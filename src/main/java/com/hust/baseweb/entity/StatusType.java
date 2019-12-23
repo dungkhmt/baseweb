@@ -1,4 +1,4 @@
-package com.dailyopt.baseweb.entity;
+package com.hust.baseweb.entity;
 
 import lombok.Getter;
 import lombok.Setter;

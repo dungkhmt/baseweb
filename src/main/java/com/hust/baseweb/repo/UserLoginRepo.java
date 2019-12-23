@@ -1,6 +1,6 @@
-package com.dailyopt.baseweb.repo;
+package com.hust.baseweb.repo;
 
-import com.dailyopt.baseweb.entity.UserLogin;
+import com.hust.baseweb.entity.UserLogin;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 

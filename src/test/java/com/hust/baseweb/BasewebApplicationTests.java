@@ -1,4 +1,4 @@
-package com.dailyopt.baseweb;
+package com.hust.baseweb;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

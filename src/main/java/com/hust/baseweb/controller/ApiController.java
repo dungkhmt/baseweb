@@ -1,4 +1,4 @@
-package com.dailyopt.baseweb.controller;
+package com.hust.baseweb.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

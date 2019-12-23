@@ -1,8 +1,7 @@
-package com.dailyopt.baseweb.entity;
+package com.hust.baseweb.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;

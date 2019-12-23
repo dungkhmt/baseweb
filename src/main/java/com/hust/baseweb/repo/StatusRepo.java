@@ -1,6 +1,6 @@
-package com.dailyopt.baseweb.repo;
+package com.hust.baseweb.repo;
 
-import com.dailyopt.baseweb.entity.Status;
+import com.hust.baseweb.entity.Status;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
