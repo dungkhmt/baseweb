@@ -17,21 +17,26 @@ INSERT INTO status (status_id, status_type_id, status_code, sequence_id, descrip
 INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_SALE_MANAGER', 'Sale manager account owner access security group', '2017-01-03 10:12:23.879', '2017-01-03 10:12:23.878');
 INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_ACCOUNTANT', 'Accountant account owner access security group', '2017-01-03 10:12:42.531', '2017-01-03 10:12:42.507');
 INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN', 'Full Admin group, has all general functional permissions.', '2017-01-03 10:12:23.994', '2017-01-03 10:12:23.993');
-INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('USER_ADMIN','Admin user permission',NOW(),NOW());
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('USER_CREATE','Create user permission',NOW(),NOW());
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('USER_VIEW','View user permission',NOW(),NOW());
-INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('ORDER_ADMIN','Admin order permission',NOW(),NOW());
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('ORDER_CREATE','Create order permission',NOW(),NOW());
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('ORDER_VIEW','View order permission',NOW(),NOW());
-INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('INVOICE_ADMIN','Admin order permission',NOW(),NOW());
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('INVOICE_CREATE','Create order permission',NOW(),NOW());
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('INVOICE_VIEW','View order permission',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','ORDER_ADMIN',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','USER_ADMIN',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','INVOICE_ADMIN',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_SALE_MANAGER','ORDER_ADMIN',NOW(),NOW());
+
+INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','ORDER_VIEW',NOW(),NOW());
+INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','ORDER_CREATE',NOW(),NOW());
+INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','USER_CREATE',NOW(),NOW());
+INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','USER_VIEW',NOW(),NOW());
+INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','INVOICE_CREATE',NOW(),NOW());
+INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','INVOICE_VIEW',NOW(),NOW());
+
+INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_SALE_MANAGER','ORDER_CREATE',NOW(),NOW());
+INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_SALE_MANAGER','ORDER_VIEW',NOW(),NOW());
 INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_ACCOUNTANT','ORDER_VIEW',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_ACCOUNTANT','INVOICE_ADMIN',NOW(),NOW());
+INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_ACCOUNTANT','INVOICE_CREATE',NOW(),NOW());
+INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_ACCOUNTANT','INVOICE_VIEW',NOW(),NOW());
+
 INSERT INTO application_type(application_type_id, description, last_updated_stamp, created_stamp) VALUES ('MENU','Menu application type', NOW(),NOW());
 INSERT INTO application_type(application_type_id, description, last_updated_stamp, created_stamp) VALUES ('SCREEN','Screen application type', NOW(),NOW());
 INSERT INTO application_type(application_type_id, description, last_updated_stamp, created_stamp) VALUES ('MODULE','Module application type', NOW(),NOW());
