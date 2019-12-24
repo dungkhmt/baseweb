@@ -20,9 +20,6 @@ spring:
 
     username: ${SQL_DB_USER}
     password: ${SQL_DB_PASS}
-  data:
-    rest:
-      base-path: /api
 
 logging:
   file:
