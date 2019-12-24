@@ -14,12 +14,13 @@ import org.springframework.stereotype.Service;
 public class BaseWebUserDetailService implements UserDetailsService {
     @Autowired
     private UserLoginRepo userLoginRepo;
+
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         UserLogin user = userLoginRepo.findByUserLoginId(s);
         return new User(user.getUserLoginId(), user.getPassword(),
-                AuthorityUtils.createAuthorityList(user.getRoles().stream().map(sg->{
-                    return sg.getId();
+                AuthorityUtils.createAuthorityList(user.getRoles().stream().map(sg -> {
+                    return sg.getGroupId();
                 }).toArray(String[]::new)));
     }
 }

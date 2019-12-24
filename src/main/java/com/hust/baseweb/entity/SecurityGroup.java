@@ -13,7 +13,7 @@ import java.util.List;
 public class SecurityGroup {
     @Id
     @Column(name = "group_id")
-    private String id;
+    private String groupId;
 
     private String description;
 
