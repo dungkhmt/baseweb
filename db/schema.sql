@@ -138,3 +138,15 @@ CREATE TABLE application (
   CONSTRAINT application_application_module FOREIGN KEY (module_id) REFERENCES application (application_id),
   CONSTRAINT application_permission FOREIGN KEY (permission_id) REFERENCES security_permission (permission_id)
 );
+
+CREATE TABLE track_locations (
+  track_location_id     UUID NOT NULL default uuid_generate_v1(),
+  party_id UUID,
+  location           VARCHAR(255),
+  time_point		TIMESTAMP,
+  last_updated_stamp  TIMESTAMP    ,
+  created_stamp       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT pk_user_login PRIMARY KEY (track_location_id),
+  CONSTRAINT track_location_party FOREIGN KEY (party_id) REFERENCES party (party_id)
+);
+
