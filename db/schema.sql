@@ -146,7 +146,7 @@ CREATE TABLE track_locations (
   time_point		TIMESTAMP,
   last_updated_stamp  TIMESTAMP    ,
   created_stamp       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_user_login PRIMARY KEY (track_location_id),
+  CONSTRAINT pk_track_locations PRIMARY KEY (track_location_id),
   CONSTRAINT track_location_party FOREIGN KEY (party_id) REFERENCES party (party_id)
 );
 

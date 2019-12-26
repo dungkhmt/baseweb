@@ -42,3 +42,7 @@ CREATE TRIGGER application_last_updated_stamp
   BEFORE UPDATE
   ON application
   FOR EACH ROW EXECUTE PROCEDURE set_last_updated_stamp();
+CREATE TRIGGER track_locations_last_updated_stamp
+  BEFORE UPDATE
+  ON track_locations
+  FOR EACH ROW EXECUTE PROCEDURE set_last_updated_stamp();

@@ -2,6 +2,7 @@ package com.hust.baseweb.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Setter
 public class TrackLocations {
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="track_location_id")
 	private UUID trackLocationId;
 	
