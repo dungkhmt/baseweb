@@ -28,8 +28,8 @@ logging:
   level:
     root: INFO
     com:
-      dailyopt :
-        tripplanning : DEBUG
+      hust :
+        baseweb : DEBUG
     org:
       springframework: INFO
   config: classpath:logback-dev.xml
