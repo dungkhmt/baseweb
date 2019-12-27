@@ -1,5 +1,7 @@
 package com.hust.baseweb.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,5 +26,7 @@ public class TrackLocationsServiceImpl implements TrackLocationsService {
 		
 		return trackLocationsRepo.save(o);
 	}
-
+	public List<TrackLocations> getListLocations(){
+		return trackLocationsRepo.findAll();
+	}
 }

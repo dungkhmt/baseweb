@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hust.baseweb.entity.TrackLocations;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PostLocationInputModel;
+import com.hust.baseweb.model.TrackLocationsOutputModel;
 import com.hust.baseweb.service.TrackLocationsService;
 import com.hust.baseweb.service.UserService;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -46,5 +49,16 @@ public class ApiController {
     	TrackLocations tl = trackLocationsService.save(input, userLogin.getParty());
     	return ResponseEntity.ok().body(tl.getTrackLocationId());
     }
+    
+    @GetMapping("/get-track-locations")
+    public ResponseEntity<List> getTrackLocations(Principal principal){
+    	System.out.println("getTrackLocations");
+    	UserLogin userLogin=userService.findById(principal.getName());
+    	List<TrackLocations> lst = trackLocationsService.getListLocations();
+    	List<TrackLocationsOutputModel> ret_lst = lst.stream().map(e -> new TrackLocationsOutputModel(e)).collect(Collectors.toList());
+    	
+    	return ResponseEntity.ok().body(ret_lst);
+    }
+    
 }
 
