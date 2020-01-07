@@ -3,9 +3,12 @@
 package com.hust.baseweb.config;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -18,10 +21,14 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 @EnableSpringHttpSession
 public class SessionConfig {
 
-	private final RedisConnectionFactory redisConnectionFactory;
+	@Autowired
+	private RedisConnectionFactory redisConnectionFactory;
 
-	public SessionConfig(ObjectProvider<RedisConnectionFactory> redisConnectionFactory) {
-		this.redisConnectionFactory = redisConnectionFactory.getIfAvailable();
+
+	@Bean
+	public LettuceConnectionFactory redisConnectionFactory() {
+
+		return new LettuceConnectionFactory(new RedisStandaloneConfiguration("localhost", 6379));
 	}
 
 	@Bean
