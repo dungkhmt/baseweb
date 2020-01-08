@@ -53,7 +53,7 @@ public class UserLogin {
             inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
     private List<SecurityGroup> roles;
 
-    UserLogin() {
+    public UserLogin() {
     }
 
     public UserLogin(String userLoginId, String password, List<SecurityGroup> roles, boolean enabled) {
