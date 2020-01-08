@@ -5,9 +5,9 @@ SQL_DB_HOST: localhost
 SQL_DB_PORT: 5432
 SQL_DB_USER: postgres
 SQL_DB_PASS: 123456
-#server:
-#  servlet:
-#    context-path: '/baseweb'
+server:
+  servlet:
+    context-path: '/api'
 
 spring:
   servlet:
