@@ -22,6 +22,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private BaseWebUserDetailService userDetailsService;
 
+    @Autowired
+    private BasicAuthenticationEndPoint basicAuthenticationEndPoint;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
@@ -33,12 +36,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .anyRequest().authenticated()
+
                 .and()
-                .formLogin()
-                .defaultSuccessUrl("/", true)
-                .permitAll()
-                .and()
-                .httpBasic()
+                .httpBasic().authenticationEntryPoint(basicAuthenticationEndPoint)
                 .and()
                 .csrf().disable()
                 .logout()
