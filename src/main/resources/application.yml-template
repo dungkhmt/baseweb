@@ -1,10 +1,10 @@
 
 SERVICE_HOST: localhost
 SERVICE_PORT: 8080
-SQL_DB_HOST: localhost
+SQL_DB_HOST: pgsql
 SQL_DB_PORT: 5432
 SQL_DB_USER: postgres
-SQL_DB_PASS: 123456
+SQL_DB_PASS: baseweb@123
 server:
   servlet:
     context-path: '/api'
@@ -16,7 +16,7 @@ spring:
      max-request-size: 10MB
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${SQL_DB_HOST}:${SQL_DB_PORT}/baseweb
+    url: jdbc:postgresql://${SQL_DB_HOST}:${SQL_DB_PORT}/${POSTGRES_DB}
 
     username: ${SQL_DB_USER}
     password: ${SQL_DB_PASS}
