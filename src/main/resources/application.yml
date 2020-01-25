@@ -5,6 +5,8 @@ SQL_DB_HOST: localhost
 SQL_DB_PORT: 5432
 SQL_DB_USER: postgres
 SQL_DB_PASS: 123456
+POSTGRES_DB: baseweb
+
 server:
   servlet:
     context-path: '/api'
@@ -14,9 +16,14 @@ spring:
     multipart:
      max-file-size: 10MB
      max-request-size: 10MB
+  data:
+    rest:
+      base-path: /rest
+      detection-strategy: all  
+        
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${SQL_DB_HOST}:${SQL_DB_PORT}/baseweb
+    url: jdbc:postgresql://${SQL_DB_HOST}:${SQL_DB_PORT}/${POSTGRES_DB}
 
     username: ${SQL_DB_USER}
     password: ${SQL_DB_PASS}

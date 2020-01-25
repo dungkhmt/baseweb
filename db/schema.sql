@@ -1,5 +1,5 @@
 CREATE TABLE status_type (
-  status_type_id     VARCHAR(60) NOT NULL,
+  uom_type_id     VARCHAR(60) NOT NULL,
   parent_type_id     VARCHAR(60),
   description        TEXT,
   last_updated_stamp TIMESTAMP   ,
