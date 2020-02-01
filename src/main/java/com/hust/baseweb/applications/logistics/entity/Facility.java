@@ -1,0 +1,25 @@
+package com.hust.baseweb.applications.logistics.entity;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+
+public class Facility {
+	@Id
+	@Column(name="facility_id")
+	private String facilityId;
+	
+	
+	private Date createdStamp;
+	private Date lastUpdatedStamp;
+	    
+}

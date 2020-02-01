@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin
 public class LogisticsAPIController {
-	
+	public static final String module = LogisticsAPIController.class.getName();
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hust.baseweb.entity.SecurityGroup;
-import com.hust.baseweb.entity.TrackLocations;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.CreateUserLoginInputModel;
 import com.hust.baseweb.model.GetDetailUserLoginInputModel;

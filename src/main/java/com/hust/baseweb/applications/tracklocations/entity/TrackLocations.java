@@ -1,8 +1,11 @@
-package com.hust.baseweb.entity;
+package com.hust.baseweb.applications.tracklocations.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import org.hibernate.annotations.GenericGenerator;
+
+import com.hust.baseweb.entity.Party;
 
 import javax.persistence.*;
 

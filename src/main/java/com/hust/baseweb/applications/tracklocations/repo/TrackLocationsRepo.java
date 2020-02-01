@@ -6,7 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.Repository;
 
 import com.hust.baseweb.entity.Application;
-import com.hust.baseweb.entity.TrackLocations;
+import com.hust.baseweb.applications.tracklocations.entity.TrackLocations;
+
 
 public interface TrackLocationsRepo extends JpaRepository<TrackLocations,UUID>{
 	

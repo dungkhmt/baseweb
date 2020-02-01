@@ -1,5 +1,5 @@
 CREATE TABLE inventory_item(
-	inventory_item_id	VARCHAR(60) NOT NULL,
+	inventory_item_id	UUID NOT NULL default uuid_generate_v1(),
 	product_id	VARCHAR(60),
 	status_id VARCHAR(60),
 	datetime_received TIMESTAMP,
@@ -23,8 +23,10 @@ CREATE TABLE inventory_item(
 	CONSTRAINT fk_inventory_item_facility_id FOREIGN KEY (facility_id) REFERENCES facility (facility_id)
 );
 
+
+
 CREATE TABLE inventory_item_detail(
-	inventory_item_id	VARCHAR(60) NOT NULL,
+	inventory_item_id	UUID NOT NULL,
 	inventory_item_detail_seq_id VARCHAR(60),
 	effective_date TIMESTAMP,
 	quantity_on_hand_diff DECIMAL(18,6),

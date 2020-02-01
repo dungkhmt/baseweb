@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hust.baseweb.applications.geo.cache.GeoPointCache;
+import com.hust.baseweb.applications.tracklocations.entity.TrackLocations;
 import com.hust.baseweb.applications.tracklocations.model.GetLocationInputModel;
 import com.hust.baseweb.applications.tracklocations.model.GetUserLocationsInputModel;
 import com.hust.baseweb.applications.tracklocations.model.PostLocationInputModel;
@@ -20,7 +21,6 @@ import com.hust.baseweb.applications.tracklocations.model.TrackLocationsOutputMo
 import com.hust.baseweb.applications.tracklocations.model.UserLocationModel;
 import com.hust.baseweb.applications.tracklocations.service.TrackLocationsService;
 import com.hust.baseweb.entity.SecurityGroup;
-import com.hust.baseweb.entity.TrackLocations;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.CreateUserLoginInputModel;
 import com.hust.baseweb.model.GetDetailUserLoginInputModel;

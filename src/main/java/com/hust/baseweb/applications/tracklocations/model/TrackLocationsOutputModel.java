@@ -8,8 +8,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import com.hust.baseweb.applications.tracklocations.entity.TrackLocations;
 import com.hust.baseweb.entity.Party;
-import com.hust.baseweb.entity.TrackLocations;
+
+
 
 import lombok.Getter;
 import lombok.Setter;
