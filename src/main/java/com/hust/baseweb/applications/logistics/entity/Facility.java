@@ -18,6 +18,8 @@ public class Facility {
 	@Column(name="facility_id")
 	private String facilityId;
 	
+	@Column(name="facility_name")
+	private String facilityName;
 	
 	private Date createdStamp;
 	private Date lastUpdatedStamp;

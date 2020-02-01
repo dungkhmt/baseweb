@@ -1,5 +1,9 @@
 package com.hust.baseweb.applications.order.repo;
 
-public class OrderRepo {
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.hust.baseweb.applications.order.entity.OrderHeader;
+
+public interface OrderRepo extends JpaRepository<OrderHeader, String>{
+	
 }

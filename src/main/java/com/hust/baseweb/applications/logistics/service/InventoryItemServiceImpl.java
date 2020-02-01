@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.logistics.service;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.hust.baseweb.applications.logistics.entity.Facility;
@@ -32,7 +33,9 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 		InventoryItem ii = new InventoryItem();
 		Product product = productService.findByProductId(input.getProductId());
 		Facility facility = facilityService.findFacilityById(input.getFacilityId());
-		
+		if(product == null || facility == null){
+			return null;
+		}
 		ii.setFacility(facility);
 		ii.setProduct(product);
 		ii.setLotId(input.getLotId());
