@@ -1,6 +1,7 @@
 package com.hust.baseweb.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.Point;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,8 @@ import com.hust.baseweb.model.CreateUserLoginInputModel;
 import com.hust.baseweb.model.GetDetailUserLoginInputModel;
 import com.hust.baseweb.model.GetDetailUserLoginOutputModel;
 import com.hust.baseweb.model.GetUserLoginOutputModel;
-import com.hust.baseweb.model.PostLocationInputModel;
 import com.hust.baseweb.model.SecurityGroupOutputModel;
-import com.hust.baseweb.model.TrackLocationsOutputModel;
 import com.hust.baseweb.service.SecurityGroupService;
-import com.hust.baseweb.service.TrackLocationsService;
 import com.hust.baseweb.service.UserService;
 
 import java.security.Principal;
@@ -38,8 +36,8 @@ public class ApiController {
 	@Autowired
 	private UserService userService;
 	 
-	@Autowired
-	private TrackLocationsService trackLocationsService;
+	//@Autowired
+	//private TrackLocationsService trackLocationsService;
 	
 	 @Autowired
 	 SecurityGroupService securityGroupService;
@@ -61,6 +59,7 @@ public class ApiController {
     }
     */
     
+    /*
     @PostMapping("/post-location")
     public ResponseEntity postLocation(Principal principal, @RequestBody PostLocationInputModel input){
     	
@@ -68,7 +67,12 @@ public class ApiController {
     	TrackLocations tl = trackLocationsService.save(input, userLogin.getParty());
     	return ResponseEntity.ok().body(tl.getTrackLocationId());
     }
-    
+    @PostMapping("/get-location")
+    public ResponseEntity getLocation(Principal principal, @RequestBody GetLocationInputModel input){
+    	Point p = trackLocationsService.getLocation(input.getPartyId());
+    	if(p == null) return ResponseEntity.ok().body(null);
+    	return ResponseEntity.ok().body(p);
+    }
     @GetMapping("/get-track-locations")
     public ResponseEntity<List> getTrackLocations(Principal principal){
     	System.out.println("getTrackLocations");
@@ -78,6 +82,8 @@ public class ApiController {
     	
     	return ResponseEntity.ok().body(ret_lst);
     }
+    */
+    
     @GetMapping("/get-list-userlogins")
     public ResponseEntity<List> getListUserLogins(Principal principal){
     	System.out.println(module + "::getListUserLogins");

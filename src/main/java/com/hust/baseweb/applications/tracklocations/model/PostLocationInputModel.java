@@ -1,4 +1,4 @@
-package com.hust.baseweb.model;
+package com.hust.baseweb.applications.tracklocations.model;
 
 import java.sql.Timestamp;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package com.hust.baseweb.repo;
+package com.hust.baseweb.applications.tracklocations.repo;
 
 import java.util.UUID;
 

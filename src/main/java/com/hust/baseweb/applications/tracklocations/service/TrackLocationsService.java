@@ -1,10 +1,13 @@
-package com.hust.baseweb.service;
+package com.hust.baseweb.applications.tracklocations.service;
 
 import java.util.List;
 
+import org.springframework.data.geo.Point;
+
+import com.hust.baseweb.applications.tracklocations.model.PostLocationInputModel;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.TrackLocations;
-import com.hust.baseweb.model.PostLocationInputModel;
+
 
 
 public interface TrackLocationsService {

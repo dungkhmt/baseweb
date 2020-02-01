@@ -1,4 +1,4 @@
-package com.hust.baseweb.model;
+package com.hust.baseweb.applications.tracklocations.model;
 
 import java.util.Date;
 import java.util.UUID;
