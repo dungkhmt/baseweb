@@ -1,5 +1,7 @@
 package com.hust.baseweb.applications.order.model;
 
+import java.util.UUID;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +9,7 @@ import lombok.Setter;
 @Setter
 
 public class ModelCreateOrderInput {
-	private String partyCustomerId;
+	private UUID partyCustomerId;
 	private ModelCreateOrderInputOrderItem[] orderItems;
 	private String salesChannelId;
 	private String facilityId;

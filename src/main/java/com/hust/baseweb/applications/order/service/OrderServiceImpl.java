@@ -15,6 +15,8 @@ import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.entity.OrderItem;
+import com.hust.baseweb.applications.order.entity.OrderRole;
+import com.hust.baseweb.applications.order.entity.OrderStatus;
 import com.hust.baseweb.applications.order.entity.OrderType;
 import com.hust.baseweb.applications.order.entity.SalesChannel;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
@@ -63,10 +65,12 @@ public class OrderServiceImpl implements OrderService {
 	@Transactional
 	public OrderHeader save(ModelCreateOrderInput orderInput) {
 		// TODO Auto-generated method stub
+		
 		OrderType orderType = orderTypeRepo.findByOrderTypeId("SALES_ORDER");
 		SalesChannel salesChannel = salesChannelRepo.findBySalesChannelId(orderInput.getSalesChannelId());
 		String salesmanId = orderInput.getSalesmanId();
-		UserLogin userLogin = userLoginRepo.findByUserLoginId(salesmanId);
+		System.out.println(module + "::save, salesmanId = " + salesmanId);
+		UserLogin salesman = userLoginRepo.findByUserLoginId(salesmanId);
 		Facility facility = facilityRepo.findByFacilityId(orderInput.getFacilityId());
 		
 		UUID uuid = UUID.randomUUID();
@@ -74,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
         
 		System.out.println(module + "::save, orderId = " + orderId + ", sales channel = " + 
 		(salesChannel != null ? salesChannel.getSalesChannelName() : "null") + ", userLogin = " + 
-				(userLogin != null ? userLogin.getUserLoginId(): "null") + ", facility = " + 
+				(salesman != null ? salesman.getUserLoginId(): "null") + ", facility = " + 
 		(facility != null ? facility.getFacilityName() : "null"));
 		
 		
@@ -87,6 +91,7 @@ public class OrderServiceImpl implements OrderService {
 		
 		orderRepo.save(order);
 		
+		// write to table order_item
 		int idx = 0;
 		for(ModelCreateOrderInputOrderItem oi: orderInput.getOrderItems()){
 			idx++;
@@ -101,6 +106,27 @@ public class OrderServiceImpl implements OrderService {
 			
 			orderItemRepo.save(orderItem);
 		}
+		
+		// write to order_role
+		OrderRole ol = new OrderRole();
+		ol.setOrderId(order.getOrderId());
+		ol.setPartyId(orderInput.getPartyCustomerId());
+		ol.setRoleTypeId("BILL_TO_CUSTOMER");
+		orderRoleRepo.save(ol);
+		
+		ol = new OrderRole();
+		ol.setOrderId(order.getOrderId());
+		ol.setPartyId(salesman.getParty().getPartyId());
+		ol.setRoleTypeId("SALES_EXECUTIVE");// salesman who sales the order (revenue of the order is accounted for this salesman)
+		orderRoleRepo.save(ol);
+		
+		// write to order-status
+		OrderStatus os = new OrderStatus();
+		String orderStatusId = UUID.randomUUID().toString();		
+		os.setOrder(order);
+		os.setOrderStatusId(orderStatusId);
+		os.setStatusId("ORDER_CREATED"); 
+		orderStatusRepo.save(os);
 		return order;
 	}
 

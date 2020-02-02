@@ -1,5 +1,7 @@
 package com.hust.baseweb.applications.order.entity;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -19,7 +21,7 @@ public class OrderRole {
 	
 	@Id
 	@Column(name="party_id")
-	private String partyId;
+	private UUID partyId;
 	
 	@Id
 	@Column(name="role_type_id")

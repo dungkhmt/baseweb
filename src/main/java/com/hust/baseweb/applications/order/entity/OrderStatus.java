@@ -22,10 +22,11 @@ public class OrderStatus {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private OrderHeader order;
 	
-	@JoinColumn(name="status_id", referencedColumnName="status_id")
-	@ManyToOne(fetch = FetchType.EAGER)
-	private StatusItem status;
+	//@JoinColumn(name="status_id", referencedColumnName="status_id")
+	//@ManyToOne(fetch = FetchType.EAGER)
+	//private StatusItem status;
 	
-	
+	@Column(name="status_id")
+	private String statusId;
 	
 }

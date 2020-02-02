@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hust.baseweb.applications.order.entity.OrderHeader;
+import com.hust.baseweb.applications.order.model.GetListOrdersInputModel;
+import com.hust.baseweb.applications.order.model.GetOrderDetailInputModel;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
 import com.hust.baseweb.applications.order.service.OrderService;
 
@@ -27,7 +29,18 @@ public class OrderAPIController {
 		//TODO
 		OrderHeader order = orderService.save(input);
 		
-		return ResponseEntity.ok().body(order);
-		
+		return ResponseEntity.ok().body(order);		
 	}
+	@PostMapping("/get-order-detail")
+	public ResponseEntity getOrderDetail(Principal principal, @RequestBody GetOrderDetailInputModel input){
+		// TODO
+		return null;
+	}
+	
+	@PostMapping("/get-list-orders")
+	public ResponseEntity getListOrders(Principal principal, @RequestBody GetListOrdersInputModel input){
+		// TODO
+		return null;
+	}
+	
 }
