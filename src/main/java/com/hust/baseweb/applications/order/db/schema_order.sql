@@ -70,6 +70,7 @@ CREATE TABLE order_header (
   product_store_id	VARCHAR(60),
   sales_channel_id VARCHAR(60),
   created_by		VARCHAR(60),
+  order_date		TIMESTAMP,
   currency_uom_id	VARCHAR(60),
   grand_total		DECIMAL(18,2),
   description        TEXT,

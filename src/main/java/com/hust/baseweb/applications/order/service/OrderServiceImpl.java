@@ -3,6 +3,8 @@ package com.hust.baseweb.applications.order.service;
 
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
+import com.hust.baseweb.applications.order.controller.OrderAPIController;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.order.entity.OrderRole;
@@ -81,16 +84,24 @@ public class OrderServiceImpl implements OrderService {
 				(salesman != null ? salesman.getUserLoginId(): "null") + ", facility = " + 
 		(facility != null ? facility.getFacilityName() : "null"));
 		
-		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+		Date orderDate = null;
+		try{
+			orderDate = formatter.parse(orderInput.getOrderDate());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
         
 		OrderHeader order = new OrderHeader();
 		order.setOrderId(orderId);
 		order.setOrderType(orderType);
 		order.setSalesChannel(salesChannel);
 		order.setFacility(facility);
+		order.setOrderDate(orderDate);
 		
 		orderRepo.save(order);
 		
+		BigDecimal total = new BigDecimal(0);
 		// write to table order_item
 		int idx = 0;
 		for(ModelCreateOrderInputOrderItem oi: orderInput.getOrderItems()){
@@ -102,9 +113,12 @@ public class OrderServiceImpl implements OrderService {
 			orderItem.setOrderItemSeqId(orderItemSeqId);
 			orderItem.setProduct(product);
 			orderItem.setQuantity(oi.getQuantity());
-			orderItem.setUnitPrice(new BigDecimal(0));// TOBE FIXED
+			orderItem.setUnitPrice(oi.getUnitPrice());// TOBE FIXED
 			
 			orderItemRepo.save(orderItem);
+			System.out.println(module + "::save, order-item " + product.getProductId() + ", price = " + oi.getTotalItemPrice() + ", total = " + total);
+			
+			total = total.add(oi.getTotalItemPrice());
 		}
 		
 		// write to order_role
@@ -127,6 +141,12 @@ public class OrderServiceImpl implements OrderService {
 		os.setOrderStatusId(orderStatusId);
 		os.setStatusId("ORDER_CREATED"); 
 		orderStatusRepo.save(os);
+		
+		//SimpleDateFormat formatterYYYYMMDD = new SimpleDateFormat("yyyy-mm-dd");
+		//String dateYYYYMMDD = formatterYYYYMMDD.format(orderDate);
+		String[] s = orderInput.getOrderDate().split(" ");// TOBE FIX
+		String dateYYYYMMDD = s[0].trim();
+		OrderAPIController.revenueOrderCache.addOrderRevenue(dateYYYYMMDD, total);
 		return order;
 	}
 

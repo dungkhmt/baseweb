@@ -3,13 +3,21 @@ package com.hust.baseweb.test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import java.math.BigDecimal;
 import java.sql.*;
 
 public class Test {
-	
+	public static void Test1(){
+		BigDecimal a = new BigDecimal(123);
+		a.add(new BigDecimal(456));
+		System.out.println(a);
+	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		
+		Test.Test1();
+		if(true) return;
+		
 		System.out.println("test..");
 		List<String> list= new ArrayList<>();
 		list.add("A");

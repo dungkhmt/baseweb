@@ -38,6 +38,8 @@ public class OrderHeader {
     @ManyToOne(fetch = FetchType.EAGER)
 	private Facility facility;
 
+	@Column(name="order_date")
+	private Date orderDate;
 	
 	@Column(name="created_stamp")
 	private Date createdStamp;

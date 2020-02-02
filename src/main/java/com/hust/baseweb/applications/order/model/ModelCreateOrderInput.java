@@ -14,6 +14,7 @@ public class ModelCreateOrderInput {
 	private String salesChannelId;
 	private String facilityId;
 	private String salesmanId;
+	private String orderDate;
 	public ModelCreateOrderInput() {
 		super();
 		// TODO Auto-generated constructor stub
