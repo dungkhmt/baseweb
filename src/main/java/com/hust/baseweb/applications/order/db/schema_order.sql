@@ -105,7 +105,7 @@ CREATE TABLE order_item(
   CONSTRAINT pk_order_item_id PRIMARY KEY (order_id,order_item_seq_id),
   CONSTRAINT fk_order_item_type_id FOREIGN KEY (order_item_type_id) REFERENCES order_item_type (order_item_type_id),
   CONSTRAINT fk_order_item_product_id FOREIGN KEY (product_id) REFERENCES product (product_id),
-  
+  CONSTRAINT fk_order_item_order_id FOREIGN KEY (order_id) REFERENCES order_header (order_id),
   CONSTRAINT fk_status_id FOREIGN KEY (status_id) REFERENCES status_item (status_id)	
 );
 

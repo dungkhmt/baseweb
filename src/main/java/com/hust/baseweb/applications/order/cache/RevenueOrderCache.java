@@ -15,7 +15,7 @@ public class RevenueOrderCache {
 	private ConcurrentHashMap<String, RPTDayRevenue> mDate2Revenue = new ConcurrentHashMap<String, RPTDayRevenue>();
 	
 	public synchronized void addOrderRevenue(String date, BigDecimal revenue){
-		System.out.println(module + "::addOrderRevenue(" + date + "," + revenue);
+		//System.out.println(module + "::addOrderRevenue(" + date + "," + revenue);
 		
 		if(mDate2Revenue.get(date) == null){
 			RPTDayRevenue e = new RPTDayRevenue(date, revenue, 1);

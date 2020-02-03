@@ -9,13 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hust.baseweb.applications.order.cache.RevenueOrderCache;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
+import com.hust.baseweb.applications.order.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.model.GetListOrdersInputModel;
+import com.hust.baseweb.applications.order.model.GetListPartyCustomerInputModel;
+import com.hust.baseweb.applications.order.model.GetListPartyCustomerOutputModel;
+import com.hust.baseweb.applications.order.model.GetListSalesmanInputModel;
 import com.hust.baseweb.applications.order.model.GetOrderDetailInputModel;
 import com.hust.baseweb.applications.order.model.GetTotalRevenueInputModel;
 import com.hust.baseweb.applications.order.model.GetTotalRevenueItemOutputModel;
 import com.hust.baseweb.applications.order.model.GetTotalRevenueOutputModel;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
 import com.hust.baseweb.applications.order.service.OrderService;
+import com.hust.baseweb.applications.order.service.PartyCustomerService;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -32,6 +37,9 @@ public class OrderAPIController {
 	
 	@Autowired
 	private OrderService orderService;
+	
+	@Autowired
+	private PartyCustomerService partyCustomerService;
 	
 	@PostMapping("/create-order")
 	public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input){
@@ -51,6 +59,19 @@ public class OrderAPIController {
 		// TODO
 		return null;
 	}
+	
+	@PostMapping("/get-list-party-customers")
+	public ResponseEntity getListPartyCustomers(Principal principal, @RequestBody GetListPartyCustomerInputModel input){
+		// TODO
+		List<PartyCustomer> lst = partyCustomerService.getListPartyCustomers();
+		return ResponseEntity.ok().body(new GetListPartyCustomerOutputModel(lst));
+	}
+	@PostMapping("/get-list-salesmans")
+	public ResponseEntity getListSalesmans(Principal principal, @RequestBody GetListSalesmanInputModel input){
+		// TODO
+		return null;
+	}
+	
 	@PostMapping("/get-total-revenue")
 	public ResponseEntity getTotalRevenue(Principal principal, @RequestBody GetTotalRevenueInputModel input){
 		

@@ -72,17 +72,17 @@ public class OrderServiceImpl implements OrderService {
 		OrderType orderType = orderTypeRepo.findByOrderTypeId("SALES_ORDER");
 		SalesChannel salesChannel = salesChannelRepo.findBySalesChannelId(orderInput.getSalesChannelId());
 		String salesmanId = orderInput.getSalesmanId();
-		System.out.println(module + "::save, salesmanId = " + salesmanId);
+		//System.out.println(module + "::save, salesmanId = " + salesmanId);
 		UserLogin salesman = userLoginRepo.findByUserLoginId(salesmanId);
 		Facility facility = facilityRepo.findByFacilityId(orderInput.getFacilityId());
 		
 		UUID uuid = UUID.randomUUID();
         String orderId = uuid.toString();
         
-		System.out.println(module + "::save, orderId = " + orderId + ", sales channel = " + 
-		(salesChannel != null ? salesChannel.getSalesChannelName() : "null") + ", userLogin = " + 
-				(salesman != null ? salesman.getUserLoginId(): "null") + ", facility = " + 
-		(facility != null ? facility.getFacilityName() : "null"));
+		//System.out.println(module + "::save, orderId = " + orderId + ", sales channel = " + 
+		//(salesChannel != null ? salesChannel.getSalesChannelName() : "null") + ", userLogin = " + 
+		//		(salesman != null ? salesman.getUserLoginId(): "null") + ", facility = " + 
+		//(facility != null ? facility.getFacilityName() : "null"));
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 		Date orderDate = null;
@@ -116,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
 			orderItem.setUnitPrice(oi.getUnitPrice());// TOBE FIXED
 			
 			orderItemRepo.save(orderItem);
-			System.out.println(module + "::save, order-item " + product.getProductId() + ", price = " + oi.getTotalItemPrice() + ", total = " + total);
+			//System.out.println(module + "::save, order-item " + product.getProductId() + ", price = " + oi.getTotalItemPrice() + ", total = " + total);
 			
 			total = total.add(oi.getTotalItemPrice());
 		}

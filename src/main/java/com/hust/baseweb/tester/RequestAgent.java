@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
+import com.hust.baseweb.test.simulator.Constants;
+
 import okhttp3.Credentials;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -36,6 +38,7 @@ public class RequestAgent extends Thread {
 
 	String execPostUseToken(String url, String json, String token)
 			throws IOException {
+		System.out.println(module + "::execPostUseToken, url = " + url + ", json = " + json + ", token = " + token);
 		RequestBody body = RequestBody.create(JSON, json);
 		Request request = new Request.Builder().url(url)
 				.header("X-Auth-Token", token).post(body).build();
@@ -93,6 +96,13 @@ public class RequestAgent extends Thread {
 			String res = execPostUseToken(url_root + "/api/post-location",
 					json, token);
 			System.out.println(module + "::postLocation, res = " + res);
+		
+			json = "{\"statusId\":null}";
+			res = execPostUseToken(Constants.URL_ROOT + "/api/get-list-product",
+					json, token);
+			System.out.println(module + "::postLocation, res = " + res);
+			
+			
 			return res;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -107,8 +117,9 @@ public class RequestAgent extends Thread {
 
 		getUserLogins();
 
+		int N = 1;
 		double maxTime = 0;
-		for (int i = 1; i <= 100; i++) {
+		for (int i = 1; i <= N; i++) {
 			Date timePoint = new Date();
 			Random R = new Random();
 			int a = R.nextInt(10000) + 210000;

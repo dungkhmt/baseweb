@@ -188,6 +188,18 @@ CREATE TABLE facility (
   CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES product_store (product_store_id)
 );
 
+CREATE TABLE product_facility (
+  product_id     VARCHAR(60) NOT NULL,
+  facility_id     VARCHAR(60) NOT NULL,
+  apt_inventory_count DECIMAL(18,6),
+  last_inventory_count DECIMAL(18,6),
+  description        TEXT,
+  last_updated_stamp TIMESTAMP   ,
+  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT pk_product_facility PRIMARY KEY (product_id, facility_id),
+  CONSTRAINT fk_product_facility_facility_id FOREIGN KEY (facility_id) REFERENCES facility (facility_id),
+  CONSTRAINT fk_product_facility_product_id FOREIGN KEY (product_id) REFERENCES product (product_id)  
+);
 
 
 
