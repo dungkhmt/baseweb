@@ -39,6 +39,7 @@ public class CreateOrderAgent extends Thread {
 	
 	private int nbIters = 1000;
 	private double maxTime = 0;
+	private int id;
 	/*
 	String execPostUseToken(String url, String json, String token)
 			throws IOException {
@@ -51,7 +52,9 @@ public class CreateOrderAgent extends Thread {
 		}
 	}
 	*/
-	
+	public CreateOrderAgent(int id){
+		this.id = id;
+	}
 	public void setNbIters(int nbIters){
 		this.nbIters = nbIters;
 	}
@@ -80,10 +83,10 @@ public class CreateOrderAgent extends Thread {
 			double t = createOrder();
 			//double t = System.currentTimeMillis() - t0;
 			if(maxTime < t) maxTime = t;
-			System.out.println("time = " + t + ", maxTime = " + maxTime);
+			//System.out.println("time = " + t + ", maxTime = " + maxTime);
 		}
 
-		System.out.println(module + " finished, maxTime = " + maxTime);
+		System.out.println(module + "[" + id + "] finished, maxTime = " + maxTime);
 		
 	}
 
@@ -170,7 +173,7 @@ public class CreateOrderAgent extends Thread {
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		CreateOrderAgent a = new CreateOrderAgent();
+		CreateOrderAgent a = new CreateOrderAgent(0);
 		a.start();
 	}
 
