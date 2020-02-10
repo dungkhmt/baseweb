@@ -9,7 +9,10 @@ server:
   servlet:
     context-path: '/api'
 
-spring:
+spring:  
+  jackson: 
+    serialization:
+      FAIL_ON_EMPTY_BEANS : false
   servlet:
     multipart:
      max-file-size: 10MB
@@ -17,7 +20,7 @@ spring:
   data:
     rest:
       base-path: /rest
-      detection-strategy: all  
+      detectioddn-strategy:  ANNOTATED 
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${SQL_DB_HOST}:${SQL_DB_PORT}/${POSTGRES_DB}
