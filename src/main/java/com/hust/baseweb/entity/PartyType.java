@@ -10,6 +10,10 @@ import java.util.Date;
 @Getter
 @Setter
 public class PartyType {
+    public static enum PartyTypeEnum {
+        AUTOMATED_AGENT, PERSON, PARTY_GROUP, BANK, LEGAL_ORGANIZATION, CORPORATION, CUSTOMER_GROUP
+    }
+
     @Id
     @Column(name = "party_type_id")
     private String id;
@@ -22,9 +26,7 @@ public class PartyType {
 
     private String description;
 
-
     private Date createdStamp;
-
 
     private Date lastUpdatedStamp;
 

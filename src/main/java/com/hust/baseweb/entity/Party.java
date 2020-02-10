@@ -12,6 +12,7 @@ import java.util.UUID;
 @Setter
 public class Party {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="party_id")
     private UUID partyId;
 
@@ -43,8 +44,7 @@ public class Party {
     @ManyToOne(fetch = FetchType.LAZY)
     private UserLogin modifiedBy;
 
-    private Date createdStamp;
-    private Date lastUpdatedStamp;
+   
 
 
     public Party(String partyCode, PartyType type,

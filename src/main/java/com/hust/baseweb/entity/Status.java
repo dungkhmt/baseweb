@@ -4,12 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Getter
 @Setter
 public class Status {
+    public static enum StatusEnum {
+        SINGLE, MARRIED, DIVORCED, PARTY_ENABLED, PARTY_DISABLED
+    }
+
     @Id
     @Column(name = "status_id")
     private String id;
@@ -25,7 +31,6 @@ public class Status {
     private String description;
 
     private Date createdStamp;
-
 
     private Date lastUpdatedStamp;
 

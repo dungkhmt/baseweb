@@ -68,10 +68,7 @@ public class UserLogin {
     private Date disabledDateTime;
 
 
-    private Date createdStamp;
-
-
-    private Date lastUpdatedStamp;
+   
 
 
     public UserLogin(String password, String passwordHint, boolean isSystem,
