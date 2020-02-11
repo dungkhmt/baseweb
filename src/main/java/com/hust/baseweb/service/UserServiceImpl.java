@@ -18,8 +18,12 @@ import com.hust.baseweb.repo.PersonRepo;
 import com.hust.baseweb.repo.SecurityGroupRepo;
 import com.hust.baseweb.repo.StatusRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
+import com.hust.baseweb.rest.user.DPerson;
+import com.hust.baseweb.rest.user.UserRestRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,8 @@ public class UserServiceImpl implements UserService {
     public static final String module = UserService.class.getName();
     @Autowired
     private UserLoginRepo userLoginRepo;
+    @Autowired
+    private UserRestRepository userRestRepository;
     @Autowired
     private PartyService partyService;
     @Autowired
@@ -80,4 +86,10 @@ public class UserServiceImpl implements UserService {
         userLoginRepo.save(ul);
         return party;
     }
+
+	@Override
+	public Page<DPerson> findAllPerson(Pageable page) {
+		Page<DPerson> res=userRestRepository.findByType(partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), page);
+		return res;
+	}
 }
