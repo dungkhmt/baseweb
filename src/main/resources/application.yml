@@ -12,6 +12,9 @@ server:
     context-path: '/api'
 
 spring:
+  jackson: 
+    serialization:
+      FAIL_ON_EMPTY_BEANS : false
   servlet:
     multipart:
      max-file-size: 10MB
@@ -33,7 +36,7 @@ logging:
     path: logs
     name: base.log
   level:
-    root: INFO
+    root: DEBUG
     com:
       hust :
         baseweb : DEBUG
