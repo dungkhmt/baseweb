@@ -29,7 +29,7 @@ logging:
     path: logs
     name: base.log
   level:
-    root: DEBUG
+    root: INFO
     com:
       hust :
         baseweb : DEBUG

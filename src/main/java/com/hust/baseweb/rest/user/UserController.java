@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 //@ExposesResourceFor(DPerson.class)
 @RestController
 public class UserController {
+	public static final String module = UserController.class.getName();
     @Autowired
     private UserService userService;
 
@@ -62,6 +63,7 @@ public class UserController {
     
     @GetMapping(path="/users")
     public ResponseEntity<?> getUsers(Pageable page){
+    	System.out.println(module + "::getUsers, pages = " + page.toString());
     	Page<DPerson> pg = userService.findAllPerson(page);
     	List<DTOPerson> lst = new ArrayList<DTOPerson>();
     	List<DPerson> lPerson = pg.getContent();
