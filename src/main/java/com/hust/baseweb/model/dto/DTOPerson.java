@@ -1,6 +1,7 @@
 package com.hust.baseweb.model.dto;
 
 import java.util.Date;
+import java.util.UUID;
 
 import com.hust.baseweb.rest.user.DPerson;
 
@@ -10,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DTOPerson {
+	private UUID partyId;
 	private String fullName;
 	private String status;
 	private String partyType;
@@ -27,6 +29,7 @@ public class DTOPerson {
 		this.partyCode = partyCode;
 	}
 	public DTOPerson(DPerson p){
+		this.partyId = p.getPartyId();
 		this.fullName = p.getPerson() != null ? p.getPerson().getFirstName() + " " + p.getPerson().getMiddleName() + " " + p.getPerson().getLastName() : null;
 		this.status = p.getStatus();
 		this.partyType = p.getType().getId();
