@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.order.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,10 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.logistics.entity.Facility;
+import com.hust.baseweb.entity.Party;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -47,6 +52,12 @@ public class OrderHeader {
 	@Column(name="last_updated_stamp")
 	private Date lastUpdatedStamp;
 
-	//private OrderItem[] orderItems;
 	
+	@JoinColumn(name="order_id", referencedColumnName="order_id")
+	@OneToMany(fetch=FetchType.LAZY)
+	private List<OrderItem> orderItems;
+	
+	//@JoinTable(name="OrderRole", inverseJoinColumns=@JoinColumn(name="party_id", referencedColumnName="party_id"),
+	//			joinColumns=@JoinColumn(name="order_id", referencedColumnName="order_id"))
+	//private List<Party> parties;
 }
