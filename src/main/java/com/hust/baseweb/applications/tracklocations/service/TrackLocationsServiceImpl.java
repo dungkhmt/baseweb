@@ -37,7 +37,8 @@ public class TrackLocationsServiceImpl implements TrackLocationsService {
 	public TrackLocations save(PostLocationInputModel input, Party party) {
 		// TODO Auto-generated method stub
 		TrackLocations o = new TrackLocations();
-		o.setParty(party);
+		//o.setParty(party);
+		o.setPartyId(party.getPartyId());
 		o.setLocation(input.getLat() + "," + input.getLng());
 		o.setTimePoint(input.getTimePoint());
 		

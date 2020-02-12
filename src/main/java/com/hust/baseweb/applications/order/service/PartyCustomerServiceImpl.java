@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hust.baseweb.applications.order.entity.PartyCustomer;
+
+
+import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 
 @Service

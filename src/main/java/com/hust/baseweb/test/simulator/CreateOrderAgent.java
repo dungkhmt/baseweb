@@ -10,11 +10,11 @@ import java.util.Random;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.*;
+import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.model.GetListFacilityOutputModel;
 import com.hust.baseweb.applications.logistics.model.GetListProductOutputModel;
-import com.hust.baseweb.applications.order.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.model.GetListPartyCustomerOutputModel;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;

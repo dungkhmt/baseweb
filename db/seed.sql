@@ -6,6 +6,8 @@ INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, l
 INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'CORPORATION', 'LEGAL_ORGANIZATION', FALSE, 'Corporation', NOW(), NOW());
 INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'CUSTOMER_GROUP', 'PARTY_GROUP', FALSE, 'Customer Group', NOW(), NOW());
 INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'PARTY_DISTRIBUTOR', NULL, FALSE, 'Distributor', NOW(), NOW());
+INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'PARTY_RETAILOUTLET', NULL, FALSE, 'Distributor', NOW(), NOW());
+
 
 
 INSERT INTO status_type (status_type_id, parent_type_id, description, last_updated_stamp, created_stamp) VALUES ( 'PARTY_STATUS', NULL, 'Party status', NOW(), NOW());

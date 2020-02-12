@@ -23,9 +23,13 @@ public class TrackLocations {
 	private UUID trackLocationId;
 	
 	
-	@JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    @OneToOne(fetch = FetchType.EAGER)
-    private Party party;
+	//@JoinColumn(name = "party_id", referencedColumnName = "party_id")
+    //@OneToOne(fetch = FetchType.LAZY)
+    //private Party party;
+	
+	@Column(name="party_id")
+	private UUID partyId;
+	
 	
 	@Column(name="location")
 	private String location;

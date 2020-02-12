@@ -1,6 +1,8 @@
 package com.hust.baseweb.applications.tracklocations.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Point;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hust.baseweb.applications.geo.cache.GeoPointCache;
@@ -19,6 +22,7 @@ import com.hust.baseweb.applications.tracklocations.model.GetUserLocationsInputM
 import com.hust.baseweb.applications.tracklocations.model.PostLocationInputModel;
 import com.hust.baseweb.applications.tracklocations.model.TrackLocationsOutputModel;
 import com.hust.baseweb.applications.tracklocations.model.UserLocationModel;
+import com.hust.baseweb.applications.tracklocations.repo.TrackLocationPagingRepo;
 import com.hust.baseweb.applications.tracklocations.service.TrackLocationsService;
 import com.hust.baseweb.entity.SecurityGroup;
 import com.hust.baseweb.entity.UserLogin;
@@ -47,6 +51,9 @@ public class TrackLocationApiController {
 	 
 	@Autowired
 	private TrackLocationsService trackLocationsService;
+	
+	@Autowired
+	private TrackLocationPagingRepo trackLocationPagingRepo;
 	
 	 @Autowired
 	 SecurityGroupService securityGroupService;
@@ -85,12 +92,22 @@ public class TrackLocationApiController {
     @GetMapping("/get-track-locations")
     public ResponseEntity<List> getTrackLocations(Principal principal){
     	System.out.println("getTrackLocations");
+    	
     	UserLogin userLogin=userService.findById(principal.getName());
     	List<TrackLocations> lst = trackLocationsService.getListLocations();
     	List<TrackLocationsOutputModel> ret_lst = lst.stream().map(e -> new TrackLocationsOutputModel(e)).collect(Collectors.toList());
     	
     	return ResponseEntity.ok().body(ret_lst);
     }
-    
+    @GetMapping("/tracklocations")
+    public ResponseEntity<?> getTracklocations(Pageable page, @RequestParam(required = false) String param){
+    	System.out.println(module + "::getTrackLocations, page = pageNumber = " + page.getPageNumber() + ", offSet = " + 
+    page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
+    	
+    	Page<TrackLocations> tl = trackLocationPagingRepo.findAll(page);
+    	return ResponseEntity.ok().body(tl);
+    	
+    	
+    }
 }
 

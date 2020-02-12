@@ -38,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
 
                 .and()
-                .httpBasic().authenticationEntryPoint(basicAuthenticationEndPoint)
+                .httpBasic()//.authenticationEntryPoint(basicAuthenticationEndPoint)
                 .and()
                 .csrf().disable()
                 .logout()

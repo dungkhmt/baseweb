@@ -16,6 +16,6 @@ public class Simulator {
 	}
 	public static void main(String[] arg){
 		Simulator app = new Simulator();
-		app.run(1000);
+		app.run(10);
 	}
 }

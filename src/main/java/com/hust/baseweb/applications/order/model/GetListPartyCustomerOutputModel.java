@@ -1,8 +1,10 @@
 package com.hust.baseweb.applications.order.model;
 
-import com.hust.baseweb.applications.order.entity.PartyCustomer;
+
 
 import java.util.List;
+
+import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -28,7 +28,7 @@ public class Party {
     @ManyToOne(fetch = FetchType.LAZY)
     private Status partyStatus;
 
-    //@JoinColumn(name = "party_id", referencedColumnName = "party_id")
+    @JoinColumn(name = "party_id", referencedColumnName = "party_id")
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "party")
     private UserLogin userLogin;
 

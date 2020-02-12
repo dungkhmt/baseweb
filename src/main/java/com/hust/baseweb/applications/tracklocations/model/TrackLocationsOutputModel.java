@@ -29,7 +29,8 @@ public class TrackLocationsOutputModel {
 	
 	public TrackLocationsOutputModel(TrackLocations tl){
 		this.trackLocationId = tl.getTrackLocationId();
-		this.partyId = tl.getParty().getPartyId().toString();
+		//this.partyId = tl.getParty().getPartyId().toString();
+		this.partyId = tl.getPartyId().toString();
 		this.location = tl.getLocation();
 		this.timePoint = tl.getTimePoint();
 	}
