@@ -61,7 +61,21 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
-
+    @GetMapping(path = "/users")
+    public ResponseEntity<?> getUsers(Pageable page,
+            @RequestParam(name = "search", required = false) String searchString,
+            @RequestParam(name = "filter", required = false) String filterString) {
+    	LOG.info("::getUsers, searchString = " + searchString);
+    	
+    	Page<DPerson> pg = userService.findAllPerson(page,null);
+        List<DTOPerson> lst = new ArrayList<DTOPerson>();
+        List<DPerson> lPerson = pg.getContent();
+        lst = lPerson.stream().map(p -> new DTOPerson(p)).collect(Collectors.toList());
+        Page<DTOPerson> dtoPerson = new PageImpl<DTOPerson>(lst, page, pg.getTotalElements());
+        return ResponseEntity.ok().body(dtoPerson);
+    }
+    
+    /*
     @GetMapping(path = "/users")
     public ResponseEntity<?> getUsers(Pageable page,
             @RequestParam(name = "filtering", required = false) String filterString) {
@@ -92,5 +106,5 @@ public class UserController {
         Page<DTOPerson> dtoPerson = new PageImpl<DTOPerson>(lst, page, pg.getTotalElements());
         return ResponseEntity.ok().body(dtoPerson);
     }
-
+	*/
 }

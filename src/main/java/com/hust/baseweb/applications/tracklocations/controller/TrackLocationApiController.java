@@ -26,7 +26,6 @@ import com.hust.baseweb.applications.tracklocations.repo.TrackLocationPagingRepo
 import com.hust.baseweb.applications.tracklocations.service.TrackLocationsService;
 import com.hust.baseweb.entity.SecurityGroup;
 import com.hust.baseweb.entity.UserLogin;
-import com.hust.baseweb.model.CreateUserLoginInputModel;
 import com.hust.baseweb.model.GetDetailUserLoginInputModel;
 import com.hust.baseweb.model.GetDetailUserLoginOutputModel;
 import com.hust.baseweb.service.SecurityGroupService;
