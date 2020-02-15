@@ -127,11 +127,107 @@ CREATE TABLE order_status(
 
 
 
+create table product_promo_type(
+	product_promo_type_id VARCHAR(60) NOT NULL,
+	parent_type_id VARCHAR(60),
+	last_updated_stamp TIMESTAMP   ,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  	constraint pk_product_promo_type primary key(product_promo_type_id),
+  	constraint fk_product_promo_parent_type foreign key(parent_type_id) references product_promo_type(product_promo_type_id)
+);
+
+CREATE TABLE product_promo (
+	product_promo_id UUID NOT NULL default uuid_generate_v1(),
+	promo_name varchar(100) NULL,
+	promo_text varchar(255) NULL,
+	product_promo_type_id VARCHAR(60),
+	from_date TIMESTAMP,
+	thru_date TIMESTAMP,
+	last_updated_stamp TIMESTAMP   ,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  	constraint pk_product_promo primary key(product_promo_id),
+  	constraint fk_product_promo_product_promo_type_id foreign key(product_promo_type_id) references product_promo_type(product_promo_type_id)
+);
 
 
 
+CREATE TABLE product_promo_rule (
+	product_promo_rule_id UUID NOT NULL default uuid_generate_v1(),
+	product_promo_id UUID NOT NULL,
+	product_promo_rule_enum_id varchar(60) NOT NULL,
+	rule_name varchar(100) NULL,
+	json_params TEXT,
+	last_updated_stamp timestamptz NULL,
+	last_updated_tx_stamp timestamptz NULL,
+	created_stamp timestamptz NULL,
+	created_tx_stamp timestamptz NULL,
+	CONSTRAINT pk_product_promo_rule PRIMARY KEY (product_promo_rule_id),
+	CONSTRAINT fk_product_promo_rule_product_promo FOREIGN KEY (product_promo_id) REFERENCES product_promo(product_promo_id),
+	constraint fk_product_promo_rule_enum foreign key(product_promo_rule_enum_id) references enumeration(enum_id)
+);
 
 
 
+CREATE TABLE product_promo_product (
+	product_promo_rule_id UUID NOT NULL,	
+	product_id varchar(60) NOT NULL,
+	last_updated_stamp TIMESTAMP   ,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_product_promo_product PRIMARY KEY (product_promo_rule_id, product_id),
+	CONSTRAINT fk_product_promo_product_rule FOREIGN KEY (product_promo_rule_id) REFERENCES product_promo_rule(product_promo_rule_id),
+	CONSTRAINT fk_product_promo_product_product FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
 
+CREATE TABLE tax_authority_rate_type (
+  tax_auth_rate_type_id varchar(60) not null,
+  description text,
+  last_updated_stamp TIMESTAMP   ,
+  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  constraint pk_tax_auth_rate_type primary key(tax_auth_rate_type_id)  
+) ;
+
+CREATE TABLE tax_authority_rate_product (
+  tax_authority_rate_seq_id UUID not null default uuid_generate_v1(),
+  tax_auth_rate_type_id varchar(60),
+  product_id varchar(60),
+  tax_percentage decimal(18,6),  
+  from_date TIMESTAMP,
+  thru_date TIMESTAMP DEFAULT NULL,
+  description text,
+  last_updated_stamp TIMESTAMP   ,
+  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  constraint pk_tax_auth_rate_prod primary key(tax_authority_rate_seq_id),
+  constraint fk_tax_auth_rate_prod_product_id foreign key(product_id) references product(product_id),
+  constraint fk_tax_auth_rate_prod_tax_auth_type_id foreign key(tax_auth_rate_type_id) references tax_authority_rate_type(tax_auth_rate_type_id) 
+) ;
+
+CREATE TABLE order_adjustment_type (
+  order_adjustment_type_id varchar(60) NOT NULL,
+  parent_type_id varchar(60) DEFAULT NULL,  
+  description TEXT,
+  last_updated_stamp TIMESTAMP   ,
+  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  constraint pk_order_adjustment_type PRIMARY KEY (order_adjustment_type_id),
+  constraint fk_order_adjustment_type foreign key(parent_type_id) references order_adjustment_type(order_adjustment_type_id)
+); 
+
+CREATE TABLE order_adjustment (
+  order_adjustment_id UUID NOT NULL default uuid_generate_v1(),
+  order_adjustment_type_id varchar(60),
+  order_id VARCHAR(60),
+  order_item_seq_id VARCHAR(60),
+  product_promo_rule_id UUID NOT NULL,	
+  product_id VARCHAR(60),
+  tax_authority_rate_seq_id UUID,
+  description TEXT,
+  amount decimal(18,3) DEFAULT NULL,
+  quantity Integer,
+  last_updated_stamp TIMESTAMP   ,
+  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  constraint pk_order_adjustment primary key(order_adjustment_id),
+  constraint fk_order_adjustment_order_adjustment_type_id foreign key(order_adjustment_type_id) references order_adjustment_type(order_adjustment_type_id),
+  constraint fk_order_adjustment_order_order_item foreign key(order_id, order_item_seq_id) references order_item(order_id,order_item_seq_id),
+  constraint fk_order_adjustment_tax_auth_rate_type_id foreign key(tax_authority_rate_seq_id) references tax_authority_rate_product(tax_authority_rate_seq_id),
+  constraint fk_order_adjustment_product_promo_product foreign key(product_promo_rule_id,product_id) references product_promo_product(product_promo_rule_id,product_id)
+) ;
 
