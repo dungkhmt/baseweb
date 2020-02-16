@@ -29,6 +29,11 @@ where oa.ORDER_ADJUSTMENT_TYPE_ID = 'SALES_TAX'
 and tarp.TAX_PERCENTAGE > 5
 ;
 
+select * from product_promo_cond;
+select * from product_promo_rule;
+select * from product_promo_action;
+
+select * from enumeration where ENUM_ID = 'PROMO_GWP';
 select * from party where party_id = "VNM_TAX";
 select * from tax_authority_rate_type;
 select * from tax_authority;
