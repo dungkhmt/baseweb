@@ -21,11 +21,16 @@ create table shipment_item(
 	shipment_item_seq_id VARCHAR(60),
 	product_id VARCHAR(60),
 	quantity Integer,
+	pallet numeric,
+	party_customer_id UUID, 
+	ship_to_location_id UUID,
 	last_updated_stamp TIMESTAMP   ,
   	created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
  	constraint pk_shipment_item primary key (shipment_id,shipment_item_seq_id),
  	constraint fk_shipment_item_shipment_id foreign key (shipment_id) references shipment(shipment_id),
- 	constraint fk_shipment_item_product_id foreign key(product_id) references product(product_id)
+ 	constraint fk_shipment_item_product_id foreign key(product_id) references product(product_id),
+ 	constraint fk_shipment_item_ship_to_location_id foreign key(ship_to_location_id) references postal_address(contact_mech_id),
+ 	constraint fk_shipment_item_party_customer_id foreign key(party_customer_id) references party_customer(party_id)
 );
 
 create table order_shipment(

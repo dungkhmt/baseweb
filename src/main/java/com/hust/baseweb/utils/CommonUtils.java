@@ -18,7 +18,8 @@ import org.springframework.data.domain.Sort.Order;
 
 public class CommonUtils {
     public static Logger LOG = LoggerFactory.getLogger(CommonUtils.class);
-
+    public static int SEQ_ID_LEN = 6;
+    
     @SuppressWarnings("unchecked")
     public static Map<String, Object> json2MapObject(String json) {
         Gson gson = new Gson();
@@ -101,5 +102,12 @@ public class CommonUtils {
         }
         res += pairTmp.getValue0().get(elm[elm.length - 1]);
         return res;
+    }
+
+    public static String buildSeqId(int idx){
+    	String s = idx + "";
+    	while(s.length() < SEQ_ID_LEN)
+    		s = "0" + s;
+    	return s;
     }
 }
