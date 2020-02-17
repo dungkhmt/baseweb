@@ -25,6 +25,7 @@ import com.hust.baseweb.repo.UserLoginRepo;
 import com.hust.baseweb.rest.user.DPerson;
 import com.hust.baseweb.rest.user.PredicateBuilder;
 import com.hust.baseweb.rest.user.SortBuilder;
+import com.hust.baseweb.rest.user.UserRestBriefProjection;
 import com.hust.baseweb.rest.user.UserRestRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
@@ -119,5 +120,10 @@ public class UserServiceImpl implements UserService {
         // }
         // Sort sort = driverSortBuilder.build();
         return userRestRepository.findAll(exp, page);
+    }
+
+    @Override
+    public Page<UserRestBriefProjection>findPersonByFullName(Pageable page, String sString) {
+        return userRestRepository.findByTypeAndFullNameLike(page, PartyTypeEnum.PERSON.name(), sString);
     }
 }
