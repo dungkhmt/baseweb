@@ -16,7 +16,7 @@ import lombok.Setter;
 public class GeoPoint {
 	@Id
 	@Column(name="geo_point_id")
-	private UUID geo_point_id;
+	private UUID geoPointId;
 	
 	@Column(name="latitude")
 	private String latitude;

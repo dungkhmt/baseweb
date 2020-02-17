@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.persistence.*;
 
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
+import com.hust.baseweb.entity.Party;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,10 @@ public class PartyCustomer {
 	@Id
     @Column(name="party_id")
     private UUID partyId;
+	
+	//@JoinColumn(name = "party_id", referencedColumnName = "party_id")
+    //@OneToOne(fetch = FetchType.EAGER)
+    //private Party party;
 	
 	@Column(name="customer_name")
 	private String customerName;

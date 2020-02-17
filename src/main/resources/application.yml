@@ -21,8 +21,8 @@ spring:
      max-request-size: 10MB
   data:
     rest:
-      base-path: /rest
-      detection-strategy: all  
+      #base-path: /rest
+      detection-strategy:  ANNOTATED 
         
   datasource:
     driver-class-name: org.postgresql.Driver

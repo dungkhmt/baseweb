@@ -21,7 +21,7 @@ public class PostalAddress {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="contact_mech_id")
-	private UUID contact_mech_id;
+	private UUID contactMechId;
 	
 	@Column(name="address")
 	private String address;
