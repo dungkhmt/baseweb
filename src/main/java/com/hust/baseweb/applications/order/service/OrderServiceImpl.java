@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
 		//		(salesman != null ? salesman.getUserLoginId(): "null") + ", facility = " + 
 		//(facility != null ? facility.getFacilityName() : "null"));
 		
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date orderDate = null;
 		try{
 			orderDate = formatter.parse(orderInput.getOrderDate());

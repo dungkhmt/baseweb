@@ -22,7 +22,7 @@ public class DeliveryPlanServiceImpl implements DeliveryPlanService {
 		DeliveryPlan deliveryPlan = new DeliveryPlan();
 		deliveryPlan.setCreatedByUserLoginId(input.getCreatedByUserLoginId());
 		deliveryPlan.setDescription(input.getDescription());
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd HH:MM:SS");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date deliveryDate = null;
 		try{
 			deliveryDate = formatter.parse(input.getDeliveryDate());

@@ -133,7 +133,7 @@ public class CreateOrderAgent extends Thread {
 		try{
 			Gson gson = new Gson();
 			String[] salesmanIds = {"dungpq","datnt","admin","nguyenvanseu"};
-			SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss");
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			List<Product> products = getProducts();
 			List<Facility> facilities = getFacilities();
 			List<PartyCustomer> customers = getCustomers();
