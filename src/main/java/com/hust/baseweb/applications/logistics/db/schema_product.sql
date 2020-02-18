@@ -136,17 +136,17 @@ CREATE TABLE inventory_item(
 
 
 CREATE TABLE inventory_item_detail(
+	inventory_item_detail_id UUID NOT NULL default uuid_generate_v1(),
 	inventory_item_id	UUID NOT NULL,
-	inventory_item_detail_seq_id VARCHAR(60),
 	effective_date TIMESTAMP,
 	quantity_on_hand_diff DECIMAL(18,6),
 	available_to_promise_diff DECIMAL(18,6),
 	accounting_quantity_diff DECIMAL(18,6),
 	order_id VARCHAR(60),
-	order_item_seq_id VARCHAR(60) NOT NULL,
+	order_item_seq_id VARCHAR(60),
 	last_updated_stamp TIMESTAMP   ,
 	created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT pk_inventory_item_detail PRIMARY KEY (inventory_item_id,inventory_item_detail_seq_id),
+	CONSTRAINT pk_inventory_item_detail PRIMARY KEY (inventory_item_detail_id),
 	CONSTRAINT fk_inventory_item_detail_inventory_item_id FOREIGN KEY(inventory_item_id) REFERENCES inventory_item(inventory_item_id),
 	CONSTRAINT fk_inventory_item_detail_order_id_order_item_seq_id FOREIGN KEY(order_id,order_item_seq_id) REFERENCES order_item(order_id,order_item_seq_id)	
 );
@@ -191,7 +191,7 @@ CREATE TABLE facility (
 CREATE TABLE product_facility (
   product_id     VARCHAR(60) NOT NULL,
   facility_id     VARCHAR(60) NOT NULL,
-  apt_inventory_count DECIMAL(18,6),
+  atp_inventory_count DECIMAL(18,6),
   last_inventory_count DECIMAL(18,6),
   description        TEXT,
   last_updated_stamp TIMESTAMP   ,

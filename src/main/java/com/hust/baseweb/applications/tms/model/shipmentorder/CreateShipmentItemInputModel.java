@@ -13,5 +13,7 @@ public class CreateShipmentItemInputModel {
 	private String productId;
 	private int quantity;
 	private double amountPallet;
-	
+	private UUID customerId;
+	private String shipToAddress;
+	private String shipToLocation;// lat,lng format
 }
