@@ -112,8 +112,8 @@ create table delivery_trip(
 
 
 create table delivery_trip_detail(
+	delivery_trip_detail_id UUID NOT NULL default uuid_generate_v1(),
 	delivery_trip_id UUID,
-	delivery_trip_item_seq_id VARCHAR(60),
 	sequence Integer,
 	shipment_id UUID,
 	shipment_item_seq_id VARCHAR(60),
@@ -121,8 +121,9 @@ create table delivery_trip_detail(
 	status_id VARCHAR(60),
 	last_updated_stamp TIMESTAMP   ,
   	created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  	constraint pk_delivery_trip_detail primary key(delivery_trip_id,delivery_trip_item_seq_id),
+  	constraint pk_delivery_trip_detail primary key(delivery_trip_detail_id),
   	constraint fk_delivery_trip_detail_status foreign key(status_id) references status_item(status_id),
+  	constraint fk_delivery_trip_detail_delivery_trip foreign key(delivery_trip_id) references delivery_trip(delivery_trip_id),
   	constraint fk_delivery_trip_detail_shipment foreign key(shipment_id,shipment_item_seq_id) references shipment_item(shipment_id, shipment_item_seq_id)
 );
 

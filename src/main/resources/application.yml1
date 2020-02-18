@@ -1,0 +1,45 @@
+
+SERVICE_HOST: localhost
+SERVICE_PORT: 8080
+SQL_DB_HOST: localhost
+SQL_DB_PORT: 5432
+SQL_DB_USER: postgres
+SQL_DB_PASS: 123456
+POSTGRES_DB: baseweb
+
+server:
+  servlet:
+    context-path: '/api'
+
+spring:
+  jackson: 
+    serialization:
+      FAIL_ON_EMPTY_BEANS : false
+  servlet:
+    multipart:
+     max-file-size: 10MB
+     max-request-size: 10MB
+  data:
+    rest:
+      #base-path: /rest
+      detection-strategy:  ANNOTATED 
+        
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${SQL_DB_HOST}:${SQL_DB_PORT}/${POSTGRES_DB}
+
+    username: ${SQL_DB_USER}
+    password: ${SQL_DB_PASS}
+
+logging:
+  file:
+    path: logs
+    name: base.log
+  level:
+    root: INFO
+    com:
+      hust :
+        baseweb : DEBUG
+    org:
+      springframework: INFO
+  config: classpath:logback-dev.xml
