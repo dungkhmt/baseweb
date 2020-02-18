@@ -26,7 +26,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 	public DeliveryTrip save(CreateDeliveryTripInputModel input){
 		DeliveryTrip deliveryTrip = new DeliveryTrip();
 		deliveryTrip.setDeliveryPlan(deliveryPlanRepo.findByDeliveryPlanId(input.getDeliveryPlanId()));
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date executeDate = null;
 		try{
 			executeDate = formatter.parse(input.getExecuteDate());
