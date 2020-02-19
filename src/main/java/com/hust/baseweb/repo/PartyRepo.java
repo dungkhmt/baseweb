@@ -1,13 +1,12 @@
 package com.hust.baseweb.repo;
 
-import java.util.UUID;
-
+import com.hust.baseweb.entity.Party;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import com.hust.baseweb.entity.Party;
+import java.util.UUID;
 
 @RepositoryRestResource(exported = false)
-public interface PartyRepo extends JpaRepository<Party, UUID>{
+public interface PartyRepo extends JpaRepository<Party, UUID> {
 
 }

@@ -1,8 +1,6 @@
-
-
 package com.hust.baseweb.config;
 
-import org.springframework.beans.factory.ObjectProvider;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,34 +17,32 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 
 @Configuration
 @EnableSpringHttpSession
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SessionConfig {
 
-	@Autowired
-	private RedisConnectionFactory redisConnectionFactory;
+    private RedisConnectionFactory redisConnectionFactory;
 
+    @Bean
+    public LettuceConnectionFactory redisConnectionFactory() {
+        return new LettuceConnectionFactory(new RedisStandaloneConfiguration("localhost", 6379));
+    }
 
-	@Bean
-	public LettuceConnectionFactory redisConnectionFactory() {
+    @Bean
+    public RedisOperations<String, Object> sessionRedisOperations() {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(this.redisConnectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        return redisTemplate;
+    }
 
-		return new LettuceConnectionFactory(new RedisStandaloneConfiguration("localhost", 6379));
-	}
+    @Bean
+    public RedisSessionRepository sessionRepository(RedisOperations<String, Object> sessionRedisOperations) {
+        return new RedisSessionRepository(sessionRedisOperations);
+    }
 
-	@Bean
-	public RedisOperations<String, Object> sessionRedisOperations() {
-		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(this.redisConnectionFactory);
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-		return redisTemplate;
-	}
-
-	@Bean
-	public RedisSessionRepository sessionRepository(RedisOperations<String, Object> sessionRedisOperations) {
-		return new RedisSessionRepository(sessionRedisOperations);
-	}
     @Bean
     public HttpSessionIdResolver httpSessionIdResolver() {
         return HeaderHttpSessionIdResolver.xAuthToken();
     }
-
 }

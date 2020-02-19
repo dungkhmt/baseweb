@@ -1,23 +1,13 @@
 package com.hust.baseweb.rest.user;
 
-import java.sql.Date;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
-import javax.persistence.SecondaryTables;
-import javax.persistence.Table;
-
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import lombok.Getter;
-import lombok.Setter;
+import javax.persistence.*;
+import java.sql.Date;
+import java.util.UUID;
 
 /**
  * UserDetailEntity
@@ -26,8 +16,8 @@ import lombok.Setter;
 @Table(name = "party")
 @Getter
 @Setter
-@SecondaryTables({ @SecondaryTable(name = "person"),
-        @SecondaryTable(name = "user_login", pkJoinColumns = @PrimaryKeyJoinColumn(name = "party_id")) })
+@SecondaryTables({@SecondaryTable(name = "person"),
+        @SecondaryTable(name = "user_login", pkJoinColumns = @PrimaryKeyJoinColumn(name = "party_id"))})
 public class DUserCombineEntity {
 
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();

@@ -1,13 +1,11 @@
 package com.hust.baseweb.applications.order.repo;
 
-import java.util.UUID;
-
+import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
+import java.util.UUID;
 
 
+public interface PartyCustomerRepo extends JpaRepository<PartyCustomer, UUID> {
 
-public interface PartyCustomerRepo extends JpaRepository<PartyCustomer, UUID>{
-	
 }

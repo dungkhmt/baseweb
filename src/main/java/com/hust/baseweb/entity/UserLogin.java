@@ -52,9 +52,11 @@ public class UserLogin {
             joinColumns = @JoinColumn(name = "user_login_id", referencedColumnName = "user_login_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
     private List<SecurityGroup> roles;
+    private Date disabledDateTime;
 
     public UserLogin() {
     }
+
 
     public UserLogin(String userLoginId, String password, List<SecurityGroup> roles, boolean enabled) {
         this.userLoginId = userLoginId;
@@ -63,12 +65,6 @@ public class UserLogin {
 
         this.enabled = enabled;
     }
-
-
-    private Date disabledDateTime;
-
-
-   
 
 
     public UserLogin(String password, String passwordHint, boolean isSystem,

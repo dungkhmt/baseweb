@@ -1,21 +1,21 @@
 package com.hust.baseweb.applications.order.model;
 
-import lombok.Setter;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
 public class GetListSalesmanInputModel {
-	private String statusId;
+    private String statusId;
 
-	public GetListSalesmanInputModel() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public GetListSalesmanInputModel() {
+        super();
 
-	public GetListSalesmanInputModel(String statusId) {
-		super();
-		this.statusId = statusId;
-	}
-	
+    }
+
+    public GetListSalesmanInputModel(String statusId) {
+        super();
+        this.statusId = statusId;
+    }
+
 }

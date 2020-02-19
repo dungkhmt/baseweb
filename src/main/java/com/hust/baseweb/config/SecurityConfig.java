@@ -1,9 +1,8 @@
-
-
 package com.hust.baseweb.config;
 
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.BaseWebUserDetailService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -17,12 +16,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     private BaseWebUserDetailService userDetailsService;
-
-    @Autowired
     private BasicAuthenticationEndPoint basicAuthenticationEndPoint;
 
     @Override
@@ -31,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userDetailsService(this.userDetailsService)
                 .passwordEncoder(UserLogin.PASSWORD_ENCODER);
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -47,9 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-
-
     @Bean
+    @SuppressWarnings("unchecked")
     public FilterRegistrationBean corsFilterRegistrationBean() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();

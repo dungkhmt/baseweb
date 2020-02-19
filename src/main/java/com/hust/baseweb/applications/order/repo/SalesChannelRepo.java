@@ -1,9 +1,8 @@
 package com.hust.baseweb.applications.order.repo;
 
+import com.hust.baseweb.applications.order.entity.SalesChannel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.hust.baseweb.applications.order.entity.SalesChannel;
-
-public interface SalesChannelRepo extends JpaRepository<SalesChannel, String>{
-	public SalesChannel findBySalesChannelId(String salesChannelId);
+public interface SalesChannelRepo extends JpaRepository<SalesChannel, String> {
+    public SalesChannel findBySalesChannelId(String salesChannelId);
 }

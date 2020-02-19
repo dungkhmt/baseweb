@@ -6,16 +6,18 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetTotalRevenueInputModel {
-	private String fromDate;
-	private String toDate;
-	public GetTotalRevenueInputModel(String fromDate, String toDate) {
-		super();
-		this.fromDate = fromDate;
-		this.toDate = toDate;
-	}
-	public GetTotalRevenueInputModel() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
+    private String fromDate;
+    private String toDate;
+
+    public GetTotalRevenueInputModel(String fromDate, String toDate) {
+        super();
+        this.fromDate = fromDate;
+        this.toDate = toDate;
+    }
+
+    public GetTotalRevenueInputModel() {
+        super();
+
+    }
+
 }

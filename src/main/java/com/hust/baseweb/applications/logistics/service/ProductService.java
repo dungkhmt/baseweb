@@ -1,13 +1,13 @@
 package com.hust.baseweb.applications.logistics.service;
 
-import java.util.List;
-
+import com.hust.baseweb.applications.logistics.entity.Product;
 import org.springframework.stereotype.Service;
 
-import com.hust.baseweb.applications.logistics.entity.Product;
+import java.util.List;
 
 @Service
 public interface ProductService {
-	public Product findByProductId(String productId);
-	public List<Product> getAllProducts();
+    public Product findByProductId(String productId);
+
+    public List<Product> getAllProducts();
 }

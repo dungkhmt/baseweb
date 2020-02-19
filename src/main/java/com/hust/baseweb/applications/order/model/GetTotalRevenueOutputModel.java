@@ -7,16 +7,16 @@ import lombok.Setter;
 @Setter
 
 public class GetTotalRevenueOutputModel {
-	private GetTotalRevenueItemOutputModel[] revenues;
+    private GetTotalRevenueItemOutputModel[] revenues;
 
-	public GetTotalRevenueOutputModel() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public GetTotalRevenueOutputModel() {
+        super();
 
-	public GetTotalRevenueOutputModel(GetTotalRevenueItemOutputModel[] revenues) {
-		super();
-		this.revenues = revenues;
-	}
-	
+    }
+
+    public GetTotalRevenueOutputModel(GetTotalRevenueItemOutputModel[] revenues) {
+        super();
+        this.revenues = revenues;
+    }
+
 }

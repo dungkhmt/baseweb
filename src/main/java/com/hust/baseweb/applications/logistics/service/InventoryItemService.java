@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.logistics.model.ExportInventoryItemsInputMo
 import com.hust.baseweb.applications.logistics.model.ImportInventoryItemInputModel;
 
 public interface InventoryItemService {
-	public InventoryItem save(ImportInventoryItemInputModel input);
-	public String exportInventoryItems(ExportInventoryItemsInputModel inventoryItems);
+    public InventoryItem save(ImportInventoryItemInputModel input);
+
+    public String exportInventoryItems(ExportInventoryItemsInputModel inventoryItems);
 }

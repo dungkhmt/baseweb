@@ -1,20 +1,20 @@
 package com.hust.baseweb.applications.logistics.model;
 
-import java.util.List;
-
+import com.hust.baseweb.applications.logistics.entity.Facility;
 import lombok.Getter;
 import lombok.Setter;
 
-import com.hust.baseweb.applications.logistics.entity.Facility;
+import java.util.List;
+
 @Getter
 @Setter
 
 public class GetListFacilityOutputModel {
-	private List<Facility> facilities;
+    private List<Facility> facilities;
 
-	public GetListFacilityOutputModel(List<Facility> facilities) {
-		super();
-		this.facilities = facilities;
-	}
-	
+    public GetListFacilityOutputModel(List<Facility> facilities) {
+        super();
+        this.facilities = facilities;
+    }
+
 }

@@ -1,24 +1,26 @@
 package com.hust.baseweb.applications.order.model;
 
-import java.math.BigDecimal;
-
-import lombok.Setter;
 import lombok.Getter;
+import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
 
 public class GetTotalRevenueItemOutputModel {
-	private String date;
-	private BigDecimal revenue;
-	public GetTotalRevenueItemOutputModel() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	public GetTotalRevenueItemOutputModel(String date, BigDecimal revenue) {
-		super();
-		this.date = date;
-		this.revenue = revenue;
-	}
-	
+    private String date;
+    private BigDecimal revenue;
+
+    public GetTotalRevenueItemOutputModel() {
+        super();
+
+    }
+
+    public GetTotalRevenueItemOutputModel(String date, BigDecimal revenue) {
+        super();
+        this.date = date;
+        this.revenue = revenue;
+    }
+
 }

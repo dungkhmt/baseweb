@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ExportInventoryItemsInputModel {
-	private ExportInventoryItemInputModel[] inventoryItems;
+    private ExportInventoryItemInputModel[] inventoryItems;
 }

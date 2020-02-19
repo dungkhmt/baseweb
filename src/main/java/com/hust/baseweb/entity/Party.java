@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -13,7 +12,7 @@ import java.util.UUID;
 public class Party {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="party_id")
+    @Column(name = "party_id")
     private UUID partyId;
 
     private String partyCode;
@@ -43,8 +42,6 @@ public class Party {
     @JoinColumn(name = "last_modified_by_user_login", referencedColumnName = "user_login_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private UserLogin modifiedBy;
-
-   
 
 
     public Party(String partyCode, PartyType type,
@@ -77,7 +74,7 @@ public class Party {
 
     public Party() {
         super();
-        // TODO Auto-generated constructor stub
+
     }
 
 }

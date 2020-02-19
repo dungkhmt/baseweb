@@ -1,28 +1,16 @@
 package com.hust.baseweb.rest.user;
 
-import java.sql.Date;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import com.hust.baseweb.entity.PartyType;
 import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.entity.Status;
-
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import lombok.Getter;
-import lombok.Setter;
+import javax.persistence.*;
+import java.sql.Date;
+import java.util.UUID;
 
 /**
  * UserDetailEntity
@@ -69,11 +57,11 @@ public class DPerson {
     private Date createdStamp;
     private Date lastUpdatedStamp;
 
-    public String getStatus() {
-        return this.status != null ? this.status.getId() : null;
-    }
-
     public DPerson() {
 
+    }
+
+    public String getStatus() {
+        return this.status != null ? this.status.getId() : null;
     }
 }

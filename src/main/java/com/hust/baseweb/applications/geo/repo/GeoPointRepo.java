@@ -1,10 +1,9 @@
 package com.hust.baseweb.applications.geo.repo;
 
-import java.util.UUID;
-
+import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.hust.baseweb.applications.geo.entity.GeoPoint;
+import java.util.UUID;
 
 public interface GeoPointRepo extends PagingAndSortingRepository<GeoPoint, UUID> {
 

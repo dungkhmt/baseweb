@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateShipmentInputModel {
-	private CreateShipmentItemInputModel[] shipmentItems;
-	
+    private CreateShipmentItemInputModel[] shipmentItems;
+
 }

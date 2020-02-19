@@ -1,7 +1,9 @@
 package com.hust.baseweb.service;
 
+import com.hust.baseweb.entity.SecurityGroup;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.UserLoginRepo;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
@@ -11,16 +13,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class BaseWebUserDetailService implements UserDetailsService {
-    @Autowired
     private UserLoginRepo userLoginRepo;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         UserLogin user = userLoginRepo.findByUserLoginId(s);
         return new User(user.getUserLoginId(), user.getPassword(),
-                AuthorityUtils.createAuthorityList(user.getRoles().stream().map(sg -> {
-                    return sg.getGroupId();
-                }).toArray(String[]::new)));
+                AuthorityUtils.createAuthorityList(user.getRoles().stream().map(SecurityGroup::getGroupId).toArray(String[]::new)));
     }
 }

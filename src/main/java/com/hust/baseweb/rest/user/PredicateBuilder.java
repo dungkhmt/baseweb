@@ -1,13 +1,13 @@
 package com.hust.baseweb.rest.user;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.hust.baseweb.model.querydsl.SearchCriteria;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PredicateBuilder {
-	private final List<SearchCriteria> params;
+    private final List<SearchCriteria> params;
 
     public PredicateBuilder() {
         params = new ArrayList<SearchCriteria>();

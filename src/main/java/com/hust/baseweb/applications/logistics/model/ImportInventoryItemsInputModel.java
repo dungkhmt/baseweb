@@ -6,11 +6,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ImportInventoryItemsInputModel {
-	private ImportInventoryItemInputModel[] inventoryItems;
+    private ImportInventoryItemInputModel[] inventoryItems;
 
-	public ImportInventoryItemsInputModel() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
+    public ImportInventoryItemsInputModel() {
+        super();
+
+    }
+
 }

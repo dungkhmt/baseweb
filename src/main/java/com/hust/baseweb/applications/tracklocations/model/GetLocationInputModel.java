@@ -6,11 +6,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetLocationInputModel {
-	private String userLoginId;
+    private String userLoginId;
 
-	public GetLocationInputModel() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
+    public GetLocationInputModel() {
+        super();
+
+    }
+
 }

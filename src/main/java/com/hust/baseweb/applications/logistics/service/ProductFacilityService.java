@@ -1,12 +1,11 @@
 package com.hust.baseweb.applications.logistics.service;
 
-import java.math.BigDecimal;
-
+import com.hust.baseweb.applications.logistics.entity.ProductFacility;
 import org.springframework.stereotype.Service;
 
-import com.hust.baseweb.applications.logistics.entity.ProductFacility;
+import java.math.BigDecimal;
 
 @Service
 public interface ProductFacilityService {
-	public ProductFacility save(String productId, String facilityId, BigDecimal lastInventoryCount, BigDecimal atpInventoryCount);
+    public ProductFacility save(String productId, String facilityId, BigDecimal lastInventoryCount, BigDecimal atpInventoryCount);
 }

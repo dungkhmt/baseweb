@@ -1,12 +1,11 @@
 package com.hust.baseweb.applications.tracklocations.repo;
 
-import java.util.UUID;
-
+import com.hust.baseweb.applications.tracklocations.entity.TrackLocations;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.hust.baseweb.applications.tracklocations.entity.TrackLocations;
+import java.util.UUID;
 
 public interface TrackLocationPagingRepo extends
-		PagingAndSortingRepository<TrackLocations, UUID> {
+        PagingAndSortingRepository<TrackLocations, UUID> {
 
 }

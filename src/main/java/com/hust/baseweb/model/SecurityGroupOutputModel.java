@@ -6,16 +6,18 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SecurityGroupOutputModel {
-	private String groupId;
-	private String description;
-	public SecurityGroupOutputModel() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	public SecurityGroupOutputModel(String groupId, String description) {
-		super();
-		this.groupId = groupId;
-		this.description = description;
-	}
-	
+    private String groupId;
+    private String description;
+
+    public SecurityGroupOutputModel() {
+        super();
+
+    }
+
+    public SecurityGroupOutputModel(String groupId, String description) {
+        super();
+        this.groupId = groupId;
+        this.description = description;
+    }
+
 }

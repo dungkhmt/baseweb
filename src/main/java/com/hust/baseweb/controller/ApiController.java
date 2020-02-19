@@ -1,44 +1,38 @@
 package com.hust.baseweb.controller;
 
 
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.hust.baseweb.service.SecurityGroupService;
 import com.hust.baseweb.service.UserService;
-
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ApiController {
-	public static final String module = ApiController.class.getName();
-	@Autowired
-	private UserService userService;
-	 
-	//@Autowired
-	//private TrackLocationsService trackLocationsService;
-	
-	 @Autowired
-	 SecurityGroupService securityGroupService;
-	 
+    public static final String module = ApiController.class.getName();
+    private SecurityGroupService securityGroupService;
+    //private TrackLocationsService trackLocationsService;
+    private UserService userService;
+
     @GetMapping("/")
     public ResponseEntity<Map> home(Principal principal) {
-    	    	
-    	System.out.println(module + "::home");
-       Map<String, String> res = new HashMap<>();
-       res.put("user", principal.getName());
-       HttpHeaders responseHeaders = new HttpHeaders();
-       responseHeaders.set("Access-Control-Expose-Headers","X-Auth-Token");
-       return ResponseEntity.ok().headers(responseHeaders).body(res);
+
+        System.out.println(module + "::home");
+        Map<String, String> response = new HashMap<>();
+        response.put("user", principal.getName());
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Auth-Token");
+        return ResponseEntity.ok().headers(responseHeaders).body(response);
     }
     /*
     @GetMapping("/logout") USE default built by SPRING
@@ -71,7 +65,7 @@ public class ApiController {
     	return ResponseEntity.ok().body(ret_lst);
     }
     */
-    
-    
+
+
 }
 

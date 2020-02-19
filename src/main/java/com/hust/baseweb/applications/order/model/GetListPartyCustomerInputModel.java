@@ -6,16 +6,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetListPartyCustomerInputModel {
-	private String statusId;
+    private String statusId;
 
-	public GetListPartyCustomerInputModel() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public GetListPartyCustomerInputModel() {
+        super();
 
-	public GetListPartyCustomerInputModel(String statusId) {
-		super();
-		this.statusId = statusId;
-	}
-	
+    }
+
+    public GetListPartyCustomerInputModel(String statusId) {
+        super();
+        this.statusId = statusId;
+    }
+
 }

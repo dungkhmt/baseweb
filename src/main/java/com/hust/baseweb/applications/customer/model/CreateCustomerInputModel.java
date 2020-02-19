@@ -7,9 +7,9 @@ import lombok.Setter;
 @Setter
 
 public class CreateCustomerInputModel {
-	private String customerName;
-	private String address;
-	private String latitude;
-	private String longitude;
-	
+    private String customerName;
+    private String address;
+    private String latitude;
+    private String longitude;
+
 }
