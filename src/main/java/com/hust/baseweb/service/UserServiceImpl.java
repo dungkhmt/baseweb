@@ -126,4 +126,9 @@ public class UserServiceImpl implements UserService {
     public Page<UserRestBriefProjection>findPersonByFullName(Pageable page, String sString) {
         return userRestRepository.findByTypeAndFullNameLike(page, PartyTypeEnum.PERSON.name(), sString);
     }
+
+    @Override
+    public DPerson findByPartyId(String partyId) {
+        return userRestRepository.findById(UUID.fromString(partyId)).get();
+    }
 }

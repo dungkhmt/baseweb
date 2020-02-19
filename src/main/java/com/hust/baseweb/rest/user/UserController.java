@@ -7,10 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.entity.SecurityGroup;
+import com.hust.baseweb.entity.SecurityPermission;
+import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
+import com.hust.baseweb.model.dto.DPersonDetailModel;
 import com.hust.baseweb.model.dto.DTOPerson;
 import com.hust.baseweb.model.querydsl.SearchCriteria;
 import com.hust.baseweb.model.querydsl.SortAndFiltersInput;
@@ -23,9 +28,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +46,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
     public static Logger LOG = LoggerFactory.getLogger(UserController.class);
+
+    public static final String EDIT_REL = "edit";
+    public static final String DELETE_REL = "delete";
     @Autowired
     private UserService userService;
 
@@ -61,45 +71,53 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
+
     @GetMapping(path = "/users")
     public ResponseEntity<?> getUsers(Pageable page,
             @RequestParam(name = "search", required = false) String searchString,
             @RequestParam(name = "filter", required = false) String filterString) {
-    	LOG.info("::getUsers, searchString = " + searchString);
-    	
+        LOG.info("::getUsers, searchString = " + searchString);
+
         return ResponseEntity.ok().body(userService.findPersonByFullName(page, searchString));
     }
-    
-    /*
-    @GetMapping(path = "/users")
-    public ResponseEntity<?> getUsers(Pageable page,
-            @RequestParam(name = "filtering", required = false) String filterString) {
-        SortAndFiltersInput sortAndFiltersInput = null;
-        if (filterString != null) {
-            String[] filterSpl = filterString.split(",");
-            SearchCriteria[] searchCriterias = new SearchCriteria[filterSpl.length];
-            for (int i = 0; i < filterSpl.length; i++) {
-                String tmp = filterSpl[i];
-                if (tmp != null) {
-                    Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?)-");// (\w+?)(:|<|>)(\w+?),
-                    Matcher matcher = pattern.matcher(tmp + "-");
-                    while (matcher.find()) {
-                        LOG.info(matcher.group(0));
-                        searchCriterias[i] = new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3));
-                    }
-                }
-            }
-            sortAndFiltersInput = new SortAndFiltersInput(searchCriterias, null);
-            sortAndFiltersInput = CommonUtils.rebuildQueryDsl(DTOPerson.mapPair, sortAndFiltersInput);
-            LOG.info(sortAndFiltersInput.toString());
+
+    @GetMapping(path = "/users/{partyId}")
+    public ResponseEntity<?> getUsersDetail(@PathVariable String partyId, Principal principal) {
+        DPerson p=userService.findByPartyId(partyId);
+        DPersonDetailModel detailModel= new DPersonDetailModel(p);
+        UserLogin userLogin=userService.findById(principal.getName());
+
+        List<SecurityPermission> permissionList= new ArrayList<>();
+        for(SecurityGroup sg:userLogin.getRoles()) 
+            permissionList.addAll(sg.getPermissions());
+        List<SecurityPermission> lf=permissionList.stream().filter(pe->"USER_CREATE".equals(pe.getPermissionId())).collect(Collectors.toList());
+        if(lf.size()>0){
+            detailModel.add(new Link("/user",EDIT_REL));
+            detailModel.add(new Link("/user",DELETE_REL));
         }
-        LOG.info("::getUsers, pages = " + page.toString());
-        Page<DPerson> pg = userService.findAllPerson(page, sortAndFiltersInput);
-        List<DTOPerson> lst = new ArrayList<DTOPerson>();
-        List<DPerson> lPerson = pg.getContent();
-        lst = lPerson.stream().map(p -> new DTOPerson(p)).collect(Collectors.toList());
-        Page<DTOPerson> dtoPerson = new PageImpl<DTOPerson>(lst, page, pg.getTotalElements());
-        return ResponseEntity.ok().body(dtoPerson);
+        return ResponseEntity.ok().body(detailModel);
     }
-	*/
+
+    /*
+     * @GetMapping(path = "/users") public ResponseEntity<?> getUsers(Pageable page,
+     * 
+     * @RequestParam(name = "filtering", required = false) String filterString) {
+     * SortAndFiltersInput sortAndFiltersInput = null; if (filterString != null) {
+     * String[] filterSpl = filterString.split(","); SearchCriteria[]
+     * searchCriterias = new SearchCriteria[filterSpl.length]; for (int i = 0; i <
+     * filterSpl.length; i++) { String tmp = filterSpl[i]; if (tmp != null) {
+     * Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?)-");//
+     * (\w+?)(:|<|>)(\w+?), Matcher matcher = pattern.matcher(tmp + "-"); while
+     * (matcher.find()) { LOG.info(matcher.group(0)); searchCriterias[i] = new
+     * SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)); } } }
+     * sortAndFiltersInput = new SortAndFiltersInput(searchCriterias, null);
+     * sortAndFiltersInput = CommonUtils.rebuildQueryDsl(DTOPerson.mapPair,
+     * sortAndFiltersInput); LOG.info(sortAndFiltersInput.toString()); }
+     * LOG.info("::getUsers, pages = " + page.toString()); Page<DPerson> pg =
+     * userService.findAllPerson(page, sortAndFiltersInput); List<DTOPerson> lst =
+     * new ArrayList<DTOPerson>(); List<DPerson> lPerson = pg.getContent(); lst =
+     * lPerson.stream().map(p -> new DTOPerson(p)).collect(Collectors.toList());
+     * Page<DTOPerson> dtoPerson = new PageImpl<DTOPerson>(lst, page,
+     * pg.getTotalElements()); return ResponseEntity.ok().body(dtoPerson); }
+     */
 }
