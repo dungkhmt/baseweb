@@ -27,7 +27,7 @@ public interface UserService {
 
     public UserLogin save(String userName, String password) throws Exception;
 
-    public Party save(PersonModel personModel, String createdBy) throws Exception;
+    public Party save(PersonModel personModel) throws Exception;
 
-    public Party update(PersonUpdateModel personUpdateModel, UUID partyId, String updateBy);
+    public Party update(PersonUpdateModel personUpdateModel, UUID partyId);
 }

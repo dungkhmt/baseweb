@@ -53,7 +53,7 @@ public class UserController {
         // Resources<String> resources = new Resources<String>(producers);\\
         Party party;
         try {
-            party = userService.save(personModel, principal.getName());
+            party = userService.save(personModel);
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -68,7 +68,7 @@ public class UserController {
     public ResponseEntity<?> update(@RequestBody PersonUpdateModel personUpdateModel, Principal principal,
             @PathVariable String partyId) {
         Party party;
-        party = userService.update(personUpdateModel, UUID.fromString(partyId), principal.getName());
+        party = userService.update(personUpdateModel, UUID.fromString(partyId));
 
         return ResponseEntity.status(HttpStatus.OK).body(party.getPartyId());
     }

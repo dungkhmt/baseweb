@@ -63,10 +63,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Party save(PersonModel personModel, String createdBy) throws Exception {
+    public Party save(PersonModel personModel) throws Exception {
         Party party = new Party(personModel.getPartyCode(), partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
                 statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
-                false, userLoginRepo.getOne(createdBy));
+                false);
         party = partyRepo.save(party);
         personRepo.save(new Person(party.getPartyId(), personModel.getFirstName(), personModel.getMiddleName(),
                 personModel.getLastName(), personModel.getGender(), personModel.getBirthDate()));
@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Party update(PersonUpdateModel personUpdateModel,UUID partyId, String updateBy) {
+    public Party update(PersonUpdateModel personUpdateModel,UUID partyId) {
         Person person=personRepo.getOne(partyId);
         person.setBirthDate(personUpdateModel.getBirthDate());
         person.setFirstName(personUpdateModel.getFirstName());
