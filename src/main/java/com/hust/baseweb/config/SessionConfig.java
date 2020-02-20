@@ -1,6 +1,5 @@
 package com.hust.baseweb.config;
 
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +16,14 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 
 @Configuration
 @EnableSpringHttpSession
-@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SessionConfig {
 
     private RedisConnectionFactory redisConnectionFactory;
+
+    @Autowired
+    public void setRedisConnectionFactory(RedisConnectionFactory redisConnectionFactory) {
+        this.redisConnectionFactory = redisConnectionFactory;
+    }
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
