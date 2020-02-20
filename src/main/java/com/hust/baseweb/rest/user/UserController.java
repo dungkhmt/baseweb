@@ -59,13 +59,9 @@ public class UserController {
 
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-        // DPerson person=
-        try {
-            return ResponseEntity.created(new URI("str")).body(party);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        
+            return ResponseEntity.status(HttpStatus.CREATED).body(party.getPartyId());
+       
     }
 
     @GetMapping(path = "/users")
