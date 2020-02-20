@@ -7,6 +7,7 @@ import com.hust.baseweb.entity.SecurityGroup;
 import com.hust.baseweb.entity.Status.StatusEnum;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
+import com.hust.baseweb.model.PersonUpdateModel;
 import com.hust.baseweb.model.querydsl.SearchCriteria;
 import com.hust.baseweb.model.querydsl.SortAndFiltersInput;
 import com.hust.baseweb.repo.*;
@@ -106,12 +107,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserRestBriefProjection>findPersonByFullName(Pageable page, String sString) {
-        return userRestRepository.findByTypeAndStatusAndFullNameLike(page, PartyTypeEnum.PERSON.name(),StatusEnum.PARTY_ENABLED.name(), sString);
+    public Page<UserRestBriefProjection> findPersonByFullName(Pageable page, String sString) {
+        return userRestRepository.findByTypeAndStatusAndFullNameLike(page, PartyTypeEnum.PERSON.name(),
+                StatusEnum.PARTY_ENABLED.name(), sString);
     }
 
     @Override
     public DPerson findByPartyId(String partyId) {
         return userRestRepository.findById(UUID.fromString(partyId)).orElseThrow(NoSuchElementException::new);
+    }
+
+    @Override
+    public Party update(PersonUpdateModel personUpdateModel,UUID partyId, String updateBy) {
+        Person person=personRepo.getOne(partyId);
+        person.setBirthDate(personUpdateModel.getBirthDate());
+        person.setFirstName(personUpdateModel.getFirstName());
+        person.setLastName(personUpdateModel.getLastName());
+        person.setMiddleName(personUpdateModel.getMiddleName());
+        personRepo.save(person);
+        Party party=partyRepo.getOne(partyId);
+        party.setPartyCode(personUpdateModel.getPartyCode());
+        UserLogin u=party.getUserLogin();
+        u.setRoles(personUpdateModel.getRoles().stream().map(r->securityGroupRepo.getOne(r)).collect(Collectors.toList()));
+        userLoginRepo.save(u);
+        return partyRepo.findById(person.getPartyId()).get();
     }
 }

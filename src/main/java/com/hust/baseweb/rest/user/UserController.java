@@ -1,10 +1,9 @@
 package com.hust.baseweb.rest.user;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.hust.baseweb.entity.Party;
@@ -12,6 +11,7 @@ import com.hust.baseweb.entity.SecurityGroup;
 import com.hust.baseweb.entity.SecurityPermission;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
+import com.hust.baseweb.model.PersonUpdateModel;
 import com.hust.baseweb.model.dto.DPersonDetailModel;
 import com.hust.baseweb.service.PartyService;
 import com.hust.baseweb.service.UserService;
@@ -25,13 +25,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 
 /**
  * UserController
@@ -59,15 +59,24 @@ public class UserController {
 
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-        
-            return ResponseEntity.status(HttpStatus.CREATED).body(party.getPartyId());
-       
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(party.getPartyId());
+
+    }
+
+    @PutMapping(path = "/user/{partyId}")
+    public ResponseEntity<?> update(@RequestBody PersonUpdateModel personUpdateModel, Principal principal,
+            @PathVariable String partyId) {
+        Party party;
+        party = userService.update(personUpdateModel, UUID.fromString(partyId), principal.getName());
+
+        return ResponseEntity.status(HttpStatus.OK).body(party.getPartyId());
     }
 
     @GetMapping(path = "/users")
     public ResponseEntity<?> getUsers(Pageable page,
-                                      @RequestParam(name = "search", required = false) String searchString,
-                                      @RequestParam(name = "filter", required = false) String filterString) {
+            @RequestParam(name = "search", required = false) String searchString,
+            @RequestParam(name = "filter", required = false) String filterString) {
         log.info("::getUsers, searchString = " + searchString);
 
         return ResponseEntity.ok().body(userService.findPersonByFullName(page, searchString));
