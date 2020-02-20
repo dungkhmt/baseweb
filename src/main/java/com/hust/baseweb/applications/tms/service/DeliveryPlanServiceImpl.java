@@ -5,6 +5,8 @@ import com.hust.baseweb.applications.tms.model.createdeliveryplan.CreateDelivery
 import com.hust.baseweb.applications.tms.repo.DeliveryPlanRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -33,6 +35,11 @@ public class DeliveryPlanServiceImpl implements DeliveryPlanService {
         deliveryPlan = deliveryPlanRepo.save(deliveryPlan);
 
         return deliveryPlan;
+    }
+
+    @Override
+    public Page<DeliveryPlan> findAll(Pageable pageable) {
+        return deliveryPlanRepo.findAll(pageable);
     }
 
 }

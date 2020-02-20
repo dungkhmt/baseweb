@@ -15,11 +15,9 @@ import com.hust.baseweb.applications.tms.service.ShipmentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -49,6 +47,13 @@ public class ShipmentOrderAPIController {
         DeliveryPlan deliveryPlan = deliveryPlanService.save(input);
 
         return ResponseEntity.ok().body(deliveryPlan);
+    }
+
+    @GetMapping("/delivery-plan")
+    public ResponseEntity<?> getDeliveryPlanList(Pageable pageable) {
+        log.info("getDeliveryPlan....");
+
+        return ResponseEntity.ok().body(deliveryPlanService.findAll(pageable));
     }
 
     @PostMapping("/create-delivery-trip")
