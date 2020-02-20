@@ -9,7 +9,10 @@ server:
   servlet:
     context-path: '/api'
 
-spring:  
+spring:
+  redis:
+    host : localhost
+    port : 6379  
   jackson: 
     serialization:
       FAIL_ON_EMPTY_BEANS : false
