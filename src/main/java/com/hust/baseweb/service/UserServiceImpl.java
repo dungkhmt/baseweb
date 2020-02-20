@@ -106,13 +106,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-<<<<<<< a09d049de17377db6e0c30febe08254b80c3e577
-    public Page<UserRestBriefProjection> findPersonByFullName(Pageable page, String sString) {
-        return userRestRepository.findByTypeAndFullNameLike(page, PartyTypeEnum.PERSON.name(), sString);
-=======
     public Page<UserRestBriefProjection>findPersonByFullName(Pageable page, String sString) {
         return userRestRepository.findByTypeAndStatusAndFullNameLike(page, PartyTypeEnum.PERSON.name(),StatusEnum.PARTY_ENABLED.name(), sString);
->>>>>>> update delete user
     }
 
     @Override
