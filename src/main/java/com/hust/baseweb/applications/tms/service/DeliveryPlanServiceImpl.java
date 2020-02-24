@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -40,6 +42,11 @@ public class DeliveryPlanServiceImpl implements DeliveryPlanService {
     @Override
     public Page<DeliveryPlan> findAll(Pageable pageable) {
         return deliveryPlanRepo.findAll(pageable);
+    }
+
+    @Override
+    public DeliveryPlan findById(UUID deliveryPlanId) {
+        return deliveryPlanRepo.findById(deliveryPlanId).orElseThrow(NoSuchElementException::new);
     }
 
 }

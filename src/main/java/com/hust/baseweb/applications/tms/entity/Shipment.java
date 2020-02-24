@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.tms.entity;
 
+import com.hust.baseweb.applications.tms.model.shipmentorder.ShipmentModel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,5 +23,11 @@ public class Shipment {
     @OneToMany(fetch = FetchType.LAZY)
     private List<ShipmentItem> shipmentItems;
 
-
+    public ShipmentModel toShipmentModel() {
+        return new ShipmentModel(
+                shipmentId.toString(),
+                shipmentTypeId,
+                shipmentItems.size()
+        );
+    }
 }

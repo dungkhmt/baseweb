@@ -5,11 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateShipmentInputModel {
-    private CreateShipmentItemInputModel[] shipmentItems;
-
+@Getter
+@Setter
+public class ShipmentModel {
+    private String shipmentId;
+    private String shipmentTypeId;
+    private int numberShipmentItems;
 }

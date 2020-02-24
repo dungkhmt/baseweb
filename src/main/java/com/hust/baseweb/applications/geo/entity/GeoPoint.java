@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.geo.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.UUID;
 @Entity
 @Setter
 @Getter
+@Builder
 public class GeoPoint {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

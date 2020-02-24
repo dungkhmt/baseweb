@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.geo.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,12 +10,15 @@ import java.util.UUID;
 @Entity
 @Setter
 @Getter
-
+@Builder
 public class PostalAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "contact_mech_id")
     private UUID contactMechId;
+
+    @Column(name = "location_code")
+    private String locationCode;
 
     @Column(name = "address")
     private String address;
