@@ -1,9 +1,11 @@
 package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
+import com.hust.baseweb.applications.tms.entity.Vehicle;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
 import com.hust.baseweb.applications.tms.repo.DeliveryPlanRepo;
 import com.hust.baseweb.applications.tms.repo.DeliveryTripRepo;
+import com.hust.baseweb.applications.tms.repo.VehicleRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
     private DeliveryTripRepo deliveryTripRepo;
     private DeliveryPlanRepo deliveryPlanRepo;
+    private VehicleRepo vehicleRepo;
 
     @Override
     @Transactional
@@ -32,6 +35,11 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
             e.printStackTrace();
         }
         deliveryTrip.setExecuteDate(executeDate);
+
+        Vehicle vehicle = vehicleRepo.findById(input.getVehicleId()).orElse(new Vehicle(input.getVehicleId()));
+        vehicleRepo.save(vehicle);
+
+        deliveryTrip.setVehicle(vehicle);
 
         deliveryTrip = deliveryTripRepo.save(deliveryTrip);
         return deliveryTrip;
