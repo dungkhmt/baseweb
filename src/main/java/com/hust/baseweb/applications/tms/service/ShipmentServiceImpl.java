@@ -21,8 +21,10 @@ import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
 import com.hust.baseweb.utils.CommonUtils;
 import com.hust.baseweb.utils.GoogleMapUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))

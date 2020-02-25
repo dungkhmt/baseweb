@@ -21,26 +21,35 @@ import com.hust.baseweb.applications.sales.repo.CustomerSalesmanRepo;
 public class CustomerSalesmanServiceImpl implements CustomerSalesmanService {
 	@Autowired
 	private CustomerSalesmanRepo customerSalesmanRepo;
-	
+
 	@Autowired
 	private PartyCustomerRepo partyCustomerRepo;
-	
+
 	@Override
 	public List<PartyCustomer> getCustomersOfSalesman(UUID partySalesmanId) {
-		// TODO: optimize this method, add condition filter where thru_date is null 
+		// TODO: optimize this method, add condition filter where thru_date is
+		// null
 		List<CustomerSalesman> lst = customerSalesmanRepo.findAll();
 		List<PartyCustomer> sel_list = new ArrayList<PartyCustomer>();
 		List<PartyCustomer> allCustomers = partyCustomerRepo.findAll();
-		for(CustomerSalesman cs: lst){
-			log.info("getCustomersOfSalesman, partySalesmanId = " + partySalesmanId + ", cs.getPartySalesmanId = " + cs.getPartySalesmanId());
-			if(cs.getThruDate() == null && cs.getPartySalesmanId().equals(partySalesmanId)){
-				//PartyCustomer c = partyCustomerRepo.findByPartyId(cs.getPartyCustomerId());// WHY thid does not work
-				for(PartyCustomer c: allCustomers){
-					if(c.getPartyId().equals(cs.getPartyCustomerId())){
-				}
-				sel_list.add(c);
-				log.info("getCustomersOfSalesman, partySalesmanId = " + partySalesmanId + ", cs.getPartySalesmanId = " + cs.getPartySalesmanId()
-						+ ", add customer " + c.getPartyId());
+		for (CustomerSalesman cs : lst) {
+			log.info("getCustomersOfSalesman, partySalesmanId = "
+					+ partySalesmanId + ", cs.getPartySalesmanId = "
+					+ cs.getPartySalesmanId());
+			if (cs.getThruDate() == null
+					&& cs.getPartySalesmanId().equals(partySalesmanId)) {
+				// PartyCustomer c =
+				// partyCustomerRepo.findByPartyId(cs.getPartyCustomerId());//
+				// WHY thid does not work
+				for (PartyCustomer c : allCustomers) {
+					if (c.getPartyId().equals(cs.getPartyCustomerId())) {
+						sel_list.add(c);
+						log.info("getCustomersOfSalesman, partySalesmanId = "
+								+ partySalesmanId
+								+ ", cs.getPartySalesmanId = "
+								+ cs.getPartySalesmanId() + ", add customer "
+								+ c.getPartyId());
+					}
 				}
 			}
 		}
@@ -48,7 +57,7 @@ public class CustomerSalesmanServiceImpl implements CustomerSalesmanService {
 	}
 
 	@Override
-	public CustomerSalesman save(UUID partyCustomerId, UUID partySalesmanId){
+	public CustomerSalesman save(UUID partyCustomerId, UUID partySalesmanId) {
 		CustomerSalesman cs = new CustomerSalesman();
 		cs.setPartyCustomerId(partyCustomerId);
 		cs.setPartySalesmanId(partySalesmanId);
