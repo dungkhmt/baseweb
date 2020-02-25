@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.tms.service;
 
+import com.google.maps.model.LatLng;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
@@ -14,6 +15,7 @@ import com.hust.baseweb.applications.tms.model.shipmentorder.ShipmentModel;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
 import com.hust.baseweb.utils.CommonUtils;
+import com.hust.baseweb.utils.GoogleMapUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,27 +54,28 @@ public class ShipmentServiceImpl implements ShipmentService {
 
         Map<String, PartyCustomer> partyCustomerMap = new HashMap<>();
         partyCustomerRepo.findAllByCustomerCodeIn(customerCodes).forEach(partyCustomer -> partyCustomerMap.put(partyCustomer.getCustomerCode(), partyCustomer));
-        customerCodes.forEach(customerCode -> partyCustomerMap.computeIfAbsent(customerCode, k -> PartyCustomer.builder()
-                .partyId(UUID.randomUUID())
-                .customerCode(customerCode)
-                .customerName(customerCode)
-                .postalAddress(new ArrayList<>())
-                .build()
+        customerCodes.forEach(customerCode -> partyCustomerMap.computeIfAbsent(customerCode,
+                k -> new PartyCustomer(
+                        UUID.randomUUID(),
+                        customerCode,
+                        customerCode,
+                        new ArrayList<>()
+                )
         ));
 
         Map<String, PostalAddress> postalAddressMap = new HashMap<>();
-        List<GeoPoint> geoPoints = new ArrayList<>();
+        Map<String, GeoPoint> locationCodeToGeoPoint = new HashMap<>();
         postalAddressRepo.findAllByLocationCodeIn(locationCodes).forEach(postalAddress -> postalAddressMap.put(postalAddress.getLocationCode(), postalAddress));
         locationCodes.forEach(locationCode -> postalAddressMap.computeIfAbsent(locationCode, k -> {
-            GeoPoint geoPoint = GeoPoint.builder().geoPointId(UUID.randomUUID()).build(); // TODO: add lat,lng
-            geoPoints.add(geoPoint);
-            return PostalAddress.builder()
-                    .contactMechId(UUID.randomUUID())
-                    .locationCode(locationCode)
-                    .geoPoint(geoPoint)
-                    .build();   // TODO: add address
+            GeoPoint geoPoint = new GeoPoint(UUID.randomUUID(), null, null);
+            locationCodeToGeoPoint.put(locationCode, geoPoint);
+            return new PostalAddress(
+                    UUID.randomUUID(),
+                    locationCode,
+                    null,
+                    geoPoint
+            );
         }));
-        geoPointRepo.saveAll(geoPoints);
 
         int idx = 0;
         List<ShipmentItem> shipmentItems = new ArrayList<>();
@@ -91,14 +94,25 @@ public class ShipmentServiceImpl implements ShipmentService {
 
             shipmentItems.add(shipmentItem);
 
-            partyCustomerMap.get(shipmentItemModel.getCustomerCode()).getPostalAddress().add(
-                    postalAddressMap.get(shipmentItemModel.getLocationCode()));
+            PostalAddress postalAddress = postalAddressMap.get(shipmentItemModel.getLocationCode());
+            postalAddress.setAddress(shipmentItemModel.getAddress());
+
+            partyCustomerMap.get(shipmentItemModel.getCustomerCode()).getPostalAddress().add(postalAddress);
+
+            GeoPoint geoPoint = locationCodeToGeoPoint.get(shipmentItemModel.getLocationCode());
+            if (geoPoint.getLatitude() == null) {
+                log.info("Query latLng: " + shipmentItemModel.getAddress());
+                LatLng location = GoogleMapUtils.queryLatLng(shipmentItemModel.getAddress())[0].geometry.location;
+                geoPoint.setLatitude(location.lat + "");
+                geoPoint.setLongitude(location.lng + "");
+            }
         }
 
         partyCustomerMap.values().forEach(partyCustomer -> partyCustomer.setPostalAddress(
                 partyCustomer.getPostalAddress().stream().distinct().collect(Collectors.toList()))
         );
 
+        geoPointRepo.saveAll(locationCodeToGeoPoint.values());
         postalAddressRepo.saveAll(postalAddressMap.values());
         shipmentItemRepo.saveAll(shipmentItems);
         shipment.setShipmentItems(shipmentItems);

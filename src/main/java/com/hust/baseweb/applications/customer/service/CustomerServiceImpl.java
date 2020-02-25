@@ -56,14 +56,14 @@ public class CustomerServiceImpl implements CustomerService {
         UUID partyId = party.getPartyId();
         log.info("save party " + partyId);
 
-        PartyCustomer customer = PartyCustomer.builder().build();
+        PartyCustomer customer = new PartyCustomer();
         customer.setPartyId(partyId);
         //customer.setParty(party);
         customer.setCustomerName(input.getCustomerName());
         log.info("save, prepare save customer partyId = " + customer.getPartyId());
         customerRepo.save(customer);
 
-        GeoPoint geoPoint = GeoPoint.builder().build();
+        GeoPoint geoPoint = new GeoPoint();
         //UUID geoPointId = UUID.randomUUID();
         geoPoint.setLatitude(input.getLatitude());
         geoPoint.setLongitude(input.getLongitude());
@@ -72,7 +72,7 @@ public class CustomerServiceImpl implements CustomerService {
         UUID geoPointId = geoPoint.getGeoPointId();
 
         //UUID contactMechId = UUID.randomUUID();
-        PostalAddress address = PostalAddress.builder().build();
+        PostalAddress address = new PostalAddress();
         //address.setContactMechId(contactMechId);// KHONG WORL vi contactMechId se duoc sinh tu dong boi DB uuid_generate_v1()
         address.setGeoPoint(geoPoint);
         address = postalAddressRepo.save(address);

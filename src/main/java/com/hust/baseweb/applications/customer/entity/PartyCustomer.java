@@ -1,8 +1,9 @@
 package com.hust.baseweb.applications.customer.entity;
 
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,7 +13,8 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PartyCustomer {
     @Id
     @Column(name = "party_id")

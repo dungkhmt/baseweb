@@ -31,3 +31,4 @@ build/
 ### VS Code ###
 .vscode/
 .history
+/gg_api_key.txt

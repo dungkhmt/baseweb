@@ -1,7 +1,8 @@
 package com.hust.baseweb.applications.geo.entity;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,7 +11,8 @@ import java.util.UUID;
 @Entity
 @Setter
 @Getter
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostalAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

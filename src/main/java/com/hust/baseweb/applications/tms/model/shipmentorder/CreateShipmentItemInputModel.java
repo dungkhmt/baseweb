@@ -21,4 +21,7 @@ public class CreateShipmentItemInputModel {
 
     @ExcelCellName("SITE_NUM")
     private String locationCode;
+
+    @ExcelCellName("ADDRESS")
+    private String address;
 }
