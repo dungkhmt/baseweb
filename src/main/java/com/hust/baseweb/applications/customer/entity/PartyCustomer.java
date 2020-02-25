@@ -34,4 +34,7 @@ public class PartyCustomer {
             joinColumns = @JoinColumn(name = "party_id", referencedColumnName = "party_id"))
     @OneToMany(fetch = FetchType.LAZY)
     private List<PostalAddress> postalAddress;
+
+	   
+    
 }

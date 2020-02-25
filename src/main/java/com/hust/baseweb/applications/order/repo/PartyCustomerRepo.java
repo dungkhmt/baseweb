@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface PartyCustomerRepo extends JpaRepository<PartyCustomer, UUID> {
     List<PartyCustomer> findAllByCustomerCodeIn(List<String> customerCodes);
+    PartyCustomer findByPartyId(UUID partyId);
 }

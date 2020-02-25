@@ -18,8 +18,10 @@ spring:
       FAIL_ON_EMPTY_BEANS : false
   servlet:
     multipart:
-     max-file-size: 200MB
-     max-request-size: 200MB
+
+     max-file-size: 100MB
+     max-request-size: 100MB
+
   data:
     rest:
       #base-path: /rest

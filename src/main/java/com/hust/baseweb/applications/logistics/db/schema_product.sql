@@ -88,6 +88,7 @@ CREATE TABLE product
     length_uom_id            VARCHAR(60),
     height_uom_id            VARCHAR(60),
     created_by_user_login_id VARCHAR(60),
+    
     description              TEXT,
     last_updated_stamp       TIMESTAMP,
     created_stamp            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
