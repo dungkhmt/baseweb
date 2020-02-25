@@ -65,6 +65,8 @@ CREATE TABLE order_header
     created_by           VARCHAR(60),
     order_date           TIMESTAMP,
     currency_uom_id      VARCHAR(60),
+    ship_to_address_id UUID,
+    ship_to_address     VARCHAR (200),
     grand_total          DECIMAL(18, 2),
     description          TEXT,
     last_updated_stamp   TIMESTAMP,
@@ -72,6 +74,7 @@ CREATE TABLE order_header
     CONSTRAINT pk_order PRIMARY KEY (order_id),
     CONSTRAINT fk_order_type_id FOREIGN KEY (order_type_id) REFERENCES order_type (order_type_id),
     CONSTRAINT fk_original_facility_id FOREIGN KEY (original_facility_id) REFERENCES facility (facility_id),
+    constraint fk_order_address_id foreign key(ship_to_address_id) references postal_address(contact_mech_id),
     CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES facility (facility_id)
 
 );

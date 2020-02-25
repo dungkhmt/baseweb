@@ -165,17 +165,19 @@ CREATE TABLE inventory_item_detail
 
 CREATE TABLE product_price
 (
+	product_price_id UUID NOT NULL default uuid_generate_v1(),
     product_id               VARCHAR(60) NOT NULL,
     currency_uom_id          VARCHAR(60),
     from_date                TIMESTAMP,
     thru_date                TIMESTAMP,
     product_store_group_id   VARCHAR(60),
+    tax_in_price			VARCHAR(1),
     price                    DECIMAL(18, 3),
     created_by_user_login_id VARCHAR(60),
     created_date             TIMESTAMP,
     last_updated_stamp       TIMESTAMP,
     created_stamp            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_product_price PRIMARY KEY (product_id, from_date, currency_uom_id),
+    CONSTRAINT pk_product_price PRIMARY KEY (product_price_id),
     CONSTRAINT fk_product_price_currency_uom_id FOREIGN KEY (currency_uom_id) REFERENCES uom (uom_id),
     CONSTRAINT fk_product_price_created_by_user_login_id FOREIGN KEY (created_by_user_login_id) REFERENCES user_login (user_login_id),
     CONSTRAINT fk_product_price_product_store_group_id FOREIGN KEY (product_store_group_id) REFERENCES product_store_group (product_store_group_id)

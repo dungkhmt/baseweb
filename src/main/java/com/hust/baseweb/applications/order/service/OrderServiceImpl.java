@@ -3,8 +3,10 @@ package com.hust.baseweb.applications.order.service;
 
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
+import com.hust.baseweb.applications.logistics.entity.ProductPrice;
 import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
+import com.hust.baseweb.applications.logistics.service.ProductPriceService;
 import com.hust.baseweb.applications.order.controller.OrderAPIController;
 import com.hust.baseweb.applications.order.entity.*;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
@@ -12,7 +14,9 @@ import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
 import com.hust.baseweb.applications.order.repo.*;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.UserLoginRepo;
+
 import lombok.AllArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +40,8 @@ public class OrderServiceImpl implements OrderService {
     private ProductRepo productRepo;
     private FacilityRepo facilityRepo;
     private SalesChannelRepo salesChannelRepo;
-
+    private ProductPriceService productPriceService;
+    
     @Override
     @Transactional
     public OrderHeader save(ModelCreateOrderInput orderInput) {
@@ -86,18 +91,23 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setOrderItemSeqId(orderItemSeqId);
             orderItem.setProduct(product);
             orderItem.setQuantity(modelCreateOrderInputOrderItem.getQuantity());
-            orderItem.setUnitPrice(modelCreateOrderInputOrderItem.getUnitPrice());// TOBE FIXED
-
+            
+            ProductPrice pp = productPriceService.getProductPrice(product.getProductId());
+            //orderItem.setUnitPrice(modelCreateOrderInputOrderItem.getUnitPrice());// TOBE FIXED
+            orderItem.setUnitPrice(pp.getPrice());
+            		
             orderItemRepo.save(orderItem);
             //System.out.println(module + "::save, order-item " + product.getProductId() + ", price = " + oi.getTotalItemPrice() + ", total = " + total);
-
-            total = total.add(modelCreateOrderInputOrderItem.getTotalItemPrice());
+            BigDecimal tt = pp.getPrice().multiply(new BigDecimal(orderItem.getQuantity()));
+            //total = total.add(modelCreateOrderInputOrderItem.getTotalItemPrice());
+            total = total.add(tt);
         }
 
         // write to order_role
         OrderRole orderRole = new OrderRole();
         orderRole.setOrderId(order.getOrderId());
-        orderRole.setPartyId(orderInput.getPartyCustomerId());
+        //orderRole.setPartyId(orderInput.getPartyCustomerId());
+        orderRole.setPartyId(orderInput.getToCustomerId());
         orderRole.setRoleTypeId("BILL_TO_CUSTOMER");
         orderRoleRepo.save(orderRole);
 

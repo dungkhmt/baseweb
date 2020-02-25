@@ -29,7 +29,7 @@ public class OrderAPIController {
     private OrderService orderService;
     private PartyCustomerService partyCustomerService;
 
-    @PostMapping("/create-order")
+    @PostMapping("/create-order-distributor-to-retailoutlet")
     public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
         //TODO
         OrderHeader order = orderService.save(input);

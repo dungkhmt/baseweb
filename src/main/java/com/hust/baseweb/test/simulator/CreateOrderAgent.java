@@ -153,15 +153,16 @@ public class CreateOrderAgent extends Thread {
             input.setSalesChannelId(null);
             input.setSalesmanId(salesmanIds[rand.nextInt(salesmanIds.length)]);
             input.setOrderDate(formatter.format(new Date()));
-            input.setPartyCustomerId(selectedCustomer.getPartyId());
+            //input.setPartyCustomerId(selectedCustomer.getPartyId());
+            input.setToCustomerId(selectedCustomer.getPartyId());
             ModelCreateOrderInputOrderItem[] orderItems = new ModelCreateOrderInputOrderItem[products.size()];
             for (int i = 0; i < orderItems.length; i++) {
                 orderItems[i] = new ModelCreateOrderInputOrderItem();
                 orderItems[i].setProductId(products.get(i).getProductId());
                 orderItems[i].setQuantity(rand.nextInt(100) + 1);
-                orderItems[i].setUnitPrice(new BigDecimal((rand.nextInt(100) + 1) * 10000000));
-                BigDecimal total = orderItems[i].getUnitPrice().multiply(new BigDecimal(orderItems[i].getQuantity()));
-                orderItems[i].setTotalItemPrice(total);
+                /// orderItems[i].setUnitPrice(new BigDecimal((rand.nextInt(100) + 1) * 10000000));
+                //BigDecimal total = orderItems[i].getUnitPrice().multiply(new BigDecimal(orderItems[i].getQuantity()));
+                //orderItems[i].setTotalItemPrice(total);
             }
 
             input.setOrderItems(orderItems);

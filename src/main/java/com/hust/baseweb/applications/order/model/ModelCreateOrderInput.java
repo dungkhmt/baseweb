@@ -9,13 +9,16 @@ import java.util.UUID;
 @Setter
 
 public class ModelCreateOrderInput {
-    private UUID partyCustomerId;
+    private UUID toCustomerId;// party_id
+    private UUID fromVendorId;// party_id
     private ModelCreateOrderInputOrderItem[] orderItems;
     private String salesChannelId;
     private String facilityId;
     private String salesmanId;
     private String orderDate;
-
+    private UUID shipToAddressId;
+    private String shipToAddress;
+    
     public ModelCreateOrderInput() {
         super();
 
