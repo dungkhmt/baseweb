@@ -36,6 +36,7 @@ create table geo_point
 create table postal_address
 (
     contact_mech_id       UUID NOT NULL default uuid_generate_v1(),
+    location_code         VARCHAR(60),
     address               VARCHAR(200),
     postal_code           VARCHAR(60),
     geo_point_id          UUID,

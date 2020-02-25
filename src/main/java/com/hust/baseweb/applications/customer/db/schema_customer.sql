@@ -1,6 +1,7 @@
 CREATE TABLE party_customer
 (
     party_id           UUID NOT NULL,
+    customer_code      VARCHAR(100),
     customer_name      VARCHAR(100),
     status_id          VARCHAR(60),
     party_type_id      VARCHAR(60),
