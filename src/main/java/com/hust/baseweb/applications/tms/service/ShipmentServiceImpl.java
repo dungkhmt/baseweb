@@ -21,10 +21,8 @@ import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
 import com.hust.baseweb.utils.CommonUtils;
 import com.hust.baseweb.utils.GoogleMapUtils;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,8 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -139,9 +135,9 @@ public class ShipmentServiceImpl implements ShipmentService {
             // thêm portal address hiện tại vào party customer
             partyCustomer.getPostalAddress().add(postalAddress);
 
-//            productMap.computeIfAbsent(shipmentItemModel.getProductId(), productId -> {
-//                productService.
-//            })
+            // Nếu product hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
+            productMap.computeIfAbsent(shipmentItemModel.getProductId(), productId ->
+                    productService.save(productId, shipmentItemModel.getProductName(), shipmentItemModel.getUom()));
         }
 
         // lọc trùng postal address nếu 1 postal address được add nhiều lần vào cùng 1 customer
@@ -149,9 +145,11 @@ public class ShipmentServiceImpl implements ShipmentService {
                 partyCustomer.getPostalAddress().stream().distinct().collect(Collectors.toList()))
         );
 
+        // lưu tất cả vào DB
         geoPointRepo.saveAll(locationCodeToGeoPointMap.values());
         partyCustomerRepo.saveAll(partyCustomerMap.values());
         postalAddressRepo.saveAll(postalAddressMap.values());
+        productRepo.saveAll(productMap.values());
         shipmentItemRepo.saveAll(shipmentItems);
         shipment.setShipmentItems(shipmentItems);
         return shipment;
