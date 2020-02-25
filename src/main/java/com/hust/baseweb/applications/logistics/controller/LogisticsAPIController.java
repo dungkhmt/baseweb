@@ -6,9 +6,12 @@ import com.hust.baseweb.applications.logistics.model.GetListFacilityInputModel;
 import com.hust.baseweb.applications.logistics.model.GetListFacilityOutputModel;
 import com.hust.baseweb.applications.logistics.model.GetListProductInputModel;
 import com.hust.baseweb.applications.logistics.model.GetListProductOutputModel;
+import com.hust.baseweb.applications.logistics.model.product.CreateProductInputModel;
 import com.hust.baseweb.applications.logistics.service.FacilityService;
 import com.hust.baseweb.applications.logistics.service.ProductService;
+
 import lombok.AllArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -43,5 +46,10 @@ public class LogisticsAPIController {
 
     }
 
+    @PostMapping("/create-product")
+    public ResponseEntity<?> createProduct(Principal principal, @RequestBody CreateProductInputModel input){
+    	Product product = productService.save(input.getProductId(), input.getProductName(), input.getUomId());
+    	return ResponseEntity.ok().body(product);
+    }
 
 }
