@@ -16,8 +16,17 @@ public class CreateShipmentItemInputModel {
     @ExcelCellName("ITEM_NO")
     private String productId;
 
+    @ExcelCellName("ITEM_NAME")
+    private String productName;
+
+    @ExcelCellName("UOM")
+    private String uom;
+
     @ExcelCellName("CUSTOMER")
     private String customerCode;
+
+    @ExcelCellName("CUSTOMER_NAME")
+    private String customerName;
 
     @ExcelCellName("SITE_NUM")
     private String locationCode;
