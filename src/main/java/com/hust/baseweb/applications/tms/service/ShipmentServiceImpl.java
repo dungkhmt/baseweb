@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.tms.service;
 
+import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.model.CreateCustomerInputModel;
@@ -21,8 +22,10 @@ import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
 import com.hust.baseweb.utils.CommonUtils;
 import com.hust.baseweb.utils.GoogleMapUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +53,8 @@ public class ShipmentServiceImpl implements ShipmentService {
     @Override
     @Transactional
     public Shipment save(CreateShipmentInputModel input) {
-
+    	log.info("save, shipmentItem.length = " + input.getShipmentItems().length);
+    	
         // Tạo shipment
         UUID shipmentId = UUID.randomUUID();
         Shipment shipment = new Shipment();
@@ -63,18 +67,28 @@ public class ShipmentServiceImpl implements ShipmentService {
         // Convert shipmentItemModel to list
         List<CreateShipmentItemInputModel> shipmentItemInputModels = Arrays.asList(input.getShipmentItems());
 
+        log.info("save, finished convert shipmentItems to list");
+        
+        
         // Danh sách customerCode khác nhau đã có trong input
         List<String> customerCodes = shipmentItemInputModels.stream()
                 .map(CreateShipmentItemInputModel::getCustomerCode).distinct().collect(Collectors.toList());
 
+        log.info("save, customerCodes = " + customerCodes.size());
+        
         // Danh sách locationCode khác nhau đã có trong input
         List<String> locationCodes = shipmentItemInputModels.stream()
                 .map(CreateShipmentItemInputModel::getLocationCode).distinct().collect(Collectors.toList());
 
+        log.info("save, locationCodes = " + locationCodes.size());
+        
+        
         // Danh sách product id khác nhau đã có trong input
         List<String> productIds = shipmentItemInputModels.stream()
                 .map(CreateShipmentItemInputModel::getProductId).distinct().collect(Collectors.toList());
 
+        log.info("save, productIds = " + productIds.size());
+        
         // partyCustomerMap: danh sách party customer đã có trong DB
         Map<String, PartyCustomer> partyCustomerMap = new HashMap<>();
         partyCustomerRepo.findAllByCustomerCodeIn(customerCodes).forEach(partyCustomer -> partyCustomerMap.put(partyCustomer.getCustomerCode(), partyCustomer));
@@ -88,12 +102,13 @@ public class ShipmentServiceImpl implements ShipmentService {
         Map<String, Product> productMap = new HashMap<>();
         productRepo.findAllByProductIdIn(productIds).forEach(product -> productMap.put(product.getProductId(), product));
 
+        log.info("save, start process items...");
         int idx = 0;
         List<ShipmentItem> shipmentItems = new ArrayList<>();
         for (int i = 0; i < input.getShipmentItems().length; i++) {
             CreateShipmentItemInputModel shipmentItemModel = input.getShipmentItems()[i];
 
-            log.info("::save, idx = " + idx + ", product = " + shipmentItemModel.getProductId() + ", quantity = " + shipmentItemModel.getQuantity() + " pallet = " + shipmentItemModel.getPallet());
+            log.info("::save, idx = " + idx + "/" + input.getShipmentItems().length + ", product = " + shipmentItemModel.getProductId() + ", quantity = " + shipmentItemModel.getQuantity() + " pallet = " + shipmentItemModel.getPallet());
             idx++;
 
             // sao chép model sang entity class
@@ -112,15 +127,41 @@ public class ShipmentServiceImpl implements ShipmentService {
             PostalAddress postalAddress = postalAddressMap.computeIfAbsent(shipmentItemModel.getLocationCode(),
                     locationCode -> {
                         log.info("Query latLng: " + shipmentItemModel.getAddress());
-                        LatLng location = GoogleMapUtils.queryLatLng(shipmentItemModel.getAddress())[0].geometry.location;
-                        GeoPoint geoPoint = new GeoPoint(UUID.randomUUID(), location.lat + "", location.lng + "");
+                        LatLng location = null;
+                        
+                        // TODO: revise this, reduce number of trials to query google
+                        /*
+                        GeocodingResult[] rs = null;
+                        try{
+                        	rs = GoogleMapUtils.queryLatLng(shipmentItemModel.getAddress());
+                        }catch(Exception ex){
+                        	ex.printStackTrace();
+                        }
+                        
+                        if(rs != null && rs.length > 0)	
+                        	location = rs[0].geometry.location;// old code may have java.lang.ArrayIndexOutOfBoundsException: 0
+                        */
+                        
+                        GeoPoint geoPoint = new GeoPoint();
+                        //geoPoint.setGeoPointId(UUID.randomUUID());
+                        if(location != null) {
+                        	geoPoint.setLatitude(location.lat + "");
+                        	geoPoint.setLongitude(location.lng + "");
+                        }
                         locationCodeToGeoPointMap.put(locationCode, geoPoint);
+                        PostalAddress pa = new PostalAddress();
+                        pa.setLocationCode(locationCode);
+                        pa.setGeoPoint(geoPoint);
+                        pa.setAddress(shipmentItemModel.getAddress());
+                        return pa;
+                        /*
                         return new PostalAddress(
                                 UUID.randomUUID(),
                                 locationCode,
                                 shipmentItemModel.getAddress(),
                                 geoPoint
                         );
+                        */
                     });
 
             // Nếu party customer hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
@@ -146,9 +187,20 @@ public class ShipmentServiceImpl implements ShipmentService {
         );
 
         // lưu tất cả vào DB
-        geoPointRepo.saveAll(locationCodeToGeoPointMap.values());
-        partyCustomerRepo.saveAll(partyCustomerMap.values());
-        postalAddressRepo.saveAll(postalAddressMap.values());
+        //geoPointRepo.saveAll(locationCodeToGeoPointMap.values());
+        //postalAddressRepo.saveAll(postalAddressMap.values());
+        //partyCustomerRepo.saveAll(partyCustomerMap.values());
+        for(GeoPoint gp: locationCodeToGeoPointMap.values()){
+        	log.info("save geo point " + gp.getGeoPointId());
+        	geoPointRepo.save(gp);
+        }
+        for(PostalAddress pa: postalAddressMap.values()){
+        	log.info("save address " + pa.getContactMechId() + ", geo point = " + pa.getGeoPoint().getGeoPointId());
+        	postalAddressRepo.save(pa);
+        }
+        for(PartyCustomer pc: partyCustomerMap.values()){
+        	log.info("save, partyCustomer " + pc.getCustomerCode() + ", shipToLocationCode = " + pc.getPostalAddress().size());
+        }
         productRepo.saveAll(productMap.values());
         shipmentItemRepo.saveAll(shipmentItems);
         shipment.setShipmentItems(shipmentItems);
