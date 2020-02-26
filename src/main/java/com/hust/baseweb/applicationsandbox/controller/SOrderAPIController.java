@@ -18,7 +18,7 @@ import com.hust.baseweb.applicationsandbox.entity.SOrderHeader;
 import java.util.List;
 @RestController
 @Log4j2
-public class OrderAPIController {
+public class SOrderAPIController {
 	
 	@PostMapping("/s-create-order")
 	public ResponseEntity<?> createOrder(Principal principal, @RequestBody ModelCreateOrderInput input){
