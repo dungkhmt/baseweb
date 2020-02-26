@@ -9,7 +9,7 @@ import java.util.UUID;
 @Setter
 public class CreateDeliveryTripDetailInputModel {
     private UUID deliveryTripId;
-    private UUID shipmentId;
-    private String shipmentItemSeqId;
+    private UUID shipmentItemId;
+    //private String shipmentItemSeqId;
     private int deliveryQuantity;
 }
