@@ -6,7 +6,6 @@ import com.hust.baseweb.entity.Status.StatusEnum;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PartyTypeRepo;
 import com.hust.baseweb.repo.StatusRepo;
-
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +23,9 @@ public class PartyServiceImpl implements PartyService {
 	public Party save(String partyTypeId) {
 
 		PartyType partyType = partyTypeRepo.getOne(partyTypeId);
-		UUID uuid = UUID.randomUUID();
+//		UUID uuid = UUID.randomUUID();
 		Party party = new Party();
-		party.setPartyId(uuid);
+//		party.setPartyId(uuid);
 		party.setType(partyType);
 		return partyRepo.save(party);
 	}

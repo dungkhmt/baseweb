@@ -22,10 +22,8 @@ import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
 import com.hust.baseweb.utils.CommonUtils;
 import com.hust.baseweb.utils.GoogleMapUtils;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,8 +51,8 @@ public class ShipmentServiceImpl implements ShipmentService {
     @Override
     @Transactional
     public Shipment save(CreateShipmentInputModel input) {
-    	log.info("save, shipmentItem.length = " + input.getShipmentItems().length);
-    	
+        log.info("save, shipmentItem.length = " + input.getShipmentItems().length);
+
         // Tạo shipment
         UUID shipmentId = UUID.randomUUID();
         Shipment shipment = new Shipment();
@@ -68,27 +66,27 @@ public class ShipmentServiceImpl implements ShipmentService {
         List<CreateShipmentItemInputModel> shipmentItemInputModels = Arrays.asList(input.getShipmentItems());
 
         log.info("save, finished convert shipmentItems to list");
-        
-        
+
+
         // Danh sách customerCode khác nhau đã có trong input
         List<String> customerCodes = shipmentItemInputModels.stream()
                 .map(CreateShipmentItemInputModel::getCustomerCode).distinct().collect(Collectors.toList());
 
         log.info("save, customerCodes = " + customerCodes.size());
-        
+
         // Danh sách locationCode khác nhau đã có trong input
         List<String> locationCodes = shipmentItemInputModels.stream()
                 .map(CreateShipmentItemInputModel::getLocationCode).distinct().collect(Collectors.toList());
 
         log.info("save, locationCodes = " + locationCodes.size());
-        
-        
+
+
         // Danh sách product id khác nhau đã có trong input
         List<String> productIds = shipmentItemInputModels.stream()
                 .map(CreateShipmentItemInputModel::getProductId).distinct().collect(Collectors.toList());
 
         log.info("save, productIds = " + productIds.size());
-        
+
         // partyCustomerMap: danh sách party customer đã có trong DB
         Map<String, PartyCustomer> partyCustomerMap = new HashMap<>();
         partyCustomerRepo.findAllByCustomerCodeIn(customerCodes).forEach(partyCustomer -> partyCustomerMap.put(partyCustomer.getCustomerCode(), partyCustomer));
@@ -127,41 +125,21 @@ public class ShipmentServiceImpl implements ShipmentService {
             PostalAddress postalAddress = postalAddressMap.computeIfAbsent(shipmentItemModel.getLocationCode(),
                     locationCode -> {
                         log.info("Query latLng: " + shipmentItemModel.getAddress());
-                        LatLng location = null;
-                        
-                        // TODO: revise this, reduce number of trials to query google
-                        /*
-                        GeocodingResult[] rs = null;
-                        try{
-                        	rs = GoogleMapUtils.queryLatLng(shipmentItemModel.getAddress());
-                        }catch(Exception ex){
-                        	ex.printStackTrace();
-                        }
-                        
-                        if(rs != null && rs.length > 0)	
-                        	location = rs[0].geometry.location;// old code may have java.lang.ArrayIndexOutOfBoundsException: 0
-                        */
-                        
-                        GeoPoint geoPoint = new GeoPoint();
-                        //geoPoint.setGeoPointId(UUID.randomUUID());
-                        if(location != null) {
-                        	geoPoint.setLatitude(location.lat + "");
-                        	geoPoint.setLongitude(location.lng + "");
+                        GeocodingResult[] geocodingResults = GoogleMapUtils.queryLatLng(shipmentItemModel.getAddress());
+                        GeoPoint geoPoint;
+                        if (geocodingResults != null && geocodingResults.length > 0) {
+                            LatLng location = geocodingResults[0].geometry.location;
+                            geoPoint = new GeoPoint(null, location.lat + "", location.lng + "");
+                        } else {
+                            geoPoint = new GeoPoint();
                         }
                         locationCodeToGeoPointMap.put(locationCode, geoPoint);
-                        PostalAddress pa = new PostalAddress();
-                        pa.setLocationCode(locationCode);
-                        pa.setGeoPoint(geoPoint);
-                        pa.setAddress(shipmentItemModel.getAddress());
-                        return pa;
-                        /*
                         return new PostalAddress(
-                                UUID.randomUUID(),
+                                null,
                                 locationCode,
                                 shipmentItemModel.getAddress(),
                                 geoPoint
                         );
-                        */
                     });
 
             // Nếu party customer hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
@@ -190,16 +168,16 @@ public class ShipmentServiceImpl implements ShipmentService {
         //geoPointRepo.saveAll(locationCodeToGeoPointMap.values());
         //postalAddressRepo.saveAll(postalAddressMap.values());
         //partyCustomerRepo.saveAll(partyCustomerMap.values());
-        for(GeoPoint gp: locationCodeToGeoPointMap.values()){
-        	log.info("save geo point " + gp.getGeoPointId());
-        	geoPointRepo.save(gp);
+        for (GeoPoint gp : locationCodeToGeoPointMap.values()) {
+            log.info("save geo point " + gp.getGeoPointId());
+            geoPointRepo.save(gp);
         }
-        for(PostalAddress pa: postalAddressMap.values()){
-        	log.info("save address " + pa.getContactMechId() + ", geo point = " + pa.getGeoPoint().getGeoPointId());
-        	postalAddressRepo.save(pa);
+        for (PostalAddress pa : postalAddressMap.values()) {
+            log.info("save address " + pa.getContactMechId() + ", geo point = " + pa.getGeoPoint().getGeoPointId());
+            postalAddressRepo.save(pa);
         }
-        for(PartyCustomer pc: partyCustomerMap.values()){
-        	log.info("save, partyCustomer " + pc.getCustomerCode() + ", shipToLocationCode = " + pc.getPostalAddress().size());
+        for (PartyCustomer pc : partyCustomerMap.values()) {
+            log.info("save, partyCustomer " + pc.getCustomerCode() + ", shipToLocationCode = " + pc.getPostalAddress().size());
         }
         productRepo.saveAll(productMap.values());
         shipmentItemRepo.saveAll(shipmentItems);
