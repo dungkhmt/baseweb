@@ -11,15 +11,19 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@IdClass(CompositeShipmentItemId.class)
+//@IdClass(CompositeShipmentItemId.class)
 public class ShipmentItem {
     @Id
-    @Column(name = "shipment_id")
-    private UUID shipmentId;
+    @Column(name = "shipment_item_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID shipmentItemId;
 
-    @Id
-    @Column(name = "shipment_item_seq_id")
-    private String shipmentItemSeqId;
+    @Column(name="shipment_id")
+    private UUID shipmentId;
+    
+    //@Id
+    //@Column(name = "shipment_item_seq_id")
+    //private String shipmentItemSeqId;
 
     @Column(name = "quantity")
     private int quantity;

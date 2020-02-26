@@ -115,7 +115,7 @@ public class ShipmentServiceImpl implements ShipmentService {
             String shipmentItemSeqId = CommonUtils.buildSeqId(idx);
             ShipmentItem shipmentItem = new ShipmentItem();
             shipmentItem.setShipmentId(shipmentId);
-            shipmentItem.setShipmentItemSeqId(shipmentItemSeqId);
+            //shipmentItem.setShipmentItemSeqId(shipmentItemSeqId);
             shipmentItem.setQuantity(shipmentItemModel.getQuantity());
             shipmentItem.setPallet(shipmentItemModel.getPallet());
             shipmentItem.setProductId(shipmentItemModel.getProductId());

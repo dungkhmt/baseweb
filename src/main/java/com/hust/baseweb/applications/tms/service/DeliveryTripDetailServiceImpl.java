@@ -25,9 +25,9 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         deliveryTripDetail.setDeliveryTripId(input.getDeliveryTripId());
         //deliveryTripDetail.setShipmentItem(input.getShipmentId());
         //deliveryTripDetail.setS
-        ShipmentItem shipmentItem = shipmentItemRepo.findByShipmentIdAndShipmentItemSeqId(input.getShipmentId(), input.getShipmentItemSeqId());
+        ShipmentItem shipmentItem = shipmentItemRepo.findByShipmentItemId(input.getShipmentItemId());
 
-        log.info("save, find ShipmentItem " + shipmentItem.getShipmentId() + "," + shipmentItem.getShipmentItemSeqId() + ", product = " + shipmentItem.getProductId());
+        log.info("save, find ShipmentItem " + shipmentItem.getShipmentId() + "," + shipmentItem.getShipmentItemId() + ", product = " + shipmentItem.getProductId());
 
         deliveryTripDetail.setShipmentItem(shipmentItem);
         deliveryTripDetail.setDeliveryQuantity(input.getDeliveryQuantity());

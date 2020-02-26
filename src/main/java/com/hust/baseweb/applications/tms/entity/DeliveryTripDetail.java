@@ -20,8 +20,9 @@ public class DeliveryTripDetail {
     private UUID deliveryTripId;
 
 
-    @JoinColumn(name = "shipment_id", referencedColumnName = "shipment_id")
-    @JoinColumn(name = "shipment_item_seq_id", referencedColumnName = "shipment_item_seq_id")
+    //@JoinColumn(name = "shipment_id", referencedColumnName = "shipment_id")
+    //@JoinColumn(name = "shipment_item_seq_id", referencedColumnName = "shipment_item_seq_id")
+    @JoinColumn(name = "shipment_item_id", referencedColumnName = "shipment_item_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private ShipmentItem shipmentItem;
 
