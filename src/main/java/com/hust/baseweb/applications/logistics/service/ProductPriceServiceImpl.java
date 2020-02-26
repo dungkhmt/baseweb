@@ -2,8 +2,11 @@ package com.hust.baseweb.applications.logistics.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
+
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,8 @@ import com.hust.baseweb.applications.logistics.repo.UomRepo;
 import com.hust.baseweb.entity.UserLogin;
 
 @Service
+@Log4j2
+
 public class ProductPriceServiceImpl implements ProductPriceService {
 
 	@Autowired
@@ -62,16 +67,19 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 			pp.setCreatedByUserLogin(createdByUserLogin);
 			pp = productPriceRepo.save(pp);
 			return pp;
-		}
-		
+		}		
 	}
 	
 	@Override
 	@Transactional
 	public ProductPrice getProductPrice(String productId){
 		Product product = productRepo.findByProductId(productId);
-		ProductPrice pp = productPriceRepo.findByProductAndThruDate(product, null);
-		return pp;
+		log.info("getProductPrice, product = " + product.getProductId());
+		
+		//ProductPrice pp = productPriceRepo.findByProductAndThruDate(product, null);
+		//Iterable<ProductPrice> lst = productPriceRepo.findAll();
+		
+		return null;
 	}
 
 }
