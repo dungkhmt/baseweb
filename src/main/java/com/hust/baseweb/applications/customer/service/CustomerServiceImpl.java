@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -60,6 +61,8 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setPartyId(partyId);
         //customer.setParty(party);
         customer.setCustomerName(input.getCustomerName());
+        customer.setPostalAddress(new ArrayList<>());
+
         log.info("save, prepare save customer partyId = " + customer.getPartyId());
         customerRepo.save(customer);
 

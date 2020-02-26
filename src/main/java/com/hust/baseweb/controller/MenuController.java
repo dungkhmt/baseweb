@@ -31,13 +31,13 @@ public class MenuController {
     @GetMapping("/menu")
     public ResponseEntity<Set> getMenu(Principal principal) {
         UserLogin userLogin = userService.findById(principal.getName());
-        System.out.println(module + "::getMenu, userName = " + principal.getName());
+//        System.out.println(module + "::getMenu, userName = " + principal.getName());
 
         List<SecurityPermission> permissionList = new ArrayList<>();
         for (SecurityGroup securityGroup : userLogin.getRoles()) {
             permissionList.addAll(securityGroup.getPermissions());
         }
-        System.out.println(module + "::getMenu, userName = " + principal.getName() + ", meu.lst = " + permissionList.size());
+//        System.out.println(module + "::getMenu, userName = " + principal.getName() + ", meu.lst = " + permissionList.size());
         return ResponseEntity.ok().body(
                 applicationService.getListByPermissionAndType(permissionList, ApplicationTypeConstant.MENU)
                         .stream().map(Application::getApplicationId).collect(Collectors.toSet())
