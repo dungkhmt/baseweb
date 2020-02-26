@@ -58,7 +58,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         Shipment shipment = new Shipment();
 //        shipment.setShipmentId(shipmentId);
         shipment.setShipmentTypeId("SALES_SHIPMENT");
-        shipmentRepo.save(shipment);
+        shipment = shipmentRepo.save(shipment);
 
         // Tạo shipment_item
 
@@ -151,7 +151,7 @@ public class ShipmentServiceImpl implements ShipmentService {
                                     postalAddress.getGeoPoint().getLongitude()
                             )));
             // thêm portal address hiện tại vào party customer
-            partyCustomer.getPostalAddress().add(postalAddress);
+            //partyCustomer.getPostalAddress().add(postalAddress);// NOT attach address into list 
 
             // Nếu product hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
             productMap.computeIfAbsent(shipmentItemModel.getProductId(), productId ->

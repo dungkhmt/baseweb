@@ -36,11 +36,11 @@ public class ShipmentItem {
     private String productId;
 
     @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private PartyCustomer customer;
 
     @JoinColumn(name = "ship_to_location_id", referencedColumnName = "contact_mech_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private PostalAddress shipToLocation;
 
 }
