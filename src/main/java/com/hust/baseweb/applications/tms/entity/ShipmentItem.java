@@ -18,9 +18,10 @@ public class ShipmentItem {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID shipmentItemId;
 
-    @Column(name="shipment_id")
-    private UUID shipmentId;
-    
+    @JoinColumn(name = "shipment_id", referencedColumnName = "shipment_id")
+    @ManyToOne
+    private Shipment shipment;
+
     //@Id
     //@Column(name = "shipment_item_seq_id")
     //private String shipmentItemSeqId;

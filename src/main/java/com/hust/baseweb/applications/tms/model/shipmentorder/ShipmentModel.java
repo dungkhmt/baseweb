@@ -12,5 +12,5 @@ import lombok.Setter;
 public class ShipmentModel {
     private String shipmentId;
     private String shipmentTypeId;
-    private int numberShipmentItems;
+//    private int numberShipmentItems;
 }

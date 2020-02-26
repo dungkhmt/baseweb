@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,15 +19,10 @@ public class Shipment {
     @Column(name = "shipment_type_id")
     private String shipmentTypeId;
 
-    @JoinColumn(name = "shipment_id", referencedColumnName = "shipment_id")
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<ShipmentItem> shipmentItems;
-
     public ShipmentModel toShipmentModel() {
         return new ShipmentModel(
                 shipmentId.toString(),
-                shipmentTypeId,
-                shipmentItems.size()
+                shipmentTypeId
         );
     }
 }

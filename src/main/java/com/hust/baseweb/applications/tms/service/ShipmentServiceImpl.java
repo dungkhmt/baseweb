@@ -54,9 +54,9 @@ public class ShipmentServiceImpl implements ShipmentService {
         log.info("save, shipmentItem.length = " + input.getShipmentItems().length);
 
         // Tạo shipment
-        UUID shipmentId = UUID.randomUUID();
+//        UUID shipmentId = UUID.randomUUID();
         Shipment shipment = new Shipment();
-        shipment.setShipmentId(shipmentId);
+//        shipment.setShipmentId(shipmentId);
         shipment.setShipmentTypeId("SALES_SHIPMENT");
         shipmentRepo.save(shipment);
 
@@ -112,7 +112,7 @@ public class ShipmentServiceImpl implements ShipmentService {
             // sao chép model sang entity class
             String shipmentItemSeqId = CommonUtils.buildSeqId(idx);
             ShipmentItem shipmentItem = new ShipmentItem();
-            shipmentItem.setShipmentId(shipmentId);
+            shipmentItem.setShipment(shipment);
             //shipmentItem.setShipmentItemSeqId(shipmentItemSeqId);
             shipmentItem.setQuantity(shipmentItemModel.getQuantity());
             shipmentItem.setPallet(shipmentItemModel.getPallet());
@@ -134,12 +134,11 @@ public class ShipmentServiceImpl implements ShipmentService {
                             geoPoint = new GeoPoint();
                         }
                         locationCodeToGeoPointMap.put(locationCode, geoPoint);
-                        return new PostalAddress(
-                                null,
-                                locationCode,
-                                shipmentItemModel.getAddress(),
-                                geoPoint
-                        );
+                        PostalAddress pa = new PostalAddress();
+                        pa.setAddress(shipmentItemModel.getAddress());
+                        pa.setLocationCode(locationCode);
+                        pa.setGeoPoint(geoPoint);
+                        return pa;
                     });
 
             // Nếu party customer hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
@@ -181,7 +180,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 //        }
         productRepo.saveAll(productMap.values());
         shipmentItemRepo.saveAll(shipmentItems);
-        shipment.setShipmentItems(shipmentItems);
+//        shipment.setShipmentItems(shipmentItems);
         return shipment;
     }
 
