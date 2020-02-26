@@ -73,7 +73,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 
         // Danh sách product id khác nhau đã có trong input
         List<String> productIds = shipmentItemInputModels.stream()
-                .map(CreateShipmentItemInputModel::getProductId).collect(Collectors.toList());
+                .map(CreateShipmentItemInputModel::getProductId).distinct().collect(Collectors.toList());
 
         // partyCustomerMap: danh sách party customer đã có trong DB
         Map<String, PartyCustomer> partyCustomerMap = new HashMap<>();
