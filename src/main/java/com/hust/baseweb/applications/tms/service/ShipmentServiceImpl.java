@@ -165,20 +165,20 @@ public class ShipmentServiceImpl implements ShipmentService {
         );
 
         // lưu tất cả vào DB
-        //geoPointRepo.saveAll(locationCodeToGeoPointMap.values());
-        //postalAddressRepo.saveAll(postalAddressMap.values());
-        //partyCustomerRepo.saveAll(partyCustomerMap.values());
-        for (GeoPoint gp : locationCodeToGeoPointMap.values()) {
-            log.info("save geo point " + gp.getGeoPointId());
-            geoPointRepo.save(gp);
-        }
-        for (PostalAddress pa : postalAddressMap.values()) {
-            log.info("save address " + pa.getContactMechId() + ", geo point = " + pa.getGeoPoint().getGeoPointId());
-            postalAddressRepo.save(pa);
-        }
-        for (PartyCustomer pc : partyCustomerMap.values()) {
-            log.info("save, partyCustomer " + pc.getCustomerCode() + ", shipToLocationCode = " + pc.getPostalAddress().size());
-        }
+        geoPointRepo.saveAll(locationCodeToGeoPointMap.values());
+        postalAddressRepo.saveAll(postalAddressMap.values());
+        partyCustomerRepo.saveAll(partyCustomerMap.values());
+//        for (GeoPoint gp : locationCodeToGeoPointMap.values()) {
+//            log.info("save geo point " + gp.getGeoPointId());
+//            geoPointRepo.save(gp);
+//        }
+//        for (PostalAddress pa : postalAddressMap.values()) {
+//            log.info("save address " + pa.getContactMechId() + ", geo point = " + pa.getGeoPoint().getGeoPointId());
+//            postalAddressRepo.save(pa);
+//        }
+//        for (PartyCustomer pc : partyCustomerMap.values()) {
+//            log.info("save, partyCustomer " + pc.getCustomerCode() + ", shipToLocationCode = " + pc.getPostalAddress().size());
+//        }
         productRepo.saveAll(productMap.values());
         shipmentItemRepo.saveAll(shipmentItems);
         shipment.setShipmentItems(shipmentItems);
