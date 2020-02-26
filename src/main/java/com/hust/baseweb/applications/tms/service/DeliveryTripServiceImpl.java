@@ -8,11 +8,15 @@ import com.hust.baseweb.applications.tms.repo.DeliveryTripRepo;
 import com.hust.baseweb.applications.tms.repo.VehicleRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -43,5 +47,15 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
         deliveryTrip = deliveryTripRepo.save(deliveryTrip);
         return deliveryTrip;
+    }
+
+    @Override
+    public Page<DeliveryTrip> findAll(Pageable pageable) {
+        return deliveryTripRepo.findAll(pageable);
+    }
+
+    @Override
+    public DeliveryTrip findById(UUID deliveryTripId) {
+        return deliveryTripRepo.findById(deliveryTripId).orElseThrow(NoSuchElementException::new);
     }
 }

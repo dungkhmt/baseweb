@@ -22,6 +22,11 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
+    public Iterable<Vehicle> findAll() {
+        return vehicleRepo.findAll();
+    }
+
+    @Override
     public void save(Vehicle vehicle) {
         vehicleRepo.save(vehicle);
     }

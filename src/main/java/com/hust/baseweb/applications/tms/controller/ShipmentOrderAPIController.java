@@ -75,24 +75,44 @@ public class ShipmentOrderAPIController {
 
     @GetMapping("/delivery-plan")
     public ResponseEntity<?> getDeliveryPlanList(Pageable pageable) {
-        log.info("getDeliveryPlan....");
+        log.info("getDeliveryPlanList....");
         return ResponseEntity.ok().body(deliveryPlanService.findAll(pageable));
     }
 
     @GetMapping("/delivery-plan/{deliveryPlanId}")
-    public ResponseEntity<?> getDeliveryTrip(@PathVariable String deliveryPlanId) {
+    public ResponseEntity<?> getDeliveryPlan(@PathVariable String deliveryPlanId) {
         log.info("getDeliveryPlan: " + deliveryPlanId);
         return ResponseEntity.ok().body(deliveryPlanService.findById(UUID.fromString(deliveryPlanId)));
     }
 
+    @GetMapping("/delivery-trip")
+    public ResponseEntity<?> getDeliveryTripList(Pageable pageable) {
+        log.info("getDeliveryTripList....");
+        return ResponseEntity.ok().body(deliveryTripService.findAll(pageable).map(DeliveryTrip::toDeliveryTripModel));
+    }
+
+    @GetMapping("/delivery-trip/{delivery-trip-id}")
+    public ResponseEntity<?> getDeliveryTrip(@PathVariable("delivery-trip-id") String deliveryTripId) {
+        log.info("getDeliveryTrip: " + deliveryTripId);
+        return ResponseEntity.ok().body(deliveryTripService.findById(UUID.fromString(deliveryTripId)));
+    }
+
+    @GetMapping("/delivery-trip-detail")
+    public ResponseEntity<?> getDeliveryTripDetailList(Pageable pageable) {
+        log.info("getDeliveryTripDetailList....");
+        return ResponseEntity.ok().body(deliveryTripDetailService.findAll(pageable));
+    }
+
     @PostMapping("/create-delivery-trip")
     public ResponseEntity<?> createDeliveryTrip(Principal principal, @RequestBody CreateDeliveryTripInputModel input) {
+        log.info("::createDeliveryTrip: " + input);
         DeliveryTrip deliveryTrip = deliveryTripService.save(input);
         return ResponseEntity.ok().body(deliveryTrip);
     }
 
     @PostMapping("/create-delivery-trip-detail")
     public ResponseEntity<?> createDeliveryTripDetail(Principal principal, @RequestBody CreateDeliveryTripDetailInputModel input) {
+        log.info("::createDeliveryTripDetail: " + input);
         DeliveryTripDetail deliveryTripDetail = null;
         deliveryTripDetail = deliveryTripDetailService.save(input);
         return ResponseEntity.ok().body(deliveryTripDetail);

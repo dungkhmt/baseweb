@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @CrossOrigin
@@ -32,6 +33,13 @@ public class VehicleAPIController {
     public ResponseEntity<?> getVehicles(Principal principal, Pageable pageable) {
         log.info("::getVehicles, ");
         return ResponseEntity.ok().body(vehicleService.findAll(pageable).map(Vehicle::toVehicleModel));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllVehicles(Principal principal) {
+        log.info("::getAllVehicles, ");
+        return ResponseEntity.ok().body(StreamSupport.stream(vehicleService.findAll().spliterator(), false)
+                .map(Vehicle::toVehicleModel).collect(Collectors.toList()));
     }
 
     @PostMapping("/upload")
