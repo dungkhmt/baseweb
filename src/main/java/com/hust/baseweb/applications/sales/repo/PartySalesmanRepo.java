@@ -7,5 +7,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 
 public interface PartySalesmanRepo extends PagingAndSortingRepository<PartySalesman, UUID> {
-
+	public PartySalesman findByPartyId(UUID partyId);
 }
