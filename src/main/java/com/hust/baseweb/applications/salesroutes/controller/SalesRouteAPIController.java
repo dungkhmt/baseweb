@@ -20,6 +20,7 @@ import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.Generate
 import com.hust.baseweb.applications.salesroutes.model.salesrouteplanningperiod.CreateSalesRoutePlanningPeriodInputModel;
 import com.hust.baseweb.applications.salesroutes.service.SalesRouteConfigCustomerService;
 import com.hust.baseweb.applications.salesroutes.service.SalesRouteConfigService;
+import com.hust.baseweb.applications.salesroutes.service.SalesRouteDetailService;
 import com.hust.baseweb.applications.salesroutes.service.SalesRoutePlanningPeriodService;
 
 @RestController
@@ -35,6 +36,9 @@ public class SalesRouteAPIController {
 	
 	@Autowired
 	private SalesRoutePlanningPeriodService salesRoutePlanningPeriodService;
+	
+	@Autowired
+	private SalesRouteDetailService salesRouteDetailService;
 	
 	@PostMapping("/create-sales-route-config")
 	public ResponseEntity<?> createSalesRouteConfig(Principal principal,
@@ -69,7 +73,7 @@ public class SalesRouteAPIController {
 	@PostMapping("/generate-sales-route-detail")
 	public ResponseEntity<?> generateSalesRouteDetail(Principal principal, @RequestBody GenerateSalesRouteDetailInputModel input){
 		log.info("generateSalesRouteDetail, salesmanId = " + input.getPartySalesmanId());
-		
-		return ResponseEntity.ok().body("ok");
+		int cnt = salesRouteDetailService.generateSalesRouteDetailOfSalesman(input.getPartySalesmanId(), input.getSalesRoutePlanningPeriodId());
+		return ResponseEntity.ok().body(cnt);
 	}
 }

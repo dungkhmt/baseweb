@@ -6,5 +6,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface SalesRouteDetailService {
-	public void generateSalesRouteDetailOfSalesman(UUID partySalesmanId);
+	public int generateSalesRouteDetailOfSalesman(UUID partySalesmanId, UUID salesRoutePlanningPeriodId);
 }

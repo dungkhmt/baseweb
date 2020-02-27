@@ -9,4 +9,6 @@ import lombok.Setter;
 @Setter
 public class GenerateSalesRouteDetailInputModel {
 	private UUID partySalesmanId;
+	private UUID salesRoutePlanningPeriodId;
+	
 }
