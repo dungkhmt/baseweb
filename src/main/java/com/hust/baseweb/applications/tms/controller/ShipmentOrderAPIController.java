@@ -1,18 +1,13 @@
 package com.hust.baseweb.applications.tms.controller;
 
-import com.hust.baseweb.applications.tms.entity.DeliveryPlan;
-import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
-import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
-import com.hust.baseweb.applications.tms.entity.Shipment;
+import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.model.createdeliveryplan.CreateDeliveryPlanInputModel;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripDetailInputModel;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
+import com.hust.baseweb.applications.tms.model.shipmentitem.CreateShipmentItemDeliveryPlan;
 import com.hust.baseweb.applications.tms.model.shipmentorder.CreateShipmentInputModel;
 import com.hust.baseweb.applications.tms.model.shipmentorder.CreateShipmentItemInputModel;
-import com.hust.baseweb.applications.tms.service.DeliveryPlanService;
-import com.hust.baseweb.applications.tms.service.DeliveryTripDetailService;
-import com.hust.baseweb.applications.tms.service.DeliveryTripService;
-import com.hust.baseweb.applications.tms.service.ShipmentService;
+import com.hust.baseweb.applications.tms.service.*;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
 import com.poiji.option.PoijiOptions;
@@ -36,6 +31,7 @@ import java.util.UUID;
 public class ShipmentOrderAPIController {
 
     private ShipmentService shipmentService;
+    private ShipmentItemService shipmentItemService;
     private DeliveryPlanService deliveryPlanService;
     private DeliveryTripService deliveryTripService;
     private DeliveryTripDetailService deliveryTripDetailService;
@@ -64,6 +60,18 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> getOrderShipment(Principal principal, Pageable pageable) {
         log.info("::getOrderShipment, ");
         return ResponseEntity.ok().body(shipmentService.findAll(pageable));
+    }
+
+    @GetMapping("/shipment-item")
+    public ResponseEntity<?> getOrderShipmentItem(Principal principal, Pageable pageable) {
+        log.info("::getOrderShipmentItem, ");
+        return ResponseEntity.ok().body(shipmentItemService.findAll(pageable).map(ShipmentItem::toShipmentItemModel));
+    }
+
+    @GetMapping("/shipment-item/{deliveryPlanId}")
+    public ResponseEntity<?> getOrderShipmentItem(Principal principal, @PathVariable String deliveryPlanId) {
+        log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
+        return ResponseEntity.ok().body(shipmentItemService.findAllByDeliveryPlanId(deliveryPlanId));
     }
 
     @PostMapping("/create-delivery-plan")
@@ -113,8 +121,14 @@ public class ShipmentOrderAPIController {
     @PostMapping("/create-delivery-trip-detail")
     public ResponseEntity<?> createDeliveryTripDetail(Principal principal, @RequestBody CreateDeliveryTripDetailInputModel input) {
         log.info("::createDeliveryTripDetail: " + input);
-        DeliveryTripDetail deliveryTripDetail = null;
+        DeliveryTripDetail deliveryTripDetail;
         deliveryTripDetail = deliveryTripDetailService.save(input);
         return ResponseEntity.ok().body(deliveryTripDetail);
+    }
+
+    @PostMapping("/create-shipment-item-delivery-plan")
+    public ResponseEntity<?> createShipmentItemDeliveryPlan(Principal principal, @RequestBody CreateShipmentItemDeliveryPlan createShipmentItemDeliveryPlan) {
+        log.info("::createShipmentItemDeliveryPlan: " + createShipmentItemDeliveryPlan.getDeliveryPlanId());
+        return ResponseEntity.ok().body(shipmentItemService.saveShipmentItemDeliveryPlan(createShipmentItemDeliveryPlan));
     }
 }

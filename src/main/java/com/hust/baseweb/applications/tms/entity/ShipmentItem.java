@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.tms.entity;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
+import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemModel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,4 +44,15 @@ public class ShipmentItem {
     @ManyToOne(fetch = FetchType.EAGER)
     private PostalAddress shipToLocation;
 
+    public ShipmentItemModel toShipmentItemModel() {
+        return new ShipmentItemModel(
+                shipmentItemId.toString(),
+                shipment.getShipmentId().toString(),
+                quantity,
+                pallet,
+                productId,
+                customer == null ? null : customer.getCustomerCode(),
+                shipToLocation == null ? null : shipToLocation.getLocationCode()
+        );
+    }
 }
