@@ -8,6 +8,8 @@ import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,6 +38,11 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         deliveryTripDetail = deliveryTripDetailRepo.save(deliveryTripDetail);
 
         return deliveryTripDetail;
+    }
+
+    @Override
+    public Page<DeliveryTripDetail> findAll(Pageable pageable) {
+        return deliveryTripDetailRepo.findAll(pageable);
     }
 
 }

@@ -1,6 +1,8 @@
 package com.hust.baseweb.applications.tms.entity;
 
+import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripModel;
 import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.utils.Constant;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,7 +38,18 @@ public class DeliveryTrip {
     private Date executeDate;
 
     @JoinColumn(name = "execute_external_vehicle_type_id", referencedColumnName = "vehicle_type_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private VehicleType externalVehicleType;
 
+    public DeliveryTripModel toDeliveryTripModel() {
+        return new DeliveryTripModel(
+                deliveryPlanSolutionSeqId,
+                deliveryTripId.toString(),
+                Constant.DATE_FORMAT.format(executeDate),
+                0,
+                0,
+                vehicle.getVehicleId(),
+                null
+        );
+    }
 }
