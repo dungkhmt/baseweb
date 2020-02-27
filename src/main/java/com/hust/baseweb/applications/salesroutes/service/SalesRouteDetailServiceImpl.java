@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.salesroutes.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import com.hust.baseweb.applications.salesroutes.repo.PSalesRouteConfigCustomerR
 import com.hust.baseweb.applications.salesroutes.repo.PSalesRouteDetailRepo;
 import com.hust.baseweb.applications.salesroutes.repo.PSalesRoutePlanningPeriodRepo;
 import com.hust.baseweb.applications.salesroutes.repo.SalesRouteConfigCustomerRepo;
+import com.hust.baseweb.applications.salesroutes.repo.SalesRouteDetailRepo;
 import com.hust.baseweb.utils.DateTimeUtils;
 
 @Service
@@ -45,6 +47,9 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
 	
 	@Autowired
 	private PSalesRouteDetailRepo pSalesRouteDetailRepo;
+	
+	@Autowired
+	private SalesRouteDetailRepo salesRouteDetailRepo;
 	
 	@Override
 	@Transactional
@@ -84,6 +89,22 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
 			}
 		}
 		return cnt;
+	}
+
+	@Override
+	public List<PartyCustomer> getCustomersVisitedSalesmanDay(
+			UUID partySalesmanId, String date) {
+		// TODO Auto-generated method stub
+		String executeDate = date;//DateTimeUtils.date2YYYYMMDD(date);
+		
+		log.info("getCustomersVisitedSalesmanDay, partySalesmanId = " + partySalesmanId + ", date = " + executeDate);
+		PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
+		
+		List<SalesRouteDetail> lst = salesRouteDetailRepo.findByPartySalesmanAndExecuteDate(partySalesman, executeDate);
+		List<PartyCustomer> retList = new ArrayList<PartyCustomer>();
+		for(SalesRouteDetail srd: lst)
+			retList.add(srd.getPartyCustomer());
+		return retList;
 	}
 
 }

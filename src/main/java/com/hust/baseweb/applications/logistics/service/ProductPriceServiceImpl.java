@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductPrice;
 import com.hust.baseweb.applications.logistics.entity.Uom;
+import com.hust.baseweb.applications.logistics.repo.ProductPriceJpaRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductPriceRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.repo.UomRepo;
@@ -26,6 +27,10 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
 	@Autowired
 	private ProductPriceRepo productPriceRepo;
+	
+	@Autowired
+	private ProductPriceJpaRepo productPriceJpaRepo;
+	
 	@Autowired
 	private ProductRepo productRepo;
 	
@@ -78,8 +83,10 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 		
 		//ProductPrice pp = productPriceRepo.findByProductAndThruDate(product, null);
 		//Iterable<ProductPrice> lst = productPriceRepo.findAll();
-		
-		return null;
+		List<ProductPrice> lst = productPriceJpaRepo.findByProductAndThruDate(product, null);
+		if(lst == null || lst.size() == 0)
+			return null;
+		else return lst.get(0);
 	}
 
 }

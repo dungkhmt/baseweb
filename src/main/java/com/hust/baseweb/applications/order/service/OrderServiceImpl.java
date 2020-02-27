@@ -1,6 +1,8 @@
 package com.hust.baseweb.applications.order.service;
 
 
+import com.hust.baseweb.applications.geo.entity.PostalAddress;
+import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductPrice;
@@ -14,8 +16,10 @@ import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
 import com.hust.baseweb.applications.order.repo.*;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.UserLoginRepo;
+import com.hust.baseweb.utils.DateTimeUtils;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class OrderServiceImpl implements OrderService {
     public static final String module = OrderServiceImpl.class.getName();
 
@@ -41,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
     private FacilityRepo facilityRepo;
     private SalesChannelRepo salesChannelRepo;
     private ProductPriceService productPriceService;
+    private PostalAddressRepo postalAddressRepo;
     
     @Override
     @Transactional
@@ -68,6 +74,30 @@ public class OrderServiceImpl implements OrderService {
             orderDate = formatter.parse(orderInput.getOrderDate());
         } catch (Exception e) {
             e.printStackTrace();
+            orderDate = new Date();// take current Date
+            log.info("save, input orderDate is null -> take current Date() = " + orderDate.toString());
+        }
+        
+        PostalAddress shipToPostalAddress = postalAddressRepo.findByContactMechId(orderInput.getShipToAddressId());
+        
+        // iterate for computing grand total
+        BigDecimal total = new BigDecimal(0);
+        for (ModelCreateOrderInputOrderItem modelCreateOrderInputOrderItem : orderInput.getOrderItems()) {
+        	//Product product = productRepo.findByProductId(modelCreateOrderInputOrderItem.getProductId());
+            ProductPrice pp = productPriceService.getProductPrice(modelCreateOrderInputOrderItem.getProductId());
+            //orderItem.setUnitPrice(modelCreateOrderInputOrderItem.getUnitPrice());// TOBE FIXED
+            BigDecimal tt = null;
+            
+            if(pp != null){
+            	tt = pp.getPrice().multiply(new BigDecimal(modelCreateOrderInputOrderItem.getQuantity()));
+            }else{
+            	tt = new BigDecimal(0);
+            }
+            //total = total.add(modelCreateOrderInputOrderItem.getTotalItemPrice());
+            total = total.add(tt);
+            System.out.println(module + "::save, order-item " + modelCreateOrderInputOrderItem.getProductId() + ", price = " + 
+            (pp != null ? pp.getPrice() : 0) + ", total = " + total);
+            
         }
 
         OrderHeader order = new OrderHeader();
@@ -76,10 +106,14 @@ public class OrderServiceImpl implements OrderService {
         order.setSalesChannel(salesChannel);
         order.setFacility(facility);
         order.setOrderDate(orderDate);
-
+        order.setShipToAddress(orderInput.getShipToAddress());
+        if(shipToPostalAddress != null)
+        	order.setShipToPostalAddress(shipToPostalAddress);
+        order.setGrandTotal(total);
+        
         orderRepo.save(order);
 
-        BigDecimal total = new BigDecimal(0);
+        
         // write to table order_item
         int idx = 0;
         for (ModelCreateOrderInputOrderItem modelCreateOrderInputOrderItem : orderInput.getOrderItems()) {
@@ -94,15 +128,26 @@ public class OrderServiceImpl implements OrderService {
             
             ProductPrice pp = productPriceService.getProductPrice(product.getProductId());
             //orderItem.setUnitPrice(modelCreateOrderInputOrderItem.getUnitPrice());// TOBE FIXED
-            orderItem.setUnitPrice(pp.getPrice());
-            		
+            //BigDecimal tt = null;
+            
+            if(pp != null){
+            	orderItem.setUnitPrice(pp.getPrice());
+            	//tt = pp.getPrice().multiply(new BigDecimal(orderItem.getQuantity()));
+            }else{
+            	orderItem.setUnitPrice(new BigDecimal(0));
+            	//tt = new BigDecimal(0);
+            }
             orderItemRepo.save(orderItem);
             //System.out.println(module + "::save, order-item " + product.getProductId() + ", price = " + oi.getTotalItemPrice() + ", total = " + total);
-            BigDecimal tt = pp.getPrice().multiply(new BigDecimal(orderItem.getQuantity()));
             //total = total.add(modelCreateOrderInputOrderItem.getTotalItemPrice());
-            total = total.add(tt);
+            //total = total.add(tt);
         }
 
+        // update total
+        //order.setGrandTotal(total);
+        //orderRepo.save(order);
+        
+        
         // write to order_role
         OrderRole orderRole = new OrderRole();
         orderRole.setOrderId(order.getOrderId());
@@ -127,8 +172,10 @@ public class OrderServiceImpl implements OrderService {
 
         //SimpleDateFormat formatterYYYYMMDD = new SimpleDateFormat("yyyy-mm-dd");
         //String dateYYYYMMDD = formatterYYYYMMDD.format(orderDate);
-        String[] s = orderInput.getOrderDate().split(" ");// TOBE FIX
-        String dateYYYYMMDD = s[0].trim();
+        //String[] s = orderInput.getOrderDate().split(" ");// TOBE FIX
+        //String dateYYYYMMDD = s[0].trim();
+        String dateYYYYMMDD = DateTimeUtils.date2YYYYMMDD(order.getOrderDate());
+        log.info("save, orderDateYYYYMMDD = " + dateYYYYMMDD);
         OrderAPIController.revenueOrderCache.addOrderRevenue(dateYYYYMMDD, total);
         return order;
     }

@@ -1,6 +1,8 @@
 package com.hust.baseweb.applications.salesroutes.controller;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.UUID;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -11,17 +13,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hust.baseweb.applications.customer.entity.PartyCustomer;
+import com.hust.baseweb.applications.sales.model.customersalesman.GetCustomersOfSalesmanInputModel;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfigCustomer;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.CreateSalesRouteConfigInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.CreateSalesRouteConfigCustomerInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GenerateSalesRouteDetailInputModel;
+import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetCustomersVisitedBySalesmanDayInputModel;
+import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetCustomersVisitedDayOfUserLogin;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteplanningperiod.CreateSalesRoutePlanningPeriodInputModel;
 import com.hust.baseweb.applications.salesroutes.service.SalesRouteConfigCustomerService;
 import com.hust.baseweb.applications.salesroutes.service.SalesRouteConfigService;
 import com.hust.baseweb.applications.salesroutes.service.SalesRouteDetailService;
 import com.hust.baseweb.applications.salesroutes.service.SalesRoutePlanningPeriodService;
+import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.service.UserService;
 
 @RestController
 @CrossOrigin
@@ -39,6 +47,9 @@ public class SalesRouteAPIController {
 	
 	@Autowired
 	private SalesRouteDetailService salesRouteDetailService;
+	
+	@Autowired
+	private UserService userService;
 	
 	@PostMapping("/create-sales-route-config")
 	public ResponseEntity<?> createSalesRouteConfig(Principal principal,
@@ -75,5 +86,19 @@ public class SalesRouteAPIController {
 		log.info("generateSalesRouteDetail, salesmanId = " + input.getPartySalesmanId());
 		int cnt = salesRouteDetailService.generateSalesRouteDetailOfSalesman(input.getPartySalesmanId(), input.getSalesRoutePlanningPeriodId());
 		return ResponseEntity.ok().body(cnt);
+	}
+	
+	@PostMapping("/get-customers-visited-salesman-date")
+	public ResponseEntity<?> getCustomersVisitedSalesmanDay(Principal principal, @RequestBody GetCustomersVisitedBySalesmanDayInputModel input){
+		List<PartyCustomer> customers = salesRouteDetailService.getCustomersVisitedSalesmanDay(input.getPartySalesmanId(), input.getDate());
+		return ResponseEntity.ok().body(customers);
+	}
+	@PostMapping("/get-customers-visited-date-of-userlogin")
+	public ResponseEntity<?> getCustomersVisitedDateOfUserLogin(Principal principal, @RequestBody GetCustomersVisitedDayOfUserLogin input){
+		UserLogin userLogin = userService.findById(principal.getName());
+		UUID partySalesmanId = userLogin.getParty().getPartyId();
+		log.info("getCustomersVisitedDateOfUserLogin, partySalesmanId = " + partySalesmanId + ", date = " + input.getDate());
+		List<PartyCustomer> customers = salesRouteDetailService.getCustomersVisitedSalesmanDay(partySalesmanId, input.getDate());
+		return ResponseEntity.ok().body(customers);
 	}
 }
