@@ -22,6 +22,12 @@ class LoginResponse {
     private final List<SecurityPermission> securityPermissions;
 }
 
+@Getter
+@RequiredArgsConstructor
+class ViewUsersResponse {
+	private final List<UserLogin> users;
+}
+
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthController {
@@ -35,9 +41,10 @@ public class AuthController {
         return new LoginResponse(userLogin, permissions);
     }
 
-    @GetMapping("/api/test")
-    public String test() {
-        return "test string";
+    @GetMapping("/api/view-users")
+    public ViewUsersResponse test() {
+    	List<UserLogin> users = userLoginRepository.findAll();
+        return new ViewUsersResponse(users);
     }
 
 }
