@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateShipmentItemDeliveryPlan {
+public class CreateShipmentItemDeliveryPlanModel {
     private String deliveryPlanId;
     private List<String> shipmentItemIds;
 }

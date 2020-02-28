@@ -47,7 +47,6 @@ public class ShipmentItem {
     public ShipmentItemModel toShipmentItemModel() {
         return new ShipmentItemModel(
                 shipmentItemId.toString(),
-                shipment.getShipmentId().toString(),
                 quantity,
                 pallet,
                 productId,

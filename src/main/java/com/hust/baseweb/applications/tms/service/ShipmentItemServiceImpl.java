@@ -2,7 +2,7 @@ package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
 import com.hust.baseweb.applications.tms.entity.ShipmentItemDeliveryPlan;
-import com.hust.baseweb.applications.tms.model.shipmentitem.CreateShipmentItemDeliveryPlan;
+import com.hust.baseweb.applications.tms.model.shipmentitem.CreateShipmentItemDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemDeliveryPlanRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import lombok.AllArgsConstructor;
@@ -37,16 +37,16 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public String saveShipmentItemDeliveryPlan(CreateShipmentItemDeliveryPlan createShipmentItemDeliveryPlan) {
+    public String saveShipmentItemDeliveryPlan(CreateShipmentItemDeliveryPlanModel createShipmentItemDeliveryPlanModel) {
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = new ArrayList<>();
-        for (String shipmentItemId : createShipmentItemDeliveryPlan.getShipmentItemIds()) {
+        for (String shipmentItemId : createShipmentItemDeliveryPlanModel.getShipmentItemIds()) {
             shipmentItemDeliveryPlans.add(new ShipmentItemDeliveryPlan(
                     UUID.fromString(shipmentItemId),
-                    UUID.fromString(createShipmentItemDeliveryPlan.getDeliveryPlanId())
+                    UUID.fromString(createShipmentItemDeliveryPlanModel.getDeliveryPlanId())
             ));
         }
         shipmentItemDeliveryPlanRepo.saveAll(shipmentItemDeliveryPlans);
-        return createShipmentItemDeliveryPlan.getDeliveryPlanId();
+        return createShipmentItemDeliveryPlanModel.getDeliveryPlanId();
     }
 
 

@@ -48,7 +48,7 @@ public class DeliveryTrip {
                 Constant.DATE_FORMAT.format(executeDate),
                 0,
                 0,
-                vehicle.getVehicleId(),
+                vehicle == null ? null : vehicle.getVehicleId(),
                 null
         );
     }

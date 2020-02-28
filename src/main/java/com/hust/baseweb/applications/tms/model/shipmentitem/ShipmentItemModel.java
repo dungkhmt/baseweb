@@ -11,7 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ShipmentItemModel {
     private String shipmentItemId;
-    private String shipmentId;
     private Integer quantity;
     private Double pallet;
     private String productId;

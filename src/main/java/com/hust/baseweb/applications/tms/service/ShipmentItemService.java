@@ -1,7 +1,7 @@
 package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
-import com.hust.baseweb.applications.tms.model.shipmentitem.CreateShipmentItemDeliveryPlan;
+import com.hust.baseweb.applications.tms.model.shipmentitem.CreateShipmentItemDeliveryPlanModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,5 +10,5 @@ public interface ShipmentItemService {
 
     Page<ShipmentItem> findAll(Pageable pageable);
 
-    String saveShipmentItemDeliveryPlan(CreateShipmentItemDeliveryPlan createShipmentItemDeliveryPlan);
+    String saveShipmentItemDeliveryPlan(CreateShipmentItemDeliveryPlanModel createShipmentItemDeliveryPlanModel);
 }

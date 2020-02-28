@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.tms.entity.Vehicle;
+import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,4 +15,8 @@ public interface VehicleService {
     void save(Vehicle vehicle);
 
     void saveAll(List<Vehicle> vehicles);
+
+    List<String> findAllByDeliveryPlanId(String deliveryPlan);
+
+    String saveVehicleDeliveryPlan(CreateVehicleDeliveryPlanModel createVehicleDeliveryPlanModel);
 }

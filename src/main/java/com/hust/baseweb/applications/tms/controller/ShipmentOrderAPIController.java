@@ -4,9 +4,10 @@ import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.model.createdeliveryplan.CreateDeliveryPlanInputModel;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripDetailInputModel;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
-import com.hust.baseweb.applications.tms.model.shipmentitem.CreateShipmentItemDeliveryPlan;
+import com.hust.baseweb.applications.tms.model.shipmentitem.CreateShipmentItemDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.shipmentorder.CreateShipmentInputModel;
 import com.hust.baseweb.applications.tms.model.shipmentorder.CreateShipmentItemInputModel;
+import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.service.*;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
@@ -35,6 +36,8 @@ public class ShipmentOrderAPIController {
     private DeliveryPlanService deliveryPlanService;
     private DeliveryTripService deliveryTripService;
     private DeliveryTripDetailService deliveryTripDetailService;
+
+    private VehicleService vehicleService;
 
     @PostMapping("/create-shipment")
     public ResponseEntity<?> createOrderShipment(Principal principal, @RequestBody CreateShipmentInputModel input) {
@@ -72,6 +75,12 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> getOrderShipmentItem(Principal principal, @PathVariable String deliveryPlanId) {
         log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(shipmentItemService.findAllByDeliveryPlanId(deliveryPlanId));
+    }
+
+    @GetMapping("/vehicle/{deliveryPlanId}")
+    public ResponseEntity<?> getVehicle(Principal principal, @PathVariable String deliveryPlanId) {
+        log.info("::getVehicle deliveryPlanId=" + deliveryPlanId);
+        return ResponseEntity.ok().body(vehicleService.findAllByDeliveryPlanId(deliveryPlanId));
     }
 
     @PostMapping("/create-delivery-plan")
@@ -127,8 +136,14 @@ public class ShipmentOrderAPIController {
     }
 
     @PostMapping("/create-shipment-item-delivery-plan")
-    public ResponseEntity<?> createShipmentItemDeliveryPlan(Principal principal, @RequestBody CreateShipmentItemDeliveryPlan createShipmentItemDeliveryPlan) {
-        log.info("::createShipmentItemDeliveryPlan: " + createShipmentItemDeliveryPlan.getDeliveryPlanId());
-        return ResponseEntity.ok().body(shipmentItemService.saveShipmentItemDeliveryPlan(createShipmentItemDeliveryPlan));
+    public ResponseEntity<?> createShipmentItemDeliveryPlan(Principal principal, @RequestBody CreateShipmentItemDeliveryPlanModel createShipmentItemDeliveryPlanModel) {
+        log.info("::createShipmentItemDeliveryPlan: " + createShipmentItemDeliveryPlanModel.getDeliveryPlanId());
+        return ResponseEntity.ok().body(shipmentItemService.saveShipmentItemDeliveryPlan(createShipmentItemDeliveryPlanModel));
+    }
+
+    @PostMapping("/create-vehicle-delivery-plan")
+    public ResponseEntity<?> createVehicleDeliveryPlan(Principal principal, @RequestBody CreateVehicleDeliveryPlanModel createVehicleDeliveryPlanModel) {
+        log.info("::createVehicleDeliveryPlan: " + createVehicleDeliveryPlanModel.getDeliveryPlanId());
+        return ResponseEntity.ok().body(vehicleService.saveVehicleDeliveryPlan(createVehicleDeliveryPlanModel));
     }
 }
