@@ -77,6 +77,12 @@ public class ShipmentOrderAPIController {
         return ResponseEntity.ok().body(shipmentItemService.findAllByDeliveryPlanId(deliveryPlanId));
     }
 
+    @GetMapping("/vehicle")
+    public ResponseEntity<?> getVehicle(Principal principal, Pageable pageable) {
+        log.info("::getVehicle, ");
+        return ResponseEntity.ok().body(vehicleService.findAll(pageable));
+    }
+
     @GetMapping("/vehicle/{deliveryPlanId}")
     public ResponseEntity<?> getVehicle(Principal principal, @PathVariable String deliveryPlanId) {
         log.info("::getVehicle deliveryPlanId=" + deliveryPlanId);
