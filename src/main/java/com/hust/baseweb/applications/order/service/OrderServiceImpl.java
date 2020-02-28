@@ -22,8 +22,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -47,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
     private SalesChannelRepo salesChannelRepo;
     private ProductPriceService productPriceService;
     private PostalAddressRepo postalAddressRepo;
+    private POrderRepo pOrderRepo;
     
     @Override
     @Transactional
@@ -179,5 +184,12 @@ public class OrderServiceImpl implements OrderService {
         OrderAPIController.revenueOrderCache.addOrderRevenue(dateYYYYMMDD, total);
         return order;
     }
+
+	@Override
+	public Page<OrderHeader> findAll(Pageable page) {
+		// TODO Auto-generated method stub
+		Page<OrderHeader> pages = pOrderRepo.findAll(page);
+		return pages;
+	}
 
 }

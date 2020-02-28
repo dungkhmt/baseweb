@@ -4,14 +4,22 @@ import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.cache.RevenueOrderCache;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.model.*;
+import com.hust.baseweb.applications.order.repo.POrderRepo;
 import com.hust.baseweb.applications.order.service.OrderService;
 import com.hust.baseweb.applications.order.service.PartyCustomerService;
+
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
@@ -21,6 +29,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class OrderAPIController {
     public static final String module = OrderAPIController.class.getName();
 
@@ -28,7 +37,8 @@ public class OrderAPIController {
 
     private OrderService orderService;
     private PartyCustomerService partyCustomerService;
-
+    
+    
     @PostMapping("/create-order-distributor-to-retailoutlet")
     public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
         //TODO
@@ -48,7 +58,14 @@ public class OrderAPIController {
         // TODO
         return null;
     }
-
+    @GetMapping("/orders")
+    public ResponseEntity<?> getOrders(Pageable page, @RequestParam(required = false) String param){
+    	log.info("getOrders, page = pageNumber = " + page.getPageNumber() + ", offSet = " +
+                page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
+    	Page<OrderHeader> orders = orderService.findAll(page);
+    	return ResponseEntity.ok().body(orders);
+    }
+    
     @PostMapping("/get-list-party-customers")
     public ResponseEntity getListPartyCustomers(Principal principal, @RequestBody GetListPartyCustomerInputModel input) {
         // TODO
