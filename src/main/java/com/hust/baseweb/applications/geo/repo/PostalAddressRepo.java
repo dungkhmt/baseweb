@@ -8,5 +8,8 @@ import java.util.UUID;
 
 public interface PostalAddressRepo extends PagingAndSortingRepository<PostalAddress, UUID> {
     List<PostalAddress> findAllByLocationCodeIn(List<String> locationCodes);
+
     PostalAddress findByContactMechId(UUID contactMechId);
+
+    List<PostalAddress> findAllByLocationCode(String locationCode);
 }

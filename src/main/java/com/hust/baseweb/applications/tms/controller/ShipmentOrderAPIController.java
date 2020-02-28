@@ -47,6 +47,14 @@ public class ShipmentOrderAPIController {
         return ResponseEntity.ok().body(shipment);
     }
 
+    @PostMapping("/create-shipment-item")
+    public ResponseEntity<?> createOrderShipment(Principal principal, @RequestBody CreateShipmentItemInputModel input) {
+        log.info("::createOrderShipment");
+
+        Shipment shipment = shipmentService.save(input);
+        return ResponseEntity.ok().body(shipment);
+    }
+
     @PostMapping("/shipment/upload")
     public ResponseEntity<?> uploadOrderShipment(Principal principal, @RequestParam("file") MultipartFile multipartFile) throws IOException {
         log.info("::uploadOrderShipment");
@@ -75,12 +83,6 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> getOrderShipmentItem(Principal principal, @PathVariable String deliveryPlanId) {
         log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(shipmentItemService.findAllByDeliveryPlanId(deliveryPlanId));
-    }
-
-    @GetMapping("/vehicle")
-    public ResponseEntity<?> getVehicle(Principal principal, Pageable pageable) {
-        log.info("::getVehicle, ");
-        return ResponseEntity.ok().body(vehicleService.findAll(pageable));
     }
 
     @GetMapping("/vehicle/{deliveryPlanId}")

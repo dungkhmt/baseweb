@@ -151,7 +151,7 @@ public class ShipmentServiceImpl implements ShipmentService {
                                     postalAddress.getGeoPoint().getLongitude()
                             )));
             // thêm portal address hiện tại vào party customer
-            //partyCustomer.getPostalAddress().add(postalAddress);// NOT attach address into list 
+            //partyCustomer.getPostalAddress().add(postalAddress);// NOT attach address into list
 
             // Nếu product hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
             productMap.computeIfAbsent(shipmentItemModel.getProductId(), productId ->
@@ -181,6 +181,62 @@ public class ShipmentServiceImpl implements ShipmentService {
         productRepo.saveAll(productMap.values());
         shipmentItemRepo.saveAll(shipmentItems);
 //        shipment.setShipmentItems(shipmentItems);
+        return shipment;
+    }
+
+    @Override
+    @Transactional
+    public Shipment save(CreateShipmentItemInputModel shipmentItemModel) {
+
+        Shipment shipment = new Shipment();
+
+        ShipmentItem shipmentItem = new ShipmentItem();
+        shipmentItem.setShipment(shipment);
+        //shipmentItem.setShipmentItemSeqId(shipmentItemSeqId);
+        shipmentItem.setQuantity(shipmentItemModel.getQuantity());
+        shipmentItem.setPallet(shipmentItemModel.getPallet());
+        shipmentItem.setProductId(shipmentItemModel.getProductId());
+
+        String locationCode = shipmentItemModel.getLocationCode();
+        List<PostalAddress> postalAddresses = postalAddressRepo.findAllByLocationCode(locationCode);
+        if (postalAddresses.isEmpty()) {
+            log.info("Query latLng: " + shipmentItemModel.getAddress());
+            GeocodingResult[] geocodingResults = GoogleMapUtils.queryLatLng(shipmentItemModel.getAddress());
+            GeoPoint geoPoint;
+            if (geocodingResults != null && geocodingResults.length > 0) {
+                LatLng location = geocodingResults[0].geometry.location;
+                geoPoint = new GeoPoint(null, location.lat + "", location.lng + "");
+            } else {
+                geoPoint = new GeoPoint();
+            }
+            geoPointRepo.save(geoPoint);
+            PostalAddress postalAddress = new PostalAddress();
+            postalAddress.setAddress(shipmentItemModel.getAddress());
+            postalAddress.setLocationCode(locationCode);
+            postalAddress.setGeoPoint(geoPoint);
+            postalAddressRepo.save(postalAddress);
+            postalAddresses.add(postalAddress);
+        }
+
+        String customerCode = shipmentItemModel.getCustomerCode();
+        List<PartyCustomer> partyCustomers = partyCustomerRepo.findAllByCustomerCode(customerCode);
+        if (partyCustomers.isEmpty()) {
+            PartyCustomer partyCustomer = customerService.save(new CreateCustomerInputModel(
+                    shipmentItemModel.getCustomerName(),
+                    shipmentItemModel.getAddress(),
+                    postalAddresses.get(0).getGeoPoint().getLatitude(),
+                    postalAddresses.get(0).getGeoPoint().getLongitude()
+            ));
+            partyCustomerRepo.save(partyCustomer);
+        }
+
+        String productId = shipmentItemModel.getProductId();
+        Product product = productRepo.findByProductId(productId);
+        if (product == null) {
+            product = productService.save(productId, shipmentItemModel.getProductName(), shipmentItemModel.getUom());
+            productRepo.save(product);
+        }
+
         return shipment;
     }
 
