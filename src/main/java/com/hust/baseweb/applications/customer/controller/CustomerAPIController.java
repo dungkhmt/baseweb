@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.customer.controller;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.model.CreateCustomerInputModel;
+import com.hust.baseweb.applications.customer.model.GetDistributorsOfUserLoginInputModel;
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.entity.UserLogin;
@@ -37,8 +38,8 @@ public class CustomerAPIController {
         return ResponseEntity.ok().body(customers);
     }
     
-    @GetMapping("/get-distributors-of-userlogin")
-    public ResponseEntity<?> getDistributorsOfUserLogin(Principal principal) {
+    @PostMapping("/get-distributors-of-userlogin")
+    public ResponseEntity<?> getDistributorsOfUserLogin(Principal principal, @RequestBody GetDistributorsOfUserLoginInputModel input) {
     	UserLogin userLogin = userService.findById(principal.getName());
         System.out.println(module + "::getDistributorsOfUserLogin");
         //Page<PartyCustomer> customers = customerRepo.findAll();

@@ -1,6 +1,7 @@
 get list of salesman
 
-select u.user_login_id, sm.party_id from party_salesman as sm, user_login as u where sm.party_id = u.party_id;
+select u.user_login_id, sm.party_id, p.last_name, p.middle_name, p.first_name from party_salesman as sm, user_login as u, person as p 
+where p.party_id = sm.party_id and sm.party_id = u.party_id;
 
 -------------
 get all customers of a salesman:

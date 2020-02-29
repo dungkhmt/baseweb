@@ -50,13 +50,16 @@ public class CustomerServiceImpl implements CustomerService {
     public PartyCustomer save(CreateCustomerInputModel input) {
 
 
+    	PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
+    	
         //UUID partyId = UUID.randomUUID();
         //Party party = new Party();
         //party.setPartyId(partyId);// KHONG WORK vi partyId khi insert vao DB se duoc sinh tu dong, no se khac voi partyId sinh ra boi SPRING
         Party party = new Party(null, partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
                 statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
                 false);
-
+        party.setType(partyType);
+        
         partyRepo.save(party);
 
         UUID partyId = party.getPartyId();
@@ -65,6 +68,7 @@ public class CustomerServiceImpl implements CustomerService {
         PartyCustomer customer = new PartyCustomer();
         customer.setPartyId(partyId);
         //customer.setParty(party);
+        customer.setPartyType(partyType);
         customer.setCustomerName(input.getCustomerName());
         customer.setPostalAddress(new ArrayList<>());
 

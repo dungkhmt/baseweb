@@ -87,11 +87,7 @@ public class OrderAPIController {
         return ResponseEntity.ok().body(new GetListPartyCustomerOutputModel(partyCustomers));
     }
 
-    @PostMapping("/get-list-salesmans")
-    public ResponseEntity getListSalesmans(Principal principal, @RequestBody GetListSalesmanInputModel input) {
-        // TODO
-        return null;
-    }
+    
 
     @PostMapping("/get-total-revenue")
     public ResponseEntity getTotalRevenue(Principal principal, @RequestBody GetTotalRevenueInputModel input) {
