@@ -10,20 +10,25 @@ import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
+import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.entity.PartyType;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
 import com.hust.baseweb.entity.Status.StatusEnum;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PartyTypeRepo;
 import com.hust.baseweb.repo.StatusRepo;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -45,13 +50,16 @@ public class CustomerServiceImpl implements CustomerService {
     public PartyCustomer save(CreateCustomerInputModel input) {
 
 
+    	PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
+    	
         //UUID partyId = UUID.randomUUID();
         //Party party = new Party();
         //party.setPartyId(partyId);// KHONG WORK vi partyId khi insert vao DB se duoc sinh tu dong, no se khac voi partyId sinh ra boi SPRING
         Party party = new Party(null, partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
                 statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
                 false);
-
+        party.setType(partyType);
+        
         partyRepo.save(party);
 
         UUID partyId = party.getPartyId();
@@ -60,6 +68,7 @@ public class CustomerServiceImpl implements CustomerService {
         PartyCustomer customer = new PartyCustomer();
         customer.setPartyId(partyId);
         //customer.setParty(party);
+        customer.setPartyType(partyType);
         customer.setCustomerName(input.getCustomerName());
         customer.setPostalAddress(new ArrayList<>());
 
@@ -92,5 +101,21 @@ public class CustomerServiceImpl implements CustomerService {
 
         return customer;
     }
+
+	@Override
+	public List<PartyCustomer> findDistributors() {
+		// TODO Auto-generated method stub
+		PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");
+		List<PartyCustomer> distributors = customerRepo.findByPartyType(partyType);
+		return distributors;
+	}
+
+	@Override
+	public List<PartyCustomer> findRetailOutlers() {
+		// TODO Auto-generated method stub
+		PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
+		List<PartyCustomer> retailoutlets = customerRepo.findByPartyType(partyType);
+		return retailoutlets;
+	}
 
 }

@@ -10,6 +10,9 @@ import lombok.extern.log4j.Log4j2;
 
 
 
+
+
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,10 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
+import com.hust.baseweb.applications.order.model.GetListSalesmanInputModel;
 import com.hust.baseweb.applications.sales.entity.CustomerSalesman;
+import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.model.customersalesman.AssignCustomer2SalesmanInputModel;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetCustomersOfSalesmanInputModel;
 import com.hust.baseweb.applications.sales.service.CustomerSalesmanService;
+import com.hust.baseweb.applications.sales.service.PartySalesmanService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 
@@ -38,6 +44,14 @@ public class SalesAPIController {
 	private UserService userService;
 	
 	private CustomerSalesmanService customerSalesmanService;
+	private PartySalesmanService partySalesmanService;
+	
+	@PostMapping("/get-list-salesmans")
+    public ResponseEntity getListSalesmans(Principal principal, @RequestBody GetListSalesmanInputModel input) {
+        // TODO
+		List<PartySalesman> salesman = partySalesmanService.findAllSalesman();
+        return ResponseEntity.ok().body(salesman);
+    }
 	
 	@PostMapping("/assign-customer-2-salesman")
 	public ResponseEntity<?> assignCustomer2Salesman(Principal principal, @RequestBody AssignCustomer2SalesmanInputModel input){

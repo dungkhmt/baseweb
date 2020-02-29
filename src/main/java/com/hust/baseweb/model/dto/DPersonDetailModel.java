@@ -51,7 +51,7 @@ public class DPersonDetailModel extends RepresentationModel<DPersonDetailModel> 
 		this.lastName = p.getPerson().getLastName();
 		this.birthDate = p.getPerson().getBirthDate();
 		this.status = p.getStatus();
-		this.partyType = p.getType().getId();
+		this.partyType = p.getType().getPartyTypeId();
 		this.createdDate = p.getCreatedDate();
 		this.userLoginId = p.getUserLogin().getUserLoginId();
 		this.partyCode = p.getPartyCode();
