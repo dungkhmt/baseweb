@@ -69,7 +69,7 @@ public class DTOPerson {
                 ? dPerson.getPerson().getFirstName() + " " + dPerson.getPerson().getMiddleName() + " " + dPerson.getPerson().getLastName()
                 : null;
         this.status = dPerson.getStatus();
-        this.partyType = dPerson.getType().getId();
+        this.partyType = dPerson.getType().getPartyTypeId();
         this.createdDate = dPerson.getCreatedDate();
         this.userLoginId = dPerson.getUserLogin().getUserLoginId();
         this.partyCode = dPerson.getPartyCode();

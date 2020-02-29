@@ -12,7 +12,9 @@ import java.util.Date;
 public class PartyType {
     @Id
     @Column(name = "party_type_id")
-    private String id;
+    //private String id;
+    private String partyTypeId;
+    
     @JoinColumn(name = "parent_type_id", referencedColumnName = "party_type_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private PartyType parentType;
@@ -21,8 +23,8 @@ public class PartyType {
     private Date createdStamp;
     private Date lastUpdatedStamp;
 
-    public PartyType(String id, PartyType parentType, boolean hasTable, String description) {
-        this.id = id;
+    public PartyType(String partyTypeId, PartyType parentType, boolean hasTable, String description) {
+        this.partyTypeId = partyTypeId;
         this.parentType = parentType;
         this.hasTable = hasTable;
         this.description = description;

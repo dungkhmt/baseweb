@@ -1,12 +1,15 @@
 package com.hust.baseweb.applications.customer.entity;
 
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
+import com.hust.baseweb.entity.PartyType;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +27,10 @@ public class PartyCustomer {
     //@OneToOne(fetch = FetchType.EAGER)
     //private Party party;
 
+    @JoinColumn(name = "party_type_id", referencedColumnName = "party_type_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private PartyType partyType;
+    
     @Column(name = "customer_code")
     private String customerCode;
 

@@ -7,5 +7,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(exported = false)
 
 public interface PartyTypeRepo extends JpaRepository<PartyType, String> {
-
+	PartyType findByPartyTypeId(String id);
 }
