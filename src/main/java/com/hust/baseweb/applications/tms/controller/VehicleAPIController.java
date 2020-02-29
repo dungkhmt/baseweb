@@ -29,7 +29,7 @@ public class VehicleAPIController {
 
     private VehicleService vehicleService;
 
-    @GetMapping("")
+    @GetMapping("/vehicles")
     public ResponseEntity<?> getVehicles(Principal principal, Pageable pageable) {
         log.info("::getVehicles, ");
         return ResponseEntity.ok().body(vehicleService.findAll(pageable).map(Vehicle::toVehicleModel));

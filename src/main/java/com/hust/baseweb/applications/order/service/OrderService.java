@@ -2,6 +2,8 @@ package com.hust.baseweb.applications.order.service;
 
 
 
+import java.util.UUID;
+
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
 
@@ -13,4 +15,5 @@ import org.springframework.stereotype.Service;
 public interface OrderService {
     public OrderHeader save(ModelCreateOrderInput order);
     public Page<OrderHeader> findAll(Pageable page);
+    public OrderHeader findByOrderId(String orderId);
 }

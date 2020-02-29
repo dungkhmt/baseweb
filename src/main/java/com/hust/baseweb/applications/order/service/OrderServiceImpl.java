@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -190,6 +191,13 @@ public class OrderServiceImpl implements OrderService {
 		// TODO Auto-generated method stub
 		Page<OrderHeader> pages = pOrderRepo.findAll(page);
 		return pages;
+	}
+
+	@Override
+	public OrderHeader findByOrderId(String orderId) {
+		// TODO Auto-generated method stub
+		OrderHeader order = orderRepo.findByOrderId(orderId);
+		return order;
 	}
 
 }

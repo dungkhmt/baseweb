@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.order.controller;
 
+import com.google.gson.Gson;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.cache.RevenueOrderCache;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +44,11 @@ public class OrderAPIController {
     @PostMapping("/create-order-distributor-to-retailoutlet")
     public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
         //TODO
+    	Gson gson = new Gson();
+    	String inputJson = gson.toJson(input);
+    	log.info("createOrder, input json = " +  inputJson);
+    	
+    	
         OrderHeader order = orderService.save(input);
 
         return ResponseEntity.ok().body(order);
@@ -64,6 +71,13 @@ public class OrderAPIController {
                 page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
     	Page<OrderHeader> orders = orderService.findAll(page);
     	return ResponseEntity.ok().body(orders);
+    }
+    @GetMapping(path = "/orders/{orderId}")
+    public ResponseEntity<?> getOrderDetail(@PathVariable String orderId, Principal principal) {
+    	log.info("getOrderDetail, orderId = " + orderId);
+    	
+    	OrderHeader order = orderService.findByOrderId(orderId);
+    	return ResponseEntity.ok().body(order);
     }
     
     @PostMapping("/get-list-party-customers")

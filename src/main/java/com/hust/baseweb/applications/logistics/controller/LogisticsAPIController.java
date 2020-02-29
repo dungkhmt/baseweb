@@ -17,6 +17,7 @@ import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +27,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class LogisticsAPIController {
     public static final String module = LogisticsAPIController.class.getName();
 
@@ -49,10 +52,14 @@ public class LogisticsAPIController {
 
     @PostMapping("/get-list-product")
     public ResponseEntity getListProducts(Principal principal, @RequestBody GetListProductInputModel input) {
+    	log.info("getListProducts");
         // TODO
         List<Product> products = productService.getAllProducts();
+        //List<Product> sel_prod = new ArrayList<Product>();
+        //for(int i = 0; i < 5; i++)
+        //	sel_prod.add(products.get(i));
         return ResponseEntity.ok().body(new GetListProductOutputModel(products));
-
+        //return ResponseEntity.ok().body(new GetListProductOutputModel(sel_prod));
     }
 
     @PostMapping("/create-product")

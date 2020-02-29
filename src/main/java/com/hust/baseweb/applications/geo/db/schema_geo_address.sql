@@ -33,6 +33,19 @@ create table geo_point
 
 );
 
+create table distance_traveltime_geo_points(
+	distance_traveltime_geo_points_id UUID NOT NULL default uuid_generate_v1(),
+	from_geo_point_id UUID,
+	to_geo_point_id UUID,
+	distance numeric,
+	travel_time numeric,
+	last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_distance_traveltime_geo_points primary key (distance_traveltime_geo_points_id),
+    constraint fk_distance_traveltime_geo_points_from foreign key(from_geo_point_id) references geo_point(geo_point_id),
+    constraint fk_distance_traveltime_geo_points_to foreign key(to_geo_point_id) references geo_point(geo_point_id)    
+);
+
 create table postal_address
 (
     contact_mech_id       UUID NOT NULL default uuid_generate_v1(),

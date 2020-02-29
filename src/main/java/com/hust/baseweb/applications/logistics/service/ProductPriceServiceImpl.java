@@ -78,8 +78,10 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 	@Override
 	@Transactional
 	public ProductPrice getProductPrice(String productId){
+		log.info("getProductPrice, productId = " + productId);
+		
 		Product product = productRepo.findByProductId(productId);
-		log.info("getProductPrice, product = " + product.getProductId());
+		//log.info("getProductPrice, product = " + product.getProductId());
 		
 		//ProductPrice pp = productPriceRepo.findByProductAndThruDate(product, null);
 		//Iterable<ProductPrice> lst = productPriceRepo.findAll();
