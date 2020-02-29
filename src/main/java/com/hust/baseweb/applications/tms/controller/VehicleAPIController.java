@@ -24,25 +24,24 @@ import java.util.stream.StreamSupport;
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
-@RequestMapping("/vehicle")
 public class VehicleAPIController {
 
     private VehicleService vehicleService;
 
-    @GetMapping("/vehicles")
+    @GetMapping("/vehicle")
     public ResponseEntity<?> getVehicles(Principal principal, Pageable pageable) {
         log.info("::getVehicles, ");
         return ResponseEntity.ok().body(vehicleService.findAll(pageable).map(Vehicle::toVehicleModel));
     }
 
-    @GetMapping("/all")
+    @GetMapping("/vehicle/all")
     public ResponseEntity<?> getAllVehicles(Principal principal) {
         log.info("::getAllVehicles, ");
         return ResponseEntity.ok().body(StreamSupport.stream(vehicleService.findAll().spliterator(), false)
                 .map(Vehicle::toVehicleModel).collect(Collectors.toList()));
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/vehicle/upload")
     public ResponseEntity<?> uploadVehicles(Principal principal, @RequestParam("file") MultipartFile multipartFile) throws IOException {
         log.info("::uploadVehicle");
         List<CreateVehicleModel> vehicleModels =

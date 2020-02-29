@@ -10,6 +10,7 @@ import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
 import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.DeliveryCustomerModel;
 import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.DeliveryItemModel;
 import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.GetAssigned2ShipperDeliveryRouteOutputModel;
+import com.hust.baseweb.applications.tms.service.DistanceTravelTimeService;
 import com.hust.baseweb.repo.UserLoginRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,5 +80,12 @@ public class TMSAPIController {
         }
 
         return ResponseEntity.ok().body(new GetAssigned2ShipperDeliveryRouteOutputModel(deliveryCustomers));
+    }
+
+    private DistanceTravelTimeService distanceTravelTimeService;
+
+    @GetMapping("/calc-distance-travel-time")
+    public ResponseEntity<?> calcDistanceTravelTime() {
+        return ResponseEntity.ok(distanceTravelTimeService.calcAll());
     }
 }
