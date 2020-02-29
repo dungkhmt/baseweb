@@ -22,6 +22,7 @@ import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
 import com.hust.baseweb.utils.CommonUtils;
 import com.hust.baseweb.utils.GoogleMapUtils;
+import com.hust.baseweb.utils.LatLngUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,11 +125,12 @@ public class ShipmentServiceImpl implements ShipmentService {
             // đồng thời với Geopoint, query GGMap
             PostalAddress postalAddress = postalAddressMap.computeIfAbsent(shipmentItemModel.getLocationCode(),
                     locationCode -> {
-                        log.info("Query latLng: " + shipmentItemModel.getAddress());
-                        GeocodingResult[] geocodingResults = GoogleMapUtils.queryLatLng(shipmentItemModel.getAddress());
+//                        log.info("Query latLng: " + shipmentItemModel.getAddress());
+//                        GeocodingResult[] geocodingResults = GoogleMapUtils.queryLatLng(shipmentItemModel.getAddress());
+//                            LatLng location = geocodingResults[0].geometry.location;
                         GeoPoint geoPoint;
-                        if (geocodingResults != null && geocodingResults.length > 0) {
-                            LatLng location = geocodingResults[0].geometry.location;
+                        if (shipmentItemModel.getLatLng() != null) {
+                            LatLng location = LatLngUtils.parse(shipmentItemModel.getLatLng());
                             geoPoint = new GeoPoint(null, location.lat + "", location.lng + "");
                         } else {
                             geoPoint = new GeoPoint();

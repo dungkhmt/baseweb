@@ -1,5 +1,7 @@
 package com.hust.baseweb.utils;
 
+import com.google.maps.model.LatLng;
+
 /**
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
@@ -20,5 +22,10 @@ public class LatLngUtils {
 
     private static double deg2rad(double deg) {
         return deg * (Math.PI / 180);
+    }
+
+    public static LatLng parse(String s) {
+        String[] split = s.split(",");
+        return new LatLng(Double.parseDouble(split[0]), Double.parseDouble(split[1]));
     }
 }

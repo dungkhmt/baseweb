@@ -33,4 +33,7 @@ public class CreateShipmentItemInputModel {
 
     @ExcelCellName("ADDRESS")
     private String address;
+
+    @ExcelCellName("LatLng")
+    private String latLng;
 }
