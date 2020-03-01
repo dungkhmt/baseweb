@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.tms.model.shipmentitem.DeleteShipmentItemDe
 import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemModel;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemDeliveryPlanRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
+import com.hust.baseweb.utils.PageUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -53,7 +54,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
                 .filter(shipmentItem -> !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId().toString()))
                 .map(ShipmentItem::toShipmentItemModel)
                 .collect(Collectors.toList());
-        return new PageImpl<>(shipmentItemModels, pageable, shipmentItemModels.size());
+        return PageUtils.getPage(shipmentItemModels, pageable);
     }
 
     @Override

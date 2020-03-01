@@ -20,7 +20,7 @@ import java.util.UUID;
 public class VehicleDeliveryPlan {
     @Id
     @Column(name = "vehicle_id")
-    private UUID vehicleId;
+    private String vehicleId;
 
     @Id
     @Column(name = "delivery_plan_id")

@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlan
 import com.hust.baseweb.applications.tms.model.vehicle.VehicleModel;
 import com.hust.baseweb.applications.tms.repo.VehicleDeliveryPlanRepo;
 import com.hust.baseweb.applications.tms.repo.VehicleRepo;
+import com.hust.baseweb.utils.PageUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -72,7 +73,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .filter(vehicle -> !vehicleInDeliveryPlans.contains(vehicle.getVehicleId().toString()))
                 .map(Vehicle::toVehicleModel)
                 .collect(Collectors.toList());
-        return new PageImpl<>(vehicleModels, pageable, vehicleModels.size());
+        return PageUtils.getPage(vehicleModels, pageable);
     }
 
     @Override
@@ -80,7 +81,7 @@ public class VehicleServiceImpl implements VehicleService {
         List<VehicleDeliveryPlan> vehicleDeliveryPlans = new ArrayList<>();
         for (String vehicleId : createVehicleDeliveryPlanModel.getVehicleIds()) {
             vehicleDeliveryPlans.add(new VehicleDeliveryPlan(
-                    UUID.fromString(vehicleId),
+                    vehicleId,
                     UUID.fromString(createVehicleDeliveryPlanModel.getDeliveryPlanId())
             ));
         }
@@ -92,7 +93,7 @@ public class VehicleServiceImpl implements VehicleService {
     public boolean deleteVehicleDeliveryPlan(DeleteVehicleDeliveryPlanModel deleteVehicleDeliveryPlanModel) {
         VehicleDeliveryPlan vehicleDeliveryPlan = vehicleDeliveryPlanRepo.findByDeliveryPlanIdAndVehicleId(
                 UUID.fromString(deleteVehicleDeliveryPlanModel.getDeliveryPlanId()),
-                UUID.fromString(deleteVehicleDeliveryPlanModel.getVehicleId())
+                deleteVehicleDeliveryPlanModel.getVehicleId()
         );
         if (vehicleDeliveryPlan != null) {
             vehicleDeliveryPlanRepo.delete(vehicleDeliveryPlan);
