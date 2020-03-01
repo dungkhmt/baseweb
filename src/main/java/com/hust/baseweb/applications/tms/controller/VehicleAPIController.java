@@ -4,7 +4,6 @@ import com.hust.baseweb.applications.tms.entity.Vehicle;
 import com.hust.baseweb.applications.tms.model.createvehicle.CreateVehicleModel;
 import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlanModel;
-import com.hust.baseweb.applications.tms.model.vehicle.VehicleModel;
 import com.hust.baseweb.applications.tms.service.VehicleService;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
@@ -19,9 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -81,14 +78,7 @@ public class VehicleAPIController {
     // add view
     @GetMapping("/vehicle-not-in/{deliveryPlanId}")
     public ResponseEntity<?> getVehicleNotIn(Principal principal, @PathVariable String deliveryPlanId, Pageable pageable) {
-        log.info("::getVehicleNotIn vehicleId=" + deliveryPlanId);
-        Set<String> vehicleIdsInDeliveryPlan = vehicleService.findAllInDeliveryPlanId(deliveryPlanId, pageable)
-                .stream().map(VehicleModel::getVehicleId).collect(Collectors.toSet());
-        List<Vehicle> allVehicles = new ArrayList<>();
-        vehicleService.findAll().forEach(allVehicles::add);
-        return ResponseEntity.ok().body(allVehicles.stream()
-                .filter(vehicle -> !vehicleIdsInDeliveryPlan.contains(vehicle.getVehicleId()))
-                .map(Vehicle::toVehicleModel)
-                .collect(Collectors.toList()));
+        log.info("::getVehicleNotIn deliveryPlanId=" + deliveryPlanId);
+        return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlanId(deliveryPlanId, pageable));
     }
 }

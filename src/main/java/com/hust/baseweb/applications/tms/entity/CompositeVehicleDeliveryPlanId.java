@@ -11,6 +11,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class CompositeVehicleDeliveryPlanId implements Serializable {
-    private UUID vehicleId;
+    private String vehicleId;
     private UUID deliveryPlanId;
 }

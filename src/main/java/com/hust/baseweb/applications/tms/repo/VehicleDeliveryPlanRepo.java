@@ -16,6 +16,6 @@ public interface VehicleDeliveryPlanRepo extends PagingAndSortingRepository<Vehi
 
     Page<VehicleDeliveryPlan> findAllByDeliveryPlanId(UUID deliveryPlanId, Pageable pageable);
 
-    VehicleDeliveryPlan findByDeliveryPlanIdAndVehicleId(UUID deliveryPlanId, UUID vehicleId);
+    VehicleDeliveryPlan findByDeliveryPlanIdAndVehicleId(UUID deliveryPlanId, String vehicleId);
 
 }
