@@ -13,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
 
 
 
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,7 @@ import com.hust.baseweb.applications.sales.entity.CustomerSalesman;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.model.customersalesman.AssignCustomer2SalesmanInputModel;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetCustomersOfSalesmanInputModel;
+import com.hust.baseweb.applications.sales.model.customersalesman.GetSalesmanOutputModel;
 import com.hust.baseweb.applications.sales.service.CustomerSalesmanService;
 import com.hust.baseweb.applications.sales.service.PartySalesmanService;
 import com.hust.baseweb.entity.UserLogin;
@@ -49,7 +51,7 @@ public class SalesAPIController {
 	@PostMapping("/get-list-salesmans")
     public ResponseEntity getListSalesmans(Principal principal, @RequestBody GetListSalesmanInputModel input) {
         // TODO
-		List<PartySalesman> salesman = partySalesmanService.findAllSalesman();
+		List<GetSalesmanOutputModel> salesman = partySalesmanService.findAllSalesman();
         return ResponseEntity.ok().body(salesman);
     }
 	
