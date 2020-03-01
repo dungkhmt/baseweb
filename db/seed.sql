@@ -7,7 +7,7 @@ INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, l
 INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'CUSTOMER_GROUP', 'PARTY_GROUP', FALSE, 'Customer Group', NOW(), NOW());
 INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'PARTY_DISTRIBUTOR', NULL, FALSE, 'Distributor', NOW(), NOW());
 INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'PARTY_RETAILOUTLET', NULL, FALSE, 'Distributor', NOW(), NOW());
-
+insert into party_type(party_type_id, description) values('COMPANY','Company');
 
 
 INSERT INTO status_type (status_type_id, parent_type_id, description, last_updated_stamp, created_stamp) VALUES ( 'PARTY_STATUS', NULL, 'Party status', NOW(), NOW());
@@ -62,5 +62,5 @@ INSERT  INTO person (party_id, first_name, middle_name, last_name, gender, birth
 INSERT INTO user_login (user_login_id, current_password, password_hint, is_system, enabled, has_logged_out, require_password_change, disabled_date_time, successive_failed_logins, last_updated_stamp, created_stamp, party_id) VALUES ( 'admin', '$2a$04$cqFXgdkB.8u2HwT3QUTVZuePtHdzi.rWFCjdgNbVB7l6vn/yAU7F6', NULL, FALSE, TRUE, FALSE, FALSE, NULL, NULL, NOW(), NOW(), 'bd6322f2-2121-11ea-81a8-979e2f76b5a4');
 INSERT INTO user_login_security_group (user_login_id, group_id, last_updated_stamp, created_stamp) VALUES ('admin', 'ROLE_FULL_ADMIN', NOW(), NOW());
 
-
+insert into party(party_type_id, status_id) values('COMPANY','PARTY_ENABLED');
 

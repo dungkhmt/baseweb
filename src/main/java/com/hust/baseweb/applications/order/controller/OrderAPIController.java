@@ -70,13 +70,16 @@ public class OrderAPIController {
     	log.info("getOrders, page = pageNumber = " + page.getPageNumber() + ", offSet = " +
                 page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
     	Page<OrderHeader> orders = orderService.findAll(page);
+    	//Page<OrderDetailView> orderDetailView = new Page<OrderDetailView>();
     	return ResponseEntity.ok().body(orders);
     }
     @GetMapping(path = "/orders/{orderId}")
     public ResponseEntity<?> getOrderDetail(@PathVariable String orderId, Principal principal) {
     	log.info("getOrderDetail, orderId = " + orderId);
     	
-    	OrderHeader order = orderService.findByOrderId(orderId);
+    	//OrderHeader order = orderService.findByOrderId(orderId);
+    	OrderDetailView order = orderService.getOrderDetail(orderId);
+    	
     	return ResponseEntity.ok().body(order);
     }
     

@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.order.service;
 
 
+import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.logistics.entity.Facility;
@@ -13,8 +14,15 @@ import com.hust.baseweb.applications.order.controller.OrderAPIController;
 import com.hust.baseweb.applications.order.entity.*;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
+import com.hust.baseweb.applications.order.model.OrderDetailView;
+import com.hust.baseweb.applications.order.model.OrderItemDetailView;
 import com.hust.baseweb.applications.order.repo.*;
+import com.hust.baseweb.applications.sales.entity.PartySalesman;
+import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
+import com.hust.baseweb.applications.sales.service.PartySalesmanService;
+import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
 import com.hust.baseweb.utils.DateTimeUtils;
 
@@ -30,9 +38,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 
+
+
+
+
+
+
+
+
+
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -53,6 +72,10 @@ public class OrderServiceImpl implements OrderService {
     private ProductPriceService productPriceService;
     private PostalAddressRepo postalAddressRepo;
     private POrderRepo pOrderRepo;
+    private PartySalesmanRepo partySalesmanRepo;
+    private PartyCustomerRepo partyCustomerRepo;
+    private PartyRepo partyRepo;
+    private PartySalesmanService partySalesmanService;
     
     @Override
     @Transactional
@@ -201,6 +224,124 @@ public class OrderServiceImpl implements OrderService {
 		// TODO Auto-generated method stub
 		OrderHeader order = orderRepo.findByOrderId(orderId);
 		return order;
+	}
+
+	@Override
+	public OrderDetailView getOrderDetail(String orderId) {
+		// TODO Auto-generated method stub
+		OrderHeader order = orderRepo.findByOrderId(orderId);
+		if(order == null) return null;
+		UUID customerId = null;
+		UUID vendorId = null;
+		UUID salesmanId = null;
+		List<OrderRole> orderRoles = orderRoleRepo.findByOrderId(orderId);
+		for(OrderRole or: orderRoles){
+			if(or.getRoleTypeId().equals("BILL_TO_CUSTOMER")){
+				customerId = or.getPartyId();
+			}else if(or.getRoleTypeId().equals("BILL_FROM_VENDOR")){
+				vendorId = or.getPartyId();
+			}else if(or.getRoleTypeId().equals("SALES_EXECUTIVE")){
+				salesmanId = or.getPartyId();
+			}
+		}
+		PartySalesman salesman = partySalesmanRepo.findByPartyId(salesmanId);
+		PartyCustomer vendor = partyCustomerRepo.findByPartyId(vendorId);
+		PartyCustomer customer = partyCustomerRepo.findByPartyId(customerId);
+		Party partySalesman = partyRepo.findByPartyId(salesmanId);
+		UserLogin userLogin = partySalesmanService.findUserLoginOfSalesmanId(salesmanId);
+		
+		OrderDetailView odv = new OrderDetailView();
+		odv.setCustomerId(customerId);
+		odv.setOrderId(orderId);
+		odv.setVendorId(vendorId);
+		if(customer != null){
+			odv.setCustomerName(customer.getCustomerName());
+		}
+		if(vendor != null){
+			odv.setVendorName(vendor.getCustomerName());
+		}
+		if(userLogin != null){
+			odv.setSalesmanLoginId(userLogin.getUserLoginId());
+		}
+		if(salesman != null){
+			odv.setSalesmanName(salesman.getPerson().getLastName() + " " + salesman.getPerson().getMiddleName() + " " + salesman.getPerson().getFirstName());
+		}
+		OrderItemDetailView[] oidv = new OrderItemDetailView[order.getOrderItems().size()];
+		for(int i = 0; i < order.getOrderItems().size(); i++){
+			OrderItem oi = order.getOrderItems().get(i);
+			oidv[i] = new OrderItemDetailView();
+			oidv[i].setOrderItemId(oi.getOrderItemSeqId());
+			if(oi.getProduct() != null){
+				oidv[i].setProductId(oi.getProduct().getProductId());
+				oidv[i].setProductName(oi.getProduct().getProductName());
+			}
+			oidv[i].setQuantity(oi.getQuantity());
+			oidv[i].setUnitPrice(oi.getUnitPrice());
+			oidv[i].setTotalItemPrice(oidv[i].getUnitPrice().multiply(new BigDecimal(oi.getQuantity())));
+			oidv[i].setUom(oi.getProduct().getUom().getDescription());
+		}
+		odv.setOrderItems(oidv);
+		return odv;
+	}
+
+	@Override
+	public OrderDetailView convertOrderDetail(OrderHeader order) {
+		// TODO Auto-generated method stub
+		if(order == null) return null;
+		String orderId = order.getOrderId();
+		UUID customerId = null;
+		UUID vendorId = null;
+		UUID salesmanId = null;
+		List<OrderRole> orderRoles = orderRoleRepo.findByOrderId(orderId);
+		for(OrderRole or: orderRoles){
+			if(or.getRoleTypeId().equals("BILL_TO_CUSTOMER")){
+				customerId = or.getPartyId();
+			}else if(or.getRoleTypeId().equals("BILL_FROM_VENDOR")){
+				vendorId = or.getPartyId();
+			}else if(or.getRoleTypeId().equals("SALES_EXECUTIVE")){
+				salesmanId = or.getPartyId();
+			}
+		}
+		PartySalesman salesman = partySalesmanRepo.findByPartyId(salesmanId);
+		PartyCustomer vendor = partyCustomerRepo.findByPartyId(vendorId);
+		PartyCustomer customer = partyCustomerRepo.findByPartyId(customerId);
+		Party partySalesman = partyRepo.findByPartyId(salesmanId);
+		UserLogin userLogin = partySalesmanService.findUserLoginOfSalesmanId(salesmanId);
+		
+		OrderDetailView odv = new OrderDetailView();
+		odv.setCustomerId(customerId);
+		odv.setOrderId(orderId);
+		odv.setVendorId(vendorId);
+		odv.setTotal(order.getGrandTotal());
+		odv.setOrderDate(order.getOrderDate());
+		if(customer != null){
+			odv.setCustomerName(customer.getCustomerName());
+		}
+		if(vendor != null){
+			odv.setVendorName(vendor.getCustomerName());
+		}
+		if(userLogin != null){
+			odv.setSalesmanLoginId(userLogin.getUserLoginId());
+		}
+		if(salesman != null){
+			odv.setSalesmanName(salesman.getPerson().getLastName() + " " + salesman.getPerson().getMiddleName() + " " + salesman.getPerson().getFirstName());
+		}
+		OrderItemDetailView[] oidv = new OrderItemDetailView[order.getOrderItems().size()];
+		for(int i = 0; i < order.getOrderItems().size(); i++){
+			OrderItem oi = order.getOrderItems().get(i);
+			oidv[i] = new OrderItemDetailView();
+			oidv[i].setOrderItemId(oi.getOrderItemSeqId());
+			if(oi.getProduct() != null){
+				oidv[i].setProductId(oi.getProduct().getProductId());
+				oidv[i].setProductName(oi.getProduct().getProductName());
+			}
+			oidv[i].setQuantity(oi.getQuantity());
+			oidv[i].setUnitPrice(oi.getUnitPrice());
+			oidv[i].setTotalItemPrice(oidv[i].getUnitPrice().multiply(new BigDecimal(oi.getQuantity())));
+			oidv[i].setUom(oi.getProduct().getUom().getDescription());
+		}
+		odv.setOrderItems(oidv);
+		return odv;
 	}
 
 }

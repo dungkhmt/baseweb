@@ -21,7 +21,7 @@ public interface UserRestBriefProjection {
     @Value("#{target.createdDate}")
     Date getCreatedDate();
 
-    @Value("#{target.type.id}")
+    @Value("#{target.type.partyTypeId}")
     String getPartyType();
 
     //  @Value("#{target.status.description}")

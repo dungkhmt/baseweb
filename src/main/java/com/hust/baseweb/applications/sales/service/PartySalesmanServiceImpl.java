@@ -59,4 +59,13 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
 		return retList;
 	}
 
+	@Override
+	public UserLogin findUserLoginOfSalesmanId(UUID partySalesmanId) {
+		// TODO Auto-generated method stub
+		Party party = partyRepo.findByPartyId(partySalesmanId);
+		List<UserLogin> userLogins = userLoginRepo.findByParty(party);
+		if(userLogins != null && userLogins.size() > 0) return userLogins.get(0);
+		return null;
+	}
+
 }
