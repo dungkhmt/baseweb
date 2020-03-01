@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @RestController
 @CrossOrigin
@@ -39,7 +38,7 @@ public class VehicleAPIController {
     @GetMapping("/all-vehicle")
     public ResponseEntity<?> getAllVehicles(Principal principal) {
         log.info("::getAllVehicles, ");
-        return ResponseEntity.ok().body(StreamSupport.stream(vehicleService.findAll().spliterator(), false)
+        return ResponseEntity.ok().body(vehicleService.findAll().stream()
                 .map(Vehicle::toVehicleModel).collect(Collectors.toList()));
     }
 
@@ -48,7 +47,7 @@ public class VehicleAPIController {
         log.info("::uploadVehicle");
         List<CreateVehicleModel> vehicleModels =
                 Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreateVehicleModel.class,
-                        PoijiOptions.PoijiOptionsBuilder.settings().sheetIndex(0).build());
+                        PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải").build());
 
         vehicleService.saveAll(vehicleModels.stream().map(CreateVehicleModel::toVehicle).collect(Collectors.toList()));
         return ResponseEntity.ok().build();

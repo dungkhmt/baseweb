@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlan
 import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.VehicleModel;
 import com.hust.baseweb.applications.tms.repo.VehicleDeliveryPlanRepo;
+import com.hust.baseweb.applications.tms.repo.VehicleMaintenanceHistoryRepo;
 import com.hust.baseweb.applications.tms.repo.VehicleRepo;
 import com.hust.baseweb.utils.PageUtils;
 import lombok.AllArgsConstructor;
@@ -27,24 +28,28 @@ public class VehicleServiceImpl implements VehicleService {
 
     private VehicleRepo vehicleRepo;
     private VehicleDeliveryPlanRepo vehicleDeliveryPlanRepo;
+    private VehicleMaintenanceHistoryRepo vehicleMaintenanceHistoryRepo;
 
     @Override
     public Page<Vehicle> findAll(Pageable pageable) {
-        return vehicleRepo.findAll(pageable);
+        return vehicleRepo.findAllByVehicleMaintenanceHistory_ThruDateIsNull(pageable);
     }
 
     @Override
-    public Iterable<Vehicle> findAll() {
-        return vehicleRepo.findAll();
-    }
-
-    @Override
-    public void save(Vehicle vehicle) {
-        vehicleRepo.save(vehicle);
+    public List<Vehicle> findAll() {
+        return vehicleRepo.findAllByVehicleMaintenanceHistory_ThruDateIsNull();
     }
 
     @Override
     public void saveAll(List<Vehicle> vehicles) {
+        Set<String> vehicleIdSet = vehicleMaintenanceHistoryRepo
+                .findAllByVehicleIn(vehicles)
+                .stream().map(vehicleMaintenanceHistory -> vehicleMaintenanceHistory.getVehicle().getVehicleId())
+                .collect(Collectors.toSet());
+        vehicles = vehicles.stream()
+                .filter(vehicle -> !vehicleIdSet.contains(vehicle.getVehicleId()))
+                .collect(Collectors.toList());
+        vehicles.forEach(vehicle -> vehicle.setVehicleMaintenanceHistory(vehicle.createVehicleMaintenanceHistory()));
         vehicleRepo.saveAll(vehicles);
     }
 

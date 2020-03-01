@@ -12,9 +12,7 @@ import java.util.List;
 public interface VehicleService {
     Page<Vehicle> findAll(Pageable pageable);
 
-    Iterable<Vehicle> findAll();
-
-    void save(Vehicle vehicle);
+    List<Vehicle> findAll();
 
     void saveAll(List<Vehicle> vehicles);
 

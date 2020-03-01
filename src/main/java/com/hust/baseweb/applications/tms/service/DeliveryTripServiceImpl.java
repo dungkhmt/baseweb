@@ -40,7 +40,12 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         }
         deliveryTrip.setExecuteDate(executeDate);
 
-        Vehicle vehicle = vehicleRepo.findById(input.getVehicleId()).orElse(new Vehicle(input.getVehicleId()));
+        Vehicle vehicle = vehicleRepo.findById(input.getVehicleId())
+                .orElseGet(() -> {
+                    Vehicle v = new Vehicle(input.getVehicleId(), null, null, null, null, null, null, null, null);
+                    v.setVehicleMaintenanceHistory(v.createVehicleMaintenanceHistory());
+                    return v;
+                });
         vehicleRepo.save(vehicle);
 
         deliveryTrip.setVehicle(vehicle);
