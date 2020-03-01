@@ -64,6 +64,9 @@ public class OrderServiceImpl implements OrderService {
         String salesmanId = orderInput.getSalesmanId();
         //System.out.println(module + "::save, salesmanId = " + salesmanId);
         UserLogin salesman = userLoginRepo.findByUserLoginId(salesmanId);
+        //Party salesman = partyRepo.
+        log.info("save, salesmanId = "+ salesmanId + ", partyId = " + (salesman != null ? salesman.getParty().getPartyId() : "NULL"));
+        
         Facility facility = facilityRepo.findByFacilityId(orderInput.getFacilityId());
 
         UUID uuid = UUID.randomUUID();

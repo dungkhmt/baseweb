@@ -14,7 +14,7 @@ public class ModelCreateOrderInput {
     private ModelCreateOrderInputOrderItem[] orderItems;
     private String salesChannelId;
     private String facilityId;
-    private String salesmanId;
+    private String salesmanId;// user_login_id
     private String orderDate;
     private UUID shipToAddressId;
     private String shipToAddress;

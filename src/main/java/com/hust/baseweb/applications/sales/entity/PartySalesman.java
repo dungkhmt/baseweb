@@ -7,12 +7,14 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import com.hust.baseweb.entity.Person;
+import com.hust.baseweb.entity.UserLogin;
 
 
 @Entity
@@ -27,5 +29,9 @@ public class PartySalesman {
 	 @JoinColumn(name = "party_id", referencedColumnName = "party_id")
 	 @OneToOne(fetch = FetchType.EAGER)
 	 private Person person;
+	 
+	 //@JoinColumn(name="party_id", referencedColumnName="party_id")
+	 //@ManyToOne(fetch=FetchType.EAGER)
+	 //private UserLogin userLogin;
 	 
 }
