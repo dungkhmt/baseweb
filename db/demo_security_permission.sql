@@ -6,7 +6,6 @@ insert into application(application_id, application_type_id, module_id, permissi
 ('MENU_TMS','MENU',null,null,'Menu TMS');
 insert into application(application_id, application_type_id, module_id, permission_id, description) values 
 ('MENU_TMS_CREATE_DELIVERY_PLAN','MENU','MENU_TMS','DELIVERY_PLAN_CREATE','Menu Create Delivery Plan');
-insert into user_login_security_group(user_login_id,group_id) values('vietho','ROLE_TMS_MANAGER');
 
 
 insert into security_group(group_id, description) values('ROLE_SALES_ROUTE_MANAGER','Management of Sales Route');
