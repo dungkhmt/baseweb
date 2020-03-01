@@ -35,6 +35,7 @@ create table vehicle_maintenance_history
     vehicle_maintenance_history_id UUID        NOT NULL default uuid_generate_v1(),
     vehicle_id                     VARCHAR(60) NOT NULL,
     maintenance_date               TIMESTAMP,
+    thru_date						TIMESTAMP,
     capacity                       numeric,
     long                           Integer,
     width                          Integer,
