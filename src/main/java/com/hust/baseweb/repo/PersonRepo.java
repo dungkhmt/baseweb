@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * PersonRepo
  */
 public interface PersonRepo  extends JpaRepository<Person,UUID>{
-
+	Person findByPartyId(UUID partyId);
 }

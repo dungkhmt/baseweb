@@ -8,12 +8,16 @@ import com.hust.baseweb.applications.order.model.*;
 import com.hust.baseweb.applications.order.repo.POrderRepo;
 import com.hust.baseweb.applications.order.service.OrderService;
 import com.hust.baseweb.applications.order.service.PartyCustomerService;
+import com.hust.baseweb.applications.sales.service.PartySalesmanService;
+import com.hust.baseweb.service.UserService;
+import com.hust.baseweb.utils.PageUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -39,7 +44,8 @@ public class OrderAPIController {
 
     private OrderService orderService;
     private PartyCustomerService partyCustomerService;
-    
+    private PartySalesmanService partySalesmanService;
+    private UserService userService;
     
     @PostMapping("/create-order-distributor-to-retailoutlet")
     public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
@@ -70,8 +76,18 @@ public class OrderAPIController {
     	log.info("getOrders, page = pageNumber = " + page.getPageNumber() + ", offSet = " +
                 page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
     	Page<OrderHeader> orders = orderService.findAll(page);
-    	//Page<OrderDetailView> orderDetailView = new Page<OrderDetailView>();
-    	return ResponseEntity.ok().body(orders);
+    	
+    	List<OrderDetailView> odv = orders.stream().map(p -> new OrderDetailView(p, orderService, partySalesmanService, userService)).collect(Collectors.toList());
+    	
+    	//Page<DTOPerson> dtoPerson = new PageImpl<DTOPerson>(lst, page,
+    	//	       pg.getTotalElements());
+    	
+    	//Page<OrderDetailView> page_odv = PageUtils.getPage(odv, orders.getPageable());
+    	Page<OrderDetailView> page_odv = new PageImpl<OrderDetailView>(odv, page,
+    		       orders.getTotalElements());
+    	
+    	//return ResponseEntity.ok().body(orders);
+    	return ResponseEntity.ok().body(page_odv);
     }
     @GetMapping(path = "/orders/{orderId}")
     public ResponseEntity<?> getOrderDetail(@PathVariable String orderId, Principal principal) {

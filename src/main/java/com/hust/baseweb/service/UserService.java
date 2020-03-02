@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.model.PersonUpdateModel;
@@ -30,4 +31,6 @@ public interface UserService {
     public Party save(PersonModel personModel) throws Exception;
 
     public Party update(PersonUpdateModel personUpdateModel, UUID partyId);
+    
+    
 }

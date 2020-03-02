@@ -4,6 +4,7 @@ package com.hust.baseweb.applications.order.service;
 
 import java.util.UUID;
 
+import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
 import com.hust.baseweb.applications.order.model.OrderDetailView;
@@ -19,4 +20,5 @@ public interface OrderService {
     public OrderHeader findByOrderId(String orderId);
     public OrderDetailView getOrderDetail(String orderId);
     public OrderDetailView convertOrderDetail(OrderHeader order);
+    public PartyCustomer findCustomerById(UUID partyId);
 }

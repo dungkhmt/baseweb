@@ -3,7 +3,7 @@ package com.hust.baseweb.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Getter
