@@ -13,8 +13,10 @@ import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetSalesmanOutputModel;
 import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
 import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.PartyRepo;
+import com.hust.baseweb.repo.PersonRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
 
 @Service
@@ -28,6 +30,9 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
 	
 	@Autowired
 	private PartyRepo partyRepo;
+	
+	@Autowired
+	private PersonRepo personRepo;
 	
 	@Override
 	public List<GetSalesmanOutputModel> findAllSalesman() {
@@ -66,6 +71,18 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
 		List<UserLogin> userLogins = userLoginRepo.findByParty(party);
 		if(userLogins != null && userLogins.size() > 0) return userLogins.get(0);
 		return null;
+	}
+
+	@Override
+	public PartySalesman findById(UUID partyId) {
+		// TODO Auto-generated method stub
+		return partySalesmanRepo.findByPartyId(partyId);
+	}
+
+	@Override
+	public Person findPersonByPartyId(UUID partyId) {
+		// TODO Auto-generated method stub
+		return personRepo.findByPartyId(partyId);
 	}
 
 }

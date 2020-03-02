@@ -215,6 +215,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public Page<OrderHeader> findAll(Pageable page) {
 		// TODO Auto-generated method stub
+		
 		Page<OrderHeader> pages = pOrderRepo.findAll(page);
 		return pages;
 	}
@@ -342,6 +343,12 @@ public class OrderServiceImpl implements OrderService {
 		}
 		odv.setOrderItems(oidv);
 		return odv;
+	}
+
+	@Override
+	public PartyCustomer findCustomerById(UUID partyId) {
+		// TODO Auto-generated method stub
+		return partyCustomerRepo.findByPartyId(partyId);
 	}
 
 }

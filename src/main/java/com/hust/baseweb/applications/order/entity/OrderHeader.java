@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.order.entity;
 
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.logistics.entity.Facility;
+import com.hust.baseweb.entity.Party;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -60,5 +62,7 @@ public class OrderHeader {
 
     //@JoinTable(name="OrderRole", inverseJoinColumns=@JoinColumn(name="party_id", referencedColumnName="party_id"),
     //			joinColumns=@JoinColumn(name="order_id", referencedColumnName="order_id"))
-    //private List<Party> parties;
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<OrderRole> orderRoles;
 }
