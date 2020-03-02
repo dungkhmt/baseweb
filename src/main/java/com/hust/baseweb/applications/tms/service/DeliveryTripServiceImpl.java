@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.tms.entity.Vehicle;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
 import com.hust.baseweb.applications.tms.repo.DeliveryPlanRepo;
 import com.hust.baseweb.applications.tms.repo.DeliveryTripRepo;
+import com.hust.baseweb.applications.tms.repo.VehicleMaintenanceHistoryRepo;
 import com.hust.baseweb.applications.tms.repo.VehicleRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     private DeliveryTripRepo deliveryTripRepo;
     private DeliveryPlanRepo deliveryPlanRepo;
     private VehicleRepo vehicleRepo;
+    private VehicleMaintenanceHistoryRepo vehicleMaintenanceHistoryRepo;
 
     @Override
     @Transactional
@@ -42,11 +44,11 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
         Vehicle vehicle = vehicleRepo.findById(input.getVehicleId())
                 .orElseGet(() -> {
-                    Vehicle v = new Vehicle(input.getVehicleId(), null, null, null, null, null, null, null, null);
-                    v.setVehicleMaintenanceHistory(v.createVehicleMaintenanceHistory());
+                    Vehicle v = new Vehicle(input.getVehicleId(), null, null, null, null, null, null, null);
+                    vehicleRepo.save(v);
+                    vehicleMaintenanceHistoryRepo.save(v.createVehicleMaintenanceHistory());
                     return v;
                 });
-        vehicleRepo.save(vehicle);
 
         deliveryTrip.setVehicle(vehicle);
 

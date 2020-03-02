@@ -26,7 +26,7 @@ public class CreateVehicleModel {
     private String description;
 
     public Vehicle toVehicle() {
-        Vehicle vehicle = new Vehicle(
+        return new Vehicle(
                 vehicleId,
                 capacity,
                 length,
@@ -34,10 +34,7 @@ public class CreateVehicleModel {
                 height,
                 pallet,
                 statusId,
-                description,
-                null
+                description
         );
-        vehicle.setVehicleMaintenanceHistory(vehicle.createVehicleMaintenanceHistory());
-        return vehicle;
     }
 }

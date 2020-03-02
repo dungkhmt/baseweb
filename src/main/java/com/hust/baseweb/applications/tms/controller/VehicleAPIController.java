@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.tms.controller;
 
 import com.hust.baseweb.applications.tms.entity.Vehicle;
+import com.hust.baseweb.applications.tms.entity.VehicleMaintenanceHistory;
 import com.hust.baseweb.applications.tms.model.createvehicle.CreateVehicleModel;
 import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlanModel;
@@ -49,7 +50,10 @@ public class VehicleAPIController {
                 Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreateVehicleModel.class,
                         PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải").build());
 
-        vehicleService.saveAll(vehicleModels.stream().map(CreateVehicleModel::toVehicle).collect(Collectors.toList()));
+        List<Vehicle> vehicles = vehicleModels.stream().map(CreateVehicleModel::toVehicle).collect(Collectors.toList());
+        List<VehicleMaintenanceHistory> vehicleMaintenanceHistories = vehicles.stream().map(Vehicle::createVehicleMaintenanceHistory).collect(Collectors.toList());
+        vehicleService.saveAll(vehicles);
+        vehicleService.saveAllMaintenanceHistory(vehicleMaintenanceHistories);
         return ResponseEntity.ok().build();
     }
 

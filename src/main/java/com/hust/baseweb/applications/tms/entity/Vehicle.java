@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
@@ -33,10 +35,6 @@ public class Vehicle {
     private String statusId;
     @Column(name = "description")
     private String description;
-
-    @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private VehicleMaintenanceHistory vehicleMaintenanceHistory;
 
     public VehicleModel toVehicleModel() {
         return new VehicleModel(
