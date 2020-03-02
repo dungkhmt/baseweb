@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.tms.controller;
 
 import com.hust.baseweb.applications.tms.entity.Vehicle;
+import com.hust.baseweb.applications.tms.entity.VehicleMaintenanceHistory;
 import com.hust.baseweb.applications.tms.model.createvehicle.CreateVehicleModel;
 import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlanModel;
@@ -20,7 +21,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @RestController
 @CrossOrigin
@@ -39,7 +39,7 @@ public class VehicleAPIController {
     @GetMapping("/all-vehicle")
     public ResponseEntity<?> getAllVehicles(Principal principal) {
         log.info("::getAllVehicles, ");
-        return ResponseEntity.ok().body(StreamSupport.stream(vehicleService.findAll().spliterator(), false)
+        return ResponseEntity.ok().body(vehicleService.findAll().stream()
                 .map(Vehicle::toVehicleModel).collect(Collectors.toList()));
     }
 
@@ -48,9 +48,12 @@ public class VehicleAPIController {
         log.info("::uploadVehicle");
         List<CreateVehicleModel> vehicleModels =
                 Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreateVehicleModel.class,
-                        PoijiOptions.PoijiOptionsBuilder.settings().sheetIndex(0).build());
+                        PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải").build());
 
-        vehicleService.saveAll(vehicleModels.stream().map(CreateVehicleModel::toVehicle).collect(Collectors.toList()));
+        List<Vehicle> vehicles = vehicleModels.stream().map(CreateVehicleModel::toVehicle).collect(Collectors.toList());
+        List<VehicleMaintenanceHistory> vehicleMaintenanceHistories = vehicles.stream().map(Vehicle::createVehicleMaintenanceHistory).collect(Collectors.toList());
+        vehicleService.saveAll(vehicles);
+        vehicleService.saveAllMaintenanceHistory(vehicleMaintenanceHistories);
         return ResponseEntity.ok().build();
     }
 

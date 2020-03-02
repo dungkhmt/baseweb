@@ -15,7 +15,26 @@ public class CreateVehicleModel {
     @ExcelCellName("Số xe")
     private String vehicleId;
 
+    @ExcelCellName("Tải trọng  (Tấn)")
+    private Double capacity;
+    private Integer length;
+    private Integer width;
+    private Integer height;
+    @ExcelCellName("SL Pallet  Tối đa")
+    private Double pallet;
+    private String statusId;
+    private String description;
+
     public Vehicle toVehicle() {
-        return new Vehicle(vehicleId);
+        return new Vehicle(
+                vehicleId,
+                capacity,
+                length,
+                width,
+                height,
+                pallet,
+                statusId,
+                description
+        );
     }
 }

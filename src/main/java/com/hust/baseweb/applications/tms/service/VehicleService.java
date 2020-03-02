@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.tms.entity.Vehicle;
+import com.hust.baseweb.applications.tms.entity.VehicleMaintenanceHistory;
 import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.VehicleModel;
@@ -12,11 +13,11 @@ import java.util.List;
 public interface VehicleService {
     Page<Vehicle> findAll(Pageable pageable);
 
-    Iterable<Vehicle> findAll();
-
-    void save(Vehicle vehicle);
+    List<Vehicle> findAll();
 
     void saveAll(List<Vehicle> vehicles);
+
+    void saveAllMaintenanceHistory(List<VehicleMaintenanceHistory> vehicleMaintenanceHistories);
 
     Page<VehicleModel> findAllInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 

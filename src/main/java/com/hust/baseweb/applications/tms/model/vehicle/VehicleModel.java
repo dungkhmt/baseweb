@@ -11,4 +11,11 @@ import lombok.Setter;
 @Setter
 public class VehicleModel {
     private String vehicleId;
+    private Double capacity;
+    private Integer length;
+    private Integer width;
+    private Integer height;
+    private Double pallet;
+    private String statusId;
+    private String description;
 }
