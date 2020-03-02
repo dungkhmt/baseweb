@@ -44,6 +44,15 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
+    public List<ShipmentItemModel> findAllInDeliveryPlanId(String deliveryPlanId) {
+        List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans
+                = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
+        return shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemDeliveryPlans.stream()
+                .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()))
+                .stream().map(ShipmentItem::toShipmentItemModel).collect(Collectors.toList());
+    }
+
+    @Override
     public Page<ShipmentItemModel> findAllNotInDeliveryPlanId(String deliveryPlanId, Pageable pageable) {
         Set<String> shipmentItemInDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
                 .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())

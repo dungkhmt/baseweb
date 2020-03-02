@@ -7,8 +7,12 @@ import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface ShipmentItemService {
     Page<ShipmentItemModel> findAllInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
+
+    List<ShipmentItemModel> findAllInDeliveryPlanId(String deliveryPlanId);
 
     Page<ShipmentItemModel> findAllNotInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 

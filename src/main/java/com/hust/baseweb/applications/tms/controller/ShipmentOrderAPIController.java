@@ -77,10 +77,16 @@ public class ShipmentOrderAPIController {
         return ResponseEntity.ok().body(shipmentItemService.findAll(pageable).map(ShipmentItem::toShipmentItemModel));
     }
 
-    @GetMapping("/shipment-item/{deliveryPlanId}")
-    public ResponseEntity<?> getOrderShipmentItem(Principal principal, @PathVariable String deliveryPlanId, Pageable pageable) {
+    @GetMapping("/shipment-item/{deliveryPlanId}/page")
+    public ResponseEntity<?> getPageOrderShipmentItem(Principal principal, @PathVariable String deliveryPlanId, Pageable pageable) {
         log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanId(deliveryPlanId, pageable));
+    }
+
+    @GetMapping("/shipment-item/{deliveryPlanId}/all")
+    public ResponseEntity<?> getAllOrderShipmentItem(Principal principal, @PathVariable String deliveryPlanId) {
+        log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
+        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanId(deliveryPlanId));
     }
 
     @GetMapping("/shipment-item-not-in/{deliveryPlanId}")
