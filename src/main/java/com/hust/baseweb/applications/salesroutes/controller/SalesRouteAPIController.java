@@ -18,6 +18,8 @@ import com.hust.baseweb.applications.sales.model.customersalesman.GetCustomersOf
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfigCustomer;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
+import com.hust.baseweb.applications.salesroutes.entity.SalesmanCheckinHistory;
+import com.hust.baseweb.applications.salesroutes.model.salesmancheckinout.SalesmanCheckInOutInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.CreateSalesRouteConfigInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.CreateSalesRouteConfigCustomerInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GenerateSalesRouteDetailInputModel;
@@ -28,6 +30,7 @@ import com.hust.baseweb.applications.salesroutes.service.SalesRouteConfigCustome
 import com.hust.baseweb.applications.salesroutes.service.SalesRouteConfigService;
 import com.hust.baseweb.applications.salesroutes.service.SalesRouteDetailService;
 import com.hust.baseweb.applications.salesroutes.service.SalesRoutePlanningPeriodService;
+import com.hust.baseweb.applications.salesroutes.service.SalesmanCheckinHistoryService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 
@@ -50,6 +53,22 @@ public class SalesRouteAPIController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private SalesmanCheckinHistoryService salesmanCheckinService;
+	
+	@PostMapping("/salesman-checkin-customer")
+	public ResponseEntity<?> salesmanCheckInCustomer(Principal principal, @RequestBody SalesmanCheckInOutInputModel input){
+		UserLogin userLogin = userService.findById(principal.getName());
+		SalesmanCheckinHistory sch = salesmanCheckinService.save(userLogin, input.getPartyCustomerId(), "Y", input.getLatitude() + "," + input.getLongitude());
+		return ResponseEntity.ok().body(sch);
+	}
+	@PostMapping("/salesman-checkout-customer")
+	public ResponseEntity<?> salesmanCheckOutCustomer(Principal principal, @RequestBody SalesmanCheckInOutInputModel input){
+		UserLogin userLogin = userService.findById(principal.getName());
+		SalesmanCheckinHistory sch = salesmanCheckinService.save(userLogin, input.getPartyCustomerId(), "N", input.getLatitude() + "," + input.getLongitude());
+		return ResponseEntity.ok().body(sch);
+	}
 	
 	@PostMapping("/create-sales-route-config")
 	public ResponseEntity<?> createSalesRouteConfig(Principal principal,
