@@ -81,6 +81,7 @@ CREATE TABLE product
     product_type_id          VARCHAR(60),
     facility_id              VARCHAR(60),
     product_name             VARCHAR(100),
+    weight                   numeric,
     introductionDate         TIMESTAMP,
     quantity_uom_id          VARCHAR(60),
     weight_uom_id            VARCHAR(60),
@@ -88,7 +89,7 @@ CREATE TABLE product
     length_uom_id            VARCHAR(60),
     height_uom_id            VARCHAR(60),
     created_by_user_login_id VARCHAR(60),
-    
+
     description              TEXT,
     last_updated_stamp       TIMESTAMP,
     created_stamp            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -165,18 +166,18 @@ CREATE TABLE inventory_item_detail
 
 CREATE TABLE product_price
 (
-	product_price_id UUID NOT NULL default uuid_generate_v1(),
+    product_price_id         UUID        NOT NULL default uuid_generate_v1(),
     product_id               VARCHAR(60) NOT NULL,
     currency_uom_id          VARCHAR(60),
     from_date                TIMESTAMP,
     thru_date                TIMESTAMP,
     product_store_group_id   VARCHAR(60),
-    tax_in_price			VARCHAR(1),
+    tax_in_price             VARCHAR(1),
     price                    DECIMAL(18, 3),
     created_by_user_login_id VARCHAR(60),
     created_date             TIMESTAMP,
     last_updated_stamp       TIMESTAMP,
-    created_stamp            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_stamp            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_product_price PRIMARY KEY (product_price_id),
     CONSTRAINT fk_product_price_currency_uom_id FOREIGN KEY (currency_uom_id) REFERENCES uom (uom_id),
     CONSTRAINT fk_product_price_created_by_user_login_id FOREIGN KEY (created_by_user_login_id) REFERENCES user_login (user_login_id),

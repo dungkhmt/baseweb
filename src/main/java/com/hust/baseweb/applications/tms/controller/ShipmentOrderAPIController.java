@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDelivery
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
 import com.hust.baseweb.applications.tms.model.shipmentitem.CreateShipmentItemDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.shipmentitem.DeleteShipmentItemDeliveryPlanModel;
+import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemModel;
 import com.hust.baseweb.applications.tms.model.shipmentorder.CreateShipmentInputModel;
 import com.hust.baseweb.applications.tms.model.shipmentorder.CreateShipmentItemInputModel;
 import com.hust.baseweb.applications.tms.service.*;
@@ -83,10 +84,10 @@ public class ShipmentOrderAPIController {
         return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanId(deliveryPlanId, pageable));
     }
 
-    @GetMapping("/shipment-item/{deliveryPlanId}/all")
-    public ResponseEntity<?> getAllOrderShipmentItem(Principal principal, @PathVariable String deliveryPlanId) {
-        log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanId(deliveryPlanId));
+    @GetMapping("/shipment-item/{deliveryTripId}/all")
+    public ResponseEntity<?> getAllOrderShipmentItem(Principal principal, @PathVariable String deliveryTripId) {
+        log.info("::getOrderShipmentItem deliveryTripId=" + deliveryTripId);
+        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanIdNearestDeliveryTrip(deliveryTripId));
     }
 
     @GetMapping("/shipment-item-not-in/{deliveryPlanId}")
@@ -120,22 +121,23 @@ public class ShipmentOrderAPIController {
         return ResponseEntity.ok().body(deliveryPlanService.findById(UUID.fromString(deliveryPlanId)));
     }
 
-    @GetMapping("/delivery-trip")
-    public ResponseEntity<?> getDeliveryTripList(Pageable pageable) {
-        log.info("getDeliveryTripList....");
-        return ResponseEntity.ok().body(deliveryTripService.findAll(pageable).map(DeliveryTrip::toDeliveryTripModel));
+    @GetMapping("/delivery-trip/{deliveryPlanId}")
+    public ResponseEntity<?> getDeliveryTripList(Pageable pageable, @PathVariable String deliveryPlanId) {
+        log.info("getDeliveryTripList, deliveryPlanId=" + deliveryPlanId);
+        return ResponseEntity.ok().body(deliveryTripService.findAllByDeliveryPlanId(deliveryPlanId, pageable)
+                .map(DeliveryTrip::toDeliveryTripModel));
     }
 
-    @GetMapping("/delivery-trip/{delivery-trip-id}")
-    public ResponseEntity<?> getDeliveryTrip(@PathVariable("delivery-trip-id") String deliveryTripId) {
+    @GetMapping("/delivery-trip/{deliveryTripId}/basic-info")
+    public ResponseEntity<?> getDeliveryTrip(@PathVariable String deliveryTripId) {
         log.info("getDeliveryTrip: " + deliveryTripId);
         return ResponseEntity.ok().body(deliveryTripService.findById(UUID.fromString(deliveryTripId)));
     }
 
-    @GetMapping("/delivery-trip-detail")
-    public ResponseEntity<?> getDeliveryTripDetailList(Pageable pageable) {
-        log.info("getDeliveryTripDetailList....");
-        return ResponseEntity.ok().body(deliveryTripDetailService.findAll(pageable));
+    @GetMapping("/delivery-trip-detail/{deliveryTripId}")
+    public ResponseEntity<?> getDeliveryTripDetailList(Pageable pageable, @PathVariable String deliveryTripId) {
+        log.info("getDeliveryTripDetailList, deliveryTripId=" + deliveryTripId);
+        return ResponseEntity.ok().body(deliveryTripDetailService.findAll(deliveryTripId, pageable));
     }
 
     @PostMapping("/create-delivery-trip")
@@ -153,11 +155,21 @@ public class ShipmentOrderAPIController {
         return ResponseEntity.ok().body(deliveryTripDetail);
     }
 
+    @GetMapping("/delete-delivery-trip-detail/{delivery-trip-detail-id}")
+    public ResponseEntity<?> deleteDeliveryTripDetail(Principal principal, @PathVariable("delivery-trip-detail-id") String deliveryTripDetailId) {
+        log.info("::deleteDeliveryTripDetail: " + deliveryTripDetailId);
+        return ResponseEntity.ok().body(deliveryTripDetailService.delete(deliveryTripDetailId));
+    }
+
     @PostMapping("/create-shipment-item-delivery-plan")
     public ResponseEntity<?> createShipmentItemDeliveryPlan(Principal principal, @RequestBody CreateShipmentItemDeliveryPlanModel createShipmentItemDeliveryPlanModel) {
         log.info("::createShipmentItemDeliveryPlan: " + createShipmentItemDeliveryPlanModel.getDeliveryPlanId());
         return ResponseEntity.ok().body(shipmentItemService.saveShipmentItemDeliveryPlan(createShipmentItemDeliveryPlanModel));
     }
 
-
+    @PostMapping("/delivery-trip/{deliveryTripId}/capacity-info")
+    public ResponseEntity<?> getDeliveryTripInfo(@PathVariable String deliveryTripId,
+                                                 @RequestBody List<ShipmentItemModel.TripDetailSelected> shipmentItemModels) {
+        return ResponseEntity.ok(deliveryTripService.getDeliveryTripInfo(deliveryTripId, shipmentItemModels));
+    }
 }

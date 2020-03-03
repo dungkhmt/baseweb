@@ -10,5 +10,7 @@ import org.springframework.stereotype.Service;
 public interface DeliveryTripDetailService {
     public DeliveryTripDetail save(CreateDeliveryTripDetailInputModel input);
 
-    Page<DeliveryTripDetail> findAll(Pageable pageable);
+    boolean delete(String deliveryTripDetailId);
+
+    Page<DeliveryTripDetail> findAll(String deliveryTripId, Pageable pageable);
 }

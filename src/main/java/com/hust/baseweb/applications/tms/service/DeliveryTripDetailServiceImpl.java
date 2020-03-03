@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
@@ -41,8 +43,14 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     }
 
     @Override
-    public Page<DeliveryTripDetail> findAll(Pageable pageable) {
-        return deliveryTripDetailRepo.findAll(pageable);
+    public boolean delete(String deliveryTripDetailId) {
+        deliveryTripDetailRepo.deleteById(UUID.fromString(deliveryTripDetailId));
+        return true;
+    }
+
+    @Override
+    public Page<DeliveryTripDetail> findAll(String deliveryTripId, Pageable pageable) {
+        return deliveryTripDetailRepo.findAllByDeliveryTripId(UUID.fromString(deliveryTripId), pageable);
     }
 
 }

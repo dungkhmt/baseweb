@@ -1,12 +1,15 @@
 package com.hust.baseweb.applications.tms.service;
 
-import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
-import com.hust.baseweb.applications.tms.entity.Vehicle;
+import com.hust.baseweb.applications.geo.entity.GeoPoint;
+import com.hust.baseweb.applications.logistics.entity.Product;
+import com.hust.baseweb.applications.logistics.repo.ProductRepo;
+import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
-import com.hust.baseweb.applications.tms.repo.DeliveryPlanRepo;
-import com.hust.baseweb.applications.tms.repo.DeliveryTripRepo;
-import com.hust.baseweb.applications.tms.repo.VehicleMaintenanceHistoryRepo;
-import com.hust.baseweb.applications.tms.repo.VehicleRepo;
+import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripInfoModel;
+import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemModel;
+import com.hust.baseweb.applications.tms.repo.*;
+import com.hust.baseweb.utils.LatLngUtils;
+import com.hust.baseweb.utils.algorithm.DistanceUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,9 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -27,6 +29,11 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     private DeliveryPlanRepo deliveryPlanRepo;
     private VehicleRepo vehicleRepo;
     private VehicleMaintenanceHistoryRepo vehicleMaintenanceHistoryRepo;
+    private ShipmentItemDeliveryPlanRepo shipmentItemDeliveryPlanRepo;
+    private ShipmentItemRepo shipmentItemRepo;
+    private DeliveryTripDetailRepo deliveryTripDetailRepo;
+    private DistanceTravelTimeGeoPointRepo distanceTravelTimeGeoPointRepo;
+    private ProductRepo productRepo;
 
     @Override
     @Transactional
@@ -57,12 +64,88 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     }
 
     @Override
-    public Page<DeliveryTrip> findAll(Pageable pageable) {
-        return deliveryTripRepo.findAll(pageable);
+    public Page<DeliveryTrip> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable) {
+        DeliveryPlan deliveryPlan = new DeliveryPlan();
+        deliveryPlan.setDeliveryPlanId(UUID.fromString(deliveryPlanId));
+        return deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan, pageable);
     }
 
     @Override
     public DeliveryTrip findById(UUID deliveryTripId) {
         return deliveryTripRepo.findById(deliveryTripId).orElseThrow(NoSuchElementException::new);
     }
+
+    @Override
+    public DeliveryTripInfoModel getDeliveryTripInfo(String deliveryTripId,
+                                                     List<ShipmentItemModel.TripDetailSelected> shipmentItemModels) {
+        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId)).orElseThrow(NoSuchElementException::new);
+        String deliveryPlanId = deliveryTrip.getDeliveryPlan().getDeliveryPlanId().toString();
+
+        List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans
+                = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
+
+        List<ShipmentItem> shipmentItemsInDeliveryPlan = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemDeliveryPlans.stream()
+                .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()));
+        Map<String, ShipmentItem> shipmentItemMap = new HashMap<>();
+        shipmentItemsInDeliveryPlan.forEach(shipmentItem -> shipmentItemMap.put(shipmentItem.getShipmentItemId().toString(), shipmentItem));
+
+        List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripId(UUID.fromString(deliveryTripId));
+        List<ShipmentItem> shipmentItemsInDeliveryTrip = deliveryTripDetails
+                .stream().map(DeliveryTripDetail::getShipmentItem).collect(Collectors.toList());
+
+        List<GeoPoint> geoPointsInDeliveryTrip = shipmentItemsInDeliveryTrip.stream()
+                .map(shipmentItem -> shipmentItem.getShipToLocation().getGeoPoint()).distinct().collect(Collectors.toList());
+
+        List<ShipmentItem> shipmentItemsSelected =
+                shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemModels.stream().map(
+                        tripDetailSelected -> UUID.fromString(tripDetailSelected.getShipmentItemId())
+                ).collect(Collectors.toList()));
+
+        List<GeoPoint> geoPointsSelected = shipmentItemsSelected.stream()
+                .map(shipmentItem -> shipmentItem.getShipToLocation().getGeoPoint()).distinct().collect(Collectors.toList());
+
+        List<GeoPoint> allGeoPoints = new ArrayList<>(geoPointsInDeliveryTrip);
+        allGeoPoints.addAll(geoPointsSelected);
+
+        double totalDistance = DistanceUtils.calculateGreedyTotalDistance(allGeoPoints, (fromGeoPoint, toGeoPoint) -> {
+            DistanceTravelTimeGeoPoint distanceTravelTimeGeoPoint
+                    = distanceTravelTimeGeoPointRepo.findByFromGeoPointAndToGeoPoint(fromGeoPoint, toGeoPoint);
+            if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
+                return LatLngUtils.distance(
+                        Double.parseDouble(toGeoPoint.getLatitude()),
+                        Double.parseDouble(toGeoPoint.getLongitude()),
+                        Double.parseDouble(fromGeoPoint.getLatitude()),
+                        Double.parseDouble(fromGeoPoint.getLongitude())
+                );
+            } else {
+                return distanceTravelTimeGeoPoint.getDistance();
+            }
+        });
+
+        Map<String, Product> productMap = new HashMap<>();
+        productRepo.findAllByProductIdIn(shipmentItemsInDeliveryPlan.stream().map(ShipmentItem::getProductId)
+                .collect(Collectors.toList()))
+                .forEach(product -> productMap.put(product.getProductId(), product));
+
+        double totalWeight = 0;
+        double totalPallet = 0;
+
+        for (DeliveryTripDetail deliveryTripDetail : deliveryTripDetails) {
+            ShipmentItem shipmentItem = deliveryTripDetail.getShipmentItem();
+            Product product = productMap.get(shipmentItem.getProductId());
+            totalWeight += product.getWeight() * deliveryTripDetail.getDeliveryQuantity();
+            totalPallet += shipmentItem.getPallet() / shipmentItem.getQuantity() * deliveryTripDetail.getDeliveryQuantity();
+        }
+
+        for (ShipmentItemModel.TripDetailSelected shipmentItemModel : shipmentItemModels) {
+            ShipmentItem shipmentItem = shipmentItemMap.get(shipmentItemModel.getShipmentItemId());
+            Product product = productMap.get(shipmentItem.getProductId());
+            totalWeight += product.getWeight() * shipmentItemModel.getQuantity();
+            totalPallet += shipmentItem.getPallet() / shipmentItem.getQuantity() * shipmentItemModel.getQuantity();
+        }
+
+        return new DeliveryTripInfoModel(deliveryTripId, totalDistance, totalWeight, totalPallet);
+    }
+
+
 }
