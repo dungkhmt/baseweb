@@ -47,3 +47,17 @@ create table vehicle_maintenance_history
     constraint pk_vehicle_maintenance_history primary key (vehicle_maintenance_history_id),
     constraint fk_vehicle_maintenance_history_vehicle_id foreign key (vehicle_id) references vehicle (vehicle_id)
 );
+
+create table vehicle_forbidden_geo_point(
+	vehicle_forbidden_geo_point_id UUID NOT NULL default uuid_generate_v1(),
+	vehicle_id VARCHAR(60),
+    geo_point_id UUID,
+    from_date TIMESTAMP,
+    thru_date TIMESTAMP,
+	last_updated_stamp             TIMESTAMP,
+    created_stamp                  TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_vehicle_forbidden_geo_point primary key(vehicle_forbidden_geo_point_id),
+    constraint fk_vehicle_forbidden_geo_point_vehicle_id foreign key(vehicle_id) references vehicle(vehicle_id),
+    constraint fk_vehicle_forbidden_geo_point_geo_point_id foreign key(geo_point_id) references geo_point(geo_point_id)
+    
+);

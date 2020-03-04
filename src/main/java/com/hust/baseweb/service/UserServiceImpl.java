@@ -16,7 +16,10 @@ import com.hust.baseweb.rest.user.PredicateBuilder;
 import com.hust.baseweb.rest.user.UserRestBriefProjection;
 import com.hust.baseweb.rest.user.UserRestRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
+
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class UserServiceImpl implements UserService {
     public static final String module = UserService.class.getName();
     private UserLoginRepo userLoginRepo;
@@ -71,6 +75,9 @@ public class UserServiceImpl implements UserService {
         personRepo.save(new Person(party.getPartyId(), personModel.getFirstName(), personModel.getMiddleName(),
                 personModel.getLastName(), personModel.getGender(), personModel.getBirthDate()));
         List<SecurityGroup> roles = new ArrayList<>();
+        
+        log.info("save, roles = " + personModel.getRoles().size());
+        
         roles = personModel.getRoles().stream().map(r -> securityGroupRepo.findById(r).get())
                 .collect(Collectors.toList());
         UserLogin userLogin = new UserLogin(personModel.getUserName(), personModel.getPassword(), roles, true);
