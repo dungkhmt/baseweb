@@ -19,6 +19,9 @@ public class CreateShipmentItemInputModel {
     @ExcelCellName("ITEM_NAME")
     private String productName;
 
+    @ExcelCellName("GRSS_WEIGHT")
+    private Double weight;
+
     @ExcelCellName("UOM")
     private String uom;
 

@@ -4,9 +4,9 @@ import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.tms.entity.*;
+import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripDetailInputModel;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripInfoModel;
-import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemModel;
 import com.hust.baseweb.applications.tms.repo.*;
 import com.hust.baseweb.utils.LatLngUtils;
 import com.hust.baseweb.utils.algorithm.DistanceUtils;
@@ -77,7 +77,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
     @Override
     public DeliveryTripInfoModel getDeliveryTripInfo(String deliveryTripId,
-                                                     List<ShipmentItemModel.TripDetailSelected> shipmentItemModels) {
+                                                     List<CreateDeliveryTripDetailInputModel> shipmentItemModels) {
         DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId)).orElseThrow(NoSuchElementException::new);
         String deliveryPlanId = deliveryTrip.getDeliveryPlan().getDeliveryPlanId().toString();
 
@@ -98,7 +98,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
         List<ShipmentItem> shipmentItemsSelected =
                 shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemModels.stream().map(
-                        tripDetailSelected -> UUID.fromString(tripDetailSelected.getShipmentItemId())
+                        CreateDeliveryTripDetailInputModel::getShipmentItemId
                 ).collect(Collectors.toList()));
 
         List<GeoPoint> geoPointsSelected = shipmentItemsSelected.stream()
@@ -137,11 +137,11 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
             totalPallet += shipmentItem.getPallet() / shipmentItem.getQuantity() * deliveryTripDetail.getDeliveryQuantity();
         }
 
-        for (ShipmentItemModel.TripDetailSelected shipmentItemModel : shipmentItemModels) {
-            ShipmentItem shipmentItem = shipmentItemMap.get(shipmentItemModel.getShipmentItemId());
+        for (CreateDeliveryTripDetailInputModel shipmentItemModel : shipmentItemModels) {
+            ShipmentItem shipmentItem = shipmentItemMap.get(shipmentItemModel.getShipmentItemId().toString());
             Product product = productMap.get(shipmentItem.getProductId());
-            totalWeight += product.getWeight() * shipmentItemModel.getQuantity();
-            totalPallet += shipmentItem.getPallet() / shipmentItem.getQuantity() * shipmentItemModel.getQuantity();
+            totalWeight += product.getWeight() * shipmentItemModel.getDeliveryQuantity();
+            totalPallet += shipmentItem.getPallet() / shipmentItem.getQuantity() * shipmentItemModel.getDeliveryQuantity();
         }
 
         return new DeliveryTripInfoModel(deliveryTripId, totalDistance, totalWeight, totalPallet);

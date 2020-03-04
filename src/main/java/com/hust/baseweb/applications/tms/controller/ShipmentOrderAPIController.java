@@ -1,12 +1,14 @@
 package com.hust.baseweb.applications.tms.controller;
 
-import com.hust.baseweb.applications.tms.entity.*;
+import com.hust.baseweb.applications.tms.entity.DeliveryPlan;
+import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
+import com.hust.baseweb.applications.tms.entity.Shipment;
+import com.hust.baseweb.applications.tms.entity.ShipmentItem;
 import com.hust.baseweb.applications.tms.model.createdeliveryplan.CreateDeliveryPlanInputModel;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripDetailInputModel;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
 import com.hust.baseweb.applications.tms.model.shipmentitem.CreateShipmentItemDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.shipmentitem.DeleteShipmentItemDeliveryPlanModel;
-import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemModel;
 import com.hust.baseweb.applications.tms.model.shipmentorder.CreateShipmentInputModel;
 import com.hust.baseweb.applications.tms.model.shipmentorder.CreateShipmentItemInputModel;
 import com.hust.baseweb.applications.tms.service.*;
@@ -147,29 +149,31 @@ public class ShipmentOrderAPIController {
         return ResponseEntity.ok().body(deliveryTrip);
     }
 
-    @PostMapping("/create-delivery-trip-detail")
-    public ResponseEntity<?> createDeliveryTripDetail(Principal principal, @RequestBody CreateDeliveryTripDetailInputModel input) {
-        log.info("::createDeliveryTripDetail: " + input);
-        DeliveryTripDetail deliveryTripDetail;
-        deliveryTripDetail = deliveryTripDetailService.save(input);
-        return ResponseEntity.ok().body(deliveryTripDetail);
+    @PostMapping("/create-delivery-trip-detail/{deliveryTripId}")
+    public ResponseEntity<?> createDeliveryTripDetail(Principal principal,
+                                                      @RequestBody List<CreateDeliveryTripDetailInputModel> inputs,
+                                                      @PathVariable String deliveryTripId) {
+        log.info("::createDeliveryTripDetail: " + deliveryTripId);
+        return ResponseEntity.ok().body(deliveryTripDetailService.save(deliveryTripId, inputs));
     }
 
-    @GetMapping("/delete-delivery-trip-detail/{delivery-trip-detail-id}")
-    public ResponseEntity<?> deleteDeliveryTripDetail(Principal principal, @PathVariable("delivery-trip-detail-id") String deliveryTripDetailId) {
+    @GetMapping("/delete-delivery-trip-detail/{deliveryTripDetailId}")
+    public ResponseEntity<?> deleteDeliveryTripDetail(Principal principal,
+                                                      @PathVariable String deliveryTripDetailId) {
         log.info("::deleteDeliveryTripDetail: " + deliveryTripDetailId);
         return ResponseEntity.ok().body(deliveryTripDetailService.delete(deliveryTripDetailId));
     }
 
     @PostMapping("/create-shipment-item-delivery-plan")
-    public ResponseEntity<?> createShipmentItemDeliveryPlan(Principal principal, @RequestBody CreateShipmentItemDeliveryPlanModel createShipmentItemDeliveryPlanModel) {
+    public ResponseEntity<?> createShipmentItemDeliveryPlan(Principal principal,
+                                                            @RequestBody CreateShipmentItemDeliveryPlanModel createShipmentItemDeliveryPlanModel) {
         log.info("::createShipmentItemDeliveryPlan: " + createShipmentItemDeliveryPlanModel.getDeliveryPlanId());
         return ResponseEntity.ok().body(shipmentItemService.saveShipmentItemDeliveryPlan(createShipmentItemDeliveryPlanModel));
     }
 
     @PostMapping("/delivery-trip/{deliveryTripId}/capacity-info")
     public ResponseEntity<?> getDeliveryTripCapacityInfo(@PathVariable String deliveryTripId,
-                                                         @RequestBody List<ShipmentItemModel.TripDetailSelected> shipmentItemModels) {
+                                                         @RequestBody List<CreateDeliveryTripDetailInputModel> shipmentItemModels) {
         log.info("::getDeliveryTripCapacityInfo(): deliveryTripId=" + deliveryTripId);
         return ResponseEntity.ok().body(deliveryTripService.getDeliveryTripInfo(deliveryTripId, shipmentItemModels));
     }

@@ -167,7 +167,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 
             // Nếu product hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
             productMap.computeIfAbsent(shipmentItemModel.getProductId(), productId ->
-                    productService.save(productId, shipmentItemModel.getProductName(), shipmentItemModel.getUom()));
+                    productService.save(productId, shipmentItemModel.getProductName(), shipmentItemModel.getWeight(), shipmentItemModel.getUom()));
         }
 
         // lọc trùng postal address nếu 1 postal address được add nhiều lần vào cùng 1 customer
@@ -245,7 +245,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         String productId = shipmentItemModel.getProductId();
         Product product = productRepo.findByProductId(productId);
         if (product == null) {
-            product = productService.save(productId, shipmentItemModel.getProductName(), shipmentItemModel.getUom());
+            product = productService.save(productId, shipmentItemModel.getProductName(), shipmentItemModel.getWeight(), shipmentItemModel.getUom());
             productRepo.save(product);
         }
 

@@ -6,9 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface DeliveryTripDetailService {
-    public DeliveryTripDetail save(CreateDeliveryTripDetailInputModel input);
+    public int save(String deliveryTripId, List<CreateDeliveryTripDetailInputModel> inputs);
 
     boolean delete(String deliveryTripDetailId);
 

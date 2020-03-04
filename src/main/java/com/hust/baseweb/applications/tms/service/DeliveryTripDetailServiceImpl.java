@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,23 +24,24 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     private ShipmentItemRepo shipmentItemRepo;
 
     @Override
-    public DeliveryTripDetail save(CreateDeliveryTripDetailInputModel input) {
-        log.info("save, input quantity = " + input.getDeliveryQuantity());
-        DeliveryTripDetail deliveryTripDetail = new DeliveryTripDetail();
-        deliveryTripDetail.setDeliveryTripId(input.getDeliveryTripId());
-        //deliveryTripDetail.setShipmentItem(input.getShipmentId());
-        //deliveryTripDetail.setS
-        ShipmentItem shipmentItem = shipmentItemRepo.findByShipmentItemId(input.getShipmentItemId());
+    public int save(String deliveryTripId, List<CreateDeliveryTripDetailInputModel> inputs) {
+        UUID deliveryTripIdUuid = UUID.fromString(deliveryTripId);
+        for (CreateDeliveryTripDetailInputModel input : inputs) {
+            log.info("save, input quantity = " + input.getDeliveryQuantity());
+            DeliveryTripDetail deliveryTripDetail = new DeliveryTripDetail();
+            deliveryTripDetail.setDeliveryTripId(deliveryTripIdUuid);
+            //deliveryTripDetail.setShipmentItem(input.getShipmentId());
+            //deliveryTripDetail.setS
+            ShipmentItem shipmentItem = shipmentItemRepo.findByShipmentItemId(input.getShipmentItemId());
 
-        log.info("save, find ShipmentItem " + shipmentItem.getShipment().getShipmentId() + "," + shipmentItem.getShipmentItemId() + ", product = " + shipmentItem.getProductId());
+            log.info("save, find ShipmentItem " + shipmentItem.getShipment().getShipmentId() + "," + shipmentItem.getShipmentItemId() + ", product = " + shipmentItem.getProductId());
 
-        deliveryTripDetail.setShipmentItem(shipmentItem);
-        deliveryTripDetail.setDeliveryQuantity(input.getDeliveryQuantity());
+            deliveryTripDetail.setShipmentItem(shipmentItem);
+            deliveryTripDetail.setDeliveryQuantity(input.getDeliveryQuantity());
 
-
-        deliveryTripDetail = deliveryTripDetailRepo.save(deliveryTripDetail);
-
-        return deliveryTripDetail;
+            deliveryTripDetailRepo.save(deliveryTripDetail);
+        }
+        return inputs.size();
     }
 
     @Override

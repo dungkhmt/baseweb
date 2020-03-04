@@ -10,6 +10,6 @@ public interface ProductService {
     public Product findByProductId(String productId);
 
     public List<Product> getAllProducts();
-    
-    public Product save(String productId, String productName, String uomId);
+
+    public Product save(String productId, String productName, double productWeight, String uomId);
 }
