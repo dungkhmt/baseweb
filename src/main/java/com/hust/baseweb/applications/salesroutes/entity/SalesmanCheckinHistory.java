@@ -27,9 +27,12 @@ public class SalesmanCheckinHistory {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private UUID salesmanCheckinHistoryId;
 	
-	@JoinColumn(name="user_login_id", referencedColumnName="user_login_id")
-	@ManyToOne(fetch = FetchType.EAGER)
-	private UserLogin userLogin;
+	//@JoinColumn(name="user_login_id", referencedColumnName="user_login_id")
+	//@ManyToOne(fetch = FetchType.EAGER)
+	//private UserLogin userLogin;
+	
+	@Column(name="user_login_id")
+	private String userLoginId;
 	
 	@JoinColumn(name="party_customer_id", referencedColumnName="party_id")
 	@ManyToOne(fetch = FetchType.EAGER)

@@ -7,10 +7,14 @@ import java.util.UUID;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
@@ -69,7 +73,15 @@ public class SalesRouteAPIController {
 		SalesmanCheckinHistory sch = salesmanCheckinService.save(userLogin, input.getPartyCustomerId(), "N", input.getLatitude() + "," + input.getLongitude());
 		return ResponseEntity.ok().body(sch);
 	}
-	
+	@GetMapping("/salesman-checkin-history")
+    public ResponseEntity<?> getSalesmanCheckInHistory(Principal principal, Pageable page, @RequestParam(required = false) String param){
+		UserLogin userLogin = userService.findById(principal.getName());
+		
+		log.info("getSalesmanCheckInHistory, user = " + userLogin.getUserLoginId());
+		
+		Page<SalesmanCheckinHistory> list = salesmanCheckinService.findAll(page);
+		return ResponseEntity.ok().body(list);
+	}
 	@PostMapping("/create-sales-route-config")
 	public ResponseEntity<?> createSalesRouteConfig(Principal principal,
 			@RequestBody CreateSalesRouteConfigInputModel input) {

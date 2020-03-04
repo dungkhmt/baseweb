@@ -50,7 +50,6 @@ create table order_shipment
 );
 
 
-
 create table delivery_plan
 (
     delivery_plan_id   UUID NOT NULL default uuid_generate_v1(),
@@ -120,7 +119,7 @@ create table delivery_trip
     constraint fk_delivery_trip_external_vehicle_type_id foreign key (execute_external_vehicle_type_id) references vehicle_type (vehicle_type_id),
     constraint fk_delivery_trip_plan_solution foreign key (delivery_plan_id, delivery_plan_solution_seq_id) references delivery_plan_solution (delivery_plan_id, delivery_plan_solution_seq_id),
     constraint fk_delivery_trip_vehicle_id foreign key (vehicle_id) references vehicle (vehicle_id),
-    constraint fk_delivery_trip_driver_id foreign key (driver_id) references party (party_id)
+    constraint fk_delivery_trip_driver_id foreign key (driver_id) references party_driver(party_id)
 );
 
 

@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
@@ -32,13 +34,20 @@ public class SalesmanCheckinHistoryServiceImpl implements
 		PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(partyCustomerId);
 		
 		SalesmanCheckinHistory sch = new SalesmanCheckinHistory();
-		sch.setUserLogin(userLogin);
+		//sch.setUserLogin(userLogin);
+		sch.setUserLoginId(userLogin.getUserLoginId());
 		sch.setPartyCustomer(partyCustomer);
 		sch.setTimePoint(new Date());
 		sch.setCheckinAction(checkinAction);
 		sch.setLocation(location);
 		sch = salesmanCheckinHistoryRepo.save(sch);
 		return sch;
+	}
+
+	@Override
+	public Page<SalesmanCheckinHistory> findAll(Pageable page) {
+		// TODO Auto-generated method stub
+		return salesmanCheckinHistoryRepo.findAll(page);
 	}
 
 }
