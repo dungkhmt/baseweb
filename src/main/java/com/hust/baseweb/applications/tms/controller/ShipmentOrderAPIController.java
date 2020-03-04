@@ -168,8 +168,9 @@ public class ShipmentOrderAPIController {
     }
 
     @PostMapping("/delivery-trip/{deliveryTripId}/capacity-info")
-    public ResponseEntity<?> getDeliveryTripInfo(@PathVariable String deliveryTripId,
-                                                 @RequestBody List<ShipmentItemModel.TripDetailSelected> shipmentItemModels) {
-        return ResponseEntity.ok(deliveryTripService.getDeliveryTripInfo(deliveryTripId, shipmentItemModels));
+    public ResponseEntity<?> getDeliveryTripCapacityInfo(@PathVariable String deliveryTripId,
+                                                         @RequestBody List<ShipmentItemModel.TripDetailSelected> shipmentItemModels) {
+        log.info("::getDeliveryTripCapacityInfo(): deliveryTripId=" + deliveryTripId);
+        return ResponseEntity.ok().body(deliveryTripService.getDeliveryTripInfo(deliveryTripId, shipmentItemModels));
     }
 }

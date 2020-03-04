@@ -143,6 +143,8 @@ public class ShipmentServiceImpl implements ShipmentService {
                         return pa;
                     });
 
+            shipmentItem.setShipToLocation(postalAddress);
+
             // Nếu party customer hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
             PartyCustomer partyCustomer = partyCustomerMap.computeIfAbsent(shipmentItemModel.getCustomerCode(),
                     customerCode ->
@@ -152,8 +154,16 @@ public class ShipmentServiceImpl implements ShipmentService {
                                     postalAddress.getGeoPoint().getLatitude(),
                                     postalAddress.getGeoPoint().getLongitude()
                             )));
+            partyCustomer.setCustomerCode(shipmentItemModel.getCustomerCode());
+            partyCustomer.setCustomerName(shipmentItemModel.getCustomerName());
             // thêm portal address hiện tại vào party customer
-            //partyCustomer.getPostalAddress().add(postalAddress);// NOT attach address into list
+//            partyCustomer.getPostalAddress().add(postalAddress);// NOT attach address into list
+//            shipmentItem.setCustomer(partyCustomer);  // TODO: Resolve exception
+            /*
+             * org.hibernate.TransientPropertyValueException: object references an unsaved transient instance -
+             * save the transient instance before flushing : com.hust.baseweb.applications.tms.entity.ShipmentItem.customer
+             * -> com.hust.baseweb.applications.customer.entity.PartyCustomer
+             */
 
             // Nếu product hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
             productMap.computeIfAbsent(shipmentItemModel.getProductId(), productId ->

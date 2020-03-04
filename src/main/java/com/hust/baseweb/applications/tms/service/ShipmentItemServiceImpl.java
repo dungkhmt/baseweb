@@ -110,9 +110,9 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
                         shipmentItemAssignedQuantityMap.merge(deliveryTripDetail.getShipmentItem(), 1, Integer::sum));
 
         return shipmentItemsNotInDeliveryTrip.stream()
-                .sorted(Comparator.comparingDouble(o -> geoPointToMinDistanceMap.get(o.getShipToLocation().getGeoPoint())))
+                .sorted(Comparator.comparingDouble(o -> geoPointToMinDistanceMap.getOrDefault(o.getShipToLocation().getGeoPoint(), 0.0)))
                 .map(shipmentItem -> shipmentItem.toShipmentItemDeliveryPlanModel(
-                        productMap, shipmentItemAssignedQuantityMap.get(shipmentItem)))
+                        productMap, shipmentItemAssignedQuantityMap.getOrDefault(shipmentItem, 0)))
                 .filter(shipmentItemDeliveryPlanModel -> shipmentItemDeliveryPlanModel.getQuantity() >= 0)
                 .collect(Collectors.toList());
     }

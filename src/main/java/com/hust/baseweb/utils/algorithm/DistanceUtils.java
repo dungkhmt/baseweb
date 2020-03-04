@@ -8,6 +8,9 @@ import java.util.function.BiFunction;
 
 public class DistanceUtils {
     public static <T> double calculateGreedyTotalDistance(List<T> ts, BiFunction<T, T, Double> distanceFunction) {
+        if (ts.isEmpty()) {
+            return 0;
+        }
         double totalDistance = 0;
         Set<T> candidates = new HashSet<>(ts);
         List<T> tour = new ArrayList<>();
