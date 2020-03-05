@@ -30,6 +30,7 @@ public class DistanceUtils {
             }
             totalDistance += minDistance;
             tour.add(selectedT);
+            candidates.remove(selectedT);
         }
 
         totalDistance += distanceFunction.apply(tour.get(tour.size() - 1), tour.get(0));
