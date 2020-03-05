@@ -17,6 +17,8 @@ public interface DeliveryTripService {
 
     Page<DeliveryTrip> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
+    List<DeliveryTrip> findAllByDeliveryPlanId(String deliveryPlanId);
+
     DeliveryTrip findById(UUID deliveryTripId);
 
     DeliveryTripInfoModel getDeliveryTripInfo(String deliveryTripId, List<CreateDeliveryTripDetailInputModel> shipmentItemModels);

@@ -49,7 +49,7 @@ public class DeliveryTrip {
                 0,
                 0,
                 vehicle == null ? null : vehicle.getVehicleId(),
-                null
+                vehicle == null ? null : vehicle.getCapacity()
         );
     }
 }

@@ -71,6 +71,13 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     }
 
     @Override
+    public List<DeliveryTrip> findAllByDeliveryPlanId(String deliveryPlanId) {
+        DeliveryPlan deliveryPlan = new DeliveryPlan();
+        deliveryPlan.setDeliveryPlanId(UUID.fromString(deliveryPlanId));
+        return deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan);
+    }
+
+    @Override
     public DeliveryTrip findById(UUID deliveryTripId) {
         return deliveryTripRepo.findById(deliveryTripId).orElseThrow(NoSuchElementException::new);
     }
