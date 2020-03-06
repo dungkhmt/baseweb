@@ -107,7 +107,8 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         deliveryTripDetailRepo.findAllByDeliveryTripIdIn(
                 deliveryTripsInDeliveryPlan.stream().map(DeliveryTrip::getDeliveryTripId).collect(Collectors.toList()))
                 .forEach(deliveryTripDetail ->
-                        shipmentItemAssignedQuantityMap.merge(deliveryTripDetail.getShipmentItem(), 1, Integer::sum));
+                        shipmentItemAssignedQuantityMap.merge(deliveryTripDetail.getShipmentItem(),
+                                deliveryTripDetail.getDeliveryQuantity(), Integer::sum));
 
         return shipmentItemsNotInDeliveryTrip.stream()
                 .sorted(Comparator.comparingDouble(o -> geoPointToMinDistanceMap.getOrDefault(o.getShipToLocation().getGeoPoint(), 0.0)))
