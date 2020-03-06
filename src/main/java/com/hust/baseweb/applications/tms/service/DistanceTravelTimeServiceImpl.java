@@ -33,6 +33,10 @@ public class DistanceTravelTimeServiceImpl implements DistanceTravelTimeService 
 
         for (GeoPoint fromGeoPoint : geoPoints) {
             for (GeoPoint toGeoPoint : geoPoints) {
+            	if(fromGeoPoint.getLatitude() == null || fromGeoPoint.getLongitude() == null ||
+            			toGeoPoint.getLatitude() == null || toGeoPoint.getLongitude() == null)
+            		continue;
+            	
                 double latFrom = Double.parseDouble(fromGeoPoint.getLatitude());
                 double lngFrom = Double.parseDouble(fromGeoPoint.getLongitude());
                 double latTo = Double.parseDouble(toGeoPoint.getLatitude());

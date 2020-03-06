@@ -24,8 +24,8 @@ create table geo_point
 (
     geo_point_id       UUID NOT NULL default uuid_generate_v1(),
 
-    longitude          VARCHAR(30),
-    latitude           VARCHAR(30),
+    longitude          VARCHAR(30) not null,
+    latitude           VARCHAR(30) not null,
 
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,

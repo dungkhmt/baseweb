@@ -84,8 +84,8 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
                 double distance;
                 if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
                     distance = LatLngUtils.distance(
-                            Double.parseDouble(geoPointNotIn.getLatitude()),
-                            Double.parseDouble(geoPointNotIn.getLongitude()),
+                            Double.parseDouble(geoPointNotIn.getLatitude()),// cause exception if lat-lng is null
+                            Double.parseDouble(geoPointNotIn.getLongitude()),// shipmentItem having not geo_point(lat-lng) -> not consider
                             Double.parseDouble(geoPointIn.getLatitude()),
                             Double.parseDouble(geoPointIn.getLongitude())
                     );
