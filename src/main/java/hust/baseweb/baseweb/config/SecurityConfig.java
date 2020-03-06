@@ -25,7 +25,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/test").hasAuthority("ADD_USER")
+                .antMatchers("/api/security/permission",
+                        "/api/security/save-group-permissions")
+                    .hasAuthority("VIEW_EDIT_SECURITY_PERMISSION")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic().authenticationEntryPoint(authenticationEntryPoint);

@@ -1,9 +1,7 @@
 package hust.baseweb.baseweb.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import java.util.Date;
@@ -11,10 +9,12 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@RequiredArgsConstructor
+@NoArgsConstructor
 public class UserLoginSecurityGroup {
     @EmbeddedId
+    @NonNull
     private UserLoginSecurityGroupId id;
 
-    @Column(nullable = false)
     private Date createdAt;
 }

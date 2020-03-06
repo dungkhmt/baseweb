@@ -2,23 +2,22 @@ package hust.baseweb.baseweb.entity;
 
 import lombok.*;
 
-import javax.persistence.*;
-import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 @Getter
 @Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class SecurityGroup {
+public class Gender {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NonNull
     private short id;
 
     @NonNull
-    @Column(unique = true)
     private String name;
-
-    private Date createdAt;
 }

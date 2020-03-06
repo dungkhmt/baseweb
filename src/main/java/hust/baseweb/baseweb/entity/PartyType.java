@@ -10,7 +10,7 @@ import java.util.Date;
 @Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class SecurityGroup {
+public class PartyType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NonNull

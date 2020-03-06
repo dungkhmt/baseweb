@@ -4,18 +4,17 @@ import lombok.*;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
-import java.util.UUID;
 
-@Embeddable
 @Getter
 @Setter
+@Embeddable
 @EqualsAndHashCode
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class UserLoginSecurityGroupId implements Serializable {
+public class SaleOrderItemId implements Serializable {
     @NonNull
-    private UUID userLoginId;
+    private long saleOrderId;
 
     @NonNull
-    private short securityGroupId;
+    private short saleOrderSeq;
 }

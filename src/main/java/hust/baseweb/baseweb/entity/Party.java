@@ -4,21 +4,30 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class SecurityGroup {
+public class Party {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NonNull
-    private short id;
+    private UUID id;
 
     @NonNull
-    @Column(unique = true)
-    private String name;
+    private short partyTypeId;
+
+    @NonNull
+    private String description;
+
+    @NonNull
+    private UUID createdByUserLoginId;
+
+    @NonNull
+    private UUID updatedByUserLoginId;
 
     private Date createdAt;
+    private Date updatedAt;
 }

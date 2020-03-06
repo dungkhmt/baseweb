@@ -1,7 +1,6 @@
 package hust.baseweb.baseweb.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -12,6 +11,8 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@RequiredArgsConstructor
+@NoArgsConstructor
 public class UserLogin {
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
@@ -19,15 +20,16 @@ public class UserLogin {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
+    @NonNull
     private String username;
 
-    @Column(nullable = false)
+    @NonNull
     private String password;
 
-    @Column(nullable = false)
+    @Column(insertable = false)
     private Date createdAt;
 
-    @Column(nullable = false)
+    @Column(insertable = false, updatable = false)
     private Date updatedAt;
 }

@@ -1,7 +1,6 @@
 package hust.baseweb.baseweb.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -9,14 +8,17 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@RequiredArgsConstructor
+@NoArgsConstructor
 public class SecurityPermission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonNull
     private short id;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
+    @NonNull
     private String name;
 
-    @Column(nullable = false)
     private Date createdAt;
 }

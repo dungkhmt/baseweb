@@ -10,7 +10,7 @@ import java.util.Date;
 @Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class SecurityGroup {
+public class SaleOrderItemStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NonNull
@@ -19,6 +19,6 @@ public class SecurityGroup {
     @NonNull
     @Column(unique = true)
     private String name;
-
+    
     private Date createdAt;
 }
