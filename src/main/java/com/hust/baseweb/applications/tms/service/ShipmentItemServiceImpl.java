@@ -56,18 +56,24 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         String deliveryPlanId = deliveryPlan.getDeliveryPlanId().toString();
         List<DeliveryTrip> deliveryTripsInDeliveryPlan = deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan);
 
-        List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans
-                = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
-
-        List<ShipmentItem> shipmentItemsInDeliveryPlan = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemDeliveryPlans.stream()
-                .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()));
+        List<ShipmentItem> shipmentItemsInDeliveryPlan = shipmentItemRepo.findAllByShipmentItemIdIn(
+                shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId)).stream()
+                        .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()));
 
         List<ShipmentItem> shipmentItemsInDeliveryTrip
                 = deliveryTripDetailRepo.findAllByDeliveryTripId(UUID.fromString(deliveryTripId))
                 .stream().map(DeliveryTripDetail::getShipmentItem).collect(Collectors.toList());
-        Set<UUID> shipmentItemIdInDeliveryTripSet = shipmentItemsInDeliveryTrip.stream().map(ShipmentItem::getShipmentItemId).collect(Collectors.toSet());
+
+        Map<ShipmentItem, Integer> shipmentItemAssignedQuantityMap = new HashMap<>();
+        deliveryTripDetailRepo.findAllByDeliveryTripIdIn(
+                deliveryTripsInDeliveryPlan.stream().map(DeliveryTrip::getDeliveryTripId).collect(Collectors.toList()))
+                .forEach(deliveryTripDetail ->
+                        shipmentItemAssignedQuantityMap.merge(deliveryTripDetail.getShipmentItem(),
+                                deliveryTripDetail.getDeliveryQuantity(), Integer::sum));
+
         List<ShipmentItem> shipmentItemsNotInDeliveryTrip = shipmentItemsInDeliveryPlan.stream()
-                .filter(shipmentItem -> !shipmentItemIdInDeliveryTripSet.contains(shipmentItem.getShipmentItemId()))
+                .filter(shipmentItem ->
+                        shipmentItemAssignedQuantityMap.getOrDefault(shipmentItem, 0) < shipmentItem.getQuantity())
                 .collect(Collectors.toList());
 
         List<GeoPoint> geoPointsInDeliveryTrip = shipmentItemsInDeliveryTrip.stream()
@@ -84,8 +90,8 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
                 double distance;
                 if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
                     distance = LatLngUtils.distance(
-                            Double.parseDouble(geoPointNotIn.getLatitude()),// cause exception if lat-lng is null
-                            Double.parseDouble(geoPointNotIn.getLongitude()),// shipmentItem having not geo_point(lat-lng) -> not consider
+                            Double.parseDouble(geoPointNotIn.getLatitude()),
+                            Double.parseDouble(geoPointNotIn.getLongitude()),
                             Double.parseDouble(geoPointIn.getLatitude()),
                             Double.parseDouble(geoPointIn.getLongitude())
                     );
@@ -100,21 +106,14 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         }
 
         Map<String, Product> productMap = new HashMap<>();
-        productRepo.findAllByProductIdIn(shipmentItemsNotInDeliveryTrip.stream().map(ShipmentItem::getProductId).collect(Collectors.toList()))
+        productRepo.findAllByProductIdIn(shipmentItemsNotInDeliveryTrip
+                .stream().map(ShipmentItem::getProductId).distinct().collect(Collectors.toList()))
                 .forEach(product -> productMap.put(product.getProductId(), product));
-
-        Map<ShipmentItem, Integer> shipmentItemAssignedQuantityMap = new HashMap<>();
-        deliveryTripDetailRepo.findAllByDeliveryTripIdIn(
-                deliveryTripsInDeliveryPlan.stream().map(DeliveryTrip::getDeliveryTripId).collect(Collectors.toList()))
-                .forEach(deliveryTripDetail ->
-                        shipmentItemAssignedQuantityMap.merge(deliveryTripDetail.getShipmentItem(),
-                                deliveryTripDetail.getDeliveryQuantity(), Integer::sum));
 
         return shipmentItemsNotInDeliveryTrip.stream()
                 .sorted(Comparator.comparingDouble(o -> geoPointToMinDistanceMap.getOrDefault(o.getShipToLocation().getGeoPoint(), 0.0)))
                 .map(shipmentItem -> shipmentItem.toShipmentItemDeliveryPlanModel(
                         productMap, shipmentItemAssignedQuantityMap.getOrDefault(shipmentItem, 0)))
-                .filter(shipmentItemDeliveryPlanModel -> shipmentItemDeliveryPlanModel.getQuantity() >= 0)
                 .collect(Collectors.toList());
     }
 

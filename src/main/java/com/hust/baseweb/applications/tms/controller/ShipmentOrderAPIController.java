@@ -30,7 +30,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -130,15 +129,13 @@ public class ShipmentOrderAPIController {
     @GetMapping("/delivery-trip/{deliveryPlanId}/page")
     public ResponseEntity<?> getPageDeliveryTripList(Pageable pageable, @PathVariable String deliveryPlanId) {
         log.info("getPageDeliveryTripList, deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(deliveryTripService.findAllByDeliveryPlanId(deliveryPlanId, pageable)
-                .map(DeliveryTrip::toDeliveryTripModel));
+        return ResponseEntity.ok().body(deliveryTripService.findAllByDeliveryPlanId(deliveryPlanId, pageable));
     }
 
     @GetMapping("/delivery-trip/{deliveryPlanId}/all")
-    public ResponseEntity<?> getAllDeliveryTripList(Pageable pageable, @PathVariable String deliveryPlanId) {
+    public ResponseEntity<?> getAllDeliveryTripList(@PathVariable String deliveryPlanId) {
         log.info("getAllDeliveryTripList, deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(deliveryTripService.findAllByDeliveryPlanId(deliveryPlanId).stream()
-                .map(DeliveryTrip::toDeliveryTripModel).collect(Collectors.toList()));
+        return ResponseEntity.ok().body(deliveryTripService.findAllByDeliveryPlanId(deliveryPlanId));
     }
 
     @GetMapping("/delivery-trip/{deliveryTripId}/basic-info")
@@ -148,9 +145,9 @@ public class ShipmentOrderAPIController {
     }
 
     @GetMapping("/delivery-trip-detail/{deliveryTripId}")
-    public ResponseEntity<?> getDeliveryTripDetailList(Pageable pageable, @PathVariable String deliveryTripId) {
+    public ResponseEntity<?> getDeliveryTripDetailList(@PathVariable String deliveryTripId) {
         log.info("getDeliveryTripDetailList, deliveryTripId=" + deliveryTripId);
-        return ResponseEntity.ok().body(deliveryTripDetailService.findAll(deliveryTripId, pageable));
+        return ResponseEntity.ok().body(deliveryTripDetailService.findAll(deliveryTripId));
     }
 
     @PostMapping("/create-delivery-trip")

@@ -42,12 +42,16 @@ public class DeliveryTrip {
     private VehicleType externalVehicleType;
 
     public DeliveryTripModel toDeliveryTripModel() {
+        return toDeliveryTripModel(0, 0);
+    }
+
+    public DeliveryTripModel toDeliveryTripModel(double totalDistance, double totalWeight) {
         return new DeliveryTripModel(
                 deliveryPlanSolutionSeqId,
                 deliveryTripId.toString(),
                 Constant.DATE_FORMAT.format(executeDate),
-                0,
-                0,
+                totalDistance,
+                totalWeight,
                 vehicle == null ? null : vehicle.getVehicleId(),
                 vehicle == null ? null : vehicle.getCapacity()
         );

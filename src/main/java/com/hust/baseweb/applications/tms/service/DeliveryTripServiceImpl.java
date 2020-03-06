@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripDetailInputModel;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripInfoModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripModel;
 import com.hust.baseweb.applications.tms.repo.*;
 import com.hust.baseweb.utils.LatLngUtils;
 import com.hust.baseweb.utils.algorithm.DistanceUtils;
@@ -64,17 +65,24 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     }
 
     @Override
-    public Page<DeliveryTrip> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable) {
+    public Page<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable) {
         DeliveryPlan deliveryPlan = new DeliveryPlan();
         deliveryPlan.setDeliveryPlanId(UUID.fromString(deliveryPlanId));
-        return deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan, pageable);
+        return deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan, pageable).map(DeliveryTrip::toDeliveryTripModel);
     }
 
     @Override
-    public List<DeliveryTrip> findAllByDeliveryPlanId(String deliveryPlanId) {
+    public List<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId) {
         DeliveryPlan deliveryPlan = new DeliveryPlan();
         deliveryPlan.setDeliveryPlanId(UUID.fromString(deliveryPlanId));
-        return deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan);
+        List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan);
+        return deliveryTrips.stream().map(deliveryTrip -> {
+            DeliveryTripInfoModel deliveryTripInfo = getDeliveryTripInfo(deliveryTrip.getDeliveryTripId().toString(), new ArrayList<>());
+            return deliveryTrip.toDeliveryTripModel(
+                    deliveryTripInfo.getTotalDistance(),
+                    deliveryTripInfo.getTotalWeight()
+            );
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -130,8 +138,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         });
 
         Map<String, Product> productMap = new HashMap<>();
-        productRepo.findAllByProductIdIn(shipmentItemsInDeliveryPlan.stream().map(ShipmentItem::getProductId)
-                .collect(Collectors.toList()))
+        productRepo.findAllByProductIdIn(shipmentItemsInDeliveryPlan
+                .stream().map(ShipmentItem::getProductId).collect(Collectors.toList()))
                 .forEach(product -> productMap.put(product.getProductId(), product));
 
         double totalWeight = 0;

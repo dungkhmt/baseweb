@@ -1,5 +1,7 @@
 package com.hust.baseweb.applications.tms.entity;
 
+import com.hust.baseweb.applications.logistics.entity.Product;
+import com.hust.baseweb.applications.tms.model.deliverytripdetail.DeliveryTripDetailModel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,5 +31,16 @@ public class DeliveryTripDetail {
     @Column(name = "delivery_quantity")
     private int deliveryQuantity;
 
+    public DeliveryTripDetailModel toDeliveryTripDetailModel(Product product) {
+        return new DeliveryTripDetailModel(
+                deliveryTripDetailId,
+                deliveryTripId,
+                (shipmentItem == null || shipmentItem.getCustomer() == null) ? null : shipmentItem.getCustomer().getCustomerCode(),
+                product == null ? null : product.getProductId(),
+                product == null ? null : product.getProductName(),
+                shipmentItem == null ? null : shipmentItem.getQuantity(),
+                deliveryQuantity
+        );
+    }
 
 }
