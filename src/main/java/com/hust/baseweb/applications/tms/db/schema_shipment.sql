@@ -20,15 +20,15 @@ create table shipment
 
 create table shipment_item
 (
-    shipment_item_id UUID NOT NULL default uuid_generate_v1(),
-    shipment_id          UUID NOT NULL,
-    product_id           VARCHAR(60),
-    quantity             Integer,
-    pallet               numeric,
-    party_customer_id    UUID,
-    ship_to_location_id  UUID,
-    last_updated_stamp   TIMESTAMP,
-    created_stamp        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    shipment_item_id    UUID NOT NULL default uuid_generate_v1(),
+    shipment_id         UUID NOT NULL,
+    product_id          VARCHAR(60),
+    quantity            Integer,
+    pallet              numeric,
+    party_customer_id   UUID,
+    ship_to_location_id UUID,
+    last_updated_stamp  TIMESTAMP,
+    created_stamp       TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_shipment_item primary key (shipment_item_id),
     constraint fk_shipment_item_shipment_id foreign key (shipment_id) references shipment (shipment_id),
     constraint fk_shipment_item_product_id foreign key (product_id) references product (product_id),
@@ -38,12 +38,12 @@ create table shipment_item
 
 create table order_shipment
 (
-	order_shipment_id  UUID NOT NULL default uuid_generate_v1(),
-    order_id             VARCHAR(60),
-    order_item_seq_id    VARCHAR(60),
-    shipment_item_id UUID,
-    last_updated_stamp   TIMESTAMP,
-    created_stamp        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    order_shipment_id  UUID NOT NULL default uuid_generate_v1(),
+    order_id           VARCHAR(60),
+    order_item_seq_id  VARCHAR(60),
+    shipment_item_id   UUID,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_order_shipment primary key (order_shipment_id),
     constraint fk_order_shipment_order_item foreign key (order_id, order_item_seq_id) references order_item (order_id, order_item_seq_id),
     constraint fk_order_shipment_shipment_item foreign key (shipment_item_id) references shipment_item (shipment_item_id)
@@ -77,15 +77,15 @@ create table vehicle_delivery_plan
 
 create table shipment_item_delivery_plan
 (
-	
-    delivery_plan_id     UUID,
-    shipment_item_id          UUID,
-    
-    last_updated_stamp   TIMESTAMP,
-    created_stamp        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    delivery_plan_id   UUID,
+    shipment_item_id   UUID,
+
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_shipment_item_delivery_plan primary key (delivery_plan_id, shipment_item_id),
-    constraint fk_shipment_item_delivery_plan_delivery_plan foreign key(delivery_plan_id) references delivery_plan(delivery_plan_id),
-    constraint fk_shipment_item_delivery_plan_shipment_item foreign key(shipment_item_id) references shipment_item(shipment_item_id)
+    constraint fk_shipment_item_delivery_plan_delivery_plan foreign key (delivery_plan_id) references delivery_plan (delivery_plan_id),
+    constraint fk_shipment_item_delivery_plan_shipment_item foreign key (shipment_item_id) references shipment_item (shipment_item_id)
 );
 
 create table delivery_plan_solution
@@ -109,7 +109,8 @@ create table delivery_trip
     driver_id                        UUID,
     execute_date                     TIMESTAMP,
     distance                         numeric,
-    totalWeight                      numeric,
+    total_weight                     numeric,
+    total_pallet                     numeric,
     execute_external_vehicle_type_id VARCHAR(60),
     status_id                        VARCHAR(60),
     last_updated_stamp               TIMESTAMP,
@@ -119,7 +120,7 @@ create table delivery_trip
     constraint fk_delivery_trip_external_vehicle_type_id foreign key (execute_external_vehicle_type_id) references vehicle_type (vehicle_type_id),
     constraint fk_delivery_trip_plan_solution foreign key (delivery_plan_id, delivery_plan_solution_seq_id) references delivery_plan_solution (delivery_plan_id, delivery_plan_solution_seq_id),
     constraint fk_delivery_trip_vehicle_id foreign key (vehicle_id) references vehicle (vehicle_id),
-    constraint fk_delivery_trip_driver_id foreign key (driver_id) references party_driver(party_id)
+    constraint fk_delivery_trip_driver_id foreign key (driver_id) references party_driver (party_id)
 );
 
 
@@ -128,7 +129,7 @@ create table delivery_trip_detail
     delivery_trip_detail_id UUID NOT NULL default uuid_generate_v1(),
     delivery_trip_id        UUID,
     sequence                Integer,
-    shipment_item_id             UUID,
+    shipment_item_id        UUID,
     delivery_quantity       Integer,
     status_id               VARCHAR(60),
     last_updated_stamp      TIMESTAMP,

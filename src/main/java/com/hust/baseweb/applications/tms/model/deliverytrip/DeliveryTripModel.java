@@ -13,8 +13,9 @@ public class DeliveryTripModel {
     private String deliveryPlanSolutionSeqId;
     private String deliveryTripId;
     private String executeDate;
-    private double totalDistance;
-    private double totalWeight;
+    private Double totalDistance;
+    private Double totalWeight;
+    private Double totalPallet;
     private String vehicleId;
     private Double maxVehicleCapacity;
 }

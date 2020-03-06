@@ -37,21 +37,24 @@ public class DeliveryTrip {
     @Column(name = "execute_date")
     private Date executeDate;
 
+    private Double distance;
+
+    private Double totalWeight;
+
+    private Double totalPallet;
+
     @JoinColumn(name = "execute_external_vehicle_type_id", referencedColumnName = "vehicle_type_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private VehicleType externalVehicleType;
 
     public DeliveryTripModel toDeliveryTripModel() {
-        return toDeliveryTripModel(0, 0);
-    }
-
-    public DeliveryTripModel toDeliveryTripModel(double totalDistance, double totalWeight) {
         return new DeliveryTripModel(
                 deliveryPlanSolutionSeqId,
                 deliveryTripId.toString(),
                 Constant.DATE_FORMAT.format(executeDate),
-                totalDistance,
+                distance,
                 totalWeight,
+                totalPallet,
                 vehicle == null ? null : vehicle.getVehicleId(),
                 vehicle == null ? null : vehicle.getCapacity()
         );

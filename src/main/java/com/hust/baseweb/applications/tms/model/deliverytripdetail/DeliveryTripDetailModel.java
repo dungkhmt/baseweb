@@ -15,8 +15,10 @@ public class DeliveryTripDetailModel {
     private UUID deliveryTripDetailId;
     private UUID deliveryTripId;
     private String customerCode;
+    private String address;
     private String productId;
     private String productName;
     private Integer shipmentQuantity;
     private Integer deliveryQuantity;
+    private Double weight;
 }

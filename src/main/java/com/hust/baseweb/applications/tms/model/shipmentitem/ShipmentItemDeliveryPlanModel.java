@@ -14,6 +14,7 @@ import java.util.UUID;
 public class ShipmentItemDeliveryPlanModel {
     private UUID shipmentItemId;
     private String productName;
+    private Double weight;
     private Integer quantity;
     private Double pallet;
     private String address;

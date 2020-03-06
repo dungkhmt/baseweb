@@ -63,6 +63,7 @@ public class ShipmentItem {
         return new ShipmentItemDeliveryPlanModel(
                 shipmentItemId,
                 product.getProductName(),
+                product.getWeight() / quantity,
                 quantity - assignedQuantity,
                 pallet,
                 shipToLocation.getAddress()

@@ -60,6 +60,10 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
         deliveryTrip.setVehicle(vehicle);
 
+        deliveryTrip.setDistance(0.0);
+        deliveryTrip.setTotalWeight(0.0);
+        deliveryTrip.setTotalPallet(0.0);
+
         deliveryTrip = deliveryTripRepo.save(deliveryTrip);
         return deliveryTrip;
     }
@@ -76,13 +80,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         DeliveryPlan deliveryPlan = new DeliveryPlan();
         deliveryPlan.setDeliveryPlanId(UUID.fromString(deliveryPlanId));
         List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan);
-        return deliveryTrips.stream().map(deliveryTrip -> {
-            DeliveryTripInfoModel deliveryTripInfo = getDeliveryTripInfo(deliveryTrip.getDeliveryTripId().toString(), new ArrayList<>());
-            return deliveryTrip.toDeliveryTripModel(
-                    deliveryTripInfo.getTotalDistance(),
-                    deliveryTripInfo.getTotalWeight()
-            );
-        }).collect(Collectors.toList());
+        return deliveryTrips.stream().map(DeliveryTrip::toDeliveryTripModel).collect(Collectors.toList());
     }
 
     @Override
@@ -123,18 +121,18 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         allGeoPoints.addAll(geoPointsSelected);
 
         double totalDistance = DistanceUtils.calculateGreedyTotalDistance(allGeoPoints, (fromGeoPoint, toGeoPoint) -> {
-            DistanceTravelTimeGeoPoint distanceTravelTimeGeoPoint
-                    = distanceTravelTimeGeoPointRepo.findByFromGeoPointAndToGeoPoint(fromGeoPoint, toGeoPoint);
-            if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
-                return LatLngUtils.distance(
-                        Double.parseDouble(toGeoPoint.getLatitude()),
-                        Double.parseDouble(toGeoPoint.getLongitude()),
-                        Double.parseDouble(fromGeoPoint.getLatitude()),
-                        Double.parseDouble(fromGeoPoint.getLongitude())
-                );
-            } else {
-                return distanceTravelTimeGeoPoint.getDistance();
-            }
+//            DistanceTravelTimeGeoPoint distanceTravelTimeGeoPoint
+//                    = distanceTravelTimeGeoPointRepo.findByFromGeoPointAndToGeoPoint(fromGeoPoint, toGeoPoint);
+//            if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
+            return LatLngUtils.distance(
+                    Double.parseDouble(toGeoPoint.getLatitude()),
+                    Double.parseDouble(toGeoPoint.getLongitude()),
+                    Double.parseDouble(fromGeoPoint.getLatitude()),
+                    Double.parseDouble(fromGeoPoint.getLongitude())
+            );
+//            } else {
+//                return distanceTravelTimeGeoPoint.getDistance();
+//            }
         });
 
         Map<String, Product> productMap = new HashMap<>();
@@ -148,14 +146,14 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         for (DeliveryTripDetail deliveryTripDetail : deliveryTripDetails) {
             ShipmentItem shipmentItem = deliveryTripDetail.getShipmentItem();
             Product product = productMap.get(shipmentItem.getProductId());
-            totalWeight += product.getWeight() * deliveryTripDetail.getDeliveryQuantity();
+            totalWeight += product.getWeight() / shipmentItem.getQuantity() * deliveryTripDetail.getDeliveryQuantity();
             totalPallet += shipmentItem.getPallet() / shipmentItem.getQuantity() * deliveryTripDetail.getDeliveryQuantity();
         }
 
         for (CreateDeliveryTripDetailInputModel shipmentItemModel : shipmentItemModels) {
             ShipmentItem shipmentItem = shipmentItemMap.get(shipmentItemModel.getShipmentItemId().toString());
             Product product = productMap.get(shipmentItem.getProductId());
-            totalWeight += product.getWeight() * shipmentItemModel.getDeliveryQuantity();
+            totalWeight += product.getWeight() / shipmentItem.getQuantity() * shipmentItemModel.getDeliveryQuantity();
             totalPallet += shipmentItem.getPallet() / shipmentItem.getQuantity() * shipmentItemModel.getDeliveryQuantity();
         }
 

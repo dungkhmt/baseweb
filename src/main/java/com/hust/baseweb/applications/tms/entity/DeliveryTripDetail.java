@@ -36,10 +36,12 @@ public class DeliveryTripDetail {
                 deliveryTripDetailId,
                 deliveryTripId,
                 (shipmentItem == null || shipmentItem.getCustomer() == null) ? null : shipmentItem.getCustomer().getCustomerCode(),
+                (shipmentItem == null || shipmentItem.getShipToLocation() == null) ? null : shipmentItem.getShipToLocation().getAddress(),
                 product == null ? null : product.getProductId(),
                 product == null ? null : product.getProductName(),
                 shipmentItem == null ? null : shipmentItem.getQuantity(),
-                deliveryQuantity
+                deliveryQuantity,
+                product == null ? null : (product.getWeight() / shipmentItem.getQuantity() * deliveryQuantity)
         );
     }
 
