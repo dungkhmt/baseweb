@@ -5,6 +5,8 @@ import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDelivery
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripInfoModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,5 +26,6 @@ public interface DeliveryTripService {
 
     DeliveryTripInfoModel getDeliveryTripInfo(String deliveryTripId, List<CreateDeliveryTripDetailInputModel> shipmentItemModels);
 
+    GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(String driverUserLoginId);
     
 }

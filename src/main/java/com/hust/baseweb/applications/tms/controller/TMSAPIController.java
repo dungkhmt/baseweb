@@ -1,16 +1,10 @@
 package com.hust.baseweb.applications.tms.controller;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
-import com.hust.baseweb.applications.order.entity.OrderHeader;
-import com.hust.baseweb.applications.order.entity.OrderItem;
-import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.order.repo.OrderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
-import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.DeliveryCustomerModel;
-import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.DeliveryItemModel;
-import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.GetAssigned2ShipperDeliveryRouteOutputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverInputModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
 import com.hust.baseweb.applications.tms.service.DeliveryTripService;
 import com.hust.baseweb.applications.tms.service.DistanceTravelTimeService;
 import com.hust.baseweb.repo.UserLoginRepo;
@@ -21,9 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -36,6 +27,15 @@ public class TMSAPIController {
     private OrderRoleRepo orderRoleRepo;
     private UserLoginRepo userLoginRepo;
     private DeliveryTripService deliveryTripService;
+    private DistanceTravelTimeService distanceTravelTimeService;
+
+
+    @PostMapping("/get-assigned-delivery-routes")
+    public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal, @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
+        GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(input.getDriverUserLoginId());
+
+        return ResponseEntity.ok().body(deliveryTrip);
+    }
 
     @Autowired
     public TMSAPIController(CustomerRepo customerRepo, OrderRepo orderRepo, OrderRoleRepo orderRoleRepo, UserLoginRepo userLoginRepo, DeliveryTripService deliveryTripService, DistanceTravelTimeService distanceTravelTimeService) {
@@ -47,11 +47,8 @@ public class TMSAPIController {
         this.distanceTravelTimeService = distanceTravelTimeService;
     }
 
-    @PostMapping
-    public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal, @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
-        return null;
-    }
 
+    /*
     @GetMapping("/get-assigned-delivery-routes")
     private ResponseEntity<?> getAssignedDeliveryRoutes(Principal principal) {
         System.out.println(module + "::getAssignedDeliveryRoutes, user = " + principal.getName());
@@ -98,8 +95,8 @@ public class TMSAPIController {
 
         return ResponseEntity.ok().body(new GetAssigned2ShipperDeliveryRouteOutputModel(deliveryCustomers));
     }
+	*/
 
-    private DistanceTravelTimeService distanceTravelTimeService;
 
     @GetMapping("/calc-distance-travel-time")
     public ResponseEntity<?> calcDistanceTravelTime() {
