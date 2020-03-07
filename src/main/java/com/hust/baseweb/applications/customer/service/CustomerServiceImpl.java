@@ -91,6 +91,7 @@ public class CustomerServiceImpl implements CustomerService {
         UUID contactMechId = address.getContactMechId();
 
 
+        log.info("save, start save party_contact_mech_purpose");
         // write to PartyContactMech
         PartyContactMechPurpose partyContactMechPurpose = new PartyContactMechPurpose();
         partyContactMechPurpose.setContactMechId(contactMechId);
@@ -99,6 +100,7 @@ public class CustomerServiceImpl implements CustomerService {
         partyContactMechPurpose.setFromDate(new Date());
         partyContactMechPurposeRepo.save(partyContactMechPurpose);
 
+        
         return customer;
     }
 

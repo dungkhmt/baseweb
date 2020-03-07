@@ -7,17 +7,24 @@ import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.order.repo.OrderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
+import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
 import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.DeliveryCustomerModel;
 import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.DeliveryItemModel;
 import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.GetAssigned2ShipperDeliveryRouteOutputModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverInputModel;
+import com.hust.baseweb.applications.tms.service.DeliveryTripService;
 import com.hust.baseweb.applications.tms.service.DistanceTravelTimeService;
 import com.hust.baseweb.repo.UserLoginRepo;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
@@ -36,7 +43,13 @@ public class TMSAPIController {
     private OrderRepo orderRepo;
     private OrderRoleRepo orderRoleRepo;
     private UserLoginRepo userLoginRepo;
-
+    private DeliveryTripService deliveryTripService;
+    
+    
+    @PostMapping
+    public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal, @RequestBody GetDeliveryTripAssignedToDriverInputModel input){
+    	return null;
+    }
     @GetMapping("/get-assigned-delivery-routes")
     private ResponseEntity<?> getAssignedDeliveryRoutes(Principal principal) {
         System.out.println(module + "::getAssignedDeliveryRoutes, user = " + principal.getName());

@@ -23,4 +23,6 @@ public interface DeliveryTripService {
     DeliveryTrip findById(UUID deliveryTripId);
 
     DeliveryTripInfoModel getDeliveryTripInfo(String deliveryTripId, List<CreateDeliveryTripDetailInputModel> shipmentItemModels);
+
+    
 }
