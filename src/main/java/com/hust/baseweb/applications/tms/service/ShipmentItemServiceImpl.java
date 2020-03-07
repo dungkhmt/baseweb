@@ -86,7 +86,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
             double minDistance = Double.MAX_VALUE;
             for (GeoPoint geoPointIn : geoPointsInDeliveryTrip) {
                 DistanceTravelTimeGeoPoint distanceTravelTimeGeoPoint
-                        = distanceTravelTimeGeoPointRepo.findByFromGeoPointAndToGeoPoint(geoPointIn, geoPointNotIn);
+                        = distanceTravelTimeGeoPointRepo.findByFromGeoPointIdAndToGeoPointId(geoPointIn.getGeoPointId(), geoPointNotIn.getGeoPointId());
                 double distance;
                 if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
                     distance = LatLngUtils.distance(
