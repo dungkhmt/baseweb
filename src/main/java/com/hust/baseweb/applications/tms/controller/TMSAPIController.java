@@ -12,6 +12,7 @@ import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.DeliveryCu
 import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.DeliveryItemModel;
 import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.GetAssigned2ShipperDeliveryRouteOutputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverInputModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
 import com.hust.baseweb.applications.tms.service.DeliveryTripService;
 import com.hust.baseweb.applications.tms.service.DistanceTravelTimeService;
 import com.hust.baseweb.repo.UserLoginRepo;
@@ -44,12 +45,17 @@ public class TMSAPIController {
     private OrderRoleRepo orderRoleRepo;
     private UserLoginRepo userLoginRepo;
     private DeliveryTripService deliveryTripService;
+    private DistanceTravelTimeService distanceTravelTimeService;
+
     
-    
-    @PostMapping
+    @PostMapping("/get-assigned-delivery-routes")
     public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal, @RequestBody GetDeliveryTripAssignedToDriverInputModel input){
-    	return null;
+    	GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(input.getDriverUserLoginId());
+    	
+    	return ResponseEntity.ok().body(deliveryTrip);
     }
+    
+    /*
     @GetMapping("/get-assigned-delivery-routes")
     private ResponseEntity<?> getAssignedDeliveryRoutes(Principal principal) {
         System.out.println(module + "::getAssignedDeliveryRoutes, user = " + principal.getName());
@@ -96,9 +102,9 @@ public class TMSAPIController {
 
         return ResponseEntity.ok().body(new GetAssigned2ShipperDeliveryRouteOutputModel(deliveryCustomers));
     }
-
-    private DistanceTravelTimeService distanceTravelTimeService;
-
+	*/
+    
+    
     @GetMapping("/calc-distance-travel-time")
     public ResponseEntity<?> calcDistanceTravelTime() {
         log.info("::calcDistanceTravelTime()");

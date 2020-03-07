@@ -1,17 +1,28 @@
 package com.hust.baseweb.applications.tms.service;
 
+import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripDetailInputModel;
 import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripHeaderView;
 import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripInfoModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripLocationItemView;
+import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripLocationView;
 import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
 import com.hust.baseweb.applications.tms.repo.*;
+import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.repo.PartyRepo;
+import com.hust.baseweb.repo.UserLoginRepo;
 import com.hust.baseweb.utils.LatLngUtils;
 import com.hust.baseweb.utils.algorithm.DistanceUtils;
+
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +33,18 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+class SequenceDeliveryTripDetail implements Comparator<DeliveryTripDetail>{
+
+	@Override
+	public int compare(DeliveryTripDetail o1, DeliveryTripDetail o2) {
+		// TODO: add sequence to DeliveryTripDetail
+		return 1;
+	}
+	
+}
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class DeliveryTripServiceImpl implements DeliveryTripService {
 
     private DeliveryTripRepo deliveryTripRepo;
@@ -35,7 +56,9 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     private DeliveryTripDetailRepo deliveryTripDetailRepo;
     private DistanceTravelTimeGeoPointRepo distanceTravelTimeGeoPointRepo;
     private ProductRepo productRepo;
-
+    private UserLoginRepo userLoginRepo;
+    private PartyRepo partyRepo;
+    
     @Override
     @Transactional
     public DeliveryTrip save(CreateDeliveryTripInputModel input) {
@@ -159,6 +182,93 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
         return new DeliveryTripInfoModel(deliveryTripId, totalDistance, totalWeight, totalPallet);
     }
+
+	@Override
+	public GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(
+			String driverUserLoginId) {
+		// TODO Auto-generated method stub
+		UserLogin u = userLoginRepo.findByUserLoginId(driverUserLoginId);
+		List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findByParty(u.getParty());
+		log.info("getDeliveryTripAssignedToDriver, got deliveryTrips.sz = " + deliveryTrips.size());
+		
+		DeliveryTripHeaderView[] deliveryTripHeaderViews = new DeliveryTripHeaderView[deliveryTrips.size()];
+		HashMap<String, Product> mID2Product = new HashMap<String, Product>();
+		for(int i = 0; i < deliveryTrips.size(); i++){
+			DeliveryTrip t = deliveryTrips.get(i);
+			UUID deliveryTripId= t.getDeliveryTripId();
+			String vehicleId = t.getVehicle().getVehicleId();
+			UUID driverPartyId = t.getParty().getPartyId();
+			//String driverUserLoginId;
+			Date executeDate = t.getExecuteDate();
+			
+			List<DeliveryTripLocationView> deliveryTripLocations = new ArrayList<>();
+			
+			List<DeliveryTripDetail> dtd = deliveryTripDetailRepo.findAllByDeliveryTripId(deliveryTripId); 
+			log.info("getDeliveryTripAssignedToDriver, dtd of deliveryTripId " + deliveryTripId + " = " + dtd.size());
+			
+			Collections.sort(dtd, new SequenceDeliveryTripDetail());
+			for(int j = 0; j < dtd.size(); j++){
+				log.info("getDeliveryTripAssignedToDriver dtd(" + j + ") " + dtd.get(j).getDeliveryQuantity() + ", " + dtd.get(j).getDeliveryTripDetailId());  
+			}
+			int idx = 0;
+			while(idx < dtd.size()){
+				List<DeliveryTripLocationView> deliveryTripLocationViews = new ArrayList<>();
+				
+				ShipmentItem SI = dtd.get(idx).getShipmentItem();
+				PartyCustomer partyCustomer = SI.getCustomer(); 
+				if(partyCustomer != null)
+					log.info("getDeliveryTripAssignedToDriver dtd[" + idx + "], shipmentItemId = " + SI.getShipmentItemId() + 
+						", customer = " + partyCustomer.getCustomerName());
+				else{
+					log.info("getDeliveryTripAssignedToDriver dtd[" + idx + "], shipmentItemId = " + SI.getShipmentItemId() + 
+							", customer = " + " NULL");
+				}
+				UUID partyCustomerId = partyCustomer.getPartyId();
+				String customerName = partyCustomer.getCustomerName();
+				String address = SI.getShipToLocation().getAddress();
+				double latitude = Double.valueOf(SI.getShipToLocation().getGeoPoint().getLatitude());
+				double longitude= Double.valueOf(SI.getShipToLocation().getGeoPoint().getLongitude());
+				//UUID partyCustomerId;
+				List<DeliveryTripLocationItemView> items =new ArrayList<>();
+				
+				ShipmentItem si = dtd.get(idx).getShipmentItem();
+				UUID deliveryTripDetailId = dtd.get(idx).getDeliveryTripDetailId();
+				UUID shipmentItemId = si.getShipmentItemId();
+				String productId = si.getProductId();
+				Product product = mID2Product.get(productId);
+				if(product == null){
+					product = productRepo.findByProductId(productId);
+					mID2Product.put(productId, product);
+				}
+				String productName = product.getProductName();
+				int deliveryQuantity = dtd.get(idx).getDeliveryQuantity();
+				items.add(new DeliveryTripLocationItemView(deliveryTripDetailId,shipmentItemId,productId,productName,deliveryQuantity));
+				
+				int j = idx + 1;
+				while(j < dtd.size() && dtd.get(j).getShipmentItem().getCustomer().getPartyId().equals(partyCustomerId)){
+					si = dtd.get(j).getShipmentItem();
+					deliveryTripDetailId = dtd.get(j).getDeliveryTripDetailId();
+					shipmentItemId = si.getShipmentItemId();
+					productId = si.getProductId();
+					product = mID2Product.get(productId);
+					if(product == null){
+						product = productRepo.findByProductId(productId);
+						mID2Product.put(productId, product);
+					}
+					productName = product.getProductName();
+					deliveryQuantity = dtd.get(j).getDeliveryQuantity();
+					items.add(new DeliveryTripLocationItemView(deliveryTripDetailId,shipmentItemId,productId,productName,deliveryQuantity));
+					j++;
+				}
+				
+				deliveryTripLocationViews.add(new DeliveryTripLocationView(customerName,address,latitude,longitude,partyCustomerId,items));
+				idx = j;
+			}
+			deliveryTripHeaderViews[i] = new DeliveryTripHeaderView(deliveryTripId, vehicleId, driverPartyId, driverUserLoginId, executeDate, deliveryTripLocations);
+		}
+		GetDeliveryTripAssignedToDriverOutputModel trip = new GetDeliveryTripAssignedToDriverOutputModel(deliveryTripHeaderViews);
+		return trip;
+	}
 
 
 }
