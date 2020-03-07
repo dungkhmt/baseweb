@@ -50,11 +50,15 @@ public class VehicleAPIController {
                 Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreateVehicleModel.class,
                         PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải").build());
 
+        /*
         List<Vehicle> vehicles = vehicleModels.stream().map(CreateVehicleModel::toVehicle).collect(Collectors.toList());
         List<VehicleMaintenanceHistory> vehicleMaintenanceHistories = vehicles.stream().map(Vehicle::createVehicleMaintenanceHistory).collect(Collectors.toList());
         vehicleService.saveAll(vehicles);
         vehicleService.saveAllMaintenanceHistory(vehicleMaintenanceHistories);
-        return ResponseEntity.ok().build();
+        */
+        List<Vehicle> vehicles = vehicleService.save(vehicleModels);
+        
+        return ResponseEntity.ok().body(vehicles.size());
     }
 
     // list view

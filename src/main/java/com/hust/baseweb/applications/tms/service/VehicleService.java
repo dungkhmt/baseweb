@@ -2,9 +2,11 @@ package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.tms.entity.Vehicle;
 import com.hust.baseweb.applications.tms.entity.VehicleMaintenanceHistory;
+import com.hust.baseweb.applications.tms.model.createvehicle.CreateVehicleModel;
 import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.VehicleModel;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -26,4 +28,6 @@ public interface VehicleService {
     String saveVehicleDeliveryPlan(CreateVehicleDeliveryPlanModel createVehicleDeliveryPlanModel);
 
     boolean deleteVehicleDeliveryPlan(DeleteVehicleDeliveryPlanModel deleteVehicleDeliveryPlanModel);
+    
+    List<Vehicle> save(List<CreateVehicleModel> vehicleModels);
 }

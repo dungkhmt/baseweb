@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.tms.service;
 import com.hust.baseweb.applications.tms.entity.Vehicle;
 import com.hust.baseweb.applications.tms.entity.VehicleDeliveryPlan;
 import com.hust.baseweb.applications.tms.entity.VehicleMaintenanceHistory;
+import com.hust.baseweb.applications.tms.model.createvehicle.CreateVehicleModel;
 import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.VehicleModel;
@@ -10,7 +11,10 @@ import com.hust.baseweb.applications.tms.repo.VehicleDeliveryPlanRepo;
 import com.hust.baseweb.applications.tms.repo.VehicleMaintenanceHistoryRepo;
 import com.hust.baseweb.applications.tms.repo.VehicleRepo;
 import com.hust.baseweb.utils.PageUtils;
+
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +26,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class VehicleServiceImpl implements VehicleService {
 
     private VehicleRepo vehicleRepo;
@@ -126,4 +133,36 @@ public class VehicleServiceImpl implements VehicleService {
         }
         return false;
     }
+
+	@Override
+	@Transactional
+	public List<Vehicle> save(List<CreateVehicleModel> vehicleModels) {
+		// TODO Auto-generated method stub
+		List<Vehicle> listVehicles = new ArrayList<>();
+		for(int i = 0; i < vehicleModels.size(); i++){
+			CreateVehicleModel vm = vehicleModels.get(i);
+			Vehicle vehicle = vehicleRepo.findByVehicleId(vm.getVehicleId());
+			if(vehicle == null){
+				vehicle = new Vehicle();
+				vehicle.setVehicleId(vm.getVehicleId());
+				vehicle.setCapacity(vm.getCapacity());
+				vehicle.setDescription(vm.getDescription());
+				vehicle.setHeight(vm.getHeight());
+				vehicle.setLength(vm.getLength());
+				vehicle.setWidth(vm.getWidth());
+				vehicle.setPallet(vm.getPallet());
+				vehicle = vehicleRepo.save(vehicle);
+			
+				VehicleMaintenanceHistory vmh = vehicle.createVehicleMaintenanceHistory();
+				vmh = vehicleMaintenanceHistoryRepo.save(vmh);
+				
+				listVehicles.add(vehicle);
+			}else{
+				
+			}
+			log.info("save vehicles, finished " + i + "/" + vehicleModels.size());
+			
+		}
+		return listVehicles;
+	}
 }
