@@ -66,7 +66,9 @@ public class ShipmentItem {
                 product.getWeight() / quantity,
                 quantity - assignedQuantity,
                 pallet,
-                shipToLocation.getAddress()
+                shipToLocation.getAddress(),
+                shipToLocation.getGeoPoint().getLatitude() + "," +
+                        shipToLocation.getGeoPoint().getLongitude()
         );
     }
 }

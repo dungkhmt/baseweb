@@ -18,4 +18,5 @@ public class ShipmentItemDeliveryPlanModel {
     private Integer quantity;
     private Double pallet;
     private String address;
+    private String latLng;
 }
