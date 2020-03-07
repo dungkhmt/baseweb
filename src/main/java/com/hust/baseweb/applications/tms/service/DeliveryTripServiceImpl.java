@@ -120,7 +120,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         List<GeoPoint> allGeoPoints = new ArrayList<>(geoPointsInDeliveryTrip);
         allGeoPoints.addAll(geoPointsSelected);
 
-        double totalDistance = DistanceUtils.calculateGreedyTotalDistance(allGeoPoints, (fromGeoPoint, toGeoPoint) -> {
+        DistanceUtils.DirectionSolution<GeoPoint> directionSolution
+                = DistanceUtils.calculateGreedyTotalDistance(allGeoPoints, (fromGeoPoint, toGeoPoint) -> {
 //            DistanceTravelTimeGeoPoint distanceTravelTimeGeoPoint
 //                    = distanceTravelTimeGeoPointRepo.findByFromGeoPointAndToGeoPoint(fromGeoPoint, toGeoPoint);
 //            if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
@@ -157,7 +158,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
             totalPallet += shipmentItem.getPallet() / shipmentItem.getQuantity() * shipmentItemModel.getDeliveryQuantity();
         }
 
-        return new DeliveryTripInfoModel(deliveryTripId, totalDistance, totalWeight, totalPallet);
+        return new DeliveryTripInfoModel(deliveryTripId, directionSolution.getDistance(), totalWeight, totalPallet, directionSolution.getTour());
     }
 
 

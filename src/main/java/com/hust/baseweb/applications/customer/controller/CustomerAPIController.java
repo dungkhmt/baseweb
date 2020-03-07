@@ -7,9 +7,7 @@ import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
-
 import lombok.AllArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +26,6 @@ public class CustomerAPIController {
 
     private CustomerRepo customerRepo;
     private CustomerService customerService;
-    @Autowired
 	private UserService userService;
 	
     @GetMapping("/customers")

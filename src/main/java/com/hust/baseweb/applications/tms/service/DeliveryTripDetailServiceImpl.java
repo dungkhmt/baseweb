@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.tms.service;
 
+import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
+@Transactional
 public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService {
 
     private DeliveryTripDetailRepo deliveryTripDetailRepo;
@@ -58,7 +61,25 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         deliveryTrip.setTotalPallet(deliveryTripInfo.getTotalPallet());
         deliveryTrip.setDistance(deliveryTripInfo.getTotalDistance());
         deliveryTripRepo.save(deliveryTrip);
+
+        updateDeliveryTripDetailSequence(deliveryTripIdUuid, deliveryTripInfo);
+
         return inputs.size();
+    }
+
+    public void updateDeliveryTripDetailSequence(UUID deliveryTripIdUuid, DeliveryTripInfoModel deliveryTripInfo) {
+        List<GeoPoint> tour = deliveryTripInfo.getTour();
+        Map<GeoPoint, Integer> geoPointIndexMap = new HashMap<>();
+        for (int i = 0; i < tour.size(); i++) {
+            geoPointIndexMap.put(tour.get(i), i);
+        }
+
+        List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripId(deliveryTripIdUuid);
+        for (DeliveryTripDetail deliveryTripDetail : deliveryTripDetails) {
+            GeoPoint geoPoint = deliveryTripDetail.getShipmentItem().getShipToLocation().getGeoPoint();
+            deliveryTripDetail.setSequence(geoPointIndexMap.get(geoPoint));
+        }
+        deliveryTripDetailRepo.saveAll(deliveryTripDetails);
     }
 
     @Override
@@ -72,6 +93,9 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         deliveryTrip.setTotalPallet(deliveryTripInfo.getTotalPallet());
         deliveryTrip.setDistance(deliveryTripInfo.getTotalDistance());
         deliveryTripRepo.save(deliveryTrip);
+
+        updateDeliveryTripDetailSequence(deliveryTrip.getDeliveryTripId(), deliveryTripInfo);
+
         return true;
     }
 

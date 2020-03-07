@@ -21,6 +21,7 @@ public class DeliveryTripDetail {
     @Column(name = "delivery_trip_id")
     private UUID deliveryTripId;
 
+    private Integer sequence;
 
     //@JoinColumn(name = "shipment_id", referencedColumnName = "shipment_id")
     //@JoinColumn(name = "shipment_item_seq_id", referencedColumnName = "shipment_item_seq_id")
@@ -32,17 +33,30 @@ public class DeliveryTripDetail {
     private int deliveryQuantity;
 
     public DeliveryTripDetailModel toDeliveryTripDetailModel(Product product) {
-        return new DeliveryTripDetailModel(
-                deliveryTripDetailId,
-                deliveryTripId,
-                (shipmentItem == null || shipmentItem.getCustomer() == null) ? null : shipmentItem.getCustomer().getCustomerCode(),
-                (shipmentItem == null || shipmentItem.getShipToLocation() == null) ? null : shipmentItem.getShipToLocation().getAddress(),
-                product == null ? null : product.getProductId(),
-                product == null ? null : product.getProductName(),
-                shipmentItem == null ? null : shipmentItem.getQuantity(),
-                deliveryQuantity,
-                product == null ? null : (product.getWeight() / shipmentItem.getQuantity() * deliveryQuantity)
-        );
+        DeliveryTripDetailModel deliveryTripDetailModel = new DeliveryTripDetailModel();
+        deliveryTripDetailModel.setSequence(sequence);
+        deliveryTripDetailModel.setDeliveryTripDetailId(deliveryTripDetailId);
+        deliveryTripDetailModel.setDeliveryTripId(deliveryTripId);
+        if (shipmentItem != null) {
+            if (shipmentItem.getCustomer() != null) {
+                deliveryTripDetailModel.setCustomerCode(shipmentItem.getCustomer().getCustomerCode());
+            }
+            if (shipmentItem.getShipToLocation() != null) {
+                deliveryTripDetailModel.setAddress(shipmentItem.getShipToLocation().getAddress());
+                if (shipmentItem.getShipToLocation().getGeoPoint() != null) {
+                    deliveryTripDetailModel.setLat(Double.parseDouble(shipmentItem.getShipToLocation().getGeoPoint().getLatitude()));
+                    deliveryTripDetailModel.setLng(Double.parseDouble(shipmentItem.getShipToLocation().getGeoPoint().getLongitude()));
+                }
+            }
+            deliveryTripDetailModel.setShipmentQuantity(shipmentItem.getQuantity());
+        }
+        if (product != null) {
+            deliveryTripDetailModel.setProductId(product.getProductId());
+            deliveryTripDetailModel.setProductName(product.getProductName());
+            deliveryTripDetailModel.setWeight(product.getWeight() / shipmentItem.getQuantity() * deliveryQuantity);
+        }
+        deliveryTripDetailModel.setDeliveryQuantity(deliveryQuantity);
+        return deliveryTripDetailModel;
     }
 
 }

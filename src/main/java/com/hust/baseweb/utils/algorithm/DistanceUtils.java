@@ -1,5 +1,8 @@
 package com.hust.baseweb.utils.algorithm;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -7,9 +10,9 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 public class DistanceUtils {
-    public static <T> double calculateGreedyTotalDistance(List<T> ts, BiFunction<T, T, Double> distanceFunction) {
+    public static <T> DirectionSolution<T> calculateGreedyTotalDistance(List<T> ts, BiFunction<T, T, Double> distanceFunction) {
         if (ts.isEmpty()) {
-            return 0;
+            return new DirectionSolution<>(0.0, new ArrayList<>());
         }
         double totalDistance = 0;
         Set<Integer> candidates = new HashSet<>();  //  T in ts can be duplicated
@@ -25,18 +28,27 @@ public class DistanceUtils {
             double minDistance = Double.MAX_VALUE;
             int selectedId = -1;
             for (int candidateId : candidates) {
-                Double distance = distanceFunction.apply(tour.get(i - 1), ts.get(candidateId));
+                Double distance = distanceFunction.apply(tour.get(tour.size() - 1), ts.get(candidateId));
                 if (distance < minDistance) {   // TODO improve real number compare
                     minDistance = distance;
                     selectedId = candidateId;
                 }
             }
             totalDistance += minDistance;
+//            if (minDistance > 0) {
             tour.add(ts.get(selectedId));
+//            }
             candidates.remove(selectedId);
         }
 
         totalDistance += distanceFunction.apply(tour.get(tour.size() - 1), tour.get(0));
-        return totalDistance;
+        return new DirectionSolution<>(totalDistance, tour);
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class DirectionSolution<T> {
+        private Double distance;
+        private List<T> tour;
     }
 }

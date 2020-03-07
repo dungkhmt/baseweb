@@ -12,10 +12,13 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DeliveryTripDetailModel {
+    private Integer sequence;
     private UUID deliveryTripDetailId;
     private UUID deliveryTripId;
     private String customerCode;
     private String address;
+    private Double lat;
+    private Double lng;
     private String productId;
     private String productName;
     private Integer shipmentQuantity;
