@@ -11,10 +11,7 @@ import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripModel;
 import com.hust.baseweb.applications.tms.repo.*;
 import com.hust.baseweb.utils.LatLngUtils;
 import com.hust.baseweb.utils.algorithm.DistanceUtils;
-
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +24,6 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-@Log4j2
 public class DeliveryTripServiceImpl implements DeliveryTripService {
 
     private DeliveryTripRepo deliveryTripRepo;
@@ -150,17 +146,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         for (DeliveryTripDetail deliveryTripDetail : deliveryTripDetails) {
             ShipmentItem shipmentItem = deliveryTripDetail.getShipmentItem();
             Product product = productMap.get(shipmentItem.getProductId());
-            if(product == null){
-            	log.info("getDeliveryTripInfo, cannot find product of productId " + shipmentItem.getProductId());
-            }else{
-            	log.info("getDeliveryTripInfo, product " + product.getProductName() + " weight = " + product.getWeight());
-            }
-            if(deliveryTripDetail == null){
-            	log.info("getDeliveryTripInfo, deliveryTripDetail is null");
-            }else{
-            	log.info("getDeliveryTripInfo, deliveryTripDetail quantity = " + deliveryTripDetail.getDeliveryQuantity());
-            }
-            totalWeight += product.getWeight() * deliveryTripDetail.getDeliveryQuantity();
+            totalWeight += product.getWeight() / shipmentItem.getQuantity() * deliveryTripDetail.getDeliveryQuantity();
             totalPallet += shipmentItem.getPallet() / shipmentItem.getQuantity() * deliveryTripDetail.getDeliveryQuantity();
         }
 
