@@ -212,7 +212,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 			}
 			int idx = 0;
 			while(idx < dtd.size()){
-				List<DeliveryTripLocationView> deliveryTripLocationViews = new ArrayList<>();
+				//List<DeliveryTripLocationView> deliveryTripLocationViews = new ArrayList<>();
 				
 				ShipmentItem SI = dtd.get(idx).getShipmentItem();
 				PartyCustomer partyCustomer = SI.getCustomer(); 
@@ -261,7 +261,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 					j++;
 				}
 				
-				deliveryTripLocationViews.add(new DeliveryTripLocationView(customerName,address,latitude,longitude,partyCustomerId,items));
+				deliveryTripLocations.add(new DeliveryTripLocationView(customerName,address,latitude,longitude,partyCustomerId,items));
 				idx = j;
 			}
 			deliveryTripHeaderViews[i] = new DeliveryTripHeaderView(deliveryTripId, vehicleId, driverPartyId, driverUserLoginId, executeDate, deliveryTripLocations);
