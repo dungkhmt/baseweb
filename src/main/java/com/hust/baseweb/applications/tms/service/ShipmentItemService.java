@@ -13,6 +13,8 @@ import java.util.List;
 public interface ShipmentItemService {
     Page<ShipmentItemModel> findAllInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
+    List<ShipmentItemModel> findAllInDeliveryPlanId(String deliveryPlanId);
+
     List<ShipmentItemDeliveryPlanModel> findAllInDeliveryPlanIdNearestDeliveryTrip(String deliveryTripId);
 
     Page<ShipmentItemModel> findAllNotInDeliveryPlanId(String deliveryPlanId, Pageable pageable);

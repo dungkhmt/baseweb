@@ -29,13 +29,13 @@ public class VehicleAPIController {
 
     private VehicleService vehicleService;
 
-    @GetMapping("/vehicle")
+    @GetMapping("/vehicle/page")
     public ResponseEntity<?> getVehicles(Principal principal, Pageable pageable) {
         log.info("::getVehicles, ");
         return ResponseEntity.ok().body(vehicleService.findAll(pageable).map(Vehicle::toVehicleModel));
     }
 
-    @GetMapping("/all-vehicle")
+    @GetMapping("/vehicle/all")
     public ResponseEntity<?> getAllVehicles(Principal principal) {
         log.info("::getAllVehicles, ");
         return ResponseEntity.ok().body(vehicleService.findAll().stream()
@@ -61,10 +61,17 @@ public class VehicleAPIController {
     }
 
     // list view
-    @GetMapping("/vehicle/{deliveryPlanId}")
+    @GetMapping("/vehicle/{deliveryPlanId}/page")
     public ResponseEntity<?> getVehicle(Principal principal, @PathVariable String deliveryPlanId, Pageable pageable) {
         log.info("::getVehicle deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(vehicleService.findAllInDeliveryPlanId(deliveryPlanId, pageable));
+    }
+
+    // list view
+    @GetMapping("/vehicle/{deliveryPlanId}/all")
+    public ResponseEntity<?> getAllVehicle(Principal principal, @PathVariable String deliveryPlanId) {
+        log.info("::getVehicle deliveryPlanId=" + deliveryPlanId);
+        return ResponseEntity.ok().body(vehicleService.findAllInDeliveryPlanId(deliveryPlanId));
     }
 
     // submit button

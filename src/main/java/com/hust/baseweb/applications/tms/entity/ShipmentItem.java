@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.tms.entity;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
+import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemDeliveryPlanModel;
@@ -48,13 +49,34 @@ public class ShipmentItem {
     private PostalAddress shipToLocation;
 
     public ShipmentItemModel toShipmentItemModel() {
+        String customerCode = null;
+        String locationCode = null;
+        String address = null;
+        String lat = null;
+        String lng = null;
+        if (customer != null) {
+            customerCode = customer.getCustomerCode();
+        }
+        if (shipToLocation != null) {
+            locationCode = shipToLocation.getLocationCode();
+            address = shipToLocation.getAddress();
+            if (shipToLocation.getGeoPoint() != null) {
+                GeoPoint geoPoint = shipToLocation.getGeoPoint();
+                lat = geoPoint.getLatitude();
+                lng = geoPoint.getLongitude();
+            }
+        }
+
         return new ShipmentItemModel(
                 shipmentItemId.toString(),
                 quantity,
                 pallet,
                 productId,
-                customer == null ? null : customer.getCustomerCode(),
-                shipToLocation == null ? null : shipToLocation.getLocationCode()
+                customerCode,
+                locationCode,
+                address,
+                lat,
+                lng
         );
     }
 

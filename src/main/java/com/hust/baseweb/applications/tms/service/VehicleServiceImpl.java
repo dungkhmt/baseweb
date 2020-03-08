@@ -72,11 +72,20 @@ public class VehicleServiceImpl implements VehicleService {
                 = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
 
         List<VehicleModel> vehicleModels = vehicleRepo.findAllByVehicleIdIn(
-                vehicleDeliveryPlans.stream().map(VehicleDeliveryPlan::getVehicleId).collect(Collectors.toList()))
+                vehicleDeliveryPlans.stream().map(VehicleDeliveryPlan::getVehicleId).distinct().collect(Collectors.toList()))
                 .stream().map(Vehicle::toVehicleModel)
                 .collect(Collectors.toList());
 
         return PageUtils.getPage(vehicleModels, pageable);
+    }
+
+    @Override
+    public List<VehicleModel> findAllInDeliveryPlanId(String deliveryPlanId) {
+        List<VehicleDeliveryPlan> vehicleDeliveryPlans = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
+        return vehicleRepo.findAllByVehicleIdIn(
+                vehicleDeliveryPlans.stream().map(VehicleDeliveryPlan::getVehicleId).distinct().collect(Collectors.toList()))
+                .stream().map(Vehicle::toVehicleModel)
+                .collect(Collectors.toList());
     }
 
     // TODO:

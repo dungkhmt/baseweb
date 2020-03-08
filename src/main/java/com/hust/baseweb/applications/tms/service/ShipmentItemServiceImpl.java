@@ -50,6 +50,14 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
+    public List<ShipmentItemModel> findAllInDeliveryPlanId(String deliveryPlanId) {
+        List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
+        List<UUID> shipmentItemIds = shipmentItemDeliveryPlans.stream().map(ShipmentItemDeliveryPlan::getShipmentItemId).distinct().collect(Collectors.toList());
+        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemIds);
+        return shipmentItems.stream().map(ShipmentItem::toShipmentItemModel).collect(Collectors.toList());
+    }
+
+    @Override
     public List<ShipmentItemDeliveryPlanModel> findAllInDeliveryPlanIdNearestDeliveryTrip(String deliveryTripId) {
         DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId)).orElseThrow(NoSuchElementException::new);
         DeliveryPlan deliveryPlan = deliveryTrip.getDeliveryPlan();

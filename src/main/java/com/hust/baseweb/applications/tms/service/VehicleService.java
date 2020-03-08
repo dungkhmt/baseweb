@@ -22,6 +22,8 @@ public interface VehicleService {
 
     Page<VehicleModel> findAllInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
+    List<VehicleModel> findAllInDeliveryPlanId(String deliveryPlanId);
+
     Page<VehicleModel> findAllNotInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
     String saveVehicleDeliveryPlan(CreateVehicleDeliveryPlanModel createVehicleDeliveryPlanModel);

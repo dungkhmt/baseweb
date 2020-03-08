@@ -83,19 +83,25 @@ public class ShipmentOrderAPIController {
         return ResponseEntity.ok().body(shipmentItemService.findAll(pageable).map(ShipmentItem::toShipmentItemModel));
     }
 
-    @GetMapping("/shipment-item/{deliveryPlanId}/page")
+    @GetMapping("/shipment-item-delivery-plan/{deliveryPlanId}/page")
     public ResponseEntity<?> getPageOrderShipmentItem(Principal principal, @PathVariable String deliveryPlanId, Pageable pageable) {
         log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanId(deliveryPlanId, pageable));
     }
 
-    @GetMapping("/shipment-item/{deliveryTripId}/all")
-    public ResponseEntity<?> getAllOrderShipmentItem(Principal principal, @PathVariable String deliveryTripId) {
+    @GetMapping("/shipment-item-delivery-plan/{deliveryPlanId}/all")
+    public ResponseEntity<?> getAllOrderShipmentItemDeliveryPlan(Principal principal, @PathVariable String deliveryPlanId) {
+        log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
+        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanId(deliveryPlanId));
+    }
+
+    @GetMapping("/shipment-item-delivery-trip/{deliveryTripId}/all")
+    public ResponseEntity<?> getAllOrderShipmentItemDeliveryTrip(Principal principal, @PathVariable String deliveryTripId) {
         log.info("::getOrderShipmentItem deliveryTripId=" + deliveryTripId);
         return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanIdNearestDeliveryTrip(deliveryTripId));
     }
 
-    @GetMapping("/shipment-item-not-in/{deliveryPlanId}")
+    @GetMapping("/shipment-item-not-in-delivery-plan/{deliveryPlanId}")
     public ResponseEntity<?> getOrderShipmentItemNotIn(Principal principal, @PathVariable String deliveryPlanId, Pageable pageable) {
         log.info("::getOrderShipmentItemNotIn deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlanId(deliveryPlanId, pageable));
