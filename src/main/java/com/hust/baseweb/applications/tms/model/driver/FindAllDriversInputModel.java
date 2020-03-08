@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FindAllDriversInputModel {
-	private String statusId;
+    private String statusId;
 }

@@ -1,15 +1,15 @@
 package com.hust.baseweb.applications.tms.model.driver;
 
-import java.sql.Date;
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.sql.Date;
+import java.util.List;
 
 @Getter
 @Setter
 public class CreateDriverInputModel {
-	private String userName;
+    private String userName;
     private String password;
     private List<String> roles;
     private String partyCode;
@@ -18,5 +18,5 @@ public class CreateDriverInputModel {
     private String middleName;
     private String gender;
     private Date birthDate;
-	
+
 }

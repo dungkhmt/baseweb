@@ -8,10 +8,7 @@ import com.hust.baseweb.applications.tracklocations.service.TrackLocationsServic
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.SecurityGroupService;
 import com.hust.baseweb.service.UserService;
-
-import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -30,18 +27,26 @@ import java.util.stream.Collectors;
 @Log4j2
 public class TrackLocationApiController {
     public static final String module = TrackLocationApiController.class.getName();
-
+    private static GeoPointCache geoPointCache = new GeoPointCache();
+    SecurityGroupService securityGroupService;
     @Value("${google.api_key}")
     private String gmap_api_key;
-    
-    private static GeoPointCache geoPointCache = new GeoPointCache();
-
-    SecurityGroupService securityGroupService;
     private UserService userService;
     private TrackLocationsService trackLocationsService;
     private TrackLocationPagingRepo trackLocationPagingRepo;
-    
-    
+
+
+    @Autowired
+    public TrackLocationApiController(
+            SecurityGroupService securityGroupService, UserService userService,
+            TrackLocationsService trackLocationsService,
+            TrackLocationPagingRepo trackLocationPagingRepo) {
+        super();
+        this.securityGroupService = securityGroupService;
+        this.userService = userService;
+        this.trackLocationsService = trackLocationsService;
+        this.trackLocationPagingRepo = trackLocationPagingRepo;
+    }
 
     @PostMapping("/post-location")
     public ResponseEntity postLocation(Principal principal, @RequestBody PostLocationInputModel input) {
@@ -99,18 +104,6 @@ public class TrackLocationApiController {
 
 
     }
-
-    @Autowired
-	public TrackLocationApiController(
-			SecurityGroupService securityGroupService, UserService userService,
-			TrackLocationsService trackLocationsService,
-			TrackLocationPagingRepo trackLocationPagingRepo) {
-		super();
-		this.securityGroupService = securityGroupService;
-		this.userService = userService;
-		this.trackLocationsService = trackLocationsService;
-		this.trackLocationPagingRepo = trackLocationPagingRepo;
-	}
 
 }
 

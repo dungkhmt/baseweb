@@ -16,10 +16,8 @@ import com.hust.baseweb.rest.user.PredicateBuilder;
 import com.hust.baseweb.rest.user.UserRestBriefProjection;
 import com.hust.baseweb.rest.user.UserRestRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -75,9 +73,9 @@ public class UserServiceImpl implements UserService {
         personRepo.save(new Person(party.getPartyId(), personModel.getFirstName(), personModel.getMiddleName(),
                 personModel.getLastName(), personModel.getGender(), personModel.getBirthDate()));
         List<SecurityGroup> roles = new ArrayList<>();
-        
+
         log.info("save, roles = " + personModel.getRoles().size());
-        
+
         roles = personModel.getRoles().stream().map(r -> securityGroupRepo.findById(r).get())
                 .collect(Collectors.toList());
         UserLogin userLogin = new UserLogin(personModel.getUserName(), personModel.getPassword(), roles, true);
@@ -125,17 +123,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Party update(PersonUpdateModel personUpdateModel,UUID partyId) {
-        Person person=personRepo.getOne(partyId);
+    public Party update(PersonUpdateModel personUpdateModel, UUID partyId) {
+        Person person = personRepo.getOne(partyId);
         person.setBirthDate(personUpdateModel.getBirthDate());
         person.setFirstName(personUpdateModel.getFirstName());
         person.setLastName(personUpdateModel.getLastName());
         person.setMiddleName(personUpdateModel.getMiddleName());
         personRepo.save(person);
-        Party party=partyRepo.getOne(partyId);
+        Party party = partyRepo.getOne(partyId);
         party.setPartyCode(personUpdateModel.getPartyCode());
-        UserLogin u=party.getUserLogin();
-        u.setRoles(personUpdateModel.getRoles().stream().map(r->securityGroupRepo.getOne(r)).collect(Collectors.toList()));
+        UserLogin u = party.getUserLogin();
+        u.setRoles(personUpdateModel.getRoles().stream().map(r -> securityGroupRepo.getOne(r)).collect(Collectors.toList()));
         userLoginRepo.save(u);
         return partyRepo.findById(person.getPartyId()).get();
     }

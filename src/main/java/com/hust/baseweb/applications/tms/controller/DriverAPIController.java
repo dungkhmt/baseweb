@@ -18,25 +18,24 @@ import java.security.Principal;
 import java.util.List;
 
 
-
 @RestController
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class DriverAPIController {
 
-	private PartyDriverService partyDriverService;
-	private UserService userService;
-	
-	@PostMapping("/create-driver")
-	public ResponseEntity<?> createDriver(Principal principal, @RequestBody CreateDriverInputModel input){
-		PartyDriver driver = partyDriverService.save(input);
-		return ResponseEntity.ok().body(driver);
-	}
-	
-	@PostMapping("/get-all-drivers")
-	public ResponseEntity<?> findAllDrivers(Principal principal, @RequestBody FindAllDriversInputModel input){
-		List<PartyDriver> drivers = partyDriverService.findAll();
-		return ResponseEntity.ok().body(drivers);
-	}
+    private PartyDriverService partyDriverService;
+    private UserService userService;
+
+    @PostMapping("/create-driver")
+    public ResponseEntity<?> createDriver(Principal principal, @RequestBody CreateDriverInputModel input) {
+        PartyDriver driver = partyDriverService.save(input);
+        return ResponseEntity.ok().body(driver);
+    }
+
+    @PostMapping("/get-all-drivers")
+    public ResponseEntity<?> findAllDrivers(Principal principal, @RequestBody FindAllDriversInputModel input) {
+        List<PartyDriver> drivers = partyDriverService.findAll();
+        return ResponseEntity.ok().body(drivers);
+    }
 }

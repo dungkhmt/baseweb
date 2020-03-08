@@ -22,14 +22,6 @@ public class GoogleMapUtils {
 
     private static GeoApiContext GEO_API_CONTEXT = new GeoApiContext.Builder().apiKey(Config.getConfig().getGoogleApiKey()).build();
 
-    @Scheduled(cron = "12,42 * * * * *", zone = "GMT+7")
-    private void updateConfig() throws FileNotFoundException {
-        String currentApiKey = Config.updateConfig();
-        if (currentApiKey != null) {
-            GEO_API_CONTEXT = new GeoApiContext.Builder().apiKey(currentApiKey).build();
-        }
-    }
-
     public static GeocodingResult[] queryLatLng(String address) {
         try {
             GeocodingApiRequest geocodingApiRequest = new GeocodingApiRequest(GEO_API_CONTEXT);
@@ -55,5 +47,13 @@ public class GoogleMapUtils {
             logger.error(e);
         }
         return directionsResult;
+    }
+
+    @Scheduled(cron = "12,42 * * * * *", zone = "GMT+7")
+    private void updateConfig() throws FileNotFoundException {
+        String currentApiKey = Config.updateConfig();
+        if (currentApiKey != null) {
+            GEO_API_CONTEXT = new GeoApiContext.Builder().apiKey(currentApiKey).build();
+        }
     }
 }

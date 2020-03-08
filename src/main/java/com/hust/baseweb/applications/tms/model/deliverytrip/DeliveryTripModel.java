@@ -18,4 +18,5 @@ public class DeliveryTripModel {
     private Double totalPallet;
     private String vehicleId;
     private Double maxVehicleCapacity;
+//    private String driverId;
 }

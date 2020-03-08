@@ -18,7 +18,7 @@ public class ModelCreateOrderInput {
     private String orderDate;
     private UUID shipToAddressId;
     private String shipToAddress;
-    
+
     public ModelCreateOrderInput() {
         super();
 

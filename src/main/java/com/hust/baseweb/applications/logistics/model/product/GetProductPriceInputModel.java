@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetProductPriceInputModel {
-	private String productId;
+    private String productId;
 }

@@ -10,7 +10,6 @@ import com.hust.baseweb.applications.tms.service.DistanceTravelTimeService;
 import com.hust.baseweb.repo.UserLoginRepo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,13 +29,6 @@ public class TMSAPIController {
     private DistanceTravelTimeService distanceTravelTimeService;
 
 
-    @PostMapping("/get-assigned-delivery-routes")
-    public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal, @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
-        GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(input.getDriverUserLoginId());
-
-        return ResponseEntity.ok().body(deliveryTrip);
-    }
-
     @Autowired
     public TMSAPIController(CustomerRepo customerRepo, OrderRepo orderRepo, OrderRoleRepo orderRoleRepo, UserLoginRepo userLoginRepo, DeliveryTripService deliveryTripService, DistanceTravelTimeService distanceTravelTimeService) {
         this.customerRepo = customerRepo;
@@ -45,6 +37,13 @@ public class TMSAPIController {
         this.userLoginRepo = userLoginRepo;
         this.deliveryTripService = deliveryTripService;
         this.distanceTravelTimeService = distanceTravelTimeService;
+    }
+
+    @PostMapping("/get-assigned-delivery-routes")
+    public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal, @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
+        GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(input.getDriverUserLoginId());
+
+        return ResponseEntity.ok().body(deliveryTrip);
     }
 
 
@@ -97,18 +96,9 @@ public class TMSAPIController {
     }
 	*/
 
-
     @GetMapping("/calc-distance-travel-time")
     public ResponseEntity<?> calcDistanceTravelTime() {
         log.info("::calcDistanceTravelTime()");
         return ResponseEntity.ok(distanceTravelTimeService.calcAll());
-    }
-
-    @Value("${google.api_key}")
-    private String googleApiKey;
-
-    @GetMapping("/get-google-api-key")
-    public ResponseEntity<?> getApiKey() {
-        return ResponseEntity.ok(googleApiKey);
     }
 }

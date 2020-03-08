@@ -1,12 +1,11 @@
 package com.hust.baseweb.applications.salesroutes.repo;
 
-import java.util.UUID;
-
+import com.hust.baseweb.applications.salesroutes.entity.SalesmanCheckinHistory;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.hust.baseweb.applications.salesroutes.entity.SalesmanCheckinHistory;
+import java.util.UUID;
 
 public interface SalesmanCheckinHistoryRepo extends
-		PagingAndSortingRepository<SalesmanCheckinHistory, UUID> {
-	
+        PagingAndSortingRepository<SalesmanCheckinHistory, UUID> {
+
 }

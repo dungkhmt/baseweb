@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetDeliveryTripAssignedToDriverInputModel {
-	private String driverUserLoginId;
+    private String driverUserLoginId;
 }

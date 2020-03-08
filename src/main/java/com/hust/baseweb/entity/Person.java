@@ -20,19 +20,19 @@ public class Person {
     @Id
     @Column(name = "party_id")
     private UUID partyId;
-    
+
     //@Column(name="first_name")
     private String firstName;
-    
+
     //@Column(name="middle_name")
     private String middleName;
-    
+
     //@Column(name="last_name")
     private String lastName;
-    
+
     //@Column(name="gender")
     private String gender;
-    
+
     //@Column(name="birth_date")
     private Date birthDate;
 

@@ -29,6 +29,11 @@ public class DeliveryTrip {
     @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Vehicle vehicle;
+//
+    // TODO: attach driver to delivery trip
+//    @JoinColumn(name = "driver_id", referencedColumnName = "party_id")
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    private PartyDriver partyDriver;
 
     @JoinColumn(name = "driver_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
@@ -57,6 +62,7 @@ public class DeliveryTrip {
                 totalPallet,
                 vehicle == null ? null : vehicle.getVehicleId(),
                 vehicle == null ? null : vehicle.getCapacity()
+//                partyDriver.getPartyId().toString()
         );
     }
 }

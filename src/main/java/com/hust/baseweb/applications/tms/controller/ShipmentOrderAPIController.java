@@ -205,5 +205,5 @@ public class ShipmentOrderAPIController {
 
         return ResponseEntity.ok(deliveryTripModels);
     }
-    
+
 }

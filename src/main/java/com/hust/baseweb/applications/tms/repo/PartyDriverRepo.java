@@ -1,10 +1,9 @@
 package com.hust.baseweb.applications.tms.repo;
 
-import java.util.UUID;
-
+import com.hust.baseweb.applications.tms.entity.PartyDriver;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.hust.baseweb.applications.tms.entity.PartyDriver;
+import java.util.UUID;
 
 public interface PartyDriverRepo extends JpaRepository<PartyDriver, UUID> {
 

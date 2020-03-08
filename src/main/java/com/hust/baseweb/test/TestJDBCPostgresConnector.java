@@ -1,17 +1,18 @@
 package com.hust.baseweb.test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
 public class TestJDBCPostgresConnector {
 
-	
-	public void test1() {
+
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+        TestJDBCPostgresConnector app = new TestJDBCPostgresConnector();
+        app.test1();
+    }
+
+    public void test1() {
 		/*
 		try {
-			
+
 			Class.forName("org.postgresql.Driver");
 			Connection connection = DriverManager.getConnection(
 					"jdbc:postgresql://localhost:5432/baseweb", "postgres",
@@ -37,12 +38,6 @@ public class TestJDBCPostgresConnector {
 			ex.printStackTrace();
 		}
 		*/
-	}
-	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		TestJDBCPostgresConnector app = new TestJDBCPostgresConnector();
-		app.test1();
-	}
+    }
 
 }

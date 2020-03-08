@@ -11,8 +11,8 @@ import java.util.Random;
 
 public class RequestAgent extends Thread {
     public static final String module = RequestAgent.class.getName();
-    private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     public static final String name = RequestAgent.class.getName();
+    private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static String urlRoot = "http://localhost:8080";
     // public static String url_root = "http://3.1.6.126";
     private OkHttpClient client = new OkHttpClient();
