@@ -60,6 +60,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         PartyCustomer customer = new PartyCustomer();
         customer.setPartyId(partyId);
+        customer.setCustomerCode(input.getCustomerCode());
         //customer.setParty(party);
         customer.setPartyType(partyType);
         customer.setCustomerName(input.getCustomerName());

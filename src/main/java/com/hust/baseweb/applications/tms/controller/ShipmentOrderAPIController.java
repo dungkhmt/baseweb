@@ -200,6 +200,9 @@ public class ShipmentOrderAPIController {
             deliveryTripModel.setMaxVehicleCapacity(deliveryTrip.getVehicle().getCapacity());
             deliveryTripModel.setTotalDistance(deliveryTripInfoModel.getTotalDistance());
             deliveryTripModel.setTotalWeight(deliveryTripInfoModel.getTotalWeight());
+            if (deliveryTrip.getVehicle() != null) {
+                deliveryTripModel.setVehicleId(deliveryTrip.getVehicle().getVehicleId());
+            }
             deliveryTripModels.add(deliveryTripModel);
         }
 

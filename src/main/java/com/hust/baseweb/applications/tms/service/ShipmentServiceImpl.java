@@ -69,14 +69,14 @@ public class ShipmentServiceImpl implements ShipmentService {
 
             List<PartyCustomer> customers = partyCustomerRepo
                     .findAllByCustomerCode(shipmentItemInputModel.getCustomerCode());
-            PartyCustomer customer = null;
+            PartyCustomer customer;
             if (customers == null || customers.size() == 0) {
                 // insert a customer
                 String[] s = shipmentItemInputModel.getLatLng().split(",");
                 // double lat = Double.valueOf(s[0].trim());
                 // double lng = Double.valueOf(s[1].trim());
-                customer = customerService.save(new CreateCustomerInputModel(shipmentItemInputModel
-                        .getCustomerName(), shipmentItemInputModel.getAddress(), s[0].trim(), s[1]
+                customer = customerService.save(new CreateCustomerInputModel(shipmentItemInputModel.getCustomerCode(),
+                        shipmentItemInputModel.getCustomerName(), shipmentItemInputModel.getAddress(), s[0].trim(), s[1]
                         .trim()));
             } else {
                 customer = customers.get(0);
@@ -89,7 +89,7 @@ public class ShipmentServiceImpl implements ShipmentService {
             }
             List<PostalAddress> addresses = postalAddressRepo
                     .findAllByLocationCode(shipmentItemInputModel.getLocationCode());
-            PostalAddress address = null;
+            PostalAddress address;
             if (addresses == null || addresses.size() == 0) {
                 String[] latlng = shipmentItemInputModel.getLatLng().split(",");
                 address = postalAddressService.save(shipmentItemInputModel.getAddress(), latlng[0],
@@ -116,9 +116,9 @@ public class ShipmentServiceImpl implements ShipmentService {
     @Transactional
     public Shipment save(CreateShipmentInputModel input) {
         log.info("save, shipmentItem.length = " + input.getShipmentItems().length);
-        if (true) {
-            return privateSave(input);
-        }
+//        if (true) {
+//            return privateSave(input);
+//        }
 
         // Tạo shipment
 //        UUID shipmentId = UUID.randomUUID();
@@ -215,6 +215,7 @@ public class ShipmentServiceImpl implements ShipmentService {
             PartyCustomer partyCustomer = partyCustomerMap.computeIfAbsent(shipmentItemModel.getCustomerCode(),
                     customerCode ->
                             customerService.save(new CreateCustomerInputModel(
+                                    shipmentItemModel.getCustomerCode(),
                                     shipmentItemModel.getCustomerName(),
                                     shipmentItemModel.getAddress(),
                                     postalAddress.getGeoPoint().getLatitude(),
@@ -224,7 +225,7 @@ public class ShipmentServiceImpl implements ShipmentService {
             partyCustomer.setCustomerName(shipmentItemModel.getCustomerName());
             // thêm portal address hiện tại vào party customer
 //            partyCustomer.getPostalAddress().add(postalAddress);// NOT attach address into list
-//            shipmentItem.setCustomer(partyCustomer);  // TODO: Resolve exception
+            shipmentItem.setCustomer(partyCustomer);  // TODO: Resolve exception
             /*
              * org.hibernate.TransientPropertyValueException: object references an unsaved transient instance -
              * save the transient instance before flushing : com.hust.baseweb.applications.tms.entity.ShipmentItem.customer
@@ -244,7 +245,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         // lưu tất cả vào DB
         geoPointRepo.saveAll(locationCodeToGeoPointMap.values());
         postalAddressRepo.saveAll(postalAddressMap.values());
-        partyCustomerRepo.saveAll(partyCustomerMap.values());
+//        partyCustomerRepo.saveAll(partyCustomerMap.values());
 //        for (GeoPoint gp : locationCodeToGeoPointMap.values()) {
 //            log.info("save geo point " + gp.getGeoPointId());
 //            geoPointRepo.save(gp);
@@ -300,6 +301,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         List<PartyCustomer> partyCustomers = partyCustomerRepo.findAllByCustomerCode(customerCode);
         if (partyCustomers.isEmpty()) {
             PartyCustomer partyCustomer = customerService.save(new CreateCustomerInputModel(
+                    shipmentItemModel.getCustomerCode(),
                     shipmentItemModel.getCustomerName(),
                     shipmentItemModel.getAddress(),
                     postalAddresses.get(0).getGeoPoint().getLatitude(),
