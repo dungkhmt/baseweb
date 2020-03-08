@@ -4,14 +4,14 @@ import com.hust.baseweb.applications.logistics.entity.Uom;
 import com.hust.baseweb.applications.logistics.entity.UomType;
 import com.hust.baseweb.applications.logistics.repo.UomRepo;
 import com.hust.baseweb.applications.logistics.repo.UomTypeRepo;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class UomServiceImpl implements UomService {
-    @Autowired
     private UomRepo uomRepo;
-    @Autowired
     private UomTypeRepo uomTypeRepo;
 
     @Override

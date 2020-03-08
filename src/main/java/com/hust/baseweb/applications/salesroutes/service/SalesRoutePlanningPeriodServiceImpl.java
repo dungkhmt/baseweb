@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.salesroutes.service;
 
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
 import com.hust.baseweb.applications.salesroutes.repo.PSalesRoutePlanningPeriodRepo;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,10 +12,10 @@ import java.util.Date;
 
 @Service
 @Log4j2
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesRoutePlanningPeriodServiceImpl implements
         SalesRoutePlanningPeriodService {
 
-    @Autowired
     private PSalesRoutePlanningPeriodRepo salesRoutePlanningPeriodRepo;
 
     @Override

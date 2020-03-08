@@ -9,6 +9,7 @@ import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PersonRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,17 +20,11 @@ import java.util.UUID;
 
 @Service
 @Log4j2
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PartySalesmanServiceImpl implements PartySalesmanService {
-    @Autowired
     private PartySalesmanRepo partySalesmanRepo;
-
-    @Autowired
     private UserLoginRepo userLoginRepo;
-
-    @Autowired
     private PartyRepo partyRepo;
-
-    @Autowired
     private PersonRepo personRepo;
 
     @Override

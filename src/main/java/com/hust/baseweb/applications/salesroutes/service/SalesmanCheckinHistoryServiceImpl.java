@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.order.service.PartyCustomerService;
 import com.hust.baseweb.applications.salesroutes.entity.SalesmanCheckinHistory;
 import com.hust.baseweb.applications.salesroutes.repo.SalesmanCheckinHistoryRepo;
 import com.hust.baseweb.entity.UserLogin;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,16 +16,12 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesmanCheckinHistoryServiceImpl implements
         SalesmanCheckinHistoryService {
 
-    @Autowired
     private SalesmanCheckinHistoryRepo salesmanCheckinHistoryRepo;
-
-    @Autowired
     private PartyCustomerService partyCustomerService;
-
-    @Autowired
     private PartyCustomerRepo partyCustomerRepo;
 
     @Override

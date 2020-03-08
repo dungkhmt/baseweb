@@ -10,6 +10,7 @@ import com.hust.baseweb.applications.salesroutes.entity.SalesRouteDetail;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
 import com.hust.baseweb.applications.salesroutes.repo.*;
 import com.hust.baseweb.utils.DateTimeUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,27 +23,15 @@ import java.util.UUID;
 
 @Service
 @Log4j2
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
 
-    @Autowired
     private PSalesRouteConfigCustomerRepo pSalesRouteConfigCustomerRepo;
-
-    @Autowired
     private PSalesRoutePlanningPeriodRepo pSalesRoutePlanningPeriodRepo;
-
-    @Autowired
     private SalesRouteConfigCustomerRepo salesRouteConfigCustomerRepo;
-
-    @Autowired
     private PartySalesmanRepo partySalesmanRepo;
-
-    @Autowired
     private PartyCustomerRepo partyCustomerRepo;
-
-    @Autowired
     private PSalesRouteDetailRepo pSalesRouteDetailRepo;
-
-    @Autowired
     private SalesRouteDetailRepo salesRouteDetailRepo;
 
     @Override
@@ -64,8 +53,8 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
             SalesRouteConfig src = srcc.getSalesRouteConfig();
             String startExecuteDate = srcc.getStartExecuteDate();
             String[] days = src.getDays().split(",");
-            for (int i = 0; i < days.length; i++) {
-                int d = Integer.valueOf(days[i].trim());
+            for (String day : days) {
+                int d = Integer.parseInt(day.trim());
                 //List<String> dates = DateTimeUtils.getListDateHavingDay(d, DateTimeUtils.date2YYYYMMDD(startDate), DateTimeUtils.date2YYYYMMDD(endDate), startExecuteDate);
                 List<String> dates = DateTimeUtils.getListDateHavingDay(d, startDate, endDate, startExecuteDate + " 00:00:00");
                 for (String date : dates) {

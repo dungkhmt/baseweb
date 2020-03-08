@@ -8,6 +8,7 @@ import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfigCustomer;
 import com.hust.baseweb.applications.salesroutes.repo.PSalesRouteConfigCustomerRepo;
 import com.hust.baseweb.applications.salesroutes.repo.PSalesRouteConfigRepo;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +16,13 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesRouteConfigCustomerServiceImpl implements
         SalesRouteConfigCustomerService {
 
-    @Autowired
     private PSalesRouteConfigCustomerRepo pSalesRouteConfigCustomerRepo;
-
-    @Autowired
     private PartyCustomerRepo partyCustomerRepo;
-
-    @Autowired
     private PartySalesmanRepo partySalesmanRepo;
-
-    @Autowired
     private PSalesRouteConfigRepo pSalesRouteConfigRepo;
 
     @Override

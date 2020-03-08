@@ -4,17 +4,17 @@ import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @Log4j2
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PostalAddressServiceImpl implements PostalAddressService {
 
-    @Autowired
     private PostalAddressRepo postalAddressRepo;
-    @Autowired
     private GeoPointRepo geoPointRepo;
 
     @Override

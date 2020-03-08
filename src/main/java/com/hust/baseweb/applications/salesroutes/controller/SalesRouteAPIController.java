@@ -15,6 +15,7 @@ import com.hust.baseweb.applications.salesroutes.model.salesrouteplanningperiod.
 import com.hust.baseweb.applications.salesroutes.service.*;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,24 +30,14 @@ import java.util.UUID;
 @RestController
 @CrossOrigin
 @Log4j2
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesRouteAPIController {
 
-    @Autowired
     private SalesRouteConfigService salesRouteConfigService;
-
-    @Autowired
     private SalesRouteConfigCustomerService salesRouteConfigCustomerService;
-
-    @Autowired
     private SalesRoutePlanningPeriodService salesRoutePlanningPeriodService;
-
-    @Autowired
     private SalesRouteDetailService salesRouteDetailService;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private SalesmanCheckinHistoryService salesmanCheckinService;
 
     @PostMapping("/salesman-checkin-customer")

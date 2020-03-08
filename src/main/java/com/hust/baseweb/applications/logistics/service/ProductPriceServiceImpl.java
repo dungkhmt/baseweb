@@ -8,6 +8,7 @@ import com.hust.baseweb.applications.logistics.repo.ProductPriceRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.repo.UomRepo;
 import com.hust.baseweb.entity.UserLogin;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,19 +20,12 @@ import java.util.List;
 
 @Service
 @Log4j2
-
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductPriceServiceImpl implements ProductPriceService {
 
-    @Autowired
     private ProductPriceRepo productPriceRepo;
-
-    @Autowired
     private ProductPriceJpaRepo productPriceJpaRepo;
-
-    @Autowired
     private ProductRepo productRepo;
-
-    @Autowired
     private UomRepo uomRepo;
 
     @Override
