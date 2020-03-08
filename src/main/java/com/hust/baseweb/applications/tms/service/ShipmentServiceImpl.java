@@ -2,8 +2,11 @@ package com.hust.baseweb.applications.tms.service;
 
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
+import com.hust.baseweb.applications.customer.entity.PartyContactMechPurpose;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.model.CreateCustomerInputModel;
+import com.hust.baseweb.applications.customer.repo.CustomerRepo;
+import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
 import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
@@ -21,7 +24,12 @@ import com.hust.baseweb.applications.tms.model.shipmentorder.CreateShipmentItemI
 import com.hust.baseweb.applications.tms.model.shipmentorder.ShipmentModel;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
-import com.hust.baseweb.utils.CommonUtils;
+import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.entity.PartyType;
+import com.hust.baseweb.entity.Status;
+import com.hust.baseweb.repo.PartyRepo;
+import com.hust.baseweb.repo.PartyTypeRepo;
+import com.hust.baseweb.repo.StatusRepo;
 import com.hust.baseweb.utils.GoogleMapUtils;
 import com.hust.baseweb.utils.LatLngUtils;
 import lombok.AllArgsConstructor;
@@ -50,6 +58,12 @@ public class ShipmentServiceImpl implements ShipmentService {
     private CustomerService customerService;
     private ProductService productService;
     private PostalAddressService postalAddressService;
+
+    private PartyRepo partyRepo;
+    private PartyTypeRepo partyTypeRepo;
+    private StatusRepo statusRepo;
+    private CustomerRepo customerRepo;
+    private PartyContactMechPurposeRepo partyContactMechPurposeRepo;
 
     // @Override
     @Transactional
@@ -92,8 +106,8 @@ public class ShipmentServiceImpl implements ShipmentService {
             PostalAddress address;
             if (addresses == null || addresses.size() == 0) {
                 String[] latlng = shipmentItemInputModel.getLatLng().split(",");
-                address = postalAddressService.save(shipmentItemInputModel.getAddress(), latlng[0],
-                        latlng[1]);
+                address = postalAddressService.save(shipmentItemInputModel.getLocationCode(),
+                        shipmentItemInputModel.getAddress(), latlng[0], latlng[1]);
             } else {
                 address = addresses.get(0);
             }
@@ -121,19 +135,15 @@ public class ShipmentServiceImpl implements ShipmentService {
 //        }
 
         // Tạo shipment
-//        UUID shipmentId = UUID.randomUUID();
         Shipment shipment = new Shipment();
-//        shipment.setShipmentId(shipmentId);
         shipment.setShipmentTypeId("SALES_SHIPMENT");
         shipment = shipmentRepo.save(shipment);
 
         // Tạo shipment_item
-
         // Convert shipmentItemModel to list
         List<CreateShipmentItemInputModel> shipmentItemInputModels = Arrays.asList(input.getShipmentItems());
 
         log.info("save, finished convert shipmentItems to list");
-
 
         // Danh sách customerCode khác nhau đã có trong input
         List<String> customerCodes = shipmentItemInputModels.stream()
@@ -147,7 +157,6 @@ public class ShipmentServiceImpl implements ShipmentService {
 
         log.info("save, locationCodes = " + locationCodes.size());
 
-
         // Danh sách product id khác nhau đã có trong input
         List<String> productIds = shipmentItemInputModels.stream()
                 .map(CreateShipmentItemInputModel::getProductId).distinct().collect(Collectors.toList());
@@ -160,7 +169,6 @@ public class ShipmentServiceImpl implements ShipmentService {
 
         // partyCustomerMap: danh sách portal address và geo point đã có trong DB
         Map<String, PostalAddress> postalAddressMap = new HashMap<>();
-        Map<String, GeoPoint> locationCodeToGeoPointMap = new HashMap<>();
         postalAddressRepo.findAllByLocationCodeIn(locationCodes).forEach(postalAddress -> postalAddressMap.put(postalAddress.getLocationCode(), postalAddress));
 
         // productMap: danh sách product đã có trong DB
@@ -177,7 +185,7 @@ public class ShipmentServiceImpl implements ShipmentService {
             idx++;
 
             // sao chép model sang entity class
-            String shipmentItemSeqId = CommonUtils.buildSeqId(idx);
+//            String shipmentItemSeqId = CommonUtils.buildSeqId(idx);
             ShipmentItem shipmentItem = new ShipmentItem();
             shipmentItem.setShipment(shipment);
             //shipmentItem.setShipmentItemSeqId(shipmentItemSeqId);
@@ -191,9 +199,6 @@ public class ShipmentServiceImpl implements ShipmentService {
             // đồng thời với Geopoint, query GGMap
             PostalAddress postalAddress = postalAddressMap.computeIfAbsent(shipmentItemModel.getLocationCode(),
                     locationCode -> {
-//                        log.info("Query latLng: " + shipmentItemModel.getAddress());
-//                        GeocodingResult[] geocodingResults = GoogleMapUtils.queryLatLng(shipmentItemModel.getAddress());
-//                            LatLng location = geocodingResults[0].geometry.location;
                         GeoPoint geoPoint;
                         if (shipmentItemModel.getLatLng() != null) {
                             LatLng location = LatLngUtils.parse(shipmentItemModel.getLatLng());
@@ -201,11 +206,13 @@ public class ShipmentServiceImpl implements ShipmentService {
                         } else {
                             geoPoint = new GeoPoint();
                         }
-                        locationCodeToGeoPointMap.put(locationCode, geoPoint);
+                        geoPoint = geoPointRepo.save(geoPoint);
+
                         PostalAddress pa = new PostalAddress();
                         pa.setAddress(shipmentItemModel.getAddress());
                         pa.setLocationCode(locationCode);
                         pa.setGeoPoint(geoPoint);
+                        pa = postalAddressRepo.save(pa);
                         return pa;
                     });
 
@@ -214,52 +221,44 @@ public class ShipmentServiceImpl implements ShipmentService {
             // Nếu party customer hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
             PartyCustomer partyCustomer = partyCustomerMap.computeIfAbsent(shipmentItemModel.getCustomerCode(),
                     customerCode ->
-                            customerService.save(new CreateCustomerInputModel(
-                                    shipmentItemModel.getCustomerCode(),
-                                    shipmentItemModel.getCustomerName(),
-                                    shipmentItemModel.getAddress(),
-                                    postalAddress.getGeoPoint().getLatitude(),
-                                    postalAddress.getGeoPoint().getLongitude()
-                            )));
-            partyCustomer.setCustomerCode(shipmentItemModel.getCustomerCode());
-            partyCustomer.setCustomerName(shipmentItemModel.getCustomerName());
-            // thêm portal address hiện tại vào party customer
-//            partyCustomer.getPostalAddress().add(postalAddress);// NOT attach address into list
-            shipmentItem.setCustomer(partyCustomer);  // TODO: Resolve exception
-            /*
-             * org.hibernate.TransientPropertyValueException: object references an unsaved transient instance -
-             * save the transient instance before flushing : com.hust.baseweb.applications.tms.entity.ShipmentItem.customer
-             * -> com.hust.baseweb.applications.customer.entity.PartyCustomer
-             */
+                    {
+                        PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
+
+                        Party party = new Party(null, partyType, "",
+                                statusRepo.findById(Status.StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
+                                false);
+
+                        party = partyRepo.save(party);
+
+                        UUID partyId = party.getPartyId();
+
+                        PartyCustomer customer = new PartyCustomer();
+                        customer.setPartyId(partyId);
+                        customer.setCustomerCode(shipmentItemModel.getCustomerCode());
+                        customer.setPartyType(partyType);
+                        customer.setCustomerName(shipmentItemModel.getCustomerName());
+                        customer.setPostalAddress(new ArrayList<>());
+
+                        customer = customerRepo.save(customer);
+
+                        PartyContactMechPurpose partyContactMechPurpose = new PartyContactMechPurpose();
+                        partyContactMechPurpose.setContactMechId(postalAddress.getContactMechId());
+                        partyContactMechPurpose.setPartyId(partyId);
+                        partyContactMechPurpose.setContactMechPurposeTypeId("PRIMARY_LOCATION");
+                        partyContactMechPurpose.setFromDate(new Date());
+                        partyContactMechPurposeRepo.save(partyContactMechPurpose);
+
+                        return customer;
+                    });
+            shipmentItem.setCustomer(partyCustomer);
 
             // Nếu product hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
             productMap.computeIfAbsent(shipmentItemModel.getProductId(), productId ->
                     productService.save(productId, shipmentItemModel.getProductName(), shipmentItemModel.getWeight(), shipmentItemModel.getUom()));
         }
 
-        // lọc trùng postal address nếu 1 postal address được add nhiều lần vào cùng 1 customer
-        partyCustomerMap.values().forEach(partyCustomer -> partyCustomer.setPostalAddress(
-                partyCustomer.getPostalAddress().stream().distinct().collect(Collectors.toList()))
-        );
-
-        // lưu tất cả vào DB
-        geoPointRepo.saveAll(locationCodeToGeoPointMap.values());
-        postalAddressRepo.saveAll(postalAddressMap.values());
-//        partyCustomerRepo.saveAll(partyCustomerMap.values());
-//        for (GeoPoint gp : locationCodeToGeoPointMap.values()) {
-//            log.info("save geo point " + gp.getGeoPointId());
-//            geoPointRepo.save(gp);
-//        }
-//        for (PostalAddress pa : postalAddressMap.values()) {
-//            log.info("save address " + pa.getContactMechId() + ", geo point = " + pa.getGeoPoint().getGeoPointId());
-//            postalAddressRepo.save(pa);
-//        }
-//        for (PartyCustomer pc : partyCustomerMap.values()) {
-//            log.info("save, partyCustomer " + pc.getCustomerCode() + ", shipToLocationCode = " + pc.getPostalAddress().size());
-//        }
-        productRepo.saveAll(productMap.values());
+        // lưu tất cả shipment item vào DB
         shipmentItemRepo.saveAll(shipmentItems);
-//        shipment.setShipmentItems(shipmentItems);
         return shipment;
     }
 

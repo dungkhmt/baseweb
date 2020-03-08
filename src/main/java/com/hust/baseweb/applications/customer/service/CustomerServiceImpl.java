@@ -67,7 +67,8 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setPostalAddress(new ArrayList<>());
 
         log.info("save, prepare save customer partyId = " + customer.getPartyId());
-        customerRepo.save(customer);
+        customer = customerRepo.save(customer);
+//        customerRepo.save(customer);
 
         GeoPoint geoPoint = new GeoPoint();
         //UUID geoPointId = UUID.randomUUID();

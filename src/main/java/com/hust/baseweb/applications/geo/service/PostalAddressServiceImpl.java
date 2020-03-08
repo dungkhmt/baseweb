@@ -18,12 +18,13 @@ public class PostalAddressServiceImpl implements PostalAddressService {
     private GeoPointRepo geoPointRepo;
 
     @Override
-    public PostalAddress save(String address, String latitude, String longitude) {
+    public PostalAddress save(String locationCode, String address, String latitude, String longitude) {
         GeoPoint geoPoint = new GeoPoint();
         geoPoint.setLatitude(latitude);
         geoPoint.setLongitude(longitude);
         geoPoint = geoPointRepo.save(geoPoint);
         PostalAddress postalAddress = new PostalAddress();
+        postalAddress.setLocationCode(locationCode);
         postalAddress.setGeoPoint(geoPoint);
         postalAddress.setAddress(address);
         postalAddress = postalAddressRepo.save(postalAddress);
