@@ -16,4 +16,6 @@ public interface DeliveryTripRepo extends PagingAndSortingRepository<DeliveryTri
     List<DeliveryTrip> findAllByDeliveryPlan(DeliveryPlan deliveryPlan);
 
     List<DeliveryTrip> findByPartyDriver(PartyDriver partyDriver);
+    
+    List<DeliveryTrip> findAll();
 }
