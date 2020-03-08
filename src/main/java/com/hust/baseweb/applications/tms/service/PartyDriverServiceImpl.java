@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.tms.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -56,6 +57,13 @@ public class PartyDriverServiceImpl implements PartyDriverService {
 	public List<PartyDriver> findAll() {
 		// TODO Auto-generated method stub
 		return partyDriverRepo.findAll();
+	}
+
+	@Override
+	public PartyDriver findByPartyId(UUID partyId) {
+		// TODO Auto-generated method stub
+		PartyDriver partyDriver = partyDriverRepo.findByPartyId(partyId);
+		return partyDriver;
 	}
 
 }

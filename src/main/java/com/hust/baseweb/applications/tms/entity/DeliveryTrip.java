@@ -32,7 +32,7 @@ public class DeliveryTrip {
 
     @JoinColumn(name = "driver_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private Party party;
+    private PartyDriver partyDriver;
 
     @Column(name = "execute_date")
     private Date executeDate;

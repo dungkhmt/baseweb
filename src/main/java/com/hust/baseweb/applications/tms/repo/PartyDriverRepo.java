@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.hust.baseweb.applications.tms.entity.PartyDriver;
 
 public interface PartyDriverRepo extends JpaRepository<PartyDriver, UUID> {
-
+	PartyDriver findByPartyId(UUID partyId);
 }

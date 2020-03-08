@@ -58,6 +58,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     private ProductRepo productRepo;
     private UserLoginRepo userLoginRepo;
     private PartyRepo partyRepo;
+    private PartyDriverService partyDriverService;
+    private PartyDriverRepo partyDriverRepo;
     
     @Override
     @Transactional
@@ -83,10 +85,13 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
         deliveryTrip.setVehicle(vehicle);
 
+        PartyDriver partyDriver = partyDriverService.findByPartyId(UUID.fromString(input.getDriverId()));
+        deliveryTrip.setPartyDriver(partyDriver);
+        
         deliveryTrip.setDistance(0.0);
         deliveryTrip.setTotalWeight(0.0);
         deliveryTrip.setTotalPallet(0.0);
-
+        
         deliveryTrip = deliveryTripRepo.save(deliveryTrip);
         return deliveryTrip;
     }
@@ -189,7 +194,10 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 			String driverUserLoginId) {
 		// TODO Auto-generated method stub
 		UserLogin u = userLoginRepo.findByUserLoginId(driverUserLoginId);
-		List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findByParty(u.getParty());
+		PartyDriver partyDriver = partyDriverRepo.findByPartyId(u.getParty().getPartyId());
+		
+		List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findByPartyDriver(partyDriver);
+		
 		log.info("getDeliveryTripAssignedToDriver, got deliveryTrips.sz = " + deliveryTrips.size());
 		
 		DeliveryTripHeaderView[] deliveryTripHeaderViews = new DeliveryTripHeaderView[deliveryTrips.size()];
@@ -198,7 +206,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 			DeliveryTrip t = deliveryTrips.get(i);
 			UUID deliveryTripId= t.getDeliveryTripId();
 			String vehicleId = t.getVehicle().getVehicleId();
-			UUID driverPartyId = t.getParty().getPartyId();
+			UUID driverPartyId = t.getPartyDriver().getPartyId();
 			//String driverUserLoginId;
 			Date executeDate = t.getExecuteDate();
 			
