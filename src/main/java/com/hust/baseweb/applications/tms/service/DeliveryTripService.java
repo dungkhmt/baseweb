@@ -27,4 +27,5 @@ public interface DeliveryTripService {
 
     GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(String driverUserLoginId);
 
+    
 }
