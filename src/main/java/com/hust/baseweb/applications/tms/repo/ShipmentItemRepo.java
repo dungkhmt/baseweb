@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface ShipmentItemRepo extends PagingAndSortingRepository<ShipmentItem, UUID> {
     //public ShipmentItem findByShipmentIdAndShipmentItemSeqId(UUID shipmentId, String shipmentItemSeqId);
-    public ShipmentItem findByShipmentItemId(UUID shipmentItemId);
+    ShipmentItem findByShipmentItemId(UUID shipmentItemId);
 
     List<ShipmentItem> findAllByShipmentItemIdIn(List<UUID> shipmentItemIds);
 }

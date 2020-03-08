@@ -3,8 +3,12 @@ package com.hust.baseweb.applications.tms.controller;
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.order.repo.OrderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
+import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
+import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemInputModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemsInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
+import com.hust.baseweb.applications.tms.service.DeliveryTripDetailService;
 import com.hust.baseweb.applications.tms.service.DeliveryTripService;
 import com.hust.baseweb.applications.tms.service.DistanceTravelTimeService;
 import com.hust.baseweb.repo.UserLoginRepo;
@@ -27,7 +31,30 @@ public class TMSAPIController {
     private UserLoginRepo userLoginRepo;
     private DeliveryTripService deliveryTripService;
     private DistanceTravelTimeService distanceTravelTimeService;
+    private DeliveryTripDetailService deliveryTripDetailService;
 
+
+    @PostMapping("/get-assigned-delivery-routes")
+    public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal, @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
+        GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(input.getDriverUserLoginId());
+
+        return ResponseEntity.ok().body(deliveryTrip);
+    }
+
+    @PostMapping("/complete-shipment-items")
+    public ResponseEntity<?> completeShipmentItems(Principal prinicpal, @RequestBody CompleteDeliveryShipmentItemsInputModel input) {
+        if (input.getItems() == null || input.getItems().length == 0) {
+            return ResponseEntity.ok().body("OK");
+        }
+        log.info("completeShipmentItems, input.getItems().length = " + input.getItems().length);
+        for (CompleteDeliveryShipmentItemInputModel I : input.getItems()) {
+            log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId());
+            //DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(), TMSConstants.SHIPMENT_ITEM_DELIVERED);
+            DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(), "SHIPMENT_ITEM_DELIVERED");
+            log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId() + " FINISHED");
+        }
+        return ResponseEntity.ok().body("OK");
+    }
 
     @Autowired
     public TMSAPIController(CustomerRepo customerRepo, OrderRepo orderRepo, OrderRoleRepo orderRoleRepo, UserLoginRepo userLoginRepo, DeliveryTripService deliveryTripService, DistanceTravelTimeService distanceTravelTimeService) {
@@ -37,13 +64,6 @@ public class TMSAPIController {
         this.userLoginRepo = userLoginRepo;
         this.deliveryTripService = deliveryTripService;
         this.distanceTravelTimeService = distanceTravelTimeService;
-    }
-
-    @PostMapping("/get-assigned-delivery-routes")
-    public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal, @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
-        GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(input.getDriverUserLoginId());
-
-        return ResponseEntity.ok().body(deliveryTrip);
     }
 
 

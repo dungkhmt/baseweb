@@ -1,3 +1,8 @@
+delete from party_contact_mech_purpose ;
+delete from postal_address;
+delete from geo_point;
+
+-------------------
 remove geo_point having no latitude/longitude
 
 delete from shipment_item_delivery_plan;

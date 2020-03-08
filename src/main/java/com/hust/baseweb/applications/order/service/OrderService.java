@@ -13,15 +13,15 @@ import java.util.UUID;
 
 @Service
 public interface OrderService {
-    public OrderHeader save(ModelCreateOrderInput order);
+    OrderHeader save(ModelCreateOrderInput order);
 
-    public Page<OrderHeader> findAll(Pageable page);
+    Page<OrderHeader> findAll(Pageable page);
 
-    public OrderHeader findByOrderId(String orderId);
+    OrderHeader findByOrderId(String orderId);
 
-    public OrderDetailView getOrderDetail(String orderId);
+    OrderDetailView getOrderDetail(String orderId);
 
-    public OrderDetailView convertOrderDetail(OrderHeader order);
+    OrderDetailView convertOrderDetail(OrderHeader order);
 
-    public PartyCustomer findCustomerById(UUID partyId);
+    PartyCustomer findCustomerById(UUID partyId);
 }

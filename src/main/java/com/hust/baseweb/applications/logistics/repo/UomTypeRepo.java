@@ -4,5 +4,5 @@ import com.hust.baseweb.applications.logistics.entity.UomType;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface UomTypeRepo extends PagingAndSortingRepository<UomType, String> {
-    public UomType findByUomTypeId(String uomTypeId);
+    UomType findByUomTypeId(String uomTypeId);
 }

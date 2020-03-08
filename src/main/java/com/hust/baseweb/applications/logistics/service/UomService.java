@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface UomService {
-    public Uom save(String uomId, String uomTypeId, String abbreviation, String description);
+    Uom save(String uomId, String uomTypeId, String abbreviation, String description);
 }

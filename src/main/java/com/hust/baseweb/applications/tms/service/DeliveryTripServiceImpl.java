@@ -42,6 +42,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     private ProductRepo productRepo;
     private UserLoginRepo userLoginRepo;
     private PartyRepo partyRepo;
+    private PartyDriverService partyDriverService;
+    private PartyDriverRepo partyDriverRepo;
 
     @Override
     @Transactional
@@ -66,6 +68,9 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                 });
 
         deliveryTrip.setVehicle(vehicle);
+
+        PartyDriver partyDriver = partyDriverService.findByPartyId(UUID.fromString(input.getDriverId()));
+        deliveryTrip.setPartyDriver(partyDriver);
 
         deliveryTrip.setDistance(0.0);
         deliveryTrip.setTotalWeight(0.0);
@@ -169,9 +174,13 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     }
 
     @Override
-    public GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(String driverUserLoginId) {
-        UserLogin u = userLoginRepo.findByUserLoginId(driverUserLoginId);
-        List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findByParty(u.getParty());
+    public GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(
+            String driverUserLoginId) {
+        UserLogin userLogin = userLoginRepo.findByUserLoginId(driverUserLoginId);
+        PartyDriver partyDriver = partyDriverRepo.findByPartyId(userLogin.getParty().getPartyId());
+
+        List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findByPartyDriver(partyDriver);
+
         log.info("getDeliveryTripAssignedToDriver, got deliveryTrips.sz = " + deliveryTrips.size());
 
         DeliveryTripHeaderView[] deliveryTripHeaderViews = new DeliveryTripHeaderView[deliveryTrips.size()];
@@ -180,7 +189,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
             DeliveryTrip deliveryTrip = deliveryTrips.get(i);
             UUID deliveryTripId = deliveryTrip.getDeliveryTripId();
             String vehicleId = deliveryTrip.getVehicle().getVehicleId();
-            UUID driverPartyId = deliveryTrip.getParty().getPartyId();
+            UUID driverPartyId = deliveryTrip.getPartyDriver().getPartyId();
             //String driverUserLoginId;
             Date executeDate = deliveryTrip.getExecuteDate();
 
@@ -199,13 +208,13 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
                 ShipmentItem shipmentItem = deliveryTripDetails.get(idx).getShipmentItem();
                 PartyCustomer partyCustomer = shipmentItem.getCustomer();
-//				if(partyCustomer != null)
-////					log.info("getDeliveryTripAssignedToDriver dtd[" + idx + "], shipmentItemId = " + SI.getShipmentItemId() +
-////						", customer = " + partyCustomer.getCustomerName());
-////				else{
-////					log.info("getDeliveryTripAssignedToDriver dtd[" + idx + "], shipmentItemId = " + SI.getShipmentItemId() +
-////							", customer = " + " NULL");
-////				}
+//                if (partyCustomer != null) {
+//                    log.info("getDeliveryTripAssignedToDriver dtd[" + idx + "], shipmentItemId = " + shipmentItem.getShipmentItemId() +
+//                            ", customer = " + partyCustomer.getCustomerName());
+//                } else {
+//                    log.info("getDeliveryTripAssignedToDriver dtd[" + idx + "], shipmentItemId = " + shipmentItem.getShipmentItemId() +
+//                            ", customer = " + " NULL");
+//                }
                 UUID partyCustomerId = partyCustomer.getPartyId();
                 String customerName = partyCustomer.getCustomerName();
                 String address = shipmentItem.getShipToLocation().getAddress();

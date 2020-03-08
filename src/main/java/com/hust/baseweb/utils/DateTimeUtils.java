@@ -113,7 +113,7 @@ public class DateTimeUtils {
     public static String date2YYYYMMDD(Date d) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-        String strDate = df.format(d).toString();
+        String strDate = df.format(d);
         String s = d.getDate() + "";
         if (s.length() == 1) {
             s = "0" + s;
@@ -290,8 +290,8 @@ public class DateTimeUtils {
 
         System.out.println("new date time of " + DT1 + " = " + getRelativeDateTime(DT1) +
                 ", recover = " + recoverDateTimeFromRelative(getRelativeDateTime(DT1)));
-        long t1 = (long) DateTimeUtils.dateTime2Int(DT1);
-        long t2 = (long) DateTimeUtils.dateTime2Int(DT2);
+        long t1 = DateTimeUtils.dateTime2Int(DT1);
+        long t2 = DateTimeUtils.dateTime2Int(DT2);
         long t = t1 - t2;
         String dt1 = DateTimeUtils.unixTimeStamp2DateTime(t1);
 

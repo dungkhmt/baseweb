@@ -16,11 +16,7 @@ public class Predicate {
     }
 
     public static boolean isNumeric(final Object str) {
-        if (str instanceof Number) {
-            return true;
-        } else {
-            return false;
-        }
+        return str instanceof Number;
     }
 
     public BooleanExpression getPredicate() {

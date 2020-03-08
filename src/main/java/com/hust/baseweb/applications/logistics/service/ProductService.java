@@ -7,9 +7,9 @@ import java.util.List;
 
 @Service
 public interface ProductService {
-    public Product findByProductId(String productId);
+    Product findByProductId(String productId);
 
-    public List<Product> getAllProducts();
+    List<Product> getAllProducts();
 
-    public Product save(String productId, String productName, double productWeight, String uomId);
+    Product save(String productId, String productName, double productWeight, String uomId);
 }

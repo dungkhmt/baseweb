@@ -20,7 +20,7 @@ import java.util.UUID;
 public interface UserRestRepository extends PagingAndSortingRepository<DPerson, UUID>,
         QuerydslPredicateExecutor<DPerson>, QuerydslBinderCustomizer<QDPerson> {
 
-    public Page<DPerson> findByType(PartyType type, Pageable page);
+    Page<DPerson> findByType(PartyType type, Pageable page);
 
     @Query("select p from DPerson p where p.type.id = :type and status.id = :status and concat(trim(p.person.firstName), trim(p.person.middleName), trim(p.person.lastName)) like %:fullNameString%")
     Page<UserRestBriefProjection> findByTypeAndStatusAndFullNameLike(Pageable page, String type, String status, String fullNameString);

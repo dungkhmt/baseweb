@@ -12,5 +12,5 @@ import java.util.UUID;
 public interface SalesmanCheckinHistoryService {
     SalesmanCheckinHistory save(UserLogin userLogin, UUID partyCustomerId, String checkinAction, String location);
 
-    public Page<SalesmanCheckinHistory> findAll(Pageable page);
+    Page<SalesmanCheckinHistory> findAll(Pageable page);
 }

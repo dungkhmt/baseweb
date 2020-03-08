@@ -7,5 +7,5 @@ import java.util.UUID;
 
 
 public interface PSalesRouteConfigRepo extends PagingAndSortingRepository<SalesRouteConfig, UUID> {
-    public SalesRouteConfig findBySalesRouteConfigId(UUID salesRouteConfigId);
+    SalesRouteConfig findBySalesRouteConfigId(UUID salesRouteConfigId);
 }

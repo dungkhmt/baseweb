@@ -29,7 +29,6 @@ public class SalesmanCheckinHistoryServiceImpl implements
 
     @Override
     public SalesmanCheckinHistory save(UserLogin userLogin, UUID partyCustomerId, String checkinAction, String location) {
-        // TODO Auto-generated method stub
         PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(partyCustomerId);
 
         SalesmanCheckinHistory sch = new SalesmanCheckinHistory();
@@ -45,7 +44,6 @@ public class SalesmanCheckinHistoryServiceImpl implements
 
     @Override
     public Page<SalesmanCheckinHistory> findAll(Pageable page) {
-        // TODO Auto-generated method stub
         return salesmanCheckinHistoryRepo.findAll(page);
     }
 

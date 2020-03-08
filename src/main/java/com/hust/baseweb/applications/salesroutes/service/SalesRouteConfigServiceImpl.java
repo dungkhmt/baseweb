@@ -14,7 +14,6 @@ public class SalesRouteConfigServiceImpl implements SalesRouteConfigService {
 
     @Override
     public SalesRouteConfig save(String days, int repeatWeek) {
-        // TODO Auto-generated method stub
         SalesRouteConfig salesRouteConfig = new SalesRouteConfig();
         salesRouteConfig.setDays(days);
         salesRouteConfig.setRepeatWeek(repeatWeek);

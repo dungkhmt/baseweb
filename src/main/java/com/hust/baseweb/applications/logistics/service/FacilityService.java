@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public interface FacilityService {
-    public Facility findFacilityById(String facilityId);
+    Facility findFacilityById(String facilityId);
 
-    public List<Facility> getAllFacilities();
+    List<Facility> getAllFacilities();
 }

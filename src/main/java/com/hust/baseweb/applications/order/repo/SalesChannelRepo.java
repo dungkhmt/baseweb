@@ -4,5 +4,5 @@ import com.hust.baseweb.applications.order.entity.SalesChannel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SalesChannelRepo extends JpaRepository<SalesChannel, String> {
-    public SalesChannel findBySalesChannelId(String salesChannelId);
+    SalesChannel findBySalesChannelId(String salesChannelId);
 }

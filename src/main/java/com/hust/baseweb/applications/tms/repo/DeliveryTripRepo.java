@@ -2,7 +2,7 @@ package com.hust.baseweb.applications.tms.repo;
 
 import com.hust.baseweb.applications.tms.entity.DeliveryPlan;
 import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
-import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.applications.tms.entity.PartyDriver;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,5 +15,5 @@ public interface DeliveryTripRepo extends PagingAndSortingRepository<DeliveryTri
 
     List<DeliveryTrip> findAllByDeliveryPlan(DeliveryPlan deliveryPlan);
 
-    List<DeliveryTrip> findByParty(Party party);
+    List<DeliveryTrip> findByPartyDriver(PartyDriver partyDriver);
 }

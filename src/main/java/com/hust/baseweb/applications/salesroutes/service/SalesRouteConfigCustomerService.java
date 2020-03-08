@@ -7,5 +7,5 @@ import java.util.UUID;
 
 @Service
 public interface SalesRouteConfigCustomerService {
-    public SalesRouteConfigCustomer save(UUID salesRouteConfigId, UUID partyCustomerId, UUID partySalesmanId, String startExecuteDate);
+    SalesRouteConfigCustomer save(UUID salesRouteConfigId, UUID partyCustomerId, UUID partySalesmanId, String startExecuteDate);
 }

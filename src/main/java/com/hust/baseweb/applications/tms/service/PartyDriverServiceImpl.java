@@ -7,21 +7,20 @@ import com.hust.baseweb.applications.tms.repo.PartyDriverRepo;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PartyDriverServiceImpl implements PartyDriverService {
 
-    @Autowired
     private PPartyDriverRepo pPartyDriverRepo;
-
-    @Autowired
     private PartyDriverRepo partyDriverRepo;
-    @Autowired
     private UserService userService;
 
     @Override
@@ -51,8 +50,12 @@ public class PartyDriverServiceImpl implements PartyDriverService {
 
     @Override
     public List<PartyDriver> findAll() {
-        // TODO Auto-generated method stub
         return partyDriverRepo.findAll();
+    }
+
+    @Override
+    public PartyDriver findByPartyId(UUID partyId) {
+        return partyDriverRepo.findByPartyId(partyId);
     }
 
 }

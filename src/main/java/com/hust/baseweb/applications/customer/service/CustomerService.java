@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface CustomerService {
-    public PartyCustomer save(CreateCustomerInputModel input);
+    PartyCustomer save(CreateCustomerInputModel input);
 
     List<PartyCustomer> findDistributors();
 

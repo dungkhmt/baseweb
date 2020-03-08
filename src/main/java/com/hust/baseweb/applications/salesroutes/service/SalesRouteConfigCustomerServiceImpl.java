@@ -33,7 +33,6 @@ public class SalesRouteConfigCustomerServiceImpl implements
     @Override
     public SalesRouteConfigCustomer save(UUID salesRouteConfigId,
                                          UUID partyCustomerId, UUID partySalesmanId, String startExecuteDate) {
-        // TODO Auto-generated method stub
         SalesRouteConfigCustomer salesRouteConfigCustomer = new SalesRouteConfigCustomer();
         PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(partyCustomerId);
         PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);

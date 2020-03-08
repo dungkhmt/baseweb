@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface PostalAddressService {
-    public PostalAddress save(String address, String latitude, String longitude);
+    PostalAddress save(String address, String latitude, String longitude);
 }

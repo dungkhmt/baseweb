@@ -19,7 +19,6 @@ public class PostalAddressServiceImpl implements PostalAddressService {
 
     @Override
     public PostalAddress save(String address, String latitude, String longitude) {
-        // TODO Auto-generated method stub
         GeoPoint geoPoint = new GeoPoint();
         geoPoint.setLatitude(latitude);
         geoPoint.setLongitude(longitude);

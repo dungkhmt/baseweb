@@ -99,7 +99,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<PartyCustomer> findDistributors() {
-        // TODO Auto-generated method stub
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");
         List<PartyCustomer> distributors = customerRepo.findByPartyType(partyType);
         return distributors;
@@ -107,7 +106,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<PartyCustomer> findRetailOutlers() {
-        // TODO Auto-generated method stub
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
         List<PartyCustomer> retailoutlets = customerRepo.findByPartyType(partyType);
         return retailoutlets;

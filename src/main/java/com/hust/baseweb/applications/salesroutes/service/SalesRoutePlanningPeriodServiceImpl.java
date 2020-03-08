@@ -20,8 +20,6 @@ public class SalesRoutePlanningPeriodServiceImpl implements
     @Override
     public SalesRoutePlanningPeriod save(String fromDateYYYYMMDD, String toDateYYYYMMDD,
                                          String description) {
-        // TODO Auto-generated method stub
-
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date fromDate = null;
         Date toDate = null;

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Service
 public interface SalesRouteDetailService {
-    public int generateSalesRouteDetailOfSalesman(UUID partySalesmanId, UUID salesRoutePlanningPeriodId);
+    int generateSalesRouteDetailOfSalesman(UUID partySalesmanId, UUID salesRoutePlanningPeriodId);
 
-    public List<PartyCustomer> getCustomersVisitedSalesmanDay(UUID partySalesmanId, String date);
+    List<PartyCustomer> getCustomersVisitedSalesmanDay(UUID partySalesmanId, String date);
 }

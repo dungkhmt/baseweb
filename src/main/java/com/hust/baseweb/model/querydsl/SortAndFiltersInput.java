@@ -2,7 +2,7 @@ package com.hust.baseweb.model.querydsl;
 
 
 public class SortAndFiltersInput {
-    private SearchCriteria filters[];
+    private SearchCriteria[] filters;
     private SortCriteria[] sort;
 
     public SortAndFiltersInput(SearchCriteria[] filters,

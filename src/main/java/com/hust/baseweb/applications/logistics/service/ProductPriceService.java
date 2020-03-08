@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Service
 public interface ProductPriceService {
-    public ProductPrice setProductPrice(UserLogin createdByUserLogin, String productId, BigDecimal price, String currencyUomId, String taxInPrice);
+    ProductPrice setProductPrice(UserLogin createdByUserLogin, String productId, BigDecimal price, String currencyUomId, String taxInPrice);
 
-    public ProductPrice getProductPrice(String productId);
+    ProductPrice getProductPrice(String productId);
 }

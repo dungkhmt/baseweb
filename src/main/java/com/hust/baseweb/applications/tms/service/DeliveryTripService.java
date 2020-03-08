@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Service
 public interface DeliveryTripService {
-    public DeliveryTrip save(CreateDeliveryTripInputModel input);
+    DeliveryTrip save(CreateDeliveryTripInputModel input);
 
     Page<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 

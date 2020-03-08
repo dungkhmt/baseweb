@@ -8,14 +8,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public interface DeliveryTripDetailService {
-    public int save(String deliveryTripId, List<CreateDeliveryTripDetailInputModel> inputs);
+    int save(String deliveryTripId, List<CreateDeliveryTripDetailInputModel> inputs);
 
     boolean delete(String deliveryTripDetailId);
 
     Page<DeliveryTripDetail> findAll(String deliveryTripId, Pageable pageable);
 
     List<DeliveryTripDetailModel> findAll(String deliveryTripId);
+
+    DeliveryTripDetail updateStatusDeliveryTripDetail(UUID deliveryTripDetailId, String statusId);
 }

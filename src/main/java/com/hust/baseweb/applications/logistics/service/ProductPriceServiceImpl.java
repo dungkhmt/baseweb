@@ -38,8 +38,6 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     @Transactional
     public ProductPrice setProductPrice(UserLogin createdByUserLogin, String productId, BigDecimal price, String currencyUomId,
                                         String taxInPrice) {
-        // TODO Auto-generated method stub
-
         Product product = productRepo.findByProductId(productId);
         Uom uom = uomRepo.findByUomId(currencyUomId);
 

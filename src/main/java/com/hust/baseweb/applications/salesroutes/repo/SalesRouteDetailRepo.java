@@ -9,5 +9,5 @@ import java.util.UUID;
 
 
 public interface SalesRouteDetailRepo extends JpaRepository<SalesRouteDetail, UUID> {
-    public List<SalesRouteDetail> findByPartySalesmanAndExecuteDate(PartySalesman partySalesman, String executeDate);
+    List<SalesRouteDetail> findByPartySalesmanAndExecuteDate(PartySalesman partySalesman, String executeDate);
 }

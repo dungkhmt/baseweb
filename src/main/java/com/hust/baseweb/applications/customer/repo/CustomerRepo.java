@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface CustomerRepo extends
         PagingAndSortingRepository<PartyCustomer, UUID> {
     //JpaRepository<PartyCustomer, UUID> {
-    public List<PartyCustomer> findAll();
+    List<PartyCustomer> findAll();
 
-    public List<PartyCustomer> findByPartyType(PartyType partyType);
+    List<PartyCustomer> findByPartyType(PartyType partyType);
 }

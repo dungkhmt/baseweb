@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CustomerSalesmanRepo extends PagingAndSortingRepository<CustomerSalesman, UUID> {
-    public List<CustomerSalesman> findAll();
+    List<CustomerSalesman> findAll();
 }

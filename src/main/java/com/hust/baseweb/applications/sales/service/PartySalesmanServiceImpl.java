@@ -34,7 +34,6 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
 
     @Override
     public List<GetSalesmanOutputModel> findAllSalesman() {
-        // TODO Auto-generated method stub
         // TODO: *** should be improved by defining entity PartySalesman
         List<PartySalesman> salesman = partySalesmanRepo.findAll();
         List<GetSalesmanOutputModel> retList = new ArrayList<GetSalesmanOutputModel>();
@@ -65,7 +64,6 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
 
     @Override
     public UserLogin findUserLoginOfSalesmanId(UUID partySalesmanId) {
-        // TODO Auto-generated method stub
         Party party = partyRepo.findByPartyId(partySalesmanId);
         List<UserLogin> userLogins = userLoginRepo.findByParty(party);
         if (userLogins != null && userLogins.size() > 0) {
@@ -76,13 +74,11 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
 
     @Override
     public PartySalesman findById(UUID partyId) {
-        // TODO Auto-generated method stub
         return partySalesmanRepo.findByPartyId(partyId);
     }
 
     @Override
     public Person findPersonByPartyId(UUID partyId) {
-        // TODO Auto-generated method stub
         return personRepo.findByPartyId(partyId);
     }
 

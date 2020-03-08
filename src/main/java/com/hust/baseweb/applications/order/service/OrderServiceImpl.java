@@ -200,22 +200,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<OrderHeader> findAll(Pageable page) {
-        // TODO Auto-generated method stub
-
         Page<OrderHeader> pages = pOrderRepo.findAll(page);
         return pages;
     }
 
     @Override
     public OrderHeader findByOrderId(String orderId) {
-        // TODO Auto-generated method stub
         OrderHeader order = orderRepo.findByOrderId(orderId);
         return order;
     }
 
     @Override
     public OrderDetailView getOrderDetail(String orderId) {
-        // TODO Auto-generated method stub
         OrderHeader order = orderRepo.findByOrderId(orderId);
         if (order == null) {
             return null;
@@ -275,7 +271,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDetailView convertOrderDetail(OrderHeader order) {
-        // TODO Auto-generated method stub
         if (order == null) {
             return null;
         }
@@ -337,7 +332,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PartyCustomer findCustomerById(UUID partyId) {
-        // TODO Auto-generated method stub
         return partyCustomerRepo.findByPartyId(partyId);
     }
 

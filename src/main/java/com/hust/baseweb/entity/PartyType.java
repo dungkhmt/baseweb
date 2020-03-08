@@ -33,7 +33,7 @@ public class PartyType {
     public PartyType() {
     }
 
-    public static enum PartyTypeEnum {
+    public enum PartyTypeEnum {
         AUTOMATED_AGENT, PERSON, PARTY_GROUP, BANK, LEGAL_ORGANIZATION, CORPORATION, CUSTOMER_GROUP
     }
 }
