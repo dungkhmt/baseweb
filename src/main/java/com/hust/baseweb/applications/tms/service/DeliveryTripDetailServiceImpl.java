@@ -12,8 +12,14 @@ import com.hust.baseweb.applications.tms.model.deliverytripdetail.DeliveryTripDe
 import com.hust.baseweb.applications.tms.repo.DeliveryTripDetailRepo;
 import com.hust.baseweb.applications.tms.repo.DeliveryTripRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
+import com.hust.baseweb.entity.Status;
+import com.hust.baseweb.entity.StatusItem;
+import com.hust.baseweb.repo.StatusItemRepo;
+import com.hust.baseweb.repo.StatusRepo;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +42,9 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     private DeliveryTripRepo deliveryTripRepo;
     private DeliveryTripService deliveryTripService;
 
+    private StatusItemRepo statusItemRepo;
+    
+    
     @Override
     public int save(String deliveryTripId, List<CreateDeliveryTripDetailInputModel> inputs) {
         UUID deliveryTripIdUuid = UUID.fromString(deliveryTripId);
@@ -116,5 +125,21 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
                         productMap.get(deliveryTripDetail.getShipmentItem().getProductId())))
                 .collect(Collectors.toList());
     }
+
+	@Override
+	@Transactional
+	public DeliveryTripDetail updateStatusDeliveryTripDetail(
+			UUID deliveryTripDetailId, String statusId) {
+		// TODO Auto-generated method stub
+		log.info("updateStatusDeliveryTripDetail, deliveryTripDetailId = " + deliveryTripDetailId + ", statusId = " + statusId);
+		StatusItem statusItem = statusItemRepo.findByStatusId(statusId);
+		DeliveryTripDetail dtd = deliveryTripDetailRepo.findByDeliveryTripDetailId(deliveryTripDetailId);
+		if(dtd == null) return null;
+		dtd.setStatusItem(statusItem);		
+		dtd = deliveryTripDetailRepo.save(dtd);
+		log.info("updateStatusDeliveryTripDetail, deliveryTripDetailId = " + deliveryTripDetailId + ", statusId = " + statusId + " DONE");
+		
+		return dtd;
+	}
 
 }

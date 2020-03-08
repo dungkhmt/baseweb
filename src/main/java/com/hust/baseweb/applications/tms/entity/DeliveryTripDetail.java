@@ -2,10 +2,15 @@ package com.hust.baseweb.applications.tms.entity;
 
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.tms.model.deliverytripdetail.DeliveryTripDetailModel;
+
+
+import com.hust.baseweb.entity.StatusItem;
+
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+
 import java.util.UUID;
 
 @Entity
@@ -32,6 +37,10 @@ public class DeliveryTripDetail {
     @Column(name = "delivery_quantity")
     private int deliveryQuantity;
 
+    @JoinColumn(name="status_id", referencedColumnName="status_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private StatusItem statusItem;
+    
     public DeliveryTripDetailModel toDeliveryTripDetailModel(Product product) {
         DeliveryTripDetailModel deliveryTripDetailModel = new DeliveryTripDetailModel();
         deliveryTripDetailModel.setSequence(sequence);

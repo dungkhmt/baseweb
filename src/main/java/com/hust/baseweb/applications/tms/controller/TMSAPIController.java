@@ -3,12 +3,19 @@ package com.hust.baseweb.applications.tms.controller;
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.order.repo.OrderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
+import com.hust.baseweb.applications.tms.constants.TMSConstants;
+import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
+import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemInputModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemsInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
+import com.hust.baseweb.applications.tms.service.DeliveryTripDetailService;
 import com.hust.baseweb.applications.tms.service.DeliveryTripService;
 import com.hust.baseweb.applications.tms.service.DistanceTravelTimeService;
 import com.hust.baseweb.repo.UserLoginRepo;
+
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +29,24 @@ import java.security.Principal;
 public class TMSAPIController {
     public static final String module = TMSAPIController.class.getName();
 
+    @Autowired
     private CustomerRepo customerRepo;
+    
+    @Autowired
     private OrderRepo orderRepo;
+    
+    @Autowired
     private OrderRoleRepo orderRoleRepo;
+    
+    @Autowired
     private UserLoginRepo userLoginRepo;
+    
+    @Autowired
     private DeliveryTripService deliveryTripService;
+    
+    @Autowired
+    private DeliveryTripDetailService deliveryTripDetailService;
+    
     private DistanceTravelTimeService distanceTravelTimeService;
 
 
@@ -35,6 +55,20 @@ public class TMSAPIController {
         GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(input.getDriverUserLoginId());
 
         return ResponseEntity.ok().body(deliveryTrip);
+    }
+    
+    @PostMapping("/complete-shipment-items")
+    public ResponseEntity<?> completeShipmentItems(Principal prinicpal, @RequestBody CompleteDeliveryShipmentItemsInputModel input){
+    	if(input.getItems() == null || input.getItems().length == 0)
+    		return ResponseEntity.ok().body("OK");
+    	log.info("completeShipmentItems, input.getItems().length = " + input.getItems().length);
+    	for(CompleteDeliveryShipmentItemInputModel I: input.getItems()){
+    		log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId());
+    		//DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(), TMSConstants.SHIPMENT_ITEM_DELIVERED);
+    		DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(), "SHIPMENT_ITEM_DELIVERED");
+    		log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId() + " FINISHED");
+    	}
+    	return ResponseEntity.ok().body("OK");
     }
 
     @Autowired

@@ -18,7 +18,10 @@ public class Status {
     private StatusType type;
     private String statusCode;
     private String sequenceId;
+    
+    //@Column(name="description")
     private String description;
+    
     private Date createdStamp;
     private Date lastUpdatedStamp;
 
