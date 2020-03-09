@@ -8,6 +8,8 @@ import com.hust.baseweb.applications.logistics.entity.UomType;
 import com.hust.baseweb.applications.logistics.repo.UomRepo;
 import com.hust.baseweb.applications.logistics.repo.UomTypeRepo;
 
+import java.util.List;
+
 @Service
 public class UomServiceImpl implements UomService {
 	@Autowired
@@ -29,4 +31,13 @@ public class UomServiceImpl implements UomService {
 		return uom;
 	}
 
+	@Override
+	public List<Uom> getAllUoms() {
+		return uomRepo.findAll();
+	}
+
+	@Override
+	public Uom getUomByUomId(String uomId) {
+		return uomRepo.findByUomId(uomId);
+	}
 }

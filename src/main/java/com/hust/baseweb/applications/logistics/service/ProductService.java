@@ -12,4 +12,6 @@ public interface ProductService {
     public List<Product> getAllProducts();
     
     public Product save(String productId, String productName, String uomId);
+
+    public void saveProduct(Product product);
 }

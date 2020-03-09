@@ -52,7 +52,7 @@ public class LogisticsAPIController {
 
     @PostMapping("/get-list-product")
     public ResponseEntity getListProducts(Principal principal, @RequestBody GetListProductInputModel input) {
-    	log.info("getListProducts");
+    	log.info("getListProducts {}",input.getStatusId());
         // TODO
         List<Product> products = productService.getAllProducts();
         //List<Product> sel_prod = new ArrayList<Product>();

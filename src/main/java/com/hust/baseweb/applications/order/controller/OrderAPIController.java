@@ -50,6 +50,7 @@ public class OrderAPIController {
     @PostMapping("/create-order-distributor-to-retailoutlet")
     public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
         //TODO
+        log.info("createOrder");
     	Gson gson = new Gson();
     	String inputJson = gson.toJson(input);
     	log.info("createOrder, input json = " +  inputJson);

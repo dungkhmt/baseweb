@@ -88,9 +88,24 @@ public class UserController {
 				userService.findPersonByFullName(page, searchString));
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	@GetMapping(path = "/users/{partyId}")
 	public ResponseEntity<?> getUsersDetail(@PathVariable String partyId,
 			Principal principal) {
+		log.info("getUsersDetail");
 		DPerson p = userService.findByPartyId(partyId);
 		DPersonDetailModel detailModel = new DPersonDetailModel(p);
 		UserLogin userLogin = userService.findById(principal.getName());
@@ -111,6 +126,7 @@ public class UserController {
 	@DeleteMapping(path = "/users/{partyId}")
 	public ResponseEntity<?> delete(@PathVariable String partyId,
 			Principal principal) {
+		log.info("delete");
 		partyService.disableParty(partyId);
 		return ResponseEntity.ok("");
 	}

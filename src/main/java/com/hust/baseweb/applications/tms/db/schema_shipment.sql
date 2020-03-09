@@ -101,6 +101,12 @@ create table delivery_plan_solution
     constraint fk_delivery_plan_solution_delivery_plan foreign key (delivery_plan_id) references delivery_plan (delivery_plan_id)
 );
 
+
+
+
+
+
+
 create table delivery_trip
 (
     delivery_trip_id                 UUID NOT NULL default uuid_generate_v1(),

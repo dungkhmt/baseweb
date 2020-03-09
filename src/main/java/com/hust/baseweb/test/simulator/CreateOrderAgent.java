@@ -94,6 +94,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     public List<Product> getProducts() {
+        System.out.println("createorderagent getProducts");
         try {
             String json = "{\"statusId\":null}";
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-product", json, token);

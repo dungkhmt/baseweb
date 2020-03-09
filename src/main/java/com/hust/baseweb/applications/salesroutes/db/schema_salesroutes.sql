@@ -58,7 +58,7 @@ create table sales_route_planning_period
     created_by                      VARCHAR(60),
     description						TEXT,
     status_id                       VARCHAR(60),
-    constraint pk_sales_planning_period primary key (sales_route_planning_period_id),
+    constraint pk_sales_route_planning_period primary key (sales_route_planning_period_id),
     constraint fk_sales_planning_period_created_by foreign key (created_by) references user_login (user_login_id),
     constraint fk_sales_planning_period_status foreign key (status_id) references status_item (status_id)
 );

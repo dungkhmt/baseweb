@@ -3,12 +3,7 @@ package com.hust.baseweb.applications.logistics.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import java.util.Date;
 
@@ -26,9 +21,18 @@ public class Product {
     @JoinColumn(name="quantity_uom_id", referencedColumnName="uom_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Uom uom;
-    
+
+    @JoinColumn(name = "product_type_id",referencedColumnName = "product_type_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private ProductType productType;
     
     private Date createdStamp;
     private Date lastUpdatedStamp;
+
+    @Transient
+    private String uomDescription;
+
+    @Transient
+    private String productTypeDescription;
 
 }

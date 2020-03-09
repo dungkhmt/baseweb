@@ -85,6 +85,7 @@ public class RequestAgent extends Thread {
     }
 
     public String postLocation(double lat, double lng, Date timePoint) {
+        System.out.println("requestagent  postLocation");
         SimpleDateFormat formatter = new SimpleDateFormat(
                 "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         String json = "{" + "\"lat\":" + lat + ",\"lng\":" + lng
