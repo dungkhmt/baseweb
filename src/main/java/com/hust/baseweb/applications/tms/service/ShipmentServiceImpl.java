@@ -194,7 +194,7 @@ public class ShipmentServiceImpl implements ShipmentService {
             shipmentItem.setQuantity(shipmentItemModel.getQuantity());
             shipmentItem.setPallet(shipmentItemModel.getPallet());
             shipmentItem.setProductId(shipmentItemModel.getProductId());
-
+            
             try {
                 shipmentItem.setOrderDate(Constant.ORDER_EXCEL_DATE_FORMAT.parse(shipmentItemModel.getOrderDate()));
             } catch (ParseException e) {

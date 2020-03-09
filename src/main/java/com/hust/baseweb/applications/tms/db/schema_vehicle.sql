@@ -6,12 +6,11 @@ create table vehicle_type
     width              Integer,
     height             Integer,
     pallet             numeric,
-    product_transport_category_id VARCHAR(60),	
+   
     description        TEXT,
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_vehicle_type primary key (vehicle_type_id),
-    constraint fk_vehicle_type_product_transport_category_id foreign key(product_transport_category_id) references enumeration(enum_id)
+    constraint pk_vehicle_type primary key (vehicle_type_id)
 );
 
 create table vehicle
@@ -24,12 +23,14 @@ create table vehicle
     height             Integer,
     pallet             numeric,
     status_id          VARCHAR(60),
+    product_transport_category_id VARCHAR(60),	
     description        TEXT,
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_vehicle_id primary key (vehicle_id),
     constraint fk_vehicle_vehicle_type foreign key (vehicle_type_id) references vehicle_type (vehicle_type_id),
-    constraint fk_vehicle_status_id foreign key (status_id) references status_item (status_id)
+    constraint fk_vehicle_status_id foreign key (status_id) references status_item (status_id),
+    constraint fk_vehicle_type_product_transport_category_id foreign key(product_transport_category_id) references enumeration(enum_id)
 );
 
 create table vehicle_maintenance_history
