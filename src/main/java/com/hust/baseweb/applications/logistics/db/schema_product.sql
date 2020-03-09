@@ -57,13 +57,13 @@ CREATE TABLE product_store
     product_store_id       VARCHAR(60) NOT NULL,
     store_name             VARCHAR(100),
     product_store_group_id VARCHAR(60),
-    owner_party_id UUID,
+    owner_party_id         UUID,
     description            TEXT,
     last_updated_stamp     TIMESTAMP,
     created_stamp          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_product_store_id PRIMARY KEY (product_store_id),
-    constraint fk_product_store_owner_party_id foreign key(owner_party_id) references party(party_id),
-    constraint fk_product_store_product_store_group foreign key(product_store_group_id) references product_store_group(product_store_group_id)
+    constraint fk_product_store_owner_party_id foreign key (owner_party_id) references party (party_id),
+    constraint fk_product_store_product_store_group foreign key (product_store_group_id) references product_store_group (product_store_group_id)
 );
 
 CREATE TABLE product_type
@@ -79,21 +79,22 @@ CREATE TABLE product_type
 );
 CREATE TABLE product
 (
-    product_id               VARCHAR(60) NOT NULL,
-    product_type_id          VARCHAR(60),
-    product_name             VARCHAR(100),
-    weight                   numeric,
-    introductionDate         TIMESTAMP,
-    quantity_uom_id          VARCHAR(60),
-    weight_uom_id            VARCHAR(60),
-    width_uom_id             VARCHAR(60),
-    length_uom_id            VARCHAR(60),
-    height_uom_id            VARCHAR(60),
-    created_by_user_login_id VARCHAR(60),
+    product_id                    VARCHAR(60) NOT NULL,
+    product_type_id               VARCHAR(60),
+    product_name                  VARCHAR(100),
+    weight                        numeric,
+    introductionDate              TIMESTAMP,
+    quantity_uom_id               VARCHAR(60),
+    weight_uom_id                 VARCHAR(60),
+    width_uom_id                  VARCHAR(60),
+    length_uom_id                 VARCHAR(60),
+    height_uom_id                 VARCHAR(60),
+    created_by_user_login_id      VARCHAR(60),
+    product_transport_category_id varchar(60),
 
-    description              TEXT,
-    last_updated_stamp       TIMESTAMP,
-    created_stamp            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    description                   TEXT,
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_product_id PRIMARY KEY (product_id),
     CONSTRAINT fk_product_type_id FOREIGN KEY (product_type_id) REFERENCES product_type (product_type_id),
     CONSTRAINT fk_created_by_user_login_id FOREIGN KEY (created_by_user_login_id) REFERENCES user_login (user_login_id),
@@ -101,7 +102,8 @@ CREATE TABLE product
     CONSTRAINT fk_weight_uom_id FOREIGN KEY (weight_uom_id) REFERENCES uom (uom_id),
     CONSTRAINT fk_length_uom_id FOREIGN KEY (length_uom_id) REFERENCES uom (uom_id),
     CONSTRAINT fk_width_uom_id FOREIGN KEY (width_uom_id) REFERENCES uom (uom_id),
-    CONSTRAINT fk_height_uom_id FOREIGN KEY (height_uom_id) REFERENCES uom (uom_id)
+    CONSTRAINT fk_height_uom_id FOREIGN KEY (height_uom_id) REFERENCES uom (uom_id),
+    constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id)
 );
 
 CREATE TABLE facility_type
@@ -122,7 +124,7 @@ CREATE TABLE facility
     facility_type_id   VARCHAR(60),
     parent_facility_id VARCHAR(60),
     facility_name      VARCHAR(100),
-    contact_mech_id 	UUID,
+    contact_mech_id    UUID,
     product_store_id   VARCHAR(60),
     opened_date        TIMESTAMP,
     closed_date        TIMESTAMP,
@@ -130,7 +132,7 @@ CREATE TABLE facility
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_facility_id PRIMARY KEY (facility_id),
-    constraint fk_facility_contact_mech_id foreign key(contact_mech_id) references postal_address(contact_mech_id),
+    constraint fk_facility_contact_mech_id foreign key (contact_mech_id) references postal_address (contact_mech_id),
     CONSTRAINT fk_facility_type_id FOREIGN KEY (facility_type_id) REFERENCES facility_type (facility_type_id),
     CONSTRAINT fk_parent_facility_id FOREIGN KEY (parent_facility_id) REFERENCES facility (facility_id),
     CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES product_store (product_store_id)

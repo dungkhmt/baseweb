@@ -1,9 +1,6 @@
 package com.hust.baseweb.applications.tms.model.shipmentorder;
 
-import java.util.Date;
-
 import com.poiji.annotation.ExcelCellName;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -44,7 +41,7 @@ public class CreateShipmentItemInputModel {
     private String address;
 
     @ExcelCellName("Ngày Book")
-    private Date orderDate;
+    private String orderDate;
     
     @ExcelCellName("LatLng")
     private String latLng;

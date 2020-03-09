@@ -4,7 +4,6 @@ import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductPrice;
 import com.hust.baseweb.applications.logistics.model.*;
-import com.hust.baseweb.applications.logistics.model.product.CreateProductInputModel;
 import com.hust.baseweb.applications.logistics.model.product.GetProductPriceInputModel;
 import com.hust.baseweb.applications.logistics.model.product.SetProductPriceInputModel;
 import com.hust.baseweb.applications.logistics.service.FacilityService;
@@ -62,11 +61,11 @@ public class LogisticsAPIController {
         //return ResponseEntity.ok().body(new GetListProductOutputModel(sel_prod));
     }
 
-    @PostMapping("/create-product")
-    public ResponseEntity<?> createProduct(Principal principal, @RequestBody CreateProductInputModel input) {
-        Product product = productService.save(input.getProductId(), input.getProductName(), input.getWeight(), input.getUomId());
-        return ResponseEntity.ok().body(product);
-    }
+//    @PostMapping("/create-product")
+//    public ResponseEntity<?> createProduct(Principal principal, @RequestBody CreateProductInputModel input) {
+//        Product product = productService.save(input.getProductId(), input.getProductName(), input.getWeight(), input.getUomId());
+//        return ResponseEntity.ok().body(product);
+//    }
 
     @PostMapping("/set-product-price")
     public ResponseEntity<?> setProductPrice(Principal principal, @RequestBody SetProductPriceInputModel input) {

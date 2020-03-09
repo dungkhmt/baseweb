@@ -24,6 +24,8 @@ public class Product {
     @ManyToOne(fetch = FetchType.EAGER)
     private Uom uom;
 
+    @Column(name = "product_transport_category_id")
+    private String productTransportCategoryId;
 
     private Date createdStamp;
     private Date lastUpdatedStamp;
