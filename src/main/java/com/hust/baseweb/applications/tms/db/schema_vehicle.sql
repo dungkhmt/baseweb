@@ -6,10 +6,12 @@ create table vehicle_type
     width              Integer,
     height             Integer,
     pallet             numeric,
+    product_transport_category_id VARCHAR(60),	
     description        TEXT,
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_vehicle_type primary key (vehicle_type_id)
+    constraint pk_vehicle_type primary key (vehicle_type_id),
+    constraint fk_vehicle_type_product_transport_category_id foreign key(product_transport_category_id) references enumeration(enum_id)
 );
 
 create table vehicle

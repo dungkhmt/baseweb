@@ -192,7 +192,10 @@ public class ShipmentServiceImpl implements ShipmentService {
             shipmentItem.setQuantity(shipmentItemModel.getQuantity());
             shipmentItem.setPallet(shipmentItemModel.getPallet());
             shipmentItem.setProductId(shipmentItemModel.getProductId());
-
+            
+            shipmentItem.setOrderDate(shipmentItemModel.getOrderDate());
+            shipmentItem.setProductTransportCategoryId(shipmentItemModel.getProductTransportCategory());
+            
             shipmentItems.add(shipmentItem);
 
             // Nếu portal address hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó

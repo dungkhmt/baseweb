@@ -6,10 +6,13 @@ import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemModel;
+
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -48,6 +51,13 @@ public class ShipmentItem {
     @ManyToOne(fetch = FetchType.EAGER)
     private PostalAddress shipToLocation;
 
+    @Column(name="order_date")
+    private Date orderDate;
+    
+    @Column(name="product_transport_category_id")
+    private String productTransportCategoryId;
+    
+    
     public ShipmentItemModel toShipmentItemModel() {
         String customerCode = null;
         String locationCode = null;

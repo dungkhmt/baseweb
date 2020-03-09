@@ -6,12 +6,13 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
 
-import com.google.ortools.linearsolver.MPConstraint;
-import com.google.ortools.linearsolver.MPObjective;
-import com.google.ortools.linearsolver.MPSolver;
-import com.google.ortools.linearsolver.MPVariable;
+//import com.google.ortools.linearsolver.MPConstraint;
+//import com.google.ortools.linearsolver.MPObjective;
+//import com.google.ortools.linearsolver.MPSolver;
+//import com.google.ortools.linearsolver.MPVariable;
 
 public class TSPSolver {
+	/*
 	static {
 	    System.loadLibrary("jniortools");
 	  }
@@ -84,43 +85,7 @@ public class TSPSolver {
 		solver = new MPSolver("TSP solver", 
 				MPSolver.OptimizationProblemType.valueOf("CBC_MIXED_INTEGER_PROGRAMMING"));
 		
-		/*
-		// x1 and x2 are integer non-negative variables.
-	    MPVariable x1 = solver.makeIntVar(0.0, inf, "x1");
-	    MPVariable x2 = solver.makeIntVar(0.0, inf, "x2");
-
-	    // Minimize x1 + 2 * x2.
-	    MPObjective objective = solver.objective();
-	    objective.setCoefficient(x1, 1);
-	    objective.setCoefficient(x2, 2);
-
-	    // 2 * x2 + 3 * x1 >= 17.
-	    MPConstraint ct = solver.makeConstraint(17, inf);
-	    ct.setCoefficient(x1, 3);
-	    ct.setCoefficient(x2, 2);
-	    
-	    final MPSolver.ResultStatus resultStatus = solver.solve();
-		 if (resultStatus != MPSolver.ResultStatus.OPTIMAL) {
-		      System.err.println("The problem does not have an optimal solution!");
-		      return;
-		    }
-		 
-		 System.out.println("Problem solved in " + solver.wallTime() + " milliseconds");
-
-		    // The objective value of the solution.
-		    System.out.println("Optimal objective value = " + solver.objective().value());
-
-		    // The value of each variable in the solution.
-		    System.out.println("x1 = " + x1.solutionValue());
-		    System.out.println("x2 = " + x2.solutionValue());
-
-		    System.out.println("Advanced usage:");
-		    System.out.println("Problem solved in " + solver.nodes() + " branch-and-bound nodes");
-		    
-		    
-		*/
-	    
-		
+			
 		X = new MPVariable[N][N];
 		for(int i = 0; i < N; i++){
 			for(int j = 0; j < N; j++){
@@ -347,5 +312,5 @@ public class TSPSolver {
 		//app.solve();
 		app.solveDynamicAddSubTourConstraint();
 	}
-
+	*/
 }

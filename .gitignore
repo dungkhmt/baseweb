@@ -27,7 +27,7 @@ logs/
 /nbdist/
 /.nb-gradle/
 build/
-
+/lib/
 ### VS Code ###
 .vscode/
 .history
