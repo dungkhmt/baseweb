@@ -104,7 +104,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     public DeliveryTripInfoModel getDeliveryTripInfo(String deliveryTripId,
                                                      List<CreateDeliveryTripDetailInputModel> shipmentItemModels) {
         DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId)).orElseThrow(NoSuchElementException::new);
-        String deliveryPlanId = deliveryTrip.getDeliveryPlan().getDeliveryPlanId().toString();
+        DeliveryPlan deliveryPlan = deliveryTrip.getDeliveryPlan();
+        String deliveryPlanId = deliveryPlan.getDeliveryPlanId().toString();
 
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans
                 = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
@@ -133,20 +134,21 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         allGeoPoints.addAll(geoPointsSelected);
 
         DistanceUtils.DirectionSolution<GeoPoint> directionSolution
-                = DistanceUtils.calculateGreedyTotalDistance(allGeoPoints, (fromGeoPoint, toGeoPoint) -> {
+                = DistanceUtils.calculateGreedyTotalDistance(allGeoPoints, deliveryPlan.getFacility().getPostalAddress().getGeoPoint(),
+                (fromGeoPoint, toGeoPoint) -> {
 //            DistanceTravelTimeGeoPoint distanceTravelTimeGeoPoint
 //                    = distanceTravelTimeGeoPointRepo.findByFromGeoPointAndToGeoPoint(fromGeoPoint, toGeoPoint);
 //            if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
-            return LatLngUtils.distance(
-                    Double.parseDouble(toGeoPoint.getLatitude()),
-                    Double.parseDouble(toGeoPoint.getLongitude()),
-                    Double.parseDouble(fromGeoPoint.getLatitude()),
-                    Double.parseDouble(fromGeoPoint.getLongitude())
-            );
+                    return LatLngUtils.distance(
+                            Double.parseDouble(toGeoPoint.getLatitude()),
+                            Double.parseDouble(toGeoPoint.getLongitude()),
+                            Double.parseDouble(fromGeoPoint.getLatitude()),
+                            Double.parseDouble(fromGeoPoint.getLongitude())
+                    );
 //            } else {
 //                return distanceTravelTimeGeoPoint.getDistance();
 //            }
-        });
+                });
 
         Map<String, Product> productMap = new HashMap<>();
         productRepo.findAllByProductIdIn(shipmentItemsInDeliveryPlan

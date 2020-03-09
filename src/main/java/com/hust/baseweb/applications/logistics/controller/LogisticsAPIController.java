@@ -3,10 +3,7 @@ package com.hust.baseweb.applications.logistics.controller;
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductPrice;
-import com.hust.baseweb.applications.logistics.model.GetListFacilityInputModel;
-import com.hust.baseweb.applications.logistics.model.GetListFacilityOutputModel;
-import com.hust.baseweb.applications.logistics.model.GetListProductInputModel;
-import com.hust.baseweb.applications.logistics.model.GetListProductOutputModel;
+import com.hust.baseweb.applications.logistics.model.*;
 import com.hust.baseweb.applications.logistics.model.product.CreateProductInputModel;
 import com.hust.baseweb.applications.logistics.model.product.GetProductPriceInputModel;
 import com.hust.baseweb.applications.logistics.model.product.SetProductPriceInputModel;
@@ -39,6 +36,12 @@ public class LogisticsAPIController {
     private ProductPriceService productPriceService;
 
     private UserService userService;
+
+    @PostMapping("/create-facility")
+    public ResponseEntity<?> createFacility(@RequestBody FacilityModel facilityModel) {
+        log.info("::createFacility(), facilityId=" + facilityModel.getFacilityId());
+        return ResponseEntity.ok(facilityService.save(facilityModel));
+    }
 
     @PostMapping("/get-list-facility")
     public ResponseEntity getListFacilities(Principal principal, @RequestBody GetListFacilityInputModel input) {

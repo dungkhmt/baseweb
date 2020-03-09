@@ -7,6 +7,7 @@ import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,12 @@ import java.io.IOException;
 public class GoogleMapUtils {
     private static final org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(GoogleMapUtils.class);
 
-    private static GeoApiContext GEO_API_CONTEXT = new GeoApiContext.Builder().apiKey(Config.getConfig().getGoogleApiKey()).build();
+    @Value("${google.api_key}")
+    public void setGoogleMapApiKey(String googleMapApiKey) {
+        GEO_API_CONTEXT = new GeoApiContext.Builder().apiKey(googleMapApiKey).build();
+    }
+
+    private static GeoApiContext GEO_API_CONTEXT;
 
     public static GeocodingResult[] queryLatLng(String address) {
         try {

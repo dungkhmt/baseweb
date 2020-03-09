@@ -10,38 +10,37 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 public class DistanceUtils {
-    public static <T> DirectionSolution<T> calculateGreedyTotalDistance(List<T> ts, BiFunction<T, T, Double> distanceFunction) {
-        if (ts.isEmpty()) {
+    public static <T> DirectionSolution<T> calculateGreedyTotalDistance(List<T> clientPoint,
+                                                                        T facilityPoint,
+                                                                        BiFunction<T, T, Double> distanceFunction) {
+        if (clientPoint.isEmpty()) {
             return new DirectionSolution<>(0.0, new ArrayList<>());
         }
         double totalDistance = 0;
         Set<Integer> candidates = new HashSet<>();  //  T in ts can be duplicated
-        for (int i = 0; i < ts.size(); i++) {
+        for (int i = 0; i < clientPoint.size(); i++) {
             candidates.add(i);
         }
         List<T> tour = new ArrayList<>();
-        tour.add(ts.get(0));
-        candidates.remove(0);
+        tour.add(facilityPoint);
 
-        for (int i = 1; i < ts.size(); i++) {
+        for (int i = 0; i < clientPoint.size(); i++) {
             // greedy get minimum neighborhood distance
             double minDistance = Double.MAX_VALUE;
             int selectedId = -1;
             for (int candidateId : candidates) {
-                Double distance = distanceFunction.apply(tour.get(tour.size() - 1), ts.get(candidateId));
+                Double distance = distanceFunction.apply(tour.get(tour.size() - 1), clientPoint.get(candidateId));
                 if (distance < minDistance) {   // TODO improve real number compare
                     minDistance = distance;
                     selectedId = candidateId;
                 }
             }
             totalDistance += minDistance;
-//            if (minDistance > 0) {
-            tour.add(ts.get(selectedId));
-//            }
+            tour.add(clientPoint.get(selectedId));
             candidates.remove(selectedId);
         }
 
-        totalDistance += distanceFunction.apply(tour.get(tour.size() - 1), tour.get(0));
+        totalDistance += distanceFunction.apply(tour.get(tour.size() - 1), facilityPoint);
         return new DirectionSolution<>(totalDistance, tour);
     }
 

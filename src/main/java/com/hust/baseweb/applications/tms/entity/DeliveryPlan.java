@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.tms.entity;
 
+import com.hust.baseweb.applications.logistics.entity.Facility;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,10 @@ public class DeliveryPlan {
 
     @Column(name = "description")
     private String description;
+
+    @JoinColumn(name = "facility_id", referencedColumnName = "facility_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Facility facility;
 
     @Column(name = "created_by")
     private String createdByUserLoginId;
