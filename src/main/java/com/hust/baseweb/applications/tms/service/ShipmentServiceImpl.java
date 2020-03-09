@@ -30,6 +30,7 @@ import com.hust.baseweb.entity.Status;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PartyTypeRepo;
 import com.hust.baseweb.repo.StatusRepo;
+import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.GoogleMapUtils;
 import com.hust.baseweb.utils.LatLngUtils;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -98,7 +100,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 
             Product product = productRepo.findByProductId(shipmentItemInputModel.getProductId());
             if (product == null) {
-                product = productService.save(shipmentItemInputModel.getProductId(),
+                product = productService.save(shipmentItemInputModel.getProductId(), shipmentItemInputModel.getProductTransportCategory(),
                         shipmentItemInputModel.getProductName(), shipmentItemInputModel.getWeight(), shipmentItemInputModel.getUom());
             }
             List<PostalAddress> addresses = postalAddressRepo
@@ -192,10 +194,13 @@ public class ShipmentServiceImpl implements ShipmentService {
             shipmentItem.setQuantity(shipmentItemModel.getQuantity());
             shipmentItem.setPallet(shipmentItemModel.getPallet());
             shipmentItem.setProductId(shipmentItemModel.getProductId());
-            
-            shipmentItem.setOrderDate(shipmentItemModel.getOrderDate());
-            shipmentItem.setProductTransportCategoryId(shipmentItemModel.getProductTransportCategory());
-            
+
+            try {
+                shipmentItem.setOrderDate(Constant.ORDER_EXCEL_DATE_FORMAT.parse(shipmentItemModel.getOrderDate()));
+            } catch (ParseException e) {
+                log.error("Date parse error: " + shipmentItemModel.getOrderDate());
+            }
+
             shipmentItems.add(shipmentItem);
 
             // Nếu portal address hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
@@ -257,7 +262,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 
             // Nếu product hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
             productMap.computeIfAbsent(shipmentItemModel.getProductId(), productId ->
-                    productService.save(productId, shipmentItemModel.getProductName(), shipmentItemModel.getWeight(), shipmentItemModel.getUom()));
+                    productService.save(productId, shipmentItemModel.getProductName(),
+                            shipmentItemModel.getProductTransportCategory(),
+                            shipmentItemModel.getWeight(), shipmentItemModel.getUom()));
         }
 
         // lưu tất cả shipment item vào DB
@@ -315,7 +322,8 @@ public class ShipmentServiceImpl implements ShipmentService {
         String productId = shipmentItemModel.getProductId();
         Product product = productRepo.findByProductId(productId);
         if (product == null) {
-            product = productService.save(productId, shipmentItemModel.getProductName(), shipmentItemModel.getWeight(), shipmentItemModel.getUom());
+            product = productService.save(productId, shipmentItemModel.getProductName(),
+                    shipmentItemModel.getProductTransportCategory(), shipmentItemModel.getWeight(), shipmentItemModel.getUom());
             productRepo.save(product);
         }
 

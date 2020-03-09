@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Product save(String productId, String productName, double productWeight, String uomId) {
+    public Product save(String productId, String productName, String productTransportCategory, double productWeight, String uomId) {
         // TODO: check duplicate productId
         Uom uom = uomRepo.findByUomId(uomId);
         if (uom == null) {
@@ -43,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
         product.setProductId(productId);
         product.setWeight(productWeight);
         product.setUom(uom);
+        product.setProductTransportCategoryId(productTransportCategory);
         product = productRepo.save(product);
         return product;
     }

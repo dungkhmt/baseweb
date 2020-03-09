@@ -11,5 +11,5 @@ public interface ProductService {
 
     List<Product> getAllProducts();
 
-    Product save(String productId, String productName, double productWeight, String uomId);
+    Product save(String productId, String productName, String productTransportCategory, double productWeight, String uomId);
 }

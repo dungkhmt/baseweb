@@ -20,23 +20,21 @@ create table shipment
 
 create table shipment_item
 (
-    shipment_item_id    UUID NOT NULL default uuid_generate_v1(),
-    shipment_id         UUID NOT NULL,
-    product_id          VARCHAR(60),
-    quantity            Integer,
-    pallet              numeric,
-    party_customer_id   UUID,
-    ship_to_location_id UUID,
-    order_date		TIMESTAMP,
-    expected_delivery_date	TIMESTAMP,
-    product_transport_category_id VARCHAR(60),	
-    last_updated_stamp  TIMESTAMP,
-    created_stamp       TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    shipment_item_id       UUID NOT NULL default uuid_generate_v1(),
+    shipment_id            UUID NOT NULL,
+    product_id             VARCHAR(60),
+    quantity               Integer,
+    pallet                 numeric,
+    party_customer_id      UUID,
+    ship_to_location_id    UUID,
+    order_date             TIMESTAMP,
+    expected_delivery_date TIMESTAMP,
+    last_updated_stamp     TIMESTAMP,
+    created_stamp          TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_shipment_item primary key (shipment_item_id),
     constraint fk_shipment_item_shipment_id foreign key (shipment_id) references shipment (shipment_id),
     constraint fk_shipment_item_product_id foreign key (product_id) references product (product_id),
     constraint fk_shipment_item_ship_to_location_id foreign key (ship_to_location_id) references postal_address (contact_mech_id),
-    constraint fk_vehicle_type_product_transport_category_id foreign key(product_transport_category_id) references enumeration(enum_id)
     constraint fk_shipment_item_party_customer_id foreign key (party_customer_id) references party_customer (party_id)
 );
 
@@ -59,13 +57,13 @@ create table delivery_plan
     delivery_plan_id   UUID NOT NULL default uuid_generate_v1(),
     delivery_date      TIMESTAMP,
     description        TEXT,
-    facility_id VARCHAR(60),
+    facility_id        VARCHAR(60),
     created_by         VARCHAR(60),
     status_id          VARCHAR(60),
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_delivery_plan primary key (delivery_plan_id),
-    constraint fk_delivery_plan_facility_id foreign key(facility_id) references facility(facility_id),
+    constraint fk_delivery_plan_facility_id foreign key (facility_id) references facility (facility_id),
     constraint fk_delivery_plan_created_by foreign key (created_by) references user_login (user_login_id),
     constraint fk_delivery_plan_status_id foreign key (status_id) references status_item (status_id)
 );
