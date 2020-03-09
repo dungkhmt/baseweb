@@ -8,6 +8,7 @@ CREATE TABLE role_type
     CONSTRAINT pk_role_type_id PRIMARY KEY (role_type_id),
     CONSTRAINT fk_parent_type_id FOREIGN KEY (parent_type_id) REFERENCES role_type (role_type_id)
 );
+
 CREATE TABLE sales_channel
 (
     sales_channel_id   VARCHAR(60) NOT NULL,

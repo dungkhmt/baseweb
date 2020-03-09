@@ -60,6 +60,18 @@ create table vehicle_forbidden_geo_point(
     created_stamp                  TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
     constraint pk_vehicle_forbidden_geo_point primary key(vehicle_forbidden_geo_point_id),
     constraint fk_vehicle_forbidden_geo_point_vehicle_id foreign key(vehicle_id) references vehicle(vehicle_id),
-    constraint fk_vehicle_forbidden_geo_point_geo_point_id foreign key(geo_point_id) references geo_point(geo_point_id)
-    
+    constraint fk_vehicle_forbidden_geo_point_geo_point_id foreign key(geo_point_id) references geo_point(geo_point_id)    
+);
+
+
+create table vehicle_location_priority(
+	vehicle_location_priority_id UUID NOT NULL default uuid_generate_v1(),
+	vehicle_id VARCHAR(60),
+	contact_mech_id UUID,
+	priority Integer,
+	from_date TIMESTAMP,
+	thru_date TIMESTAMP,
+	constraint pk_vehicle_location_priority primary key (vehicle_location_priority_id),
+	constraint fk_vehicle_location_priority_vehicle_id foreign key(vehicle_id) references vehicle(vehicle_id),
+	constraint fk_vehicle_location_priority_contact_mech_id foreign key(contact_mech_id) references postal_address(contact_mech_id)
 );
