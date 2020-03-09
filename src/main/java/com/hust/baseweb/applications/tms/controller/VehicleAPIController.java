@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.tms.controller;
 
 import com.hust.baseweb.applications.tms.entity.Vehicle;
-import com.hust.baseweb.applications.tms.entity.VehicleMaintenanceHistory;
 import com.hust.baseweb.applications.tms.model.createvehicle.CreateVehicleModel;
 import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlanModel;
@@ -30,13 +29,13 @@ public class VehicleAPIController {
 
     private VehicleService vehicleService;
 
-    @GetMapping("/vehicle")
+    @GetMapping("/vehicle/page")
     public ResponseEntity<?> getVehicles(Principal principal, Pageable pageable) {
         log.info("::getVehicles, ");
         return ResponseEntity.ok().body(vehicleService.findAll(pageable).map(Vehicle::toVehicleModel));
     }
 
-    @GetMapping("/all-vehicle")
+    @GetMapping("/vehicle/all")
     public ResponseEntity<?> getAllVehicles(Principal principal) {
         log.info("::getAllVehicles, ");
         return ResponseEntity.ok().body(vehicleService.findAll().stream()
@@ -50,18 +49,29 @@ public class VehicleAPIController {
                 Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreateVehicleModel.class,
                         PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải").build());
 
+        /*
         List<Vehicle> vehicles = vehicleModels.stream().map(CreateVehicleModel::toVehicle).collect(Collectors.toList());
         List<VehicleMaintenanceHistory> vehicleMaintenanceHistories = vehicles.stream().map(Vehicle::createVehicleMaintenanceHistory).collect(Collectors.toList());
         vehicleService.saveAll(vehicles);
         vehicleService.saveAllMaintenanceHistory(vehicleMaintenanceHistories);
-        return ResponseEntity.ok().build();
+        */
+        List<Vehicle> vehicles = vehicleService.save(vehicleModels);
+
+        return ResponseEntity.ok().body(vehicles.size());
     }
 
     // list view
-    @GetMapping("/vehicle/{deliveryPlanId}")
+    @GetMapping("/vehicle/{deliveryPlanId}/page")
     public ResponseEntity<?> getVehicle(Principal principal, @PathVariable String deliveryPlanId, Pageable pageable) {
         log.info("::getVehicle deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(vehicleService.findAllInDeliveryPlanId(deliveryPlanId, pageable));
+    }
+
+    // list view
+    @GetMapping("/vehicle/{deliveryPlanId}/all")
+    public ResponseEntity<?> getAllVehicle(Principal principal, @PathVariable String deliveryPlanId) {
+        log.info("::getVehicle deliveryPlanId=" + deliveryPlanId);
+        return ResponseEntity.ok().body(vehicleService.findAllInDeliveryPlanId(deliveryPlanId));
     }
 
     // submit button

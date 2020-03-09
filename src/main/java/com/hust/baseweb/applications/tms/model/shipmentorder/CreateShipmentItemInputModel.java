@@ -16,8 +16,14 @@ public class CreateShipmentItemInputModel {
     @ExcelCellName("ITEM_NO")
     private String productId;
 
+    @ExcelCellName("LANH_KHO")
+    private String productTransportCategory;
+    
     @ExcelCellName("ITEM_NAME")
     private String productName;
+
+    @ExcelCellName("GRSS_WEIGHT")
+    private Double weight;
 
     @ExcelCellName("UOM")
     private String uom;
@@ -34,6 +40,9 @@ public class CreateShipmentItemInputModel {
     @ExcelCellName("ADDRESS")
     private String address;
 
+    @ExcelCellName("Ngày Book")
+    private String orderDate;
+    
     @ExcelCellName("LatLng")
     private String latLng;
 }

@@ -1,17 +1,19 @@
 package com.hust.baseweb.applications.logistics.entity;
 
+import com.hust.baseweb.applications.geo.entity.PostalAddress;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Getter
 @Setter
-
+@AllArgsConstructor
+@NoArgsConstructor
 public class Facility {
     @Id
     @Column(name = "facility_id")
@@ -19,6 +21,10 @@ public class Facility {
 
     @Column(name = "facility_name")
     private String facilityName;
+
+    @JoinColumn(name = "contact_mech_id", referencedColumnName = "contact_mech_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    private PostalAddress postalAddress;
 
     private Date createdStamp;
     private Date lastUpdatedStamp;

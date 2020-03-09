@@ -6,8 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateProductInputModel {
-	private String productId;
-	private String productName;
-	private String uomId;
-	
+    private String productId;
+    private String productName;
+    private Double weight;
+    private String uomId;
+
 }

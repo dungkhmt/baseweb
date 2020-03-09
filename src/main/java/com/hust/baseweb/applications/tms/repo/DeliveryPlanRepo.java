@@ -9,7 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.UUID;
 
 public interface DeliveryPlanRepo extends PagingAndSortingRepository<DeliveryPlan, UUID> {
-    public DeliveryPlan findByDeliveryPlanId(UUID deliveryPlanId);
+    DeliveryPlan findByDeliveryPlanId(UUID deliveryPlanId);
 
     @NotNull
     Page<DeliveryPlan> findAll(@NotNull Pageable pageable);

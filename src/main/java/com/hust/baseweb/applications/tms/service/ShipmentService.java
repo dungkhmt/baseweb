@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface ShipmentService {
-    public Shipment save(CreateShipmentInputModel input);
+    Shipment save(CreateShipmentInputModel input);
 
-    public Shipment save(CreateShipmentItemInputModel input);
+    Shipment save(CreateShipmentItemInputModel input);
 
     Page<ShipmentModel> findAll(Pageable pageable);
 }

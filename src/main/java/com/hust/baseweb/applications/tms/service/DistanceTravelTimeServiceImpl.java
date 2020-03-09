@@ -33,6 +33,11 @@ public class DistanceTravelTimeServiceImpl implements DistanceTravelTimeService 
 
         for (GeoPoint fromGeoPoint : geoPoints) {
             for (GeoPoint toGeoPoint : geoPoints) {
+                if (fromGeoPoint.getLatitude() == null || fromGeoPoint.getLongitude() == null ||
+                        toGeoPoint.getLatitude() == null || toGeoPoint.getLongitude() == null) {
+                    continue;
+                }
+
                 double latFrom = Double.parseDouble(fromGeoPoint.getLatitude());
                 double lngFrom = Double.parseDouble(fromGeoPoint.getLongitude());
                 double latTo = Double.parseDouble(toGeoPoint.getLatitude());
@@ -40,8 +45,8 @@ public class DistanceTravelTimeServiceImpl implements DistanceTravelTimeService 
                 double distance = LatLngUtils.distance(latFrom, lngFrom, latTo, lngTo) * 1000; // meter
                 double time = distance / 30_000 * 3600; // second (30km/h)
                 DistanceTravelTimeGeoPoint distanceTravelTimeGeoPoint = new DistanceTravelTimeGeoPoint();
-                distanceTravelTimeGeoPoint.setFromGeoPoint(fromGeoPoint);
-                distanceTravelTimeGeoPoint.setToGeoPoint(toGeoPoint);
+                distanceTravelTimeGeoPoint.setFromGeoPointId(fromGeoPoint.getGeoPointId());
+                distanceTravelTimeGeoPoint.setToGeoPointId(toGeoPoint.getGeoPointId());
                 distanceTravelTimeGeoPoint.setDistance(distance);
                 distanceTravelTimeGeoPoint.setTravelTime(time);
 

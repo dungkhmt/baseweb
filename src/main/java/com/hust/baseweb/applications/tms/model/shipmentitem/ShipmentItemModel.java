@@ -16,4 +16,16 @@ public class ShipmentItemModel {
     private String productId;
     private String customerCode;
     private String locationCode;
+    private String address;
+    private String lat;
+    private String lng;
+
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class TripDetailSelected {
+        private String shipmentItemId;
+        private Integer quantity;
+    }
 }

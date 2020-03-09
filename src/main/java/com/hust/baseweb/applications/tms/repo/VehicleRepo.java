@@ -9,4 +9,6 @@ public interface VehicleRepo extends
         PagingAndSortingRepository<Vehicle, String> {
 
     List<Vehicle> findAllByVehicleIdIn(List<String> vehicleIds);
+
+    Vehicle findByVehicleId(String vehicleId);
 }

@@ -5,5 +5,5 @@ import com.hust.baseweb.applications.logistics.entity.ProductFacility;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface ProductFacilityRepo extends PagingAndSortingRepository<ProductFacility, CompositeProductFacilityId> {
-    public ProductFacility findByProductIdAndFacilityId(String productId, String facilityId);
+    ProductFacility findByProductIdAndFacilityId(String productId, String facilityId);
 }

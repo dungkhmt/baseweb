@@ -22,29 +22,39 @@ create table geo
 
 create table geo_point
 (
-    geo_point_id       UUID NOT NULL default uuid_generate_v1(),
+    geo_point_id       UUID        NOT NULL default uuid_generate_v1(),
 
-    longitude          VARCHAR(30),
-    latitude           VARCHAR(30),
+    longitude          VARCHAR(30) not null,
+    latitude           VARCHAR(30) not null,
 
     last_updated_stamp TIMESTAMP,
-    created_stamp      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    created_stamp      TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
     constraint pk_geo_point primary key (geo_point_id)
 
 );
 
-create table distance_traveltime_geo_points(
-	distance_traveltime_geo_points_id UUID NOT NULL default uuid_generate_v1(),
-	from_geo_point_id UUID,
-	to_geo_point_id UUID,
-	distance numeric,
-	travel_time numeric,
-	last_updated_stamp TIMESTAMP,
-    created_stamp      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_distance_traveltime_geo_points primary key (distance_traveltime_geo_points_id),
-    constraint fk_distance_traveltime_geo_points_from foreign key(from_geo_point_id) references geo_point(geo_point_id),
-    constraint fk_distance_traveltime_geo_points_to foreign key(to_geo_point_id) references geo_point(geo_point_id)    
+create table distance_traveltime_geo_points
+(
+    from_geo_point_id  uuid not null
+        constraint distance_traveltime_geo_points_geo_point_geo_point_id_from_fk
+            references geo_point,
+    to_geo_point_id    uuid not null
+        constraint distance_traveltime_geo_points_geo_point_geo_point_id_to_fk
+            references geo_point,
+    distance           numeric,
+    travel_time        numeric,
+    last_updated_stamp timestamp,
+    created_stamp      timestamp default current_timestamp
 );
+
+create unique index distance_traveltime_geo_points_from_geo_point_id_to_geo_point_id_uindex
+    on distance_traveltime_geo_points (from_geo_point_id, to_geo_point_id);
+
+alter table distance_traveltime_geo_points
+    add constraint distance_traveltime_geo_points_pk
+        primary key (from_geo_point_id, to_geo_point_id);
+
+
 
 create table postal_address
 (

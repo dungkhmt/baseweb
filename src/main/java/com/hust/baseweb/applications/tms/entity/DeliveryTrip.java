@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.tms.entity;
 
 import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripModel;
-import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.utils.Constant;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,10 +31,16 @@ public class DeliveryTrip {
 
     @JoinColumn(name = "driver_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private Party party;
+    private PartyDriver partyDriver;
 
     @Column(name = "execute_date")
     private Date executeDate;
+
+    private Double distance;
+
+    private Double totalWeight;
+
+    private Double totalPallet;
 
     @JoinColumn(name = "execute_external_vehicle_type_id", referencedColumnName = "vehicle_type_id")
     @ManyToOne(fetch = FetchType.EAGER)
@@ -46,10 +51,12 @@ public class DeliveryTrip {
                 deliveryPlanSolutionSeqId,
                 deliveryTripId.toString(),
                 Constant.DATE_FORMAT.format(executeDate),
-                0,
-                0,
+                distance,
+                totalWeight,
+                totalPallet,
                 vehicle == null ? null : vehicle.getVehicleId(),
-                null
+                vehicle == null ? null : vehicle.getCapacity(),
+                partyDriver == null ? null : partyDriver.getPartyId().toString()
         );
     }
 }

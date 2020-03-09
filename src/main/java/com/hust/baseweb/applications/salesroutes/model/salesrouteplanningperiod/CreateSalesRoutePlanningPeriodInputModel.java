@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateSalesRoutePlanningPeriodInputModel {
-	private String fromDate;// format YYYY-MM-DD
-	private String toDate;// format YYYY-MM-DD
-	private String description;
+    private String fromDate;// format YYYY-MM-DD
+    private String toDate;// format YYYY-MM-DD
+    private String description;
 }

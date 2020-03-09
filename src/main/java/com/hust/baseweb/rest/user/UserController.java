@@ -1,11 +1,5 @@
 package com.hust.baseweb.rest.user;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.SecurityGroup;
 import com.hust.baseweb.entity.SecurityPermission;
@@ -15,23 +9,20 @@ import com.hust.baseweb.model.PersonUpdateModel;
 import com.hust.baseweb.model.dto.DPersonDetailModel;
 import com.hust.baseweb.service.PartyService;
 import com.hust.baseweb.service.UserService;
-
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * UserController
@@ -45,12 +36,11 @@ public class UserController {
 	public static final String EDIT_REL = "edit";
 	public static final String DELETE_REL = "delete";
 	private UserService userService;
-	@Autowired
 	private PartyService partyService;
 
 	@PostMapping(path = "/user")
 	public ResponseEntity<?> save(@RequestBody PersonModel personModel,
-			Principal principal) {
+								  Principal principal) {
 		// Resources<String> resources = new Resources<String>(producers);\\
 		Party party;
 		try {
@@ -88,31 +78,17 @@ public class UserController {
 				userService.findPersonByFullName(page, searchString));
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	@GetMapping(path = "/users/{partyId}")
 	public ResponseEntity<?> getUsersDetail(@PathVariable String partyId,
-			Principal principal) {
-		log.info("getUsersDetail");
+											Principal principal) {
 		DPerson p = userService.findByPartyId(partyId);
 		DPersonDetailModel detailModel = new DPersonDetailModel(p);
 		UserLogin userLogin = userService.findById(principal.getName());
 
 		List<SecurityPermission> permissionList = new ArrayList<>();
-		for (SecurityGroup sg : userLogin.getRoles())
+		for (SecurityGroup sg : userLogin.getRoles()) {
 			permissionList.addAll(sg.getPermissions());
+		}
 		List<SecurityPermission> lf = permissionList.stream()
 				.filter(pe -> "USER_CREATE".equals(pe.getPermissionId()))
 				.collect(Collectors.toList());
@@ -125,8 +101,7 @@ public class UserController {
 
 	@DeleteMapping(path = "/users/{partyId}")
 	public ResponseEntity<?> delete(@PathVariable String partyId,
-			Principal principal) {
-		log.info("delete");
+									Principal principal) {
 		partyService.disableParty(partyId);
 		return ResponseEntity.ok("");
 	}
@@ -153,5 +128,5 @@ public class UserController {
        Page<DTOPerson> dtoPerson = new PageImpl<DTOPerson>(lst, page,
        pg.getTotalElements()); return ResponseEntity.ok().body(dtoPerson); 
        }
-    */  
+    */
 }

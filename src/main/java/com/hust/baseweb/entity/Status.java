@@ -18,7 +18,10 @@ public class Status {
     private StatusType type;
     private String statusCode;
     private String sequenceId;
+
+    //@Column(name="description")
     private String description;
+
     private Date createdStamp;
     private Date lastUpdatedStamp;
 
@@ -33,7 +36,7 @@ public class Status {
     public Status() {
     }
 
-    public static enum StatusEnum {
+    public enum StatusEnum {
         SINGLE, MARRIED, DIVORCED, PARTY_ENABLED, PARTY_DISABLED
     }
 }

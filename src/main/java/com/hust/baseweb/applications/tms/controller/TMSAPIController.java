@@ -1,32 +1,33 @@
 package com.hust.baseweb.applications.tms.controller;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
-import com.hust.baseweb.applications.order.entity.OrderHeader;
-import com.hust.baseweb.applications.order.entity.OrderItem;
-import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.order.repo.OrderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
-import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.DeliveryCustomerModel;
-import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.DeliveryItemModel;
-import com.hust.baseweb.applications.tms.model.deliveryrouteofshipper.GetAssigned2ShipperDeliveryRouteOutputModel;
+import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
+import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemInputModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemsInputModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverInputModel;
+import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
+import com.hust.baseweb.applications.tms.model.statistic.vehicledistance.StatisticVehicleDistanceInputModel;
+import com.hust.baseweb.applications.tms.model.statistic.vehicledistance.VehicleDistance;
+import com.hust.baseweb.applications.tms.service.DeliveryTripDetailService;
+import com.hust.baseweb.applications.tms.service.DeliveryTripService;
 import com.hust.baseweb.applications.tms.service.DistanceTravelTimeService;
+import com.hust.baseweb.applications.tms.service.statistic.StatisticDeliveryTripService;
 import com.hust.baseweb.repo.UserLoginRepo;
-import lombok.AllArgsConstructor;
+
+import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
 @CrossOrigin
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class TMSAPIController {
     public static final String module = TMSAPIController.class.getName();
 
@@ -34,7 +35,52 @@ public class TMSAPIController {
     private OrderRepo orderRepo;
     private OrderRoleRepo orderRoleRepo;
     private UserLoginRepo userLoginRepo;
+    private DeliveryTripService deliveryTripService;
+    private DistanceTravelTimeService distanceTravelTimeService;
+    private DeliveryTripDetailService deliveryTripDetailService;
+    private StatisticDeliveryTripService statisticDeliveryTripService;
 
+    @PostMapping("/statistic-vehicle-distance")
+    public ResponseEntity<?> statisticVehicleDistance(Principal prinicpal, @RequestBody StatisticVehicleDistanceInputModel input){
+    	List<VehicleDistance> vehicleDistances = statisticDeliveryTripService.collectVehicleDistance(input.getFromDate(), input.getThruDate());
+    	return ResponseEntity.ok().body(vehicleDistances);
+    }
+    @PostMapping("/get-assigned-delivery-routes")
+    public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal, @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
+        GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(input.getDriverUserLoginId());
+
+        return ResponseEntity.ok().body(deliveryTrip);
+    }
+
+    @PostMapping("/complete-shipment-items")
+    public ResponseEntity<?> completeShipmentItems(Principal prinicpal, @RequestBody CompleteDeliveryShipmentItemsInputModel input) {
+        if (input.getItems() == null || input.getItems().length == 0) {
+            return ResponseEntity.ok().body("OK");
+        }
+        log.info("completeShipmentItems, input.getItems().length = " + input.getItems().length);
+        for (CompleteDeliveryShipmentItemInputModel I : input.getItems()) {
+            log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId());
+            //DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(), TMSConstants.SHIPMENT_ITEM_DELIVERED);
+            DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(), "SHIPMENT_ITEM_DELIVERED");
+            log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId() + " FINISHED");
+        }
+        return ResponseEntity.ok().body("OK");
+    }
+
+    @Autowired
+    public TMSAPIController(CustomerRepo customerRepo, OrderRepo orderRepo, OrderRoleRepo orderRoleRepo, UserLoginRepo userLoginRepo, 
+    		DeliveryTripService deliveryTripService, DistanceTravelTimeService distanceTravelTimeService, StatisticDeliveryTripService statisticDeliveryTripService) {
+        this.customerRepo = customerRepo;
+        this.orderRepo = orderRepo;
+        this.orderRoleRepo = orderRoleRepo;
+        this.userLoginRepo = userLoginRepo;
+        this.deliveryTripService = deliveryTripService;
+        this.distanceTravelTimeService = distanceTravelTimeService;
+        this.statisticDeliveryTripService = statisticDeliveryTripService;
+    }
+
+
+    /*
     @GetMapping("/get-assigned-delivery-routes")
     private ResponseEntity<?> getAssignedDeliveryRoutes(Principal principal) {
         System.out.println(module + "::getAssignedDeliveryRoutes, user = " + principal.getName());
@@ -81,11 +127,11 @@ public class TMSAPIController {
 
         return ResponseEntity.ok().body(new GetAssigned2ShipperDeliveryRouteOutputModel(deliveryCustomers));
     }
-
-    private DistanceTravelTimeService distanceTravelTimeService;
+	*/
 
     @GetMapping("/calc-distance-travel-time")
     public ResponseEntity<?> calcDistanceTravelTime() {
+        log.info("::calcDistanceTravelTime()");
         return ResponseEntity.ok(distanceTravelTimeService.calcAll());
     }
 }

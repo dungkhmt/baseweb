@@ -10,7 +10,6 @@ import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
-import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.PartyType;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
@@ -18,19 +17,13 @@ import com.hust.baseweb.entity.Status.StatusEnum;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PartyTypeRepo;
 import com.hust.baseweb.repo.StatusRepo;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -50,8 +43,8 @@ public class CustomerServiceImpl implements CustomerService {
     public PartyCustomer save(CreateCustomerInputModel input) {
 
 
-    	PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
-    	
+        PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
+
         //UUID partyId = UUID.randomUUID();
         //Party party = new Party();
         //party.setPartyId(partyId);// KHONG WORK vi partyId khi insert vao DB se duoc sinh tu dong, no se khac voi partyId sinh ra boi SPRING
@@ -59,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
                 statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
                 false);
         party.setType(partyType);
-        
+
         partyRepo.save(party);
 
         UUID partyId = party.getPartyId();
@@ -67,13 +60,15 @@ public class CustomerServiceImpl implements CustomerService {
 
         PartyCustomer customer = new PartyCustomer();
         customer.setPartyId(partyId);
+        customer.setCustomerCode(input.getCustomerCode());
         //customer.setParty(party);
         customer.setPartyType(partyType);
         customer.setCustomerName(input.getCustomerName());
         customer.setPostalAddress(new ArrayList<>());
 
         log.info("save, prepare save customer partyId = " + customer.getPartyId());
-        customerRepo.save(customer);
+        customer = customerRepo.save(customer);
+//        customerRepo.save(customer);
 
         GeoPoint geoPoint = new GeoPoint();
         //UUID geoPointId = UUID.randomUUID();
@@ -91,6 +86,7 @@ public class CustomerServiceImpl implements CustomerService {
         UUID contactMechId = address.getContactMechId();
 
 
+        log.info("save, start save party_contact_mech_purpose");
         // write to PartyContactMech
         PartyContactMechPurpose partyContactMechPurpose = new PartyContactMechPurpose();
         partyContactMechPurpose.setContactMechId(contactMechId);
@@ -99,23 +95,22 @@ public class CustomerServiceImpl implements CustomerService {
         partyContactMechPurpose.setFromDate(new Date());
         partyContactMechPurposeRepo.save(partyContactMechPurpose);
 
+
         return customer;
     }
 
-	@Override
-	public List<PartyCustomer> findDistributors() {
-		// TODO Auto-generated method stub
-		PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");
-		List<PartyCustomer> distributors = customerRepo.findByPartyType(partyType);
-		return distributors;
-	}
+    @Override
+    public List<PartyCustomer> findDistributors() {
+        PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");
+        List<PartyCustomer> distributors = customerRepo.findByPartyType(partyType);
+        return distributors;
+    }
 
-	@Override
-	public List<PartyCustomer> findRetailOutlers() {
-		// TODO Auto-generated method stub
-		PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
-		List<PartyCustomer> retailoutlets = customerRepo.findByPartyType(partyType);
-		return retailoutlets;
-	}
+    @Override
+    public List<PartyCustomer> findRetailOutlers() {
+        PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
+        List<PartyCustomer> retailoutlets = customerRepo.findByPartyType(partyType);
+        return retailoutlets;
+    }
 
 }

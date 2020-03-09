@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @Service
 public interface DeliveryPlanService {
-    public DeliveryPlan save(CreateDeliveryPlanInputModel input);
+    DeliveryPlan save(CreateDeliveryPlanInputModel input);
 
-    public Page<DeliveryPlan> findAll(Pageable pageable);
+    Page<DeliveryPlan> findAll(Pageable pageable);
 
-    public DeliveryPlan findById(UUID deliveryPlanId);
+    DeliveryPlan findById(UUID deliveryPlanId);
 }

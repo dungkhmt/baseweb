@@ -14,7 +14,7 @@ public class PartyType {
     @Column(name = "party_type_id")
     //private String id;
     private String partyTypeId;
-    
+
     @JoinColumn(name = "parent_type_id", referencedColumnName = "party_type_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private PartyType parentType;
@@ -33,7 +33,7 @@ public class PartyType {
     public PartyType() {
     }
 
-    public static enum PartyTypeEnum {
+    public enum PartyTypeEnum {
         AUTOMATED_AGENT, PERSON, PARTY_GROUP, BANK, LEGAL_ORGANIZATION, CORPORATION, CUSTOMER_GROUP
     }
 }

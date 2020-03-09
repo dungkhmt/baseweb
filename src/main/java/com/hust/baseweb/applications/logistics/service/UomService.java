@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.logistics.service;
 
+import com.hust.baseweb.applications.logistics.entity.Uom;
 import org.springframework.stereotype.Service;
 
 import com.hust.baseweb.applications.logistics.entity.Uom;
@@ -13,4 +14,5 @@ public interface UomService {
 	public List<Uom> getAllUoms();
 
 	public Uom getUomByUomId(String uomId);
+
 }

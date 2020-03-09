@@ -7,5 +7,5 @@ import java.math.BigDecimal;
 
 @Service
 public interface ProductFacilityService {
-    public ProductFacility save(String productId, String facilityId, BigDecimal lastInventoryCount, BigDecimal atpInventoryCount);
+    ProductFacility save(String productId, String facilityId, BigDecimal lastInventoryCount, BigDecimal atpInventoryCount);
 }

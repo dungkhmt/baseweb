@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.tms.entity.Vehicle;
 import com.hust.baseweb.applications.tms.entity.VehicleMaintenanceHistory;
+import com.hust.baseweb.applications.tms.model.createvehicle.CreateVehicleModel;
 import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlanModel;
 import com.hust.baseweb.applications.tms.model.vehicle.VehicleModel;
@@ -21,9 +22,13 @@ public interface VehicleService {
 
     Page<VehicleModel> findAllInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
+    List<VehicleModel> findAllInDeliveryPlanId(String deliveryPlanId);
+
     Page<VehicleModel> findAllNotInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
     String saveVehicleDeliveryPlan(CreateVehicleDeliveryPlanModel createVehicleDeliveryPlanModel);
 
     boolean deleteVehicleDeliveryPlan(DeleteVehicleDeliveryPlanModel deleteVehicleDeliveryPlanModel);
+
+    List<Vehicle> save(List<CreateVehicleModel> vehicleModels);
 }

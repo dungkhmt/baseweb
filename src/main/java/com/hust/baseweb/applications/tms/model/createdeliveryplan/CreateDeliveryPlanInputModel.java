@@ -8,5 +8,6 @@ import lombok.Setter;
 public class CreateDeliveryPlanInputModel {
     private String deliveryDate;
     private String createdByUserLoginId;
+    private String facilityId;
     private String description;
 }

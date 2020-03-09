@@ -1,12 +1,11 @@
 package com.hust.baseweb.applications.salesroutes.repo;
 
-import java.util.UUID;
-
+import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
+import java.util.UUID;
 
 
 public interface PSalesRouteConfigRepo extends PagingAndSortingRepository<SalesRouteConfig, UUID> {
-	public SalesRouteConfig findBySalesRouteConfigId(UUID salesRouteConfigId);
+    SalesRouteConfig findBySalesRouteConfigId(UUID salesRouteConfigId);
 }
