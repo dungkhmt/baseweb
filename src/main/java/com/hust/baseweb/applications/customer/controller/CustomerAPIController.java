@@ -2,12 +2,15 @@ package com.hust.baseweb.applications.customer.controller;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.model.CreateCustomerInputModel;
+import com.hust.baseweb.applications.customer.model.CreateDistributorInputModel;
 import com.hust.baseweb.applications.customer.model.GetDistributorsOfUserLoginInputModel;
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
+
 import lombok.AllArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +50,11 @@ public class CustomerAPIController {
 
     @PostMapping("/create-customer")
     public ResponseEntity<?> createCustomer(Principal principal, @RequestBody CreateCustomerInputModel input) {
+        PartyCustomer customer = customerService.save(input);
+        return ResponseEntity.ok().body(customer);
+    }
+    @PostMapping("/create-distributor")
+    public ResponseEntity<?> createDistributor(Principal principal, @RequestBody CreateDistributorInputModel input) {
         PartyCustomer customer = customerService.save(input);
         return ResponseEntity.ok().body(customer);
     }
