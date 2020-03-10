@@ -12,9 +12,8 @@ import java.util.List;
 public interface CustomerService {
     PartyCustomer save(CreateCustomerInputModel input);
 
-    PartyCustomer save(CreateDistributorInputModel input);
-
-    List<PartyCustomer> findDistributors();
+    
+    
 
     List<PartyCustomer> findRetailOutlers();
 }

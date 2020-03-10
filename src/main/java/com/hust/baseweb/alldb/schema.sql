@@ -496,7 +496,8 @@ CREATE TABLE product
     length_uom_id            VARCHAR(60),
     height_uom_id            VARCHAR(60),
     created_by_user_login_id VARCHAR(60),
-
+    product_transport_category_id varchar(60),
+ 
     description              TEXT,
     last_updated_stamp       TIMESTAMP,
     created_stamp            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -507,7 +508,8 @@ CREATE TABLE product
     CONSTRAINT fk_weight_uom_id FOREIGN KEY (weight_uom_id) REFERENCES uom (uom_id),
     CONSTRAINT fk_length_uom_id FOREIGN KEY (length_uom_id) REFERENCES uom (uom_id),
     CONSTRAINT fk_width_uom_id FOREIGN KEY (width_uom_id) REFERENCES uom (uom_id),
-    CONSTRAINT fk_height_uom_id FOREIGN KEY (height_uom_id) REFERENCES uom (uom_id)
+    CONSTRAINT fk_height_uom_id FOREIGN KEY (height_uom_id) REFERENCES uom (uom_id),
+    constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id)
 );
 
 CREATE TABLE facility_type
