@@ -85,6 +85,10 @@ public class CustomerServiceImpl implements CustomerService {
         PostalAddress address = new PostalAddress();
         //address.setContactMechId(contactMechId);// KHONG WORL vi contactMechId se duoc sinh tu dong boi DB uuid_generate_v1()
         address.setGeoPoint(geoPoint);
+
+        address.setAddress(input.getAddress());
+
+
         address = postalAddressRepo.save(address);
         UUID contactMechId = address.getContactMechId();
 

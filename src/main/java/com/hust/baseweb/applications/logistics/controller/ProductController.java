@@ -65,7 +65,7 @@ public class ProductController {
         product.setProductType(productTypeService.getProductTypeByProductTypeId(input.getType()));
         product.setUom(uomService.getUomByUomId(input.getQuantityUomId()));
         productService.saveProduct(product);
-        return ResponseEntity.ok().body(product);
+        return ResponseEntity.ok().body(new Product());
     }
 
 

@@ -40,6 +40,10 @@ public class CustomerAPIController {
     public ResponseEntity<?> getCustomers(Pageable page) {
         System.out.println(module + "::getCustomers");
         Page<PartyCustomer> customers = customerRepo.findAll(page);
+        for (PartyCustomer c: customers
+             ) {
+            c.setType(c.getPartyType().getDescription());
+        }
         return ResponseEntity.ok().body(customers);
     }
     @GetMapping("/distributors")
