@@ -56,35 +56,6 @@ CREATE TABLE order_type
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 CREATE TABLE order_header
 (
     order_id             VARCHAR(60) NOT NULL,

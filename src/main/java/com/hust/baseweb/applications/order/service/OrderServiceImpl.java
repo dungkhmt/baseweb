@@ -24,9 +24,12 @@ import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
+import com.hust.baseweb.utils.CommonUtils;
 import com.hust.baseweb.utils.DateTimeUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -136,7 +139,7 @@ public class OrderServiceImpl implements OrderService {
         int idx = 0;
         for (ModelCreateOrderInputOrderItem modelCreateOrderInputOrderItem : orderInput.getOrderItems()) {
             idx++;
-            String orderItemSeqId = "0000" + idx;
+            String orderItemSeqId = CommonUtils.buildSeqId(idx);//"0000" + idx;
             Product product = productRepo.findByProductId(modelCreateOrderInputOrderItem.getProductId());
             OrderItem orderItem = new OrderItem();
             orderItem.setOrderId(order.getOrderId());
