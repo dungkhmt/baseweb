@@ -4,6 +4,7 @@ package com.hust.baseweb.applications.customer.service;
 import com.hust.baseweb.applications.customer.entity.PartyContactMechPurpose;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.model.CreateCustomerInputModel;
+import com.hust.baseweb.applications.customer.model.CreateDistributorInputModel;
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
@@ -17,8 +18,10 @@ import com.hust.baseweb.entity.Status.StatusEnum;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PartyTypeRepo;
 import com.hust.baseweb.repo.StatusRepo;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,6 +85,10 @@ public class CustomerServiceImpl implements CustomerService {
         PostalAddress address = new PostalAddress();
         //address.setContactMechId(contactMechId);// KHONG WORL vi contactMechId se duoc sinh tu dong boi DB uuid_generate_v1()
         address.setGeoPoint(geoPoint);
+
+        address.setAddress(input.getAddress());
+
+
         address = postalAddressRepo.save(address);
         UUID contactMechId = address.getContactMechId();
 

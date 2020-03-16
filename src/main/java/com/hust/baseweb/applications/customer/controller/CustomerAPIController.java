@@ -11,7 +11,9 @@ import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.applications.customer.service.DistributorService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
+
 import lombok.AllArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +40,10 @@ public class CustomerAPIController {
     public ResponseEntity<?> getCustomers(Pageable page) {
         System.out.println(module + "::getCustomers");
         Page<PartyCustomer> customers = customerRepo.findAll(page);
+        for (PartyCustomer c: customers
+             ) {
+            c.setType(c.getPartyType().getDescription());
+        }
         return ResponseEntity.ok().body(customers);
     }
 

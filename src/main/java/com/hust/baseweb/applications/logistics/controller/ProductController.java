@@ -76,7 +76,9 @@ public class ProductController {
         Page<Product> productPage = productPagingRepo.findAll(page);
         for (Product p : productPage) {
             p.setProductTypeDescription(p.getProductType().getDescription());
-            p.setUomDescription(p.getUom().getDescription());
+            if (p.getUom() != null) {
+                p.setUomDescription(p.getUom().getDescription());
+            }
         }
         return ResponseEntity.ok().body(productPage);
     }

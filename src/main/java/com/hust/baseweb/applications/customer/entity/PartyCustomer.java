@@ -40,5 +40,7 @@ public class PartyCustomer {
     @OneToMany(fetch = FetchType.LAZY)
     private List<PostalAddress> postalAddress;
 
+    @Transient
+    private String type;
 
 }
