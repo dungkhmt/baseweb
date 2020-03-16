@@ -81,11 +81,7 @@ CREATE TABLE order_header
 );
 
 
-
-
-
-
-//done
+-- done
 CREATE TABLE order_item_type
 (
     order_item_type_id VARCHAR(60) NOT NULL,

@@ -1,7 +1,7 @@
 package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.tms.entity.PartyDriver;
-import com.hust.baseweb.applications.tms.model.driver.CreateDriverInputModel;
+import com.hust.baseweb.applications.tms.model.DriverModel;
 import com.hust.baseweb.applications.tms.repo.PPartyDriverRepo;
 import com.hust.baseweb.applications.tms.repo.PartyDriverRepo;
 import com.hust.baseweb.entity.Party;
@@ -25,7 +25,7 @@ public class PartyDriverServiceImpl implements PartyDriverService {
 
     @Override
     @Transactional
-    public PartyDriver save(CreateDriverInputModel input) {
+    public PartyDriver save(DriverModel.InputCreate input) {
         // TODO:
         PersonModel personModel = new PersonModel();
         personModel.setBirthDate(input.getBirthDate());

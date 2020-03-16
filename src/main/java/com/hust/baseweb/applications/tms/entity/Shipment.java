@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.tms.entity;
 
-import com.hust.baseweb.applications.tms.model.shipmentorder.ShipmentModel;
+import com.hust.baseweb.applications.tms.model.ShipmentModel;
 import lombok.Getter;
 import lombok.Setter;
 

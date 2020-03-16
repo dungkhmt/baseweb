@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @Setter
 @IdClass(CompositeOrderItemId.class)
 public class OrderItem {
+
     @Id
     @Column(name = "order_id")
     private String orderId;

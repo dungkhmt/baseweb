@@ -1,142 +1,154 @@
-CREATE TABLE status_type (
-  status_type_id     VARCHAR(60) NOT NULL,
-  parent_type_id     VARCHAR(60),
-  description        TEXT,
-  last_updated_stamp TIMESTAMP   ,
-  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_status_type PRIMARY KEY (status_type_id),
-  CONSTRAINT status_type_parent FOREIGN KEY (parent_type_id) REFERENCES status_type (status_type_id)
+CREATE TABLE status_type
+(
+    status_type_id     VARCHAR(60) NOT NULL,
+    parent_type_id     VARCHAR(60),
+    description        TEXT,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_status_type PRIMARY KEY (status_type_id),
+    CONSTRAINT status_type_parent FOREIGN KEY (parent_type_id) REFERENCES status_type (status_type_id)
 );
-CREATE TABLE status (
-  status_id          VARCHAR(60) NOT NULL,
-  status_type_id     VARCHAR(60),
-  status_code        VARCHAR(60),
-  sequence_id        VARCHAR(60),
-  description        TEXT,
-  last_updated_stamp TIMESTAMP   ,
-  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_status PRIMARY KEY (status_id),
-  CONSTRAINT status_to_type FOREIGN KEY (status_type_id) REFERENCES status_type (status_type_id)
+CREATE TABLE status
+(
+    status_id          VARCHAR(60) NOT NULL,
+    status_type_id     VARCHAR(60),
+    status_code        VARCHAR(60),
+    sequence_id        VARCHAR(60),
+    description        TEXT,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_status PRIMARY KEY (status_id),
+    CONSTRAINT status_to_type FOREIGN KEY (status_type_id) REFERENCES status_type (status_type_id)
 );
-CREATE TABLE party_type (
-  party_type_id      VARCHAR(60) NOT NULL,
-  parent_type_id     VARCHAR(60),
-  has_table          BOOLEAN,
-  description        TEXT,
-  last_updated_stamp TIMESTAMP   ,
-  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_party_type PRIMARY KEY (party_type_id),
-  CONSTRAINT party_type_par FOREIGN KEY (parent_type_id) REFERENCES party_type (party_type_id)
+CREATE TABLE party_type
+(
+    party_type_id      VARCHAR(60) NOT NULL,
+    parent_type_id     VARCHAR(60),
+    has_table          BOOLEAN,
+    description        TEXT,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_party_type PRIMARY KEY (party_type_id),
+    CONSTRAINT party_type_par FOREIGN KEY (parent_type_id) REFERENCES party_type (party_type_id)
 );
-CREATE TABLE party (
-  party_id                    UUID NOT NULL default uuid_generate_v1(),
-  party_type_id               VARCHAR(60),
-  external_id                 VARCHAR(60),
-  description                 TEXT,
-  status_id                   VARCHAR(60),
-  created_date                TIMESTAMP   NULL,
-  created_by_user_login       VARCHAR(255),
-  last_modified_date          TIMESTAMP   NULL,
-  last_modified_by_user_login VARCHAR(255),
-  is_unread                   BOOLEAN,
-  last_updated_stamp          TIMESTAMP   ,
-  created_stamp               TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  party_code                  VARCHAR(255),
-  CONSTRAINT pk_party PRIMARY KEY (party_id),
-  CONSTRAINT party_statusitm FOREIGN KEY (status_id) REFERENCES status (status_id),
-  CONSTRAINT party_pty_typ FOREIGN KEY (party_type_id) REFERENCES party_type (party_type_id)
+CREATE TABLE party
+(
+    party_id                    UUID      NOT NULL default uuid_generate_v1(),
+    party_type_id               VARCHAR(60),
+    external_id                 VARCHAR(60),
+    description                 TEXT,
+    status_id                   VARCHAR(60),
+    created_date                TIMESTAMP NULL,
+    created_by_user_login       VARCHAR(255),
+    last_modified_date          TIMESTAMP NULL,
+    last_modified_by_user_login VARCHAR(255),
+    is_unread                   BOOLEAN,
+    last_updated_stamp          TIMESTAMP,
+    created_stamp               TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
+    party_code                  VARCHAR(255),
+    CONSTRAINT pk_party PRIMARY KEY (party_id),
+    CONSTRAINT party_statusitm FOREIGN KEY (status_id) REFERENCES status (status_id),
+    CONSTRAINT party_pty_typ FOREIGN KEY (party_type_id) REFERENCES party_type (party_type_id)
 );
-CREATE TABLE person (
-  party_id                    UUID              NOT NULL,
-  first_name                  VARCHAR(100),
-  middle_name                 VARCHAR(100),
-  last_name                   VARCHAR(100),
-  gender                      CHARACTER(1),
-  birth_date                  DATE,
-  last_updated_stamp          TIMESTAMP                NULL,
-  created_stamp               TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_person PRIMARY KEY (party_id),
-  CONSTRAINT person_party FOREIGN KEY (party_id) REFERENCES party (party_id)
+CREATE TABLE person
+(
+    party_id           UUID      NOT NULL,
+    first_name         VARCHAR(100),
+    middle_name        VARCHAR(100),
+    last_name          VARCHAR(100),
+    gender             CHARACTER(1),
+    birth_date         DATE,
+    last_updated_stamp TIMESTAMP NULL,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_person PRIMARY KEY (party_id),
+    CONSTRAINT person_party FOREIGN KEY (party_id) REFERENCES party (party_id)
 );
 
-CREATE TABLE user_login (
-  user_login_id            VARCHAR(255)  NOT NULL,
-  current_password         VARCHAR(60),
-  otp_secret               VARCHAR(60),
-  client_token             VARCHAR(512),
-  password_hint            TEXT,
-  is_system                BOOLEAN,
-  enabled                  BOOLEAN,
-  has_logged_out           BOOLEAN,
-  require_password_change  BOOLEAN,
-  disabled_date_time       TIMESTAMP     NULL,
-  successive_failed_logins INTEGER,
-  last_updated_stamp       TIMESTAMP     ,
-  created_stamp            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  otp_resend_number        INT DEFAULT 0 NULL,
-  party_id                 UUID,
-  CONSTRAINT pk_user_login PRIMARY KEY (user_login_id),
-  CONSTRAINT user_party FOREIGN KEY (party_id) REFERENCES party (party_id)
+CREATE TABLE user_login
+(
+    user_login_id            VARCHAR(255)        NOT NULL,
+    current_password         VARCHAR(60),
+    otp_secret               VARCHAR(60),
+    client_token             VARCHAR(512),
+    password_hint            TEXT,
+    is_system                BOOLEAN,
+    enabled                  BOOLEAN,
+    has_logged_out           BOOLEAN,
+    require_password_change  BOOLEAN,
+    disabled_date_time       TIMESTAMP           NULL,
+    successive_failed_logins INTEGER,
+    last_updated_stamp       TIMESTAMP,
+    created_stamp            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    otp_resend_number        INT       DEFAULT 0 NULL,
+    party_id                 UUID,
+    CONSTRAINT pk_user_login PRIMARY KEY (user_login_id),
+    CONSTRAINT user_party FOREIGN KEY (party_id) REFERENCES party (party_id)
 );
 
 ALTER TABLE party
-  ADD CONSTRAINT party_m_user_login FOREIGN KEY (last_modified_by_user_login) REFERENCES user_login (user_login_id);
+    ADD CONSTRAINT party_m_user_login FOREIGN KEY (last_modified_by_user_login) REFERENCES user_login (user_login_id);
 ALTER TABLE party
-  ADD CONSTRAINT party_c_user_login FOREIGN KEY (created_by_user_login) REFERENCES user_login (user_login_id);
+    ADD CONSTRAINT party_c_user_login FOREIGN KEY (created_by_user_login) REFERENCES user_login (user_login_id);
 
-CREATE TABLE security_group (
-  group_id           VARCHAR(60) NOT NULL,
-  description        TEXT,
-  last_updated_stamp TIMESTAMP   ,
-  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_security_group PRIMARY KEY (group_id)
+CREATE TABLE security_group
+(
+    group_id           VARCHAR(60) NOT NULL,
+    description        TEXT,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_security_group PRIMARY KEY (group_id)
 );
-CREATE TABLE security_permission (
-  permission_id      VARCHAR(100) NOT NULL,
-  description        TEXT,
-  last_updated_stamp TIMESTAMP    ,
-  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_security_permission PRIMARY KEY (permission_id)
+CREATE TABLE security_permission
+(
+    permission_id      VARCHAR(100) NOT NULL,
+    description        TEXT,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_security_permission PRIMARY KEY (permission_id)
 );
-CREATE TABLE security_group_permission (
-  group_id           VARCHAR(60)  NOT NULL,
-  permission_id      VARCHAR(100) NOT NULL,
-  last_updated_stamp TIMESTAMP    ,
-  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_security_group_permission PRIMARY KEY (group_id, permission_id),
-  CONSTRAINT sec_grp_perm_grp FOREIGN KEY (group_id) REFERENCES security_group (group_id),
-  CONSTRAINT sec_grp_perm_perm FOREIGN KEY (permission_id) REFERENCES security_permission (permission_id)
+CREATE TABLE security_group_permission
+(
+    group_id           VARCHAR(60)  NOT NULL,
+    permission_id      VARCHAR(100) NOT NULL,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_security_group_permission PRIMARY KEY (group_id, permission_id),
+    CONSTRAINT sec_grp_perm_grp FOREIGN KEY (group_id) REFERENCES security_group (group_id),
+    CONSTRAINT sec_grp_perm_perm FOREIGN KEY (permission_id) REFERENCES security_permission (permission_id)
 );
-CREATE TABLE user_login_security_group (
-  user_login_id      VARCHAR(255) NOT NULL,
-  group_id           VARCHAR(60)  NOT NULL,
-  last_updated_stamp TIMESTAMP    ,
-  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_user_login_security_group PRIMARY KEY (user_login_id, group_id),
-  CONSTRAINT user_secgrp_grp FOREIGN KEY (group_id) REFERENCES security_group (group_id),
-  CONSTRAINT user_secgrp_user FOREIGN KEY (user_login_id) REFERENCES user_login (user_login_id)
-);
-
-CREATE TABLE application_type (
-  application_type_id VARCHAR(60) NOT NULL,
-  description         TEXT,
-  last_updated_stamp  TIMESTAMP   ,
-  created_stamp       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_application_type PRIMARY KEY (application_type_id)
+CREATE TABLE user_login_security_group
+(
+    user_login_id      VARCHAR(255) NOT NULL,
+    group_id           VARCHAR(60)  NOT NULL,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_user_login_security_group PRIMARY KEY (user_login_id, group_id),
+    CONSTRAINT user_secgrp_grp FOREIGN KEY (group_id) REFERENCES security_group (group_id),
+    CONSTRAINT user_secgrp_user FOREIGN KEY (user_login_id) REFERENCES user_login (user_login_id)
 );
 
-CREATE TABLE application (
-  application_id      VARCHAR(255) NOT NULL,
-  application_type_id VARCHAR(255) NOT NULL,
-  module_id           VARCHAR(255),
-  permission_id       VARCHAR(255),
-  description         TEXT,
-  last_updated_stamp  TIMESTAMP    ,
-  created_stamp       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_application PRIMARY KEY (application_id),
-  CONSTRAINT application_application_type FOREIGN KEY (application_type_id) REFERENCES application_type (application_type_id),
-  CONSTRAINT application_application_module FOREIGN KEY (module_id) REFERENCES application (application_id),
-  CONSTRAINT application_permission FOREIGN KEY (permission_id) REFERENCES security_permission (permission_id)
+CREATE TABLE application_type
+(
+    application_type_id VARCHAR(60) NOT NULL,
+    description         TEXT,
+    last_updated_stamp  TIMESTAMP,
+    created_stamp       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_application_type PRIMARY KEY (application_type_id)
+);
+
+CREATE TABLE application
+(
+    application_id      VARCHAR(255) NOT NULL,
+    application_type_id VARCHAR(255) NOT NULL,
+    module_id           VARCHAR(255),
+    permission_id       VARCHAR(255),
+    description         TEXT,
+    last_updated_stamp  TIMESTAMP,
+    created_stamp       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_application PRIMARY KEY (application_id),
+    CONSTRAINT application_application_type FOREIGN KEY (application_type_id) REFERENCES application_type (application_type_id),
+    CONSTRAINT application_application_module FOREIGN KEY (module_id) REFERENCES application (application_id),
+    CONSTRAINT application_permission FOREIGN KEY (permission_id) REFERENCES security_permission (permission_id)
 );
 
 
@@ -209,6 +221,7 @@ create table postal_address
     country_geo_id        VARCHAR(60),
     state_province_geo_id VARCHAR(60),
     city                  VARCHAR(200),
+    max_load_weight       numeric,
     last_updated_stamp    TIMESTAMP,
     created_stamp         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_postal_address primary key (contact_mech_id),
@@ -291,10 +304,11 @@ CREATE TABLE party_customer
     CONSTRAINT fp_party_customer_status_id FOREIGN KEY (status_id) REFERENCES status_item (status_id)
 );
 
-create table party_distributor(
-	party_id           UUID NOT NULL,
-    distributor_code      VARCHAR(100),
-    distributor_name      VARCHAR(100),
+create table party_distributor
+(
+    party_id           UUID NOT NULL,
+    distributor_code   VARCHAR(100),
+    distributor_name   VARCHAR(100),
     status_id          VARCHAR(60),
     party_type_id      VARCHAR(60),
     description        TEXT,
@@ -357,17 +371,17 @@ create table sales_route_config_customer
     constraint pk_sales_route_config_customer primary key (sales_route_config_customer_id),
     constraint fk_sales_route_config_customer_sales_route_config_id foreign key (sales_route_config_id) references sales_route_config (sales_route_config_id),
     constraint fk_sales_route_config_customer_party_customer_id foreign key (party_customer_id) references party_customer (party_id),
-    constraint fk_sales_route_config_customer_party_salesman_id foreign key(party_salesman_id) references party_salesman(party_id)
+    constraint fk_sales_route_config_customer_party_salesman_id foreign key (party_salesman_id) references party_salesman (party_id)
 );
 
 create table sales_route_planning_period
 (
     sales_route_planning_period_id UUID NOT NULL default uuid_generate_v1(),
-    from_date                       VARCHAR(60),
-    to_date                         VARCHAR(60),
-    created_by                      VARCHAR(60),
-    description						TEXT,
-    status_id                       VARCHAR(60),
+    from_date                      VARCHAR(60),
+    to_date                        VARCHAR(60),
+    created_by                     VARCHAR(60),
+    description                    TEXT,
+    status_id                      VARCHAR(60),
     constraint pk_sales_planning_period primary key (sales_route_planning_period_id),
     constraint fk_sales_planning_period_created_by foreign key (created_by) references user_login (user_login_id),
     constraint fk_sales_planning_period_status foreign key (status_id) references status_item (status_id)
@@ -387,21 +401,22 @@ create table sales_route_detail
     constraint fk_sales_route_detail_sales_route_config_customer foreign key (sales_route_config_customer_id) references sales_route_config_customer (sales_route_config_customer_id),
     constraint fk_sales_route_detail_party_customer foreign key (party_customer_id) references party_customer (party_id),
     constraint fk_sales_route_detail_salesman_id foreign key (party_salesman_id) references party_salesman (party_id),
-    constraint fk_sales_route_detail_sales_route_planning_period_id foreign key(sales_route_planning_period_id) references sales_route_planning_period(sales_route_planning_period_id)
+    constraint fk_sales_route_detail_sales_route_planning_period_id foreign key (sales_route_planning_period_id) references sales_route_planning_period (sales_route_planning_period_id)
 );
 
-create table salesman_checkin_history(
-	salesman_checkin_history_id UUID NOT NULL default uuid_generate_v1(),
-	user_login_id VARCHAR(60),
-	party_customer_id UUID,
-	location VARCHAR(60),
-	check_in_action VARCHAR(1),
-	time_point TIMESTAMP,
-	last_updated_stamp             TIMESTAMP,
-    created_stamp                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_salesman_checkin_history primary key(salesman_checkin_history_id),
-    constraint fk_salesman_checkin_history_user_login_id foreign key(user_login_id) references user_login(user_login_id),
-    constraint fk_salesman_checkin_history_party_customer_id foreign key(party_customer_id) references party_customer(party_id)    
+create table salesman_checkin_history
+(
+    salesman_checkin_history_id UUID NOT NULL default uuid_generate_v1(),
+    user_login_id               VARCHAR(60),
+    party_customer_id           UUID,
+    location                    VARCHAR(60),
+    check_in_action             VARCHAR(1),
+    time_point                  TIMESTAMP,
+    last_updated_stamp          TIMESTAMP,
+    created_stamp               TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_salesman_checkin_history primary key (salesman_checkin_history_id),
+    constraint fk_salesman_checkin_history_user_login_id foreign key (user_login_id) references user_login (user_login_id),
+    constraint fk_salesman_checkin_history_party_customer_id foreign key (party_customer_id) references party_customer (party_id)
 );
 
 CREATE TABLE enumeration_type
@@ -463,13 +478,13 @@ CREATE TABLE product_store
     product_store_id       VARCHAR(60) NOT NULL,
     store_name             VARCHAR(100),
     product_store_group_id VARCHAR(60),
-    owner_party_id UUID,
+    owner_party_id         UUID,
     description            TEXT,
     last_updated_stamp     TIMESTAMP,
     created_stamp          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_product_store_id PRIMARY KEY (product_store_id),
-    constraint fk_product_store_owner_party_id foreign key(owner_party_id) references party(party_id),
-    constraint fk_product_store_product_store_group foreign key(product_store_group_id) references product_store_group(product_store_group_id)
+    constraint fk_product_store_owner_party_id foreign key (owner_party_id) references party (party_id),
+    constraint fk_product_store_product_store_group foreign key (product_store_group_id) references product_store_group (product_store_group_id)
 );
 
 CREATE TABLE product_type
@@ -485,22 +500,24 @@ CREATE TABLE product_type
 );
 CREATE TABLE product
 (
-    product_id               VARCHAR(60) NOT NULL,
-    product_type_id          VARCHAR(60),
-    product_name             VARCHAR(100),
-    weight                   numeric,
-    introductionDate         TIMESTAMP,
-    quantity_uom_id          VARCHAR(60),
-    weight_uom_id            VARCHAR(60),
-    width_uom_id             VARCHAR(60),
-    length_uom_id            VARCHAR(60),
-    height_uom_id            VARCHAR(60),
-    created_by_user_login_id VARCHAR(60),
+    product_id                    VARCHAR(60) NOT NULL,
+    product_type_id               VARCHAR(60),
+    product_name                  VARCHAR(100),
+    weight                        numeric,
+    hs_thu                        int,
+    hs_pal                        int,
+    introductionDate              TIMESTAMP,
+    quantity_uom_id               VARCHAR(60),
+    weight_uom_id                 VARCHAR(60),
+    width_uom_id                  VARCHAR(60),
+    length_uom_id                 VARCHAR(60),
+    height_uom_id                 VARCHAR(60),
+    created_by_user_login_id      VARCHAR(60),
     product_transport_category_id varchar(60),
- 
-    description              TEXT,
-    last_updated_stamp       TIMESTAMP,
-    created_stamp            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    description                   TEXT,
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_product_id PRIMARY KEY (product_id),
     CONSTRAINT fk_product_type_id FOREIGN KEY (product_type_id) REFERENCES product_type (product_type_id),
     CONSTRAINT fk_created_by_user_login_id FOREIGN KEY (created_by_user_login_id) REFERENCES user_login (user_login_id),
@@ -530,7 +547,7 @@ CREATE TABLE facility
     facility_type_id   VARCHAR(60),
     parent_facility_id VARCHAR(60),
     facility_name      VARCHAR(100),
-    contact_mech_id 	UUID,
+    contact_mech_id    UUID,
     product_store_id   VARCHAR(60),
     opened_date        TIMESTAMP,
     closed_date        TIMESTAMP,
@@ -538,7 +555,7 @@ CREATE TABLE facility
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_facility_id PRIMARY KEY (facility_id),
-    constraint fk_facility_contact_mech_id foreign key(contact_mech_id) references postal_address(contact_mech_id),
+    constraint fk_facility_contact_mech_id foreign key (contact_mech_id) references postal_address (contact_mech_id),
     CONSTRAINT fk_facility_type_id FOREIGN KEY (facility_type_id) REFERENCES facility_type (facility_type_id),
     CONSTRAINT fk_parent_facility_id FOREIGN KEY (parent_facility_id) REFERENCES facility (facility_id),
     CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES product_store (product_store_id)
@@ -657,8 +674,8 @@ CREATE TABLE order_header
     created_by           VARCHAR(60),
     order_date           TIMESTAMP,
     currency_uom_id      VARCHAR(60),
-    ship_to_address_id UUID,
-    ship_to_address     VARCHAR (200),
+    ship_to_address_id   UUID,
+    ship_to_address      VARCHAR(200),
     grand_total          DECIMAL(18, 2),
     description          TEXT,
     last_updated_stamp   TIMESTAMP,
@@ -666,7 +683,7 @@ CREATE TABLE order_header
     CONSTRAINT pk_order PRIMARY KEY (order_id),
     CONSTRAINT fk_order_type_id FOREIGN KEY (order_type_id) REFERENCES order_type (order_type_id),
     CONSTRAINT fk_original_facility_id FOREIGN KEY (original_facility_id) REFERENCES facility (facility_id),
-    constraint fk_order_address_id foreign key(ship_to_address_id) references postal_address(contact_mech_id),
+    constraint fk_order_address_id foreign key (ship_to_address_id) references postal_address (contact_mech_id),
     CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES facility (facility_id)
 
 );
@@ -845,37 +862,39 @@ CREATE TABLE order_adjustment
 
 create table vehicle_type
 (
-    vehicle_type_id    VARCHAR(60) NOT NULL,
-    capacity           numeric,
-    long               Integer,
-    width              Integer,
-    height             Integer,
-    pallet             numeric,
-    
-    description        TEXT,
-    last_updated_stamp TIMESTAMP,
-    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_vehicle_type primary key (vehicle_type_id)
+    vehicle_type_id               VARCHAR(60) NOT NULL,
+    capacity                      numeric,
+    long                          Integer,
+    width                         Integer,
+    height                        Integer,
+    pallet                        numeric,
+    product_transport_category_id VARCHAR(60),
+    description                   TEXT,
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_vehicle_type primary key (vehicle_type_id),
+    constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id)
 );
 
 create table vehicle
 (
-    vehicle_id         VARCHAR(60) NOT NULL,
-    vehicle_type_id    VARCHAR(60),
-    capacity           numeric,
-    long               Integer,
-    width              Integer,
-    height             Integer,
-    pallet             numeric,
-    status_id          VARCHAR(60),
-    product_transport_category_id VARCHAR(60),	
-    description        TEXT,
-    last_updated_stamp TIMESTAMP,
-    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    vehicle_id                    VARCHAR(60) NOT NULL,
+    vehicle_type_id               VARCHAR(60),
+    capacity                      numeric,
+    long                          Integer,
+    width                         Integer,
+    height                        Integer,
+    pallet                        numeric,
+    status_id                     VARCHAR(60),
+    product_transport_category_id VARCHAR(60),
+    priority                      int,
+    description                   TEXT,
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_vehicle_id primary key (vehicle_id),
     constraint fk_vehicle_vehicle_type foreign key (vehicle_type_id) references vehicle_type (vehicle_type_id),
     constraint fk_vehicle_status_id foreign key (status_id) references status_item (status_id),
-    constraint fk_vehicle_type_product_transport_category_id foreign key(product_transport_category_id) references enumeration(enum_id)
+    constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id)
 );
 
 create table vehicle_maintenance_history
@@ -883,7 +902,7 @@ create table vehicle_maintenance_history
     vehicle_maintenance_history_id UUID        NOT NULL default uuid_generate_v1(),
     vehicle_id                     VARCHAR(60) NOT NULL,
     maintenance_date               TIMESTAMP,
-    thru_date						TIMESTAMP,
+    thru_date                      TIMESTAMP,
     capacity                       numeric,
     long                           Integer,
     width                          Integer,
@@ -896,54 +915,58 @@ create table vehicle_maintenance_history
     constraint fk_vehicle_maintenance_history_vehicle_id foreign key (vehicle_id) references vehicle (vehicle_id)
 );
 
-create table vehicle_forbidden_geo_point(
-	vehicle_forbidden_geo_point_id UUID NOT NULL default uuid_generate_v1(),
-	vehicle_id VARCHAR(60),
-    geo_point_id UUID,
-    from_date TIMESTAMP,
-    thru_date TIMESTAMP,
-	last_updated_stamp             TIMESTAMP,
-    created_stamp                  TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_vehicle_forbidden_geo_point primary key(vehicle_forbidden_geo_point_id),
-    constraint fk_vehicle_forbidden_geo_point_vehicle_id foreign key(vehicle_id) references vehicle(vehicle_id),
-    constraint fk_vehicle_forbidden_geo_point_geo_point_id foreign key(geo_point_id) references geo_point(geo_point_id)    
+create table vehicle_forbidden_geo_point
+(
+    vehicle_forbidden_geo_point_id UUID NOT NULL default uuid_generate_v1(),
+    vehicle_id                     VARCHAR(60),
+    geo_point_id                   UUID,
+    from_date                      TIMESTAMP,
+    thru_date                      TIMESTAMP,
+    last_updated_stamp             TIMESTAMP,
+    created_stamp                  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_vehicle_forbidden_geo_point primary key (vehicle_forbidden_geo_point_id),
+    constraint fk_vehicle_forbidden_geo_point_vehicle_id foreign key (vehicle_id) references vehicle (vehicle_id),
+    constraint fk_vehicle_forbidden_geo_point_geo_point_id foreign key (geo_point_id) references geo_point (geo_point_id)
 );
 
 
-create table vehicle_location_priority(
-	vehicle_location_priority_id UUID NOT NULL default uuid_generate_v1(),
-	vehicle_id VARCHAR(60),
-	contact_mech_id UUID,
-	priority Integer,
-	from_date TIMESTAMP,
-	thru_date TIMESTAMP,
-	constraint pk_vehicle_location_priority primary key (vehicle_location_priority_id),
-	constraint fk_vehicle_location_priority_vehicle_id foreign key(vehicle_id) references vehicle(vehicle_id),
-	constraint fk_vehicle_location_priority_contact_mech_id foreign key(contact_mech_id) references postal_address(contact_mech_id)
+create table vehicle_location_priority
+(
+    vehicle_location_priority_id UUID NOT NULL default uuid_generate_v1(),
+    vehicle_id                   VARCHAR(60),
+    contact_mech_id              UUID,
+    priority                     Integer,
+    from_date                    TIMESTAMP,
+    thru_date                    TIMESTAMP,
+    constraint pk_vehicle_location_priority primary key (vehicle_location_priority_id),
+    constraint fk_vehicle_location_priority_vehicle_id foreign key (vehicle_id) references vehicle (vehicle_id),
+    constraint fk_vehicle_location_priority_contact_mech_id foreign key (contact_mech_id) references postal_address (contact_mech_id)
 );
 
 
-create table party_driver(
-	party_id UUID NOT NULL default uuid_generate_v1(),
-	status_id          VARCHAR(60),
-	last_updated_stamp   TIMESTAMP,
-    created_stamp        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_party_driver primary key(party_id),
-    constraint fk_party_driver foreign key (party_id) references party(party_id),
-	constraint fk_party_driver_status_id foreign key (status_id) references status_item (status_id)
+create table party_driver
+(
+    party_id           UUID NOT NULL default uuid_generate_v1(),
+    status_id          VARCHAR(60),
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_party_driver primary key (party_id),
+    constraint fk_party_driver foreign key (party_id) references party (party_id),
+    constraint fk_party_driver_status_id foreign key (status_id) references status_item (status_id)
 );
 
-create table vehicle_driver(
-	vehicle_driver_id UUID not null default uuid_generate_v1(),
-	party_driver_id UUID not null,
-	vehicle_id VARCHAR(60),
-	from_date TIMESTAMP,
-	thru_date TIMESTAMP,
-	last_updated_stamp   TIMESTAMP,
-    created_stamp        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_vehicle_driver primary key(vehicle_driver_id),
-    constraint fk_vehicle_driver_vehicle_id foreign key(vehicle_id) references vehicle(vehicle_id),
-    constraint fk_vehicle_driver_party_driver_id foreign key(party_driver_id) references party_driver(party_id)
+create table vehicle_driver
+(
+    vehicle_driver_id  UUID not null default uuid_generate_v1(),
+    party_driver_id    UUID not null,
+    vehicle_id         VARCHAR(60),
+    from_date          TIMESTAMP,
+    thru_date          TIMESTAMP,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_vehicle_driver primary key (vehicle_driver_id),
+    constraint fk_vehicle_driver_vehicle_id foreign key (vehicle_id) references vehicle (vehicle_id),
+    constraint fk_vehicle_driver_party_driver_id foreign key (party_driver_id) references party_driver (party_id)
 );
 
 create table shipment_type
@@ -968,24 +991,25 @@ create table shipment
 
 create table shipment_item
 (
-    shipment_item_id    UUID NOT NULL default uuid_generate_v1(),
-    shipment_id         UUID NOT NULL,
-    product_id          VARCHAR(60),
-    quantity            Integer,
-    pallet              numeric,
-    party_customer_id   UUID,
-    ship_to_location_id UUID,
-    order_date		TIMESTAMP,
-    expected_delivery_date	TIMESTAMP,
-    product_transport_category_id VARCHAR(60),	
-    last_updated_stamp  TIMESTAMP,
-    created_stamp       TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    shipment_item_id              UUID NOT NULL default uuid_generate_v1(),
+    shipment_id                   UUID NOT NULL,
+    quantity                      Integer,
+    pallet                        numeric,
+    party_customer_id             UUID,
+    ship_to_location_id           UUID,
+    order_id                      varchar(60),
+    order_item_seq_id             varchar(60),
+    expected_delivery_date        TIMESTAMP,
+    product_transport_category_id VARCHAR(60),
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_shipment_item primary key (shipment_item_id),
     constraint fk_shipment_item_shipment_id foreign key (shipment_id) references shipment (shipment_id),
-    constraint fk_shipment_item_product_id foreign key (product_id) references product (product_id),
     constraint fk_shipment_item_ship_to_location_id foreign key (ship_to_location_id) references postal_address (contact_mech_id),
-    constraint fk_vehicle_type_product_transport_category_id foreign key(product_transport_category_id) references enumeration(enum_id)
-    constraint fk_shipment_item_party_customer_id foreign key (party_customer_id) references party_customer (party_id)
+    constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id),
+    constraint fk_shipment_item_party_customer_id foreign key (party_customer_id) references party_customer (party_id),
+    constraint fk_shipment_item_order_id foreign key (order_id) references order_header (order_id)
+
 );
 
 create table order_shipment
@@ -1007,13 +1031,13 @@ create table delivery_plan
     delivery_plan_id   UUID NOT NULL default uuid_generate_v1(),
     delivery_date      TIMESTAMP,
     description        TEXT,
-    facility_id VARCHAR(60),
+    facility_id        VARCHAR(60),
     created_by         VARCHAR(60),
     status_id          VARCHAR(60),
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_delivery_plan primary key (delivery_plan_id),
-    constraint fk_delivery_plan_facility_id foreign key(facility_id) references facility(facility_id),
+    constraint fk_delivery_plan_facility_id foreign key (facility_id) references facility (facility_id),
     constraint fk_delivery_plan_created_by foreign key (created_by) references user_login (user_login_id),
     constraint fk_delivery_plan_status_id foreign key (status_id) references status_item (status_id)
 );
@@ -1027,7 +1051,7 @@ create table vehicle_delivery_plan
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_vehicle_delivery_plan primary key (delivery_plan_id, vehicle_id),
-    constraint fk_vehicle_delivery_plan_vehicle_id foreign key(vehicle_id) references vehicle(vehicle_id)
+    constraint fk_vehicle_delivery_plan_vehicle_id foreign key (vehicle_id) references vehicle (vehicle_id)
 );
 
 create table shipment_item_delivery_plan
@@ -1055,42 +1079,44 @@ create table delivery_plan_solution
     constraint fk_delivery_plan_solution_delivery_plan foreign key (delivery_plan_id) references delivery_plan (delivery_plan_id)
 );
 
-CREATE TABLE delivery_trip (
-	delivery_trip_id uuid NOT NULL DEFAULT uuid_generate_v1(),
-	delivery_plan_id uuid NULL,
-	delivery_plan_solution_seq_id varchar(60) NULL,
-	vehicle_id varchar(60) NULL,
-	driver_id uuid NULL,
-	execute_date timestamp NULL,
-	distance numeric NULL,
-	total_weight numeric NULL,
-	total_pallet numeric NULL,
-	execute_external_vehicle_type_id varchar(60) NULL,
-	status_id varchar(60) NULL,
-	last_updated_stamp timestamp NULL,
-	created_stamp timestamp NULL DEFAULT now(),
-	CONSTRAINT pk_delivery_trip PRIMARY KEY (delivery_trip_id),
-	CONSTRAINT fk_delivery_trip_driver_id FOREIGN KEY (driver_id) REFERENCES party_driver(party_id),
-	CONSTRAINT fk_delivery_trip_delivery_plan_id FOREIGN KEY (delivery_plan_id) REFERENCES delivery_plan(delivery_plan_id),
-	CONSTRAINT fk_delivery_trip_external_vehicle_type_id FOREIGN KEY (execute_external_vehicle_type_id) REFERENCES vehicle_type(vehicle_type_id),
-	CONSTRAINT fk_delivery_trip_plan_solution FOREIGN KEY (delivery_plan_id, delivery_plan_solution_seq_id) REFERENCES delivery_plan_solution(delivery_plan_id, delivery_plan_solution_seq_id),
-	CONSTRAINT fk_delivery_trip_status FOREIGN KEY (status_id) REFERENCES status_item(status_id),
-	CONSTRAINT fk_delivery_trip_vehicle_id FOREIGN KEY (vehicle_id) REFERENCES vehicle(vehicle_id)
+CREATE TABLE delivery_trip
+(
+    delivery_trip_id                 uuid        NOT NULL DEFAULT uuid_generate_v1(),
+    delivery_plan_id                 uuid        NULL,
+    delivery_plan_solution_seq_id    varchar(60) NULL,
+    vehicle_id                       varchar(60) NULL,
+    driver_id                        uuid        NULL,
+    execute_date                     timestamp   NULL,
+    distance                         numeric     NULL,
+    total_weight                     numeric     NULL,
+    total_pallet                     numeric     NULL,
+    execute_external_vehicle_type_id varchar(60) NULL,
+    status_id                        varchar(60) NULL,
+    last_updated_stamp               timestamp   NULL,
+    created_stamp                    timestamp   NULL     DEFAULT now(),
+    CONSTRAINT pk_delivery_trip PRIMARY KEY (delivery_trip_id),
+    CONSTRAINT fk_delivery_trip_driver_id FOREIGN KEY (driver_id) REFERENCES party_driver (party_id),
+    CONSTRAINT fk_delivery_trip_delivery_plan_id FOREIGN KEY (delivery_plan_id) REFERENCES delivery_plan (delivery_plan_id),
+    CONSTRAINT fk_delivery_trip_external_vehicle_type_id FOREIGN KEY (execute_external_vehicle_type_id) REFERENCES vehicle_type (vehicle_type_id),
+    CONSTRAINT fk_delivery_trip_plan_solution FOREIGN KEY (delivery_plan_id, delivery_plan_solution_seq_id) REFERENCES delivery_plan_solution (delivery_plan_id, delivery_plan_solution_seq_id),
+    CONSTRAINT fk_delivery_trip_status FOREIGN KEY (status_id) REFERENCES status_item (status_id),
+    CONSTRAINT fk_delivery_trip_vehicle_id FOREIGN KEY (vehicle_id) REFERENCES vehicle (vehicle_id)
 );
 
-CREATE TABLE delivery_trip_detail (
-	delivery_trip_detail_id uuid NOT NULL DEFAULT uuid_generate_v1(),
-	delivery_trip_id uuid NULL,
-	sequence Integer NULL,
-	shipment_item_id uuid NULL,
-	delivery_quantity int4 NULL,
-	status_id varchar(60) NULL,
-	last_updated_stamp timestamp NULL,
-	created_stamp timestamp NULL DEFAULT now(),
-	CONSTRAINT pk_delivery_trip_detail PRIMARY KEY (delivery_trip_detail_id),
-	CONSTRAINT fk_delivery_trip_detail_delivery_trip FOREIGN KEY (delivery_trip_id) REFERENCES delivery_trip(delivery_trip_id),
-	CONSTRAINT fk_delivery_trip_detail_shipment FOREIGN KEY (shipment_item_id) REFERENCES shipment_item(shipment_item_id),
-	CONSTRAINT fk_delivery_trip_detail_status FOREIGN KEY (status_id) REFERENCES status_item(status_id)
+CREATE TABLE delivery_trip_detail
+(
+    delivery_trip_detail_id uuid        NOT NULL DEFAULT uuid_generate_v1(),
+    delivery_trip_id        uuid        NULL,
+    sequence                Integer     NULL,
+    shipment_item_id        uuid        NULL,
+    delivery_quantity       int4        NULL,
+    status_id               varchar(60) NULL,
+    last_updated_stamp      timestamp   NULL,
+    created_stamp           timestamp   NULL     DEFAULT now(),
+    CONSTRAINT pk_delivery_trip_detail PRIMARY KEY (delivery_trip_detail_id),
+    CONSTRAINT fk_delivery_trip_detail_delivery_trip FOREIGN KEY (delivery_trip_id) REFERENCES delivery_trip (delivery_trip_id),
+    CONSTRAINT fk_delivery_trip_detail_shipment FOREIGN KEY (shipment_item_id) REFERENCES shipment_item (shipment_item_id),
+    CONSTRAINT fk_delivery_trip_detail_status FOREIGN KEY (status_id) REFERENCES status_item (status_id)
 );
 
 

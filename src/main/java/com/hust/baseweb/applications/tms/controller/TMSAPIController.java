@@ -1,27 +1,26 @@
 package com.hust.baseweb.applications.tms.controller;
 
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
-import com.hust.baseweb.applications.order.repo.OrderRepo;
+import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
+import com.hust.baseweb.applications.tms.model.VehicleModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemsInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
-import com.hust.baseweb.applications.tms.model.statistic.vehicledistance.StatisticVehicleDistanceInputModel;
-import com.hust.baseweb.applications.tms.model.statistic.vehicledistance.VehicleDistance;
 import com.hust.baseweb.applications.tms.service.DeliveryTripDetailService;
 import com.hust.baseweb.applications.tms.service.DeliveryTripService;
 import com.hust.baseweb.applications.tms.service.DistanceTravelTimeService;
+import com.hust.baseweb.applications.tms.service.SolverService;
 import com.hust.baseweb.applications.tms.service.statistic.StatisticDeliveryTripService;
 import com.hust.baseweb.repo.UserLoginRepo;
-
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class TMSAPIController {
     public static final String module = TMSAPIController.class.getName();
 
     private CustomerRepo customerRepo;
-    private OrderRepo orderRepo;
+    private OrderHeaderRepo orderHeaderRepo;
     private OrderRoleRepo orderRoleRepo;
     private UserLoginRepo userLoginRepo;
     private DeliveryTripService deliveryTripService;
@@ -40,11 +39,16 @@ public class TMSAPIController {
     private DeliveryTripDetailService deliveryTripDetailService;
     private StatisticDeliveryTripService statisticDeliveryTripService;
 
+    private SolverService solverService;
+
     @PostMapping("/statistic-vehicle-distance")
-    public ResponseEntity<?> statisticVehicleDistance(Principal prinicpal, @RequestBody StatisticVehicleDistanceInputModel input){
-    	List<VehicleDistance> vehicleDistances = statisticDeliveryTripService.collectVehicleDistance(input.getFromDate(), input.getThruDate());
-    	return ResponseEntity.ok().body(vehicleDistances);
+    public ResponseEntity<?> statisticVehicleDistance(Principal prinicpal,
+                                                      @RequestBody VehicleModel.InputDistanceStatistic input) {
+        List<VehicleModel.Distance> distances = statisticDeliveryTripService.collectVehicleDistance(input.getFromDate(),
+                input.getThruDate());
+        return ResponseEntity.ok().body(distances);
     }
+
     @PostMapping("/get-assigned-delivery-routes")
     public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal, @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
         GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(input.getDriverUserLoginId());
@@ -68,17 +72,25 @@ public class TMSAPIController {
     }
 
     @Autowired
-    public TMSAPIController(CustomerRepo customerRepo, OrderRepo orderRepo, OrderRoleRepo orderRoleRepo, UserLoginRepo userLoginRepo, 
-    		DeliveryTripService deliveryTripService, DistanceTravelTimeService distanceTravelTimeService, StatisticDeliveryTripService statisticDeliveryTripService) {
+    public TMSAPIController(CustomerRepo customerRepo,
+                            OrderHeaderRepo orderHeaderRepo,
+                            OrderRoleRepo orderRoleRepo,
+                            UserLoginRepo userLoginRepo,
+                            DeliveryTripService deliveryTripService,
+                            DistanceTravelTimeService distanceTravelTimeService,
+                            DeliveryTripDetailService deliveryTripDetailService,
+                            StatisticDeliveryTripService statisticDeliveryTripService,
+                            SolverService solverService) {
         this.customerRepo = customerRepo;
-        this.orderRepo = orderRepo;
+        this.orderHeaderRepo = orderHeaderRepo;
         this.orderRoleRepo = orderRoleRepo;
         this.userLoginRepo = userLoginRepo;
         this.deliveryTripService = deliveryTripService;
         this.distanceTravelTimeService = distanceTravelTimeService;
+        this.deliveryTripDetailService = deliveryTripDetailService;
         this.statisticDeliveryTripService = statisticDeliveryTripService;
+        this.solverService = solverService;
     }
-
 
     /*
     @GetMapping("/get-assigned-delivery-routes")
@@ -133,5 +145,12 @@ public class TMSAPIController {
     public ResponseEntity<?> calcDistanceTravelTime() {
         log.info("::calcDistanceTravelTime()");
         return ResponseEntity.ok(distanceTravelTimeService.calcAll());
+    }
+
+    @GetMapping("/solve/{deliveryPlanId}")
+    public ResponseEntity<?> solve(@PathVariable String deliveryPlanId) throws IOException {
+        log.info("::solve()");
+
+        return ResponseEntity.ok(solverService.solve(deliveryPlanId));
     }
 }

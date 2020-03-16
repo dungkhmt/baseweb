@@ -10,10 +10,16 @@ public interface ProductService {
     Product findByProductId(String productId);
 
     public List<Product> getAllProducts();
-    
+
     public Product save(String productId, String productName, String uomId);
 
     public void saveProduct(Product product);
 
-    Product save(String productId, String productName, String productTransportCategory, double productWeight, String uomId);
+    Product save(String productId,
+                 String productName,
+                 String productTransportCategory,
+                 double productWeight,
+                 String uomId,
+                 Integer hsThu,
+                 Integer hsPal);
 }

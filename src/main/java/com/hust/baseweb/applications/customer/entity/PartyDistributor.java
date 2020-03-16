@@ -1,24 +1,15 @@
 package com.hust.baseweb.applications.customer.entity;
 
-import java.util.List;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-
+import com.hust.baseweb.applications.geo.entity.PostalAddress;
+import com.hust.baseweb.entity.PartyType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import com.hust.baseweb.applications.geo.entity.PostalAddress;
-import com.hust.baseweb.entity.PartyType;
+import javax.persistence.*;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter

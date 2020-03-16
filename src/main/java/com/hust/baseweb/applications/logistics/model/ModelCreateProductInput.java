@@ -3,8 +3,6 @@ package com.hust.baseweb.applications.logistics.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 public class ModelCreateProductInput {

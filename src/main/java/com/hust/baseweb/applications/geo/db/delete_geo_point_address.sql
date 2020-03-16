@@ -1,5 +1,13 @@
 delete from party_contact_mech_purpose ;
+delete
+from delivery_trip;
+delete
+from delivery_plan;
+delete
+from facility;
 delete from postal_address;
+delete
+from distance_traveltime_geo_points;
 delete from geo_point;
 
 -------------------

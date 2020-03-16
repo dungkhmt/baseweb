@@ -27,6 +27,7 @@ public class PostalAddressServiceImpl implements PostalAddressService {
         postalAddress.setLocationCode(locationCode);
         postalAddress.setGeoPoint(geoPoint);
         postalAddress.setAddress(address);
+        postalAddress.setMaxLoadWeight(Double.MAX_VALUE);
         postalAddress = postalAddressRepo.save(postalAddress);
         return postalAddress;
     }

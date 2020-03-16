@@ -31,19 +31,26 @@ import com.hust.baseweb.entity.Status.StatusEnum;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PartyTypeRepo;
 import com.hust.baseweb.repo.StatusRepo;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class DistributorServiceImpl implements DistributorService {
-	private GeoPointRepo geoPointRepo;
+    private GeoPointRepo geoPointRepo;
     private PostalAddressRepo postalAddressRepo;
     private PartyRepo partyRepo;
     private PartyTypeRepo partyTypeRepo;
     private StatusRepo statusRepo;
     private PartyContactMechPurposeRepo partyContactMechPurposeRepo;
     private DistributorRepo distributorRepo;
-    
+
     @Override
     @Transactional
     public PartyDistributor save(CreateDistributorInputModel input) {
@@ -105,7 +112,7 @@ public class DistributorServiceImpl implements DistributorService {
         return distributor;
     }
 
-    
+
     @Override
     public List<PartyDistributor> findDistributors() {
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");

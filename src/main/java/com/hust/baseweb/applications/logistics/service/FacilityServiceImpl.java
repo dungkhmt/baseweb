@@ -44,7 +44,11 @@ public class FacilityServiceImpl implements FacilityService {
             LatLng location = geocodingResults[0].geometry.location;
             GeoPoint geoPoint = new GeoPoint(null, location.lat + "", location.lng + "");
             geoPoint = geoPointRepo.save(geoPoint);
-            postalAddress = new PostalAddress(null, facilityModel.getFacilityId(), facilityModel.getAddress(), geoPoint);
+            postalAddress = new PostalAddress(null,
+                    facilityModel.getFacilityId(),
+                    facilityModel.getAddress(),
+                    geoPoint,
+                    Double.MAX_VALUE);
             postalAddress = postalAddressRepo.save(postalAddress);
         } else {
             throw new RuntimeException("Address lat lng not found");

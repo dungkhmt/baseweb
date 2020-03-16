@@ -46,6 +46,7 @@ public class CustomerAPIController {
         }
         return ResponseEntity.ok().body(customers);
     }
+
     @GetMapping("/distributors")
     public ResponseEntity<?> getDIstributors(Pageable page) {
         System.out.println(module + "::getDistributors");
@@ -67,6 +68,7 @@ public class CustomerAPIController {
         PartyCustomer customer = customerService.save(input);
         return ResponseEntity.ok().body(customer);
     }
+
     @PostMapping("/create-distributor")
     public ResponseEntity<?> createDistributor(Principal principal, @RequestBody CreateDistributorInputModel input) {
         PartyDistributor distributor = distributorService.save(input);

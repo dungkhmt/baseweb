@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.tms.model.deliverytrip;
 
+import com.hust.baseweb.applications.tms.model.DeliveryTripModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetDeliveryTripAssignedToDriverOutputModel {
-    private DeliveryTripHeaderView[] deliveryTripHeader;
+    private DeliveryTripModel.HeaderView[] deliveryTripHeaders;
 
 }

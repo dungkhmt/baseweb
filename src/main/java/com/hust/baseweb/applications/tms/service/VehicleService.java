@@ -2,10 +2,8 @@ package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.tms.entity.Vehicle;
 import com.hust.baseweb.applications.tms.entity.VehicleMaintenanceHistory;
-import com.hust.baseweb.applications.tms.model.createvehicle.CreateVehicleModel;
-import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
-import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlanModel;
-import com.hust.baseweb.applications.tms.model.vehicle.VehicleModel;
+import com.hust.baseweb.applications.tms.model.LocationModel;
+import com.hust.baseweb.applications.tms.model.VehicleModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -26,9 +24,13 @@ public interface VehicleService {
 
     Page<VehicleModel> findAllNotInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
-    String saveVehicleDeliveryPlan(CreateVehicleDeliveryPlanModel createVehicleDeliveryPlanModel);
+    List<VehicleModel> findAllNotInDeliveryPlanId(String deliveryPlanId);
 
-    boolean deleteVehicleDeliveryPlan(DeleteVehicleDeliveryPlanModel deleteVehicleDeliveryPlanModel);
+    String saveVehicleDeliveryPlan(VehicleModel.CreateDeliveryPlan createDeliveryPlan);
 
-    List<Vehicle> save(List<CreateVehicleModel> vehicleModels);
+    boolean deleteVehicleDeliveryPlan(VehicleModel.DeleteDeliveryPlan deleteDeliveryPlan);
+
+    List<Vehicle> save(List<VehicleModel.Create> vehicleModels,
+                       List<VehicleModel.CreateLocationPriority> vehicleLocationPriorities,
+                       List<LocationModel.Create> shipToModels);
 }

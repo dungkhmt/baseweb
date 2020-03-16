@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
     public static final String module = OrderServiceImpl.class.getName();
 
     private UserLoginRepo userLoginRepo;
-    private OrderRepo orderRepo;
+    private OrderHeaderRepo orderHeaderRepo;
     private OrderItemRepo orderItemRepo;
     private OrderRoleRepo orderRoleRepo;
     private OrderStatusRepo orderStatusRepo;
@@ -132,7 +132,7 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setGrandTotal(total);
 
-        orderRepo.save(order);
+        orderHeaderRepo.save(order);
 
 
         // write to table order_item
@@ -209,13 +209,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderHeader findByOrderId(String orderId) {
-        OrderHeader order = orderRepo.findByOrderId(orderId);
+        OrderHeader order = orderHeaderRepo.findByOrderId(orderId);
         return order;
     }
 
     @Override
     public OrderDetailView getOrderDetail(String orderId) {
-        OrderHeader order = orderRepo.findByOrderId(orderId);
+        OrderHeader order = orderHeaderRepo.findByOrderId(orderId);
         if (order == null) {
             return null;
         }

@@ -2,7 +2,9 @@ package com.hust.baseweb.applications.order.entity;
 
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.logistics.entity.Facility;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -14,6 +16,8 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderHeader {
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY)

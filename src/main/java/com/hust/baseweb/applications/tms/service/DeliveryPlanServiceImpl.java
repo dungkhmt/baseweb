@@ -2,7 +2,7 @@ package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.tms.entity.DeliveryPlan;
-import com.hust.baseweb.applications.tms.model.createdeliveryplan.CreateDeliveryPlanInputModel;
+import com.hust.baseweb.applications.tms.model.DeliveryPlanModel;
 import com.hust.baseweb.applications.tms.repo.DeliveryPlanRepo;
 import com.hust.baseweb.utils.Constant;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ public class DeliveryPlanServiceImpl implements DeliveryPlanService {
     private FacilityRepo facilityRepo;
 
     @Override
-    public DeliveryPlan save(CreateDeliveryPlanInputModel input) {
+    public DeliveryPlan save(DeliveryPlanModel.Create input) {
 
         DeliveryPlan deliveryPlan = new DeliveryPlan();
         deliveryPlan.setCreatedByUserLoginId(input.getCreatedByUserLoginId());

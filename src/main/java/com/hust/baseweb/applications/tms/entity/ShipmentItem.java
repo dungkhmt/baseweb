@@ -3,15 +3,12 @@ package com.hust.baseweb.applications.tms.entity;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
-import com.hust.baseweb.applications.logistics.entity.Product;
-import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemDeliveryPlanModel;
-import com.hust.baseweb.applications.tms.model.shipmentitem.ShipmentItemModel;
+import com.hust.baseweb.applications.order.entity.OrderItem;
+import com.hust.baseweb.applications.tms.model.ShipmentItemModel;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -38,8 +35,10 @@ public class ShipmentItem {
     @Column(name = "pallet")
     private double pallet;
 
-    @Column(name = "product_id")
-    private String productId;
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    @JoinColumn(name = "order_item_seq_id", referencedColumnName = "order_item_seq_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    private OrderItem orderItem;
 
     @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
@@ -49,9 +48,6 @@ public class ShipmentItem {
     @ManyToOne(fetch = FetchType.EAGER)
     private PostalAddress shipToLocation;
 
-    @Column(name="order_date")
-    private Date orderDate;
-    
     public ShipmentItemModel toShipmentItemModel() {
         String customerCode = null;
         String locationCode = null;
@@ -75,7 +71,7 @@ public class ShipmentItem {
                 shipmentItemId.toString(),
                 quantity,
                 pallet,
-                productId,
+                orderItem.getProduct().getProductId(),
                 customerCode,
                 locationCode,
                 address,
@@ -84,12 +80,11 @@ public class ShipmentItem {
         );
     }
 
-    public ShipmentItemDeliveryPlanModel toShipmentItemDeliveryPlanModel(Map<String, Product> productMap, int assignedQuantity) {
-        Product product = productMap.get(productId);
-        return new ShipmentItemDeliveryPlanModel(
+    public ShipmentItemModel.DeliveryPlan toShipmentItemDeliveryPlanModel(int assignedQuantity) {
+        return new ShipmentItemModel.DeliveryPlan(
                 shipmentItemId,
-                product.getProductName(),
-                product.getWeight() / quantity,
+                orderItem.getProduct().getProductName(),
+                orderItem.getProduct().getWeight(),
                 quantity - assignedQuantity,
                 pallet,
                 shipToLocation.getAddress(),

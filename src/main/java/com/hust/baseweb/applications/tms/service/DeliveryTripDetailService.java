@@ -1,8 +1,7 @@
 package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
-import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripDetailInputModel;
-import com.hust.baseweb.applications.tms.model.deliverytripdetail.DeliveryTripDetailModel;
+import com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,8 @@ import java.util.UUID;
 
 @Service
 public interface DeliveryTripDetailService {
-    int save(String deliveryTripId, List<CreateDeliveryTripDetailInputModel> inputs);
+    int save(String deliveryTripId,
+             List<com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel.Create> inputs);
 
     boolean delete(String deliveryTripDetailId);
 
