@@ -265,7 +265,9 @@ public class OrderServiceImpl implements OrderService {
             }
             oidv[i].setQuantity(oi.getQuantity());
             oidv[i].setUnitPrice(oi.getUnitPrice());
-            oidv[i].setTotalItemPrice(oidv[i].getUnitPrice().multiply(new BigDecimal(oi.getQuantity())));
+            if(oidv[i].getUnitPrice() != null)
+            	oidv[i].setTotalItemPrice(oidv[i].getUnitPrice().multiply(new BigDecimal(oi.getQuantity())));
+            
             oidv[i].setUom(oi.getProduct().getUom().getDescription());
         }
         odv.setOrderItems(oidv);

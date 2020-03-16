@@ -578,8 +578,6 @@ CREATE TABLE inventory_item_detail
     inventory_item_id         UUID NOT NULL,
     effective_date            TIMESTAMP,
     quantity_on_hand_diff     DECIMAL(18, 6),
-    available_to_promise_diff DECIMAL(18, 6),
-    accounting_quantity_diff  DECIMAL(18, 6),
     order_id                  VARCHAR(60),
     order_item_seq_id         VARCHAR(60),
     last_updated_stamp        TIMESTAMP,

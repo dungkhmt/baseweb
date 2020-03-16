@@ -68,10 +68,6 @@ public class ProductController {
         return ResponseEntity.ok().body(new Product());
     }
 
-
-
-
-
     @GetMapping("/get-list-product-frontend")
     public ResponseEntity<?> getListProductFrontend(Pageable page, @RequestParam(required = false) String param){
         Page<Product> productPage = productPagingRepo.findAll(page);
