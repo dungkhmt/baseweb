@@ -99,12 +99,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customer;
     }
 
-    @Override
-    public List<PartyCustomer> findDistributors() {
-        PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");
-        List<PartyCustomer> distributors = customerRepo.findByPartyType(partyType);
-        return distributors;
-    }
 
     @Override
     public List<PartyCustomer> findRetailOutlers() {

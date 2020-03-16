@@ -1,7 +1,7 @@
 package com.hust.baseweb.applications.tms.entity;
 
 import com.hust.baseweb.applications.logistics.entity.Product;
-import com.hust.baseweb.applications.tms.model.deliverytripdetail.DeliveryTripDetailModel;
+import com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel;
 import com.hust.baseweb.entity.StatusItem;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,8 +49,12 @@ public class DeliveryTripDetail {
             if (shipmentItem.getShipToLocation() != null) {
                 deliveryTripDetailModel.setAddress(shipmentItem.getShipToLocation().getAddress());
                 if (shipmentItem.getShipToLocation().getGeoPoint() != null) {
-                    deliveryTripDetailModel.setLat(Double.parseDouble(shipmentItem.getShipToLocation().getGeoPoint().getLatitude()));
-                    deliveryTripDetailModel.setLng(Double.parseDouble(shipmentItem.getShipToLocation().getGeoPoint().getLongitude()));
+                    deliveryTripDetailModel.setLat(Double.parseDouble(shipmentItem.getShipToLocation()
+                            .getGeoPoint()
+                            .getLatitude()));
+                    deliveryTripDetailModel.setLng(Double.parseDouble(shipmentItem.getShipToLocation()
+                            .getGeoPoint()
+                            .getLongitude()));
                 }
             }
             deliveryTripDetailModel.setShipmentQuantity(shipmentItem.getQuantity());
@@ -58,7 +62,7 @@ public class DeliveryTripDetail {
         if (product != null) {
             deliveryTripDetailModel.setProductId(product.getProductId());
             deliveryTripDetailModel.setProductName(product.getProductName());
-            deliveryTripDetailModel.setWeight(product.getWeight() / shipmentItem.getQuantity() * deliveryQuantity);
+            deliveryTripDetailModel.setWeight(product.getWeight() * deliveryQuantity);
         }
         deliveryTripDetailModel.setDeliveryQuantity(deliveryQuantity);
         return deliveryTripDetailModel;

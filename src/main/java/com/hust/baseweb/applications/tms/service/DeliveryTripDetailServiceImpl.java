@@ -1,14 +1,12 @@
 package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
-import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
-import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripDetailInputModel;
-import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripInfoModel;
-import com.hust.baseweb.applications.tms.model.deliverytripdetail.DeliveryTripDetailModel;
+import com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel;
+import com.hust.baseweb.applications.tms.model.DeliveryTripModel;
 import com.hust.baseweb.applications.tms.repo.DeliveryTripDetailRepo;
 import com.hust.baseweb.applications.tms.repo.DeliveryTripRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
@@ -42,9 +40,10 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
 
     @Override
-    public int save(String deliveryTripId, List<CreateDeliveryTripDetailInputModel> inputs) {
+    public int save(String deliveryTripId,
+                    List<com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel.Create> inputs) {
         UUID deliveryTripIdUuid = UUID.fromString(deliveryTripId);
-        for (CreateDeliveryTripDetailInputModel input : inputs) {
+        for (com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel.Create input : inputs) {
             log.info("save, input quantity = " + input.getDeliveryQuantity());
             DeliveryTripDetail deliveryTripDetail = new DeliveryTripDetail();
             deliveryTripDetail.setDeliveryTripId(deliveryTripIdUuid);
@@ -52,7 +51,12 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             //deliveryTripDetail.setS
             ShipmentItem shipmentItem = shipmentItemRepo.findByShipmentItemId(input.getShipmentItemId());
 
-            log.info("save, find ShipmentItem " + shipmentItem.getShipment().getShipmentId() + "," + shipmentItem.getShipmentItemId() + ", product = " + shipmentItem.getProductId());
+            log.info("save, find ShipmentItem " +
+                    shipmentItem.getShipment().getShipmentId() +
+                    "," +
+                    shipmentItem.getShipmentItemId() +
+                    ", product = " +
+                    shipmentItem.getOrderItem().getProduct().getProductId());
 
             deliveryTripDetail.setShipmentItem(shipmentItem);
             deliveryTripDetail.setDeliveryQuantity(input.getDeliveryQuantity());
@@ -60,8 +64,10 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             deliveryTripDetailRepo.save(deliveryTripDetail);
         }
         // TODO: reuse calc weight+distance+pallet function
-        DeliveryTripInfoModel deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(deliveryTripId, new ArrayList<>());
-        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(deliveryTripIdUuid).orElseThrow(NoSuchElementException::new);
+        DeliveryTripModel.Tour deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(deliveryTripId,
+                new ArrayList<>());
+        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(deliveryTripIdUuid)
+                .orElseThrow(NoSuchElementException::new);
         deliveryTrip.setTotalWeight(deliveryTripInfo.getTotalWeight());
         deliveryTrip.setTotalPallet(deliveryTripInfo.getTotalPallet());
         deliveryTrip.setDistance(deliveryTripInfo.getTotalDistance());
@@ -72,7 +78,7 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         return inputs.size();
     }
 
-    public void updateDeliveryTripDetailSequence(UUID deliveryTripIdUuid, DeliveryTripInfoModel deliveryTripInfo) {
+    public void updateDeliveryTripDetailSequence(UUID deliveryTripIdUuid, DeliveryTripModel.Tour deliveryTripInfo) {
         List<GeoPoint> tour = deliveryTripInfo.getTour();
         Map<GeoPoint, Integer> geoPointIndexMap = new HashMap<>();
         for (int i = 0; i < tour.size(); i++) {
@@ -90,10 +96,13 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     @Override
     public boolean delete(String deliveryTripDetailId) {
         UUID deliveryTripDetailIdUuid = UUID.fromString(deliveryTripDetailId);
-        DeliveryTripDetail deliveryTripDetail = deliveryTripDetailRepo.findById(deliveryTripDetailIdUuid).orElseThrow(NoSuchElementException::new);
-        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(deliveryTripDetail.getDeliveryTripId()).orElseThrow(NoSuchElementException::new);
+        DeliveryTripDetail deliveryTripDetail = deliveryTripDetailRepo.findById(deliveryTripDetailIdUuid)
+                .orElseThrow(NoSuchElementException::new);
+        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(deliveryTripDetail.getDeliveryTripId())
+                .orElseThrow(NoSuchElementException::new);
         deliveryTripDetailRepo.deleteById(deliveryTripDetailIdUuid);
-        DeliveryTripInfoModel deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(deliveryTrip.getDeliveryTripId().toString(), new ArrayList<>());
+        DeliveryTripModel.Tour deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(deliveryTrip.getDeliveryTripId()
+                .toString(), new ArrayList<>());
         deliveryTrip.setTotalWeight(deliveryTripInfo.getTotalWeight());
         deliveryTrip.setTotalPallet(deliveryTripInfo.getTotalPallet());
         deliveryTrip.setDistance(deliveryTripInfo.getTotalDistance());
@@ -111,14 +120,11 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     @Override
     public List<DeliveryTripDetailModel> findAll(String deliveryTripId) {
-        List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripId(UUID.fromString(deliveryTripId));
-        Map<String, Product> productMap = new HashMap<>();
-        productRepo.findAllByProductIdIn(deliveryTripDetails.stream()
-                .map(deliveryTripDetail -> deliveryTripDetail.getShipmentItem().getProductId()).distinct()
-                .collect(Collectors.toList())).forEach(product -> productMap.put(product.getProductId(), product));
+        List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripId(UUID.fromString(
+                deliveryTripId));
         return deliveryTripDetails.stream()
                 .map(deliveryTripDetail -> deliveryTripDetail.toDeliveryTripDetailModel(
-                        productMap.get(deliveryTripDetail.getShipmentItem().getProductId())))
+                        deliveryTripDetail.getShipmentItem().getOrderItem().getProduct()))
                 .collect(Collectors.toList());
     }
 
@@ -126,7 +132,10 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     @Transactional
     public DeliveryTripDetail updateStatusDeliveryTripDetail(
             UUID deliveryTripDetailId, String statusId) {
-        log.info("updateStatusDeliveryTripDetail, deliveryTripDetailId = " + deliveryTripDetailId + ", statusId = " + statusId);
+        log.info("updateStatusDeliveryTripDetail, deliveryTripDetailId = " +
+                deliveryTripDetailId +
+                ", statusId = " +
+                statusId);
         StatusItem statusItem = statusItemRepo.findByStatusId(statusId);
         DeliveryTripDetail dtd = deliveryTripDetailRepo.findByDeliveryTripDetailId(deliveryTripDetailId);
         if (dtd == null) {
@@ -134,7 +143,11 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         }
         dtd.setStatusItem(statusItem);
         dtd = deliveryTripDetailRepo.save(dtd);
-        log.info("updateStatusDeliveryTripDetail, deliveryTripDetailId = " + deliveryTripDetailId + ", statusId = " + statusId + " DONE");
+        log.info("updateStatusDeliveryTripDetail, deliveryTripDetailId = " +
+                deliveryTripDetailId +
+                ", statusId = " +
+                statusId +
+                " DONE");
 
         return dtd;
     }

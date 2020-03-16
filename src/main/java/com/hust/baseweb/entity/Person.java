@@ -1,6 +1,8 @@
 package com.hust.baseweb.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Person {
     @Id
     @Column(name = "party_id")
@@ -36,16 +40,17 @@ public class Person {
     //@Column(name="birth_date")
     private Date birthDate;
 
-
-    public Person(UUID partyId, String firstName, String middleName, String lastName, String gender, Date birthDate) {
-        this.partyId = partyId;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.gender = gender;
-        this.birthDate = birthDate;
+    public BasicInfoModel getBasicInfoModel() {
+        return new BasicInfoModel(partyId, firstName + " " + middleName + " " + lastName, gender);
     }
 
-    public Person() {
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class BasicInfoModel {
+        private UUID partyId;
+        private String fullName;
+        private String gender;
     }
 }
+

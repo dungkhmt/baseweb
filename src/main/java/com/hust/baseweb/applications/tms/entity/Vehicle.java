@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.tms.entity;
 
-import com.hust.baseweb.applications.tms.model.vehicle.VehicleModel;
+import com.hust.baseweb.applications.tms.model.VehicleModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +35,11 @@ public class Vehicle {
     private String statusId;
     @Column(name = "description")
     private String description;
+
+    @Column(name = "product_transport_category_id")
+    private String productTransportCategoryId;  // KHO, LANH, DONG
+
+    private Integer priority;
 
     public VehicleModel toVehicleModel() {
         return new VehicleModel(

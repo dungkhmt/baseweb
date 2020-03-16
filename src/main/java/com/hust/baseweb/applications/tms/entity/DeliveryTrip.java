@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.tms.entity;
 
-import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripModel;
+import com.hust.baseweb.applications.tms.model.DeliveryTripModel;
 import com.hust.baseweb.utils.Constant;
 import lombok.Getter;
 import lombok.Setter;

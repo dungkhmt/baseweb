@@ -29,5 +29,5 @@ public class PostalAddress {
     @ManyToOne
     private GeoPoint geoPoint;
 
-
+    private Double maxLoadWeight;
 }

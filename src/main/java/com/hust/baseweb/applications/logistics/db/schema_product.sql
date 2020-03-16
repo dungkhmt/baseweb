@@ -124,6 +124,7 @@ CREATE TABLE facility
     facility_type_id   VARCHAR(60),
     parent_facility_id VARCHAR(60),
     facility_name      VARCHAR(100),
+
     contact_mech_id    UUID,
     product_store_id   VARCHAR(60),
     opened_date        TIMESTAMP,
@@ -137,6 +138,7 @@ CREATE TABLE facility
     CONSTRAINT fk_parent_facility_id FOREIGN KEY (parent_facility_id) REFERENCES facility (facility_id),
     CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES product_store (product_store_id)
 );
+
 
 CREATE TABLE inventory_item
 (

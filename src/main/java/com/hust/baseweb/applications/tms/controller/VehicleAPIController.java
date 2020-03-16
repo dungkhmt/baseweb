@@ -1,9 +1,8 @@
 package com.hust.baseweb.applications.tms.controller;
 
 import com.hust.baseweb.applications.tms.entity.Vehicle;
-import com.hust.baseweb.applications.tms.model.createvehicle.CreateVehicleModel;
-import com.hust.baseweb.applications.tms.model.vehicle.CreateVehicleDeliveryPlanModel;
-import com.hust.baseweb.applications.tms.model.vehicle.DeleteVehicleDeliveryPlanModel;
+import com.hust.baseweb.applications.tms.model.LocationModel;
+import com.hust.baseweb.applications.tms.model.VehicleModel;
 import com.hust.baseweb.applications.tms.service.VehicleService;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
@@ -45,9 +44,19 @@ public class VehicleAPIController {
     @PostMapping("/upload-vehicle")
     public ResponseEntity<?> uploadVehicles(Principal principal, @RequestParam("file") MultipartFile multipartFile) throws IOException {
         log.info("::uploadVehicle");
-        List<CreateVehicleModel> vehicleModels =
-                Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreateVehicleModel.class,
-                        PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải").build());
+        List<VehicleModel.Create> vehicleModels
+                = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, VehicleModel.Create.class,
+                PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải").build());
+
+        List<VehicleModel.CreateLocationPriority> vehicleLocationPriorities
+                = Poiji.fromExcel(multipartFile.getInputStream(),
+                PoijiExcelType.XLSX,
+                VehicleModel.CreateLocationPriority.class,
+                PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải - Shipto").build());
+
+        List<LocationModel.Create> shipToModels
+                = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, LocationModel.Create.class,
+                PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Shipto").build());
 
         /*
         List<Vehicle> vehicles = vehicleModels.stream().map(CreateVehicleModel::toVehicle).collect(Collectors.toList());
@@ -55,7 +64,7 @@ public class VehicleAPIController {
         vehicleService.saveAll(vehicles);
         vehicleService.saveAllMaintenanceHistory(vehicleMaintenanceHistories);
         */
-        List<Vehicle> vehicles = vehicleService.save(vehicleModels);
+        List<Vehicle> vehicles = vehicleService.save(vehicleModels, vehicleLocationPriorities, shipToModels);
 
         return ResponseEntity.ok().body(vehicles.size());
     }
@@ -76,22 +85,33 @@ public class VehicleAPIController {
 
     // submit button
     @PostMapping("/create-vehicle-delivery-plan")
-    public ResponseEntity<?> createVehicleDeliveryPlan(Principal principal, @RequestBody CreateVehicleDeliveryPlanModel createVehicleDeliveryPlanModel) {
-        log.info("::createVehicleDeliveryPlan: " + createVehicleDeliveryPlanModel.getDeliveryPlanId());
-        return ResponseEntity.ok().body(vehicleService.saveVehicleDeliveryPlan(createVehicleDeliveryPlanModel));
+    public ResponseEntity<?> createVehicleDeliveryPlan(Principal principal,
+                                                       @RequestBody VehicleModel.CreateDeliveryPlan createDeliveryPlan) {
+        log.info("::createVehicleDeliveryPlan: " + createDeliveryPlan.getDeliveryPlanId());
+        return ResponseEntity.ok().body(vehicleService.saveVehicleDeliveryPlan(createDeliveryPlan));
     }
 
     // delete button
     @PostMapping("/delete-vehicle-delivery-plan")
-    public ResponseEntity<?> deleteVehicleDeliveryPlan(Principal principal, @RequestBody DeleteVehicleDeliveryPlanModel deleteVehicleDeliveryPlanModel) {
-        log.info("::deleteVehicleDeliveryPlan: " + deleteVehicleDeliveryPlanModel.getDeliveryPlanId());
-        return ResponseEntity.ok().body(vehicleService.deleteVehicleDeliveryPlan(deleteVehicleDeliveryPlanModel));
+    public ResponseEntity<?> deleteVehicleDeliveryPlan(Principal principal,
+                                                       @RequestBody VehicleModel.DeleteDeliveryPlan deleteDeliveryPlan) {
+        log.info("::deleteVehicleDeliveryPlan: " + deleteDeliveryPlan.getDeliveryPlanId());
+        return ResponseEntity.ok().body(vehicleService.deleteVehicleDeliveryPlan(deleteDeliveryPlan));
     }
 
     // add view
-    @GetMapping("/vehicle-not-in/{deliveryPlanId}")
-    public ResponseEntity<?> getVehicleNotIn(Principal principal, @PathVariable String deliveryPlanId, Pageable pageable) {
+    @GetMapping("/vehicle-not-in/{deliveryPlanId}/page")
+    public ResponseEntity<?> getVehiclePageNotIn(Principal principal,
+                                                 @PathVariable String deliveryPlanId,
+                                                 Pageable pageable) {
         log.info("::getVehicleNotIn deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlanId(deliveryPlanId, pageable));
+    }
+
+    // add view
+    @GetMapping("/vehicle-not-in/{deliveryPlanId}/all")
+    public ResponseEntity<?> getAllVehicleNotIn(Principal principal, @PathVariable String deliveryPlanId) {
+        log.info("::getVehicleNotIn deliveryPlanId=" + deliveryPlanId);
+        return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlanId(deliveryPlanId));
     }
 }

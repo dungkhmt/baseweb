@@ -9,7 +9,17 @@ import java.util.List;
 public interface ProductService {
     Product findByProductId(String productId);
 
-    List<Product> getAllProducts();
+    public List<Product> getAllProducts();
 
-    Product save(String productId, String productName, String productTransportCategory, double productWeight, String uomId);
+    public Product save(String productId, String productName, String uomId);
+
+    public void saveProduct(Product product);
+
+    Product save(String productId,
+                 String productName,
+                 String productTransportCategory,
+                 double productWeight,
+                 String uomId,
+                 Integer hsThu,
+                 Integer hsPal);
 }

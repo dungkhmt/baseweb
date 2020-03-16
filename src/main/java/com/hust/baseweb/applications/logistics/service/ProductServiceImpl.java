@@ -32,7 +32,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Product save(String productId, String productName, String productTransportCategory, double productWeight, String uomId) {
+    public Product save(String productId,
+                        String productName,
+                        String productTransportCategory,
+                        double productWeight,
+                        String uomId,
+                        Integer hsThu,
+                        Integer hsPal) {
         // TODO: check duplicate productId
         Uom uom = uomRepo.findByUomId(uomId);
         if (uom == null) {
@@ -44,6 +50,30 @@ public class ProductServiceImpl implements ProductService {
         product.setWeight(productWeight);
         product.setUom(uom);
         product.setProductTransportCategoryId(productTransportCategory);
+        product.setHsThu(hsThu);
+        product.setHsPal(hsPal);
+        product = productRepo.save(product);
+        return product;
+    }
+
+    @Override
+    public void saveProduct(Product product) {
+        productRepo.save(product);
+    }
+
+
+    @Override
+    @Transactional
+    public Product save(String productId, String productName, String uomId) {
+        // TODO: check duplicate productId
+        Uom uom = uomRepo.findByUomId(uomId);
+        if (uom == null) {
+            uom = uomService.save(uomId, "UNIT_MEASURE", uomId, uomId);
+        }
+        Product product = new Product();
+        product.setProductName(productName);
+        product.setProductId(productId);
+        product.setUom(uom);
         product = productRepo.save(product);
         return product;
     }

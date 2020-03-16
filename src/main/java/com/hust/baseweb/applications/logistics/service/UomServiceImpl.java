@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class UomServiceImpl implements UomService {
@@ -27,4 +29,13 @@ public class UomServiceImpl implements UomService {
         return uom;
     }
 
+    @Override
+    public List<Uom> getAllUoms() {
+        return uomRepo.findAll();
+    }
+
+    @Override
+    public Uom getUomByUomId(String uomId) {
+        return uomRepo.findByUomId(uomId);
+    }
 }

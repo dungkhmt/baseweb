@@ -79,6 +79,9 @@ CREATE TABLE order_header
     CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES facility (facility_id)
 
 );
+
+
+-- done
 CREATE TABLE order_item_type
 (
     order_item_type_id VARCHAR(60) NOT NULL,

@@ -1,10 +1,8 @@
 package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
-import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripDetailInputModel;
-import com.hust.baseweb.applications.tms.model.createdeliverytrip.CreateDeliveryTripInputModel;
-import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripInfoModel;
-import com.hust.baseweb.applications.tms.model.deliverytrip.DeliveryTripModel;
+import com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel;
+import com.hust.baseweb.applications.tms.model.DeliveryTripModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +13,10 @@ import java.util.UUID;
 
 @Service
 public interface DeliveryTripService {
-    DeliveryTrip save(CreateDeliveryTripInputModel input);
+    DeliveryTrip save(com.hust.baseweb.applications.tms.model.DeliveryTripModel.Create input,
+                      double totalDistance,
+                      double totalWeight,
+                      double totalPallet);
 
     Page<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
@@ -23,7 +24,8 @@ public interface DeliveryTripService {
 
     DeliveryTrip findById(UUID deliveryTripId);
 
-    DeliveryTripInfoModel getDeliveryTripInfo(String deliveryTripId, List<CreateDeliveryTripDetailInputModel> shipmentItemModels);
+    DeliveryTripModel.Tour getDeliveryTripInfo(String deliveryTripId,
+                                               List<DeliveryTripDetailModel.Create> shipmentItemModels);
 
     GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(String driverUserLoginId);
 

@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.tms.repo;
 import com.hust.baseweb.applications.tms.entity.DistanceTravelTimeGeoPoint;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -10,4 +11,7 @@ import java.util.UUID;
  */
 public interface DistanceTravelTimeGeoPointRepo extends PagingAndSortingRepository<DistanceTravelTimeGeoPoint, String> {
     DistanceTravelTimeGeoPoint findByFromGeoPointIdAndToGeoPointId(UUID fromGeoPointId, UUID toGeoPointId);
+
+    List<DistanceTravelTimeGeoPoint> findAllByFromGeoPointIdInAndToGeoPointIdIn(List<UUID> fromGeoPoints,
+                                                                                List<UUID> toGeoPoints);
 }
