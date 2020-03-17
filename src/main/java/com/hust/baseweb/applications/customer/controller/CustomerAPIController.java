@@ -42,7 +42,8 @@ public class CustomerAPIController {
         Page<PartyCustomer> customers = customerRepo.findAll(page);
         for (PartyCustomer c: customers
              ) {
-            c.setType(c.getPartyType().getDescription());
+            if(c.getPartyType() != null)
+            	c.setType(c.getPartyType().getDescription());
         }
         return ResponseEntity.ok().body(customers);
     }
