@@ -344,6 +344,21 @@ create table customer_salesman
     constraint fk_customer_salesman_salesman foreign key (party_salesman_id) references party_salesman (party_id)
 );
 
+create table customer_salesman_vendor
+(
+    customer_salesman_vendor_id UUID NOT NULL default uuid_generate_v1(),
+    party_customer_id    UUID NOT NULL,
+    party_salesman_id    UUID NOT NULL,
+    party_vendor_id		UUID NOT NULL,
+    from_date            TIMESTAMP,
+    thru_date            TIMESTAMP,
+    constraint pk_customer_salesman_vendor primary key (customer_salesman_vendor_id),
+    constraint fk_customer_salesman_vendor_customer foreign key (party_customer_id) references party(party_id),
+    constraint fk_customer_salesman_vendor_salesman foreign key (party_salesman_id) references party(party_id),
+    constraint fk_customer_salesman_vendor_vendor foreign key (party_vendor_id) references party(party_id)
+);
+
+
 create table sales_route_config
 (
     sales_route_config_id UUID NOT NULL default uuid_generate_v1(),
