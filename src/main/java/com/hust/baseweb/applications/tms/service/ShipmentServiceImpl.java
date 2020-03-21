@@ -13,6 +13,7 @@ import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.geo.service.PostalAddressService;
+import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.service.ProductService;
@@ -237,6 +238,10 @@ public class ShipmentServiceImpl implements ShipmentService {
         orderItem.setProduct(product);
         orderItem.setQuantity(shipmentItemModel.getQuantity());
         orderItem.setOrderItemSeqId(orderSeqIdCounterMap.merge(orderHeader.getOrderId(), 1, Integer::sum) + "");
+
+        Facility facility = new Facility();
+        facility.setFacilityId(shipmentItemModel.getFacilityId());
+        orderItem.setFacility(facility);
         return orderItem;
     }
 

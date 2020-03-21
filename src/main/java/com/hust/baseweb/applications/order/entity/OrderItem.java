@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.order.entity;
 
+import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.model.InventoryModel;
 import lombok.Getter;
@@ -21,6 +22,10 @@ public class OrderItem {
     @Id
     @Column(name = "order_item_seq_id")
     private String orderItemSeqId;
+
+    @JoinColumn(name = "facility_id", referencedColumnName = "facility_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Facility facility;
 
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
     @ManyToOne(fetch = FetchType.EAGER)
