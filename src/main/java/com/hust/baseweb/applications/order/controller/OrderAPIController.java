@@ -4,7 +4,10 @@ import com.google.gson.Gson;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.cache.RevenueOrderCache;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
+import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.order.model.*;
+import com.hust.baseweb.applications.order.repo.OrderHeaderPageRepo;
+import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
 import com.hust.baseweb.applications.order.service.OrderService;
 import com.hust.baseweb.applications.order.service.PartyCustomerService;
 import com.hust.baseweb.applications.sales.service.PartySalesmanService;
@@ -37,6 +40,8 @@ public class OrderAPIController {
     private PartySalesmanService partySalesmanService;
     private UserService userService;
 
+    private OrderHeaderPageRepo orderHeaderPageRepo;
+
     @PostMapping("/create-order-distributor-to-retailoutlet")
     public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
         //TODO
@@ -56,26 +61,26 @@ public class OrderAPIController {
         return null;
     }
 
-    @PostMapping("/get-list-orders")
-    public ResponseEntity getListOrders(Principal principal, @RequestBody GetListOrdersInputModel input) {
-        // TODO
-        return null;
+    @GetMapping("/get-orders/all")
+    public ResponseEntity getAllOrders() {
+        return ResponseEntity.ok().body(orderService.findAll());
     }
 
     @GetMapping("/orders")
     public ResponseEntity<?> getOrders(Pageable page, @RequestParam(required = false) String param) {
         log.info("getOrders, page = pageNumber = " + page.getPageNumber() + ", offSet = " +
                 page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
-        Page<OrderHeader> orders = orderService.findAll(page);
+        Page<OrderHeader> orders = orderHeaderPageRepo.findAll(page);
 
-        List<OrderDetailView> odv = orders.stream().map(p -> new OrderDetailView(p, orderService, partySalesmanService, userService)).collect(Collectors.toList());
+        List<OrderDetailView> odv = orders.stream()
+                .map(p -> new OrderDetailView(p, orderService, partySalesmanService, userService))
+                .collect(Collectors.toList());
 
         //Page<DTOPerson> dtoPerson = new PageImpl<DTOPerson>(lst, page,
         //	       pg.getTotalElements());
 
         //Page<OrderDetailView> page_odv = PageUtils.getPage(odv, orders.getPageable());
-        Page<OrderDetailView> page_odv = new PageImpl<OrderDetailView>(odv, page,
-                orders.getTotalElements());
+        Page<OrderDetailView> page_odv = new PageImpl<>(odv, page, orders.getTotalElements());
 
         //return ResponseEntity.ok().body(orders);
         return ResponseEntity.ok().body(page_odv);
@@ -92,7 +97,8 @@ public class OrderAPIController {
     }
 
     @PostMapping("/get-list-party-customers")
-    public ResponseEntity getListPartyCustomers(Principal principal, @RequestBody GetListPartyCustomerInputModel input) {
+    public ResponseEntity getListPartyCustomers(Principal principal,
+                                                @RequestBody GetListPartyCustomerInputModel input) {
         // TODO
         List<PartyCustomer> partyCustomers = partyCustomerService.getListPartyCustomers();
         return ResponseEntity.ok().body(new GetListPartyCustomerOutputModel(partyCustomers));

@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.order.entity;
 
 import com.hust.baseweb.applications.logistics.entity.Product;
+import com.hust.baseweb.applications.logistics.model.InventoryModel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,4 +31,14 @@ public class OrderItem {
 
     @Column(name = "quantity")
     private int quantity;
+
+    public InventoryModel.OrderItem toOrderItemModel(int exportedQuantity) {
+        return new InventoryModel.OrderItem(
+                product.getProductId(),
+                product.getProductName(),
+                quantity,
+                exportedQuantity,
+                orderId
+        );
+    }
 }

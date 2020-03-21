@@ -7,12 +7,10 @@ import com.hust.baseweb.applications.logistics.model.ImportInventoryItemsInputMo
 import com.hust.baseweb.applications.logistics.service.InventoryItemService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -27,10 +25,10 @@ public class InventoryItemAPIController {
     @PostMapping("/import-inventory-items")
     @Transactional
     public ResponseEntity importInventoryItems(Principal principal, @RequestBody ImportInventoryItemsInputModel input) {
-        System.out.println(module + "::importInventoryItems, input.sz = " + input.getInventoryItems().length);
+//        System.out.println(module + "::importInventoryItems, input.sz = " + input.getInventoryItems().length);
 
         for (ImportInventoryItemInputModel inputModel : input.getInventoryItems()) {
-            InventoryItem inventoryItem = inventoryItemService.save(inputModel);
+            InventoryItem inventoryItem = inventoryItemService.importInventoryItem(inputModel);
             if (inventoryItem == null) {
                 // THIS SHOULD BE IMPROVE using transaction
                 return ResponseEntity.unprocessableEntity().body("cannot create inventory item");
@@ -40,8 +38,19 @@ public class InventoryItemAPIController {
     }
 
     @PostMapping("/export-inventory-items")
-    public ResponseEntity<?> exportInventoryItems(Principal principal, @RequestBody ExportInventoryItemsInputModel input) {
+    public ResponseEntity<?> exportInventoryItems(Principal principal,
+                                                  @RequestBody ExportInventoryItemsInputModel input) {
         String response = inventoryItemService.exportInventoryItems(input);
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/get-inventory-order-header/page")
+    public ResponseEntity<?> getInventoryOrderHeaderPage(Pageable pageable) {
+        return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderHeaderPage(pageable));
+    }
+
+    @GetMapping("/get-inventory-order-detail/{orderId}/all")
+    public ResponseEntity<?> getInventoryOrderDetailPage(Pageable pageable, @PathVariable String orderId) {
+        return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderHeaderDetail(orderId));
     }
 }

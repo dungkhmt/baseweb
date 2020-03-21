@@ -1,21 +1,30 @@
 package com.hust.baseweb.applications.logistics.service;
 
+import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.logistics.entity.*;
 import com.hust.baseweb.applications.logistics.model.ExportInventoryItemInputModel;
 import com.hust.baseweb.applications.logistics.model.ExportInventoryItemsInputModel;
 import com.hust.baseweb.applications.logistics.model.ImportInventoryItemInputModel;
+import com.hust.baseweb.applications.logistics.model.InventoryModel;
+import com.hust.baseweb.applications.logistics.repo.InventoryItemDetailRepo;
 import com.hust.baseweb.applications.logistics.repo.InventoryItemRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductFacilityRepo;
+import com.hust.baseweb.applications.order.entity.OrderHeader;
+import com.hust.baseweb.applications.order.entity.OrderItem;
+import com.hust.baseweb.applications.order.entity.OrderRole;
+import com.hust.baseweb.applications.order.repo.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -23,26 +32,36 @@ import java.util.List;
 public class InventoryItemServiceImpl implements InventoryItemService {
     public static final String module = InventoryItemServiceImpl.class.getName();
 
-    InventoryItemRepo inventoryItemRepo;
-    FacilityService facilityService;
-    ProductService productService;
+    private InventoryItemRepo inventoryItemRepo;
+    private FacilityService facilityService;
+    private ProductService productService;
     private ProductFacilityRepo productFacilityRepo;
     private InventoryItemDetailService inventoryItemDetailService;
 
+    private OrderHeaderPageRepo orderHeaderPageRepo;
+    private OrderHeaderRepo orderHeaderRepo;
+    private OrderItemRepo orderItemRepo;
+    private OrderRoleRepo orderRoleRepo;
+    private PartyCustomerRepo partyCustomerRepo;
+
+    private InventoryItemDetailRepo inventoryItemDetailRepo;
+
     @Override
     @Transactional
-    public InventoryItem save(ImportInventoryItemInputModel input) {
+    public InventoryItem importInventoryItem(ImportInventoryItemInputModel input) {
 
-        System.out.println(module + "::save(" + input.getProductId() + "," + input.getQuantityOnHandTotal() + ")");
+//        System.out.println(module + "::save(" + input.getProductId() + "," + input.getQuantityOnHandTotal() + ")");
 
-        InventoryItem inventoryItem = new InventoryItem();
         Product product = productService.findByProductId(input.getProductId());
         Facility facility = facilityService.findFacilityById(input.getFacilityId());
 
         if (product == null || facility == null) {
             return null;
         }
-        ProductFacility productFacility = productFacilityRepo.findByProductIdAndFacilityId(product.getProductId(), facility.getFacilityId());
+
+        // product processing region
+        ProductFacility productFacility = productFacilityRepo.findByProductIdAndFacilityId(product.getProductId(),
+                facility.getFacilityId());
         if (productFacility == null) {
             productFacility = new ProductFacility();
             productFacility.setProductId(product.getProductId());
@@ -50,15 +69,16 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             productFacility.setAtpInventoryCount(new BigDecimal(input.getQuantityOnHandTotal()));
             productFacility.setLastInventoryCount(new BigDecimal(0));
         }
+        productFacility.setLastInventoryCount(productFacility.getLastInventoryCount()
+                .add(new BigDecimal(input.getQuantityOnHandTotal())));
+        productFacility = productFacilityRepo.save(productFacility);
 
+        // inventory processing region
+        InventoryItem inventoryItem = new InventoryItem();
         inventoryItem.setFacility(facility);
         inventoryItem.setProduct(product);
         inventoryItem.setLotId(input.getLotId());
         inventoryItem.setQuantityOnHandTotal(input.getQuantityOnHandTotal());
-
-        productFacility.setLastInventoryCount(productFacility.getLastInventoryCount().add(new BigDecimal(input.getQuantityOnHandTotal())));
-
-        productFacility = productFacilityRepo.save(productFacility);
 
         return inventoryItemRepo.save(inventoryItem);
     }
@@ -67,25 +87,54 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @Transactional
     public String exportInventoryItems(ExportInventoryItemsInputModel inventoryItemsInput) {
 
-        List<InventoryItem> inventoryItems = inventoryItemRepo.findAll();// to be improved, find by (productId, facilityId)
+//        List<InventoryItem> inventoryItems = inventoryItemRepo.findAll();// to be improved, find by (productId, facilityId)
+        List<Product> queryProducts = Stream.of(inventoryItemsInput.getInventoryItems())
+                .map(exportInventoryItemInputModel -> {
+                    Product product = new Product();
+                    product.setProductId(exportInventoryItemInputModel.getProductId());
+                    return product;
+                })
+                .collect(Collectors.toList());
+        List<Facility> queryFacilities = Stream.of(inventoryItemsInput.getInventoryItems())
+                .map(exportInventoryItemInputModel -> {
+                    Facility facility = new Facility();
+                    facility.setFacilityId(exportInventoryItemInputModel.getFacilityId());
+                    return facility;
+                })
+                .collect(Collectors.toList());
+        List<InventoryItem> inventoryItems = inventoryItemRepo.findAllByProductInAndFacilityIn(
+                queryProducts, queryFacilities);
+
         log.info("exportInventoryItems, inventoryItems.sz = " + inventoryItems.size());
 
         for (int i = 0; i < inventoryItemsInput.getInventoryItems().length; i++) {
-            ExportInventoryItemInputModel eii = inventoryItemsInput.getInventoryItems()[i];
-            String productId = eii.getProductId();
-            String facilityId = eii.getFacilityId();
-            int quantity = eii.getQuantity();
+            ExportInventoryItemInputModel exportModel = inventoryItemsInput.getInventoryItems()[i];
+            String productId = exportModel.getProductId();
+            String facilityId = exportModel.getFacilityId();
+            int quantity = exportModel.getQuantity();
             // find list of inventory-items suitable for exporting productId at the facilityId
             //List<InventoryItem> inventoryItems = inventoryItemRepo.findAllByProductIdAndFacilityId(productId, facilityId);
 
-            log.info("exportInventoryItems, productId = " + productId + ", facilityId = " + facilityId + ", list = " + inventoryItems.size());
-            List<InventoryItem> selectedInventoryItems = new ArrayList<InventoryItem>();
+            log.info("exportInventoryItems, productId = " +
+                    productId +
+                    ", facilityId = " +
+                    facilityId +
+                    ", list = " +
+                    inventoryItems.size());
+            List<InventoryItem> selectedInventoryItems = new ArrayList<>();
             BigDecimal totalCount = new BigDecimal(0);// total inventory count of productId in the faicilityId
-            for (InventoryItem ii : inventoryItems) {
-                if (ii.getQuantityOnHandTotal() > 0 && ii.getProduct().getProductId().equals(productId) && ii.getFacility().getFacilityId().equals(facilityId)) {
-                    log.info("exportInventoryItems, productId = " + productId + ", facilityId = " + facilityId + ", qty = " + ii.getQuantityOnHandTotal());
-                    selectedInventoryItems.add(ii);
-                    totalCount = totalCount.add(new BigDecimal(ii.getQuantityOnHandTotal()));
+            for (InventoryItem inventoryItem : inventoryItems) {
+                if (inventoryItem.getQuantityOnHandTotal() > 0 &&
+                        inventoryItem.getProduct().getProductId().equals(productId) &&
+                        inventoryItem.getFacility().getFacilityId().equals(facilityId)) {
+                    log.info("exportInventoryItems, productId = " +
+                            productId +
+                            ", facilityId = " +
+                            facilityId +
+                            ", qty = " +
+                            inventoryItem.getQuantityOnHandTotal());
+                    selectedInventoryItems.add(inventoryItem);
+                    totalCount = totalCount.add(new BigDecimal(inventoryItem.getQuantityOnHandTotal()));
                 }
             }
             InventoryItem[] sortedInventoryItems = new InventoryItem[selectedInventoryItems.size()];
@@ -95,7 +144,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             // sorting
             for (int j1 = 0; j1 < sortedInventoryItems.length; j1++) {
                 for (int j2 = j1 + 1; j2 < sortedInventoryItems.length; j2++) {
-                    if (sortedInventoryItems[j1].getQuantityOnHandTotal() > sortedInventoryItems[j2].getQuantityOnHandTotal()) {
+                    if (sortedInventoryItems[j1].getQuantityOnHandTotal() >
+                            sortedInventoryItems[j2].getQuantityOnHandTotal()) {
                         InventoryItem temp = sortedInventoryItems[j1];
                         sortedInventoryItems[j1] = sortedInventoryItems[j2];
                         sortedInventoryItems[j2] = temp;
@@ -110,7 +160,9 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                     //iid.setEffectiveDate(effectiveDate);
                     //iid.setInventoryItem(sort_list[j]);
                     //iid.setQuantityOnHandDiff(-qty);
-                    inventoryItemDetail = inventoryItemDetailService.save(inventoryItem.getInventoryItemId(), -quantity, effectiveDate);
+                    inventoryItemDetail = inventoryItemDetailService.save(inventoryItem.getInventoryItemId(),
+                            -quantity,
+                            effectiveDate);
 
                     inventoryItem.setQuantityOnHandTotal(inventoryItem.getQuantityOnHandTotal() - quantity);
                     inventoryItemRepo.save(inventoryItem);
@@ -121,7 +173,9 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                     //iid.setEffectiveDate(effectiveDate);
                     //iid.setInventoryItem(sort_list[j]);
                     //iid.setQuantityOnHandDiff(-sort_list[j].getQuantityOnHandTotal());
-                    inventoryItemDetail = inventoryItemDetailService.save(inventoryItem.getInventoryItemId(), -inventoryItem.getQuantityOnHandTotal(), effectiveDate);
+                    inventoryItemDetail = inventoryItemDetailService.save(inventoryItem.getInventoryItemId(),
+                            -inventoryItem.getQuantityOnHandTotal(),
+                            effectiveDate);
 
                     inventoryItem.setQuantityOnHandTotal(0);
                     inventoryItemRepo.save(inventoryItem);
@@ -143,4 +197,46 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         }
         return "ok";
     }
+
+    @Override
+    public Page<InventoryModel.OrderHeader> getInventoryOrderHeaderPage(Pageable page) {
+        Page<OrderHeader> orderHeaderPage = orderHeaderPageRepo.findAll(page);
+        List<String> orderIds = orderHeaderPage.stream()
+                .map(OrderHeader::getOrderId)
+                .distinct()
+                .collect(Collectors.toList());
+        List<OrderRole> orderRoles = orderRoleRepo.findAllByOrderIdIn(orderIds);
+        Map<String, UUID> orderIdToPartyIdMap = new HashMap<>();
+        // TODO: map 1-1
+        orderRoles.forEach(orderRole -> orderIdToPartyIdMap.put(orderRole.getOrderId(), orderRole.getPartyId()));
+        List<UUID> partyIds = orderRoles.stream().map(OrderRole::getPartyId).distinct().collect(Collectors.toList());
+        List<PartyCustomer> partyCustomers = partyCustomerRepo.findAllByPartyIdIn(partyIds);
+        Map<UUID, PartyCustomer> partyCustomerMap = new HashMap<>();
+        partyCustomers.forEach(partyCustomer -> partyCustomerMap.put(partyCustomer.getPartyId(), partyCustomer));
+        return orderHeaderPage.map(orderHeader -> orderHeader.toOrderHeaderModel(partyCustomerMap.getOrDefault(
+                orderIdToPartyIdMap.getOrDefault(orderHeader.getOrderId(), null), null)));
+    }
+
+    @Override
+    public List<InventoryModel.OrderItem> getInventoryOrderHeaderDetail(String orderId) {
+        OrderHeader orderHeader = orderHeaderRepo.findById(orderId).orElseThrow(NoSuchElementException::new);
+        List<OrderItem> orderItems = orderItemRepo.findAllByOrderId(orderHeader.getOrderId());
+        List<InventoryItemDetail> inventoryItemDetails = inventoryItemDetailRepo.findAllByOrderIdInAndOrderItemSeqIdIn(
+                Collections.singletonList(orderId),
+                orderItems.stream().map(OrderItem::getOrderItemSeqId).collect(Collectors.toList())
+        );
+        Map<String, Integer> exportedQuantityCounter = new HashMap<>();
+        for (InventoryItemDetail inventoryItemDetail : inventoryItemDetails) {
+            exportedQuantityCounter.merge(inventoryItemDetail.getOrderItemSeqId(),
+                    inventoryItemDetail.getQuantityOnHandDiff(),
+                    Integer::sum);
+        }
+
+        return orderItems.stream()
+                .map(orderItem -> orderItem.toOrderItemModel(
+                        exportedQuantityCounter.getOrDefault(orderItem.getOrderItemSeqId(), 0)))
+                .collect(Collectors.toList());
+    }
+
+
 }

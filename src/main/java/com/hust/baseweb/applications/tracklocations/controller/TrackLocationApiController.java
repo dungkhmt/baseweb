@@ -62,7 +62,7 @@ public class TrackLocationApiController {
         //Point p = trackLocationsService.getLocation(input.getPartyId());
         Point point = geoPointCache.getLocation(input.getUserLoginId());
 
-        System.out.println(module + "::getLocation(" + input.getUserLoginId() + "), location = " + (point != null ? point.getX() + "," + point.getY() : "NULL"));
+//        System.out.println(module + "::getLocation(" + input.getUserLoginId() + "), location = " + (point != null ? point.getX() + "," + point.getY() : "NULL"));
         if (point == null) {
             return ResponseEntity.ok().body(null);
         }
@@ -84,7 +84,7 @@ public class TrackLocationApiController {
 
     @GetMapping("/get-track-locations")
     public ResponseEntity<List> getTrackLocations(Principal principal) {
-        System.out.println("getTrackLocations");
+//        System.out.println("getTrackLocations");
 
         UserLogin userLogin = userService.findById(principal.getName());
         List<TrackLocations> listLocationList = trackLocationsService.getListLocations();
@@ -96,8 +96,8 @@ public class TrackLocationApiController {
 
     @GetMapping("/tracklocations")
     public ResponseEntity<?> getTracklocations(Pageable page, @RequestParam(required = false) String param) {
-        System.out.println(module + "::getTrackLocations, page = pageNumber = " + page.getPageNumber() + ", offSet = " +
-                page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
+//        System.out.println(module + "::getTrackLocations, page = pageNumber = " + page.getPageNumber() + ", offSet = " +
+//                page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
         log.info("getTracklocations, api_key = " + gmap_api_key);
         Page<TrackLocations> trackLocationPage = trackLocationPagingRepo.findAll(page);
         return ResponseEntity.ok().body(trackLocationPage);

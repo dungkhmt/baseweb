@@ -19,8 +19,10 @@ import com.hust.baseweb.applications.logistics.service.ProductService;
 import com.hust.baseweb.applications.order.entity.CompositeOrderItemId;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.entity.OrderItem;
+import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
 import com.hust.baseweb.applications.order.repo.OrderItemRepo;
+import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.tms.entity.Shipment;
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
@@ -63,6 +65,7 @@ public class ShipmentServiceImpl implements ShipmentService {
     private ProductRepo productRepo;
     private OrderHeaderRepo orderHeaderRepo;
     private OrderItemRepo orderItemRepo;
+    private OrderRoleRepo orderRoleRepo;
 
     private CustomerService customerService;
     private ProductService productService;
@@ -299,6 +302,12 @@ public class ShipmentServiceImpl implements ShipmentService {
                     partyContactMechPurpose.setContactMechPurposeTypeId("PRIMARY_LOCATION");
                     partyContactMechPurpose.setFromDate(new Date());
                     partyContactMechPurposeRepo.save(partyContactMechPurpose);
+
+                    OrderRole orderRole = new OrderRole();
+                    orderRole.setOrderId(shipmentItemModel.getOrderId());
+                    orderRole.setPartyId(customer.getPartyId());
+                    orderRole.setRoleTypeId("BILL_TO_CUSTOMER");
+                    orderRole = orderRoleRepo.save(orderRole);
 
                     return customer;
                 });

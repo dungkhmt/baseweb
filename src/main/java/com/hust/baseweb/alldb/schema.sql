@@ -591,14 +591,14 @@ CREATE TABLE inventory_item
 
 CREATE TABLE inventory_item_detail
 (
-    inventory_item_detail_id  UUID NOT NULL default uuid_generate_v1(),
-    inventory_item_id         UUID NOT NULL,
-    effective_date            TIMESTAMP,
-    quantity_on_hand_diff     DECIMAL(18, 6),
-    order_id                  VARCHAR(60),
-    order_item_seq_id         VARCHAR(60),
-    last_updated_stamp        TIMESTAMP,
-    created_stamp             TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    inventory_item_detail_id UUID NOT NULL default uuid_generate_v1(),
+    inventory_item_id        UUID NOT NULL,
+    effective_date           TIMESTAMP,
+    quantity_on_hand_diff    DECIMAL(18, 6),
+    order_id                 VARCHAR(60),
+    order_item_seq_id        VARCHAR(60),
+    last_updated_stamp       TIMESTAMP,
+    created_stamp            TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_inventory_item_detail PRIMARY KEY (inventory_item_detail_id),
     CONSTRAINT fk_inventory_item_detail_inventory_item_id FOREIGN KEY (inventory_item_id) REFERENCES inventory_item (inventory_item_id),
     CONSTRAINT fk_inventory_item_detail_order_id_order_item_seq_id FOREIGN KEY (order_id, order_item_seq_id) REFERENCES order_item (order_id, order_item_seq_id)
@@ -675,7 +675,6 @@ CREATE TABLE order_header
     order_date           TIMESTAMP,
     currency_uom_id      VARCHAR(60),
     ship_to_address_id   UUID,
-    ship_to_address      VARCHAR(200),
     grand_total          DECIMAL(18, 2),
     description          TEXT,
     last_updated_stamp   TIMESTAMP,
@@ -684,7 +683,9 @@ CREATE TABLE order_header
     CONSTRAINT fk_order_type_id FOREIGN KEY (order_type_id) REFERENCES order_type (order_type_id),
     CONSTRAINT fk_original_facility_id FOREIGN KEY (original_facility_id) REFERENCES facility (facility_id),
     constraint fk_order_address_id foreign key (ship_to_address_id) references postal_address (contact_mech_id),
-    CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES facility (facility_id)
+    CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES facility (facility_id),
+    CONSTRAINT fk_currency_uom_id FOREIGN KEY (currency_uom_id) REFERENCES uom (uom_id),
+    CONSTRAINT fk_sales_channel_id FOREIGN KEY (sales_channel_id) REFERENCES sales_channel (sales_channel_id)
 
 );
 CREATE TABLE order_item_type
@@ -704,8 +705,8 @@ CREATE TABLE order_item
     order_item_seq_id  VARCHAR(60),
     order_item_type_id VARCHAR(60),
     product_id         VARCHAR(60),
-    unit_price         DECIMAL(18, 2),
-    quantity           DECIMAL(18, 6),
+    unit_price         numeric,
+    quantity           int,
     status_id          VARCHAR(60),
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
