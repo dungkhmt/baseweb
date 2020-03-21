@@ -6,11 +6,15 @@ import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PersonRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
+import com.hust.baseweb.service.UserService;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +28,7 @@ import java.util.UUID;
 public class PartySalesmanServiceImpl implements PartySalesmanService {
     private PartySalesmanRepo partySalesmanRepo;
     private UserLoginRepo userLoginRepo;
+    private UserService userService;
     private PartyRepo partyRepo;
     private PersonRepo personRepo;
 
@@ -76,5 +81,20 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
     public Person findPersonByPartyId(UUID partyId) {
         return personRepo.findByPartyId(partyId);
     }
+
+	@Override
+	public PartySalesman save(PersonModel salesman) {
+		// TODO Auto-generated method stub
+		try{
+			Party party = userService.save(salesman);
+			PartySalesman partySalesman = new PartySalesman();
+			partySalesman.setPartyId(party.getPartyId());
+			partySalesmanRepo.save(partySalesman);
+			return partySalesman;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }

@@ -19,9 +19,27 @@ INSERT INTO status (status_id, status_type_id, status_code, sequence_id, descrip
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('PARTY_ENABLED', 'PARTY_STATUS', 'ENABLED', 0, 'Đã kích hoạt', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('PARTY_DISABLED', 'PARTY_STATUS', 'DISABLED', 0, 'Đã bị vô hiệu hóa', NOW(), NOW());
 
-INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_SALE_MANAGER', 'Sale manager account owner access security group', '2017-01-03 10:12:23.879', '2017-01-03 10:12:23.878');
-INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_ACCOUNTANT', 'Accountant account owner access security group', '2017-01-03 10:12:42.531', '2017-01-03 10:12:42.507');
-INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN', 'Full Admin group, has all general functional permissions.', '2017-01-03 10:12:23.994', '2017-01-03 10:12:23.993');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_SALE_MANAGER', 'Sale manager account owner access security group', '2017-01-03 10:12:23.879', '2017-01-03 10:12:23.878');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_ACCOUNTANT', 'Accountant account owner access security group', '2017-01-03 10:12:42.531', '2017-01-03 10:12:42.507');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_FULL_ADMIN', 'Full Admin group, has all general functional permissions.', '2017-01-03 10:12:23.994', '2017-01-03 10:12:23.993');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_TMS_MANAGER', 'Management of Transportation System', NULL, '2020-03-01 18:39:19.097');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_SALES_ROUTE_MANAGER', 'Management of Sales Route', NULL, '2020-03-01 18:54:50.488');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_SALESMAN', 'salesman group', NULL, '2020-03-21 14:23:29.816');
+
+
+
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('USER_CREATE','Create user permission',NOW(),NOW());
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('USER_VIEW','View user permission',NOW(),NOW());
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('ORDER_CREATE','Create order permission',NOW(),NOW());
