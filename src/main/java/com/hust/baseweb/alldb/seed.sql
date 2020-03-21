@@ -62,6 +62,9 @@ INSERT  INTO person (party_id, first_name, middle_name, last_name, gender, birth
 INSERT INTO user_login (user_login_id, current_password, password_hint, is_system, enabled, has_logged_out, require_password_change, disabled_date_time, successive_failed_logins, last_updated_stamp, created_stamp, party_id) VALUES ( 'admin', '$2a$04$cqFXgdkB.8u2HwT3QUTVZuePtHdzi.rWFCjdgNbVB7l6vn/yAU7F6', NULL, FALSE, TRUE, FALSE, FALSE, NULL, NULL, NOW(), NOW(), 'bd6322f2-2121-11ea-81a8-979e2f76b5a4');
 INSERT INTO user_login_security_group (user_login_id, group_id, last_updated_stamp, created_stamp) VALUES ('admin', 'ROLE_FULL_ADMIN', NOW(), NOW());
 
+update user_login set current_password = '$2a$10$Y4FXX6TalapgQ3rJoe.QHe9.RutM4l81pAm2S1XzDuUR83qLvDxyO' where user_login_id = 'admin';
+
+
 insert into party(party_type_id, status_id) values('COMPANY','PARTY_ENABLED');
 
 

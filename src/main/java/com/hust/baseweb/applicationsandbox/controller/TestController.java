@@ -14,6 +14,7 @@ import com.hust.baseweb.applicationsandbox.model.AddInputModel;
 @RestController
 @Log4j2
 public class TestController {
+	
 	@PostMapping("/add")
 	public ResponseEntity<?> add(Principal principal, @RequestBody AddInputModel input){
 		int c = input.getA() + input.getB();
