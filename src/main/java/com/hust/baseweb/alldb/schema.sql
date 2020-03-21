@@ -265,17 +265,6 @@ CREATE TABLE role_type
     CONSTRAINT fk_parent_type_id FOREIGN KEY (parent_type_id) REFERENCES role_type (role_type_id)
 );
 
-CREATE TABLE status_type
-(
-    status_type_id     VARCHAR(60) NOT NULL,
-    parent_type_id     VARCHAR(60),
-    description        TEXT,
-    last_updated_stamp TIMESTAMP,
-    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_status_type_id PRIMARY KEY (status_type_id),
-    CONSTRAINT fk_parent_type_id FOREIGN KEY (parent_type_id) REFERENCES status_type (status_type_id)
-);
-
 CREATE TABLE status_item
 (
     status_id          VARCHAR(60) NOT NULL,

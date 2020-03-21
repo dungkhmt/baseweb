@@ -91,12 +91,18 @@ insert into role_type(role_type_id, description) values
 ('BILL_TO_CUSTOMER', 'Hóa đơn đến khách hàng'),
 ('SALES_EXECUTIVE', 'Hóa đơn của nhân viên bán hàng');
 
-  
+
+INSERT INTO public.status_type
+(status_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
+VALUES('ORDER_STATUS', NULL, 'Order Status', NULL, '2020-02-01 21:35:10.048');
+INSERT INTO public.status_type
+(status_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
+VALUES('DELIVERY_STATUS', NULL, 'Delivery status', NULL, '2020-03-08 08:43:46.697');
+
 insert into status_item(status_id, status_type_id, status_code, description) values 
 ('ORDER_CREATED', 'ORDER_STATUS', 'CREATED', 'tạo mới'),
 ('ORDER_CANCELLED', 'ORDER_STATUS', 'CANCELLED', 'đã hủy');
 
-insert into status_type(status_type_id, description) values('DELIVERY_STATUS','Delivery status');
 insert into status_item(status_id,status_type_id,description) values
 ('SHIPMENT_TRIP_CREATED','DELIVERY_STATUS','Tạo mới'),
 ('SHIPMENT_TRIP_CANCELLED','DELIVERY_STATUS','Hủy'),
