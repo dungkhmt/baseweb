@@ -67,4 +67,5 @@ public class SalesAPIController {
 
         return ResponseEntity.ok().body(lst);
     }
+    
 }	
