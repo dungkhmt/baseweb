@@ -15,6 +15,7 @@ import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.geo.service.PostalAddressService;
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
+import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.service.ProductService;
 import com.hust.baseweb.applications.order.entity.CompositeOrderItemId;
@@ -59,6 +60,8 @@ import java.util.stream.Collectors;
 public class ShipmentServiceImpl implements ShipmentService {
     private ShipmentRepo shipmentRepo;
     private ShipmentItemRepo shipmentItemRepo;
+
+    private FacilityRepo facilityRepo;
 
     private PartyCustomerRepo partyCustomerRepo;
     private PostalAddressRepo postalAddressRepo;
@@ -241,6 +244,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 
         Facility facility = new Facility();
         facility.setFacilityId(shipmentItemModel.getFacilityId());
+        facility = facilityRepo.save(facility);
         orderItem.setFacility(facility);
         return orderItem;
     }

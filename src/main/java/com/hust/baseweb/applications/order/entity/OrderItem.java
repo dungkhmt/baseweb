@@ -43,7 +43,8 @@ public class OrderItem {
                 product.getProductName(),
                 quantity,
                 exportedQuantity,
-                orderId
+                orderId,
+                orderItemSeqId
         );
     }
 }

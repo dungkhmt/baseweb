@@ -30,6 +30,7 @@ public class InventoryModel {
         private Integer quantity;
         private Integer exportedQuantity;
         private String orderId;
+        private String orderItemSeqId;
     }
 
 

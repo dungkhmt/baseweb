@@ -19,6 +19,10 @@ public class Facility {
     @Column(name = "facility_id")
     private String facilityId;
 
+    public Facility(String facilityId) {
+        this.facilityId = facilityId;
+    }
+
     @Column(name = "facility_name")
     private String facilityName;
 

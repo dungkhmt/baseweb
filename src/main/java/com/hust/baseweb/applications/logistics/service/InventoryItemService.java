@@ -17,4 +17,6 @@ public interface InventoryItemService {
     Page<InventoryModel.OrderHeader> getInventoryOrderHeaderPage(Pageable page);
 
     List<InventoryModel.OrderItem> getInventoryOrderHeaderDetail(String orderId);
+
+    List<InventoryModel.OrderItem> getInventoryOrderDetailPage(String orderId, String facilityId);
 }

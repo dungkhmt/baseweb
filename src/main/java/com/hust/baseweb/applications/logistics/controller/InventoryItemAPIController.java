@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.logistics.entity.InventoryItem;
 import com.hust.baseweb.applications.logistics.model.ExportInventoryItemsInputModel;
 import com.hust.baseweb.applications.logistics.model.ImportInventoryItemInputModel;
 import com.hust.baseweb.applications.logistics.model.ImportInventoryItemsInputModel;
+import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.logistics.service.InventoryItemService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,8 @@ import java.security.Principal;
 public class InventoryItemAPIController {
     public static final String module = InventoryItemAPIController.class.getName();
 
-    InventoryItemService inventoryItemService;
+    private InventoryItemService inventoryItemService;
+    private FacilityRepo facilityRepo;
 
     @PostMapping("/import-inventory-items")
     @Transactional
@@ -50,7 +52,18 @@ public class InventoryItemAPIController {
     }
 
     @GetMapping("/get-inventory-order-detail/{orderId}/all")
-    public ResponseEntity<?> getInventoryOrderDetailPage(Pageable pageable, @PathVariable String orderId) {
+    public ResponseEntity<?> getInventoryOrderDetail(@PathVariable String orderId) {
         return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderHeaderDetail(orderId));
+    }
+
+    @GetMapping("/get-inventory-order-export/{orderId}/{facilityId}/")
+    public ResponseEntity<?> getInventoryOrderDetail(@PathVariable String orderId,
+                                                     @PathVariable String facilityId) {
+        return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderDetailPage(orderId, facilityId));
+    }
+
+    @GetMapping("/facility/all")
+    public ResponseEntity<?> getAllFacility() {
+        return ResponseEntity.ok().body(facilityRepo.findAll());
     }
 }

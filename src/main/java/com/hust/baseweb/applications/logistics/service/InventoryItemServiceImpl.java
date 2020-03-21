@@ -15,6 +15,7 @@ import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.order.repo.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -219,8 +220,12 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @Override
     public List<InventoryModel.OrderItem> getInventoryOrderHeaderDetail(String orderId) {
-        OrderHeader orderHeader = orderHeaderRepo.findById(orderId).orElseThrow(NoSuchElementException::new);
-        List<OrderItem> orderItems = orderItemRepo.findAllByOrderId(orderHeader.getOrderId());
+        List<OrderItem> orderItems = orderItemRepo.findAllByOrderId(orderId);
+        return convertOrderItemToModel(orderId, orderItems);
+    }
+
+    @NotNull
+    private List<InventoryModel.OrderItem> convertOrderItemToModel(String orderId, List<OrderItem> orderItems) {
         List<InventoryItemDetail> inventoryItemDetails = inventoryItemDetailRepo.findAllByOrderIdInAndOrderItemSeqIdIn(
                 Collections.singletonList(orderId),
                 orderItems.stream().map(OrderItem::getOrderItemSeqId).collect(Collectors.toList())
@@ -238,5 +243,10 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                 .collect(Collectors.toList());
     }
 
-
+    @Override
+    public List<InventoryModel.OrderItem> getInventoryOrderDetailPage(String orderId, String facilityId) {
+        List<OrderItem> orderItems
+                = orderItemRepo.findAllByOrderIdAndFacility(orderId, new Facility(facilityId));
+        return convertOrderItemToModel(orderId, orderItems);
+    }
 }
