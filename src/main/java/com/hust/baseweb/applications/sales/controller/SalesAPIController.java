@@ -3,16 +3,21 @@ package com.hust.baseweb.applications.sales.controller;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.model.GetListSalesmanInputModel;
 import com.hust.baseweb.applications.sales.entity.CustomerSalesman;
+import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.model.customersalesman.AssignCustomer2SalesmanInputModel;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetCustomersOfSalesmanInputModel;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetSalesmanOutputModel;
 import com.hust.baseweb.applications.sales.service.CustomerSalesmanService;
 import com.hust.baseweb.applications.sales.service.PartySalesmanService;
 import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.service.UserService;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,5 +71,14 @@ public class SalesAPIController {
         List<PartyCustomer> lst = customerSalesmanService.getCustomersOfSalesman(userLogin.getParty().getPartyId());
 
         return ResponseEntity.ok().body(lst);
+    }
+    @PostMapping("/create-salesman")
+    public ResponseEntity<?> createSalesman(Principal principal, @RequestBody PersonModel input){
+    	PartySalesman partySalesman = partySalesmanService.save(input);
+    	if(partySalesman == null){
+    		return ResponseEntity.status(HttpStatus.CONFLICT).body("conflict");
+    	}else{
+    		return ResponseEntity.ok().body(partySalesman);
+    	}
     }
 }	

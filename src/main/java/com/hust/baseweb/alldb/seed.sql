@@ -19,9 +19,27 @@ INSERT INTO status (status_id, status_type_id, status_code, sequence_id, descrip
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('PARTY_ENABLED', 'PARTY_STATUS', 'ENABLED', 0, 'Đã kích hoạt', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('PARTY_DISABLED', 'PARTY_STATUS', 'DISABLED', 0, 'Đã bị vô hiệu hóa', NOW(), NOW());
 
-INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_SALE_MANAGER', 'Sale manager account owner access security group', '2017-01-03 10:12:23.879', '2017-01-03 10:12:23.878');
-INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_ACCOUNTANT', 'Accountant account owner access security group', '2017-01-03 10:12:42.531', '2017-01-03 10:12:42.507');
-INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN', 'Full Admin group, has all general functional permissions.', '2017-01-03 10:12:23.994', '2017-01-03 10:12:23.993');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_SALE_MANAGER', 'Sale manager account owner access security group', '2017-01-03 10:12:23.879', '2017-01-03 10:12:23.878');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_ACCOUNTANT', 'Accountant account owner access security group', '2017-01-03 10:12:42.531', '2017-01-03 10:12:42.507');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_FULL_ADMIN', 'Full Admin group, has all general functional permissions.', '2017-01-03 10:12:23.994', '2017-01-03 10:12:23.993');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_TMS_MANAGER', 'Management of Transportation System', NULL, '2020-03-01 18:39:19.097');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_SALES_ROUTE_MANAGER', 'Management of Sales Route', NULL, '2020-03-01 18:54:50.488');
+INSERT INTO public.security_group
+(group_id, description, last_updated_stamp, created_stamp)
+VALUES('ROLE_SALESMAN', 'salesman group', NULL, '2020-03-21 14:23:29.816');
+
+
+
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('USER_CREATE','Create user permission',NOW(),NOW());
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('USER_VIEW','View user permission',NOW(),NOW());
 INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('ORDER_CREATE','Create order permission',NOW(),NOW());
@@ -62,6 +80,9 @@ INSERT  INTO person (party_id, first_name, middle_name, last_name, gender, birth
 INSERT INTO user_login (user_login_id, current_password, password_hint, is_system, enabled, has_logged_out, require_password_change, disabled_date_time, successive_failed_logins, last_updated_stamp, created_stamp, party_id) VALUES ( 'admin', '$2a$04$cqFXgdkB.8u2HwT3QUTVZuePtHdzi.rWFCjdgNbVB7l6vn/yAU7F6', NULL, FALSE, TRUE, FALSE, FALSE, NULL, NULL, NOW(), NOW(), 'bd6322f2-2121-11ea-81a8-979e2f76b5a4');
 INSERT INTO user_login_security_group (user_login_id, group_id, last_updated_stamp, created_stamp) VALUES ('admin', 'ROLE_FULL_ADMIN', NOW(), NOW());
 
+update user_login set current_password = '$2a$10$Y4FXX6TalapgQ3rJoe.QHe9.RutM4l81pAm2S1XzDuUR83qLvDxyO' where user_login_id = 'admin';
+
+
 insert into party(party_type_id, status_id) values('COMPANY','PARTY_ENABLED');
 
 
@@ -91,12 +112,18 @@ insert into role_type(role_type_id, description) values
 ('BILL_TO_CUSTOMER', 'Hóa đơn đến khách hàng'),
 ('SALES_EXECUTIVE', 'Hóa đơn của nhân viên bán hàng');
 
-  
+
+INSERT INTO public.status_type
+(status_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
+VALUES('ORDER_STATUS', NULL, 'Order Status', NULL, '2020-02-01 21:35:10.048');
+INSERT INTO public.status_type
+(status_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
+VALUES('DELIVERY_STATUS', NULL, 'Delivery status', NULL, '2020-03-08 08:43:46.697');
+
 insert into status_item(status_id, status_type_id, status_code, description) values 
 ('ORDER_CREATED', 'ORDER_STATUS', 'CREATED', 'tạo mới'),
 ('ORDER_CANCELLED', 'ORDER_STATUS', 'CANCELLED', 'đã hủy');
 
-insert into status_type(status_type_id, description) values('DELIVERY_STATUS','Delivery status');
 insert into status_item(status_id,status_type_id,description) values
 ('SHIPMENT_TRIP_CREATED','DELIVERY_STATUS','Tạo mới'),
 ('SHIPMENT_TRIP_CANCELLED','DELIVERY_STATUS','Hủy'),

@@ -265,17 +265,6 @@ CREATE TABLE role_type
     CONSTRAINT fk_parent_type_id FOREIGN KEY (parent_type_id) REFERENCES role_type (role_type_id)
 );
 
-CREATE TABLE status_type
-(
-    status_type_id     VARCHAR(60) NOT NULL,
-    parent_type_id     VARCHAR(60),
-    description        TEXT,
-    last_updated_stamp TIMESTAMP,
-    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_status_type_id PRIMARY KEY (status_type_id),
-    CONSTRAINT fk_parent_type_id FOREIGN KEY (parent_type_id) REFERENCES status_type (status_type_id)
-);
-
 CREATE TABLE status_item
 (
     status_id          VARCHAR(60) NOT NULL,
@@ -343,6 +332,21 @@ create table customer_salesman
     constraint fk_customer_salesman_customer foreign key (party_customer_id) references party_customer (party_id),
     constraint fk_customer_salesman_salesman foreign key (party_salesman_id) references party_salesman (party_id)
 );
+
+create table customer_salesman_vendor
+(
+    customer_salesman_vendor_id UUID NOT NULL default uuid_generate_v1(),
+    party_customer_id    UUID NOT NULL,
+    party_salesman_id    UUID NOT NULL,
+    party_vendor_id		UUID NOT NULL,
+    from_date            TIMESTAMP,
+    thru_date            TIMESTAMP,
+    constraint pk_customer_salesman_vendor primary key (customer_salesman_vendor_id),
+    constraint fk_customer_salesman_vendor_customer foreign key (party_customer_id) references party(party_id),
+    constraint fk_customer_salesman_vendor_salesman foreign key (party_salesman_id) references party(party_id),
+    constraint fk_customer_salesman_vendor_vendor foreign key (party_vendor_id) references party(party_id)
+);
+
 
 create table sales_route_config
 (
@@ -996,6 +1000,7 @@ create table shipment_item
     shipment_id                   UUID NOT NULL,
     quantity                      Integer,
     pallet                        numeric,
+    from_facility_id			VARCHAR(60),
     party_customer_id             UUID,
     ship_to_location_id           UUID,
     order_id                      varchar(60),
@@ -1009,6 +1014,7 @@ create table shipment_item
     constraint fk_shipment_item_ship_to_location_id foreign key (ship_to_location_id) references postal_address (contact_mech_id),
     constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id),
     constraint fk_shipment_item_party_customer_id foreign key (party_customer_id) references party_customer (party_id),
+    constraint fk_shipment_item_from_facility_id foreign key(from_facility_id) references facility(facility_id),
     constraint fk_shipment_item_order_id foreign key (order_id) references order_header (order_id)
 
 );
@@ -1118,6 +1124,17 @@ CREATE TABLE delivery_trip_detail
     CONSTRAINT fk_delivery_trip_detail_delivery_trip FOREIGN KEY (delivery_trip_id) REFERENCES delivery_trip (delivery_trip_id),
     CONSTRAINT fk_delivery_trip_detail_shipment FOREIGN KEY (shipment_item_id) REFERENCES shipment_item (shipment_item_id),
     CONSTRAINT fk_delivery_trip_detail_status FOREIGN KEY (status_id) REFERENCES status_item (status_id)
+);
+
+create table delivery_trip_detail_status(
+	delivery_trip_detail_id uuid        NOT NULL,
+	status_id 	VARCHAR(60),
+	status_date TIMESTAMP,
+	updated_by_user_login_id	VARCHAR(60),
+	constraint pk_delivery_trip_detail_status primary key(delivery_trip_detail_id, status_id),
+	constraint fk_delivery_trip_detail_status_delivery_trip_detail_id foreign key(delivery_trip_detail_id) references delivery_trip_detail(delivery_trip_detail_id),
+	constraint fk_delivery_trip_detail_status_status_id foreign key(status_id) references status_item(status_id),
+	constraint fk_delivery_trip_detail_status_updated_by_user_login_id foreign key(updated_by_user_login_id) references user_login(user_login_id)
 );
 
 
