@@ -152,6 +152,11 @@ public class SalesAPIController {
         PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(UUID.fromString(input.getPartyCustomerId()));
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(UUID.fromString(input.getPartyDistributorId()));
         PartySalesman partySalesman = partySalesmanService.findById(UUID.fromString(partyId));
+        List<CustomerSalesmanVendor> lst = customerSalesmanVendorRepo.findAllByPartySalesmanAndPartyCustomerAndPartyDistributorAndThruDate(partySalesman, 
+        		partyCustomer, partyDistributor, null);
+        if(lst != null && lst.size() > 0){
+        	return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("DUPLICATE");
+        }
         CustomerSalesmanVendor customerSalesmanVendor = new CustomerSalesmanVendor();
         customerSalesmanVendor.setPartyCustomer(partyCustomer);
         customerSalesmanVendor.setPartySalesman(partySalesman);

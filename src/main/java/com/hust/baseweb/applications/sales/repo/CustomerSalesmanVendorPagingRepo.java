@@ -1,5 +1,7 @@
 package com.hust.baseweb.applications.sales.repo;
 
+import com.hust.baseweb.applications.customer.entity.PartyCustomer;
+import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.sales.entity.CustomerSalesmanVendor;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 
@@ -14,5 +16,5 @@ import java.util.UUID;
 public interface CustomerSalesmanVendorPagingRepo extends PagingAndSortingRepository<CustomerSalesmanVendor, UUID> {
     Page<CustomerSalesmanVendor> findByPartySalesman(PartySalesman partySalesman, Pageable pageable);
     Page<CustomerSalesmanVendor> findByPartySalesmanAndThruDate(PartySalesman partySalesman, Date thruDate, Pageable pageable);
-    
+   
 }

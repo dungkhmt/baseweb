@@ -40,40 +40,122 @@ VALUES('ROLE_SALESMAN', 'salesman group', NULL, '2020-03-21 14:23:29.816');
 
 
 
-INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('USER_CREATE','Create user permission',NOW(),NOW());
-INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('USER_VIEW','View user permission',NOW(),NOW());
-INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('ORDER_CREATE','Create order permission',NOW(),NOW());
-INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('ORDER_VIEW','View order permission',NOW(),NOW());
-INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('INVOICE_CREATE','Create order permission',NOW(),NOW());
-INSERT INTO security_permission (permission_id, description, last_updated_stamp, created_stamp) VALUES ('INVOICE_VIEW','View order permission',NOW(),NOW());
+INSERT INTO public.security_permission
+(permission_id, description, last_updated_stamp, created_stamp)
+VALUES('USER_CREATE', 'Create user permission', '2019-12-26 08:00:31.803', '2019-12-26 08:00:31.803');
+INSERT INTO public.security_permission
+(permission_id, description, last_updated_stamp, created_stamp)
+VALUES('USER_VIEW', 'View user permission', '2019-12-26 08:00:31.803', '2019-12-26 08:00:31.803');
+INSERT INTO public.security_permission
+(permission_id, description, last_updated_stamp, created_stamp)
+VALUES('ORDER_CREATE', 'Create order permission', '2019-12-26 08:00:31.803', '2019-12-26 08:00:31.803');
+INSERT INTO public.security_permission
+(permission_id, description, last_updated_stamp, created_stamp)
+VALUES('ORDER_VIEW', 'View order permission', '2019-12-26 08:00:31.803', '2019-12-26 08:00:31.803');
+INSERT INTO public.security_permission
+(permission_id, description, last_updated_stamp, created_stamp)
+VALUES('INVOICE_CREATE', 'Create order permission', '2019-12-26 08:00:31.803', '2019-12-26 08:00:31.803');
+INSERT INTO public.security_permission
+(permission_id, description, last_updated_stamp, created_stamp)
+VALUES('INVOICE_VIEW', 'View order permission', '2019-12-26 08:00:31.803', '2019-12-26 08:00:31.803');
+INSERT INTO public.security_permission
+(permission_id, description, last_updated_stamp, created_stamp)
+VALUES('DELIVERY_PLAN_CREATE', 'Creation of delivery plan and trips', NULL, '2020-03-01 18:39:22.008');
+INSERT INTO public.security_permission
+(permission_id, description, last_updated_stamp, created_stamp)
+VALUES('SALES_ROUTE_PLAN_CREATE', 'Creation of Sales Route', NULL, '2020-03-01 18:54:50.488');
 
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','ORDER_VIEW',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','ORDER_CREATE',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','USER_CREATE',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','USER_VIEW',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','INVOICE_CREATE',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_FULL_ADMIN','INVOICE_VIEW',NOW(),NOW());
-
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_SALE_MANAGER','ORDER_CREATE',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_SALE_MANAGER','ORDER_VIEW',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_ACCOUNTANT','ORDER_VIEW',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_ACCOUNTANT','INVOICE_CREATE',NOW(),NOW());
-INSERT INTO security_group_permission(group_id, permission_id, last_updated_stamp, created_stamp) VALUES ('ROLE_ACCOUNTANT','INVOICE_VIEW',NOW(),NOW());
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_FULL_ADMIN', 'ORDER_VIEW', '2019-12-26 08:00:35.749', '2019-12-26 08:00:35.749');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_FULL_ADMIN', 'ORDER_CREATE', '2019-12-26 08:00:35.749', '2019-12-26 08:00:35.749');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_FULL_ADMIN', 'USER_CREATE', '2019-12-26 08:00:35.749', '2019-12-26 08:00:35.749');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_FULL_ADMIN', 'USER_VIEW', '2019-12-26 08:00:35.749', '2019-12-26 08:00:35.749');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_FULL_ADMIN', 'INVOICE_CREATE', '2019-12-26 08:00:35.749', '2019-12-26 08:00:35.749');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_FULL_ADMIN', 'INVOICE_VIEW', '2019-12-26 08:00:35.749', '2019-12-26 08:00:35.749');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_SALE_MANAGER', 'ORDER_CREATE', '2019-12-26 08:00:35.749', '2019-12-26 08:00:35.749');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_SALE_MANAGER', 'ORDER_VIEW', '2019-12-26 08:00:35.749', '2019-12-26 08:00:35.749');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_ACCOUNTANT', 'ORDER_VIEW', '2019-12-26 08:00:35.749', '2019-12-26 08:00:35.749');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_ACCOUNTANT', 'INVOICE_CREATE', '2019-12-26 08:00:35.749', '2019-12-26 08:00:35.749');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_ACCOUNTANT', 'INVOICE_VIEW', '2019-12-26 08:00:35.749', '2019-12-26 08:00:35.749');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_TMS_MANAGER', 'DELIVERY_PLAN_CREATE', NULL, '2020-03-01 18:39:24.741');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_FULL_ADMIN', 'DELIVERY_PLAN_CREATE', NULL, '2020-03-01 18:49:58.969');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_SALES_ROUTE_MANAGER', 'SALES_ROUTE_PLAN_CREATE', NULL, '2020-03-01 18:54:50.488');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_FULL_ADMIN', 'SALES_ROUTE_PLAN_CREATE', NULL, '2020-03-01 18:54:50.488');
 
 INSERT INTO application_type(application_type_id, description, last_updated_stamp, created_stamp) VALUES ('MENU','Menu application type', NOW(),NOW());
 INSERT INTO application_type(application_type_id, description, last_updated_stamp, created_stamp) VALUES ('SCREEN','Screen application type', NOW(),NOW());
 INSERT INTO application_type(application_type_id, description, last_updated_stamp, created_stamp) VALUES ('MODULE','Module application type', NOW(),NOW());
 INSERT INTO application_type(application_type_id, description, last_updated_stamp, created_stamp) VALUES ('SERVICE','Service application type', NOW(),NOW());
 INSERT INTO application_type(application_type_id, description, last_updated_stamp, created_stamp) VALUES ('ENTITY','Entity application type', NOW(),NOW());
-INSERT INTO application (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp,created_stamp) VALUES ('MENU_USER','MENU',NULL ,NULL,'Menu user management',NOW(), NOW());
-INSERT INTO application (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp,created_stamp) VALUES ('MENU_USER_CREATE','MENU','MENU_USER' ,'USER_CREATE','Menu user create',NOW(), NOW());
-INSERT INTO application (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp,created_stamp) VALUES ('MENU_USER_LIST','MENU','MENU_USER' ,'USER_VIEW','Menu user list',NOW(), NOW());
-INSERT INTO application (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp,created_stamp) VALUES ('MENU_ORDER','MENU',NULL ,NULL,'Menu order management',NOW(), NOW());
-INSERT INTO application (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp,created_stamp) VALUES ('MENU_ORDER_LIST','MENU','MENU_ORDER' ,'ORDER_VIEW','Menu order list',NOW(), NOW());
-INSERT INTO application (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp,created_stamp) VALUES ('MENU_ORDER_CREATE','MENU','MENU_ORDER' ,'ORDER_CREATE','Menu order create',NOW(), NOW());
-INSERT INTO application (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp,created_stamp) VALUES ('MENU_INVOICE','MENU',NULL ,NULL,'Menu invoice management',NOW(), NOW());
-INSERT INTO application (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp,created_stamp) VALUES ('MENU_INVOICE_CREATE','MENU','MENU_INVOICE' ,'INVOICE_CREATE','Menu invoice create',NOW(), NOW());
-INSERT INTO application (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp,created_stamp) VALUES ('MENU_INVOICE_LIST','MENU','MENU_INVOICE' ,'INVOICE_VIEW','Menu invoice list',NOW(), NOW());
+
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_USER', 'MENU', NULL, NULL, 'Menu user management', '2019-12-26 08:00:39.953', '2019-12-26 08:00:39.953');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_USER_CREATE', 'MENU', 'MENU_USER', 'USER_CREATE', 'Menu user create', '2019-12-26 08:00:39.953', '2019-12-26 08:00:39.953');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_USER_LIST', 'MENU', 'MENU_USER', 'USER_VIEW', 'Menu user list', '2019-12-26 08:00:39.953', '2019-12-26 08:00:39.953');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_ORDER', 'MENU', NULL, NULL, 'Menu order management', '2019-12-26 08:00:39.953', '2019-12-26 08:00:39.953');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_ORDER_LIST', 'MENU', 'MENU_ORDER', 'ORDER_VIEW', 'Menu order list', '2019-12-26 08:00:39.953', '2019-12-26 08:00:39.953');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_ORDER_CREATE', 'MENU', 'MENU_ORDER', 'ORDER_CREATE', 'Menu order create', '2019-12-26 08:00:39.953', '2019-12-26 08:00:39.953');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_INVOICE', 'MENU', NULL, NULL, 'Menu invoice management', '2019-12-26 08:00:39.953', '2019-12-26 08:00:39.953');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_INVOICE_CREATE', 'MENU', 'MENU_INVOICE', 'INVOICE_CREATE', 'Menu invoice create', '2019-12-26 08:00:39.953', '2019-12-26 08:00:39.953');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_INVOICE_LIST', 'MENU', 'MENU_INVOICE', 'INVOICE_VIEW', 'Menu invoice list', '2019-12-26 08:00:39.953', '2019-12-26 08:00:39.953');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_TMS_CREATE_DELIVERY_PLAN', 'MENU', 'MENU_TMS', 'DELIVERY_PLAN_CREATE', 'Menu Create Delivery Plan', NULL, '2020-03-01 18:41:10.706');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_TMS', 'MENU', NULL, NULL, 'Menu TMS', '2020-03-01 18:46:31.727', '2020-03-01 18:40:20.478');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_SALES_ROUTE', 'MENU', NULL, NULL, 'Menu Sales Route', NULL, '2020-03-01 18:54:50.488');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_SALES_ROUTE_PLAN_CREATE', 'MENU', 'MENU_SALES_ROUTE', 'SALES_ROUTE_PLAN_CREATE', 'Menu Sales Route', NULL, '2020-03-01 18:54:50.488');
 
 INSERT INTO party (party_id, party_type_id, external_id, description, status_id, created_date, created_by_user_login, last_modified_date, last_modified_by_user_login, is_unread, last_updated_stamp, created_stamp, party_code) VALUES ('bd6322f2-2121-11ea-81a8-979e2f76b5a4', 'PERSON', NULL, NULL, 'PARTY_ENABLED', NULL, NULL, NULL, NULL, FALSE, NOW(), NOW(), 'admin');
 INSERT  INTO person (party_id, first_name, middle_name, last_name, gender, birth_date, last_updated_stamp, created_stamp) VALUES ('bd6322f2-2121-11ea-81a8-979e2f76b5a4','admin',',',',','M',NOW(),null,NOW());
