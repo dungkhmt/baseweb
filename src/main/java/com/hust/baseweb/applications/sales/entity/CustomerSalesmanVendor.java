@@ -29,9 +29,6 @@ public class CustomerSalesmanVendor {
     private PartySalesman partySalesman;
 
 
-
-
-
     @JoinColumn(name = "party_vendor_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private PartyDistributor partyDistributor;

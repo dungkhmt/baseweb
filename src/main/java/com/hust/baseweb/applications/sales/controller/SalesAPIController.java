@@ -37,6 +37,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -128,7 +129,8 @@ public class SalesAPIController {
     public ResponseEntity<?> getDetailSalesman(Pageable pageable,@RequestParam(required = false) String param, @PathVariable String partyId){
         log.info("getDetailSalesman");
         PartySalesman partySalesman = partySalesmanService.findById(UUID.fromString(partyId));
-        Page<CustomerSalesmanVendor> customerSalesmanVendorPage = customerSalesmanVendorPagingRepo.findByPartySalesman(partySalesman,pageable);
+        //Page<CustomerSalesmanVendor> customerSalesmanVendorPage = customerSalesmanVendorPagingRepo.findByPartySalesman(partySalesman,pageable);
+        Page<CustomerSalesmanVendor> customerSalesmanVendorPage = customerSalesmanVendorPagingRepo.findByPartySalesmanAndThruDate(partySalesman,null,pageable);
         for (CustomerSalesmanVendor customerSalesmanVendor: customerSalesmanVendorPage ) {
             customerSalesmanVendor.setCustomerName(customerSalesmanVendor.getPartyCustomer().getCustomerName());
             customerSalesmanVendor.setCustomerCode(customerSalesmanVendor.getPartyCustomer().getCustomerCode());
@@ -154,6 +156,7 @@ public class SalesAPIController {
         customerSalesmanVendor.setPartyCustomer(partyCustomer);
         customerSalesmanVendor.setPartySalesman(partySalesman);
         customerSalesmanVendor.setPartyDistributor(partyDistributor);
+        customerSalesmanVendor.setFromDate(new Date());// take current date-time
         customerSalesmanVendorRepo.save(customerSalesmanVendor);
         return ResponseEntity.ok(input);
     }
@@ -162,7 +165,9 @@ public class SalesAPIController {
     @GetMapping("/delete-customer-distributor-salesman/{Id}")
     public void deleteCustomerDistributorSalesman (@PathVariable String Id){
         CustomerSalesmanVendor customerSalesmanVendor = customerSalesmanVendorRepo.findByCustomerSalesmanVendorId(UUID.fromString(Id));
-        customerSalesmanVendorRepo.delete(customerSalesmanVendor);
+        //customerSalesmanVendorRepo.delete(customerSalesmanVendor);// do not delete physically 
+        customerSalesmanVendor.setThruDate(new Date());// set thru_date by current date-time
+        customerSalesmanVendorRepo.save(customerSalesmanVendor);
     }
 
 
