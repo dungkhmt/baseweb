@@ -22,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -67,11 +66,10 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             productFacility = new ProductFacility();
             productFacility.setProductId(product.getProductId());
             productFacility.setFacilityId(facility.getFacilityId());
-            productFacility.setAtpInventoryCount(new BigDecimal(input.getQuantityOnHandTotal()));
-            productFacility.setLastInventoryCount(new BigDecimal(0));
+            productFacility.setAtpInventoryCount((double) input.getQuantityOnHandTotal());
+            productFacility.setLastInventoryCount(0.0);
         }
-        productFacility.setLastInventoryCount(productFacility.getLastInventoryCount()
-                .add(new BigDecimal(input.getQuantityOnHandTotal())));
+        productFacility.setLastInventoryCount(productFacility.getLastInventoryCount() + input.getQuantityOnHandTotal());
         productFacility = productFacilityRepo.save(productFacility);
 
         // inventory processing region
@@ -123,7 +121,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                     ", list = " +
                     inventoryItems.size());
             List<InventoryItem> selectedInventoryItems = new ArrayList<>();
-            BigDecimal totalCount = new BigDecimal(0);// total inventory count of productId in the faicilityId
+            double totalCount = 0.0;// total inventory count of productId in the faicilityId
             for (InventoryItem inventoryItem : inventoryItems) {
                 if (inventoryItem.getQuantityOnHandTotal() > 0 &&
                         inventoryItem.getProduct().getProductId().equals(productId) &&
@@ -135,55 +133,39 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                             ", qty = " +
                             inventoryItem.getQuantityOnHandTotal());
                     selectedInventoryItems.add(inventoryItem);
-                    totalCount = totalCount.add(new BigDecimal(inventoryItem.getQuantityOnHandTotal()));
+                    totalCount += inventoryItem.getQuantityOnHandTotal();
                 }
             }
-            InventoryItem[] sortedInventoryItems = new InventoryItem[selectedInventoryItems.size()];
-            for (int j = 0; j < selectedInventoryItems.size(); j++) {
-                sortedInventoryItems[j] = selectedInventoryItems.get(j);
-            }
+            selectedInventoryItems.sort(Comparator.comparingInt(InventoryItem::getQuantityOnHandTotal));
+//            InventoryItem[] sortedInventoryItems = new InventoryItem[selectedInventoryItems.size()];
+//            for (int j = 0; j < selectedInventoryItems.size(); j++) {
+//                sortedInventoryItems[j] = selectedInventoryItems.get(j);
+//            }
             // sorting
-            for (int j1 = 0; j1 < sortedInventoryItems.length; j1++) {
-                for (int j2 = j1 + 1; j2 < sortedInventoryItems.length; j2++) {
-                    if (sortedInventoryItems[j1].getQuantityOnHandTotal() >
-                            sortedInventoryItems[j2].getQuantityOnHandTotal()) {
-                        InventoryItem temp = sortedInventoryItems[j1];
-                        sortedInventoryItems[j1] = sortedInventoryItems[j2];
-                        sortedInventoryItems[j2] = temp;
-                    }
-                }
-            }
+//            for (int j1 = 0; j1 < sortedInventoryItems.length; j1++) {
+//                for (int j2 = j1 + 1; j2 < sortedInventoryItems.length; j2++) {
+//                    if (sortedInventoryItems[j1].getQuantityOnHandTotal() >
+//                            sortedInventoryItems[j2].getQuantityOnHandTotal()) {
+//                        InventoryItem temp = sortedInventoryItems[j1];
+//                        sortedInventoryItems[j1] = sortedInventoryItems[j2];
+//                        sortedInventoryItems[j2] = temp;
+//                    }
+//                }
+//            }
 
-            for (InventoryItem inventoryItem : sortedInventoryItems) {
+            for (InventoryItem inventoryItem : selectedInventoryItems) {
                 if (quantity <= inventoryItem.getQuantityOnHandTotal()) {
-                    InventoryItemDetail inventoryItemDetail = new InventoryItemDetail();
-                    Date effectiveDate = new Date();
-                    //iid.setEffectiveDate(effectiveDate);
-                    //iid.setInventoryItem(sort_list[j]);
-                    //iid.setQuantityOnHandDiff(-qty);
-                    inventoryItemDetail = inventoryItemDetailService.save(inventoryItem.getInventoryItemId(),
-                            -quantity,
-                            effectiveDate);
-
+                    inventoryItemDetailService.save(inventoryItem, -quantity);
                     inventoryItem.setQuantityOnHandTotal(inventoryItem.getQuantityOnHandTotal() - quantity);
                     inventoryItemRepo.save(inventoryItem);
                     break;
                 } else {
-                    InventoryItemDetail inventoryItemDetail = new InventoryItemDetail();
-                    Date effectiveDate = new Date();
-                    //iid.setEffectiveDate(effectiveDate);
-                    //iid.setInventoryItem(sort_list[j]);
-                    //iid.setQuantityOnHandDiff(-sort_list[j].getQuantityOnHandTotal());
-                    inventoryItemDetail = inventoryItemDetailService.save(inventoryItem.getInventoryItemId(),
-                            -inventoryItem.getQuantityOnHandTotal(),
-                            effectiveDate);
-
+                    inventoryItemDetailService.save(inventoryItem, -inventoryItem.getQuantityOnHandTotal());
                     inventoryItem.setQuantityOnHandTotal(0);
                     inventoryItemRepo.save(inventoryItem);
-
                 }
             }
-            totalCount = totalCount.subtract(new BigDecimal(quantity));// remain total inventory count
+            totalCount -= quantity; // remain total inventory count
 
             ProductFacility productFacility = productFacilityRepo.findByProductIdAndFacilityId(productId, facilityId);
             if (productFacility == null) {

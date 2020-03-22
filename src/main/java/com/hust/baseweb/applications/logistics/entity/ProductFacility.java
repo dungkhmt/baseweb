@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -23,10 +22,10 @@ public class ProductFacility {
     private String facilityId;
 
     @Column(name = "last_inventory_count")
-    private BigDecimal lastInventoryCount;
+    private Double lastInventoryCount;
 
     @Column(name = "atp_inventory_count")
-    private BigDecimal atpInventoryCount;
+    private Double atpInventoryCount;
 
     public static void main(String[] args) {
 

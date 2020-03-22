@@ -12,7 +12,6 @@ import com.hust.baseweb.service.UserService;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
@@ -27,7 +26,7 @@ public class OrderDetailView {
     private String vendorName;
     private String salesmanLoginId;
     private String salesmanName;
-    private BigDecimal total;
+    private Double total;
     private OrderItemDetailView[] orderItems;
 
     public OrderDetailView(OrderHeader order, OrderService orderService, PartySalesmanService salesmanService, UserService userService) {
