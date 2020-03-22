@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface CustomerSalesmanRepo extends PagingAndSortingRepository<CustomerSalesman, UUID> {
     List<CustomerSalesman> findAll();
+
 }

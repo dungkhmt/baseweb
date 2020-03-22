@@ -12,4 +12,6 @@ public interface CustomerService {
 
 
     List<PartyCustomer> findRetailOutlers();
+
+    List<PartyCustomer> findAll();
 }

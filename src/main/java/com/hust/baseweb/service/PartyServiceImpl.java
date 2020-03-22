@@ -37,4 +37,9 @@ public class PartyServiceImpl implements PartyService {
         return partyRepo.save(party);
     }
 
+    @Override
+    public Party findByPartyId(UUID partyId) {
+        return partyRepo.findByPartyId(partyId);
+    }
+
 }

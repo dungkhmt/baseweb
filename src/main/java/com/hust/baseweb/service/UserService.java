@@ -31,4 +31,7 @@ public interface UserService {
     Party update(PersonUpdateModel personUpdateModel, UUID partyId);
 
 
+    UserLogin findUserLoginByPartyId(UUID partyId);
+
+
 }

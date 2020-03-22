@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.sql.Date;
 import java.util.UUID;
 
@@ -40,6 +41,15 @@ public class Person {
     //@Column(name="birth_date")
     private Date birthDate;
 
+    public Person(UUID partyId, String firstName, String middleName, String lastName, String gender, Date birthDate) {
+        this.partyId = partyId;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.birthDate = birthDate;
+    }
+
     public BasicInfoModel getBasicInfoModel() {
         return new BasicInfoModel(partyId, firstName + " " + middleName + " " + lastName, gender);
     }
@@ -51,6 +61,28 @@ public class Person {
         private UUID partyId;
         private String fullName;
         private String gender;
+    }
+
+
+    @Transient
+    String name;
+
+    @Transient
+    String userName;
+
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "partyId=" + partyId +
+                ", firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", gender='" + gender + '\'' +
+                ", birthDate=" + birthDate +
+                ", name='" + name + '\'' +
+                ", userName='" + userName + '\'' +
+                '}';
     }
 }
 

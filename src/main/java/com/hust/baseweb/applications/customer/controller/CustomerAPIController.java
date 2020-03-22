@@ -2,18 +2,18 @@ package com.hust.baseweb.applications.customer.controller;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
-import com.hust.baseweb.applications.customer.model.CreateCustomerInputModel;
-import com.hust.baseweb.applications.customer.model.CreateDistributorInputModel;
-import com.hust.baseweb.applications.customer.model.GetDistributorsOfUserLoginInputModel;
+import com.hust.baseweb.applications.customer.model.*;
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.applications.customer.service.DistributorService;
+import com.hust.baseweb.applications.logistics.model.InputModel;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 
 import lombok.AllArgsConstructor;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +27,8 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
+
 public class CustomerAPIController {
     public static final String module = CustomerAPIController.class.getName();
 
@@ -75,4 +77,20 @@ public class CustomerAPIController {
         PartyDistributor distributor = distributorService.save(input);
         return ResponseEntity.ok().body(distributor);
     }
+
+
+    @PostMapping("/get-list-customer")
+    public ResponseEntity<?> getListCustomer(Principal principal, @RequestBody InputModel input){
+        log.info("getListCustomer");
+        List<PartyCustomer> partyCustomerList = customerService.findAll();
+        return ResponseEntity.ok().body(new GetListCustomerOutputModel(partyCustomerList));
+    }
+
+    @PostMapping("/get-list-distributor")
+    public ResponseEntity<?> getListDistributor(Principal principal, @RequestBody InputModel input){
+        log.info("getListDistributor");
+        List<PartyDistributor> partyDistributorList = distributorRepo.findAll();
+        return ResponseEntity.ok().body(new GetListDistributorOutPutModel(partyDistributorList));
+    }
+
 }

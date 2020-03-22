@@ -52,6 +52,47 @@ public class Party {
     @LastModifiedBy
     private String modifiedBy;
 
+
+
+
+
+    //create username show in party list
+    @Transient
+    String userName;
+
+    //create partyname show in party list; party = person.firstname + person.middlename + person.lastname
+    @Transient
+    String partyName;
+
+
+    @Transient
+    Person person;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public Party(String partyCode, PartyType type, String description, Status partyStatus, boolean isUnread) {
         super();
         this.partyCode = partyCode;
@@ -66,5 +107,11 @@ public class Party {
         super();
 
     }
+
+
+
+
+
+
 
 }

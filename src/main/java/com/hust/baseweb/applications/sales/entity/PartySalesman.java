@@ -25,4 +25,10 @@ public class PartySalesman {
     //@ManyToOne(fetch=FetchType.EAGER)
     //private UserLogin userLogin;
 
+    @Transient
+    private String name;
+
+    @Transient
+    private String userName;
+
 }

@@ -1,14 +1,27 @@
 package com.hust.baseweb.applications.sales.controller;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
+import com.hust.baseweb.applications.customer.entity.PartyDistributor;
+import com.hust.baseweb.applications.customer.model.CustomerDistributorSalesmanInputModel;
+import com.hust.baseweb.applications.customer.repo.DistributorRepo;
+import com.hust.baseweb.applications.geo.entity.PostalAddress;
+import com.hust.baseweb.applications.logistics.model.ModelCreateProductInput;
 import com.hust.baseweb.applications.order.model.GetListSalesmanInputModel;
+import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
+import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
 import com.hust.baseweb.applications.sales.entity.CustomerSalesman;
+import com.hust.baseweb.applications.sales.entity.CustomerSalesmanVendor;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.model.customersalesman.AssignCustomer2SalesmanInputModel;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetCustomersOfSalesmanInputModel;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetSalesmanOutputModel;
+import com.hust.baseweb.applications.sales.repo.CustomerSalesmanVendorPagingRepo;
+import com.hust.baseweb.applications.sales.repo.CustomerSalesmanVendorRepo;
+import com.hust.baseweb.applications.sales.repo.PartySalesmanPagingRepo;
 import com.hust.baseweb.applications.sales.service.CustomerSalesmanService;
 import com.hust.baseweb.applications.sales.service.PartySalesmanService;
+import com.hust.baseweb.applications.tms.repo.PartyDriverRepo;
+import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.service.UserService;
@@ -17,12 +30,15 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -32,9 +48,14 @@ import java.util.List;
 
 public class SalesAPIController {
     private UserService userService;
-
+    private PartyCustomerRepo partyCustomerRepo;
     private CustomerSalesmanService customerSalesmanService;
     private PartySalesmanService partySalesmanService;
+    private PartySalesmanPagingRepo partySalesmanPagingRepo;
+    private CustomerSalesmanVendorPagingRepo customerSalesmanVendorPagingRepo;
+    private PartyDistributorRepo partyDistributorRepo;
+    private CustomerSalesmanVendorRepo customerSalesmanVendorRepo;
+
 
     @PostMapping("/get-list-salesmans")
     public ResponseEntity getListSalesmans(Principal principal, @RequestBody GetListSalesmanInputModel input) {
@@ -72,13 +93,80 @@ public class SalesAPIController {
 
         return ResponseEntity.ok().body(lst);
     }
+
+
+
     @PostMapping("/create-salesman")
     public ResponseEntity<?> createSalesman(Principal principal, @RequestBody PersonModel input){
+        log.info("createSalesman");
     	PartySalesman partySalesman = partySalesmanService.save(input);
+    	log.info("1");
     	if(partySalesman == null){
+    	    log.info("null");
     		return ResponseEntity.status(HttpStatus.CONFLICT).body("conflict");
     	}else{
+    	    log.info("!=null");
     		return ResponseEntity.ok().body(partySalesman);
     	}
     }
+    @GetMapping("/get-list-salesman")
+    public ResponseEntity<?> getListSaleman(Pageable pageable, @RequestParam(required = false) String param){
+        log.info("getListSaleman");
+
+        Page<PartySalesman> partySalesmanPage = partySalesmanPagingRepo.findAll(pageable);
+        for(PartySalesman partySalesman: partySalesmanPage){
+            Person p = partySalesman.getPerson();
+            String name = "" + p.getFirstName() + " " + p.getMiddleName() + " " + p.getLastName();
+            partySalesman.setName(name);
+            partySalesman.setUserName(userService.findUserLoginByPartyId(partySalesman.getPartyId()).getUserLoginId());
+        }
+
+        return ResponseEntity.ok().body(partySalesmanPage);
+    }
+
+    @GetMapping("/salesman-detail/{partyId}")
+    public ResponseEntity<?> getDetailSalesman(Pageable pageable,@RequestParam(required = false) String param, @PathVariable String partyId){
+        log.info("getDetailSalesman");
+        PartySalesman partySalesman = partySalesmanService.findById(UUID.fromString(partyId));
+        Page<CustomerSalesmanVendor> customerSalesmanVendorPage = customerSalesmanVendorPagingRepo.findByPartySalesman(partySalesman,pageable);
+        for (CustomerSalesmanVendor customerSalesmanVendor: customerSalesmanVendorPage ) {
+            customerSalesmanVendor.setCustomerName(customerSalesmanVendor.getPartyCustomer().getCustomerName());
+            customerSalesmanVendor.setCustomerCode(customerSalesmanVendor.getPartyCustomer().getCustomerCode());
+            customerSalesmanVendor.setPartyDistritorName(customerSalesmanVendor.getPartyDistributor().getDistributorName());
+            String address = "";
+            List<PostalAddress> postalAddresses = customerSalesmanVendor.getPartyCustomer().getPostalAddress();
+            for (PostalAddress postalAddress: postalAddresses){
+                address += postalAddress.getAddress() + "; ";
+            }
+            customerSalesmanVendor.setAddress(address);
+
+        }
+        return ResponseEntity.ok().body(customerSalesmanVendorPage);
+    }
+
+    @PostMapping("/add-customer-distributor-salesman/{partyId}")
+    public ResponseEntity<?> addCustomerDistributorSalesman(@PathVariable String partyId, @RequestBody CustomerDistributorSalesmanInputModel input){
+        log.info("addCustomerDistributorSalesman {}",partyId);
+        PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(UUID.fromString(input.getPartyCustomerId()));
+        PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(UUID.fromString(input.getPartyDistributorId()));
+        PartySalesman partySalesman = partySalesmanService.findById(UUID.fromString(partyId));
+        CustomerSalesmanVendor customerSalesmanVendor = new CustomerSalesmanVendor();
+        customerSalesmanVendor.setPartyCustomer(partyCustomer);
+        customerSalesmanVendor.setPartySalesman(partySalesman);
+        customerSalesmanVendor.setPartyDistributor(partyDistributor);
+        customerSalesmanVendorRepo.save(customerSalesmanVendor);
+        return ResponseEntity.ok(input);
+    }
+
+
+    @GetMapping("/delete-customer-distributor-salesman/{Id}")
+    public void deleteCustomerDistributorSalesman (@PathVariable String Id){
+        CustomerSalesmanVendor customerSalesmanVendor = customerSalesmanVendorRepo.findByCustomerSalesmanVendorId(UUID.fromString(Id));
+        customerSalesmanVendorRepo.delete(customerSalesmanVendor);
+    }
+
+
+
+
+
 }	

@@ -69,6 +69,10 @@ public class ProductController {
         productService.saveProduct(product);
         return ResponseEntity.ok().body(product);
     }
+
+
+
+
     @GetMapping("/get-list-product-frontend")
     public ResponseEntity<?> getListProductFrontend(Pageable page, @RequestParam(required = false) String param) {
         Page<Product> productPage = productPagingRepo.findAll(page);
@@ -77,6 +81,7 @@ public class ProductController {
             if (p.getUom() != null) {
                 p.setUomDescription(p.getUom().getDescription());
             }
+
         }
         return ResponseEntity.ok().body(productPage);
     }
