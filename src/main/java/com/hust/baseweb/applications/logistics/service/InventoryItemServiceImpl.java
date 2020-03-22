@@ -87,98 +87,134 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     public String exportInventoryItems(ExportInventoryItemsInputModel inventoryItemsInput) {
 
 //        List<InventoryItem> inventoryItems = inventoryItemRepo.findAll();// to be improved, find by (productId, facilityId)
-        List<Product> queryProducts = Stream.of(inventoryItemsInput.getInventoryItems())
-                .map(exportInventoryItemInputModel -> {
-                    Product product = new Product();
-                    product.setProductId(exportInventoryItemInputModel.getProductId());
-                    return product;
-                })
-                .collect(Collectors.toList());
-        List<Facility> queryFacilities = Stream.of(inventoryItemsInput.getInventoryItems())
-                .map(exportInventoryItemInputModel -> {
-                    Facility facility = new Facility();
-                    facility.setFacilityId(exportInventoryItemInputModel.getFacilityId());
-                    return facility;
-                })
-                .collect(Collectors.toList());
-        List<InventoryItem> inventoryItems = inventoryItemRepo.findAllByProductInAndFacilityIn(
-                queryProducts, queryFacilities);
 
-        log.info("exportInventoryItems, inventoryItems.sz = " + inventoryItems.size());
+        Stream<ExportInventoryItemInputModel> exportModelStream = Stream.of(inventoryItemsInput.getInventoryItems());
+
+        List<Product> queryProducts = getProducts(exportModelStream);
+
+        List<Facility> queryFacilities = getFacilities(exportModelStream);
+
+        Map<List<String>, List<InventoryItem>> inventoryItemsMap = getInventoryItemsMap(queryProducts, queryFacilities);
+
+        Map<List<String>, ProductFacility> productFacilityMap = getProductFacilityMap(queryProducts, queryFacilities);
+
+        Map<List<String>, OrderItem> orderItemMap = getOrderItemMap(exportModelStream);
+
+        log.info("exportInventoryItems, inventoryItems.sz = " + inventoryItemsMap.size());
+
+        List<InventoryItemDetail> inventoryItemDetails = new ArrayList<>();
 
         for (int i = 0; i < inventoryItemsInput.getInventoryItems().length; i++) {
             ExportInventoryItemInputModel exportModel = inventoryItemsInput.getInventoryItems()[i];
             String productId = exportModel.getProductId();
             String facilityId = exportModel.getFacilityId();
             int quantity = exportModel.getQuantity();
-            // find list of inventory-items suitable for exporting productId at the facilityId
-            //List<InventoryItem> inventoryItems = inventoryItemRepo.findAllByProductIdAndFacilityId(productId, facilityId);
+            OrderItem orderItem = orderItemMap.get(
+                    Arrays.asList(exportModel.getOrderId(), exportModel.getOrderItemSeqId()));
 
-            log.info("exportInventoryItems, productId = " +
-                    productId +
-                    ", facilityId = " +
-                    facilityId +
-                    ", list = " +
-                    inventoryItems.size());
-            List<InventoryItem> selectedInventoryItems = new ArrayList<>();
-            double totalCount = 0.0;// total inventory count of productId in the faicilityId
-            for (InventoryItem inventoryItem : inventoryItems) {
-                if (inventoryItem.getQuantityOnHandTotal() > 0 &&
-                        inventoryItem.getProduct().getProductId().equals(productId) &&
-                        inventoryItem.getFacility().getFacilityId().equals(facilityId)) {
-                    log.info("exportInventoryItems, productId = " +
-                            productId +
-                            ", facilityId = " +
-                            facilityId +
-                            ", qty = " +
-                            inventoryItem.getQuantityOnHandTotal());
-                    selectedInventoryItems.add(inventoryItem);
-                    totalCount += inventoryItem.getQuantityOnHandTotal();
-                }
-            }
+            log.info("exportInventoryItems, productId = " + productId + ", facilityId = " + facilityId + ", list = " +
+                    inventoryItemsMap.size());
+
+            List<InventoryItem> selectedInventoryItems = inventoryItemsMap.get(Arrays.asList(facilityId, productId));
+            double totalCount = // total inventory count of productId in the faicilityId
+                    selectedInventoryItems.stream().mapToInt(InventoryItem::getQuantityOnHandTotal).sum()
+                            - quantity; // remain total inventory count
             selectedInventoryItems.sort(Comparator.comparingInt(InventoryItem::getQuantityOnHandTotal));
-//            InventoryItem[] sortedInventoryItems = new InventoryItem[selectedInventoryItems.size()];
-//            for (int j = 0; j < selectedInventoryItems.size(); j++) {
-//                sortedInventoryItems[j] = selectedInventoryItems.get(j);
-//            }
-            // sorting
-//            for (int j1 = 0; j1 < sortedInventoryItems.length; j1++) {
-//                for (int j2 = j1 + 1; j2 < sortedInventoryItems.length; j2++) {
-//                    if (sortedInventoryItems[j1].getQuantityOnHandTotal() >
-//                            sortedInventoryItems[j2].getQuantityOnHandTotal()) {
-//                        InventoryItem temp = sortedInventoryItems[j1];
-//                        sortedInventoryItems[j1] = sortedInventoryItems[j2];
-//                        sortedInventoryItems[j2] = temp;
-//                    }
-//                }
-//            }
 
             for (InventoryItem inventoryItem : selectedInventoryItems) {
                 if (quantity <= inventoryItem.getQuantityOnHandTotal()) {
-                    inventoryItemDetailService.save(inventoryItem, -quantity);
+                    InventoryItemDetail inventoryItemDetail = inventoryItemDetailService.createInventoryItemDetail(
+                            inventoryItem,
+                            -quantity,
+                            orderItem);
+                    inventoryItemDetails.add(inventoryItemDetail);
                     inventoryItem.setQuantityOnHandTotal(inventoryItem.getQuantityOnHandTotal() - quantity);
-                    inventoryItemRepo.save(inventoryItem);
                     break;
                 } else {
-                    inventoryItemDetailService.save(inventoryItem, -inventoryItem.getQuantityOnHandTotal());
+                    InventoryItemDetail inventoryItemDetail = inventoryItemDetailService.createInventoryItemDetail(
+                            inventoryItem,
+                            -inventoryItem.getQuantityOnHandTotal(),
+                            orderItem);
+                    inventoryItemDetails.add(inventoryItemDetail);
                     inventoryItem.setQuantityOnHandTotal(0);
-                    inventoryItemRepo.save(inventoryItem);
+                    quantity -= inventoryItem.getQuantityOnHandTotal();
                 }
             }
-            totalCount -= quantity; // remain total inventory count
 
-            ProductFacility productFacility = productFacilityRepo.findByProductIdAndFacilityId(productId, facilityId);
-            if (productFacility == null) {
-                productFacility = new ProductFacility();
+            productFacilityMap.computeIfAbsent(Arrays.asList(facilityId, productId), key -> {
+                ProductFacility productFacility = new ProductFacility();
                 productFacility.setProductId(productId);
                 productFacility.setFacilityId(facilityId);
                 productFacility.setAtpInventoryCount(totalCount);
-            }
-            productFacility.setLastInventoryCount(totalCount);
-            productFacility = productFacilityRepo.save(productFacility);
-
+                return productFacility;
+            }).setLastInventoryCount(totalCount);
         }
+
+        inventoryItemDetailRepo.saveAll(inventoryItemDetails);
+        inventoryItemRepo.saveAll(inventoryItemsMap.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList()));    // convert List<List<T>> --> List<T>
+        productFacilityRepo.saveAll(productFacilityMap.values());
+
         return "ok";
+    }
+
+    @NotNull
+    private Map<List<String>, ProductFacility> getProductFacilityMap(List<Product> queryProducts,
+                                                                     List<Facility> queryFacilities) {
+        return productFacilityRepo.findByProductIdInAndFacilityIdIn(
+                queryProducts.stream().map(Product::getProductId).collect(Collectors.toList()),
+                queryFacilities.stream().map(Facility::getFacilityId).collect(Collectors.toList())
+        ).stream().collect(Collectors.toMap(productFacility -> Arrays.asList(productFacility.getFacilityId(),
+                productFacility.getProductId()),
+                productFacility -> productFacility));
+    }
+
+    @NotNull
+    private Map<List<String>, List<InventoryItem>> getInventoryItemsMap(List<Product> queryProducts,
+                                                                        List<Facility> queryFacilities) {
+        Map<List<String>, List<InventoryItem>> inventoryItemsMap = new HashMap<>();
+        inventoryItemRepo.findAllByProductInAndFacilityInAndQuantityOnHandTotalGreaterThan(
+                queryProducts, queryFacilities, 0).forEach(inventoryItem ->
+                inventoryItemsMap.computeIfAbsent(
+                        Arrays.asList(inventoryItem.getFacility().getFacilityId(),
+                                inventoryItem.getProduct().getProductId()),
+                        key -> new ArrayList<>())
+                        .add(inventoryItem));
+        return inventoryItemsMap;
+    }
+
+    @NotNull
+    private List<Facility> getFacilities(Stream<ExportInventoryItemInputModel> exportModelStream) {
+        return exportModelStream
+                .map(exportInventoryItemInputModel -> {
+                    Facility facility = new Facility();
+                    facility.setFacilityId(exportInventoryItemInputModel.getFacilityId());
+                    return facility;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private List<Product> getProducts(Stream<ExportInventoryItemInputModel> exportModelStream) {
+        return exportModelStream
+                .map(exportInventoryItemInputModel -> {
+                    Product product = new Product();
+                    product.setProductId(exportInventoryItemInputModel.getProductId());
+                    return product;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private Map<List<String>, OrderItem> getOrderItemMap(Stream<ExportInventoryItemInputModel> exportModelStream) {
+        return orderItemRepo.findAllByOrderIdInAndOrderItemSeqIdIn(
+                exportModelStream.map(ExportInventoryItemInputModel::getOrderId).collect(Collectors.toList()),
+                exportModelStream.map(ExportInventoryItemInputModel::getOrderItemSeqId).collect(Collectors.toList())
+        ).stream().collect(Collectors.toMap(orderItem -> Arrays.asList(orderItem.getOrderId(),
+                orderItem.getOrderItemSeqId()),
+                orderItem -> orderItem));
     }
 
     @Override
@@ -203,18 +239,15 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @Override
     public List<InventoryModel.OrderItem> getInventoryOrderHeaderDetail(String orderId) {
         List<OrderItem> orderItems = orderItemRepo.findAllByOrderId(orderId);
-        return convertOrderItemToModel(orderId, orderItems);
+        return convertOrderItemToModel(orderItems);
     }
 
     @NotNull
-    private List<InventoryModel.OrderItem> convertOrderItemToModel(String orderId, List<OrderItem> orderItems) {
-        List<InventoryItemDetail> inventoryItemDetails = inventoryItemDetailRepo.findAllByOrderIdInAndOrderItemSeqIdIn(
-                Collections.singletonList(orderId),
-                orderItems.stream().map(OrderItem::getOrderItemSeqId).collect(Collectors.toList())
-        );
+    private List<InventoryModel.OrderItem> convertOrderItemToModel(List<OrderItem> orderItems) {
+        List<InventoryItemDetail> inventoryItemDetails = inventoryItemDetailRepo.findAllByOrderItemIn(orderItems);
         Map<String, Integer> exportedQuantityCounter = new HashMap<>();
         for (InventoryItemDetail inventoryItemDetail : inventoryItemDetails) {
-            exportedQuantityCounter.merge(inventoryItemDetail.getOrderItemSeqId(),
+            exportedQuantityCounter.merge(inventoryItemDetail.getOrderItem().getOrderItemSeqId(),
                     inventoryItemDetail.getQuantityOnHandDiff(),
                     Integer::sum);
         }
@@ -229,6 +262,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     public List<InventoryModel.OrderItem> getInventoryOrderDetailPage(String orderId, String facilityId) {
         List<OrderItem> orderItems
                 = orderItemRepo.findAllByOrderIdAndFacility(orderId, new Facility(facilityId));
-        return convertOrderItemToModel(orderId, orderItems);
+        return convertOrderItemToModel(orderItems);
     }
 }
