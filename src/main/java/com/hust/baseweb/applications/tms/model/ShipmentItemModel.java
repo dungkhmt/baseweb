@@ -87,6 +87,9 @@ public class ShipmentItemModel {
 
         @ExcelCellName("HS_PAL")
         private Integer hsPal;
+
+        @ExcelCellName("KHO_XUAT")
+        private String facilityId;
     }
 
     @Getter

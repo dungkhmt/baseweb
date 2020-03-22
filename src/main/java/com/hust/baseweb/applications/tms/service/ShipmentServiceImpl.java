@@ -13,14 +13,18 @@ import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.geo.service.PostalAddressService;
+import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
+import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.service.ProductService;
 import com.hust.baseweb.applications.order.entity.CompositeOrderItemId;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.entity.OrderItem;
+import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
 import com.hust.baseweb.applications.order.repo.OrderItemRepo;
+import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.tms.entity.Shipment;
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
@@ -57,12 +61,15 @@ public class ShipmentServiceImpl implements ShipmentService {
     private ShipmentRepo shipmentRepo;
     private ShipmentItemRepo shipmentItemRepo;
 
+    private FacilityRepo facilityRepo;
+
     private PartyCustomerRepo partyCustomerRepo;
     private PostalAddressRepo postalAddressRepo;
     private GeoPointRepo geoPointRepo;
     private ProductRepo productRepo;
     private OrderHeaderRepo orderHeaderRepo;
     private OrderItemRepo orderItemRepo;
+    private OrderRoleRepo orderRoleRepo;
 
     private CustomerService customerService;
     private ProductService productService;
@@ -234,6 +241,11 @@ public class ShipmentServiceImpl implements ShipmentService {
         orderItem.setProduct(product);
         orderItem.setQuantity(shipmentItemModel.getQuantity());
         orderItem.setOrderItemSeqId(orderSeqIdCounterMap.merge(orderHeader.getOrderId(), 1, Integer::sum) + "");
+
+        Facility facility = new Facility();
+        facility.setFacilityId(shipmentItemModel.getFacilityId());
+        facility = facilityRepo.save(facility);
+        orderItem.setFacility(facility);
         return orderItem;
     }
 
@@ -299,6 +311,12 @@ public class ShipmentServiceImpl implements ShipmentService {
                     partyContactMechPurpose.setContactMechPurposeTypeId("PRIMARY_LOCATION");
                     partyContactMechPurpose.setFromDate(new Date());
                     partyContactMechPurposeRepo.save(partyContactMechPurpose);
+
+                    OrderRole orderRole = new OrderRole();
+                    orderRole.setOrderId(shipmentItemModel.getOrderId());
+                    orderRole.setPartyId(customer.getPartyId());
+                    orderRole.setRoleTypeId("BILL_TO_CUSTOMER");
+                    orderRole = orderRoleRepo.save(orderRole);
 
                     return customer;
                 });

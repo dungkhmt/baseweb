@@ -13,4 +13,6 @@ public interface PartyCustomerRepo extends JpaRepository<PartyCustomer, UUID> {
     PartyCustomer findByPartyId(UUID partyId);
 
     List<PartyCustomer> findAllByCustomerCode(String customerCode);
+
+    List<PartyCustomer> findAllByPartyIdIn(List<UUID> partyIds);
 }

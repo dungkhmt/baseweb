@@ -38,7 +38,7 @@ public class CustomerAPIController {
 
     @GetMapping("/customers")
     public ResponseEntity<?> getCustomers(Pageable page) {
-        System.out.println(module + "::getCustomers");
+//        System.out.println(module + "::getCustomers");
         Page<PartyCustomer> customers = customerRepo.findAll(page);
         for (PartyCustomer c: customers
              ) {
@@ -50,7 +50,7 @@ public class CustomerAPIController {
 
     @GetMapping("/distributors")
     public ResponseEntity<?> getDIstributors(Pageable page) {
-        System.out.println(module + "::getDistributors");
+//        System.out.println(module + "::getDistributors");
         Page<PartyDistributor> distributors = distributorRepo.findAll(page);
         return ResponseEntity.ok().body(distributors);
     }
@@ -58,7 +58,7 @@ public class CustomerAPIController {
     @PostMapping("/get-distributors-of-userlogin")
     public ResponseEntity<?> getDistributorsOfUserLogin(Principal principal, @RequestBody GetDistributorsOfUserLoginInputModel input) {
         UserLogin userLogin = userService.findById(principal.getName());
-        System.out.println(module + "::getDistributorsOfUserLogin");
+//        System.out.println(module + "::getDistributorsOfUserLogin");
         // TODO: to be upgrade and revise
         List<PartyDistributor> distributors = distributorService.findDistributors();
         return ResponseEntity.ok().body(distributors);

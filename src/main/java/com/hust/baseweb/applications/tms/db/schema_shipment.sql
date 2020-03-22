@@ -59,13 +59,11 @@ create table delivery_plan
     delivery_plan_id   UUID NOT NULL default uuid_generate_v1(),
     delivery_date      TIMESTAMP,
     description        TEXT,
-    facility_id        VARCHAR(60),
     created_by         VARCHAR(60),
     status_id          VARCHAR(60),
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_delivery_plan primary key (delivery_plan_id),
-    constraint fk_delivery_plan_facility_id foreign key (facility_id) references facility (facility_id),
     constraint fk_delivery_plan_created_by foreign key (created_by) references user_login (user_login_id),
     constraint fk_delivery_plan_status_id foreign key (status_id) references status_item (status_id)
 );

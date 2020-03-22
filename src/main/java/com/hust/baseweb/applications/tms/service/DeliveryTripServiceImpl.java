@@ -141,7 +141,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
         DistanceUtils.DirectionSolution<GeoPoint> directionSolution
                 = DistanceUtils.calculateGreedyTotalDistance(allGeoPoints,
-                deliveryPlan.getFacility().getPostalAddress().getGeoPoint(),
+                allGeoPoints.get(0),    // TODO: temporary set the first point to depot
                 (fromGeoPoint, toGeoPoint) -> {
 //            DistanceTravelTimeGeoPoint distanceTravelTimeGeoPoint
 //                    = distanceTravelTimeGeoPointRepo.findByFromGeoPointAndToGeoPoint(fromGeoPoint, toGeoPoint);

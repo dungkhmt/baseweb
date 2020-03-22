@@ -20,10 +20,6 @@ public class DeliveryPlan {
     @Column(name = "description")
     private String description;
 
-    @JoinColumn(name = "facility_id", referencedColumnName = "facility_id")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Facility facility;
-
     @Column(name = "created_by")
     private String createdByUserLoginId;
 
