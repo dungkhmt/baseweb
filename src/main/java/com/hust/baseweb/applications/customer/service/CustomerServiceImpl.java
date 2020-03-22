@@ -114,4 +114,9 @@ public class CustomerServiceImpl implements CustomerService {
         return retailoutlets;
     }
 
+    @Override
+    public List<PartyCustomer> findAll() {
+        return customerRepo.findAll();
+    }
+
 }

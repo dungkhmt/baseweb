@@ -137,4 +137,10 @@ public class UserServiceImpl implements UserService {
         userLoginRepo.save(u);
         return partyRepo.findById(person.getPartyId()).get();
     }
+
+    @Override
+    public UserLogin findUserLoginByPartyId(UUID partyId) {
+        Party party = partyService.findByPartyId(partyId);
+        return userLoginRepo.findByParty(party).get(0);
+    }
 }
