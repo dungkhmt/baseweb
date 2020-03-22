@@ -12,10 +12,7 @@ import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.service.ProductPriceService;
 import com.hust.baseweb.applications.order.controller.OrderAPIController;
 import com.hust.baseweb.applications.order.entity.*;
-import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
-import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
-import com.hust.baseweb.applications.order.model.OrderDetailView;
-import com.hust.baseweb.applications.order.model.OrderItemDetailView;
+import com.hust.baseweb.applications.order.model.*;
 import com.hust.baseweb.applications.order.repo.*;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
@@ -26,10 +23,8 @@ import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
 import com.hust.baseweb.utils.CommonUtils;
 import com.hust.baseweb.utils.DateTimeUtils;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,10 +32,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -59,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
     private SalesChannelRepo salesChannelRepo;
     private ProductPriceService productPriceService;
     private PostalAddressRepo postalAddressRepo;
-    private POrderRepo pOrderRepo;
+    private OrderHeaderPageRepo orderHeaderPageRepo;
     private PartySalesmanRepo partySalesmanRepo;
     private PartyCustomerRepo partyCustomerRepo;
     private PartyRepo partyRepo;
@@ -76,7 +71,8 @@ public class OrderServiceImpl implements OrderService {
         //System.out.println(module + "::save, salesmanId = " + salesmanId);
         UserLogin salesman = userLoginRepo.findByUserLoginId(salesmanId);
         //Party salesman = partyRepo.
-        log.info("save, salesmanId = " + salesmanId + ", partyId = " + (salesman != null ? salesman.getParty().getPartyId() : "NULL"));
+        log.info("save, salesmanId = " + salesmanId + ", partyId = "
+                + (salesman != null ? salesman.getParty().getPartyId() : "NULL"));
 
         Facility facility = facilityRepo.findByFacilityId(orderInput.getFacilityId());
 
@@ -89,10 +85,10 @@ public class OrderServiceImpl implements OrderService {
         //(facility != null ? facility.getFacilityName() : "null"));
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date orderDate = null;
+        Date orderDate;
         try {
             orderDate = formatter.parse(orderInput.getOrderDate());
-        } catch (Exception e) {
+        } catch (ParseException e) {
             e.printStackTrace();
             orderDate = new Date();// take current Date
             log.info("save, input orderDate is null -> take current Date() = " + orderDate.toString());
@@ -101,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
         PostalAddress shipToPostalAddress = postalAddressRepo.findByContactMechId(orderInput.getShipToAddressId());
 
         // iterate for computing grand total
-        BigDecimal total = new BigDecimal(0);
+        BigDecimal totalGrand = new BigDecimal(0);
         for (ModelCreateOrderInputOrderItem modelCreateOrderInputOrderItem : orderInput.getOrderItems()) {
             //Product product = productRepo.findByProductId(modelCreateOrderInputOrderItem.getProductId());
             ProductPrice pp = productPriceService.getProductPrice(modelCreateOrderInputOrderItem.getProductId());
@@ -114,9 +110,14 @@ public class OrderServiceImpl implements OrderService {
                 tt = new BigDecimal(0);
             }
             //total = total.add(modelCreateOrderInputOrderItem.getTotalItemPrice());
-            total = total.add(tt);
-            System.out.println(module + "::save, order-item " + modelCreateOrderInputOrderItem.getProductId() + ", price = " +
-                    (pp != null ? pp.getPrice() : 0) + ", total = " + total);
+            totalGrand = totalGrand.add(tt);
+//            System.out.println(module +
+//                    "::save, order-item " +
+//                    modelCreateOrderInputOrderItem.getProductId() +
+//                    ", price = " +
+//                    (pp != null ? pp.getPrice() : 0) +
+//                    ", total = " +
+//                    totalGrand);
 
         }
 
@@ -124,15 +125,13 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderId(orderId);
         order.setOrderType(orderType);
         order.setSalesChannel(salesChannel);
-        order.setFacility(facility);
         order.setOrderDate(orderDate);
-        order.setShipToAddress(orderInput.getShipToAddress());
         if (shipToPostalAddress != null) {
             order.setShipToPostalAddress(shipToPostalAddress);
         }
-        order.setGrandTotal(total);
+        order.setGrandTotal(totalGrand);
 
-        orderHeaderRepo.save(order);
+        order = orderHeaderRepo.save(order);
 
 
         // write to table order_item
@@ -179,7 +178,9 @@ public class OrderServiceImpl implements OrderService {
 
         orderRole = new OrderRole();
         orderRole.setOrderId(order.getOrderId());
-        orderRole.setPartyId(salesman.getParty().getPartyId());
+        if (salesman != null) {
+            orderRole.setPartyId(salesman.getParty().getPartyId());
+        }
         orderRole.setRoleTypeId("SALES_EXECUTIVE");// salesman who sales the order (revenue of the order is accounted for this salesman)
         orderRoleRepo.save(orderRole);
 
@@ -197,20 +198,18 @@ public class OrderServiceImpl implements OrderService {
         //String dateYYYYMMDD = s[0].trim();
         String dateYYYYMMDD = DateTimeUtils.date2YYYYMMDD(order.getOrderDate());
         log.info("save, orderDateYYYYMMDD = " + dateYYYYMMDD);
-        OrderAPIController.revenueOrderCache.addOrderRevenue(dateYYYYMMDD, total);
+        OrderAPIController.revenueOrderCache.addOrderRevenue(dateYYYYMMDD, totalGrand);
         return order;
     }
 
     @Override
-    public Page<OrderHeader> findAll(Pageable page) {
-        Page<OrderHeader> pages = pOrderRepo.findAll(page);
-        return pages;
+    public List<OrderHeader> findAll() {
+        return orderHeaderRepo.findAll();
     }
 
     @Override
     public OrderHeader findByOrderId(String orderId) {
-        OrderHeader order = orderHeaderRepo.findByOrderId(orderId);
-        return order;
+        return orderHeaderRepo.findByOrderId(orderId);
     }
 
     @Override
@@ -252,7 +251,11 @@ public class OrderServiceImpl implements OrderService {
             odv.setSalesmanLoginId(userLogin.getUserLoginId());
         }
         if (salesman != null) {
-            odv.setSalesmanName(salesman.getPerson().getLastName() + " " + salesman.getPerson().getMiddleName() + " " + salesman.getPerson().getFirstName());
+            odv.setSalesmanName(salesman.getPerson().getLastName() +
+                    " " +
+                    salesman.getPerson().getMiddleName() +
+                    " " +
+                    salesman.getPerson().getFirstName());
         }
         OrderItemDetailView[] oidv = new OrderItemDetailView[order.getOrderItems().size()];
         for (int i = 0; i < order.getOrderItems().size(); i++) {
@@ -265,9 +268,10 @@ public class OrderServiceImpl implements OrderService {
             }
             oidv[i].setQuantity(oi.getQuantity());
             oidv[i].setUnitPrice(oi.getUnitPrice());
-            if(oidv[i].getUnitPrice() != null)
-            	oidv[i].setTotalItemPrice(oidv[i].getUnitPrice().multiply(new BigDecimal(oi.getQuantity())));
-            
+            if (oidv[i].getUnitPrice() != null) {
+                oidv[i].setTotalItemPrice(oidv[i].getUnitPrice().multiply(new BigDecimal(oi.getQuantity())));
+            }
+
             oidv[i].setUom(oi.getProduct().getUom().getDescription());
         }
         odv.setOrderItems(oidv);
@@ -315,7 +319,11 @@ public class OrderServiceImpl implements OrderService {
             odv.setSalesmanLoginId(userLogin.getUserLoginId());
         }
         if (salesman != null) {
-            odv.setSalesmanName(salesman.getPerson().getLastName() + " " + salesman.getPerson().getMiddleName() + " " + salesman.getPerson().getFirstName());
+            odv.setSalesmanName(salesman.getPerson().getLastName() +
+                    " " +
+                    salesman.getPerson().getMiddleName() +
+                    " " +
+                    salesman.getPerson().getFirstName());
         }
         OrderItemDetailView[] oidv = new OrderItemDetailView[order.getOrderItems().size()];
         for (int i = 0; i < order.getOrderItems().size(); i++) {

@@ -29,7 +29,6 @@ public class DeliveryPlanServiceImpl implements DeliveryPlanService {
         DeliveryPlan deliveryPlan = new DeliveryPlan();
         deliveryPlan.setCreatedByUserLoginId(input.getCreatedByUserLoginId());
         deliveryPlan.setDescription(input.getDescription());
-        deliveryPlan.setFacility(facilityRepo.findByFacilityId(input.getFacilityId()));
         Date deliveryDate = null;
         try {
             deliveryDate = Constant.DATE_FORMAT.parse(input.getDeliveryDate());

@@ -1,7 +1,10 @@
 package com.hust.baseweb.applications.order.entity;
 
+import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.logistics.entity.Facility;
+import com.hust.baseweb.applications.logistics.model.InventoryModel;
+import com.hust.baseweb.utils.Constant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,18 +35,11 @@ public class OrderHeader {
     @ManyToOne(fetch = FetchType.EAGER)
     private SalesChannel salesChannel;
 
-    @JoinColumn(name = "original_facility_id", referencedColumnName = "facility_id")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Facility facility;
-
     @Column(name = "order_date")
     private Date orderDate;
 
     @Column(name = "grand_total")
     private BigDecimal grandTotal;
-
-    @Column(name = "ship_to_address")
-    private String shipToAddress;
 
     @JoinColumn(name = "ship_to_address_id", referencedColumnName = "contact_mech_id")
     @ManyToOne(fetch = FetchType.EAGER)
@@ -66,4 +62,12 @@ public class OrderHeader {
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     @OneToMany(fetch = FetchType.EAGER)
     private Set<OrderRole> orderRoles;
+
+    public InventoryModel.OrderHeader toOrderHeaderModel(PartyCustomer customer) {
+        return new InventoryModel.OrderHeader(
+                orderId,
+                customer == null ? null : customer.getCustomerCode(),
+                orderDate == null ? null : Constant.DATE_FORMAT.format(orderDate)
+        );
+    }
 }

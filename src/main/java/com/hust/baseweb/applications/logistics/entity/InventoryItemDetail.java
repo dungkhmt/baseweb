@@ -27,7 +27,7 @@ public class InventoryItemDetail {
     private int quantityOnHandDiff;
 
     @Column(name = "order_id")
-    private UUID orderId;
+    private String orderId;
 
     @Column(name = "order_item_seq_id")
     private String orderItemSeqId;

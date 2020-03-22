@@ -336,15 +336,15 @@ create table customer_salesman
 create table customer_salesman_vendor
 (
     customer_salesman_vendor_id UUID NOT NULL default uuid_generate_v1(),
-    party_customer_id    UUID NOT NULL,
-    party_salesman_id    UUID NOT NULL,
-    party_vendor_id		UUID NOT NULL,
-    from_date            TIMESTAMP,
-    thru_date            TIMESTAMP,
+    party_customer_id           UUID NOT NULL,
+    party_salesman_id           UUID NOT NULL,
+    party_vendor_id             UUID NOT NULL,
+    from_date                   TIMESTAMP,
+    thru_date                   TIMESTAMP,
     constraint pk_customer_salesman_vendor primary key (customer_salesman_vendor_id),
-    constraint fk_customer_salesman_vendor_customer foreign key (party_customer_id) references party(party_id),
-    constraint fk_customer_salesman_vendor_salesman foreign key (party_salesman_id) references party(party_id),
-    constraint fk_customer_salesman_vendor_vendor foreign key (party_vendor_id) references party(party_id)
+    constraint fk_customer_salesman_vendor_customer foreign key (party_customer_id) references party (party_id),
+    constraint fk_customer_salesman_vendor_salesman foreign key (party_salesman_id) references party (party_id),
+    constraint fk_customer_salesman_vendor_vendor foreign key (party_vendor_id) references party (party_id)
 );
 
 
@@ -595,14 +595,14 @@ CREATE TABLE inventory_item
 
 CREATE TABLE inventory_item_detail
 (
-    inventory_item_detail_id  UUID NOT NULL default uuid_generate_v1(),
-    inventory_item_id         UUID NOT NULL,
-    effective_date            TIMESTAMP,
-    quantity_on_hand_diff     DECIMAL(18, 6),
-    order_id                  VARCHAR(60),
-    order_item_seq_id         VARCHAR(60),
-    last_updated_stamp        TIMESTAMP,
-    created_stamp             TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    inventory_item_detail_id UUID NOT NULL default uuid_generate_v1(),
+    inventory_item_id        UUID NOT NULL,
+    effective_date           TIMESTAMP,
+    quantity_on_hand_diff    DECIMAL(18, 6),
+    order_id                 VARCHAR(60),
+    order_item_seq_id        VARCHAR(60),
+    last_updated_stamp       TIMESTAMP,
+    created_stamp            TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_inventory_item_detail PRIMARY KEY (inventory_item_detail_id),
     CONSTRAINT fk_inventory_item_detail_inventory_item_id FOREIGN KEY (inventory_item_id) REFERENCES inventory_item (inventory_item_id),
     CONSTRAINT fk_inventory_item_detail_order_id_order_item_seq_id FOREIGN KEY (order_id, order_item_seq_id) REFERENCES order_item (order_id, order_item_seq_id)
@@ -679,7 +679,6 @@ CREATE TABLE order_header
     order_date           TIMESTAMP,
     currency_uom_id      VARCHAR(60),
     ship_to_address_id   UUID,
-    ship_to_address      VARCHAR(200),
     grand_total          DECIMAL(18, 2),
     description          TEXT,
     last_updated_stamp   TIMESTAMP,
@@ -688,7 +687,9 @@ CREATE TABLE order_header
     CONSTRAINT fk_order_type_id FOREIGN KEY (order_type_id) REFERENCES order_type (order_type_id),
     CONSTRAINT fk_original_facility_id FOREIGN KEY (original_facility_id) REFERENCES facility (facility_id),
     constraint fk_order_address_id foreign key (ship_to_address_id) references postal_address (contact_mech_id),
-    CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES facility (facility_id)
+    CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES facility (facility_id),
+    CONSTRAINT fk_currency_uom_id FOREIGN KEY (currency_uom_id) REFERENCES uom (uom_id),
+    CONSTRAINT fk_sales_channel_id FOREIGN KEY (sales_channel_id) REFERENCES sales_channel (sales_channel_id)
 
 );
 CREATE TABLE order_item_type
@@ -708,8 +709,9 @@ CREATE TABLE order_item
     order_item_seq_id  VARCHAR(60),
     order_item_type_id VARCHAR(60),
     product_id         VARCHAR(60),
-    unit_price         DECIMAL(18, 2),
-    quantity           DECIMAL(18, 6),
+    facility_id        varchar(60),
+    unit_price         numeric,
+    quantity           int,
     status_id          VARCHAR(60),
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -717,7 +719,9 @@ CREATE TABLE order_item
     CONSTRAINT fk_order_item_type_id FOREIGN KEY (order_item_type_id) REFERENCES order_item_type (order_item_type_id),
     CONSTRAINT fk_order_item_product_id FOREIGN KEY (product_id) REFERENCES product (product_id),
     CONSTRAINT fk_order_item_order_id FOREIGN KEY (order_id) REFERENCES order_header (order_id),
-    CONSTRAINT fk_status_id FOREIGN KEY (status_id) REFERENCES status_item (status_id)
+    CONSTRAINT fk_status_id FOREIGN KEY (status_id) REFERENCES status_item (status_id),
+    CONSTRAINT fk_facility_id FOREIGN KEY (facility_id) REFERENCES facility (facility_id)
+
 );
 
 CREATE TABLE order_role
@@ -999,7 +1003,7 @@ create table shipment_item
     shipment_id                   UUID NOT NULL,
     quantity                      Integer,
     pallet                        numeric,
-    from_facility_id			VARCHAR(60),
+    from_facility_id              VARCHAR(60),
     party_customer_id             UUID,
     ship_to_location_id           UUID,
     order_id                      varchar(60),
@@ -1013,7 +1017,7 @@ create table shipment_item
     constraint fk_shipment_item_ship_to_location_id foreign key (ship_to_location_id) references postal_address (contact_mech_id),
     constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id),
     constraint fk_shipment_item_party_customer_id foreign key (party_customer_id) references party_customer (party_id),
-    constraint fk_shipment_item_from_facility_id foreign key(from_facility_id) references facility(facility_id),
+    constraint fk_shipment_item_from_facility_id foreign key (from_facility_id) references facility (facility_id),
     constraint fk_shipment_item_order_id foreign key (order_id) references order_header (order_id)
 
 );
@@ -1125,15 +1129,16 @@ CREATE TABLE delivery_trip_detail
     CONSTRAINT fk_delivery_trip_detail_status FOREIGN KEY (status_id) REFERENCES status_item (status_id)
 );
 
-create table delivery_trip_detail_status(
-	delivery_trip_detail_id uuid        NOT NULL,
-	status_id 	VARCHAR(60),
-	status_date TIMESTAMP,
-	updated_by_user_login_id	VARCHAR(60),
-	constraint pk_delivery_trip_detail_status primary key(delivery_trip_detail_id, status_id),
-	constraint fk_delivery_trip_detail_status_delivery_trip_detail_id foreign key(delivery_trip_detail_id) references delivery_trip_detail(delivery_trip_detail_id),
-	constraint fk_delivery_trip_detail_status_status_id foreign key(status_id) references status_item(status_id),
-	constraint fk_delivery_trip_detail_status_updated_by_user_login_id foreign key(updated_by_user_login_id) references user_login(user_login_id)
+create table delivery_trip_detail_status
+(
+    delivery_trip_detail_id  uuid NOT NULL,
+    status_id                VARCHAR(60),
+    status_date              TIMESTAMP,
+    updated_by_user_login_id VARCHAR(60),
+    constraint pk_delivery_trip_detail_status primary key (delivery_trip_detail_id, status_id),
+    constraint fk_delivery_trip_detail_status_delivery_trip_detail_id foreign key (delivery_trip_detail_id) references delivery_trip_detail (delivery_trip_detail_id),
+    constraint fk_delivery_trip_detail_status_status_id foreign key (status_id) references status_item (status_id),
+    constraint fk_delivery_trip_detail_status_updated_by_user_login_id foreign key (updated_by_user_login_id) references user_login (user_login_id)
 );
 
 
