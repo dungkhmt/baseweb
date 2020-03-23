@@ -27,7 +27,4 @@ public class ProductFacility {
     @Column(name = "atp_inventory_count")
     private Double atpInventoryCount;
 
-    public static void main(String[] args) {
-
-    }
 }

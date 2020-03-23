@@ -11,10 +11,10 @@ delete
 from delivery_trip;
 
 delete
-from order_item;
+from shipment_item;
 
 delete
-from shipment_item;
+from order_item;
 
 delete
 from shipment;

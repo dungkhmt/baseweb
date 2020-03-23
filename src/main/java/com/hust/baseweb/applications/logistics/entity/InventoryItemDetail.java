@@ -1,6 +1,8 @@
 package com.hust.baseweb.applications.logistics.entity;
 
+import com.hust.baseweb.applications.logistics.model.InventoryModel;
 import com.hust.baseweb.applications.order.entity.OrderItem;
+import com.hust.baseweb.utils.Constant;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,4 +34,9 @@ public class InventoryItemDetail {
     @ManyToOne(fetch = FetchType.EAGER)
     private OrderItem orderItem;
 
+    public InventoryModel.ExportDetail toInventoryExportDetail() {
+        return new InventoryModel.ExportDetail(
+                inventoryItemDetailId.toString(), orderItem.getOrderId(), Constant.DATE_FORMAT.format(effectiveDate)
+        );
+    }
 }

@@ -10,4 +10,6 @@ public interface ProductFacilityRepo extends JpaRepository<ProductFacility, Comp
     ProductFacility findByProductIdAndFacilityId(String productId, String facilityId);
 
     List<ProductFacility> findByProductIdInAndFacilityIdIn(List<String> productIds, List<String> facilityIds);
+
+    List<ProductFacility> findAllByFacilityId(String facilityId);
 }

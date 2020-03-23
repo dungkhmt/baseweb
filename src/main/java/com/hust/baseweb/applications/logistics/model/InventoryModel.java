@@ -33,5 +33,26 @@ public class InventoryModel {
         private String orderItemSeqId;
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class ExportDetail {
+        private String inventoryItemDetailId;
+        private String orderId;
+        private String effectiveDate;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class ProductFacility {
+        private String productId;
+        private String productName;
+        private Double quantity;
+        private String facilityId;
+        private String facilityName;
+    }
 
 }

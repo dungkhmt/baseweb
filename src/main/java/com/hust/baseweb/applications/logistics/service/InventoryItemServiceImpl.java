@@ -6,9 +6,7 @@ import com.hust.baseweb.applications.logistics.model.ExportInventoryItemInputMod
 import com.hust.baseweb.applications.logistics.model.ExportInventoryItemsInputModel;
 import com.hust.baseweb.applications.logistics.model.ImportInventoryItemInputModel;
 import com.hust.baseweb.applications.logistics.model.InventoryModel;
-import com.hust.baseweb.applications.logistics.repo.InventoryItemDetailRepo;
-import com.hust.baseweb.applications.logistics.repo.InventoryItemRepo;
-import com.hust.baseweb.applications.logistics.repo.ProductFacilityRepo;
+import com.hust.baseweb.applications.logistics.repo.*;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.order.entity.OrderRole;
@@ -43,6 +41,9 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     private OrderItemRepo orderItemRepo;
     private OrderRoleRepo orderRoleRepo;
     private PartyCustomerRepo partyCustomerRepo;
+
+    private FacilityRepo facilityRepo;
+    private ProductRepo productRepo;
 
     private InventoryItemDetailRepo inventoryItemDetailRepo;
 
@@ -263,5 +264,35 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         List<OrderItem> orderItems
                 = orderItemRepo.findAllByOrderIdAndFacility(orderId, new Facility(facilityId));
         return convertOrderItemToModel(orderItems);
+    }
+
+    @Override
+    public List<InventoryModel.ExportDetail> getInventoryExportList(String facilityId) {
+        List<OrderItem> orderItems = orderItemRepo.findAllByFacility(new Facility(facilityId));
+        List<InventoryItemDetail> inventoryItemDetails = inventoryItemDetailRepo.findAllByOrderItemIn(orderItems);
+        return inventoryItemDetails.stream()
+                .map(InventoryItemDetail::toInventoryExportDetail)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InventoryModel.ProductFacility> getInventoryList(String facilityId) {
+        Facility facility = facilityRepo.findById(facilityId).orElseThrow(NoSuchElementException::new);
+        List<ProductFacility> productFacilities = productFacilityRepo.findAllByFacilityId(facilityId);
+        List<String> productIds = productFacilities.stream()
+                .map(ProductFacility::getFacilityId)
+                .distinct()
+                .collect(Collectors.toList());
+
+        Map<String, Product> productMap = productRepo.findAllByProductIdIn(productIds).stream()
+                .collect(Collectors.toMap(Product::getProductId, product -> product));
+
+        return productFacilities.stream().map(productFacility -> new InventoryModel.ProductFacility(
+                productFacility.getProductId(),
+                productMap.get(productFacility.getFacilityId()).getProductName(),
+                productFacility.getLastInventoryCount(),
+                facilityId,
+                facility.getFacilityName()
+        )).collect(Collectors.toList());
     }
 }

@@ -12,4 +12,6 @@ public interface OrderItemRepo extends JpaRepository<OrderItem, String> {
     List<OrderItem> findAllByOrderIdAndFacility(String orderId, Facility facility);
 
     List<OrderItem> findAllByOrderIdInAndOrderItemSeqIdIn(List<String> orderIds, List<String> orderItemSeqIds);
+
+    List<OrderItem> findAllByFacility(Facility facility);
 }

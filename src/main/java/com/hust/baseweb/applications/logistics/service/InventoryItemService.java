@@ -19,4 +19,8 @@ public interface InventoryItemService {
     List<InventoryModel.OrderItem> getInventoryOrderHeaderDetail(String orderId);
 
     List<InventoryModel.OrderItem> getInventoryOrderDetailPage(String orderId, String facilityId);
+
+    List<InventoryModel.ExportDetail> getInventoryExportList(String facilityId);
+
+    List<InventoryModel.ProductFacility> getInventoryList(String facilityId);
 }

@@ -53,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -170,6 +171,13 @@ public class ShipmentServiceImpl implements ShipmentService {
         Map<String, Product> productMap = codeListInDb.getProductMap();
         Map<String, OrderHeader> orderHeaderMap = codeListInDb.getOrderHeaderMap();
 
+        Map<String, Facility> facilityMap = facilityRepo.findAllByFacilityIdIn(
+                Stream.of(input.getShipmentItems())
+                        .map(ShipmentItemModel.Create::getFacilityId)
+                        .distinct()
+                        .collect(Collectors.toList()))
+                .stream().collect(Collectors.toMap(Facility::getFacilityId, facility -> facility));
+
         Map<String, Integer> orderSeqIdCounterMap = new HashMap<>();
         Map<CompositeOrderItemId, ShipmentItemModel.Create> orderItemIdToShipmentItemModelMap = new HashMap<>();
 
@@ -182,13 +190,18 @@ public class ShipmentServiceImpl implements ShipmentService {
 
             OrderHeader orderHeader = getOrCreateOrderHeader(orderHeaderMap, shipmentItemModel);
 
-            OrderItem orderItem = createOrderItem(orderSeqIdCounterMap, shipmentItemModel, product, orderHeader);
+            OrderItem orderItem = createOrderItem(facilityMap,
+                    orderSeqIdCounterMap,
+                    shipmentItemModel,
+                    product,
+                    orderHeader);
             orderItems.add(orderItem);
 
             orderItemIdToShipmentItemModelMap.put(new CompositeOrderItemId(orderItem.getOrderId(),
                     orderItem.getOrderItemSeqId()), shipmentItemModel);
         }
 
+        facilityRepo.saveAll(facilityMap.values());
         orderItems = orderItemRepo.saveAll(orderItems);
 
         List<ShipmentItem> shipmentItems = new ArrayList<>();
@@ -206,6 +219,23 @@ public class ShipmentServiceImpl implements ShipmentService {
         shipmentItemRepo.saveAll(shipmentItems);
 
         return shipment;
+    }
+
+    @NotNull
+    private OrderItem createOrderItem(Map<String, Facility> facilityMap,
+                                      Map<String, Integer> orderSeqIdCounterMap,
+                                      ShipmentItemModel.Create shipmentItemModel,
+                                      Product product,
+                                      OrderHeader orderHeader) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrderId(orderHeader.getOrderId());
+        orderItem.setProduct(product);
+        orderItem.setQuantity(shipmentItemModel.getQuantity());
+        orderItem.setOrderItemSeqId(orderSeqIdCounterMap.merge(orderHeader.getOrderId(), 1, Integer::sum) + "");
+
+        Facility facility = facilityMap.computeIfAbsent(shipmentItemModel.getFacilityId(), Facility::new);
+        orderItem.setFacility(facility);
+        return orderItem;
     }
 
     @NotNull
@@ -228,25 +258,6 @@ public class ShipmentServiceImpl implements ShipmentService {
         PartyCustomer partyCustomer = getOrCreatePartyCustomer(partyCustomerMap, shipmentItemModel, postalAddress);
         shipmentItem.setCustomer(partyCustomer);
         return shipmentItem;
-    }
-
-    @NotNull
-    private OrderItem createOrderItem(Map<String, Integer> orderSeqIdCounterMap,
-                                      ShipmentItemModel.Create shipmentItemModel,
-                                      Product product,
-                                      OrderHeader orderHeader) {
-        OrderItem orderItem = new OrderItem();
-//        orderItem.setOrderHeader(orderHeader);
-        orderItem.setOrderId(orderHeader.getOrderId());
-        orderItem.setProduct(product);
-        orderItem.setQuantity(shipmentItemModel.getQuantity());
-        orderItem.setOrderItemSeqId(orderSeqIdCounterMap.merge(orderHeader.getOrderId(), 1, Integer::sum) + "");
-
-        Facility facility = new Facility();
-        facility.setFacilityId(shipmentItemModel.getFacilityId());
-        facility = facilityRepo.save(facility);
-        orderItem.setFacility(facility);
-        return orderItem;
     }
 
     @NotNull
