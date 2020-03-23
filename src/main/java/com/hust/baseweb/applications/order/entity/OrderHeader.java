@@ -2,7 +2,6 @@ package com.hust.baseweb.applications.order.entity;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
-import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.model.InventoryModel;
 import com.hust.baseweb.utils.Constant;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +37,7 @@ public class OrderHeader {
     private Date orderDate;
 
     @Column(name = "grand_total")
-    private BigDecimal grandTotal;
+    private Double grandTotal;
 
     @JoinColumn(name = "ship_to_address_id", referencedColumnName = "contact_mech_id")
     @ManyToOne(fetch = FetchType.EAGER)

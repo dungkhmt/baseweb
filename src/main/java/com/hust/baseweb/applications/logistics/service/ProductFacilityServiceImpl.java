@@ -5,8 +5,6 @@ import com.hust.baseweb.applications.logistics.repo.ProductFacilityRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductFacilityServiceImpl implements ProductFacilityService {
 
@@ -14,7 +12,7 @@ public class ProductFacilityServiceImpl implements ProductFacilityService {
 
     @Override
     public ProductFacility save(String productId, String facilityId,
-                                BigDecimal lastInventoryCount, BigDecimal atpInventoryCount) {
+                                Double lastInventoryCount, Double atpInventoryCount) {
 
         ProductFacility productFacility = new ProductFacility();
         productFacility.setAtpInventoryCount(atpInventoryCount);

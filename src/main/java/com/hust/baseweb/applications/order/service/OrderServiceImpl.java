@@ -12,7 +12,10 @@ import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.service.ProductPriceService;
 import com.hust.baseweb.applications.order.controller.OrderAPIController;
 import com.hust.baseweb.applications.order.entity.*;
-import com.hust.baseweb.applications.order.model.*;
+import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
+import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
+import com.hust.baseweb.applications.order.model.OrderDetailView;
+import com.hust.baseweb.applications.order.model.OrderItemDetailView;
 import com.hust.baseweb.applications.order.repo.*;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
@@ -26,16 +29,14 @@ import com.hust.baseweb.utils.DateTimeUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -97,20 +98,19 @@ public class OrderServiceImpl implements OrderService {
         PostalAddress shipToPostalAddress = postalAddressRepo.findByContactMechId(orderInput.getShipToAddressId());
 
         // iterate for computing grand total
-        BigDecimal totalGrand = new BigDecimal(0);
+        Double totalGrand = 0.0;
         for (ModelCreateOrderInputOrderItem modelCreateOrderInputOrderItem : orderInput.getOrderItems()) {
             //Product product = productRepo.findByProductId(modelCreateOrderInputOrderItem.getProductId());
             ProductPrice pp = productPriceService.getProductPrice(modelCreateOrderInputOrderItem.getProductId());
             //orderItem.setUnitPrice(modelCreateOrderInputOrderItem.getUnitPrice());// TOBE FIXED
-            BigDecimal tt = null;
-
+            double tt;
             if (pp != null) {
-                tt = pp.getPrice().multiply(new BigDecimal(modelCreateOrderInputOrderItem.getQuantity()));
+                tt = pp.getPrice() * modelCreateOrderInputOrderItem.getQuantity();
             } else {
-                tt = new BigDecimal(0);
+                tt = 0.0;
             }
             //total = total.add(modelCreateOrderInputOrderItem.getTotalItemPrice());
-            totalGrand = totalGrand.add(tt);
+            totalGrand += tt;
 //            System.out.println(module +
 //                    "::save, order-item " +
 //                    modelCreateOrderInputOrderItem.getProductId() +
@@ -154,7 +154,7 @@ public class OrderServiceImpl implements OrderService {
                 orderItem.setUnitPrice(pp.getPrice());
                 //tt = pp.getPrice().multiply(new BigDecimal(orderItem.getQuantity()));
             } else {
-                orderItem.setUnitPrice(new BigDecimal(0));
+                orderItem.setUnitPrice(0.0);
                 //tt = new BigDecimal(0);
             }
             orderItemRepo.save(orderItem);
@@ -269,7 +269,7 @@ public class OrderServiceImpl implements OrderService {
             oidv[i].setQuantity(oi.getQuantity());
             oidv[i].setUnitPrice(oi.getUnitPrice());
             if (oidv[i].getUnitPrice() != null) {
-                oidv[i].setTotalItemPrice(oidv[i].getUnitPrice().multiply(new BigDecimal(oi.getQuantity())));
+                oidv[i].setTotalItemPrice(oidv[i].getUnitPrice() * oi.getQuantity());
             }
 
             oidv[i].setUom(oi.getProduct().getUom().getDescription());
@@ -336,7 +336,7 @@ public class OrderServiceImpl implements OrderService {
             }
             oidv[i].setQuantity(oi.getQuantity());
             oidv[i].setUnitPrice(oi.getUnitPrice());
-            oidv[i].setTotalItemPrice(oidv[i].getUnitPrice().multiply(new BigDecimal(oi.getQuantity())));
+            oidv[i].setTotalItemPrice(oidv[i].getUnitPrice() * oi.getQuantity());
             oidv[i].setUom(oi.getProduct().getUom().getDescription());
         }
         odv.setOrderItems(oidv);

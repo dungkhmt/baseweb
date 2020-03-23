@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.logistics.entity;
 
+import com.hust.baseweb.applications.order.entity.OrderItem;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,11 +27,9 @@ public class InventoryItemDetail {
     @Column(name = "quantity_on_hand_diff")
     private int quantityOnHandDiff;
 
-    @Column(name = "order_id")
-    private String orderId;
-
-    @Column(name = "order_item_seq_id")
-    private String orderItemSeqId;
-
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    @JoinColumn(name = "order_item_seq_id", referencedColumnName = "order_item_seq_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private OrderItem orderItem;
 
 }

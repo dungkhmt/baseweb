@@ -16,5 +16,7 @@ public interface InventoryItemRepo extends PagingAndSortingRepository<InventoryI
     List<InventoryItem> findAll();
     //public List<InventoryItem> findAllByProductIdAndFacilityId(String productId, String facilityId); NOT ALLOWED
 
-    List<InventoryItem> findAllByProductInAndFacilityIn(List<Product> products, List<Facility> facilities);
+    List<InventoryItem> findAllByProductInAndFacilityInAndQuantityOnHandTotalGreaterThan(List<Product> products,
+                                                                                         List<Facility> facilities,
+                                                                                         int quantity);
 }

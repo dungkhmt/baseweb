@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +29,10 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
     @Override
     @Transactional
-    public ProductPrice setProductPrice(UserLogin createdByUserLogin, String productId, BigDecimal price, String currencyUomId,
+    public ProductPrice setProductPrice(UserLogin createdByUserLogin,
+                                        String productId,
+                                        Double price,
+                                        String currencyUomId,
                                         String taxInPrice) {
         Product product = productRepo.findByProductId(productId);
         Uom uom = uomRepo.findByUomId(currencyUomId);

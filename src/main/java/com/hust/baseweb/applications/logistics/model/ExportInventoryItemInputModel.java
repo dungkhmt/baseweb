@@ -9,4 +9,6 @@ public class ExportInventoryItemInputModel {
     private String productId;
     private String facilityId;
     private int quantity;
+    private String orderId;
+    private String orderItemSeqId;
 }
