@@ -212,6 +212,27 @@ create table distance_traveltime_geo_points
     created_stamp      timestamp default current_timestamp
 );
 
+create table distance_traveltime_postal_address
+(
+    from_contact_mech_id  uuid not null,
+    to_contact_mech_id    uuid not null,
+    distance           numeric,
+    travel_time        numeric,
+    travel_time_truck        numeric,
+    travel_time_motobike        numeric,
+    updated_by_user_login_id	VARCHAR(60),
+    updated_date TIMESTAMP,
+    source_enum_id	VARCHAR(60),
+    last_updated_stamp timestamp,
+    created_stamp      timestamp default current_timestamp,
+	constraint pk_distance_traveltime_postal_address primary key(from_contact_mech_id,to_contact_mech_id),
+	constraint fk_distance_traveltime_postal_address_from foreign key(from_contact_mech_id) references postal_address(contact_mech_id),
+	constraint fk_distance_traveltime_postal_address_to foreign key(to_contact_mech_id) references postal_address(contact_mech_id),
+	constraint fk_distance_traveltime_postal_address_source_enum_id foreign key(source_enum_id) references enumeration(enum_id),
+	constraint fk_distance_traveltime_postal_address_updated_by_user_login foreign key(updated_by_user_login_id) references user_login(user_login_id)
+);
+
+
 create unique index distance_traveltime_geo_points_from_geo_point_id_to_geo_point_id_uindex
     on distance_traveltime_geo_points (from_geo_point_id, to_geo_point_id);
 
@@ -370,24 +391,6 @@ create table sales_route_config
     constraint pk_sales_route_config primary key (sales_route_config_id),
     constraint fk_sales_route_config_status foreign key (status_id) references status_item (status_id)
 );
-
-create table sales_route_config_customer
-(
-    sales_route_config_customer_id UUID NOT NULL default uuid_generate_v1(),
-    sales_route_config_id          UUID NOT NULL,
-    party_customer_id              UUID NOT NULL,
-    party_salesman_id              UUID NOT NULL,
-    from_date                      TIMESTAMP,
-    thru_date                      TIMESTAMP,
-    start_execute_date             VARCHAR(60),
-    last_updated_stamp             TIMESTAMP,
-    created_stamp                  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_sales_route_config_customer primary key (sales_route_config_customer_id),
-    constraint fk_sales_route_config_customer_sales_route_config_id foreign key (sales_route_config_id) references sales_route_config (sales_route_config_id),
-    constraint fk_sales_route_config_customer_party_customer_id foreign key (party_customer_id) references party_customer (party_id),
-    constraint fk_sales_route_config_customer_party_salesman_id foreign key (party_salesman_id) references party_salesman (party_id)
-);
-
 create table sales_route_planning_period
 (
     sales_route_planning_period_id UUID NOT NULL default uuid_generate_v1(),
@@ -400,11 +403,32 @@ create table sales_route_planning_period
     constraint fk_sales_planning_period_created_by foreign key (created_by) references user_login (user_login_id),
     constraint fk_sales_planning_period_status foreign key (status_id) references status_item (status_id)
 );
+
+create table sales_route_config_customer
+(
+    sales_route_config_customer_id UUID NOT NULL default uuid_generate_v1(),
+    sales_route_planning_period_id UUID not null,
+    
+    sales_route_config_id          UUID NOT NULL,
+    customer_salesman_vendor_id              UUID NOT NULL,
+    status_id						VARCHAR(60),
+    start_execute_week             int,
+    number_days_per_week 			int,
+    repeat_week						int,
+    last_updated_stamp             TIMESTAMP,
+    created_stamp                  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_sales_route_config_customer primary key (sales_route_config_customer_id),
+    constraint fk_sales_route_config_customer_sales_route_config_id foreign key (sales_route_config_id) references sales_route_config (sales_route_config_id),
+    constraint fk_sales_route_config_customer_sales_route_planning_period_id foreign key(sales_route_planning_period_id) references sales_route_planning_period(sales_route_planning_period_id),
+    constraint fk_sales_route_config_customer_customer_salesman_vendor_id foreign key (customer_salesman_vendor_id) references customer_salesman_vendor(customer_salesman_vendor_id)
+);
+
 create table sales_route_detail
 (
     sales_route_detail_id          UUID NOT NULL,
     party_salesman_id              UUID NOT NULL,
     party_customer_id              UUID NOT NULL,
+    party_distributor				UUID not null,
     sequence                       Integer,
     execute_date                   VARCHAR(60),
     sales_route_config_customer_id UUID NOT NULL,

@@ -64,6 +64,11 @@ VALUES('DELIVERY_PLAN_CREATE', 'Creation of delivery plan and trips', NULL, '202
 INSERT INTO public.security_permission
 (permission_id, description, last_updated_stamp, created_stamp)
 VALUES('SALES_ROUTE_PLAN_CREATE', 'Creation of Sales Route', NULL, '2020-03-01 18:54:50.488');
+INSERT INTO public.security_permission
+(permission_id, description, last_updated_stamp, created_stamp)
+VALUES('GEO_ADDRESS_ADMIN', 'Creation of Sales Route', NULL, '2020-03-01 18:54:50.488');
+
+
 
 INSERT INTO public.security_group_permission
 (group_id, permission_id, last_updated_stamp, created_stamp)
@@ -110,6 +115,11 @@ VALUES('ROLE_SALES_ROUTE_MANAGER', 'SALES_ROUTE_PLAN_CREATE', NULL, '2020-03-01 
 INSERT INTO public.security_group_permission
 (group_id, permission_id, last_updated_stamp, created_stamp)
 VALUES('ROLE_FULL_ADMIN', 'SALES_ROUTE_PLAN_CREATE', NULL, '2020-03-01 18:54:50.488');
+INSERT INTO public.security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_FULL_ADMIN', 'GEO_ADDRESS_ADMIN', NULL, '2020-03-01 18:54:50.488');
+
+
 
 INSERT INTO application_type(application_type_id, description, last_updated_stamp, created_stamp) VALUES ('MENU','Menu application type', NOW(),NOW());
 INSERT INTO application_type(application_type_id, description, last_updated_stamp, created_stamp) VALUES ('SCREEN','Screen application type', NOW(),NOW());
@@ -156,6 +166,11 @@ VALUES('MENU_SALES_ROUTE', 'MENU', NULL, NULL, 'Menu Sales Route', NULL, '2020-0
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
 VALUES('MENU_SALES_ROUTE_PLAN_CREATE', 'MENU', 'MENU_SALES_ROUTE', 'SALES_ROUTE_PLAN_CREATE', 'Menu Sales Route', NULL, '2020-03-01 18:54:50.488');
+INSERT INTO public.application
+(application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
+VALUES('MENU_GEO_ADDRESS', 'MENU', NULL,NULL, 'Menu Geo and Address', NULL, '2020-03-01 18:54:50.488');
+
+
 
 INSERT INTO party (party_id, party_type_id, external_id, description, status_id, created_date, created_by_user_login, last_modified_date, last_modified_by_user_login, is_unread, last_updated_stamp, created_stamp, party_code) VALUES ('bd6322f2-2121-11ea-81a8-979e2f76b5a4', 'PERSON', NULL, NULL, 'PARTY_ENABLED', NULL, NULL, NULL, NULL, FALSE, NOW(), NOW(), 'admin');
 INSERT  INTO person (party_id, first_name, middle_name, last_name, gender, birth_date, last_updated_stamp, created_stamp) VALUES ('bd6322f2-2121-11ea-81a8-979e2f76b5a4','admin',',',',','M',NOW(),null,NOW());
@@ -224,4 +239,36 @@ INSERT INTO public.contact_mech_purpose_type
     (contact_mech_purpose_type_id, description)
 VALUES ('PRIMARY_LOCATION', 'Primary Address');
 
+
+INSERT INTO public.enumeration_type
+(enumeration_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
+VALUES('PROD_PROMO_RULE', NULL, NULL, NULL, '2020-02-15 21:27:25.628');
+INSERT INTO public.enumeration_type
+(enumeration_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
+VALUES('PRODUCT_TRANSPORT_CATEGORY', NULL, NULL, NULL, '2020-03-09 15:59:16.836');
+INSERT INTO public.enumeration_type
+(enumeration_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
+VALUES('DISTANCE_SOURCE', NULL, NULL, NULL, '2020-03-22 23:53:59.100');
+
+INSERT INTO public.enumeration
+(enum_id, enum_type_id, enum_code, sequence_id, description, last_updated_stamp, created_stamp)
+VALUES('PROD_PROMO_DISCOUNT_PERCENTAGE', 'PROD_PROMO_RULE', NULL, NULL, NULL, NULL, '2020-02-15 21:28:45.612');
+INSERT INTO public.enumeration
+(enum_id, enum_type_id, enum_code, sequence_id, description, last_updated_stamp, created_stamp)
+VALUES('KHO', 'PRODUCT_TRANSPORT_CATEGORY', NULL, NULL, NULL, NULL, '2020-03-09 16:01:14.820');
+INSERT INTO public.enumeration
+(enum_id, enum_type_id, enum_code, sequence_id, description, last_updated_stamp, created_stamp)
+VALUES('LANH', 'PRODUCT_TRANSPORT_CATEGORY', NULL, NULL, NULL, NULL, '2020-03-09 16:01:14.820');
+INSERT INTO public.enumeration
+(enum_id, enum_type_id, enum_code, sequence_id, description, last_updated_stamp, created_stamp)
+VALUES('DONG', 'PRODUCT_TRANSPORT_CATEGORY', NULL, NULL, NULL, NULL, '2020-03-09 16:01:14.820');
+INSERT INTO public.enumeration
+(enum_id, enum_type_id, enum_code, sequence_id, description, last_updated_stamp, created_stamp)
+VALUES('GOOGLE', 'DISTANCE_SOURCE', NULL, NULL, NULL, NULL, '2020-03-22 23:55:50.746');
+INSERT INTO public.enumeration
+(enum_id, enum_type_id, enum_code, sequence_id, description, last_updated_stamp, created_stamp)
+VALUES('HAVERSINE', 'DISTANCE_SOURCE', NULL, NULL, NULL, NULL, '2020-03-22 23:55:50.746');
+INSERT INTO public.enumeration
+(enum_id, enum_type_id, enum_code, sequence_id, description, last_updated_stamp, created_stamp)
+VALUES('OPEN_STREET_MAP', 'DISTANCE_SOURCE', NULL, NULL, NULL, NULL, '2020-03-22 23:55:50.746');
 
