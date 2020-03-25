@@ -65,6 +65,7 @@ public class DeliveryTripDetail {
             orderItemModel.setWeight(product.getWeight() * deliveryQuantity);
         }
         orderItemModel.setDeliveryQuantity(deliveryQuantity);
+        orderItemModel.setLocationCode(shipmentItem.getShipToLocation().getLocationCode());
         return orderItemModel;
     }
 

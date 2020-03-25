@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Service
 public interface PartyDriverService {
-	PartyDriver save(DriverModel.InputCreate input);
+    PartyDriver save(DriverModel.InputCreate input);
 
 	List<PartyDriver> findAll();
 

@@ -312,7 +312,7 @@ CREATE TABLE party_customer
 (
     party_id           UUID NOT NULL,
     customer_code      VARCHAR(100),
-    customer_name      VARCHAR(100),
+    customer_name      VARCHAR(200),
     status_id          VARCHAR(60),
     party_type_id      VARCHAR(60),
     description        TEXT,
@@ -540,7 +540,7 @@ CREATE TABLE product
 (
     product_id                    VARCHAR(60) NOT NULL,
     product_type_id               VARCHAR(60),
-    product_name                  VARCHAR(100),
+    product_name                  VARCHAR(200),
     weight                        numeric,
     hs_thu                        int,
     hs_pal                        int,

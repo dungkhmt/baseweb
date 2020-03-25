@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -45,7 +46,7 @@ public class FacilityServiceImpl implements FacilityService {
             GeoPoint geoPoint = new GeoPoint(null, location.lat + "", location.lng + "");
             geoPoint = geoPointRepo.save(geoPoint);
             postalAddress = new PostalAddress(null,
-                    facilityModel.getFacilityId(),
+                    UUID.randomUUID().toString(),
                     facilityModel.getAddress(),
                     geoPoint,
                     Double.MAX_VALUE);

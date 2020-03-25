@@ -26,6 +26,9 @@ delete
 from vehicle_location_priority;
 
 delete
+from delivery_plan;
+
+delete
 from facility;
 
 delete

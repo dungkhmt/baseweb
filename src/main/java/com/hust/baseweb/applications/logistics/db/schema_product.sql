@@ -81,7 +81,7 @@ CREATE TABLE product
 (
     product_id                    VARCHAR(60) NOT NULL,
     product_type_id               VARCHAR(60),
-    product_name                  VARCHAR(100),
+    product_name                  VARCHAR(200),
     weight                        numeric,
     introductionDate              TIMESTAMP,
     quantity_uom_id               VARCHAR(60),
