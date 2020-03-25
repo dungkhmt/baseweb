@@ -22,7 +22,7 @@ public class DeliveryTripDetail {
     @Column(name = "delivery_trip_id")
     private UUID deliveryTripId;
 
-    private Integer sequence;
+    private Integer sequenceId;
 
     //@JoinColumn(name = "shipment_id", referencedColumnName = "shipment_id")
     //@JoinColumn(name = "shipment_item_seq_id", referencedColumnName = "shipment_item_seq_id")
@@ -39,7 +39,7 @@ public class DeliveryTripDetail {
 
     public DeliveryTripDetailModel.OrderItem toDeliveryTripDetailModel(Product product) {
         DeliveryTripDetailModel.OrderItem orderItemModel = new DeliveryTripDetailModel.OrderItem();
-        orderItemModel.setSequence(sequence);
+        orderItemModel.setSequence(sequenceId);
         orderItemModel.setDeliveryTripDetailId(deliveryTripDetailId);
         orderItemModel.setDeliveryTripId(deliveryTripId);
         if (shipmentItem != null) {

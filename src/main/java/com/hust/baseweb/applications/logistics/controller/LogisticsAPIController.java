@@ -42,6 +42,11 @@ public class LogisticsAPIController {
         return ResponseEntity.ok(facilityService.save(facilityModel));
     }
 
+    @PostMapping("/create-facilities")
+    public ResponseEntity<?> createFacility(@RequestBody List<FacilityModel> facilityModels) {
+        return ResponseEntity.ok(facilityService.saveAll(facilityModels));
+    }
+
     @PostMapping("/get-list-facility")
     public ResponseEntity getListFacilities(Principal principal, @RequestBody GetListFacilityInputModel input) {
         // TODO

@@ -13,4 +13,6 @@ public interface FacilityService {
     List<Facility> getAllFacilities();
 
     Facility save(FacilityModel facilityModel);
+
+    List<Facility> saveAll(List<FacilityModel> facilityModels);
 }

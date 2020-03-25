@@ -152,15 +152,16 @@ CREATE TABLE application
 );
 
 
-create  table department(
-	department_id   UUID not null default uuid_generate_v1(),
-	deaprtment_name  VARCHAR(100),
-	start_date  TIMESTAMP,
-	created_by_userLogin_id  VARCHAR(255),
-	last_updated_stamp  TIMESTAMP,
-    created_stamp       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_department  primary key(department_id),
-    constraint fk_department_create_by_user_login_id foreign key(created_by_userLogin_id) references user_login (user_login_id)
+create table department
+(
+    department_id           UUID not null default uuid_generate_v1(),
+    deaprtment_name         VARCHAR(100),
+    start_date              TIMESTAMP,
+    created_by_userLogin_id VARCHAR(255),
+    last_updated_stamp      TIMESTAMP,
+    created_stamp           TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_department primary key (department_id),
+    constraint fk_department_create_by_user_login_id foreign key (created_by_userLogin_id) references user_login (user_login_id)
 );
 
 create table geo_type
@@ -214,22 +215,22 @@ create table distance_traveltime_geo_points
 
 create table distance_traveltime_postal_address
 (
-    from_contact_mech_id  uuid not null,
-    to_contact_mech_id    uuid not null,
-    distance           numeric,
-    travel_time        numeric,
+    from_contact_mech_id     uuid not null,
+    to_contact_mech_id       uuid not null,
+    distance                 numeric,
+    travel_time              numeric,
     travel_time_truck        numeric,
-    travel_time_motobike        numeric,
-    updated_by_user_login_id	VARCHAR(60),
-    updated_date TIMESTAMP,
-    source_enum_id	VARCHAR(60),
-    last_updated_stamp timestamp,
-    created_stamp      timestamp default current_timestamp,
-	constraint pk_distance_traveltime_postal_address primary key(from_contact_mech_id,to_contact_mech_id),
-	constraint fk_distance_traveltime_postal_address_from foreign key(from_contact_mech_id) references postal_address(contact_mech_id),
-	constraint fk_distance_traveltime_postal_address_to foreign key(to_contact_mech_id) references postal_address(contact_mech_id),
-	constraint fk_distance_traveltime_postal_address_source_enum_id foreign key(source_enum_id) references enumeration(enum_id),
-	constraint fk_distance_traveltime_postal_address_updated_by_user_login foreign key(updated_by_user_login_id) references user_login(user_login_id)
+    travel_time_motobike     numeric,
+    updated_by_user_login_id VARCHAR(60),
+    updated_date             TIMESTAMP,
+    source_enum_id           VARCHAR(60),
+    last_updated_stamp       timestamp,
+    created_stamp            timestamp default current_timestamp,
+    constraint pk_distance_traveltime_postal_address primary key (from_contact_mech_id, to_contact_mech_id),
+    constraint fk_distance_traveltime_postal_address_from foreign key (from_contact_mech_id) references postal_address (contact_mech_id),
+    constraint fk_distance_traveltime_postal_address_to foreign key (to_contact_mech_id) references postal_address (contact_mech_id),
+    constraint fk_distance_traveltime_postal_address_source_enum_id foreign key (source_enum_id) references enumeration (enum_id),
+    constraint fk_distance_traveltime_postal_address_updated_by_user_login foreign key (updated_by_user_login_id) references user_login (user_login_id)
 );
 
 
@@ -408,19 +409,19 @@ create table sales_route_config_customer
 (
     sales_route_config_customer_id UUID NOT NULL default uuid_generate_v1(),
     sales_route_planning_period_id UUID not null,
-    
+
     sales_route_config_id          UUID NOT NULL,
-    customer_salesman_vendor_id              UUID NOT NULL,
-    status_id						VARCHAR(60),
+    customer_salesman_vendor_id    UUID NOT NULL,
+    status_id                      VARCHAR(60),
     start_execute_week             int,
-    number_days_per_week 			int,
-    repeat_week						int,
+    number_days_per_week           int,
+    repeat_week                    int,
     last_updated_stamp             TIMESTAMP,
     created_stamp                  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_sales_route_config_customer primary key (sales_route_config_customer_id),
     constraint fk_sales_route_config_customer_sales_route_config_id foreign key (sales_route_config_id) references sales_route_config (sales_route_config_id),
-    constraint fk_sales_route_config_customer_sales_route_planning_period_id foreign key(sales_route_planning_period_id) references sales_route_planning_period(sales_route_planning_period_id),
-    constraint fk_sales_route_config_customer_customer_salesman_vendor_id foreign key (customer_salesman_vendor_id) references customer_salesman_vendor(customer_salesman_vendor_id)
+    constraint fk_sales_route_config_customer_sales_route_planning_period_id foreign key (sales_route_planning_period_id) references sales_route_planning_period (sales_route_planning_period_id),
+    constraint fk_sales_route_config_customer_customer_salesman_vendor_id foreign key (customer_salesman_vendor_id) references customer_salesman_vendor (customer_salesman_vendor_id)
 );
 
 create table sales_route_detail
@@ -428,7 +429,7 @@ create table sales_route_detail
     sales_route_detail_id          UUID NOT NULL,
     party_salesman_id              UUID NOT NULL,
     party_customer_id              UUID NOT NULL,
-    party_distributor				UUID not null,
+    party_distributor              UUID not null,
     sequence                       Integer,
     execute_date                   VARCHAR(60),
     sales_route_config_customer_id UUID NOT NULL,
@@ -1151,7 +1152,7 @@ CREATE TABLE delivery_trip_detail
 (
     delivery_trip_detail_id uuid        NOT NULL DEFAULT uuid_generate_v1(),
     delivery_trip_id        uuid        NULL,
-    sequence                Integer     NULL,
+    sequence_id             int         NULL,
     shipment_item_id        uuid        NULL,
     delivery_quantity       int4        NULL,
     status_id               varchar(60) NULL,

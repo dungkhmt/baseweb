@@ -88,7 +88,7 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripId(deliveryTripIdUuid);
         for (DeliveryTripDetail deliveryTripDetail : deliveryTripDetails) {
             GeoPoint geoPoint = deliveryTripDetail.getShipmentItem().getShipToLocation().getGeoPoint();
-            deliveryTripDetail.setSequence(geoPointIndexMap.get(geoPoint));
+            deliveryTripDetail.setSequenceId(geoPointIndexMap.get(geoPoint));
         }
         deliveryTripDetailRepo.saveAll(deliveryTripDetails);
     }

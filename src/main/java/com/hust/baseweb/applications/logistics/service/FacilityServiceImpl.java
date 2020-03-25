@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -59,6 +60,11 @@ public class FacilityServiceImpl implements FacilityService {
         facility.setFacilityName(facilityModel.getFacilityName());
         facility.setPostalAddress(postalAddress);
         return facilityRepo.save(facility);
+    }
+
+    @Override
+    public List<Facility> saveAll(List<FacilityModel> facilityModels) {
+        return facilityModels.stream().map(this::save).collect(Collectors.toList());
     }
 
 }

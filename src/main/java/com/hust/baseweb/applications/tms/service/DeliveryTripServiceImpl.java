@@ -211,7 +211,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                     " = " +
                     deliveryTripDetails.size());
 
-            deliveryTripDetails.sort(Comparator.comparingInt(DeliveryTripDetail::getSequence));
+            deliveryTripDetails.sort(Comparator.comparingInt(DeliveryTripDetail::getSequenceId));
             for (int j = 0; j < deliveryTripDetails.size(); j++) {
                 log.info("getDeliveryTripAssignedToDriver dtd(" +
                         j +
