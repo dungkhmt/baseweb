@@ -119,13 +119,24 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     }
 
     @Override
-    public List<DeliveryTripDetailModel> findAll(String deliveryTripId) {
+    public DeliveryTripDetailModel.OrderItems findAll(String deliveryTripId) {
         List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripId(UUID.fromString(
                 deliveryTripId));
-        return deliveryTripDetails.stream()
-                .map(deliveryTripDetail -> deliveryTripDetail.toDeliveryTripDetailModel(
-                        deliveryTripDetail.getShipmentItem().getOrderItem().getProduct()))
-                .collect(Collectors.toList());
+        GeoPoint facilityGeoPoint = deliveryTripDetails.get(0)
+                .getShipmentItem()
+                .getOrderItem()
+                .getFacility()
+                .getPostalAddress()
+                .getGeoPoint();
+        return new DeliveryTripDetailModel.OrderItems(
+                deliveryTripDetails.stream()
+                        .map(deliveryTripDetail -> deliveryTripDetail.toDeliveryTripDetailModel(
+                                deliveryTripDetail.getShipmentItem().getOrderItem().getProduct()))
+                        .collect(Collectors.toList()),
+                Double.parseDouble(facilityGeoPoint.getLatitude()),
+                Double.parseDouble(facilityGeoPoint.getLongitude())
+        );
+
     }
 
     @Override

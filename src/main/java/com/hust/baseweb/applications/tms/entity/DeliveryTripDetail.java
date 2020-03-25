@@ -37,35 +37,35 @@ public class DeliveryTripDetail {
     @ManyToOne(fetch = FetchType.EAGER)
     private StatusItem statusItem;
 
-    public DeliveryTripDetailModel toDeliveryTripDetailModel(Product product) {
-        DeliveryTripDetailModel deliveryTripDetailModel = new DeliveryTripDetailModel();
-        deliveryTripDetailModel.setSequence(sequence);
-        deliveryTripDetailModel.setDeliveryTripDetailId(deliveryTripDetailId);
-        deliveryTripDetailModel.setDeliveryTripId(deliveryTripId);
+    public DeliveryTripDetailModel.OrderItem toDeliveryTripDetailModel(Product product) {
+        DeliveryTripDetailModel.OrderItem orderItemModel = new DeliveryTripDetailModel.OrderItem();
+        orderItemModel.setSequence(sequence);
+        orderItemModel.setDeliveryTripDetailId(deliveryTripDetailId);
+        orderItemModel.setDeliveryTripId(deliveryTripId);
         if (shipmentItem != null) {
             if (shipmentItem.getCustomer() != null) {
-                deliveryTripDetailModel.setCustomerCode(shipmentItem.getCustomer().getCustomerCode());
+                orderItemModel.setCustomerCode(shipmentItem.getCustomer().getCustomerCode());
             }
             if (shipmentItem.getShipToLocation() != null) {
-                deliveryTripDetailModel.setAddress(shipmentItem.getShipToLocation().getAddress());
+                orderItemModel.setAddress(shipmentItem.getShipToLocation().getAddress());
                 if (shipmentItem.getShipToLocation().getGeoPoint() != null) {
-                    deliveryTripDetailModel.setLat(Double.parseDouble(shipmentItem.getShipToLocation()
+                    orderItemModel.setLat(Double.parseDouble(shipmentItem.getShipToLocation()
                             .getGeoPoint()
                             .getLatitude()));
-                    deliveryTripDetailModel.setLng(Double.parseDouble(shipmentItem.getShipToLocation()
+                    orderItemModel.setLng(Double.parseDouble(shipmentItem.getShipToLocation()
                             .getGeoPoint()
                             .getLongitude()));
                 }
             }
-            deliveryTripDetailModel.setShipmentQuantity(shipmentItem.getQuantity());
+            orderItemModel.setShipmentQuantity(shipmentItem.getQuantity());
         }
         if (product != null) {
-            deliveryTripDetailModel.setProductId(product.getProductId());
-            deliveryTripDetailModel.setProductName(product.getProductName());
-            deliveryTripDetailModel.setWeight(product.getWeight() * deliveryQuantity);
+            orderItemModel.setProductId(product.getProductId());
+            orderItemModel.setProductName(product.getProductName());
+            orderItemModel.setWeight(product.getWeight() * deliveryQuantity);
         }
-        deliveryTripDetailModel.setDeliveryQuantity(deliveryQuantity);
-        return deliveryTripDetailModel;
+        orderItemModel.setDeliveryQuantity(deliveryQuantity);
+        return orderItemModel;
     }
 
 }

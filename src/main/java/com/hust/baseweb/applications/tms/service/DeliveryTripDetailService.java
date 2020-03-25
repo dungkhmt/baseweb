@@ -18,7 +18,7 @@ public interface DeliveryTripDetailService {
 
     Page<DeliveryTripDetail> findAll(String deliveryTripId, Pageable pageable);
 
-    List<DeliveryTripDetailModel> findAll(String deliveryTripId);
+    DeliveryTripDetailModel.OrderItems findAll(String deliveryTripId);
 
     DeliveryTripDetail updateStatusDeliveryTripDetail(UUID deliveryTripDetailId, String statusId);
 }
