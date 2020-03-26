@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.order.service;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
+import com.hust.baseweb.applications.customer.model.PartyCustomerModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,5 +8,5 @@ import java.util.List;
 
 @Service
 public interface PartyCustomerService {
-    List<PartyCustomer> getListPartyCustomers();
+    List<PartyCustomerModel> getListPartyCustomers();
 }

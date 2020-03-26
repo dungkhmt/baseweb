@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductPrice;
 import com.hust.baseweb.applications.logistics.model.*;
 import com.hust.baseweb.applications.logistics.model.product.GetProductPriceInputModel;
+import com.hust.baseweb.applications.logistics.model.product.SaleReportModel;
 import com.hust.baseweb.applications.logistics.model.product.SetProductPriceInputModel;
 import com.hust.baseweb.applications.logistics.service.FacilityService;
 import com.hust.baseweb.applications.logistics.service.ProductPriceService;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -75,7 +77,11 @@ public class LogisticsAPIController {
     @PostMapping("/set-product-price")
     public ResponseEntity<?> setProductPrice(Principal principal, @RequestBody SetProductPriceInputModel input) {
         UserLogin userLogin = userService.findById(principal.getName());
-        ProductPrice pp = productPriceService.setProductPrice(userLogin, input.getProductId(), input.getPrice(), input.getCurrencyUomId(), input.getTaxInPrice());
+        ProductPrice pp = productPriceService.setProductPrice(userLogin,
+                input.getProductId(),
+                input.getPrice(),
+                input.getCurrencyUomId(),
+                input.getTaxInPrice());
         return ResponseEntity.ok().body(pp);
     }
 
@@ -83,5 +89,10 @@ public class LogisticsAPIController {
     public ResponseEntity<?> getProductPrice(Principal principal, @RequestBody GetProductPriceInputModel input) {
         ProductPrice pp = productPriceService.getProductPrice(input.getProductId());
         return ResponseEntity.ok().body(pp);
+    }
+
+    @PostMapping("/get-sale-reports")
+    public ResponseEntity<?> getSaleReports(@RequestBody SaleReportModel.Input input) throws ParseException {
+        return ResponseEntity.ok().body(productPriceService.getSaleReports(input));
     }
 }

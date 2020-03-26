@@ -1,13 +1,10 @@
 package com.hust.baseweb.applications.order.controller;
 
 import com.google.gson.Gson;
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.cache.RevenueOrderCache;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
-import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.order.model.*;
 import com.hust.baseweb.applications.order.repo.OrderHeaderPageRepo;
-import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
 import com.hust.baseweb.applications.order.service.OrderService;
 import com.hust.baseweb.applications.order.service.PartyCustomerService;
 import com.hust.baseweb.applications.sales.service.PartySalesmanService;
@@ -96,12 +93,9 @@ public class OrderAPIController {
         return ResponseEntity.ok().body(order);
     }
 
-    @PostMapping("/get-list-party-customers")
-    public ResponseEntity getListPartyCustomers(Principal principal,
-                                                @RequestBody GetListPartyCustomerInputModel input) {
-        // TODO
-        List<PartyCustomer> partyCustomers = partyCustomerService.getListPartyCustomers();
-        return ResponseEntity.ok().body(new GetListPartyCustomerOutputModel(partyCustomers));
+    @GetMapping("/get-list-party-customers")
+    public ResponseEntity getListPartyCustomers() {
+        return ResponseEntity.ok().body(partyCustomerService.getListPartyCustomers());
     }
 
 

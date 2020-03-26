@@ -22,4 +22,6 @@ public interface ProductService {
                  String uomId,
                  Integer hsThu,
                  Integer hsPal);
+
+
 }
