@@ -170,7 +170,7 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> createDeliveryTrip(Principal principal,
                                                 @RequestBody com.hust.baseweb.applications.tms.model.DeliveryTripModel.Create input) {
         log.info("::createDeliveryTrip: " + input);
-        DeliveryTrip deliveryTrip = deliveryTripService.save(input, 0, 0, 0);
+        DeliveryTrip deliveryTrip = deliveryTripService.save(input, 0, 0, 0, 0, 0);
         return ResponseEntity.ok().body(deliveryTrip);
     }
 
@@ -211,17 +211,11 @@ public class ShipmentOrderAPIController {
         List<DeliveryTripModel> deliveryTripModels = new ArrayList<>();
 
         for (String deliveryTripId : deliveryTripIds) {
-            DeliveryTrip deliveryTrip = deliveryTripService.findById(UUID.fromString(deliveryTripId));
+            DeliveryTripModel deliveryTripModel = deliveryTripService.findById(UUID.fromString(deliveryTripId));
             DeliveryTripModel.Tour tour = deliveryTripService.getDeliveryTripInfo(deliveryTripId,
                     new ArrayList<>());
-            DeliveryTripModel deliveryTripModel = new DeliveryTripModel();
-            deliveryTripModel.setDeliveryTripId(deliveryTripId);
-            deliveryTripModel.setMaxVehicleCapacity(deliveryTrip.getVehicle().getCapacity());
             deliveryTripModel.setTotalDistance(tour.getTotalDistance());
             deliveryTripModel.setTotalWeight(tour.getTotalWeight());
-            if (deliveryTrip.getVehicle() != null) {
-                deliveryTripModel.setVehicleId(deliveryTrip.getVehicle().getVehicleId());
-            }
             deliveryTripModels.add(deliveryTripModel);
         }
 

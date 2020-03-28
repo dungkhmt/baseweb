@@ -71,6 +71,6 @@ public class DriverAPIController {
                     .orElseThrow(NoSuchElementException::new);
             deliveryTrip.setPartyDriver(partyDriver);
         }
-        return ResponseEntity.ok().body(deliveryTripRepo.save(deliveryTrip));
+        return ResponseEntity.ok().body(deliveryTripRepo.save(deliveryTrip).toDeliveryTripModel());
     }
 }

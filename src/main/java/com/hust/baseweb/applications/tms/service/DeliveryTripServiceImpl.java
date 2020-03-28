@@ -50,7 +50,9 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     public DeliveryTrip save(DeliveryTripModel.Create input,
                              double totalDistance,
                              double totalWeight,
-                             double totalPallet) {
+                             double totalPallet,
+                             double totalExecutionTime,
+                             int totalLocation) {
         DeliveryTrip deliveryTrip = new DeliveryTrip();
         deliveryTrip.setDeliveryPlan(deliveryPlanRepo.findByDeliveryPlanId(input.getDeliveryPlanId()));
         Date executeDate = null;
@@ -73,6 +75,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         deliveryTrip.setDistance(totalDistance);
         deliveryTrip.setTotalWeight(totalWeight);
         deliveryTrip.setTotalPallet(totalPallet);
+        deliveryTrip.setTotalExecutionTime(totalExecutionTime);
+        deliveryTrip.setTotalLocation(totalLocation);
 
         deliveryTrip = deliveryTripRepo.save(deliveryTrip);
         return deliveryTrip;
@@ -94,8 +98,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     }
 
     @Override
-    public DeliveryTrip findById(UUID deliveryTripId) {
-        return deliveryTripRepo.findById(deliveryTripId).orElseThrow(NoSuchElementException::new);
+    public DeliveryTripModel findById(UUID deliveryTripId) {
+        return deliveryTripRepo.findById(deliveryTripId).orElseThrow(NoSuchElementException::new).toDeliveryTripModel();
     }
 
     @Override

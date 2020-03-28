@@ -15,6 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DeliveryTripModel {
+    private String deliveryPlanId;
     private String deliveryPlanSolutionSeqId;
     private String deliveryTripId;
     private String executeDate;
@@ -24,8 +25,10 @@ public class DeliveryTripModel {
     private Double totalExecutionTime;
     private Integer totalLocation;
     private String vehicleId;
+    private String vehicleTypeId;
     private Double maxVehicleCapacity;
     private String userLoginId;
+    private Double distance;
 
     @Getter
     @Setter

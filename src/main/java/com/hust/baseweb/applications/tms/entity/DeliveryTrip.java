@@ -52,6 +52,7 @@ public class DeliveryTrip {
 
     public DeliveryTripModel toDeliveryTripModel() {
         return new DeliveryTripModel(
+                deliveryPlan.getDeliveryPlanId().toString(),
                 deliveryPlanSolutionSeqId,
                 deliveryTripId.toString(),
                 Constant.DATE_FORMAT.format(executeDate),
@@ -61,8 +62,10 @@ public class DeliveryTrip {
                 totalExecutionTime,
                 totalLocation,
                 vehicle == null ? null : vehicle.getVehicleId(),
+                externalVehicleType == null ? null : externalVehicleType.getVehicleTypeId(),
                 vehicle == null ? null : vehicle.getCapacity(),
-                partyDriver == null ? null : partyDriver.getParty().getUserLogin().getUserLoginId()
+                partyDriver == null ? null : partyDriver.getParty().getUserLogin().getUserLoginId(),
+                distance
         );
     }
 }

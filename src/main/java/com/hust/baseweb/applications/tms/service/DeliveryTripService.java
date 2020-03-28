@@ -16,18 +16,20 @@ public interface DeliveryTripService {
     DeliveryTrip save(com.hust.baseweb.applications.tms.model.DeliveryTripModel.Create input,
                       double totalDistance,
                       double totalWeight,
-                      double totalPallet);
+                      double totalPallet,
+                      double totalExecutionTime,
+                      int totalLocation);
 
     Page<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
     List<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId);
 
-    DeliveryTrip findById(UUID deliveryTripId);
+    DeliveryTripModel findById(UUID deliveryTripId);
 
     DeliveryTripModel.Tour getDeliveryTripInfo(String deliveryTripId,
                                                List<DeliveryTripDetailModel.Create> shipmentItemModels);
 
     GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(String driverUserLoginId);
 
-    
+
 }
