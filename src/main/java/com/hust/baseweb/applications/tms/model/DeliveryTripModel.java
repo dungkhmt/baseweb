@@ -21,9 +21,11 @@ public class DeliveryTripModel {
     private Double totalDistance;
     private Double totalWeight;
     private Double totalPallet;
+    private Double totalExecutionTime;
+    private Integer totalLocation;
     private String vehicleId;
     private Double maxVehicleCapacity;
-    private String driverId;
+    private String userLoginId;
 
     @Getter
     @Setter

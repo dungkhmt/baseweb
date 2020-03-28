@@ -42,6 +42,10 @@ public class DeliveryTrip {
 
     private Double totalPallet;
 
+    private Double totalExecutionTime;
+
+    private Integer totalLocation;
+
     @JoinColumn(name = "execute_external_vehicle_type_id", referencedColumnName = "vehicle_type_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private VehicleType externalVehicleType;
@@ -54,9 +58,11 @@ public class DeliveryTrip {
                 distance,
                 totalWeight,
                 totalPallet,
+                totalExecutionTime,
+                totalLocation,
                 vehicle == null ? null : vehicle.getVehicleId(),
                 vehicle == null ? null : vehicle.getCapacity(),
-                partyDriver == null ? null : partyDriver.getPartyId().toString()
+                partyDriver == null ? null : partyDriver.getParty().getUserLogin().getUserLoginId()
         );
     }
 }

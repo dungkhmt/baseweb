@@ -1135,6 +1135,8 @@ CREATE TABLE delivery_trip
     distance                         numeric     NULL,
     total_weight                     numeric     NULL,
     total_pallet                     numeric     NULL,
+    total_execution_time             numeric,
+    total_location                   int,
     execute_external_vehicle_type_id varchar(60) NULL,
     status_id                        varchar(60) NULL,
     last_updated_stamp               timestamp   NULL,
