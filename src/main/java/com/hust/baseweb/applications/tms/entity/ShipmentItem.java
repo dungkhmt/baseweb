@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.tms.entity;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
+import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.tms.model.ShipmentItemModel;
 import lombok.Getter;
@@ -25,9 +26,9 @@ public class ShipmentItem {
     @ManyToOne
     private Shipment shipment;
 
-    //@Id
-    //@Column(name = "shipment_item_seq_id")
-    //private String shipmentItemSeqId;
+    @JoinColumn(name = "facility_id", referencedColumnName = "facility_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Facility facility;
 
     @Column(name = "quantity")
     private int quantity;

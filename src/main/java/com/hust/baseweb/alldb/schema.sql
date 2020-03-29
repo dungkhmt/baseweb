@@ -744,7 +744,7 @@ CREATE TABLE order_item
     order_item_seq_id  VARCHAR(60),
     order_item_type_id VARCHAR(60),
     product_id         VARCHAR(60),
-    facility_id        varchar(60),
+
     unit_price         numeric,
     quantity           int,
     status_id          VARCHAR(60),
@@ -754,9 +754,7 @@ CREATE TABLE order_item
     CONSTRAINT fk_order_item_type_id FOREIGN KEY (order_item_type_id) REFERENCES order_item_type (order_item_type_id),
     CONSTRAINT fk_order_item_product_id FOREIGN KEY (product_id) REFERENCES product (product_id),
     CONSTRAINT fk_order_item_order_id FOREIGN KEY (order_id) REFERENCES order_header (order_id),
-    CONSTRAINT fk_status_id FOREIGN KEY (status_id) REFERENCES status_item (status_id),
-    CONSTRAINT fk_facility_id FOREIGN KEY (facility_id) REFERENCES facility (facility_id)
-
+    CONSTRAINT fk_status_id FOREIGN KEY (status_id) REFERENCES status_item (status_id)
 );
 
 CREATE TABLE order_role
@@ -1043,6 +1041,7 @@ create table shipment_item
     ship_to_location_id           UUID,
     order_id                      varchar(60),
     order_item_seq_id             varchar(60),
+    facility_id                   varchar(60),
     expected_delivery_date        TIMESTAMP,
     product_transport_category_id VARCHAR(60),
     last_updated_stamp            TIMESTAMP,
@@ -1053,8 +1052,8 @@ create table shipment_item
     constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id),
     constraint fk_shipment_item_party_customer_id foreign key (party_customer_id) references party_customer (party_id),
     constraint fk_shipment_item_from_facility_id foreign key (from_facility_id) references facility (facility_id),
-    constraint fk_shipment_item_order_id foreign key (order_id) references order_header (order_id)
-
+    constraint fk_shipment_item_order_id foreign key (order_id) references order_header (order_id),
+    CONSTRAINT fk_facility_id FOREIGN KEY (facility_id) REFERENCES facility (facility_id)
 );
 
 create table order_shipment

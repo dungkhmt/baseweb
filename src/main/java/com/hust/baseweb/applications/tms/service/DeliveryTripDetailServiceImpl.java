@@ -124,7 +124,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
                 deliveryTripId));
         GeoPoint facilityGeoPoint = deliveryTripDetails.get(0)
                 .getShipmentItem()
-                .getOrderItem()
                 .getFacility()
                 .getPostalAddress()
                 .getGeoPoint();

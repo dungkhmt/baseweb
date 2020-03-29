@@ -56,12 +56,6 @@ public class InventoryItemAPIController {
         return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderHeaderDetail(orderId));
     }
 
-    @GetMapping("/get-inventory-order-export/{orderId}/{facilityId}/")
-    public ResponseEntity<?> getInventoryOrderDetail(@PathVariable String orderId,
-                                                     @PathVariable String facilityId) {
-        return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderDetailPage(orderId, facilityId));
-    }
-
     @GetMapping("/facility/all")
     public ResponseEntity<?> getAllFacility() {
         return ResponseEntity.ok().body(facilityRepo.findAll());

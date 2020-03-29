@@ -190,11 +190,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 
             OrderHeader orderHeader = getOrCreateOrderHeader(orderHeaderMap, shipmentItemModel);
 
-            OrderItem orderItem = createOrderItem(facilityMap,
-                    orderSeqIdCounterMap,
-                    shipmentItemModel,
-                    product,
-                    orderHeader);
+            OrderItem orderItem = createOrderItem(orderSeqIdCounterMap, shipmentItemModel, product, orderHeader);
+
             orderItems.add(orderItem);
 
             orderItemIdToShipmentItemModelMap.put(new CompositeOrderItemId(orderItem.getOrderId(),
@@ -209,6 +206,7 @@ public class ShipmentServiceImpl implements ShipmentService {
             ShipmentItem shipmentItem = createShipmentItem(shipment,
                     partyCustomerMap,
                     postalAddressMap,
+                    facilityMap,
                     orderItemIdToShipmentItemModelMap,
                     orderItem);
 
@@ -222,26 +220,10 @@ public class ShipmentServiceImpl implements ShipmentService {
     }
 
     @NotNull
-    private OrderItem createOrderItem(Map<String, Facility> facilityMap,
-                                      Map<String, Integer> orderSeqIdCounterMap,
-                                      ShipmentItemModel.Create shipmentItemModel,
-                                      Product product,
-                                      OrderHeader orderHeader) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setOrderId(orderHeader.getOrderId());
-        orderItem.setProduct(product);
-        orderItem.setQuantity(shipmentItemModel.getQuantity());
-        orderItem.setOrderItemSeqId(orderSeqIdCounterMap.merge(orderHeader.getOrderId(), 1, Integer::sum) + "");
-
-        Facility facility = facilityMap.computeIfAbsent(shipmentItemModel.getFacilityId(), Facility::new);
-        orderItem.setFacility(facility);
-        return orderItem;
-    }
-
-    @NotNull
     private ShipmentItem createShipmentItem(Shipment shipment,
                                             Map<String, PartyCustomer> partyCustomerMap,
                                             Map<String, PostalAddress> postalAddressMap,
+                                            Map<String, Facility> facilityMap,
                                             Map<CompositeOrderItemId, ShipmentItemModel.Create> orderItemIdToShipmentItemModelMap,
                                             OrderItem orderItem) {
         ShipmentItemModel.Create shipmentItemModel = orderItemIdToShipmentItemModelMap.get(
@@ -255,9 +237,25 @@ public class ShipmentServiceImpl implements ShipmentService {
         PostalAddress postalAddress = getOrCreatePostalAddress(postalAddressMap, shipmentItemModel);
         shipmentItem.setShipToLocation(postalAddress);
 
+        Facility facility = facilityMap.computeIfAbsent(shipmentItemModel.getFacilityId(), Facility::new);
+        shipmentItem.setFacility(facility);
+
         PartyCustomer partyCustomer = getOrCreatePartyCustomer(partyCustomerMap, shipmentItemModel, postalAddress);
         shipmentItem.setCustomer(partyCustomer);
         return shipmentItem;
+    }
+
+    @NotNull
+    private OrderItem createOrderItem(Map<String, Integer> orderSeqIdCounterMap,
+                                      ShipmentItemModel.Create shipmentItemModel,
+                                      Product product,
+                                      OrderHeader orderHeader) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrderId(orderHeader.getOrderId());
+        orderItem.setProduct(product);
+        orderItem.setQuantity(shipmentItemModel.getQuantity());
+        orderItem.setOrderItemSeqId(orderSeqIdCounterMap.merge(orderHeader.getOrderId(), 1, Integer::sum) + "");
+        return orderItem;
     }
 
     @NotNull

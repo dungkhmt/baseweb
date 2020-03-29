@@ -11,6 +11,8 @@ import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.order.repo.*;
+import com.hust.baseweb.applications.tms.entity.ShipmentItem;
+import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +46,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     private FacilityRepo facilityRepo;
     private ProductRepo productRepo;
+
+    private ShipmentItemRepo shipmentItemRepo;
 
     private InventoryItemDetailRepo inventoryItemDetailRepo;
 
@@ -260,16 +264,11 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     }
 
     @Override
-    public List<InventoryModel.OrderItem> getInventoryOrderDetailPage(String orderId, String facilityId) {
-        List<OrderItem> orderItems
-                = orderItemRepo.findAllByOrderIdAndFacility(orderId, new Facility(facilityId));
-        return convertOrderItemToModel(orderItems);
-    }
-
-    @Override
     public List<InventoryModel.ExportDetail> getInventoryExportList(String facilityId) {
-        List<OrderItem> orderItems = orderItemRepo.findAllByFacility(new Facility(facilityId));
-        List<InventoryItemDetail> inventoryItemDetails = inventoryItemDetailRepo.findAllByOrderItemIn(orderItems);
+        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByFacility(new Facility(facilityId));
+        List<InventoryItemDetail> inventoryItemDetails = inventoryItemDetailRepo.findAllByOrderItemIn(shipmentItems.stream()
+                .map(ShipmentItem::getOrderItem)
+                .collect(Collectors.toList()));
         return inventoryItemDetails.stream()
                 .map(InventoryItemDetail::toInventoryExportDetail)
                 .collect(Collectors.toList());
