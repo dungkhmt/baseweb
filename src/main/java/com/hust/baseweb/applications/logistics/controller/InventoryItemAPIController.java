@@ -39,6 +39,12 @@ public class InventoryItemAPIController {
         return ResponseEntity.ok().body("ok");
     }
 
+//    @GetMapping("/simulator/import-inventory-items")
+//    @Transactional
+//    public ResponseEntity simulatorImportInventoryItems() {
+//
+//    }
+
     @PostMapping("/export-inventory-items")
     public ResponseEntity<?> exportInventoryItems(Principal principal,
                                                   @RequestBody ExportInventoryItemsInputModel input) {
@@ -53,7 +59,12 @@ public class InventoryItemAPIController {
 
     @GetMapping("/get-inventory-order-detail/{orderId}/all")
     public ResponseEntity<?> getInventoryOrderDetail(@PathVariable String orderId) {
-        return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderHeaderDetail(orderId));
+        return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderHeaderDetail(null, orderId));
+    }
+
+    @GetMapping("/get-inventory-order-detail-in-facility/{orderId}/{facilityId}/all")
+    public ResponseEntity<?> getInventoryOrderDetail(@PathVariable String orderId, @PathVariable String facilityId) {
+        return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderHeaderDetail(facilityId, orderId));
     }
 
     @GetMapping("/facility/all")

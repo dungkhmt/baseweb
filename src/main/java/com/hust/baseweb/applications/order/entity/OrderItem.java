@@ -31,12 +31,13 @@ public class OrderItem {
     @Column(name = "quantity")
     private int quantity;
 
-    public InventoryModel.OrderItem toOrderItemModel(int exportedQuantity) {
+    public InventoryModel.OrderItem toOrderItemModel(int exportedQuantity, int inventoryQuantity) {
         return new InventoryModel.OrderItem(
                 product.getProductId(),
                 product.getProductName(),
                 quantity,
                 exportedQuantity,
+                inventoryQuantity,
                 orderId,
                 orderItemSeqId
         );

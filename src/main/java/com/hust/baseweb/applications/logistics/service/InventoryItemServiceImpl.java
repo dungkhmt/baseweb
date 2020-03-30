@@ -82,6 +82,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         inventoryItem.setFacility(facility);
         inventoryItem.setProduct(product);
         inventoryItem.setLotId(input.getLotId());
+        inventoryItem.setUomId(input.getUomId());
         inventoryItem.setQuantityOnHandTotal(input.getQuantityOnHandTotal());
 
         return inventoryItemRepo.save(inventoryItem);
@@ -120,7 +121,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
             List<InventoryItem> selectedInventoryItems = inventoryItemsMap.get(Arrays.asList(facilityId, productId));
             double totalCount = // total inventory count of productId in the faicilityId
-                    selectedInventoryItems.stream().mapToInt(InventoryItem::getQuantityOnHandTotal).sum()
+                    productFacilityMap.get(Arrays.asList(facilityId, productId)).getLastInventoryCount()
                             - quantity; // remain total inventory count
             selectedInventoryItems.sort(Comparator.comparingInt(InventoryItem::getQuantityOnHandTotal));
 
@@ -144,20 +145,10 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                 }
             }
 
-            productFacilityMap.computeIfAbsent(Arrays.asList(facilityId, productId), key -> {
-                ProductFacility productFacility = new ProductFacility();
-                productFacility.setProductId(productId);
-                productFacility.setFacilityId(facilityId);
-                productFacility.setAtpInventoryCount(totalCount);
-                return productFacility;
-            }).setLastInventoryCount(totalCount);
+            productFacilityMap.get(Arrays.asList(facilityId, productId)).setLastInventoryCount(Math.max(totalCount, 0));
         }
 
         inventoryItemDetailRepo.saveAll(inventoryItemDetails);
-        inventoryItemRepo.saveAll(inventoryItemsMap.values()
-                .stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList()));    // convert List<List<T>> --> List<T>
         productFacilityRepo.saveAll(productFacilityMap.values());
 
         return "ok";
@@ -189,10 +180,10 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     private Map<List<String>, OrderItem> buildOrderItemMap(ExportInventoryItemsInputModel inventoryItemsInput) {
         return orderItemRepo.findAllByOrderIdInAndOrderItemSeqIdIn(
                 Stream.of(inventoryItemsInput.getInventoryItems())
-                        .map(ExportInventoryItemInputModel::getOrderId)
+                        .map(ExportInventoryItemInputModel::getOrderId).distinct()
                         .collect(Collectors.toList()),
                 Stream.of(inventoryItemsInput.getInventoryItems())
-                        .map(ExportInventoryItemInputModel::getOrderItemSeqId)
+                        .map(ExportInventoryItemInputModel::getOrderItemSeqId).distinct()
                         .collect(Collectors.toList())
         ).stream().collect(Collectors.toMap(orderItem -> Arrays.asList(orderItem.getOrderId(),
                 orderItem.getOrderItemSeqId()),
@@ -244,13 +235,14 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     }
 
     @Override
-    public List<InventoryModel.OrderItem> getInventoryOrderHeaderDetail(String orderId) {
+    public List<InventoryModel.OrderItem> getInventoryOrderHeaderDetail(String facilityId, String orderId) {
         List<OrderItem> orderItems = orderItemRepo.findAllByOrderId(orderId);
-        return convertOrderItemToModel(orderItems);
+        return convertOrderItemToModel(facilityId, orderItems);
     }
 
     @NotNull
-    private List<InventoryModel.OrderItem> convertOrderItemToModel(List<OrderItem> orderItems) {
+    private List<InventoryModel.OrderItem> convertOrderItemToModel(String facilityId,
+                                                                   List<OrderItem> orderItems) {
         List<InventoryItemDetail> inventoryItemDetails = inventoryItemDetailRepo.findAllByOrderItemIn(orderItems);
         Map<String, Integer> exportedQuantityCounter = new HashMap<>();
         for (InventoryItemDetail inventoryItemDetail : inventoryItemDetails) {
@@ -258,10 +250,34 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                     inventoryItemDetail.getQuantityOnHandDiff(),
                     Integer::sum);
         }
+        List<String> productIds = orderItems.stream()
+                .map(orderItem -> orderItem.getProduct().getProductId())
+                .distinct()
+                .collect(Collectors.toList());
+        Map<String, ProductFacility> productFacilityMap;
+        if (facilityId == null) {
+            productFacilityMap = productFacilityRepo.findAllByProductIdIn(productIds)
+                    .stream()
+                    .collect(Collectors.toMap(ProductFacility::getProductId, productFacility -> productFacility));
+        } else {
+            productFacilityMap = productFacilityRepo.findAllByFacilityIdAndProductIdIn(facilityId, productIds)
+                    .stream()
+                    .collect(Collectors.toMap(ProductFacility::getProductId, productFacility -> productFacility));
+        }
+        Map<OrderItem, Integer> orderItemInventoryQuantityMap = new HashMap<>();
+        for (OrderItem orderItem : orderItems) {
+            ProductFacility productFacility = productFacilityMap.get(orderItem.getProduct().getProductId());
+            if (productFacility == null) {
+                orderItemInventoryQuantityMap.put(orderItem, 0);
+            } else {
+                orderItemInventoryQuantityMap.put(orderItem, productFacility.getLastInventoryCount().intValue());
+            }
+        }
 
         return orderItems.stream()
                 .map(orderItem -> orderItem.toOrderItemModel(
-                        exportedQuantityCounter.getOrDefault(orderItem.getOrderItemSeqId(), 0)))
+                        exportedQuantityCounter.getOrDefault(orderItem.getOrderItemSeqId(), 0),
+                        orderItemInventoryQuantityMap.get(orderItem)))
                 .collect(Collectors.toList());
     }
 

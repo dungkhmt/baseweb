@@ -29,6 +29,7 @@ public class InventoryModel {
         private String productName;
         private Integer quantity;
         private Integer exportedQuantity;
+        private Integer inventoryQuantity;
         private String orderId;
         private String orderItemSeqId;
     }
