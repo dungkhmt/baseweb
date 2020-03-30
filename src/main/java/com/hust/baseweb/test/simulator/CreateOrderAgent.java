@@ -2,6 +2,7 @@ package com.hust.baseweb.test.simulator;
 
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
+import com.hust.baseweb.applications.customer.model.PartyCustomerModel;
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.model.GetListFacilityOutputModel;
@@ -11,9 +12,11 @@ import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class CreateOrderAgent extends Thread {
     public static final String module = CreateOrderAgent.class.getName();
@@ -91,7 +94,9 @@ public class CreateOrderAgent extends Thread {
         System.out.println(module + "[" + id + "] finished, maxTime = " + maxTime);
 
     }
-
+    public String name(){
+    	return module + "[" + id + "]";
+    }
     public List<Product> getProducts() {
         System.out.println("createorderagent getProducts");
         try {
@@ -121,14 +126,23 @@ public class CreateOrderAgent extends Thread {
         return null;
     }
 
-    public List<PartyCustomer> getCustomers() {
+    public List<PartyCustomerModel> getCustomers() {
         try {
             String json = "{\"statusId\":null}";
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", json, token);
-            //System.out.println(module + "::getCustomers, rs = " + rs);
+            
+            //String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", json, token);
+            String rs = executor.execGetUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", null, token);
+            System.out.println(name() + "::getCustomers, rs = " + rs);
             Gson gson = new Gson();
-            GetListPartyCustomerOutputModel customers = gson.fromJson(rs, GetListPartyCustomerOutputModel.class);
-            return customers.getCustomers();
+            //GetListPartyCustomerOutputModel customers = gson.fromJson(rs, GetListPartyCustomerOutputModel.class);
+            //return customers.getCustomers();
+            PartyCustomerModel[] arr = gson.fromJson(rs, PartyCustomerModel[].class);
+            List<PartyCustomerModel> lst = new ArrayList<PartyCustomerModel>();
+            if(arr != null)
+            	for(int i = 0; i < arr.length; i++)
+            		lst.add(arr[i]);
+            
+            return lst;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -142,11 +156,13 @@ public class CreateOrderAgent extends Thread {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             List<Product> products = getProducts();
             List<Facility> facilities = getFacilities();
-            List<PartyCustomer> customers = getCustomers();
-
+            List<PartyCustomerModel> customers = getCustomers();
+            System.out.println(name() + "::createOrder, products.sz = " + products.size() + ", facilities.sz = "
+            + facilities.size() + ", customers.sz = " + customers.size());
+            
             //Product sel_p = products.get(rand.nextInt(products.size()));
             Facility selectedFacility = facilities.get(rand.nextInt(facilities.size()));
-            PartyCustomer selectedCustomer = customers.get(rand.nextInt(customers.size()));
+            PartyCustomerModel selectedCustomer = customers.get(rand.nextInt(customers.size()));
 
             ModelCreateOrderInput input = new ModelCreateOrderInput();
             input.setFacilityId(selectedFacility.getFacilityId());
@@ -154,7 +170,7 @@ public class CreateOrderAgent extends Thread {
             input.setSalesmanId(salesmanIds[rand.nextInt(salesmanIds.length)]);
             input.setOrderDate(formatter.format(new Date()));
             //input.setPartyCustomerId(selectedCustomer.getPartyId());
-            input.setToCustomerId(selectedCustomer.getPartyId());
+            input.setToCustomerId(UUID.fromString(selectedCustomer.getPartyCustomerId()));
             ModelCreateOrderInputOrderItem[] orderItems = new ModelCreateOrderInputOrderItem[products.size()];
             for (int i = 0; i < orderItems.length; i++) {
                 orderItems[i] = new ModelCreateOrderInputOrderItem();
@@ -169,7 +185,7 @@ public class CreateOrderAgent extends Thread {
 
             double t0 = System.currentTimeMillis();
             String json = gson.toJson(input);
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-order", json, token);
+            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-order-distributor-to-retailoutlet", json, token);
             //System.out.println(module + "::createOrder, rs = " + rs);
             return System.currentTimeMillis() - t0;
         } catch (Exception ex) {

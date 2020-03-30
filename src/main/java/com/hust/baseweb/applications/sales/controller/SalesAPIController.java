@@ -88,7 +88,7 @@ public class SalesAPIController {
     public ResponseEntity<?> getCustomersOfUserLogin(Principal principal) {
         UserLogin userLogin = userService.findById(principal.getName());
 
-        log.info("getCustomersOfSalesman, userlogin = " + userLogin.getUserLoginId());
+        log.info("getCustomersOfUserLogin, userlogin = " + userLogin.getUserLoginId());
 
         List<PartyCustomer> lst = customerSalesmanService.getCustomersOfSalesman(userLogin.getParty().getPartyId());
 

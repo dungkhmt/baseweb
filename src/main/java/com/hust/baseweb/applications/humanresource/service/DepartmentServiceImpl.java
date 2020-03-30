@@ -1,5 +1,7 @@
 package com.hust.baseweb.applications.humanresource.service;
 
+import java.util.List;
+
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 		log.info("save, after repo, departmentId = " + dept.getDepartmentId());
 		
 		return dept;
+	}
+
+	@Override
+	public List<Department> findAll() {
+		// TODO Auto-generated method stub
+		List<Department> departments = departmentRepo.findAll();
+		return departments;
 	}
 
 }

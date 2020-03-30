@@ -1,5 +1,10 @@
 package com.hust.baseweb.applications.logistics.model;
 
-public class GetListFacilityInputModel {
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+public class GetListFacilityInputModel {
+	private String statusId;
 }
