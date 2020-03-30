@@ -61,12 +61,12 @@ public class InventoryItemAPIController {
         return ResponseEntity.ok().body(facilityRepo.findAll());
     }
 
-    @GetMapping("/get-inventory-order-export-list/{facilityId}/")
+    @GetMapping("/get-inventory-order-export-list/{facilityId}")
     public ResponseEntity<?> getInventoryOrderExportList(@PathVariable String facilityId) {
         return ResponseEntity.ok().body(inventoryItemService.getInventoryExportList(facilityId));
     }
 
-    @GetMapping("/get-inventory-list/{facilityId}/")
+    @GetMapping("/get-inventory-list/{facilityId}")
     public ResponseEntity<?> getInventoryList(@PathVariable String facilityId) {
         return ResponseEntity.ok().body(inventoryItemService.getInventoryList(facilityId));
     }
