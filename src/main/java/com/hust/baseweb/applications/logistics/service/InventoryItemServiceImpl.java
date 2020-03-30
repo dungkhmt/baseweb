@@ -93,17 +93,15 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
 //        List<InventoryItem> inventoryItems = inventoryItemRepo.findAll();// to be improved, find by (productId, facilityId)
 
-        Stream<ExportInventoryItemInputModel> exportModelStream = Stream.of(inventoryItemsInput.getInventoryItems());
+        List<Product> queryProducts = buildProducts(inventoryItemsInput);
 
-        List<Product> queryProducts = getProducts(exportModelStream);
-
-        List<Facility> queryFacilities = getFacilities(exportModelStream);
+        List<Facility> queryFacilities = buildFacilities(inventoryItemsInput);
 
         Map<List<String>, List<InventoryItem>> inventoryItemsMap = getInventoryItemsMap(queryProducts, queryFacilities);
 
         Map<List<String>, ProductFacility> productFacilityMap = getProductFacilityMap(queryProducts, queryFacilities);
 
-        Map<List<String>, OrderItem> orderItemMap = getOrderItemMap(exportModelStream);
+        Map<List<String>, OrderItem> orderItemMap = buildOrderItemMap(inventoryItemsInput);
 
         log.info("exportInventoryItems, inventoryItems.sz = " + inventoryItemsMap.size());
 
@@ -166,6 +164,42 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     }
 
     @NotNull
+    private List<Product> buildProducts(ExportInventoryItemsInputModel inventoryItemsInput) {
+        return Stream.of(inventoryItemsInput.getInventoryItems())
+                .map(exportInventoryItemInputModel -> {
+                    Product product = new Product();
+                    product.setProductId(exportInventoryItemInputModel.getProductId());
+                    return product;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private List<Facility> buildFacilities(ExportInventoryItemsInputModel inventoryItemsInput) {
+        return Stream.of(inventoryItemsInput.getInventoryItems())
+                .map(exportInventoryItemInputModel -> {
+                    Facility facility = new Facility();
+                    facility.setFacilityId(exportInventoryItemInputModel.getFacilityId());
+                    return facility;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private Map<List<String>, OrderItem> buildOrderItemMap(ExportInventoryItemsInputModel inventoryItemsInput) {
+        return orderItemRepo.findAllByOrderIdInAndOrderItemSeqIdIn(
+                Stream.of(inventoryItemsInput.getInventoryItems())
+                        .map(ExportInventoryItemInputModel::getOrderId)
+                        .collect(Collectors.toList()),
+                Stream.of(inventoryItemsInput.getInventoryItems())
+                        .map(ExportInventoryItemInputModel::getOrderItemSeqId)
+                        .collect(Collectors.toList())
+        ).stream().collect(Collectors.toMap(orderItem -> Arrays.asList(orderItem.getOrderId(),
+                orderItem.getOrderItemSeqId()),
+                orderItem -> orderItem));
+    }
+
+    @NotNull
     private Map<List<String>, ProductFacility> getProductFacilityMap(List<Product> queryProducts,
                                                                      List<Facility> queryFacilities) {
         return productFacilityRepo.findByProductIdInAndFacilityIdIn(
@@ -188,38 +222,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                         key -> new ArrayList<>())
                         .add(inventoryItem));
         return inventoryItemsMap;
-    }
-
-    @NotNull
-    private List<Facility> getFacilities(Stream<ExportInventoryItemInputModel> exportModelStream) {
-        return exportModelStream
-                .map(exportInventoryItemInputModel -> {
-                    Facility facility = new Facility();
-                    facility.setFacilityId(exportInventoryItemInputModel.getFacilityId());
-                    return facility;
-                })
-                .collect(Collectors.toList());
-    }
-
-    @NotNull
-    private List<Product> getProducts(Stream<ExportInventoryItemInputModel> exportModelStream) {
-        return exportModelStream
-                .map(exportInventoryItemInputModel -> {
-                    Product product = new Product();
-                    product.setProductId(exportInventoryItemInputModel.getProductId());
-                    return product;
-                })
-                .collect(Collectors.toList());
-    }
-
-    @NotNull
-    private Map<List<String>, OrderItem> getOrderItemMap(Stream<ExportInventoryItemInputModel> exportModelStream) {
-        return orderItemRepo.findAllByOrderIdInAndOrderItemSeqIdIn(
-                exportModelStream.map(ExportInventoryItemInputModel::getOrderId).collect(Collectors.toList()),
-                exportModelStream.map(ExportInventoryItemInputModel::getOrderItemSeqId).collect(Collectors.toList())
-        ).stream().collect(Collectors.toMap(orderItem -> Arrays.asList(orderItem.getOrderId(),
-                orderItem.getOrderItemSeqId()),
-                orderItem -> orderItem));
     }
 
     @Override
