@@ -1,24 +1,18 @@
 package com.hust.baseweb.test.simulator;
 
 import com.google.gson.Gson;
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.model.PartyCustomerModel;
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.model.GetListFacilityOutputModel;
 import com.hust.baseweb.applications.logistics.model.GetListProductOutputModel;
-import com.hust.baseweb.applications.order.model.GetListPartyCustomerOutputModel;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
 import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.DateTimeUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class CreateOrderAgent extends Thread {
     public static final String module = CreateOrderAgent.class.getName();
@@ -148,7 +142,7 @@ public class CreateOrderAgent extends Thread {
     public void run() {
         System.out.println(module + "::run....");
 
-        token = Login.login("dungpq", "123");
+        token = Login.login("admin", "123");
 
         createOrders(nbIters, fromDate, toDate);
         
