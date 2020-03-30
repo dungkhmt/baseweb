@@ -73,7 +73,8 @@ public class OrderServiceImpl implements OrderService {
         UserLogin salesman = userLoginRepo.findByUserLoginId(salesmanId);
         //Party salesman = partyRepo.
         log.info("save, salesmanId = " + salesmanId + ", partyId = "
-                + (salesman != null ? salesman.getParty().getPartyId() : "NULL"));
+                + (salesman != null ? salesman.getParty().getPartyId() : "NULL")
+                + ", customerId = " + (orderInput.getToCustomerId() != null ? orderInput.getToCustomerId() : " NULL") );
 
         Facility facility = facilityRepo.findByFacilityId(orderInput.getFacilityId());
 

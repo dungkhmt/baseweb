@@ -117,6 +117,8 @@ public class DistributorServiceImpl implements DistributorService {
     public List<PartyDistributor> findDistributors() {
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");
         List<PartyDistributor> distributors = distributorRepo.findByPartyType(partyType);
+        log.info("findDistributors, got distributors.sz = " + distributors.size());
+        
         return distributors;
     }
 

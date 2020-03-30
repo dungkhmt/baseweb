@@ -52,10 +52,15 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                                         String currencyUomId,
                                         String taxInPrice) {
         Product product = productRepo.findByProductId(productId);
+        if(product != null) log.info("setProductPrice, find product " + product.getProductId());
+        
         Uom uom = uomRepo.findByUomId(currencyUomId);
 
         Date d = new Date();
         ProductPrice pp = productPriceRepo.findByProductAndThruDate(product, null);
+        
+        if(pp != null) log.info("setProductPrice, find productPrice " + pp.getProductPriceId());
+        
         if (pp == null) {
             pp = new ProductPrice();
             pp.setCurrencyUom(uom);
@@ -63,8 +68,11 @@ public class ProductPriceServiceImpl implements ProductPriceService {
             pp.setPrice(price);
             pp.setFromDate(d);
             pp.setTaxInPrice(taxInPrice);
-            pp.setCreatedByUserLogin(createdByUserLogin);
+            //pp.setCreatedByUserLogin(createdByUserLogin);
+            pp.setCreatedByUserLoginId(createdByUserLogin.getUserLoginId());
             pp = productPriceRepo.save(pp);
+            
+            log.info("setProductPrice create DONE");
             return pp;
         } else {
             // set thru_date of the current product_price by now() to disable this information
@@ -77,8 +85,11 @@ public class ProductPriceServiceImpl implements ProductPriceService {
             pp.setPrice(price);
             pp.setFromDate(d);
             pp.setTaxInPrice(taxInPrice);
-            pp.setCreatedByUserLogin(createdByUserLogin);
+            //pp.setCreatedByUserLogin(createdByUserLogin);
+            pp.setCreatedByUserLoginId(createdByUserLogin.getUserLoginId());
             pp = productPriceRepo.save(pp);
+            
+            log.info("setProductPrice update DONE");
             return pp;
         }
     }
@@ -86,7 +97,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     @Override
     @Transactional
     public ProductPrice getProductPrice(String productId) {
-        log.info("getProductPrice, productId = " + productId);
+        //log.info("getProductPrice, productId = " + productId);
 
         Product product = productRepo.findByProductId(productId);
         //log.info("getProductPrice, product = " + product.getProductId());

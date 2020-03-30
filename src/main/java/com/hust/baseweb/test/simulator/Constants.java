@@ -6,8 +6,8 @@ public class Constants {
     public static final MediaType JSON = MediaType
             .get("application/json; charset=utf-8");
 
-    //public static final String URL_ROOT = "http://localhost:8080";
-    public static final String URL_ROOT = "http://3.1.6.126";
+    public static final String URL_ROOT = "http://localhost:8080";
+    //public static final String URL_ROOT = "http://3.1.6.126";
 
 
 }

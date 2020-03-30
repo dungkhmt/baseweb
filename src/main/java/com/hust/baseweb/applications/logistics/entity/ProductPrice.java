@@ -38,9 +38,11 @@ public class ProductPrice {
     @Column(name = "thru_date")
     private Date thruDate;
 
-    @JoinColumn(name = "created_by_user_login_id", referencedColumnName = "user_login_id")
-    @ManyToOne
-    private UserLogin createdByUserLogin;
+    //@JoinColumn(name = "created_by_user_login_id", referencedColumnName = "user_login_id")
+    //@ManyToOne
+    //private UserLogin createdByUserLogin;
 
+    @Column(name="created_by_user_login_id")
+    private String createdByUserLoginId;
 
 }
