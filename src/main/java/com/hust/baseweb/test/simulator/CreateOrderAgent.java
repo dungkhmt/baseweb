@@ -10,6 +10,8 @@ import com.hust.baseweb.applications.logistics.model.GetListProductOutputModel;
 import com.hust.baseweb.applications.order.model.GetListPartyCustomerOutputModel;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
+import com.hust.baseweb.utils.Constant;
+import com.hust.baseweb.utils.DateTimeUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,7 +35,9 @@ public class CreateOrderAgent extends Thread {
     private int nbIters = 1000;
     private double maxTime = 0;
     private int id;
-
+    private String fromDate;
+    private String toDate;
+    
     /*
     String execPostUseToken(String url, String json, String token)
             throws IOException {
@@ -46,11 +50,28 @@ public class CreateOrderAgent extends Thread {
         }
     }
     */
+    
     public CreateOrderAgent(int id) {
         this.id = id;
     }
 
-    public static void main(String[] args) {
+    public String getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public String getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
+	}
+
+	public static void main(String[] args) {
 
         CreateOrderAgent a = new CreateOrderAgent(0);
         a.start();
@@ -72,18 +93,48 @@ public class CreateOrderAgent extends Thread {
         return this.maxTime;
     }
 
-    public void run() {
-        System.out.println(module + "::run....");
-
-        token = Login.login("dungpq", "123");
-
-
-        maxTime = 0;
+    public void createOrders(int nbIters, String fromDateStr, String toDateStr){
+    	maxTime = 0;
+    	List<String> dates = new ArrayList<String>();
+    	String curDate = fromDateStr;
+    	int cnt = 0;
+    	while(!curDate.equals(toDateStr)){
+    		dates.add(curDate);
+    		String s = curDate + " 00:00:00";
+    		s = DateTimeUtils.next(s, 1);
+    		String[] tmp = s.split(" ");
+    		curDate = tmp[0].trim();
+    		
+    		if(cnt > 1000){
+    			System.out.println("EXCEPTION too many dates!!!!");
+    			assert(false);
+    		}
+    		cnt++;
+    	}
+    	Random R = new Random();
+    	
         for (int i = 1; i <= nbIters; i++) {
             Date timePoint = new Date();
             Random random = new Random();
             //double t0 = System.currentTimeMillis();
-            double time = createOrder();
+            
+            curDate = dates.get(R.nextInt(dates.size()));// pickup a random date
+            // genrate random hh:mm:ss
+            curDate = curDate + " " + R.nextInt(24) + ":" + R.nextInt(60) + ":" + R.nextInt(60);
+            
+            //Date orderDate = new Date();// take current date-time
+            Date orderDate = null;
+            try{
+            	orderDate = Constant.DATE_FORMAT.parse(curDate);
+            	System.out.println("GEN orderDate " + orderDate);
+            	
+            }catch(Exception e){
+            	System.out.println("NOT CORRECT date-time " + curDate);
+            	e.printStackTrace();
+            	return;
+            }
+            double time = createOrder(orderDate);
+            
             //double t = System.currentTimeMillis() - t0;
             if (maxTime < time) {
                 maxTime = time;
@@ -93,6 +144,15 @@ public class CreateOrderAgent extends Thread {
 
         System.out.println(module + "[" + id + "] finished, maxTime = " + maxTime);
 
+    }
+    public void run() {
+        System.out.println(module + "::run....");
+
+        token = Login.login("dungpq", "123");
+
+        createOrders(nbIters, fromDate, toDate);
+        
+        
     }
     public String name(){
     	return module + "[" + id + "]";
@@ -149,7 +209,7 @@ public class CreateOrderAgent extends Thread {
         return null;
     }
 
-    public double createOrder() {
+    public double createOrder(Date orderDate) {
         try {
             Gson gson = new Gson();
             String[] salesmanIds = {"dungpq", "datnt", "admin", "nguyenvanseu"};
@@ -168,7 +228,10 @@ public class CreateOrderAgent extends Thread {
             input.setFacilityId(selectedFacility.getFacilityId());
             input.setSalesChannelId(null);
             input.setSalesmanId(salesmanIds[rand.nextInt(salesmanIds.length)]);
-            input.setOrderDate(formatter.format(new Date()));
+            
+            //input.setOrderDate(formatter.format(new Date()));
+            input.setOrderDate(formatter.format(orderDate));
+            
             //input.setPartyCustomerId(selectedCustomer.getPartyId());
             input.setToCustomerId(UUID.fromString(selectedCustomer.getPartyCustomerId()));
             ModelCreateOrderInputOrderItem[] orderItems = new ModelCreateOrderInputOrderItem[products.size()];

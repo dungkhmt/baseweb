@@ -11,8 +11,12 @@ public class Simulator {
         CreateOrderAgent[] agents = new CreateOrderAgent[nbAgents];
         for (int i = 0; i < agents.length; i++) {
             agents[i] = new CreateOrderAgent(i);
-            agents[i].setNbIters(100);
+            agents[i].setNbIters(500);
+            agents[i].setFromDate("2020-03-23");
+            agents[i].setToDate("2020-03-29");
             agents[i].start();
+            
+            
         }
 
         //for(int i = 0; i < agents.length; i++){
