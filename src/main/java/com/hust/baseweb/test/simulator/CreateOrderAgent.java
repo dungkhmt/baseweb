@@ -114,11 +114,16 @@ public class CreateOrderAgent extends Thread {
             
             curDate = dates.get(R.nextInt(dates.size()));// pickup a random date
             // genrate random hh:mm:ss
-            curDate = curDate + " " + R.nextInt(24) + ":" + R.nextInt(60) + ":" + R.nextInt(60);
+            String hh = DateTimeUtils.std2Digit(R.nextInt(24));
+            String mm = DateTimeUtils.std2Digit(R.nextInt(60));
+            String ss = DateTimeUtils.std2Digit(R.nextInt(60));
+            
+            curDate = curDate + " " + hh + ":" + mm + ":" + ss;
             
             //Date orderDate = new Date();// take current date-time
             Date orderDate = null;
             try{
+            	System.out.println("Consider curDate = " + curDate);
             	orderDate = Constant.DATE_FORMAT.parse(curDate);
             	System.out.println("GEN orderDate " + orderDate);
             	

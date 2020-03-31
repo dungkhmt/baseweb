@@ -271,7 +271,13 @@ public class DateTimeUtils {
         String new_date_time = unixTimeStamp2DateTime(new_d);
         return new_date_time;
     }
-
+    public static String std2Digit(int x){
+    	String s = x + "";
+    	while(s.length() < 2){
+    		s = "0" + s;
+    	}
+    	return s;
+    }
     public static void main(String[] args) {
         String fromDate = "2020-01-01 00:00:00";
         String toDate = "2020-03-04 00:00:00";
