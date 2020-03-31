@@ -671,8 +671,8 @@ CREATE TABLE product_facility
 (
     product_id           VARCHAR(60) NOT NULL,
     facility_id          VARCHAR(60) NOT NULL,
-    atp_inventory_count  DECIMAL(18, 6),
-    last_inventory_count DECIMAL(18, 6),
+    atp_inventory_count  INT,
+    last_inventory_count INT,
     description          TEXT,
     last_updated_stamp   TIMESTAMP,
     created_stamp        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

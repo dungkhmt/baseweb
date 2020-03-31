@@ -71,8 +71,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             productFacility = new ProductFacility();
             productFacility.setProductId(product.getProductId());
             productFacility.setFacilityId(facility.getFacilityId());
-            productFacility.setAtpInventoryCount((double) input.getQuantityOnHandTotal());
-            productFacility.setLastInventoryCount(0.0);
+            productFacility.setAtpInventoryCount(input.getQuantityOnHandTotal());
+            productFacility.setLastInventoryCount(0);
         }
         productFacility.setLastInventoryCount(productFacility.getLastInventoryCount() + input.getQuantityOnHandTotal());
         productFacility = productFacilityRepo.save(productFacility);
@@ -120,7 +120,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                     inventoryItemsMap.size());
 
             List<InventoryItem> selectedInventoryItems = inventoryItemsMap.get(Arrays.asList(facilityId, productId));
-            double totalCount = // total inventory count of productId in the faicilityId
+            int totalCount = // total inventory count of productId in the faicilityId
                     productFacilityMap.get(Arrays.asList(facilityId, productId)).getLastInventoryCount()
                             - quantity; // remain total inventory count
             selectedInventoryItems.sort(Comparator.comparingInt(InventoryItem::getQuantityOnHandTotal));
@@ -270,7 +270,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             if (productFacility == null) {
                 orderItemInventoryQuantityMap.put(orderItem, 0);
             } else {
-                orderItemInventoryQuantityMap.put(orderItem, productFacility.getLastInventoryCount().intValue());
+                orderItemInventoryQuantityMap.put(orderItem, productFacility.getLastInventoryCount());
             }
         }
 

@@ -22,9 +22,9 @@ public class ProductFacility {
     private String facilityId;
 
     @Column(name = "last_inventory_count")
-    private Double lastInventoryCount;
+    private Integer lastInventoryCount;
 
     @Column(name = "atp_inventory_count")
-    private Double atpInventoryCount;
+    private Integer atpInventoryCount;
 
 }

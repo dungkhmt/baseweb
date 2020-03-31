@@ -51,7 +51,7 @@ public class InventoryModel {
     public static class ProductFacility {
         private String productId;
         private String productName;
-        private Double quantity;
+        private Integer quantity;
         private String facilityId;
         private String facilityName;
     }
