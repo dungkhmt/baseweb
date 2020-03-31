@@ -17,10 +17,25 @@ delete
 from order_item;
 
 delete
+from inventory_item;
+
+delete
 from shipment;
 
 delete
+from product_facility;
+
+delete
 from product;
+
+delete
+from order_role;
+
+delete
+from order_status;
+
+delete
+from order_header;
 
 delete
 from vehicle_location_priority;

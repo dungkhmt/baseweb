@@ -56,4 +56,12 @@ public class InventoryModel {
         private String facilityName;
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class OrderFacility {
+        private String orderId;
+        private String facilityId;
+    }
 }

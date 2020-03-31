@@ -254,24 +254,24 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                 .map(orderItem -> orderItem.getProduct().getProductId())
                 .distinct()
                 .collect(Collectors.toList());
-        Map<String, ProductFacility> productFacilityMap;
+        Map<String, Integer> productFacilityCountMap;
         if (facilityId == null) {
-            productFacilityMap = productFacilityRepo.findAllByProductIdIn(productIds)
+            productFacilityCountMap = productFacilityRepo.findAllByProductIdIn(productIds)
                     .stream()
-                    .collect(Collectors.toMap(ProductFacility::getProductId, productFacility -> productFacility));
+                    .collect(Collectors.toMap(ProductFacility::getProductId,
+                            ProductFacility::getLastInventoryCount,
+                            Integer::sum));
         } else {
-            productFacilityMap = productFacilityRepo.findAllByFacilityIdAndProductIdIn(facilityId, productIds)
+            productFacilityCountMap = productFacilityRepo.findAllByFacilityIdAndProductIdIn(facilityId, productIds)
                     .stream()
-                    .collect(Collectors.toMap(ProductFacility::getProductId, productFacility -> productFacility));
+                    .collect(Collectors.toMap(ProductFacility::getProductId,
+                            ProductFacility::getLastInventoryCount,
+                            Integer::sum));
         }
         Map<OrderItem, Integer> orderItemInventoryQuantityMap = new HashMap<>();
         for (OrderItem orderItem : orderItems) {
-            ProductFacility productFacility = productFacilityMap.get(orderItem.getProduct().getProductId());
-            if (productFacility == null) {
-                orderItemInventoryQuantityMap.put(orderItem, 0);
-            } else {
-                orderItemInventoryQuantityMap.put(orderItem, productFacility.getLastInventoryCount());
-            }
+            orderItemInventoryQuantityMap.put(orderItem,
+                    productFacilityCountMap.getOrDefault(orderItem.getProduct().getProductId(), 0));
         }
 
         return orderItems.stream()
@@ -297,7 +297,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         Facility facility = facilityRepo.findById(facilityId).orElseThrow(NoSuchElementException::new);
         List<ProductFacility> productFacilities = productFacilityRepo.findAllByFacilityId(facilityId);
         List<String> productIds = productFacilities.stream()
-                .map(ProductFacility::getFacilityId)
+                .map(ProductFacility::getProductId)
                 .distinct()
                 .collect(Collectors.toList());
 
@@ -306,7 +306,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
         return productFacilities.stream().map(productFacility -> new InventoryModel.ProductFacility(
                 productFacility.getProductId(),
-                productMap.get(productFacility.getFacilityId()).getProductName(),
+                productMap.get(productFacility.getProductId()).getProductName(),
                 productFacility.getLastInventoryCount(),
                 facilityId,
                 facility.getFacilityName()
