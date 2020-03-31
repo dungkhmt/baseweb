@@ -4,16 +4,16 @@ public class Simulator {
 
     public static void main(String[] arg) {
         Simulator app = new Simulator();
-        app.run(1);
+        app.run(10);
     }
 
     private void run(int nbAgents) {
         CreateOrderAgent[] agents = new CreateOrderAgent[nbAgents];
         for (int i = 0; i < agents.length; i++) {
             agents[i] = new CreateOrderAgent(i);
-            agents[i].setNbIters(500);
-            agents[i].setFromDate("2020-03-23");
-            agents[i].setToDate("2020-03-29");
+            agents[i].setNbIters(1000);
+            agents[i].setFromDate("2020-01-01");
+            agents[i].setToDate("2020-03-31");
             agents[i].start();
             
             
