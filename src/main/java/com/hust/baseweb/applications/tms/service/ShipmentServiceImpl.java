@@ -15,14 +15,9 @@ import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.geo.service.PostalAddressService;
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
-import com.hust.baseweb.applications.logistics.entity.ProductPrice;
 import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
-import com.hust.baseweb.applications.logistics.repo.ProductPriceRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.service.ProductService;
-import com.hust.baseweb.applications.order.document.aggregation.CustomerRevenue;
-import com.hust.baseweb.applications.order.document.aggregation.ProductRevenue;
-import com.hust.baseweb.applications.order.document.aggregation.TotalRevenue;
 import com.hust.baseweb.applications.order.entity.CompositeOrderItemId;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.entity.OrderItem;
@@ -31,9 +26,7 @@ import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
 import com.hust.baseweb.applications.order.repo.OrderItemRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
-import com.hust.baseweb.applications.order.repo.mongodb.CustomerRevenueRepo;
-import com.hust.baseweb.applications.order.repo.mongodb.ProductRevenueRepo;
-import com.hust.baseweb.applications.order.repo.mongodb.TotalRevenueRepo;
+import com.hust.baseweb.applications.order.service.RevenueService;
 import com.hust.baseweb.applications.tms.entity.Shipment;
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
 import com.hust.baseweb.applications.tms.model.ShipmentItemModel;
@@ -59,7 +52,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -91,10 +83,7 @@ public class ShipmentServiceImpl implements ShipmentService {
     private CustomerRepo customerRepo;
     private PartyContactMechPurposeRepo partyContactMechPurposeRepo;
 
-    private ProductRevenueRepo productRevenueRepo;
-    private CustomerRevenueRepo customerRevenueRepo;
-    private TotalRevenueRepo totalRevenueRepo;
-    private ProductPriceRepo productPriceRepo;
+    private RevenueService revenueService;
 
     // @Override
     @Transactional
@@ -227,58 +216,15 @@ public class ShipmentServiceImpl implements ShipmentService {
             shipmentItems.add(shipmentItem);
         }
 
+        Map<OrderItem, PartyCustomer> orderItemToCustomerMap = shipmentItems.stream()
+                .collect(Collectors.toMap(ShipmentItem::getOrderItem, ShipmentItem::getCustomer));
+
         // lưu tất cả shipment item vào DB
         shipmentItemRepo.saveAll(shipmentItems);
 
-        updateRevenue(partyCustomerMap, productMap, shipmentItems);
+        revenueService.updateRevenue(partyCustomerMap.values(), productMap, orderItems, orderItemToCustomerMap::get);
 
         return shipment;
-    }
-
-    private void updateRevenue(Map<String, PartyCustomer> partyCustomerMap,
-                               Map<String, Product> productMap,
-                               List<ShipmentItem> shipmentItems) {
-        LocalDate today = LocalDate.now();
-        TotalRevenue totalRevenueToday = totalRevenueRepo.findById(today).orElse(new TotalRevenue(today, 0));
-
-        Map<String, ProductRevenue> productRevenueMap = productRevenueRepo.findAllByIdIn(productMap.keySet()
-                .stream()
-                .map(productId -> new ProductRevenue.ProductRevenueId(productId, today))
-                .collect(Collectors.toList()))
-                .stream().collect(Collectors.toMap(productRevenue -> productRevenue.getId().getProductId(),
-                        productRevenue -> productRevenue));
-        Map<UUID, CustomerRevenue> customerRevenueMap = customerRevenueRepo.findAllByIdIn(partyCustomerMap.values()
-                .stream()
-                .map(customer -> new CustomerRevenue.CustomerRevenueId(customer.getPartyId(), today))
-                .collect(Collectors.toList()))
-                .stream()
-                .collect(Collectors.toMap(customerRevenue -> customerRevenue.getId().getCustomerId(),
-                        customerRevenue -> customerRevenue));
-
-        Map<String, ProductPrice> productPriceMap = productPriceRepo.findAllByProductInAndThruDateNull(productMap.values())
-                .stream()
-                .collect(Collectors.toMap(productPrice -> productPrice.getProduct().getProductId(),
-                        productPrice -> productPrice));
-
-        for (ShipmentItem shipmentItem : shipmentItems) {
-            int quantity = shipmentItem.getOrderItem().getQuantity();
-            Product product = shipmentItem.getOrderItem().getProduct();
-            PartyCustomer customer = shipmentItem.getCustomer();
-            ProductPrice productPrice = productPriceMap.get(product.getProductId());
-            double revenue = quantity * productPrice.getPrice();
-
-            totalRevenueToday.increase(revenue);
-            customerRevenueMap.computeIfAbsent(customer.getPartyId(),
-                    k -> new CustomerRevenue(new CustomerRevenue.CustomerRevenueId(customer.getPartyId(), today), 0))
-                    .increase(revenue);
-            productRevenueMap.computeIfAbsent(product.getProductId(),
-                    k -> new ProductRevenue(new ProductRevenue.ProductRevenueId(product.getProductId(), today), 0))
-                    .increase(revenue);
-        }
-
-        totalRevenueRepo.save(totalRevenueToday);
-        customerRevenueRepo.saveAll(customerRevenueMap.values());
-        productRevenueRepo.saveAll(productRevenueMap.values());
     }
 
     @NotNull

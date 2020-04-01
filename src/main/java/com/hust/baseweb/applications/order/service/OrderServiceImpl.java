@@ -64,6 +64,8 @@ public class OrderServiceImpl implements OrderService {
 
     private ProductPriceRepo productPriceRepo;
 
+    private RevenueService revenueService;
+
     @Override
     @Transactional
     public OrderHeader save(ModelCreateOrderInput orderInput) {
@@ -208,6 +210,15 @@ public class OrderServiceImpl implements OrderService {
         String dateYYYYMMDD = DateTimeUtils.date2YYYYMMDD(order.getOrderDate());
         log.info("save, orderDateYYYYMMDD = " + dateYYYYMMDD);
         OrderAPIController.revenueOrderCache.addOrderRevenue(dateYYYYMMDD, totalGrand);
+
+        PartyCustomer partyCustomer = partyCustomerRepo.findById(orderInput.getToCustomerId())
+                .orElseThrow(NoSuchElementException::new);
+
+        revenueService.updateRevenue(Collections.singletonList(partyCustomer),
+                productMap,
+                orderItems,
+                orderItem -> partyCustomer);
+
         return order;
     }
 
