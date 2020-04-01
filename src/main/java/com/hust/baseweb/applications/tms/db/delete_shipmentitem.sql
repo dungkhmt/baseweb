@@ -14,6 +14,9 @@ delete
 from shipment_item;
 
 delete
+from inventory_item_detail;
+
+delete
 from order_item;
 
 delete

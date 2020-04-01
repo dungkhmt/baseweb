@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
-import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -92,7 +91,7 @@ public class LogisticsAPIController {
     }
 
     @PostMapping("/get-sale-reports")
-    public ResponseEntity<?> getSaleReports(@RequestBody SaleReportModel.Input input) throws ParseException {
+    public ResponseEntity<?> getSaleReports(@RequestBody SaleReportModel.Input input) {
         return ResponseEntity.ok().body(productPriceService.getSaleReports(input));
     }
 }

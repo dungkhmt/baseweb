@@ -5,8 +5,6 @@ import com.hust.baseweb.applications.logistics.model.product.SaleReportModel;
 import com.hust.baseweb.entity.UserLogin;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-
 
 @Service
 public interface ProductPriceService {
@@ -18,5 +16,5 @@ public interface ProductPriceService {
 
     ProductPrice getProductPrice(String productId);
 
-    SaleReportModel.Output getSaleReports(SaleReportModel.Input input) throws ParseException;
+    SaleReportModel.Output getSaleReports(SaleReportModel.Input input);
 }

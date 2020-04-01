@@ -123,9 +123,9 @@ public class CreateOrderAgent extends Thread {
             //Date orderDate = new Date();// take current date-time
             Date orderDate = null;
             try{
-            	System.out.println("Consider curDate = " + curDate);
+//            	System.out.println("Consider curDate = " + curDate);
             	orderDate = Constant.DATE_FORMAT.parse(curDate);
-            	System.out.println("GEN orderDate " + orderDate);
+//            	System.out.println("GEN orderDate " + orderDate);
             	
             }catch(Exception e){
             	System.out.println("NOT CORRECT date-time " + curDate);

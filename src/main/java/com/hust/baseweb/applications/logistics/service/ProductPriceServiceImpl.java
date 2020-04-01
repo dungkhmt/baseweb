@@ -14,6 +14,8 @@ import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
 import com.hust.baseweb.applications.order.repo.OrderItemRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
+import com.hust.baseweb.applications.order.repo.mongodb.CustomerRevenueRepo;
+import com.hust.baseweb.applications.order.repo.mongodb.ProductRevenueRepo;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.utils.Constant;
 import lombok.AllArgsConstructor;
@@ -23,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -44,6 +45,9 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
     private OrderRoleRepo orderRoleRepo;
 
+    private CustomerRevenueRepo customerRevenueRepo;
+    private ProductRevenueRepo productRevenueRepo;
+
     @Override
     @Transactional
     public ProductPrice setProductPrice(UserLogin createdByUserLogin,
@@ -52,15 +56,19 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                                         String currencyUomId,
                                         String taxInPrice) {
         Product product = productRepo.findByProductId(productId);
-        if(product != null) log.info("setProductPrice, find product " + product.getProductId());
-        
+        if (product != null) {
+            log.info("setProductPrice, find product " + product.getProductId());
+        }
+
         Uom uom = uomRepo.findByUomId(currencyUomId);
 
         Date d = new Date();
         ProductPrice pp = productPriceRepo.findByProductAndThruDateNull(product);
-        
-        if(pp != null) log.info("setProductPrice, find productPrice " + pp.getProductPriceId());
-        
+
+        if (pp != null) {
+            log.info("setProductPrice, find productPrice " + pp.getProductPriceId());
+        }
+
         if (pp == null) {
             pp = new ProductPrice();
             pp.setCurrencyUom(uom);
@@ -71,7 +79,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
             //pp.setCreatedByUserLogin(createdByUserLogin);
             pp.setCreatedByUserLoginId(createdByUserLogin.getUserLoginId());
             pp = productPriceRepo.save(pp);
-            
+
             log.info("setProductPrice create DONE");
             return pp;
         } else {
@@ -88,7 +96,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
             //pp.setCreatedByUserLogin(createdByUserLogin);
             pp.setCreatedByUserLoginId(createdByUserLogin.getUserLoginId());
             pp = productPriceRepo.save(pp);
-            
+
             log.info("setProductPrice update DONE");
             return pp;
         }
@@ -113,14 +121,30 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     }
 
     @Override
-    public SaleReportModel.Output getSaleReports(SaleReportModel.Input input) throws ParseException {
-        Date fromDate = Constant.DATE_FORMAT.parse(input.getFromDate());
-        Date thruDate = Constant.DATE_FORMAT.parse(input.getThruDate());
-
+    public SaleReportModel.Output getSaleReports(SaleReportModel.Input input) {
         if (input.getProductId() != null) {
-            return calcSaleReportByProduct(input, fromDate, thruDate);
+            List<SaleReportModel.DatePrice> datePrices = productRevenueRepo.findAllById_ProductIdAndId_DateBetween(
+                    input.getProductId(),
+                    LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT))
+                    .stream()
+                    .map(productRevenue -> new SaleReportModel.DatePrice(productRevenue.getId()
+                            .getDate()
+                            .format(Constant.LOCAL_DATE_FORMAT), productRevenue.getRevenue()))
+                    .collect(Collectors.toList());
+            return new SaleReportModel.Output(datePrices);
+
         } else if (input.getPartyCustomerId() != null) {
-            return calcSaleReportByPartyCustomer(input, fromDate, thruDate);
+            List<SaleReportModel.DatePrice> datePrices = customerRevenueRepo.findAllById_CustomerIdAndId_DateBetween(
+                    UUID.fromString(input.getPartyCustomerId()),
+                    LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT))
+                    .stream()
+                    .map(customerRevenue -> new SaleReportModel.DatePrice(customerRevenue.getId()
+                            .getDate()
+                            .format(Constant.LOCAL_DATE_FORMAT), customerRevenue.getRevenue()))
+                    .collect(Collectors.toList());
+            return new SaleReportModel.Output(datePrices);
         }
         return null;
     }
