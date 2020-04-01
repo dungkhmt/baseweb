@@ -57,7 +57,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         Uom uom = uomRepo.findByUomId(currencyUomId);
 
         Date d = new Date();
-        ProductPrice pp = productPriceRepo.findByProductAndThruDate(product, null);
+        ProductPrice pp = productPriceRepo.findByProductAndThruDateNull(product);
         
         if(pp != null) log.info("setProductPrice, find productPrice " + pp.getProductPriceId());
         

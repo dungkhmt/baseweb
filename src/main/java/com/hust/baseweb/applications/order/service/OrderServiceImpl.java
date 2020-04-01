@@ -8,6 +8,7 @@ import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductPrice;
 import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
+import com.hust.baseweb.applications.logistics.repo.ProductPriceRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.service.ProductPriceService;
 import com.hust.baseweb.applications.order.controller.OrderAPIController;
@@ -25,18 +26,18 @@ import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
 import com.hust.baseweb.utils.CommonUtils;
+import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.DateTimeUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -61,6 +62,8 @@ public class OrderServiceImpl implements OrderService {
     private PartyRepo partyRepo;
     private PartySalesmanService partySalesmanService;
 
+    private ProductPriceRepo productPriceRepo;
+
     @Override
     @Transactional
     public OrderHeader save(ModelCreateOrderInput orderInput) {
@@ -74,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
         //Party salesman = partyRepo.
         log.info("save, salesmanId = " + salesmanId + ", partyId = "
                 + (salesman != null ? salesman.getParty().getPartyId() : "NULL")
-                + ", customerId = " + (orderInput.getToCustomerId() != null ? orderInput.getToCustomerId() : " NULL") );
+                + ", customerId = " + (orderInput.getToCustomerId() != null ? orderInput.getToCustomerId() : " NULL"));
 
         Facility facility = facilityRepo.findByFacilityId(orderInput.getFacilityId());
 
@@ -86,10 +89,9 @@ public class OrderServiceImpl implements OrderService {
         //		(salesman != null ? salesman.getUserLoginId(): "null") + ", facility = " +
         //(facility != null ? facility.getFacilityName() : "null"));
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date orderDate;
         try {
-            orderDate = formatter.parse(orderInput.getOrderDate());
+            orderDate = Constant.DATE_FORMAT.parse(orderInput.getOrderDate());
         } catch (ParseException e) {
             e.printStackTrace();
             orderDate = new Date();// take current Date
@@ -98,15 +100,18 @@ public class OrderServiceImpl implements OrderService {
 
         PostalAddress shipToPostalAddress = postalAddressRepo.findByContactMechId(orderInput.getShipToAddressId());
 
+        Map<String, Product> productMap = buildProductMap(orderInput);
+        Map<String, ProductPrice> productPriceMap = buildProductPriceMap(productMap);
+
         // iterate for computing grand total
         Double totalGrand = 0.0;
         for (ModelCreateOrderInputOrderItem modelCreateOrderInputOrderItem : orderInput.getOrderItems()) {
             //Product product = productRepo.findByProductId(modelCreateOrderInputOrderItem.getProductId());
-            ProductPrice pp = productPriceService.getProductPrice(modelCreateOrderInputOrderItem.getProductId());
+            ProductPrice productPrice = productPriceMap.get(modelCreateOrderInputOrderItem.getProductId());
             //orderItem.setUnitPrice(modelCreateOrderInputOrderItem.getUnitPrice());// TOBE FIXED
             double tt;
-            if (pp != null) {
-                tt = pp.getPrice() * modelCreateOrderInputOrderItem.getQuantity();
+            if (productPrice != null) {
+                tt = productPrice.getPrice() * modelCreateOrderInputOrderItem.getQuantity();
             } else {
                 tt = 0.0;
             }
@@ -134,35 +139,38 @@ public class OrderServiceImpl implements OrderService {
 
         order = orderHeaderRepo.save(order);
 
+        List<OrderItem> orderItems = new ArrayList<>();
 
         // write to table order_item
         int idx = 0;
         for (ModelCreateOrderInputOrderItem modelCreateOrderInputOrderItem : orderInput.getOrderItems()) {
             idx++;
             String orderItemSeqId = CommonUtils.buildSeqId(idx);//"0000" + idx;
-            Product product = productRepo.findByProductId(modelCreateOrderInputOrderItem.getProductId());
+            Product product = productMap.get(modelCreateOrderInputOrderItem.getProductId());
             OrderItem orderItem = new OrderItem();
             orderItem.setOrderId(order.getOrderId());
             orderItem.setOrderItemSeqId(orderItemSeqId);
             orderItem.setProduct(product);
             orderItem.setQuantity(modelCreateOrderInputOrderItem.getQuantity());
 
-            ProductPrice pp = productPriceService.getProductPrice(product.getProductId());
+            ProductPrice productPrice = productPriceMap.get(product.getProductId());
             //orderItem.setUnitPrice(modelCreateOrderInputOrderItem.getUnitPrice());// TOBE FIXED
             //BigDecimal tt = null;
 
-            if (pp != null) {
-                orderItem.setUnitPrice(pp.getPrice());
+            if (productPrice != null) {
+                orderItem.setUnitPrice(productPrice.getPrice());
                 //tt = pp.getPrice().multiply(new BigDecimal(orderItem.getQuantity()));
             } else {
                 orderItem.setUnitPrice(0.0);
                 //tt = new BigDecimal(0);
             }
-            orderItemRepo.save(orderItem);
+            orderItems.add(orderItem);
             //System.out.println(module + "::save, order-item " + product.getProductId() + ", price = " + oi.getTotalItemPrice() + ", total = " + total);
             //total = total.add(modelCreateOrderInputOrderItem.getTotalItemPrice());
             //total = total.add(tt);
         }
+
+        orderItemRepo.saveAll(orderItems);
 
         // update total
         //order.setGrandTotal(total);
@@ -201,6 +209,23 @@ public class OrderServiceImpl implements OrderService {
         log.info("save, orderDateYYYYMMDD = " + dateYYYYMMDD);
         OrderAPIController.revenueOrderCache.addOrderRevenue(dateYYYYMMDD, totalGrand);
         return order;
+    }
+
+    @NotNull
+    private Map<String, ProductPrice> buildProductPriceMap(Map<String, Product> productMap) {
+        return productPriceRepo.findAllByProductInAndThruDateNull(productMap.values())
+                .stream()
+                .collect(Collectors.toMap(productPrice1 -> productPrice1.getProduct().getProductId(),
+                        productPrice1 -> productPrice1));
+    }
+
+    @NotNull
+    private Map<String, Product> buildProductMap(ModelCreateOrderInput orderInput) {
+        return productRepo.findAllByProductIdIn(Arrays.stream(orderInput.getOrderItems())
+                .map(ModelCreateOrderInputOrderItem::getProductId).distinct()
+                .collect(Collectors.toList()))
+                .stream()
+                .collect(Collectors.toMap(Product::getProductId, product -> product));
     }
 
     @Override
