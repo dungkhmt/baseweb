@@ -52,6 +52,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -185,6 +187,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         Map<CompositeOrderItemId, ShipmentItemModel.Create> orderItemIdToShipmentItemModelMap = new HashMap<>();
 
         List<OrderItem> orderItems = new ArrayList<>();
+        Map<CompositeOrderItemId, LocalDate> orderItemIdToDateMap = new HashMap<>();
 
         for (int i = 0; i < input.getShipmentItems().length; i++) {
             ShipmentItemModel.Create shipmentItemModel = input.getShipmentItems()[i];
@@ -199,6 +202,11 @@ public class ShipmentServiceImpl implements ShipmentService {
 
             orderItemIdToShipmentItemModelMap.put(new CompositeOrderItemId(orderItem.getOrderId(),
                     orderItem.getOrderItemSeqId()), shipmentItemModel);
+
+            orderItemIdToDateMap.put(new CompositeOrderItemId(orderItem.getOrderId(), orderItem.getOrderItemSeqId()),
+                    orderHeader.getOrderDate().toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate());
         }
 
         facilityRepo.saveAll(facilityMap.values());
@@ -222,7 +230,10 @@ public class ShipmentServiceImpl implements ShipmentService {
         // lưu tất cả shipment item vào DB
         shipmentItemRepo.saveAll(shipmentItems);
 
-        revenueService.updateRevenue(partyCustomerMap.values(), productMap, orderItems, orderItemToCustomerMap::get);
+        revenueService.updateRevenue(orderItems,
+                orderItemToCustomerMap::get,
+                orderItem -> orderItemIdToDateMap.get(new CompositeOrderItemId(orderItem.getOrderId(),
+                        orderItem.getOrderItemSeqId())));
 
         return shipment;
     }

@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.order.document.aggregation;
 
 import lombok.*;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
@@ -16,8 +15,8 @@ import java.time.LocalDate;
 @Document
 public class ProductRevenue {
 
-    @Id
-    private ProductRevenueId id;
+    @org.springframework.data.annotation.Id
+    private ProductRevenue.Id id;
     private double revenue;
 
     public double increase(double value) {
@@ -30,7 +29,7 @@ public class ProductRevenue {
     @AllArgsConstructor
     @NoArgsConstructor
     @EqualsAndHashCode
-    public static class ProductRevenueId {
+    public static class Id {
         private String productId;
         private LocalDate date;
     }

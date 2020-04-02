@@ -125,8 +125,8 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         if (input.getProductId() != null) {
             List<SaleReportModel.DatePrice> datePrices = productRevenueRepo.findAllById_ProductIdAndId_DateBetween(
                     input.getProductId(),
-                    LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
-                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT))
+                    LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_TIME_FORMAT),
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_TIME_FORMAT))
                     .stream()
                     .map(productRevenue -> new SaleReportModel.DatePrice(productRevenue.getId()
                             .getDate()
@@ -137,8 +137,8 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         } else if (input.getPartyCustomerId() != null) {
             List<SaleReportModel.DatePrice> datePrices = customerRevenueRepo.findAllById_CustomerIdAndId_DateBetween(
                     UUID.fromString(input.getPartyCustomerId()),
-                    LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
-                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT))
+                    LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_TIME_FORMAT),
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_TIME_FORMAT))
                     .stream()
                     .map(customerRevenue -> new SaleReportModel.DatePrice(customerRevenue.getId()
                             .getDate()

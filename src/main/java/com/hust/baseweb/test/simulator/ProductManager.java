@@ -1,10 +1,10 @@
 package com.hust.baseweb.test.simulator;
 
-import java.util.List;
-
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.model.GetListProductOutputModel;
+
+import java.util.List;
 
 public class ProductManager {
 	private HttpPostExecutor executor = new HttpPostExecutor();
@@ -13,7 +13,7 @@ public class ProductManager {
 		this.token = token;
 	}
 	public List<Product> getProducts() {
-        System.out.println("createorderagent getProducts");
+//        System.out.println("createorderagent getProducts");
         try {
             String json = "{\"statusId\":null}";
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-product", json, token);

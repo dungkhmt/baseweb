@@ -129,7 +129,7 @@ public class CreateOrderAgent extends Thread {
             	
             }catch(Exception e){
             	System.out.println("NOT CORRECT date-time " + curDate);
-            	e.printStackTrace();
+//            	e.printStackTrace();
             	return;
             }
             double time = createOrder(orderDate);
@@ -157,7 +157,7 @@ public class CreateOrderAgent extends Thread {
     	return module + "[" + id + "]";
     }
     public List<Product> getProducts() {
-        System.out.println("createorderagent getProducts");
+//        System.out.println("createorderagent getProducts");
         try {
             String json = "{\"statusId\":null}";
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-product", json, token);
@@ -191,7 +191,7 @@ public class CreateOrderAgent extends Thread {
             
             //String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", json, token);
             String rs = executor.execGetUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", null, token);
-            System.out.println(name() + "::getCustomers, rs = " + rs);
+//            System.out.println(name() + "::getCustomers, rs = " + rs);
             Gson gson = new Gson();
             //GetListPartyCustomerOutputModel customers = gson.fromJson(rs, GetListPartyCustomerOutputModel.class);
             //return customers.getCustomers();
@@ -216,8 +216,8 @@ public class CreateOrderAgent extends Thread {
             List<Product> products = getProducts();
             List<Facility> facilities = getFacilities();
             List<PartyCustomerModel> customers = getCustomers();
-            System.out.println(name() + "::createOrder, products.sz = " + products.size() + ", facilities.sz = "
-            + facilities.size() + ", customers.sz = " + customers.size());
+//            System.out.println(name() + "::createOrder, products.sz = " + products.size() + ", facilities.sz = "
+//            + facilities.size() + ", customers.sz = " + customers.size());
             
             //Product sel_p = products.get(rand.nextInt(products.size()));
             Facility selectedFacility = facilities.get(rand.nextInt(facilities.size()));

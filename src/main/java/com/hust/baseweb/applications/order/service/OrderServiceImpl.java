@@ -36,6 +36,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -214,10 +216,12 @@ public class OrderServiceImpl implements OrderService {
         PartyCustomer partyCustomer = partyCustomerRepo.findById(orderInput.getToCustomerId())
                 .orElseThrow(NoSuchElementException::new);
 
-        revenueService.updateRevenue(Collections.singletonList(partyCustomer),
-                productMap,
+        LocalDate orderLocalDate = orderDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        revenueService.updateRevenue(
                 orderItems,
-                orderItem -> partyCustomer);
+                orderItem -> partyCustomer,
+                orderItem -> orderLocalDate
+        );
 
         return order;
     }
