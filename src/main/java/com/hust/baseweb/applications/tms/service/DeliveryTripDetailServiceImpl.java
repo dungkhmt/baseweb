@@ -41,9 +41,9 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     @Override
     public int save(String deliveryTripId,
-                    List<com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel.Create> inputs) {
+                    List<DeliveryTripDetailModel.Create> inputs) {
         UUID deliveryTripIdUuid = UUID.fromString(deliveryTripId);
-        for (com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel.Create input : inputs) {
+        for (DeliveryTripDetailModel.Create input : inputs) {
             log.info("save, input quantity = " + input.getDeliveryQuantity());
             DeliveryTripDetail deliveryTripDetail = new DeliveryTripDetail();
             deliveryTripDetail.setDeliveryTripId(deliveryTripIdUuid);
@@ -107,6 +107,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         deliveryTrip.setTotalPallet(deliveryTripInfo.getTotalPallet());
         deliveryTrip.setDistance(deliveryTripInfo.getTotalDistance());
         deliveryTripRepo.save(deliveryTrip);
+
+        // TODO: delivery trip status??
 
         updateDeliveryTripDetailSequence(deliveryTrip.getDeliveryTripId(), deliveryTripInfo);
 
