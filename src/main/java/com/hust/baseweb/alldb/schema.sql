@@ -1056,6 +1056,20 @@ create table shipment_item
     CONSTRAINT fk_facility_id FOREIGN KEY (facility_id) REFERENCES facility (facility_id)
 );
 
+create table shipment_item_status(
+	shipment_item_status_id	UUID not null default uuid_generate_v1(),
+	shipment_item_id	UUID not null,
+	status_id			VARCHAR(60),
+	from_date			TIMESTAMP,
+	thru_date			TIMESTAMP,
+	last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_shipment_item_status	primary key(shipment_item_status_id),
+    constraint fk_shipment_item_status_shipment_item_id foreign key(shipment_item_id) references shipment_item(shipment_item_id),
+    constraint fk_shipment_item_status_status_id foreign key(status_id) references status_item(status_id)
+);
+
+
 create table order_shipment
 (
     order_shipment_id  UUID NOT NULL default uuid_generate_v1(),
@@ -1167,16 +1181,33 @@ CREATE TABLE delivery_trip_detail
 
 create table delivery_trip_detail_status
 (
+	delivery_trip_detail_status_id	UUID not null default uuid_generate_v1(),
     delivery_trip_detail_id  uuid NOT NULL,
     status_id                VARCHAR(60),
-    status_date              TIMESTAMP,
+    from_date              TIMESTAMP,
+    thru_date				TIMESTAMP,
     updated_by_user_login_id VARCHAR(60),
-    constraint pk_delivery_trip_detail_status primary key (delivery_trip_detail_id, status_id),
+    last_updated_stamp      timestamp   NULL,
+    created_stamp           timestamp   NULL     DEFAULT now(),
+    
+    constraint pk_delivery_trip_detail_status primary key (delivery_trip_detail_status_id),
     constraint fk_delivery_trip_detail_status_delivery_trip_detail_id foreign key (delivery_trip_detail_id) references delivery_trip_detail (delivery_trip_detail_id),
     constraint fk_delivery_trip_detail_status_status_id foreign key (status_id) references status_item (status_id),
     constraint fk_delivery_trip_detail_status_updated_by_user_login_id foreign key (updated_by_user_login_id) references user_login (user_login_id)
 );
 
+create table delivery_trip_status(
+	delivery_trip_status_id UUID not null default uuid_generate_v1(),
+	delivery_trip_id	UUID not null,
+	status_id VARCHAR(60),
+	from_date TIMESTAMP,
+	thru_date TIMESTAMP,
+	last_updated_stamp      timestamp   NULL,
+    created_stamp           timestamp   NULL     DEFAULT now(),
+    constraint pk_delivery_trip_status_id primary key(delivery_trip_status_id),
+    constraint fk_delivery_trip_status_delivery_trip_id foreign key(delivery_trip_id) references delivery_trip(delivery_trip_id),
+    constraint fk_delivery_trip_status_status_id foreign key(status_id) references status_item(status_id)
+);
 
 CREATE TABLE track_locations
 (

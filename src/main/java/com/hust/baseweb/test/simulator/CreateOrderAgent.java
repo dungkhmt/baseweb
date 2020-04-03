@@ -110,7 +110,7 @@ public class CreateOrderAgent extends Thread {
         for (int i = 1; i <= nbIters; i++) {
             Date timePoint = new Date();
             Random random = new Random();
-            //double t0 = System.currentTimeMillis();
+            double t0 = System.currentTimeMillis();
             
             curDate = dates.get(R.nextInt(dates.size()));// pickup a random date
             // genrate random hh:mm:ss
@@ -134,11 +134,11 @@ public class CreateOrderAgent extends Thread {
             }
             double time = createOrder(orderDate);
             
-            //double t = System.currentTimeMillis() - t0;
+            double t = System.currentTimeMillis() - t0;
             if (maxTime < time) {
                 maxTime = time;
             }
-            //System.out.println("time = " + t + ", maxTime = " + maxTime);
+            System.out.println("finished " + i + "/" + nbIters + ", time = " + t + ", maxTime = " + maxTime);
         }
 
         System.out.println(module + "[" + id + "] finished, maxTime = " + maxTime);
