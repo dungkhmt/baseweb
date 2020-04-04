@@ -47,7 +47,7 @@ public class DistanceTraveltimePostalAddress {
     private UUID idEnd;
 
     @Transient
-    private UUID enumID;
+    private String enumID;
 
 
 

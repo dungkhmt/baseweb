@@ -91,6 +91,7 @@ public class GeoAPIController {
             PostalAddress postalAddressEnd = postalAddressRepo.findByContactMechId(idEnd);
             d.setAddressStart(postalAddressStart.getAddress());
             d.setAddressEnd(postalAddressEnd.getAddress());
+            d.setEnumID(d.getEnumeration().getEnumId());
         }
         return ResponseEntity.ok().body(distanceTraveltimePostalAddressPage);
     }
@@ -99,12 +100,11 @@ public class GeoAPIController {
     ResponseEntity<?> getDistancePostalAddressInfoWithKey(@PathVariable String fromContactMechId, @PathVariable String toContactMechId,
                                                           @RequestBody InputModel inputModel){
         log.info("getDistancePostalAddressInfoWithKey");
-        log.info("fromContactMechId {}",fromContactMechId);
-        log.info("toContactMechId {}",toContactMechId);
         DistanceTraveltimePostalAddressEmbeddableId distanceTraveltimePostalAddressEmbeddableId =
                 new DistanceTraveltimePostalAddressEmbeddableId(UUID.fromString(fromContactMechId), UUID.fromString(toContactMechId));
         DistanceTraveltimePostalAddress distanceTraveltimePostalAddress =
                 distanceTraveltimePostalAddressRepo.findByDistanceTraveltimePostalAddressEmbeddableId(distanceTraveltimePostalAddressEmbeddableId);
+        distanceTraveltimePostalAddress.setEnumID(distanceTraveltimePostalAddress.getEnumeration().getEnumId());
         return ResponseEntity.ok().body(distanceTraveltimePostalAddress);
     }
 
