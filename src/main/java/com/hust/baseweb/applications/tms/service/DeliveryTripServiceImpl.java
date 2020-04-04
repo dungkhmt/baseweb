@@ -143,23 +143,27 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         List<GeoPoint> allGeoPoints = new ArrayList<>(geoPointsInDeliveryTrip);
         allGeoPoints.addAll(geoPointsSelected);
 
-        DistanceUtils.DirectionSolution<GeoPoint> directionSolution
-                = DistanceUtils.calculateGreedyTotalDistance(allGeoPoints,
-                allGeoPoints.get(0),    // TODO: temporary set the first point to depot
-                (fromGeoPoint, toGeoPoint) -> {
+        DistanceUtils.DirectionSolution<GeoPoint> directionSolution;
+        if (allGeoPoints.isEmpty()) {
+            directionSolution = new DistanceUtils.DirectionSolution<>(0.0, new ArrayList<>());
+        } else {
+            directionSolution = DistanceUtils.calculateGreedyTotalDistance(allGeoPoints,
+                    allGeoPoints.get(0),    // TODO: temporary set the first point to depot
+                    (fromGeoPoint, toGeoPoint) -> {
 //            DistanceTravelTimeGeoPoint distanceTravelTimeGeoPoint
 //                    = distanceTravelTimeGeoPointRepo.findByFromGeoPointAndToGeoPoint(fromGeoPoint, toGeoPoint);
 //            if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
-                    return LatLngUtils.distance(
-                            Double.parseDouble(toGeoPoint.getLatitude()),
-                            Double.parseDouble(toGeoPoint.getLongitude()),
-                            Double.parseDouble(fromGeoPoint.getLatitude()),
-                            Double.parseDouble(fromGeoPoint.getLongitude())
-                    );
+                        return LatLngUtils.distance(
+                                Double.parseDouble(toGeoPoint.getLatitude()),
+                                Double.parseDouble(toGeoPoint.getLongitude()),
+                                Double.parseDouble(fromGeoPoint.getLatitude()),
+                                Double.parseDouble(fromGeoPoint.getLongitude())
+                        );
 //            } else {
 //                return distanceTravelTimeGeoPoint.getDistance();
 //            }
-                });
+                    });
+        }
 
         double totalWeight = 0;
         double totalPallet = 0;

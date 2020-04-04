@@ -122,6 +122,9 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     public DeliveryTripDetailModel.OrderItems findAll(String deliveryTripId) {
         List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripId(UUID.fromString(
                 deliveryTripId));
+        if (deliveryTripDetails == null || deliveryTripDetails.isEmpty()) {
+            return new DeliveryTripDetailModel.OrderItems(new ArrayList<>(), null, null);
+        }
         GeoPoint facilityGeoPoint = deliveryTripDetails.get(0)
                 .getShipmentItem()
                 .getFacility()

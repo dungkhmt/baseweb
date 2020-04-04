@@ -1,6 +1,8 @@
 package com.hust.baseweb.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,6 +18,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
 public class Party {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,6 +36,7 @@ public class Party {
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Status partyStatus;
     @CreatedDate
     private Date createdDate;
@@ -52,10 +56,6 @@ public class Party {
     @LastModifiedBy
     private String modifiedBy;
 
-
-
-
-
     //create username show in party list
     @Transient
     String userName;
@@ -64,34 +64,8 @@ public class Party {
     @Transient
     String partyName;
 
-
     @Transient
     Person person;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public Party(String partyCode, PartyType type, String description, Status partyStatus, boolean isUnread) {
         super();
@@ -100,18 +74,5 @@ public class Party {
         this.description = description;
         this.partyStatus = partyStatus;
         this.isUnread = isUnread;
-
     }
-
-    public Party() {
-        super();
-
-    }
-
-
-
-
-
-
-
 }
