@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.tms.model.ShipmentItemModel;
+import com.hust.baseweb.entity.StatusItem;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,6 +49,10 @@ public class ShipmentItem {
     @JoinColumn(name = "ship_to_location_id", referencedColumnName = "contact_mech_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private PostalAddress shipToLocation;
+
+    @JoinColumn(name = "status_id", referencedColumnName = "status_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private StatusItem statusItem;
 
     public ShipmentItemModel toShipmentItemModel() {
         String customerCode = null;

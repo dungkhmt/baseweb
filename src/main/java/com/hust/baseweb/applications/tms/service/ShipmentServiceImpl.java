@@ -235,10 +235,14 @@ public class ShipmentServiceImpl implements ShipmentService {
         Map<OrderItem, PartyCustomer> orderItemToCustomerMap = shipmentItems.stream()
                 .collect(Collectors.toMap(ShipmentItem::getOrderItem, ShipmentItem::getCustomer));
 
+        StatusItem statusItem = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
+                .orElseThrow(NoSuchElementException::new);
+        shipmentItems.forEach(shipmentItem -> shipmentItem.setStatusItem(statusItem));
+
         // lưu tất cả shipment item vào DB
         shipmentItemRepo.saveAll(shipmentItems);
 
-        List<ShipmentItemStatus> shipmentItemStatuses = createShipmentItemStatuses(shipmentItems);
+        List<ShipmentItemStatus> shipmentItemStatuses = createShipmentItemStatuses(shipmentItems, statusItem);
         shipmentItemStatusRepo.saveAll(shipmentItemStatuses);
 
         revenueService.updateRevenue(orderItems,
@@ -250,9 +254,8 @@ public class ShipmentServiceImpl implements ShipmentService {
     }
 
     @NotNull
-    private List<ShipmentItemStatus> createShipmentItemStatuses(List<ShipmentItem> shipmentItems) {
-        StatusItem statusItem = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
-                .orElseThrow(NoSuchElementException::new);
+    private List<ShipmentItemStatus> createShipmentItemStatuses(List<ShipmentItem> shipmentItems,
+                                                                StatusItem statusItem) {
         Date now = new Date();
         return shipmentItems.stream()
                 .map(shipmentItem -> new ShipmentItemStatus(null, shipmentItem, statusItem, now, null))
