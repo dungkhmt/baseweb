@@ -15,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @IdClass(CompositeDistanceTravelTimeGeoPointId.class)
+@ToString
 public class DistanceTravelTimeGeoPoint {
 
     @Id

@@ -1,4 +1,9 @@
 package com.hust.baseweb.applications.geo.repo;
 
-public interface DistanceTraveltimePostalAddressRepo {
+import com.hust.baseweb.applications.geo.embeddable.DistanceTraveltimePostalAddressEmbeddableId;
+import com.hust.baseweb.applications.geo.entity.DistanceTraveltimePostalAddress;
+import org.springframework.data.repository.CrudRepository;
+
+public interface DistanceTraveltimePostalAddressRepo extends CrudRepository<DistanceTraveltimePostalAddress, DistanceTraveltimePostalAddressEmbeddableId> {
+    DistanceTraveltimePostalAddress findByDistanceTraveltimePostalAddressEmbeddableId(DistanceTraveltimePostalAddressEmbeddableId distanceTraveltimePostalAddressEmbeddableId);
 }

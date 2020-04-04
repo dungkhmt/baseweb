@@ -5,6 +5,7 @@ import lombok.*;
 import javax.validation.constraints.NotNull;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.util.UUID;
 
 @Embeddable
@@ -14,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 
-public class DistanceTraveltimePostalAddressEmbeddable {
+public class DistanceTraveltimePostalAddressEmbeddableId implements Serializable {
     @NotNull
     private UUID fromContactMechId;
 
