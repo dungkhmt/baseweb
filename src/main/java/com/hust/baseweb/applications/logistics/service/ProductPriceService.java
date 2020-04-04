@@ -16,5 +16,5 @@ public interface ProductPriceService {
 
     ProductPrice getProductPrice(String productId);
 
-    SaleReportModel.Output getSaleReports(SaleReportModel.Input input);
+    //SaleReportModel.Output getSaleReports(SaleReportModel.Input input);
 }

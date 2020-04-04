@@ -90,8 +90,8 @@ public class LogisticsAPIController {
         return ResponseEntity.ok().body(pp);
     }
 
-    @PostMapping("/get-sale-reports")
-    public ResponseEntity<?> getSaleReports(@RequestBody SaleReportModel.Input input) {
-        return ResponseEntity.ok().body(productPriceService.getSaleReports(input));
-    }
+    //@PostMapping("/get-sale-reports")
+    //public ResponseEntity<?> getSaleReports(@RequestBody SaleReportModel.Input input) {
+     //   return ResponseEntity.ok().body(productPriceService.getSaleReports(input));
+    //}
 }
