@@ -30,4 +30,23 @@ public class PostalAddress {
     private GeoPoint geoPoint;
 
     private Double maxLoadWeight;
+
+    @Transient
+    private String coordinates;
+
+    @Transient
+    private String lat;
+
+    @Transient
+    private String lng;
+
+
+
+    public PostalAddress(UUID contactMechId, String locationCode, String address, GeoPoint geoPoint, Double maxLoadWeight) {
+        this.contactMechId = contactMechId;
+        this.locationCode = locationCode;
+        this.address = address;
+        this.geoPoint = geoPoint;
+        this.maxLoadWeight = maxLoadWeight;
+    }
 }

@@ -2,7 +2,11 @@ package com.hust.baseweb.applications.sales.controller.report;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import com.hust.baseweb.applications.logistics.model.product.SaleReportModel;
+import com.hust.baseweb.applications.sales.model.report.DateBasedRevenueReportElement;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -41,6 +45,12 @@ public class SalesReportAPIController {
 		
 		return ResponseEntity.ok().body(revenueReport);		
 	}
+
+	@PostMapping("/get-report-date-based-revenue")
+	public ResponseEntity<?> getReportDateBasedRevenue(Principal principal, @RequestBody SaleReportModel.DateBasedInput input){
+		SaleReportModel.Output output = salesReportService.getDateBasedSalesReport(input);
+		return ResponseEntity.ok().body(output);
+	}
 	
 	@PostMapping("/report-date-based-revenue-recent")
 	public ResponseEntity<?> reportDateBasedRevenueRecent(Principal principal, @RequestBody DateBasedRevenueReportRecentInputModel input){
@@ -56,8 +66,18 @@ public class SalesReportAPIController {
 		}
 		fromDateStr = DateTimeUtils.date2YYYYMMDD(currentDate);
 		log.info("reportDateBasedRevenueRecent, fromDate = " + fromDateStr + ", toDate = " + toDateStr);
-		DateBasedRevenueReportOutputModel revenueReport = salesReportService.computeDateBasedRevenue(fromDateStr, toDateStr);
-		
+		//DateBasedRevenueReportOutputModel revenueReport = salesReportService.computeDateBasedRevenue(fromDateStr, toDateStr);
+
+		SaleReportModel.DateBasedInput I = new SaleReportModel.DateBasedInput(fromDateStr + " 00:00:00", toDateStr + " 23:59:59");
+		SaleReportModel.Output output = salesReportService.getDateBasedSalesReport(I);
+		List<DateBasedRevenueReportElement> lst = output.getDatePrices().stream().map(e -> new DateBasedRevenueReportElement(e.getDate(),e.getPrice()))
+				.collect(Collectors.toList());
+		DateBasedRevenueReportOutputModel revenueReport = new DateBasedRevenueReportOutputModel(lst);
 		return ResponseEntity.ok().body(revenueReport);		
+	}
+
+	@PostMapping("/get-sale-reports")
+	public ResponseEntity<?> getSaleReports(@RequestBody SaleReportModel.Input input) {
+		return ResponseEntity.ok().body(salesReportService.getSaleReports(input));
 	}
 }

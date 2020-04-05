@@ -120,6 +120,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         }
     }
 
+    /*
     @Override
     public SaleReportModel.Output getSaleReports(SaleReportModel.Input input) {
         if (input.getProductId() != null) {
@@ -148,6 +149,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         }
         return null;
     }
+    */
 
     @NotNull
     private SaleReportModel.Output calcSaleReportByPartyCustomer(SaleReportModel.Input input,

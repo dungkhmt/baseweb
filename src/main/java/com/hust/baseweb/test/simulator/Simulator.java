@@ -13,9 +13,8 @@ public class Simulator {
             agents[i] = new CreateOrderAgent(i);
             agents[i].setNbIters(1000);
             agents[i].setFromDate("2020-01-01");
-            agents[i].setToDate("2020-03-31");
+            agents[i].setToDate("2020-04-04");
             agents[i].start();
-            
             
         }
 

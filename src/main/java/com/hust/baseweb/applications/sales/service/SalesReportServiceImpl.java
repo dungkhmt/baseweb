@@ -1,9 +1,13 @@
 package com.hust.baseweb.applications.sales.service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.hust.baseweb.applications.logistics.model.product.SaleReportModel;
+import com.hust.baseweb.applications.order.repo.mongodb.CustomerRevenueRepo;
+import com.hust.baseweb.applications.order.repo.mongodb.ProductRevenueRepo;
+import com.hust.baseweb.applications.order.repo.mongodb.TotalRevenueRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -23,7 +27,39 @@ import com.hust.baseweb.utils.DateTimeUtils;
 @Log4j2
 public class SalesReportServiceImpl implements SalesReportService {
 	private OrderHeaderRepo orderHeaderRepo;
-	
+	private TotalRevenueRepo totalRevenueRepo;
+	private CustomerRevenueRepo customerRevenueRepo;
+	private ProductRevenueRepo productRevenueRepo;
+
+	@Override
+	public SaleReportModel.Output getSaleReports(SaleReportModel.Input input) {
+		if (input.getProductId() != null) {
+			List<SaleReportModel.DatePrice> datePrices = productRevenueRepo.findAllById_ProductIdAndId_DateBetween(
+					input.getProductId(),
+					LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_TIME_FORMAT),
+					LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_TIME_FORMAT))
+					.stream()
+					.map(productRevenue -> new SaleReportModel.DatePrice(productRevenue.getId()
+							.getDate()
+							.format(Constant.LOCAL_DATE_FORMAT), productRevenue.getRevenue()))
+					.collect(Collectors.toList());
+			return new SaleReportModel.Output(datePrices);
+
+		} else if (input.getPartyCustomerId() != null) {
+			List<SaleReportModel.DatePrice> datePrices = customerRevenueRepo.findAllById_CustomerIdAndId_DateBetween(
+					UUID.fromString(input.getPartyCustomerId()),
+					LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_TIME_FORMAT),
+					LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_TIME_FORMAT))
+					.stream()
+					.map(customerRevenue -> new SaleReportModel.DatePrice(customerRevenue.getId()
+							.getDate()
+							.format(Constant.LOCAL_DATE_FORMAT), customerRevenue.getRevenue()))
+					.collect(Collectors.toList());
+			return new SaleReportModel.Output(datePrices);
+		}
+		return null;
+	}
+
 	@Override
 	public DateBasedRevenueReportOutputModel computeDateBasedRevenue(
 			String fromDateStr, String toDateStr) {
@@ -44,14 +80,14 @@ public class SalesReportServiceImpl implements SalesReportService {
 					mDate2Revenue.put(yyyyMMdd, mDate2Revenue.get(yyyyMMdd) + o.getGrandTotal());
 				}
 			}
-			DateBasedRevenueReportElement[] dbrre = new DateBasedRevenueReportElement[mDate2Revenue.keySet().size()];
-			int idx = -1;
+			List<DateBasedRevenueReportElement> dbrre = new ArrayList<DateBasedRevenueReportElement>();//[mDate2Revenue.keySet().size()];
+			//int idx = -1;
 			for(String k: mDate2Revenue.keySet()){
-				idx++;
-				dbrre[idx] = new DateBasedRevenueReportElement(k,mDate2Revenue.get(k));
+				//idx++;
+				dbrre.add(new DateBasedRevenueReportElement(k,mDate2Revenue.get(k)));
 			}
-			DateBasedRevenueReportOutputModel rs = new DateBasedRevenueReportOutputModel();
-			rs.setRevenueElements(dbrre);
+			DateBasedRevenueReportOutputModel rs = new DateBasedRevenueReportOutputModel(dbrre);
+			//rs.setRevenueElements(dbrre);
 			return rs;
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -59,4 +95,16 @@ public class SalesReportServiceImpl implements SalesReportService {
 		return null;
 	}
 
+	public SaleReportModel.Output getDateBasedSalesReport(SaleReportModel.DateBasedInput input ){
+		String fromDateTime = input.getFromDate();// + " 00:00:00";
+		String thruDateTime = input.getThruDate();// + " 00:00:00";
+		List<SaleReportModel.DatePrice> datePrices = totalRevenueRepo.findAllByIdBetween(
+				LocalDate.parse(fromDateTime, Constant.LOCAL_DATE_TIME_FORMAT),
+				LocalDate.parse(thruDateTime, Constant.LOCAL_DATE_TIME_FORMAT)
+		).stream()
+				.map(totalRevenue -> new SaleReportModel.DatePrice(totalRevenue.getId().format(Constant.LOCAL_DATE_FORMAT),
+						totalRevenue.getRevenue()))
+				.collect(Collectors.toList());
+		return new SaleReportModel.Output(datePrices);
+	}
 }

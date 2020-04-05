@@ -27,8 +27,22 @@ public class SaleReportModel {
     @NoArgsConstructor
     @Getter
     @Setter
+    public static class DateBasedInput {
+        private String fromDate;
+        private String thruDate;
+
+
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
     public static class Output {
         private List<DatePrice> datePrices;
+        public List<DatePrice> getDatePrices(){
+            return datePrices;
+        }
     }
 
     @AllArgsConstructor
@@ -38,6 +52,13 @@ public class SaleReportModel {
     public static class DatePrice {
         private String date;
         private Double price;
+
+        public String getDate() {
+            return date;
+        }
+        public Double getPrice(){
+            return price;
+        }
     }
 
 }
