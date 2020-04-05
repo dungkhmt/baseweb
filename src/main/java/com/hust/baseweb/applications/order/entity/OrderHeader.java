@@ -52,7 +52,7 @@ public class OrderHeader {
     @Column(name = "last_updated_stamp")
     private Date lastUpdatedStamp;
 
-    @JoinColumn(name = "party_customer_id", referencedColumnName = "party_customer_id")
+    @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private PartyCustomer partyCustomer;
 
