@@ -54,6 +54,9 @@ public class ShipmentItem {
     @ManyToOne(fetch = FetchType.EAGER)
     private StatusItem statusItem;
 
+    private Integer scheduledQuantity;
+    private Integer completedQuantity;
+
     public ShipmentItemModel toShipmentItemModel() {
         String customerCode = null;
         String locationCode = null;

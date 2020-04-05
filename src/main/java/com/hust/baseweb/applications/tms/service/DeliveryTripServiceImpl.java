@@ -137,8 +137,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         shipmentItemsInDeliveryPlan.forEach(shipmentItem -> shipmentItemMap.put(shipmentItem.getShipmentItemId()
                 .toString(), shipmentItem));
 
-        List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripId(UUID.fromString(
-                deliveryTripId));
+        List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip);
         List<ShipmentItem> shipmentItemsInDeliveryTrip = deliveryTripDetails
                 .stream().map(DeliveryTripDetail::getShipmentItem).collect(Collectors.toList());
 
@@ -230,7 +229,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
             List<DeliveryTripModel.LocationView> deliveryTripLocations = new ArrayList<>();
 
-            List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripId(deliveryTripId);
+            List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip);
             log.info("getDeliveryTripAssignedToDriver, dtd of deliveryTripId " +
                     deliveryTripId +
                     " = " +

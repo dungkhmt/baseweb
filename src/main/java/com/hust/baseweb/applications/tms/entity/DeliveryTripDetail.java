@@ -19,8 +19,9 @@ public class DeliveryTripDetail {
     @Column(name = "delivery_trip_detail_id")
     private UUID deliveryTripDetailId;
 
-    @Column(name = "delivery_trip_id")
-    private UUID deliveryTripId;
+    @JoinColumn(name = "delivery_trip_id", referencedColumnName = "delivery_trip_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private DeliveryTrip deliveryTrip;
 
     private Integer sequenceId;
 
@@ -41,7 +42,7 @@ public class DeliveryTripDetail {
         DeliveryTripDetailModel.OrderItem orderItemModel = new DeliveryTripDetailModel.OrderItem();
         orderItemModel.setSequence(sequenceId);
         orderItemModel.setDeliveryTripDetailId(deliveryTripDetailId);
-        orderItemModel.setDeliveryTripId(deliveryTripId);
+        orderItemModel.setDeliveryTripId(deliveryTrip.getDeliveryTripId());
         if (shipmentItem != null) {
             if (shipmentItem.getCustomer() != null) {
                 orderItemModel.setCustomerCode(shipmentItem.getCustomer().getCustomerCode());

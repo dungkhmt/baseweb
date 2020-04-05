@@ -1050,6 +1050,8 @@ create table shipment_item
     expected_delivery_date        TIMESTAMP,
     product_transport_category_id VARCHAR(60),
     status_id                     varchar(60),
+    scheduled_quantity            int,
+    completed_quantity            int,
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_shipment_item primary key (shipment_item_id),
