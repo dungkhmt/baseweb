@@ -18,6 +18,9 @@ public class Enumeration {
     @Column(name = "enum_code")
     private String enumCode;
 
+    @Column(name = "enum_type_id")
+    private String enumTypeId;
+
     @Column(name = "sequence_id")
     private String sequenceId;
 

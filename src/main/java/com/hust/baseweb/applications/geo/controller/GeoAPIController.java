@@ -5,10 +5,12 @@ import com.hust.baseweb.applications.geo.entity.DistanceTraveltimePostalAddress;
 import com.hust.baseweb.applications.geo.entity.Enumeration;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
+import com.hust.baseweb.applications.geo.model.ComputeMissingDistanceInputModel;
 import com.hust.baseweb.applications.geo.model.InputModelDistanceTraveltimePostalAddress;
 import com.hust.baseweb.applications.geo.model.InputModelGetInfoPostalAddressChangeWithGoogleMap;
 import com.hust.baseweb.applications.geo.model.ListEnumerationOutputModel;
 import com.hust.baseweb.applications.geo.repo.*;
+import com.hust.baseweb.applications.geo.service.DistanceTravelTimePostalAddressService;
 import com.hust.baseweb.applications.logistics.model.InputModel;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -18,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.parser.Entity;
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,8 +36,14 @@ public class GeoAPIController {
     private DistanceTraveltimePostalAddressPagingRepo distanceTraveltimePostalAddressPagingRepo;
     private DistanceTraveltimePostalAddressRepo distanceTraveltimePostalAddressRepo;
     private EnumerationRepo enumerationRepo;
+    private DistanceTravelTimePostalAddressService distanceTravelTimePostalAddressService;
 
-
+    @PostMapping("/compute-missing-address-distances")
+    public ResponseEntity<?> computeMissingAddressDistance(Principal prinicpal, @RequestBody ComputeMissingDistanceInputModel input){
+        int cnt = distanceTravelTimePostalAddressService.computeMissingDistance(input.getDistanceSource(),
+                input.getSpeedTruck(),input.getSpeedMotobike());
+        return ResponseEntity.ok().body(cnt);
+    }
 
     @GetMapping("/get-list-geo-point-page")
     ResponseEntity<?> getListGeoPoint(Pageable page,@RequestParam(required = false) String param){
@@ -108,6 +118,13 @@ public class GeoAPIController {
         return ResponseEntity.ok().body(distanceTraveltimePostalAddress);
     }
 
+    @PostMapping("/get-list-enumeration-distance-source")
+    ResponseEntity<?> getListEnumerationDistanceSource(@RequestBody InputModel inputModel){
+        log.info("getListEnumeration");
+        //List<Enumeration> enumerationList = enumerationRepo.findAll();
+        List<Enumeration> enumerationList = enumerationRepo.findByEnumTypeId("DISTANCE_SOURCE");
+        return ResponseEntity.ok().body(new ListEnumerationOutputModel(enumerationList));
+    }
     @PostMapping("/get-list-enumeration")
     ResponseEntity<?> getListEnumeration(@RequestBody InputModel inputModel){
         log.info("getListEnumeration");
