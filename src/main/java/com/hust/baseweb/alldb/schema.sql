@@ -716,6 +716,10 @@ CREATE TABLE order_header
     ship_to_address_id   UUID,
     grand_total          DECIMAL(18, 2),
     description          TEXT,
+    exported             boolean,
+    party_customer_id    uuid,
+    vendor_id            uuid,
+    sale_man_id          varchar(60),
     last_updated_stamp   TIMESTAMP,
     created_stamp        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_order PRIMARY KEY (order_id),
@@ -724,8 +728,8 @@ CREATE TABLE order_header
     constraint fk_order_address_id foreign key (ship_to_address_id) references postal_address (contact_mech_id),
     CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES facility (facility_id),
     CONSTRAINT fk_currency_uom_id FOREIGN KEY (currency_uom_id) REFERENCES uom (uom_id),
-    CONSTRAINT fk_sales_channel_id FOREIGN KEY (sales_channel_id) REFERENCES sales_channel (sales_channel_id)
-
+    CONSTRAINT fk_sales_channel_id FOREIGN KEY (sales_channel_id) REFERENCES sales_channel (sales_channel_id),
+    constraint fk_party_customer_id foreign key (party_customer_id) references party_customer (party_id)
 );
 CREATE TABLE order_item_type
 (

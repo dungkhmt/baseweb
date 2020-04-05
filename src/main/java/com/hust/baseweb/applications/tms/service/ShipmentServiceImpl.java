@@ -227,7 +227,7 @@ public class ShipmentServiceImpl implements ShipmentService {
                     facilityMap,
                     orderItemIdToShipmentItemModelMap.get(new CompositeOrderItemId(orderItem.getOrderId(),
                             orderItem.getOrderItemSeqId())),
-                    orderItem);
+                    orderItem, orderHeaderMap.get(orderItem.getOrderId()));
 
             shipmentItems.add(shipmentItem);
         }
@@ -268,7 +268,8 @@ public class ShipmentServiceImpl implements ShipmentService {
                                             Map<String, PostalAddress> postalAddressMap,
                                             Map<String, Facility> facilityMap,
                                             ShipmentItemModel.Create shipmentItemModel,
-                                            OrderItem orderItem) {
+                                            OrderItem orderItem,
+                                            OrderHeader orderHeader) {
         ShipmentItem shipmentItem = new ShipmentItem();
         shipmentItem.setShipment(shipment);
         shipmentItem.setQuantity(shipmentItemModel.getQuantity());
@@ -284,6 +285,8 @@ public class ShipmentServiceImpl implements ShipmentService {
         PartyCustomer partyCustomer = getOrCreatePartyCustomer(partyCustomerMap, shipmentItemModel, postalAddress);
         shipmentItem.setCustomer(partyCustomer);
 
+        orderHeader.setPartyCustomer(partyCustomer);
+
         return shipmentItem;
     }
 
@@ -297,6 +300,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         orderItem.setProduct(product);
         orderItem.setQuantity(shipmentItemModel.getQuantity());
         orderItem.setOrderItemSeqId(orderSeqIdCounterMap.merge(orderHeader.getOrderId(), 1, Integer::sum) + "");
+        orderItem.setExportedQuantity(shipmentItemModel.getQuantity());
         return orderItem;
     }
 
@@ -311,10 +315,11 @@ public class ShipmentServiceImpl implements ShipmentService {
         }
         final Date finalOrderDate = orderDate;
         return orderHeaderMap.computeIfAbsent(shipmentItemModel.getOrderId(), orderId -> {
-            OrderHeader oh = new OrderHeader();
-            oh.setOrderId(orderId);
-            oh.setOrderDate(finalOrderDate);
-            return orderHeaderRepo.save(oh);
+            OrderHeader orderHeader = new OrderHeader();
+            orderHeader.setOrderId(orderId);
+            orderHeader.setOrderDate(finalOrderDate);
+            orderHeader.setExported(true);
+            return orderHeaderRepo.save(orderHeader);
         });
     }
 

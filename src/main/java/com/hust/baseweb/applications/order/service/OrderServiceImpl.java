@@ -141,6 +141,10 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setGrandTotal(totalGrand);
 
+        PartyCustomer partyCustomer = partyCustomerRepo.findById(orderInput.getToCustomerId())
+                .orElseThrow(NoSuchElementException::new);
+
+        order.setPartyCustomer(partyCustomer);
         order = orderHeaderRepo.save(order);
 
         List<OrderItem> orderItems = new ArrayList<>();
@@ -213,8 +217,6 @@ public class OrderServiceImpl implements OrderService {
         log.info("save, orderDateYYYYMMDD = " + dateYYYYMMDD);
         OrderAPIController.revenueOrderCache.addOrderRevenue(dateYYYYMMDD, totalGrand);
 
-        PartyCustomer partyCustomer = partyCustomerRepo.findById(orderInput.getToCustomerId())
-                .orElseThrow(NoSuchElementException::new);
 
         LocalDate orderLocalDate = orderDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         revenueService.updateRevenue(
