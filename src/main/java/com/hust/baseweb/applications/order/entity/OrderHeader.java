@@ -13,6 +13,7 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -43,12 +44,20 @@ public class OrderHeader {
     @ManyToOne(fetch = FetchType.EAGER)
     private PostalAddress shipToPostalAddress;
 
+    private Boolean exported;
+
     @Column(name = "created_stamp")
     private Date createdStamp;
 
     @Column(name = "last_updated_stamp")
     private Date lastUpdatedStamp;
 
+    @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private PartyCustomer partyCustomer;
+
+    private UUID vendorId;
+    private String saleManId;
 
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     //@OneToMany(fetch = FetchType.LAZY)
@@ -61,10 +70,10 @@ public class OrderHeader {
     @OneToMany(fetch = FetchType.EAGER)
     private Set<OrderRole> orderRoles;
 
-    public InventoryModel.OrderHeader toOrderHeaderModel(PartyCustomer customer) {
+    public InventoryModel.OrderHeader toOrderHeaderModel() {
         return new InventoryModel.OrderHeader(
                 orderId,
-                customer == null ? null : customer.getCustomerCode(),
+                partyCustomer.getPartyId().toString(),
                 orderDate == null ? null : Constant.DATE_FORMAT.format(orderDate)
         );
     }

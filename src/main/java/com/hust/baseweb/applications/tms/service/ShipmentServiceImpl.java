@@ -29,15 +29,19 @@ import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.order.service.RevenueService;
 import com.hust.baseweb.applications.tms.entity.Shipment;
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
+import com.hust.baseweb.applications.tms.entity.status.ShipmentItemStatus;
 import com.hust.baseweb.applications.tms.model.ShipmentItemModel;
 import com.hust.baseweb.applications.tms.model.ShipmentModel;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
+import com.hust.baseweb.applications.tms.repo.status.ShipmentItemStatusRepo;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.PartyType;
 import com.hust.baseweb.entity.Status;
+import com.hust.baseweb.entity.StatusItem;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PartyTypeRepo;
+import com.hust.baseweb.repo.StatusItemRepo;
 import com.hust.baseweb.repo.StatusRepo;
 import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.GoogleMapUtils;
@@ -86,6 +90,9 @@ public class ShipmentServiceImpl implements ShipmentService {
     private PartyContactMechPurposeRepo partyContactMechPurposeRepo;
 
     private RevenueService revenueService;
+
+    private StatusItemRepo statusItemRepo;
+    private ShipmentItemStatusRepo shipmentItemStatusRepo;
 
     // @Override
     @Transactional
@@ -218,8 +225,9 @@ public class ShipmentServiceImpl implements ShipmentService {
                     partyCustomerMap,
                     postalAddressMap,
                     facilityMap,
-                    orderItemIdToShipmentItemModelMap,
-                    orderItem);
+                    orderItemIdToShipmentItemModelMap.get(new CompositeOrderItemId(orderItem.getOrderId(),
+                            orderItem.getOrderItemSeqId())),
+                    orderItem, orderHeaderMap.get(orderItem.getOrderId()));
 
             shipmentItems.add(shipmentItem);
         }
@@ -227,8 +235,15 @@ public class ShipmentServiceImpl implements ShipmentService {
         Map<OrderItem, PartyCustomer> orderItemToCustomerMap = shipmentItems.stream()
                 .collect(Collectors.toMap(ShipmentItem::getOrderItem, ShipmentItem::getCustomer));
 
+        StatusItem statusItem = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
+                .orElseThrow(NoSuchElementException::new);
+        shipmentItems.forEach(shipmentItem -> shipmentItem.setStatusItem(statusItem));
+
         // lưu tất cả shipment item vào DB
         shipmentItemRepo.saveAll(shipmentItems);
+
+        List<ShipmentItemStatus> shipmentItemStatuses = createShipmentItemStatuses(shipmentItems, statusItem);
+        shipmentItemStatusRepo.saveAll(shipmentItemStatuses);
 
         revenueService.updateRevenue(orderItems,
                 orderItemToCustomerMap::get,
@@ -239,14 +254,22 @@ public class ShipmentServiceImpl implements ShipmentService {
     }
 
     @NotNull
+    private List<ShipmentItemStatus> createShipmentItemStatuses(List<ShipmentItem> shipmentItems,
+                                                                StatusItem statusItem) {
+        Date now = new Date();
+        return shipmentItems.stream()
+                .map(shipmentItem -> new ShipmentItemStatus(null, shipmentItem, statusItem, now, null))
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
     private ShipmentItem createShipmentItem(Shipment shipment,
                                             Map<String, PartyCustomer> partyCustomerMap,
                                             Map<String, PostalAddress> postalAddressMap,
                                             Map<String, Facility> facilityMap,
-                                            Map<CompositeOrderItemId, ShipmentItemModel.Create> orderItemIdToShipmentItemModelMap,
-                                            OrderItem orderItem) {
-        ShipmentItemModel.Create shipmentItemModel = orderItemIdToShipmentItemModelMap.get(
-                new CompositeOrderItemId(orderItem.getOrderId(), orderItem.getOrderItemSeqId()));
+                                            ShipmentItemModel.Create shipmentItemModel,
+                                            OrderItem orderItem,
+                                            OrderHeader orderHeader) {
         ShipmentItem shipmentItem = new ShipmentItem();
         shipmentItem.setShipment(shipment);
         shipmentItem.setQuantity(shipmentItemModel.getQuantity());
@@ -262,6 +285,8 @@ public class ShipmentServiceImpl implements ShipmentService {
         PartyCustomer partyCustomer = getOrCreatePartyCustomer(partyCustomerMap, shipmentItemModel, postalAddress);
         shipmentItem.setCustomer(partyCustomer);
 
+        orderHeader.setPartyCustomer(partyCustomer);
+
         return shipmentItem;
     }
 
@@ -275,6 +300,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         orderItem.setProduct(product);
         orderItem.setQuantity(shipmentItemModel.getQuantity());
         orderItem.setOrderItemSeqId(orderSeqIdCounterMap.merge(orderHeader.getOrderId(), 1, Integer::sum) + "");
+        orderItem.setExportedQuantity(shipmentItemModel.getQuantity());
         return orderItem;
     }
 
@@ -289,10 +315,11 @@ public class ShipmentServiceImpl implements ShipmentService {
         }
         final Date finalOrderDate = orderDate;
         return orderHeaderMap.computeIfAbsent(shipmentItemModel.getOrderId(), orderId -> {
-            OrderHeader oh = new OrderHeader();
-            oh.setOrderId(orderId);
-            oh.setOrderDate(finalOrderDate);
-            return orderHeaderRepo.save(oh);
+            OrderHeader orderHeader = new OrderHeader();
+            orderHeader.setOrderId(orderId);
+            orderHeader.setOrderDate(finalOrderDate);
+            orderHeader.setExported(true);
+            return orderHeaderRepo.save(orderHeader);
         });
     }
 

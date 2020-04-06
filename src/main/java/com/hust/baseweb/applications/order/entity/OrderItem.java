@@ -29,7 +29,9 @@ public class OrderItem {
     private Double unitPrice;
 
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
+
+    private Integer exportedQuantity;
 
     public InventoryModel.OrderItem toOrderItemModel(int exportedQuantity, int inventoryQuantity) {
         return new InventoryModel.OrderItem(

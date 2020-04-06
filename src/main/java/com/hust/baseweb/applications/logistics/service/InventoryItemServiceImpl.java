@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.logistics.service;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.logistics.entity.*;
 import com.hust.baseweb.applications.logistics.model.ExportInventoryItemInputModel;
 import com.hust.baseweb.applications.logistics.model.ExportInventoryItemsInputModel;
@@ -9,10 +8,13 @@ import com.hust.baseweb.applications.logistics.model.InventoryModel;
 import com.hust.baseweb.applications.logistics.repo.*;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.entity.OrderItem;
-import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.order.repo.*;
+import com.hust.baseweb.applications.tms.entity.Shipment;
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
+import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
+import com.hust.baseweb.entity.StatusItem;
+import com.hust.baseweb.repo.StatusItemRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +52,9 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     private ShipmentItemRepo shipmentItemRepo;
 
     private InventoryItemDetailRepo inventoryItemDetailRepo;
+
+    private ShipmentRepo shipmentRepo;
+    private StatusItemRepo statusItemRepo;
 
     @Override
     @Transactional
@@ -104,9 +109,17 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
         Map<List<String>, OrderItem> orderItemMap = buildOrderItemMap(inventoryItemsInput);
 
+        Map<String, OrderHeader> orderHeaderMap = buildOrderHeaderMap(inventoryItemsInput);
+
         log.info("exportInventoryItems, inventoryItems.sz = " + inventoryItemsMap.size());
 
         List<InventoryItemDetail> inventoryItemDetails = new ArrayList<>();
+
+        Shipment shipment = createAndSaveShipment();
+
+        List<ShipmentItem> shipmentItems = new ArrayList<>();
+        StatusItem statusItem = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
+                .orElseThrow(NoSuchElementException::new);
 
         for (int i = 0; i < inventoryItemsInput.getInventoryItems().length; i++) {
             ExportInventoryItemInputModel exportModel = inventoryItemsInput.getInventoryItems()[i];
@@ -115,6 +128,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             int quantity = exportModel.getQuantity();
             OrderItem orderItem = orderItemMap.get(
                     Arrays.asList(exportModel.getOrderId(), exportModel.getOrderItemSeqId()));
+            OrderHeader orderHeader = orderHeaderMap.get(orderItem.getOrderId());
 
             log.info("exportInventoryItems, productId = " + productId + ", facilityId = " + facilityId + ", list = " +
                     inventoryItemsMap.size());
@@ -131,14 +145,34 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                             inventoryItem,
                             -quantity,
                             orderItem);
+                    orderItem.setExportedQuantity(orderItem.getExportedQuantity() + quantity);
                     inventoryItemDetails.add(inventoryItemDetail);
                     inventoryItem.setQuantityOnHandTotal(inventoryItem.getQuantityOnHandTotal() - quantity);
+
+                    ShipmentItem shipmentItem = createShipmentItem(shipment,
+                            statusItem,
+                            quantity,
+                            orderItem,
+                            orderHeader,
+                            inventoryItem);
+                    shipmentItems.add(shipmentItem);
+
                     break;
                 } else {
                     InventoryItemDetail inventoryItemDetail = inventoryItemDetailService.createInventoryItemDetail(
                             inventoryItem,
                             -inventoryItem.getQuantityOnHandTotal(),
                             orderItem);
+                    ShipmentItem shipmentItem = createShipmentItem(shipment,
+                            statusItem,
+                            inventoryItem.getQuantityOnHandTotal(),
+                            orderItem,
+                            orderHeader,
+                            inventoryItem);
+                    shipmentItems.add(shipmentItem);
+
+                    orderItem.setExportedQuantity(orderItem.getExportedQuantity() +
+                            inventoryItem.getQuantityOnHandTotal());
                     inventoryItemDetails.add(inventoryItemDetail);
                     inventoryItem.setQuantityOnHandTotal(0);
                     quantity -= inventoryItem.getQuantityOnHandTotal();
@@ -148,10 +182,66 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             productFacilityMap.get(Arrays.asList(facilityId, productId)).setLastInventoryCount(Math.max(totalCount, 0));
         }
 
-        inventoryItemDetailRepo.saveAll(inventoryItemDetails);
-        productFacilityRepo.saveAll(productFacilityMap.values());
+        shipmentItemRepo.saveAll(shipmentItems);
+        orderItemRepo.saveAll(orderItemMap.values());   // update exported quantity
+
+        updateOrderHeaderAllExportedStatus(inventoryItemsInput);    // update all exported
+
+        inventoryItemDetailRepo.saveAll(inventoryItemDetails);   // save export history
+        productFacilityRepo.saveAll(productFacilityMap.values());   // update inventory
 
         return "ok";
+    }
+
+    @NotNull
+    private ShipmentItem createShipmentItem(Shipment shipment,
+                                            StatusItem statusItem,
+                                            int quantity,
+                                            OrderItem orderItem,
+                                            OrderHeader orderHeader, InventoryItem inventoryItem) {
+        ShipmentItem shipmentItem = new ShipmentItem();
+        shipmentItem.setShipment(shipment);
+        shipmentItem.setFacility(inventoryItem.getFacility());
+        shipmentItem.setStatusItem(statusItem);
+        shipmentItem.setQuantity(quantity);
+        shipmentItem.setOrderItem(orderItem);
+        shipmentItem.setCustomer(orderHeader.getPartyCustomer());
+        shipmentItem.setShipToLocation(orderHeader.getShipToPostalAddress());
+        return shipmentItem;
+    }
+
+    @NotNull
+    private Map<String, OrderHeader> buildOrderHeaderMap(ExportInventoryItemsInputModel inventoryItemsInput) {
+        return orderHeaderRepo.findAllByOrderIdIn(Stream.of(inventoryItemsInput.getInventoryItems())
+                .map(ExportInventoryItemInputModel::getOrderId).distinct()
+                .collect(Collectors.toList()))
+                .stream()
+                .collect(Collectors.toMap(OrderHeader::getOrderId, orderHeader -> orderHeader));
+    }
+
+    @NotNull
+    private Shipment createAndSaveShipment() {
+        Shipment shipment = new Shipment();
+        shipment.setShipmentTypeId("SALES_SHIPMENT");
+        shipment = shipmentRepo.save(shipment);
+        return shipment;
+    }
+
+    private void updateOrderHeaderAllExportedStatus(ExportInventoryItemsInputModel inventoryItemsInput) {
+        if (inventoryItemsInput.getInventoryItems().length > 0) {
+            OrderHeader orderHeader = orderHeaderRepo.findById(inventoryItemsInput.getInventoryItems()[0].getOrderId())
+                    .orElseThrow(NoSuchElementException::new);
+            List<OrderItem> orderItems = orderItemRepo.findAllByOrderId(orderHeader.getOrderId());
+            boolean exported = true;
+            for (OrderItem orderItem : orderItems) {
+                if (!orderItem.getExportedQuantity().equals(orderItem.getQuantity())) {
+                    exported = false;
+                    break;
+                }
+            }
+            orderHeader.setExported(exported);
+            orderHeaderRepo.save(orderHeader);
+        }
     }
 
     @NotNull
@@ -217,21 +307,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @Override
     public Page<InventoryModel.OrderHeader> getInventoryOrderHeaderPage(Pageable page) {
-        Page<OrderHeader> orderHeaderPage = orderHeaderPageRepo.findAll(page);
-        List<String> orderIds = orderHeaderPage.stream()
-                .map(OrderHeader::getOrderId)
-                .distinct()
-                .collect(Collectors.toList());
-        List<OrderRole> orderRoles = orderRoleRepo.findAllByOrderIdIn(orderIds);
-        Map<String, UUID> orderIdToPartyIdMap = new HashMap<>();
-        // TODO: map 1-1
-        orderRoles.forEach(orderRole -> orderIdToPartyIdMap.put(orderRole.getOrderId(), orderRole.getPartyId()));
-        List<UUID> partyIds = orderRoles.stream().map(OrderRole::getPartyId).distinct().collect(Collectors.toList());
-        List<PartyCustomer> partyCustomers = partyCustomerRepo.findAllByPartyIdIn(partyIds);
-        Map<UUID, PartyCustomer> partyCustomerMap = new HashMap<>();
-        partyCustomers.forEach(partyCustomer -> partyCustomerMap.put(partyCustomer.getPartyId(), partyCustomer));
-        return orderHeaderPage.map(orderHeader -> orderHeader.toOrderHeaderModel(partyCustomerMap.getOrDefault(
-                orderIdToPartyIdMap.getOrDefault(orderHeader.getOrderId(), null), null)));
+        return orderHeaderPageRepo.findAllByExportedFalse(page).map(OrderHeader::toOrderHeaderModel);
     }
 
     @Override

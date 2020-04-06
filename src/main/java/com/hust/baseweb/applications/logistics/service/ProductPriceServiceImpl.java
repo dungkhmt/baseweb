@@ -159,7 +159,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                 UUID.fromString(input.getPartyCustomerId()),
                 "BILL_TO_CUSTOMER");
         List<String> orderIds = orderRoles.stream()
-                .map(OrderRole::getOrderId)
+                .map(OrderRole::getOrderId) // TODO: use party customer in order header
                 .distinct()
                 .collect(Collectors.toList());
         List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderIdInAndOrderDateBetween(

@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.tms.repo;
 
+import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,11 +11,11 @@ import java.util.UUID;
 
 public interface DeliveryTripDetailRepo extends
         PagingAndSortingRepository<DeliveryTripDetail, UUID> {
-    Page<DeliveryTripDetail> findAllByDeliveryTripId(UUID deliveryTripId, Pageable pageable);
+    Page<DeliveryTripDetail> findAllByDeliveryTrip(DeliveryTrip deliveryTrip, Pageable pageable);
 
-    List<DeliveryTripDetail> findAllByDeliveryTripId(UUID deliveryTripId);
+    List<DeliveryTripDetail> findAllByDeliveryTrip(DeliveryTrip deliveryTrip);
 
-    List<DeliveryTripDetail> findAllByDeliveryTripIdIn(List<UUID> deliveryTripIds);
+    List<DeliveryTripDetail> findAllByDeliveryTripIn(List<DeliveryTrip> deliveryTrips);
 
     DeliveryTripDetail findByDeliveryTripDetailId(UUID deliveryTripDetailId);
 }

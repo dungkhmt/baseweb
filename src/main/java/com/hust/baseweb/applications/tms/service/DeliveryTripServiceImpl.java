@@ -5,12 +5,16 @@ import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.tms.entity.*;
+import com.hust.baseweb.applications.tms.entity.status.DeliveryTripStatus;
 import com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel;
 import com.hust.baseweb.applications.tms.model.DeliveryTripModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
 import com.hust.baseweb.applications.tms.repo.*;
+import com.hust.baseweb.applications.tms.repo.status.DeliveryTripStatusRepo;
+import com.hust.baseweb.entity.StatusItem;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.PartyRepo;
+import com.hust.baseweb.repo.StatusItemRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
 import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.LatLngUtils;
@@ -44,6 +48,9 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     private PartyRepo partyRepo;
     private PartyDriverService partyDriverService;
     private PartyDriverRepo partyDriverRepo;
+
+    private StatusItemRepo statusItemRepo;
+    private DeliveryTripStatusRepo deliveryTripStatusRepo;
 
     @Override
     @Transactional
@@ -79,6 +86,16 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         deliveryTrip.setTotalLocation(totalLocation);
 
         deliveryTrip = deliveryTripRepo.save(deliveryTrip);
+
+        StatusItem statusItem = statusItemRepo.findById("DELIVERY_TRIP_CREATED")
+                .orElseThrow(NoSuchElementException::new);
+        DeliveryTripStatus deliveryTripStatus = new DeliveryTripStatus(null,
+                deliveryTrip,
+                statusItem,
+                new Date(),
+                null);
+        deliveryTripStatusRepo.save(deliveryTripStatus);
+
         return deliveryTrip;
     }
 
@@ -120,8 +137,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         shipmentItemsInDeliveryPlan.forEach(shipmentItem -> shipmentItemMap.put(shipmentItem.getShipmentItemId()
                 .toString(), shipmentItem));
 
-        List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripId(UUID.fromString(
-                deliveryTripId));
+        List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip);
         List<ShipmentItem> shipmentItemsInDeliveryTrip = deliveryTripDetails
                 .stream().map(DeliveryTripDetail::getShipmentItem).collect(Collectors.toList());
 
@@ -213,7 +229,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
             List<DeliveryTripModel.LocationView> deliveryTripLocations = new ArrayList<>();
 
-            List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripId(deliveryTripId);
+            List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip);
             log.info("getDeliveryTripAssignedToDriver, dtd of deliveryTripId " +
                     deliveryTripId +
                     " = " +

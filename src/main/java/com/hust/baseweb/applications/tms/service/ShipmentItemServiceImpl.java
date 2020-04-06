@@ -70,12 +70,11 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
                         .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()));
 
         List<ShipmentItem> shipmentItemsInDeliveryTrip
-                = deliveryTripDetailRepo.findAllByDeliveryTripId(UUID.fromString(deliveryTripId))
+                = deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip)
                 .stream().map(DeliveryTripDetail::getShipmentItem).collect(Collectors.toList());
 
         Map<ShipmentItem, Integer> shipmentItemAssignedQuantityMap = new HashMap<>();
-        deliveryTripDetailRepo.findAllByDeliveryTripIdIn(
-                deliveryTripsInDeliveryPlan.stream().map(DeliveryTrip::getDeliveryTripId).collect(Collectors.toList()))
+        deliveryTripDetailRepo.findAllByDeliveryTripIn(deliveryTripsInDeliveryPlan)
                 .forEach(deliveryTripDetail ->
                         shipmentItemAssignedQuantityMap.merge(deliveryTripDetail.getShipmentItem(),
                                 deliveryTripDetail.getDeliveryQuantity(), Integer::sum));

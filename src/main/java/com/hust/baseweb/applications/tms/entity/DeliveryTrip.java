@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.tms.entity;
 
 import com.hust.baseweb.applications.tms.model.DeliveryTripModel;
+import com.hust.baseweb.entity.StatusItem;
 import com.hust.baseweb.utils.Constant;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,6 +50,10 @@ public class DeliveryTrip {
     @JoinColumn(name = "execute_external_vehicle_type_id", referencedColumnName = "vehicle_type_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private VehicleType externalVehicleType;
+
+    @JoinColumn(name = "status_id", referencedColumnName = "status_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private StatusItem statusItem;
 
     public DeliveryTripModel toDeliveryTripModel() {
         return new DeliveryTripModel(

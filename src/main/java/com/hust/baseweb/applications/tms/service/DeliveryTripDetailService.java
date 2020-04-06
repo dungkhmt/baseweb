@@ -12,7 +12,7 @@ import java.util.UUID;
 @Service
 public interface DeliveryTripDetailService {
     int save(String deliveryTripId,
-             List<com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel.Create> inputs);
+             List<DeliveryTripDetailModel.Create> inputs);
 
     boolean delete(String deliveryTripDetailId);
 
