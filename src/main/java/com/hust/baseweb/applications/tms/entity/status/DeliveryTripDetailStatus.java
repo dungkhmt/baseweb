@@ -23,6 +23,7 @@ import java.util.UUID;
 public class DeliveryTripDetailStatus {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID deliveryTripDetailStatusId;
 
     @JoinColumn(name = "delivery_trip_detail_id", referencedColumnName = "delivery_trip_detail_id")

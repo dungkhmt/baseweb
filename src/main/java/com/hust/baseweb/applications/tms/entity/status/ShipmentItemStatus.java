@@ -21,6 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ShipmentItemStatus {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID shipmentItemStatusId;
 
     @JoinColumn(name = "shipment_item_id", referencedColumnName = "shipment_item_id")

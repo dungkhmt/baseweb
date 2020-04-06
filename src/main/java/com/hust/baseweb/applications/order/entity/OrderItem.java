@@ -31,7 +31,7 @@ public class OrderItem {
     @Column(name = "quantity")
     private Integer quantity;
 
-    private Integer exportedQuantity;
+    private Integer exportedQuantity = 0;
 
     public InventoryModel.OrderItem toOrderItemModel(int exportedQuantity, int inventoryQuantity) {
         return new InventoryModel.OrderItem(

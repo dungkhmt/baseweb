@@ -72,16 +72,16 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                 } else {
 
                 }
-                log.info("computeMissingDistance, i = " +
-                        i +
-                        ", j = " +
-                        j +
-                        ", cnt = " +
-                        cnt +
-                        ", sz = " +
-                        points.size());
+//                log.info("computeMissingDistance, i = " +
+//                        i +
+//                        ", j = " +
+//                        j +
+//                        ", cnt = " +
+//                        cnt +
+//                        ", sz = " +
+//                        points.size());
             }
-            log.info("computeMissingDistance, finished " + i + "/" + points.size());
+//            log.info("computeMissingDistance, finished " + i + "/" + points.size());
         }
         log.info("computeMissingDistance, cnt = " + cnt);
         //List<DistanceTraveltimePostalAddress> distances = distanceTraveltimePostalAddressRepo.findAll();
@@ -143,20 +143,20 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                 } else {
 
                 }
-                log.info("computeMissingDistance, i = " +
-                        i +
-                        ", j = " +
-                        j +
-                        ", cnt = " +
-                        cnt +
-                        ", sz = " +
-                        points.size());
+//                log.info("computeMissingDistance, i = " +
+//                        i +
+//                        ", j = " +
+//                        j +
+//                        ", cnt = " +
+//                        cnt +
+//                        ", sz = " +
+//                        points.size());
 
                 if (cnt > maxElements) {
                     break;
                 }
             }
-            log.info("computeMissingDistance, finished " + i + "/" + points.size());
+//            log.info("computeMissingDistance, finished " + i + "/" + points.size());
             if (cnt > maxElements) {
                 break;
             }

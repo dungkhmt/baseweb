@@ -5,6 +5,15 @@ delete
 from shipment_item_delivery_plan;
 
 delete
+from delivery_trip_detail_status;
+
+delete
+from delivery_trip_status;
+
+delete
+from shipment_item_status;
+
+delete
 from delivery_trip_detail;
 
 delete
@@ -48,6 +57,9 @@ from delivery_plan;
 
 delete
 from facility;
+
+delete
+from distance_traveltime_postal_address;
 
 delete
 from postal_address;
