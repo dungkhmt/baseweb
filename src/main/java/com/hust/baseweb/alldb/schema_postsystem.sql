@@ -1,23 +1,27 @@
 create table ship_order(
 	ship_order_id UUID not null uuid_generate_v1(),
-	from_location_id UUID not null,
-	to_location_id UUID not null,
-	
-	customer_id UUID,
+
 	from_customer_name VARCHAR(100),
 	from_phone_num VARCHAR(60),
-	
+    from_address VARCHAR(200),
+    from_commune_id VARCHAR(60),
+
 	to_customer_name VARCHAR(100),
 	to_phone_num VARCHAR(60),
+	to_address VARCHAR(200),
+	to_commune_id VARCHAR(60),
 	
 	weight numeric,
+	package_name VARCHAR(200),
 	
 	pickup_date  TIMESTAMP,
 	expected_delivery_date TIMESTAMP,
 	
 	last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+    constraint pk_ship_order primary key (ship_order_id),
+    constraint fk_ship_order_from_commune_id foreign key(from_commune_id) references commune(commune_id),
+    constraint fk_ship_order_to_commune_id foreign key(to_commune_id) references commune(commune_id)
 );
 
 

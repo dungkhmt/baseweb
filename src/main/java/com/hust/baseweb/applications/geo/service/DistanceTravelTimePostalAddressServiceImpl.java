@@ -3,10 +3,12 @@ package com.hust.baseweb.applications.geo.service;
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.geo.embeddable.DistanceTraveltimePostalAddressEmbeddableId;
 import com.hust.baseweb.applications.geo.entity.DistanceTraveltimePostalAddress;
+import com.hust.baseweb.applications.geo.entity.Enumeration;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.model.DistanceTravelTimeElement;
 import com.hust.baseweb.applications.geo.model.QueryDistanceTravelTimeInputModel;
 import com.hust.baseweb.applications.geo.repo.DistanceTraveltimePostalAddressRepo;
+import com.hust.baseweb.applications.geo.repo.EnumerationRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressJpaRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.tms.model.VehicleModel;
@@ -23,6 +25,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+//import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +36,7 @@ import java.util.UUID;
 public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTravelTimePostalAddressService {
     private PostalAddressJpaRepo postalAddressRepo;
     private DistanceTraveltimePostalAddressRepo distanceTraveltimePostalAddressRepo;
-
+    private EnumerationRepo enumerationRepo;
 
     private int computeMissingDistanceHarvsine(){
         List<PostalAddress> points = postalAddressRepo.findAll();
@@ -84,7 +87,7 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
 
     }
 
-    private int computeMissingDistanceOpenStreetMap(int speedTruck, int speedMotobike){
+    private int computeMissingDistanceOpenStreetMap(int speedTruck, int speedMotobike, int maxElements){
         // speedTruck, speedMotobike in km/h
         List<PostalAddress> points = postalAddressRepo.findAll();
         List<DistanceTraveltimePostalAddress> distances = new ArrayList<DistanceTraveltimePostalAddress>();
@@ -137,10 +140,10 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                 }
                 log.info("computeMissingDistance, i = " + i + ", j = " + j + ", cnt = " + cnt + ", sz = " + points.size());
 
-                //if(cnt > 2) break;
+                if(cnt > maxElements) break;
             }
             log.info("computeMissingDistance, finished " + i + "/" + points.size());
-            //if(cnt > 2) break;
+            if(cnt > maxElements) break;
         }
         log.info("computeMissingDistance, cnt = " + cnt);
         //List<DistanceTraveltimePostalAddress> distances = distanceTraveltimePostalAddressRepo.findAll();
@@ -156,7 +159,7 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
         try{
             long cur = System.currentTimeMillis();
 
-            String url = "http://118.70.13.71/mo/HoChiMinh/get-distances";
+            String url = "http://118.70.13.71/mo/HoChiMinh/get-distance-elements";
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -196,8 +199,11 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                 DistanceTraveltimePostalAddress dis = new DistanceTraveltimePostalAddress();
                 dis.setDistanceTraveltimePostalAddressEmbeddableId(id);
                 dis.setDistance(d.getDistance());
+                Enumeration enumeration = enumerationRepo.findByEnumId("OPEN_STREET_MAP");
 
-                dis.setEnumID("OPEN_STREET_MAP");
+                dis.setEnumeration(enumeration);
+
+                //dis.setEnumID("OPEN_STREET_MAP");
 
                 int t_truck = (int) ((int)d.getDistance()/(speedTruck*1000.0/3600));
                 int t_motobike = (int) ((int)d.getDistance()/(speedMotobike*1000.0/3600));
@@ -223,12 +229,12 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
 
 
     @Override
-    public int computeMissingDistance(String distanceSource, int speedTruck, int speedMotobike) {
+    public int computeMissingDistance(String distanceSource, int speedTruck, int speedMotobike, int maxElements) {
 
         if(distanceSource.equals("HAVERSINE")){
             return computeMissingDistanceHarvsine();
         }else{// use open street map
-            return computeMissingDistanceOpenStreetMap(speedTruck, speedMotobike);
+            return computeMissingDistanceOpenStreetMap(speedTruck, speedMotobike, maxElements);
         }
     }
 }

@@ -4,5 +4,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface DistanceTravelTimePostalAddressService {
-    public int computeMissingDistance(String distanceSource, int speedTruck, int speedMotobike);
+    public int computeMissingDistance(String distanceSource, int speedTruck, int speedMotobike, int maxElements);
 }

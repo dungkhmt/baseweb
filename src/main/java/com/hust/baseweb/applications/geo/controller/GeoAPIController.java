@@ -41,7 +41,7 @@ public class GeoAPIController {
     @PostMapping("/compute-missing-address-distances")
     public ResponseEntity<?> computeMissingAddressDistance(Principal prinicpal, @RequestBody ComputeMissingDistanceInputModel input){
         int cnt = distanceTravelTimePostalAddressService.computeMissingDistance(input.getDistanceSource(),
-                input.getSpeedTruck(),input.getSpeedMotobike());
+                input.getSpeedTruck(),input.getSpeedMotobike(),input.getMaxElements());
         return ResponseEntity.ok().body(cnt);
     }
 

@@ -9,4 +9,5 @@ public class ComputeMissingDistanceInputModel {
     private String distanceSource;
     private int speedTruck = 30;
     private int speedMotobike = 40;
+    private int maxElements;
 }
