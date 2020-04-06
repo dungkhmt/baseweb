@@ -220,7 +220,7 @@ create table distance_traveltime_postal_address
     distance                 numeric,
     travel_time              numeric,
     travel_time_truck        numeric,
-    travel_time_motobike     numeric,
+    travel_time_motorbike    numeric,
     updated_by_user_login_id VARCHAR(60),
     updated_date             TIMESTAMP,
     source_enum_id           VARCHAR(60),

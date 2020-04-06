@@ -44,7 +44,7 @@ public class FacilityServiceImpl implements FacilityService {
         PostalAddress postalAddress;
         if (geocodingResults != null && geocodingResults.length > 0) {
             LatLng location = geocodingResults[0].geometry.location;
-            GeoPoint geoPoint = new GeoPoint(null, location.lat + "", location.lng + "");
+            GeoPoint geoPoint = new GeoPoint(null, location.lat, location.lng);
             geoPoint = geoPointRepo.save(geoPoint);
             postalAddress = new PostalAddress(null,
                     UUID.randomUUID().toString(),

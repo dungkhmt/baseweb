@@ -13,7 +13,7 @@ public class CreateCustomerInputModel {
     private String customerCode;
     private String customerName;
     private String address;
-    private String latitude;
-    private String longitude;
+    private Double latitude;
+    private Double longitude;
 
 }

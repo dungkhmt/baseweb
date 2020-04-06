@@ -50,12 +50,8 @@ public class DeliveryTripDetail {
             if (shipmentItem.getShipToLocation() != null) {
                 orderItemModel.setAddress(shipmentItem.getShipToLocation().getAddress());
                 if (shipmentItem.getShipToLocation().getGeoPoint() != null) {
-                    orderItemModel.setLat(Double.parseDouble(shipmentItem.getShipToLocation()
-                            .getGeoPoint()
-                            .getLatitude()));
-                    orderItemModel.setLng(Double.parseDouble(shipmentItem.getShipToLocation()
-                            .getGeoPoint()
-                            .getLongitude()));
+                    orderItemModel.setLat(shipmentItem.getShipToLocation().getGeoPoint().getLatitude());
+                    orderItemModel.setLng(shipmentItem.getShipToLocation().getGeoPoint().getLongitude());
                 }
             }
             orderItemModel.setShipmentQuantity(shipmentItem.getQuantity());

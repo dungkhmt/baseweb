@@ -114,11 +114,10 @@ public class ShipmentServiceImpl implements ShipmentService {
             if (customers == null || customers.size() == 0) {
                 // insert a customer
                 String[] s = shipmentItemInputModel.getLatLng().split(",");
-                // double lat = Double.valueOf(s[0].trim());
-                // double lng = Double.valueOf(s[1].trim());
+                double lat = Double.parseDouble(s[0].trim());
+                double lng = Double.parseDouble(s[1].trim());
                 customer = customerService.save(new CreateCustomerInputModel(shipmentItemInputModel.getCustomerCode(),
-                        shipmentItemInputModel.getCustomerName(), shipmentItemInputModel.getAddress(), s[0].trim(), s[1]
-                        .trim()));
+                        shipmentItemInputModel.getCustomerName(), shipmentItemInputModel.getAddress(), lat, lng));
             } else {
                 customer = customers.get(0);
             }
@@ -139,7 +138,9 @@ public class ShipmentServiceImpl implements ShipmentService {
             if (addresses == null || addresses.size() == 0) {
                 String[] latlng = shipmentItemInputModel.getLatLng().split(",");
                 address = postalAddressService.save(shipmentItemInputModel.getLocationCode(),
-                        shipmentItemInputModel.getAddress(), latlng[0], latlng[1]);
+                        shipmentItemInputModel.getAddress(),
+                        Double.parseDouble(latlng[0]),
+                        Double.parseDouble(latlng[1]));
             } else {
                 address = addresses.get(0);
             }
@@ -388,7 +389,7 @@ public class ShipmentServiceImpl implements ShipmentService {
                     GeoPoint geoPoint;
                     if (shipmentItemModel.getLatLng() != null) {
                         LatLng location = LatLngUtils.parse(shipmentItemModel.getLatLng());
-                        geoPoint = new GeoPoint(null, location.lat + "", location.lng + "");
+                        geoPoint = new GeoPoint(null, location.lat, location.lng);
                     } else {
                         geoPoint = new GeoPoint();
                     }
@@ -433,7 +434,7 @@ public class ShipmentServiceImpl implements ShipmentService {
             GeoPoint geoPoint;
             if (geocodingResults != null && geocodingResults.length > 0) {
                 LatLng location = geocodingResults[0].geometry.location;
-                geoPoint = new GeoPoint(null, location.lat + "", location.lng + "");
+                geoPoint = new GeoPoint(null, location.lat, location.lng);
             } else {
                 geoPoint = new GeoPoint();
             }

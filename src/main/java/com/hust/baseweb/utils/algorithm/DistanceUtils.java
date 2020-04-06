@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
 public class DistanceUtils {
     public static <T> DirectionSolution<T> calculateGreedyTotalDistance(List<T> clientPoint,
                                                                         T facilityPoint,
-                                                                        BiFunction<T, T, Double> distanceFunction) {
+                                                                        BiFunction<T, T, Integer> distanceFunction) {
         if (clientPoint.isEmpty()) {
             return new DirectionSolution<>(0.0, new ArrayList<>());
         }
@@ -26,11 +26,11 @@ public class DistanceUtils {
 
         for (int i = 0; i < clientPoint.size(); i++) {
             // greedy get minimum neighborhood distance
-            double minDistance = Double.MAX_VALUE;
+            int minDistance = Integer.MAX_VALUE;
             int selectedId = -1;
             for (int candidateId : candidates) {
-                Double distance = distanceFunction.apply(tour.get(tour.size() - 1), clientPoint.get(candidateId));
-                if (distance < minDistance) {   // TODO improve real number compare
+                Integer distance = distanceFunction.apply(tour.get(tour.size() - 1), clientPoint.get(candidateId));
+                if (distance < minDistance) {
                     minDistance = distance;
                     selectedId = candidateId;
                 }

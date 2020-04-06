@@ -44,7 +44,6 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     private ShipmentItemDeliveryPlanRepo shipmentItemDeliveryPlanRepo;
     private ShipmentItemRepo shipmentItemRepo;
     private DeliveryTripDetailRepo deliveryTripDetailRepo;
-    private DistanceTravelTimeGeoPointRepo distanceTravelTimeGeoPointRepo;
     private ProductRepo productRepo;
     private UserLoginRepo userLoginRepo;
     private PartyRepo partyRepo;
@@ -173,10 +172,10 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 //                    = distanceTravelTimeGeoPointRepo.findByFromGeoPointAndToGeoPoint(fromGeoPoint, toGeoPoint);
 //            if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
                         return LatLngUtils.distance(
-                                Double.parseDouble(toGeoPoint.getLatitude()),
-                                Double.parseDouble(toGeoPoint.getLongitude()),
-                                Double.parseDouble(fromGeoPoint.getLatitude()),
-                                Double.parseDouble(fromGeoPoint.getLongitude())
+                                toGeoPoint.getLatitude(),
+                                toGeoPoint.getLongitude(),
+                                fromGeoPoint.getLatitude(),
+                                fromGeoPoint.getLongitude()
                         );
 //            } else {
 //                return distanceTravelTimeGeoPoint.getDistance();
@@ -263,8 +262,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                 UUID partyCustomerId = partyCustomer.getPartyId();
                 String customerName = partyCustomer.getCustomerName();
                 String address = shipmentItem.getShipToLocation().getAddress();
-                double latitude = Double.parseDouble(shipmentItem.getShipToLocation().getGeoPoint().getLatitude());
-                double longitude = Double.parseDouble(shipmentItem.getShipToLocation().getGeoPoint().getLongitude());
+                double latitude = shipmentItem.getShipToLocation().getGeoPoint().getLatitude();
+                double longitude = shipmentItem.getShipToLocation().getGeoPoint().getLongitude();
                 //UUID partyCustomerId;
                 List<DeliveryTripModel.LocationItemView> items = new ArrayList<>();
 

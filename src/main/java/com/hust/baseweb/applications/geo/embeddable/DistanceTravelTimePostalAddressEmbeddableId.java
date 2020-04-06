@@ -2,9 +2,8 @@ package com.hust.baseweb.applications.geo.embeddable;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
-
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -15,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 
-public class DistanceTraveltimePostalAddressEmbeddableId implements Serializable {
+public class DistanceTravelTimePostalAddressEmbeddableId implements Serializable {
     @NotNull
     private UUID fromContactMechId;
 

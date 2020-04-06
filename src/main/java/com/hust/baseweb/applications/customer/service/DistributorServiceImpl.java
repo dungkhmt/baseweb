@@ -1,23 +1,8 @@
 package com.hust.baseweb.applications.customer.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
-
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.hust.baseweb.applications.customer.entity.PartyContactMechPurpose;
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.model.CreateDistributorInputModel;
-import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
@@ -85,8 +70,8 @@ public class DistributorServiceImpl implements DistributorService {
 
         GeoPoint geoPoint = new GeoPoint();
         //UUID geoPointId = UUID.randomUUID();
-        geoPoint.setLatitude(input.getLatitude());
-        geoPoint.setLongitude(input.getLongitude());
+        geoPoint.setLatitude(Double.parseDouble(input.getLatitude()));
+        geoPoint.setLongitude(Double.parseDouble(input.getLongitude()));
         //geoPoint.setGeoPointId(geoPointId);// KHONG WORK vi khi save vao DB thi geoPointId se duoc sinh voi DB engine
         geoPoint = geoPointRepo.save(geoPoint);
         UUID geoPointId = geoPoint.getGeoPointId();
@@ -118,10 +103,9 @@ public class DistributorServiceImpl implements DistributorService {
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");
         List<PartyDistributor> distributors = distributorRepo.findByPartyType(partyType);
         log.info("findDistributors, got distributors.sz = " + distributors.size());
-        
+
         return distributors;
     }
-
 
 
 }

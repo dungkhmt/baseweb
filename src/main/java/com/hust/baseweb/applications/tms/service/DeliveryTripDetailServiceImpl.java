@@ -212,8 +212,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
                         .map(deliveryTripDetail -> deliveryTripDetail.toDeliveryTripDetailModel(
                                 deliveryTripDetail.getShipmentItem().getOrderItem().getProduct()))
                         .collect(Collectors.toList()),
-                Double.parseDouble(facilityGeoPoint.getLatitude()),
-                Double.parseDouble(facilityGeoPoint.getLongitude())
+                facilityGeoPoint.getLatitude(),
+                facilityGeoPoint.getLongitude()
         );
 
     }
