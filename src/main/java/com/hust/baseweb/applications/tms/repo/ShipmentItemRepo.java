@@ -2,12 +2,12 @@ package com.hust.baseweb.applications.tms.repo;
 
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface ShipmentItemRepo extends PagingAndSortingRepository<ShipmentItem, UUID> {
+public interface ShipmentItemRepo extends JpaRepository<ShipmentItem, UUID> {
     //public ShipmentItem findByShipmentIdAndShipmentItemSeqId(UUID shipmentId, String shipmentItemSeqId);
     ShipmentItem findByShipmentItemId(UUID shipmentItemId);
 

@@ -11,8 +11,10 @@ import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.order.repo.*;
 import com.hust.baseweb.applications.tms.entity.Shipment;
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
+import com.hust.baseweb.applications.tms.entity.status.ShipmentItemStatus;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
+import com.hust.baseweb.applications.tms.repo.status.ShipmentItemStatusRepo;
 import com.hust.baseweb.entity.StatusItem;
 import com.hust.baseweb.repo.StatusItemRepo;
 import lombok.AllArgsConstructor;
@@ -55,6 +57,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     private ShipmentRepo shipmentRepo;
     private StatusItemRepo statusItemRepo;
+    private ShipmentItemStatusRepo shipmentItemStatusRepo;
 
     @Override
     @Transactional
@@ -96,6 +99,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @Override
     @Transactional
     public String exportInventoryItems(ExportInventoryItemsInputModel inventoryItemsInput) {
+        Date now = new Date();
 
 //        List<InventoryItem> inventoryItems = inventoryItemRepo.findAll();// to be improved, find by (productId, facilityId)
 
@@ -182,7 +186,13 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             productFacilityMap.get(Arrays.asList(facilityId, productId)).setLastInventoryCount(Math.max(totalCount, 0));
         }
 
-        shipmentItemRepo.saveAll(shipmentItems);
+        shipmentItems = shipmentItemRepo.saveAll(shipmentItems);
+
+        shipmentItemStatusRepo.saveAll(
+                shipmentItems.stream()
+                        .map(shipmentItem -> new ShipmentItemStatus(null, shipmentItem, statusItem, now, null))
+                        .collect(Collectors.toList()));
+
         orderItemRepo.saveAll(orderItemMap.values());   // update exported quantity
 
         updateOrderHeaderAllExportedStatus(inventoryItemsInput);    // update all exported
