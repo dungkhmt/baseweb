@@ -61,8 +61,8 @@ public class ShipmentItem {
         String customerCode = null;
         String locationCode = null;
         String address = null;
-        String lat = null;
-        String lng = null;
+        Double lat = null;
+        Double lng = null;
         if (customer != null) {
             customerCode = customer.getCustomerCode();
         }
@@ -84,8 +84,8 @@ public class ShipmentItem {
                 customerCode,
                 locationCode,
                 address,
-                lat,
-                lng
+                lat + "",
+                lng + ""
         );
     }
 

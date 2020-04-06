@@ -1,11 +1,16 @@
 package com.hust.baseweb.applications.tms.service;
 
-import com.hust.baseweb.applications.geo.entity.GeoPoint;
+import com.hust.baseweb.applications.geo.embeddable.DistanceTravelTimePostalAddressEmbeddableId;
+import com.hust.baseweb.applications.geo.entity.DistanceTravelTimePostalAddress;
+import com.hust.baseweb.applications.geo.entity.PostalAddress;
+import com.hust.baseweb.applications.geo.repo.DistanceTravelTimePostalAddressRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.model.ShipmentItemModel;
-import com.hust.baseweb.applications.tms.repo.*;
-import com.hust.baseweb.utils.LatLngUtils;
+import com.hust.baseweb.applications.tms.repo.DeliveryTripDetailRepo;
+import com.hust.baseweb.applications.tms.repo.DeliveryTripRepo;
+import com.hust.baseweb.applications.tms.repo.ShipmentItemDeliveryPlanRepo;
+import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.utils.PageUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +34,8 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     private DeliveryTripRepo deliveryTripRepo;
     private DeliveryTripDetailRepo deliveryTripDetailRepo;
-    private DistanceTravelTimeGeoPointRepo distanceTravelTimeGeoPointRepo;
+
+    private DistanceTravelTimePostalAddressRepo distanceTraveltimePostalAddressRepo;
 
     @Override
     public Page<ShipmentItemModel> findAllInDeliveryPlanId(String deliveryPlanId, Pageable pageable) {
@@ -84,43 +90,40 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
                         shipmentItemAssignedQuantityMap.getOrDefault(shipmentItem, 0) < shipmentItem.getQuantity())
                 .collect(Collectors.toList());
 
-        List<GeoPoint> geoPointsInDeliveryTrip = shipmentItemsInDeliveryTrip.stream()
-                .map(shipmentItem -> shipmentItem.getShipToLocation().getGeoPoint())
+        List<PostalAddress> postalAddressInDeliveryTrip = shipmentItemsInDeliveryTrip.stream()
+                .map(ShipmentItem::getShipToLocation)
                 .distinct()
                 .collect(Collectors.toList());
-        List<GeoPoint> geoPointsNotInDeliveryTrip = shipmentItemsNotInDeliveryTrip.stream()
-                .map(shipmentItem -> shipmentItem.getShipToLocation().getGeoPoint())
+        List<PostalAddress> postalAddressNotInDeliveryTrip = shipmentItemsNotInDeliveryTrip.stream()
+                .map(ShipmentItem::getShipToLocation)
                 .distinct()
                 .collect(Collectors.toList());
 
-        Map<GeoPoint, Double> geoPointToMinDistanceMap = new HashMap<>();
-        for (GeoPoint geoPointNotIn : geoPointsNotInDeliveryTrip) {
-            double minDistance = Double.MAX_VALUE;
-            for (GeoPoint geoPointIn : geoPointsInDeliveryTrip) {
-                DistanceTravelTimeGeoPoint distanceTravelTimeGeoPoint
-                        = distanceTravelTimeGeoPointRepo.findByFromGeoPointIdAndToGeoPointId(geoPointIn.getGeoPointId(),
-                        geoPointNotIn.getGeoPointId());
-                double distance;
-                if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
-                    distance = LatLngUtils.distance(
-                            Double.parseDouble(geoPointNotIn.getLatitude()),
-                            Double.parseDouble(geoPointNotIn.getLongitude()),
-                            Double.parseDouble(geoPointIn.getLatitude()),
-                            Double.parseDouble(geoPointIn.getLongitude())
-                    );
+        // TODO
+        Map<PostalAddress, Integer> postalAddressToMinDistanceMap = new HashMap<>();
+        for (PostalAddress postalAddressNotIn : postalAddressNotInDeliveryTrip) {
+            int minDistance = Integer.MAX_VALUE;
+            for (PostalAddress postalAddressIn : postalAddressInDeliveryTrip) {
+                DistanceTravelTimePostalAddress distanceTravelTimePostalAddress = distanceTraveltimePostalAddressRepo
+                        .findByDistanceTravelTimePostalAddressEmbeddableId(
+                                new DistanceTravelTimePostalAddressEmbeddableId(postalAddressIn.getContactMechId(),
+                                        postalAddressNotIn.getContactMechId()));
+                int distance;
+                if (distanceTravelTimePostalAddress == null) {   // Haversine formula
+                    distance = Integer.MAX_VALUE;
                 } else {
-                    distance = distanceTravelTimeGeoPoint.getDistance();
+                    distance = distanceTravelTimePostalAddress.getDistance();
                 }
                 if (distance < minDistance) {
                     minDistance = distance;
-                    geoPointToMinDistanceMap.put(geoPointNotIn, minDistance);
+                    postalAddressToMinDistanceMap.put(postalAddressNotIn, minDistance);
                 }
             }
         }
 
         return shipmentItemsNotInDeliveryTrip.stream()
-                .sorted(Comparator.comparingDouble(o -> geoPointToMinDistanceMap.getOrDefault(o.getShipToLocation()
-                        .getGeoPoint(), 0.0)))
+                .sorted(Comparator.comparingDouble(o -> postalAddressToMinDistanceMap.getOrDefault(
+                        o.getShipToLocation(), 0)))
                 .map(shipmentItem -> shipmentItem.toShipmentItemDeliveryPlanModel(
                         shipmentItemAssignedQuantityMap.getOrDefault(shipmentItem, 0)))
                 .collect(Collectors.toList());

@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.tms.controller;
 
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
+import com.hust.baseweb.applications.geo.service.DistanceTravelTimePostalAddressService;
 import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
@@ -11,7 +12,6 @@ import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssig
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
 import com.hust.baseweb.applications.tms.service.DeliveryTripDetailService;
 import com.hust.baseweb.applications.tms.service.DeliveryTripService;
-import com.hust.baseweb.applications.tms.service.DistanceTravelTimeService;
 import com.hust.baseweb.applications.tms.service.SolverService;
 import com.hust.baseweb.applications.tms.service.statistic.StatisticDeliveryTripService;
 import com.hust.baseweb.repo.UserLoginRepo;
@@ -34,8 +34,8 @@ public class TMSAPIController {
     private OrderHeaderRepo orderHeaderRepo;
     private OrderRoleRepo orderRoleRepo;
     private UserLoginRepo userLoginRepo;
+    private DistanceTravelTimePostalAddressService distanceTravelTimePostalAddressService;
     private DeliveryTripService deliveryTripService;
-    private DistanceTravelTimeService distanceTravelTimeService;
     private DeliveryTripDetailService deliveryTripDetailService;
     private StatisticDeliveryTripService statisticDeliveryTripService;
 
@@ -50,14 +50,17 @@ public class TMSAPIController {
     }
 
     @PostMapping("/get-assigned-delivery-routes")
-    public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal, @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
-        GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(input.getDriverUserLoginId());
+    public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal,
+                                                             @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
+        GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(
+                input.getDriverUserLoginId());
 
         return ResponseEntity.ok().body(deliveryTrip);
     }
 
     @PostMapping("/complete-shipment-items")
-    public ResponseEntity<?> completeShipmentItems(Principal prinicpal, @RequestBody CompleteDeliveryShipmentItemsInputModel input) {
+    public ResponseEntity<?> completeShipmentItems(Principal prinicpal,
+                                                   @RequestBody CompleteDeliveryShipmentItemsInputModel input) {
         if (input.getItems() == null || input.getItems().length == 0) {
             return ResponseEntity.ok().body("OK");
         }
@@ -65,7 +68,8 @@ public class TMSAPIController {
         for (CompleteDeliveryShipmentItemInputModel I : input.getItems()) {
             log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId());
             //DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(), TMSConstants.SHIPMENT_ITEM_DELIVERED);
-            DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(), "SHIPMENT_ITEM_DELIVERED");
+            DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(),
+                    "SHIPMENT_ITEM_DELIVERED");
             log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId() + " FINISHED");
         }
         return ResponseEntity.ok().body("OK");
@@ -77,18 +81,18 @@ public class TMSAPIController {
                             OrderRoleRepo orderRoleRepo,
                             UserLoginRepo userLoginRepo,
                             DeliveryTripService deliveryTripService,
-                            DistanceTravelTimeService distanceTravelTimeService,
                             DeliveryTripDetailService deliveryTripDetailService,
                             StatisticDeliveryTripService statisticDeliveryTripService,
+                            DistanceTravelTimePostalAddressService distanceTravelTimePostalAddressService,
                             SolverService solverService) {
         this.customerRepo = customerRepo;
         this.orderHeaderRepo = orderHeaderRepo;
         this.orderRoleRepo = orderRoleRepo;
         this.userLoginRepo = userLoginRepo;
         this.deliveryTripService = deliveryTripService;
-        this.distanceTravelTimeService = distanceTravelTimeService;
         this.deliveryTripDetailService = deliveryTripDetailService;
         this.statisticDeliveryTripService = statisticDeliveryTripService;
+        this.distanceTravelTimePostalAddressService = distanceTravelTimePostalAddressService;
         this.solverService = solverService;
     }
 
@@ -144,7 +148,10 @@ public class TMSAPIController {
     @GetMapping("/calc-distance-travel-time")
     public ResponseEntity<?> calcDistanceTravelTime() {
         log.info("::calcDistanceTravelTime()");
-        return ResponseEntity.ok(distanceTravelTimeService.calcAll());
+        return ResponseEntity.ok(distanceTravelTimePostalAddressService.computeMissingDistance("HAVERSINE",
+                -1,
+                -1,
+                -1));
     }
 
     @GetMapping("/solve/{deliveryPlanId}")

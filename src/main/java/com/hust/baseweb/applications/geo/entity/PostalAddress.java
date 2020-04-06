@@ -35,10 +35,10 @@ public class PostalAddress {
     private String coordinates;
 
     @Transient
-    private String lat;
+    private Double lat;
 
     @Transient
-    private String lng;
+    private Double lng;
 
 
 

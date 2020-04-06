@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.geo.entity;
 
-import com.hust.baseweb.applications.geo.embeddable.DistanceTraveltimePostalAddressEmbeddableId;
+import com.hust.baseweb.applications.geo.embeddable.DistanceTravelTimePostalAddressEmbeddableId;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,22 +13,22 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class DistanceTraveltimePostalAddress {
+public class DistanceTravelTimePostalAddress {
 
     @EmbeddedId
-    private DistanceTraveltimePostalAddressEmbeddableId distanceTraveltimePostalAddressEmbeddableId;
+    private DistanceTravelTimePostalAddressEmbeddableId distanceTravelTimePostalAddressEmbeddableId;
 
     @Column(name = "distance")
-    private double distance;
+    private Integer distance;
 
     @Column(name = "travel_time")
-    private double travelTime;
+    private Integer travelTime;
 
     @Column(name = "travel_time_truck")
-    private double travelTimeTruck;
+    private Integer travelTimeTruck;
 
-    @Column(name = "travel_time_motobike")
-    private double travelTimeMotobike;
+    @Column(name = "travel_time_motorbike")
+    private Integer travelTimeMotorbike;
 
     @JoinColumn(name = "source_enum_id", referencedColumnName = "enum_id")
     @ManyToOne

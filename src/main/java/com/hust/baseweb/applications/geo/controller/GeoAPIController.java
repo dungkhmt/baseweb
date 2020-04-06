@@ -1,12 +1,12 @@
 package com.hust.baseweb.applications.geo.controller;
 
-import com.hust.baseweb.applications.geo.embeddable.DistanceTraveltimePostalAddressEmbeddableId;
-import com.hust.baseweb.applications.geo.entity.DistanceTraveltimePostalAddress;
+import com.hust.baseweb.applications.geo.embeddable.DistanceTravelTimePostalAddressEmbeddableId;
+import com.hust.baseweb.applications.geo.entity.DistanceTravelTimePostalAddress;
 import com.hust.baseweb.applications.geo.entity.Enumeration;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.model.ComputeMissingDistanceInputModel;
-import com.hust.baseweb.applications.geo.model.InputModelDistanceTraveltimePostalAddress;
+import com.hust.baseweb.applications.geo.model.InputModelDistanceTravelTimePostalAddress;
 import com.hust.baseweb.applications.geo.model.InputModelGetInfoPostalAddressChangeWithGoogleMap;
 import com.hust.baseweb.applications.geo.model.ListEnumerationOutputModel;
 import com.hust.baseweb.applications.geo.repo.*;
@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
@@ -34,38 +33,40 @@ public class GeoAPIController {
     private PostalAddressRepo postalAddressRepo;
     private GeoPointRepo geoPointRepo;
     private DistanceTraveltimePostalAddressPagingRepo distanceTraveltimePostalAddressPagingRepo;
-    private DistanceTraveltimePostalAddressRepo distanceTraveltimePostalAddressRepo;
+    private DistanceTravelTimePostalAddressRepo distanceTraveltimePostalAddressRepo;
     private EnumerationRepo enumerationRepo;
     private DistanceTravelTimePostalAddressService distanceTravelTimePostalAddressService;
 
     @PostMapping("/compute-missing-address-distances")
-    public ResponseEntity<?> computeMissingAddressDistance(Principal prinicpal, @RequestBody ComputeMissingDistanceInputModel input){
+    public ResponseEntity<?> computeMissingAddressDistance(Principal principal,
+                                                           @RequestBody ComputeMissingDistanceInputModel input) {
         int cnt = distanceTravelTimePostalAddressService.computeMissingDistance(input.getDistanceSource(),
-                input.getSpeedTruck(),input.getSpeedMotobike(),input.getMaxElements());
+                input.getSpeedTruck(), input.getSpeedMotobike(), input.getMaxElements());
         return ResponseEntity.ok().body(cnt);
     }
 
     @GetMapping("/get-list-geo-point-page")
-    ResponseEntity<?> getListGeoPoint(Pageable page,@RequestParam(required = false) String param){
+    ResponseEntity<?> getListGeoPoint(Pageable page, @RequestParam(required = false) String param) {
         log.info("getListGeoPoint");
         Page<PostalAddress> postalAddressPage = postalAddressPagingRepo.findAll(page);
-        for(PostalAddress postalAddress: postalAddressPage){
-            String latitude = postalAddress.getGeoPoint().getLatitude();
-            String longitude = postalAddress.getGeoPoint().getLongitude();
-            String cooridinates = "" + latitude + ", " + longitude;
-            postalAddress.setCoordinates(cooridinates);
+        for (PostalAddress postalAddress : postalAddressPage) {
+            Double latitude = postalAddress.getGeoPoint().getLatitude();
+            Double longitude = postalAddress.getGeoPoint().getLongitude();
+            String coordinates = "" + latitude + ", " + longitude;
+            postalAddress.setCoordinates(coordinates);
         }
         return ResponseEntity.ok().body(postalAddressPage);
 
     }
 
     @PostMapping("/get-info-postal-to-display-in-map/{contactMechId}")
-    ResponseEntity<?> getInfoPostalToDisplatInMap(@PathVariable String contactMechId, @RequestBody InputModel inputModel){
-        log.info("getInfoPostalToDisplatInMap");
+    public ResponseEntity<?> getInfoPostalToDisplayInMap(@PathVariable String contactMechId,
+                                                         @RequestBody InputModel inputModel) {
+        log.info("getInfoPostalToDisplayInMap");
         PostalAddress postalAddress = postalAddressRepo.findByContactMechId(UUID.fromString(contactMechId));
-        String lat = postalAddress.getGeoPoint().getLatitude();
-        String lng = postalAddress.getGeoPoint().getLongitude();
-        String coordinates = "" + lat +", " +lng;
+        Double lat = postalAddress.getGeoPoint().getLatitude();
+        Double lng = postalAddress.getGeoPoint().getLongitude();
+        String coordinates = "" + lat + ", " + lng;
         postalAddress.setCoordinates(coordinates);
         postalAddress.setLng(lng);
         postalAddress.setLat(lat);
@@ -73,28 +74,28 @@ public class GeoAPIController {
     }
 
     @PostMapping("/geo-change-location-info-with-googlemap/{contactMechId}")
-    void geoChangeLacationInfoWithGooglemap(@PathVariable String contactMechId,
-                                                         @RequestBody InputModelGetInfoPostalAddressChangeWithGoogleMap input){
+    // TODO: fix typo --> google-map in frontend
+    public void geoChangeLocationInfoWithGoogleMap(@PathVariable String contactMechId,
+                                                   @RequestBody InputModelGetInfoPostalAddressChangeWithGoogleMap input) {
         PostalAddress postalAddress = postalAddressRepo.findByContactMechId(UUID.fromString(contactMechId));
         postalAddress.setAddress(input.getAddress());
         GeoPoint geoPoint = postalAddress.getGeoPoint();
-        geoPoint.setLatitude(input.getLat());
-        geoPoint.setLongitude(input.getLng());
+        geoPoint.setLatitude(Double.parseDouble(input.getLat()));
+        geoPoint.setLongitude(Double.parseDouble(input.getLng()));
         geoPointRepo.save(geoPoint);
         postalAddressRepo.save(postalAddress);
     }
 
     @GetMapping("/get-list-distance-info")
-    ResponseEntity<?> getListDistanceInfo(Pageable page,@RequestParam(required = false) String param){
+    public ResponseEntity<?> getListDistanceInfo(Pageable page, @RequestParam(required = false) String param) {
         log.info("getListDistanceInfo");
-        Page<DistanceTraveltimePostalAddress> distanceTraveltimePostalAddressPage =
+        Page<DistanceTravelTimePostalAddress> distanceTravelTimePostalAddressPage =
                 distanceTraveltimePostalAddressPagingRepo.findAll(page);
 
 
-
-        for(DistanceTraveltimePostalAddress d : distanceTraveltimePostalAddressPage){
-            UUID idStart = d.getDistanceTraveltimePostalAddressEmbeddableId().getFromContactMechId();
-            UUID idEnd = d.getDistanceTraveltimePostalAddressEmbeddableId().getToContactMechId();
+        for (DistanceTravelTimePostalAddress d : distanceTravelTimePostalAddressPage) {
+            UUID idStart = d.getDistanceTravelTimePostalAddressEmbeddableId().getFromContactMechId();
+            UUID idEnd = d.getDistanceTravelTimePostalAddressEmbeddableId().getToContactMechId();
             d.setIdStart(idStart);
             d.setIdEnd(idEnd);
             PostalAddress postalAddressStart = postalAddressRepo.findByContactMechId(idStart);
@@ -103,53 +104,56 @@ public class GeoAPIController {
             d.setAddressEnd(postalAddressEnd.getAddress());
             d.setEnumID(d.getEnumeration().getEnumId());
         }
-        return ResponseEntity.ok().body(distanceTraveltimePostalAddressPage);
+        return ResponseEntity.ok().body(distanceTravelTimePostalAddressPage);
     }
 
     @PostMapping("/get-distance-postal-address-info-with-key/{fromContactMechId}/{toContactMechId}")
-    ResponseEntity<?> getDistancePostalAddressInfoWithKey(@PathVariable String fromContactMechId, @PathVariable String toContactMechId,
-                                                          @RequestBody InputModel inputModel){
+    ResponseEntity<?> getDistancePostalAddressInfoWithKey(@PathVariable String fromContactMechId,
+                                                          @PathVariable String toContactMechId,
+                                                          @RequestBody InputModel inputModel) {
         log.info("getDistancePostalAddressInfoWithKey");
-        DistanceTraveltimePostalAddressEmbeddableId distanceTraveltimePostalAddressEmbeddableId =
-                new DistanceTraveltimePostalAddressEmbeddableId(UUID.fromString(fromContactMechId), UUID.fromString(toContactMechId));
-        DistanceTraveltimePostalAddress distanceTraveltimePostalAddress =
-                distanceTraveltimePostalAddressRepo.findByDistanceTraveltimePostalAddressEmbeddableId(distanceTraveltimePostalAddressEmbeddableId);
+        DistanceTravelTimePostalAddressEmbeddableId distanceTraveltimePostalAddressEmbeddableId =
+                new DistanceTravelTimePostalAddressEmbeddableId(UUID.fromString(fromContactMechId),
+                        UUID.fromString(toContactMechId));
+        DistanceTravelTimePostalAddress distanceTraveltimePostalAddress =
+                distanceTraveltimePostalAddressRepo.findByDistanceTravelTimePostalAddressEmbeddableId(
+                        distanceTraveltimePostalAddressEmbeddableId);
         distanceTraveltimePostalAddress.setEnumID(distanceTraveltimePostalAddress.getEnumeration().getEnumId());
         return ResponseEntity.ok().body(distanceTraveltimePostalAddress);
     }
 
     @PostMapping("/get-list-enumeration-distance-source")
-    ResponseEntity<?> getListEnumerationDistanceSource(@RequestBody InputModel inputModel){
+    ResponseEntity<?> getListEnumerationDistanceSource(@RequestBody InputModel inputModel) {
         log.info("getListEnumeration");
         //List<Enumeration> enumerationList = enumerationRepo.findAll();
         List<Enumeration> enumerationList = enumerationRepo.findByEnumTypeId("DISTANCE_SOURCE");
         return ResponseEntity.ok().body(new ListEnumerationOutputModel(enumerationList));
     }
+
     @PostMapping("/get-list-enumeration")
-    ResponseEntity<?> getListEnumeration(@RequestBody InputModel inputModel){
+    ResponseEntity<?> getListEnumeration(@RequestBody InputModel inputModel) {
         log.info("getListEnumeration");
         List<Enumeration> enumerationList = enumerationRepo.findAll();
         return ResponseEntity.ok().body(new ListEnumerationOutputModel(enumerationList));
     }
 
     @PostMapping("/change-distance-travel-time-postal-address-info")
-    void changeDistanceTravelTimePostalAddressInfo(@RequestBody InputModelDistanceTraveltimePostalAddress data){
-        DistanceTraveltimePostalAddressEmbeddableId distanceTraveltimePostalAddressEmbeddableId =
-                new DistanceTraveltimePostalAddressEmbeddableId(
+    public void changeDistanceTravelTimePostalAddressInfo(@RequestBody InputModelDistanceTravelTimePostalAddress data) {
+        DistanceTravelTimePostalAddressEmbeddableId distanceTraveltimePostalAddressEmbeddableId =
+                new DistanceTravelTimePostalAddressEmbeddableId(
                         UUID.fromString(data.getFromContactMechId()),
                         UUID.fromString(data.getToContactMechId())
                 );
-        DistanceTraveltimePostalAddress distanceTraveltimePostalAddress
-                = distanceTraveltimePostalAddressRepo.findByDistanceTraveltimePostalAddressEmbeddableId(distanceTraveltimePostalAddressEmbeddableId);
-        distanceTraveltimePostalAddress.setDistance(data.getDistance());
-        distanceTraveltimePostalAddress.setTravelTime(data.getTravelTime());
-        distanceTraveltimePostalAddress.setTravelTimeMotobike(data.getTravelTimeMotobike());
-        distanceTraveltimePostalAddress.setTravelTimeTruck(data.getTravelTimeTruck());
+        DistanceTravelTimePostalAddress distanceTraveltimePostalAddress
+                = distanceTraveltimePostalAddressRepo.findByDistanceTravelTimePostalAddressEmbeddableId(
+                distanceTraveltimePostalAddressEmbeddableId);
+        distanceTraveltimePostalAddress.setDistance((int) data.getDistance());
+        distanceTraveltimePostalAddress.setTravelTime((int) data.getTravelTime());
+        distanceTraveltimePostalAddress.setTravelTimeMotorbike((int) data.getTravelTimeMotobike());
+        distanceTraveltimePostalAddress.setTravelTimeTruck((int) data.getTravelTimeTruck());
         distanceTraveltimePostalAddress.setEnumeration(enumerationRepo.findByEnumId(data.getEnumId()));
         distanceTraveltimePostalAddressRepo.save(distanceTraveltimePostalAddress);
     }
-
-
 
 
 }

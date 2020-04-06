@@ -21,9 +21,9 @@ public class GeoPoint {
     private UUID geoPointId;
 
     @Column(name = "latitude")
-    private String latitude;
+    private Double latitude;
 
     @Column(name = "longitude")
-    private String longitude;
+    private Double longitude;
 
 }
