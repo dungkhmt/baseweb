@@ -10,3 +10,9 @@ alter table shipment_item
 
 alter table shipment_item
     add completed_quantity int;
+
+alter table delivery_trip
+    add completed_delivery_trip_detail_count int;
+
+alter table delivery_trip
+    add delivery_trip_detail_count int;

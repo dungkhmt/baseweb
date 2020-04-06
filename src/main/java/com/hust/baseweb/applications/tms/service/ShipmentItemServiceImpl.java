@@ -132,8 +132,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
                 = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
                 .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
                 .collect(Collectors.toSet());
-        List<ShipmentItem> allShipmentItems = new ArrayList<>();
-        shipmentItemRepo.findAll().forEach(allShipmentItems::add);
+        List<ShipmentItem> allShipmentItems = shipmentItemRepo.findAll();
         List<ShipmentItemModel> shipmentItemModels = allShipmentItems.stream()
                 .filter(shipmentItem -> !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId()
                         .toString()))
@@ -148,11 +147,10 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
                 = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
                 .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
                 .collect(Collectors.toSet());
-        List<ShipmentItem> allShipmentItems = new ArrayList<>();
-        shipmentItemRepo.findAll().forEach(allShipmentItems::add);
+        List<ShipmentItem> allShipmentItems = shipmentItemRepo.findAll();
         return allShipmentItems.stream()
-                .filter(shipmentItem -> !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId()
-                        .toString()))
+                .filter(shipmentItem -> shipmentItem.getStatusItem().getStatusId().equals("SHIPMENT_ITEM_CREATED")
+                        && !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId().toString()))
                 .map(ShipmentItem::toShipmentItemModel)
                 .collect(Collectors.toList());
     }

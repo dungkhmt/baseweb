@@ -55,6 +55,9 @@ public class DeliveryTrip {
     @ManyToOne(fetch = FetchType.EAGER)
     private StatusItem statusItem;
 
+    private Integer completedDeliveryTripDetailCount = 0;
+    private Integer deliveryTripDetailCount = 0;
+
     public DeliveryTripModel toDeliveryTripModel() {
         return new DeliveryTripModel(
                 deliveryPlan.getDeliveryPlanId().toString(),

@@ -21,4 +21,6 @@ public interface DeliveryTripDetailService {
     DeliveryTripDetailModel.OrderItems findAll(String deliveryTripId);
 
     DeliveryTripDetail updateStatusDeliveryTripDetail(UUID deliveryTripDetailId, String statusId);
+
+    boolean completeDeliveryTripDetail(UUID deliveryTripDetailId);
 }

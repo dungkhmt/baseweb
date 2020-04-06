@@ -222,4 +222,20 @@ public class ShipmentOrderAPIController {
         return ResponseEntity.ok(deliveryTripModels);
     }
 
+
+    @GetMapping("/approve-delivery-trip/{deliveryTripId}")
+    public ResponseEntity<?> approveDeliveryTrip(@PathVariable String deliveryTripId) {
+        return ResponseEntity.ok().body(deliveryTripService.approveDeliveryTrip(UUID.fromString(deliveryTripId)));
+    }
+
+    @GetMapping("/start-execute-delivery-trip/{deliveryTripId}")
+    public ResponseEntity<?> startExecuteDeliveryTrip(@PathVariable String deliveryTripId) {
+        return ResponseEntity.ok().body(deliveryTripService.startExecuteDeliveryTrip(UUID.fromString(deliveryTripId)));
+    }
+
+    @GetMapping("/complete-delivery-trip-detail/{deliveryTripDetailId}")
+    public ResponseEntity<?> completeDeliveryTripDetail(@PathVariable String deliveryTripDetailId) {
+        return ResponseEntity.ok()
+                .body(deliveryTripDetailService.completeDeliveryTripDetail(UUID.fromString(deliveryTripDetailId)));
+    }
 }

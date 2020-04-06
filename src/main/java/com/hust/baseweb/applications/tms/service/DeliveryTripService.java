@@ -31,5 +31,7 @@ public interface DeliveryTripService {
 
     GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(String driverUserLoginId);
 
+    boolean approveDeliveryTrip(UUID deliveryTripId);
 
+    boolean startExecuteDeliveryTrip(UUID deliveryTripId);
 }
