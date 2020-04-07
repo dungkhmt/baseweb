@@ -44,7 +44,7 @@ public class OrderHeader {
     @ManyToOne(fetch = FetchType.EAGER)
     private PostalAddress shipToPostalAddress;
 
-    private Boolean exported;
+    private Boolean exported = false;
 
     @Column(name = "created_stamp")
     private Date createdStamp;
