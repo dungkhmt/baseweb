@@ -1,6 +1,14 @@
 
 INSERT INTO public.status_item
 (status_id, status_type_id, status_code, description, last_updated_stamp, created_stamp)
+VALUES('SHIPMENT_ITEM_CREATED', 'DELIVERY_STATUS', NULL, 'Tạo mới', NULL, '2020-03-08 08:47:16.775');
+
+INSERT INTO public.status_item
+(status_id, status_type_id, status_code, description, last_updated_stamp, created_stamp)
+VALUES('DELIVERY_TRIP_CREATED', 'DELIVERY_STATUS', NULL, 'Tạo mới', NULL, '2020-03-08 08:47:16.775');
+
+INSERT INTO public.status_item
+(status_id, status_type_id, status_code, description, last_updated_stamp, created_stamp)
 VALUES('SHIPMENT_TRIP_CREATED', 'DELIVERY_STATUS', NULL, 'Tạo mới', NULL, '2020-03-08 08:47:16.775');
 INSERT INTO public.status_item
 (status_id, status_type_id, status_code, description, last_updated_stamp, created_stamp)

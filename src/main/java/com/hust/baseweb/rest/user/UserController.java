@@ -8,6 +8,7 @@ import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.model.PersonUpdateModel;
 import com.hust.baseweb.model.dto.DPersonDetailModel;
 import com.hust.baseweb.service.PartyService;
+import com.hust.baseweb.service.SecurityGroupService;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -37,6 +38,7 @@ public class UserController {
 	public static final String DELETE_REL = "delete";
 	private UserService userService;
 	private PartyService partyService;
+	private SecurityGroupService securityGroupService;
 
 	@PostMapping(path = "/user")
 	public ResponseEntity<?> save(@RequestBody PersonModel personModel,
@@ -77,6 +79,13 @@ public class UserController {
 		return ResponseEntity.ok().body(
 				userService.findPersonByFullName(page, searchString));
 	}
+
+	@GetMapping(path="/get-security-groups")
+	public ResponseEntity<?> getSecurityGroups(Principal principal){
+		List<SecurityGroup> securityGroups = securityGroupService.findAll();
+		return ResponseEntity.ok().body(securityGroups);
+	}
+
 
 	@GetMapping(path = "/users/{partyId}")
 	public ResponseEntity<?> getUsersDetail(@PathVariable String partyId,
