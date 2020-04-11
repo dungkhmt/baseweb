@@ -161,7 +161,7 @@ create table post_ship_order_itinerary(
 	post_office_id UUID not null,
 	arrival_date_time  TIMESTAMP,
 	delivery_fixed_trip_post_office_execute_id UUID,
-	
+
 	departure_date_time TIMESTAMP
 	pickup_fixed_trip_post_office_execute_id UUID,
 
