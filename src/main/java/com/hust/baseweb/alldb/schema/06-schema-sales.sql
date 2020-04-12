@@ -36,6 +36,20 @@ create table customer_salesman_vendor
     constraint fk_customer_salesman_vendor_vendor foreign key (party_vendor_id) references party (party_id)
 );
 
+create table retail_outlet_salesman_vendor
+(
+    retail_outlet_salesman_vendor_id UUID NOT NULL default uuid_generate_v1(),
+    party_retail_outlet_id           UUID NOT NULL,
+    party_salesman_id           UUID NOT NULL,
+    party_vendor_id             UUID NOT NULL,
+    from_date                   TIMESTAMP,
+    thru_date                   TIMESTAMP,
+    constraint pk_retail_outlet_salesman_vendor primary key (retail_outlet_salesman_vendor_id),
+    constraint fk_retail_outlet_salesman_vendor_customer foreign key (party_retail_outlet_id) references party (party_id),
+    constraint fk_retail_outlet_salesman_vendor_salesman foreign key (party_salesman_id) references party (party_id),
+    constraint fk_retail_outlet_salesman_vendor_vendor foreign key (party_vendor_id) references party (party_id)
+);
+
 
 create table sales_route_config
 (
@@ -79,6 +93,26 @@ create table sales_route_config_customer
     constraint fk_sales_route_config_customer_sales_route_config_id foreign key (sales_route_config_id) references sales_route_config (sales_route_config_id),
     constraint fk_sales_route_config_customer_sales_route_planning_period_id foreign key (sales_route_planning_period_id) references sales_route_planning_period (sales_route_planning_period_id),
     constraint fk_sales_route_config_customer_customer_salesman_vendor_id foreign key (customer_salesman_vendor_id) references customer_salesman_vendor (customer_salesman_vendor_id)
+);
+
+create table sales_route_config_retail_outlet
+(
+    sales_route_config_retail_outlet_id UUID NOT NULL default uuid_generate_v1(),
+    sales_route_planning_period_id UUID not null,
+
+    sales_route_config_id          UUID NOT NULL,
+    retail_outlet_salesman_vendor_id    UUID NOT NULL,
+    status_id                      VARCHAR(60),
+    start_execute_week             int,
+    number_days_per_week           int,
+    repeat_week                    int,
+    last_updated_stamp             TIMESTAMP,
+    created_stamp                  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_sales_route_config_retail_outlet primary key (sales_route_config_retail_outlet_id),
+    constraint fk_sales_route_config_retail_outlet_sales_route_config_id foreign key (sales_route_config_id) references sales_route_config (sales_route_config_id),
+    constraint fk_sales_route_config_retail_outlet_sales_route_planning_period_id foreign key (sales_route_planning_period_id) references sales_route_planning_period (sales_route_planning_period_id),
+    constraint fk_sales_route_config_retail_outlet_retail_outlet_salesman_vendor_id foreign key
+    (retail_outlet_salesman_vendor_id) references retail_outlet_salesman_vendor (retail_outlet_salesman_vendor_id)
 );
 
 create table sales_route_detail

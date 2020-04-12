@@ -288,45 +288,9 @@ values ('BILL_TO_CUSTOMER', 'Hóa đơn đến khách hàng'),
        ('SALES_EXECUTIVE', 'Hóa đơn của nhân viên bán hàng');
 
 
-INSERT INTO public.status_type
-(status_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
-VALUES ('ORDER_STATUS', NULL, 'Order Status', NULL, '2020-02-01 21:35:10.048');
-INSERT INTO public.status_type
-(status_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
-VALUES ('DELIVERY_STATUS', NULL, 'Delivery status', NULL, '2020-03-08 08:43:46.697');
 
-insert into status_item(status_id, status_type_id, status_code, description)
-values ('ORDER_CREATED', 'ORDER_STATUS', 'CREATED', 'tạo mới'),
-       ('ORDER_CANCELLED', 'ORDER_STATUS', 'CANCELLED', 'đã hủy');
 
-insert into status_item(status_id, status_type_id, description)
-values ('SHIPMENT_TRIP_CREATED', 'DELIVERY_STATUS', 'Tạo mới'),
-       ('SHIPMENT_TRIP_CANCELLED', 'DELIVERY_STATUS', 'Hủy'),
-       ('SHIPMENT_TRIP_COMPLETED', 'DELIVERY_STATUS', 'Hoàn thành'),
-       ('SHIPMENT_ITEM_ON_TRIP', 'DELIVERY_STATUS', 'Hàng xếp chuyến'),
-       ('SHIPMENT_ITEM_DELIVERED', 'DELIVERY_STATUS', 'Đã giao xong'),
-       ('SHIPMENT_ITEM_NOT_DELIVERED', 'DELIVERY_STATUS', 'Hàng không được giao'),
-       ('SHIPMENT_ITEM_CANCELLED', 'DELIVERY_STATUS', 'Hủy');
 
-insert into status_item(status_id, status_type_id, description)
-values ('SHIPMENT_ITEM_CREATED', 'DELIVERY_STATUS', 'Tạo mới'),
-       ('DELIVERY_TRIP_CREATED', 'DELIVERY_STATUS', 'Tạo mới'),
-       ('SHIPMENT_ITEM_SCHEDULED_TRIP', 'DELIVERY_STATUS', 'Đang xếp chuyến'),
-       ('DELIVERY_TRIP_DETAIL_SCHEDULED_TRIP', 'DELIVERY_STATUS', 'Đang xếp chuyến'),
-       ('DELIVERY_TRIP_APPROVED_TRIP', 'DELIVERY_STATUS', 'Đã phê duyệt chuyến'),
-       ('DELIVERY_TRIP_DETAIL_APPROVED_TRIP', 'DELIVERY_STATUS', 'Đã phê duyệt chi tiết chuyến'),
-       ('DELIVERY_TRIP_DETAIL_ON_TRIP', 'DELIVERY_STATUS', 'Đang thực hiện chuyến'),
-       ('DELIVERY_TRIP_EXECUTED', 'DELIVERY_STATUS', 'Đang thực hiện chuyến'),
-       ('DELIVERY_TRIP_DETAIL_COMPLETED', 'DELIVERY_STATUS', 'Hoàn thành giao chi tiết chuyến'),
-       ('SHIPMENT_ITEM_COMPLETED', 'DELIVERY_STATUS', 'Hoàn thành giao đơn vận chuyển'),
-       ('DELIVERY_TRIP_COMPLETED', 'DELIVERY_STATUS', 'Hoàn thành giao chuyến');
 
-INSERT INTO public.contact_mech_purpose_type
-    (contact_mech_purpose_type_id, description)
-VALUES ('SHIPPING_LOCATION', 'Shipping Destination Address');
-
-INSERT INTO public.contact_mech_purpose_type
-    (contact_mech_purpose_type_id, description)
-VALUES ('PRIMARY_LOCATION', 'Primary Address');
 
 
