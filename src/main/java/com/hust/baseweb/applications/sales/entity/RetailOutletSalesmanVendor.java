@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.sales.entity;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
+import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,15 +15,15 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class CustomerSalesmanVendor {
+public class RetailOutletSalesmanVendor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "customer_salesman_vendor_id")
-    private UUID customerSalesmanVendorId;
+    @Column(name = "retail_outlet_salesman_vendor_id")
+    private UUID retailOutletSalesmanVendorId;
 
-    @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
+    @JoinColumn(name = "party_retail_outlet_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private PartyCustomer partyCustomer;
+    private PartyRetailOutlet partyRetailOutlet;
 
     @JoinColumn(name = "party_salesman_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
@@ -41,20 +42,15 @@ public class CustomerSalesmanVendor {
 
 
     @Transient
-    private String customerCode;
+    private String retailOutletCode;
 
     @Transient
-    private String customerName;
+    private String retailOutletName;
 
     @Transient
     private String address;
 
     @Transient
     private String partyDistritorName;
-
-
-
-
-
 
 }

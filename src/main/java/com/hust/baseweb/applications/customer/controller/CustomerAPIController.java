@@ -77,7 +77,11 @@ public class CustomerAPIController {
         PartyDistributor distributor = distributorService.save(input);
         return ResponseEntity.ok().body(distributor);
     }
-
+    @PostMapping("/create-retail-outlet")
+    public ResponseEntity<?> createRetailOutlet(Principal principal, @RequestBody CreateRetailOutletInputModel input) {
+        // TODO: by TuanLA
+        return ResponseEntity.ok().body("");
+    }
 
     @PostMapping("/get-list-customer")
     public ResponseEntity<?> getListCustomer(Principal principal, @RequestBody InputModel input){

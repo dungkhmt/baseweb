@@ -119,19 +119,21 @@ create table sales_route_detail
 (
     sales_route_detail_id          UUID NOT NULL,
     party_salesman_id              UUID NOT NULL,
-    party_customer_id              UUID NOT NULL,
+    party_retail_outlet_id              UUID NOT NULL,
     party_distributor              UUID not null,
     sequence                       Integer,
     execute_date                   VARCHAR(60),
-    sales_route_config_customer_id UUID NOT NULL,
+    sales_route_config_retail_outlet_id UUID NOT NULL,
     sales_route_planning_period_id UUID,
     last_updated_stamp             TIMESTAMP,
     created_stamp                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_sales_route_detail primary key (sales_route_detail_id),
-    constraint fk_sales_route_detail_sales_route_config_customer foreign key (sales_route_config_customer_id) references sales_route_config_customer (sales_route_config_customer_id),
-    constraint fk_sales_route_detail_party_customer foreign key (party_customer_id) references party_customer (party_id),
+    constraint fk_sales_route_detail_sales_route_config_retail_outlet foreign key (sales_route_config_retail_outlet_id)
+                references sales_route_config_retail_outlet (sales_route_config_retail_outlet_id),
+    constraint fk_sales_route_detail_party_retail_outlet foreign key (party_retail_outlet_id) references party_retail_outlet (party_id),
     constraint fk_sales_route_detail_salesman_id foreign key (party_salesman_id) references party_salesman (party_id),
-    constraint fk_sales_route_detail_sales_route_planning_period_id foreign key (sales_route_planning_period_id) references sales_route_planning_period (sales_route_planning_period_id)
+    constraint fk_sales_route_detail_sales_route_planning_period_id foreign key (sales_route_planning_period_id)
+                references sales_route_planning_period (sales_route_planning_period_id)
 );
 
 create table salesman_checkin_history

@@ -2,8 +2,10 @@ package com.hust.baseweb.applications.sales.controller;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
+import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.CustomerDistributorSalesmanInputModel;
 import com.hust.baseweb.applications.customer.repo.DistributorRepo;
+import com.hust.baseweb.applications.customer.repo.RetailOutletRepo;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.logistics.model.ModelCreateProductInput;
 import com.hust.baseweb.applications.order.model.GetListSalesmanInputModel;
@@ -12,12 +14,12 @@ import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
 import com.hust.baseweb.applications.sales.entity.CustomerSalesman;
 import com.hust.baseweb.applications.sales.entity.CustomerSalesmanVendor;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
+import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
 import com.hust.baseweb.applications.sales.model.customersalesman.AssignCustomer2SalesmanInputModel;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetCustomersOfSalesmanInputModel;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetSalesmanOutputModel;
-import com.hust.baseweb.applications.sales.repo.CustomerSalesmanVendorPagingRepo;
-import com.hust.baseweb.applications.sales.repo.CustomerSalesmanVendorRepo;
-import com.hust.baseweb.applications.sales.repo.PartySalesmanPagingRepo;
+import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.RetailOutletSalesmanDistributorInputModel;
+import com.hust.baseweb.applications.sales.repo.*;
 import com.hust.baseweb.applications.sales.service.CustomerSalesmanService;
 import com.hust.baseweb.applications.sales.service.PartySalesmanService;
 import com.hust.baseweb.applications.tms.repo.PartyDriverRepo;
@@ -56,7 +58,10 @@ public class SalesAPIController {
     private CustomerSalesmanVendorPagingRepo customerSalesmanVendorPagingRepo;
     private PartyDistributorRepo partyDistributorRepo;
     private CustomerSalesmanVendorRepo customerSalesmanVendorRepo;
+    private RetailOutletSalesmanVendorPagingRepo retailOutletSalesmanVendorPagingRepo;
+    private RetailOutletSalesmanVendorRepo retailOutletSalesmanVendorRepo;
 
+    private RetailOutletRepo retailOutletRepo;
 
     @PostMapping("/get-list-salesmans")
     public ResponseEntity getListSalesmans(Principal principal, @RequestBody GetListSalesmanInputModel input) {
@@ -129,7 +134,8 @@ public class SalesAPIController {
     public ResponseEntity<?> getDetailSalesman(Pageable pageable,@RequestParam(required = false) String param, @PathVariable String partyId){
         log.info("getDetailSalesman");
         PartySalesman partySalesman = partySalesmanService.findById(UUID.fromString(partyId));
-        //Page<CustomerSalesmanVendor> customerSalesmanVendorPage = customerSalesmanVendorPagingRepo.findByPartySalesman(partySalesman,pageable);
+
+        /*
         Page<CustomerSalesmanVendor> customerSalesmanVendorPage = customerSalesmanVendorPagingRepo.findByPartySalesmanAndThruDate(partySalesman,null,pageable);
         for (CustomerSalesmanVendor customerSalesmanVendor: customerSalesmanVendorPage ) {
             customerSalesmanVendor.setCustomerName(customerSalesmanVendor.getPartyCustomer().getCustomerName());
@@ -143,7 +149,22 @@ public class SalesAPIController {
             customerSalesmanVendor.setAddress(address);
 
         }
-        return ResponseEntity.ok().body(customerSalesmanVendorPage);
+        */
+        Page<RetailOutletSalesmanVendor> retailOutletSalesmanVendorPage = retailOutletSalesmanVendorPagingRepo.findByPartySalesmanAndThruDate(partySalesman,null,pageable);
+        for (RetailOutletSalesmanVendor retailOutletSalesmanVendor: retailOutletSalesmanVendorPage ) {
+            retailOutletSalesmanVendor.setRetailOutletName(retailOutletSalesmanVendor.getPartyRetailOutlet().getRetailOutletName());
+            retailOutletSalesmanVendor.setRetailOutletCode(retailOutletSalesmanVendor.getPartyRetailOutlet().getRetailOutletCode());
+            retailOutletSalesmanVendor.setPartyDistritorName(retailOutletSalesmanVendor.getPartyDistributor().getDistributorName());
+            String address = "";
+            List<PostalAddress> postalAddresses = retailOutletSalesmanVendor.getPartyRetailOutlet().getPostalAddress();
+            for (PostalAddress postalAddress: postalAddresses){
+                address += postalAddress.getAddress() + "; ";
+            }
+            retailOutletSalesmanVendor.setAddress(address);
+
+        }
+
+        return ResponseEntity.ok().body(retailOutletSalesmanVendorPage);
     }
 
     @PostMapping("/add-customer-distributor-salesman/{partyId}")
@@ -166,6 +187,25 @@ public class SalesAPIController {
         return ResponseEntity.ok(input);
     }
 
+    @PostMapping("/add-retail-outlet-distributor-salesman/{partyId}")
+    public ResponseEntity<?> addRetailOutletDistributorSalesman(@PathVariable String partyId, @RequestBody RetailOutletSalesmanDistributorInputModel input){
+        log.info("addRetailOutletDistributorSalesman {}",partyId);
+        PartyRetailOutlet partyRetailOutlet = retailOutletRepo.findByPartyId(UUID.fromString(input.getPartyRetailOutletId()));
+        PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(UUID.fromString(input.getPartyDistributorId()));
+        PartySalesman partySalesman = partySalesmanService.findById(UUID.fromString(partyId));
+        List<RetailOutletSalesmanVendor> lst = retailOutletSalesmanVendorRepo.findAllByPartySalesmanAndPartyRetailOutletAndPartyDistributorAndThruDate(partySalesman,
+                partyRetailOutlet, partyDistributor, null);
+        if(lst != null && lst.size() > 0){
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("DUPLICATE");
+        }
+        RetailOutletSalesmanVendor retailOutletSalesmanVendor = new RetailOutletSalesmanVendor();
+        retailOutletSalesmanVendor.setPartyRetailOutlet(partyRetailOutlet);
+        retailOutletSalesmanVendor.setPartySalesman(partySalesman);
+        retailOutletSalesmanVendor.setPartyDistributor(partyDistributor);
+        retailOutletSalesmanVendor.setFromDate(new Date());// take current date-time
+        retailOutletSalesmanVendorRepo.save(retailOutletSalesmanVendor);
+        return ResponseEntity.ok(input);
+    }
 
     @GetMapping("/delete-customer-distributor-salesman/{Id}")
     public void deleteCustomerDistributorSalesman (@PathVariable String Id){
@@ -175,6 +215,13 @@ public class SalesAPIController {
         customerSalesmanVendorRepo.save(customerSalesmanVendor);
     }
 
+    @GetMapping("/delete-retail-outlet-distributor-salesman/{Id}")
+    public void deleteRetailOutletDistributorSalesman (@PathVariable String Id){
+        RetailOutletSalesmanVendor retailOutletSalesmanVendor = retailOutletSalesmanVendorRepo.findByRetailOutletSalesmanVendorId(UUID.fromString(Id));
+        //customerSalesmanVendorRepo.delete(customerSalesmanVendor);// do not delete physically
+        retailOutletSalesmanVendor.setThruDate(new Date());// set thru_date by current date-time
+        retailOutletSalesmanVendorRepo.save(retailOutletSalesmanVendor);
+    }
 
 
 
