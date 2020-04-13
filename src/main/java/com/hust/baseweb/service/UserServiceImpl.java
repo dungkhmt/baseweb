@@ -72,12 +72,14 @@ public class UserServiceImpl implements UserService {
         party = partyRepo.save(party);
         personRepo.save(new Person(party.getPartyId(), personModel.getFirstName(), personModel.getMiddleName(),
                 personModel.getLastName(), personModel.getGender(), personModel.getBirthDate()));
-        List<SecurityGroup> roles = new ArrayList<>();
+        Set<SecurityGroup> roles;
 
         log.info("save, roles = " + personModel.getRoles().size());
 
-        roles = personModel.getRoles().stream().map(r -> securityGroupRepo.findById(r).get())
-                .collect(Collectors.toList());
+        roles = personModel.getRoles()
+                .stream()
+                .map(r -> securityGroupRepo.findById(r).orElseThrow(NoSuchElementException::new))
+                .collect(Collectors.toSet());
         UserLogin userLogin = new UserLogin(personModel.getUserName(), personModel.getPassword(), roles, true);
         userLogin.setParty(party);
         if (userLoginRepo.existsById(personModel.getUserName())) {
@@ -133,9 +135,12 @@ public class UserServiceImpl implements UserService {
         Party party = partyRepo.getOne(partyId);
         party.setPartyCode(personUpdateModel.getPartyCode());
         UserLogin u = party.getUserLogin();
-        u.setRoles(personUpdateModel.getRoles().stream().map(r -> securityGroupRepo.getOne(r)).collect(Collectors.toList()));
+        u.setRoles(personUpdateModel.getRoles()
+                .stream()
+                .map(r -> securityGroupRepo.getOne(r))
+                .collect(Collectors.toSet()));
         userLoginRepo.save(u);
-        return partyRepo.findById(person.getPartyId()).get();
+        return partyRepo.findById(person.getPartyId()).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
