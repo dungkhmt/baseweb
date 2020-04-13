@@ -59,6 +59,24 @@ create table geo_point
     constraint pk_geo_point primary key (geo_point_id)
 
 );
+create table postal_address
+(
+    contact_mech_id       UUID NOT NULL default uuid_generate_v1(),
+    location_code         VARCHAR(60),
+    address               VARCHAR(200),
+    postal_code           VARCHAR(60),
+    geo_point_id          UUID,
+    country_geo_id        VARCHAR(60),
+    state_province_geo_id VARCHAR(60),
+    city                  VARCHAR(200),
+    max_load_weight       numeric,
+    last_updated_stamp    TIMESTAMP,
+    created_stamp         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_postal_address primary key (contact_mech_id),
+    constraint fk_postal_address_geo_point_id foreign key (geo_point_id) references geo_point (geo_point_id),
+    constraint fk_postal_address_country_geo_id foreign key (country_geo_id) references geo (geo_id),
+    constraint fk_postal_address_state_province_geo_id foreign key (state_province_geo_id) references geo (geo_id)
+);
 
 create table distance_traveltime_postal_address
 (
@@ -80,34 +98,6 @@ create table distance_traveltime_postal_address
     constraint fk_distance_traveltime_postal_address_updated_by_user_login foreign key (updated_by_user_login_id) references user_login (user_login_id)
 );
 
-
-create unique index distance_traveltime_geo_points_from_geo_point_id_to_geo_point_id_uindex
-    on distance_traveltime_geo_points (from_geo_point_id, to_geo_point_id);
-
-alter table distance_traveltime_geo_points
-    add constraint distance_traveltime_geo_points_pk
-        primary key (from_geo_point_id, to_geo_point_id);
-
-
-
-create table postal_address
-(
-    contact_mech_id       UUID NOT NULL default uuid_generate_v1(),
-    location_code         VARCHAR(60),
-    address               VARCHAR(200),
-    postal_code           VARCHAR(60),
-    geo_point_id          UUID,
-    country_geo_id        VARCHAR(60),
-    state_province_geo_id VARCHAR(60),
-    city                  VARCHAR(200),
-    max_load_weight       numeric,
-    last_updated_stamp    TIMESTAMP,
-    created_stamp         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_postal_address primary key (contact_mech_id),
-    constraint fk_postal_address_geo_point_id foreign key (geo_point_id) references geo_point (geo_point_id),
-    constraint fk_postal_address_country_geo_id foreign key (country_geo_id) references geo (geo_id),
-    constraint fk_postal_address_state_province_geo_id foreign key (state_province_geo_id) references geo (geo_id)
-);
 
 create table contact_mech_purpose_type
 (

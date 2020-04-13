@@ -1,4 +1,4 @@
-create post_package_type(
+create table post_package_type(
     post_package_type_id VARCHAR(60),
     post_package_type_name VARCHAR(200),
     last_updated_stamp TIMESTAMP,
@@ -21,7 +21,7 @@ create table post_customer(
 );
 
 create table post_ship_order(
-	post_ship_order_id UUID not null uuid_generate_v1(),
+	post_ship_order_id UUID not null default uuid_generate_v1(),
     from_customer_id UUID not null,
     to_customer_id UUID not null,
 
@@ -39,7 +39,7 @@ create table post_ship_order(
 	last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_ship_order primary key (post_ship_order_id),
-    constraint fk_ship_order_package_type_id foreign key(package_type_id) references package_type(package_type_id),
+    constraint fk_ship_order_package_type_id foreign key(package_type_id) references post_package_type(post_package_type_id),
     constraint fk_post_ship_order_status foreign key(status_id) references status_item(status_id),
     constraint fk_ship_order_from_customer_id foreign key(from_customer_id) references post_customer(post_customer_id),
     constraint fk_ship_order_to_customer_id foreign key(to_customer_id) references post_customer(post_customer_id)
@@ -65,7 +65,7 @@ create table post_office_relationship(
 
 	last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	constraint pk_post_office_relationship_id primary key(post_office_relationship_id)
+	constraint pk_post_office_relationship_id primary key(post_office_relationship_id),
     constraint fk_post_office_relationship_post_office_id foreign key(post_office_id) references post_office(post_office_id),
     constraint fk_post_office_relationship_parent_post_office_id foreign key(parent_post_office_id) references post_office(post_office_id)
 );
@@ -81,7 +81,7 @@ create table post_office_fixed_trip(
 
 	last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_post_office_fixed_trip_id primary key(post_office_fixed_trip),
+    constraint pk_post_office_fixed_trip_id primary key(post_office_fixed_trip_id),
     constraint fk_post_office_fixed_trip_from_post_office_id foreign key(from_post_office_id) references post_office(post_office_id),
     constraint fk_post_office_fixed_trip_to_post_office_id foreign key(to_post_office_id) references post_office(post_office_id)
 );
@@ -89,7 +89,7 @@ create table post_office_fixed_trip(
 create table postman(
 	postman_id UUID,
 	postman_name VARCHAR(200),
-	post_office_id UUID,
+	post_office_id VARCHAR(60),
 
 	last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -136,7 +136,7 @@ create table post_ship_order_postman_last_mile_assignment(
 	last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    constraint pk_post_ship_order_postman_last_mile_assignment_id primary key(post_ship_order_fixed_trip_post_office_assignment_id),
+    constraint pk_post_ship_order_postman_last_mile_assignment_id primary key(post_ship_order_postman_last_mile_assignment_id),
     constraint fk_post_ship_order_postman_last_mile_assignment_post_ship_order_id foreign key(post_ship_order_id) references post_ship_order(post_ship_order_id),
     constraint fk_post_ship_order_postman_last_mile_assignment_postman_id foreign key(postman_id) references postman(postman_id),
     constraint fk_post_ship_order_postman_last_mile_assignment_staus_id foreign key(status_id) references status_item(status_id)
@@ -158,11 +158,11 @@ create table post_ship_order_fixed_trip_post_office_assignment(
 create table post_ship_order_itinerary(
 	post_ship_order_itinerary_id UUID not null default uuid_generate_v1(),
 	post_ship_order_id UUID not null,
-	post_office_id UUID not null,
+	post_office_id VARCHAR(60) not null,
 	arrival_date_time  TIMESTAMP,
 	delivery_fixed_trip_post_office_execute_id UUID,
 
-	departure_date_time TIMESTAMP
+	departure_date_time TIMESTAMP,
 	pickup_fixed_trip_post_office_execute_id UUID,
 
 	last_updated_stamp TIMESTAMP,
