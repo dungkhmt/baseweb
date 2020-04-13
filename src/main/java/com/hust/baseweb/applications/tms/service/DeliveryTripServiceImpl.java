@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
+import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.entity.status.DeliveryTripDetailStatus;
 import com.hust.baseweb.applications.tms.entity.status.DeliveryTripStatus;
@@ -49,7 +50,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     private PartyRepo partyRepo;
     private PartyDriverService partyDriverService;
     private PartyDriverRepo partyDriverRepo;
-
+    private PartyCustomerRepo partyCustomerRepo;
     private StatusItemRepo statusItemRepo;
     private DeliveryTripStatusRepo deliveryTripStatusRepo;
     private DeliveryTripDetailStatusRepo deliveryTripDetailStatusRepo;
@@ -251,7 +252,10 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                 //List<DeliveryTripLocationView> deliveryTripLocationViews = new ArrayList<>();
 
                 ShipmentItem shipmentItem = deliveryTripDetails.get(idx).getShipmentItem();
-                PartyCustomer partyCustomer = shipmentItem.getCustomer();
+                //PartyCustomer partyCustomer = shipmentItem.getCustomer();
+                PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(shipmentItem.getPartyCustomer().getPartyId());
+
+
 //                if (partyCustomer != null) {
 //                    log.info("getDeliveryTripAssignedToDriver dtd[" + idx + "], shipmentItemId = " + shipmentItem.getShipmentItemId() +
 //                            ", customer = " + partyCustomer.getCustomerName());
@@ -286,7 +290,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                 while (j < deliveryTripDetails.size() &&
                         deliveryTripDetails.get(j)
                                 .getShipmentItem()
-                                .getCustomer()
+                                //.getCustomer()
+                                .getPartyCustomer()
                                 .getPartyId()
                                 .equals(partyCustomerId)) {
                     shipmentItem = deliveryTripDetails.get(j).getShipmentItem();

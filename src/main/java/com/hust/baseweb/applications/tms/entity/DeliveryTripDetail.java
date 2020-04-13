@@ -44,9 +44,13 @@ public class DeliveryTripDetail {
         orderItemModel.setDeliveryTripDetailId(deliveryTripDetailId);
         orderItemModel.setDeliveryTripId(deliveryTrip.getDeliveryTripId());
         if (shipmentItem != null) {
-            if (shipmentItem.getCustomer() != null) {
-                orderItemModel.setCustomerCode(shipmentItem.getCustomer().getCustomerCode());
+            //if (shipmentItem.getCustomer() != null) {
+            //    orderItemModel.setCustomerCode(shipmentItem.getCustomer().getCustomerCode());
+            //}
+            if (shipmentItem.getPartyCustomer() != null) {
+                orderItemModel.setCustomerCode(shipmentItem.getPartyCustomer().getPartyCode());
             }
+
             if (shipmentItem.getShipToLocation() != null) {
                 orderItemModel.setAddress(shipmentItem.getShipToLocation().getAddress());
                 if (shipmentItem.getShipToLocation().getGeoPoint() != null) {

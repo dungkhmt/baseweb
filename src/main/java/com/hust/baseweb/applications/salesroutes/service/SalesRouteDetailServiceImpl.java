@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.salesroutes.service;
 
+import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
@@ -54,6 +55,8 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
             RetailOutletSalesmanVendor rosv = srcc.getRetailOutletSalesmanVendor();
             PartyRetailOutlet pc = rosv.getPartyRetailOutlet();// srcc.getPartyRetailOutlet();
             PartySalesman sm = rosv.getPartySalesman();
+            PartyDistributor partyDistributor = rosv.getPartyDistributor();
+
             if(!sm.getPartyId().equals(partySalesmanId)) continue;
 
             SalesRouteConfig src = srcc.getSalesRouteConfig();
@@ -69,6 +72,7 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
                     srd.setExecuteDate(date);
                     srd.setPartyRetailOutlet(pc);
                     srd.setPartySalesman(partySalesman);
+                    srd.setPartyDistributor(partyDistributor);
                     srd.setSalesRoutePlanningPeriod(SRPP);
                     srd.setSalesRouteConfigRetailOutlet(srcc);
                     srd = pSalesRouteDetailRepo.save(srd);

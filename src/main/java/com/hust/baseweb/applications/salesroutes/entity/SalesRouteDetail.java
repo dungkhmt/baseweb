@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.salesroutes.entity;
 
+import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import lombok.Getter;
@@ -23,6 +24,10 @@ public class SalesRouteDetail {
     @JoinColumn(name = "party_retail_outlet_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private PartyRetailOutlet partyRetailOutlet;
+
+    @JoinColumn(name = "party_distributor_id", referencedColumnName = "party_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private PartyDistributor partyDistributor;
 
     @Column(name = "sequence")
     private int sequence;
