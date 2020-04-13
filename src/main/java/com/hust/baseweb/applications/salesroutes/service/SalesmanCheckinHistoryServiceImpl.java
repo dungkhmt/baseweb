@@ -5,7 +5,9 @@ import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.order.service.PartyCustomerService;
 import com.hust.baseweb.applications.salesroutes.entity.SalesmanCheckinHistory;
 import com.hust.baseweb.applications.salesroutes.repo.SalesmanCheckinHistoryRepo;
+import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.repo.PartyRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,15 +25,16 @@ public class SalesmanCheckinHistoryServiceImpl implements
     private SalesmanCheckinHistoryRepo salesmanCheckinHistoryRepo;
     private PartyCustomerService partyCustomerService;
     private PartyCustomerRepo partyCustomerRepo;
+    private PartyRepo partyRepo;
 
     @Override
-    public SalesmanCheckinHistory save(UserLogin userLogin, UUID partyCustomerId, String checkinAction, String location) {
-        PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(partyCustomerId);
+    public SalesmanCheckinHistory save(UserLogin userLogin, UUID partyId, String checkinAction, String location) {
+        Party party = partyRepo.findByPartyId(partyId);
 
         SalesmanCheckinHistory sch = new SalesmanCheckinHistory();
         //sch.setUserLogin(userLogin);
         sch.setUserLoginId(userLogin.getUserLoginId());
-        sch.setPartyCustomer(partyCustomer);
+        sch.setParty(party);
         sch.setTimePoint(new Date());
         sch.setCheckinAction(checkinAction);
         sch.setLocation(location);

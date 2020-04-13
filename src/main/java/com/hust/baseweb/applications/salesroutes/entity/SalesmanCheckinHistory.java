@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.salesroutes.entity;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
+import com.hust.baseweb.entity.Party;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,9 +25,9 @@ public class SalesmanCheckinHistory {
     @Column(name = "user_login_id")
     private String userLoginId;
 
-    @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
+    @JoinColumn(name = "party_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private PartyCustomer partyCustomer;
+    private Party party;
 
     @Column(name = "check_in_action")
     private String checkinAction;// Y (check-in) or N (check-out)

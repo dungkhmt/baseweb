@@ -4,10 +4,8 @@ import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.CustomerDistributorSalesmanInputModel;
-import com.hust.baseweb.applications.customer.repo.DistributorRepo;
-import com.hust.baseweb.applications.customer.repo.RetailOutletRepo;
+import com.hust.baseweb.applications.customer.repo.RetailOutletPagingRepo;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
-import com.hust.baseweb.applications.logistics.model.ModelCreateProductInput;
 import com.hust.baseweb.applications.order.model.GetListSalesmanInputModel;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
@@ -22,7 +20,6 @@ import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor
 import com.hust.baseweb.applications.sales.repo.*;
 import com.hust.baseweb.applications.sales.service.CustomerSalesmanService;
 import com.hust.baseweb.applications.sales.service.PartySalesmanService;
-import com.hust.baseweb.applications.tms.repo.PartyDriverRepo;
 import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
@@ -61,7 +58,7 @@ public class SalesAPIController {
     private RetailOutletSalesmanVendorPagingRepo retailOutletSalesmanVendorPagingRepo;
     private RetailOutletSalesmanVendorRepo retailOutletSalesmanVendorRepo;
 
-    private RetailOutletRepo retailOutletRepo;
+    private RetailOutletPagingRepo retailOutletRepo;
 
     @PostMapping("/get-list-salesmans")
     public ResponseEntity getListSalesmans(Principal principal, @RequestBody GetListSalesmanInputModel input) {
@@ -187,15 +184,27 @@ public class SalesAPIController {
         return ResponseEntity.ok(input);
     }
 
-    @PostMapping("/add-retail-outlet-distributor-salesman/{partyId}")
-    public ResponseEntity<?> addRetailOutletDistributorSalesman(@PathVariable String partyId, @RequestBody RetailOutletSalesmanDistributorInputModel input){
-        log.info("addRetailOutletDistributorSalesman {}",partyId);
-        PartyRetailOutlet partyRetailOutlet = retailOutletRepo.findByPartyId(UUID.fromString(input.getPartyRetailOutletId()));
-        PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(UUID.fromString(input.getPartyDistributorId()));
-        PartySalesman partySalesman = partySalesmanService.findById(UUID.fromString(partyId));
+    //@PostMapping("/add-retail-outlet-distributor-salesman/{partyId}")
+    //public ResponseEntity<?> addRetailOutletDistributorSalesman(@PathVariable String partyId, @RequestBody RetailOutletSalesmanDistributorInputModel input){
+    @PostMapping("/add-retail-outlet-distributor-salesman")
+    public ResponseEntity<?> addRetailOutletDistributorSalesman(Principal principal, @RequestBody RetailOutletSalesmanDistributorInputModel input){
+        log.info("addRetailOutletDistributorSalesman salesmanId = ",input.getPartySalesmanId());
+        PartyRetailOutlet partyRetailOutlet = retailOutletRepo.findByPartyId(input.getPartyRetailOutletId());
+        if(partyRetailOutlet == null){
+            log.info("addRetailOutletDistributorSalesman, retail outlet " + input.getPartyRetailOutletId() + " cannot be FOUND");
+        }
+        PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(input.getPartyDistributorId());
+        if(partyDistributor == null){
+            log.info("addRetailOutletDistributorSalesman, distributor " + input.getPartyDistributorId() + " cannot be FOUND");
+        }
+        PartySalesman partySalesman = partySalesmanService.findById(input.getPartySalesmanId());
+        if(partySalesman == null){
+            log.info("addRetailOutletDistributorSalesman, salesman " + input.getPartySalesmanId() + " cannot be FOUND");
+        }
         List<RetailOutletSalesmanVendor> lst = retailOutletSalesmanVendorRepo.findAllByPartySalesmanAndPartyRetailOutletAndPartyDistributorAndThruDate(partySalesman,
                 partyRetailOutlet, partyDistributor, null);
         if(lst != null && lst.size() > 0){
+            log.info("addRetailOutletDistributorSalesman, lst.sz = " + lst.size() + " --> DUPLICATED ???");
             return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("DUPLICATE");
         }
         RetailOutletSalesmanVendor retailOutletSalesmanVendor = new RetailOutletSalesmanVendor();

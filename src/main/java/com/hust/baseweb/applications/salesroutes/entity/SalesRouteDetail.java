@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.salesroutes.entity;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
+import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,9 +20,9 @@ public class SalesRouteDetail {
     @ManyToOne(fetch = FetchType.EAGER)
     private PartySalesman partySalesman;
 
-    @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
+    @JoinColumn(name = "party_retail_outlet_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private PartyCustomer partyCustomer;
+    private PartyRetailOutlet partyRetailOutlet;
 
     @Column(name = "sequence")
     private int sequence;
@@ -30,9 +30,9 @@ public class SalesRouteDetail {
     @Column(name = "execute_date")
     private String executeDate;// format YYYY-MM-DD
 
-    @JoinColumn(name = "sales_route_config_customer_id", referencedColumnName = "sales_route_config_customer_id")
+    @JoinColumn(name = "sales_route_config_retail_outlet_id", referencedColumnName = "sales_route_config_retail_outlet_id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private SalesRouteConfigCustomer salesRouteConfigCustomer;
+    private SalesRouteConfigRetailOutlet salesRouteConfigRetailOutlet;
 
     @JoinColumn(name = "sales_route_planning_period_id", referencedColumnName = "sales_route_planning_period_id")
     @ManyToOne(fetch = FetchType.EAGER)

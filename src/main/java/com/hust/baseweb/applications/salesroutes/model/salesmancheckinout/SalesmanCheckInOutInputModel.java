@@ -8,7 +8,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class SalesmanCheckInOutInputModel {
-    private UUID partyCustomerId;
+    private UUID partyId;
     private double latitude;
     private double longitude;
 }

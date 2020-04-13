@@ -2,11 +2,13 @@ package com.hust.baseweb.applications.customer.controller;
 
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
+import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.*;
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.applications.customer.service.DistributorService;
+import com.hust.baseweb.applications.customer.service.RetailOutletService;
 import com.hust.baseweb.applications.logistics.model.InputModel;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
@@ -37,6 +39,7 @@ public class CustomerAPIController {
     private DistributorRepo distributorRepo;
     private DistributorService distributorService;
     private UserService userService;
+    private RetailOutletService retailOutletService;
 
     @GetMapping("/customers")
     public ResponseEntity<?> getCustomers(Pageable page) {
@@ -79,8 +82,11 @@ public class CustomerAPIController {
     }
     @PostMapping("/create-retail-outlet")
     public ResponseEntity<?> createRetailOutlet(Principal principal, @RequestBody CreateRetailOutletInputModel input) {
-        // TODO: by TuanLA
-        return ResponseEntity.ok().body("");
+        UserLogin u = userService.findById(principal.getName());
+        log.info("createRetailOutlet, userlogin = " + u.getUserLoginId());
+        PartyRetailOutlet retailOutlet = retailOutletService.save(input);
+        return ResponseEntity.ok().body(retailOutlet);
+
     }
 
     @PostMapping("/get-list-customer")
@@ -88,6 +94,12 @@ public class CustomerAPIController {
         log.info("getListCustomer");
         List<PartyCustomer> partyCustomerList = customerService.findAll();
         return ResponseEntity.ok().body(new GetListCustomerOutputModel(partyCustomerList));
+    }
+    @PostMapping("/get-list-retail-outlet")
+    public ResponseEntity<?> getListRetailOutlet(Principal principal, @RequestBody InputModel input){
+        log.info("getListCustomer");
+        List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findAll();
+        return ResponseEntity.ok().body(new GetListRetailOutletOutputModel(partyRetailOutletList));
     }
 
     @PostMapping("/get-list-distributor")
