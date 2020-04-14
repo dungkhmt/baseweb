@@ -88,8 +88,6 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         deliveryTrip.setTotalExecutionTime(totalExecutionTime);
         deliveryTrip.setTotalLocation(totalLocation);
 
-        deliveryTrip = deliveryTripRepo.save(deliveryTrip);
-
         StatusItem statusItem = statusItemRepo.findById("DELIVERY_TRIP_CREATED")
                 .orElseThrow(NoSuchElementException::new);
         DeliveryTripStatus deliveryTripStatus = new DeliveryTripStatus(null,
@@ -99,6 +97,9 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                 null);
         deliveryTripStatusRepo.save(deliveryTripStatus);
 
+        deliveryTrip.setStatusItem(statusItem);
+
+        deliveryTrip = deliveryTripRepo.save(deliveryTrip);
         return deliveryTrip;
     }
 
