@@ -17,6 +17,26 @@ where sm.party_id = p.party_id and u.party_id = sm.party_id;
 --lay danh sach san pham (bang product)
 select * from product;
 
+--lay danh sach don hang ban tu NPP den dai li ban le (party_retail_outlet), sap xep theo order_date
+select o.order_id, o.order_date, oi.order_item_seq_id, p.product_name, oi.quantity, o.grand_total, oi.unit_price, ro.retail_outlet_name, ol1.role_type_id,
+u.user_login_id, ol2.role_type_id
+from order_header as o, order_item as oi, product as p, order_role as ol1, order_role as ol2, party_retail_outlet as ro, party_salesman as sm,
+user_login as u
+where o.order_id = oi.order_id and oi.product_id = p.product_id and o.order_id = ol1.order_id and o.order_id = ol2.order_id
+and ol1.party_id = ro.party_id and ol2.party_id = sm.party_id and sm.party_id = u.party_id
+order by (o.order_date, o.order_id, oi.order_item_seq_id) desc;
+
+-- lay danh sach don hang ban tu cong ty den NPP (party_distributor)
+select o.order_id, o.order_date, oi.order_item_seq_id, p.product_name, oi.quantity, o.grand_total, oi.unit_price, d.distributor_name, ol1.role_type_id,
+u.user_login_id, ol2.role_type_id
+from order_header as o, order_item as oi, product as p, order_role as ol1, order_role as ol2, party_distributor as d, party_salesman as sm,
+user_login as u
+where o.order_id = oi.order_id and oi.product_id = p.product_id and o.order_id = ol1.order_id and o.order_id = ol2.order_id
+and ol1.party_id = d.party_id and ol2.party_id = sm.party_id and sm.party_id = u.party_id
+order by (o.order_date, o.order_id, oi.order_item_seq_id) desc;
+
+
+
 
 --lay danh sach cau hinh vieng tham
 select  srp.sales_route_planning_period_id, srp.description, srp.from_date, srp.to_date, u.party_id, u.user_login_id, ro.retail_outlet_name, d.distributor_name,

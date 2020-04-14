@@ -43,10 +43,16 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
         PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
 
         SalesRoutePlanningPeriod SRPP = pSalesRoutePlanningPeriodRepo.findBySalesRoutePlanningPeriodId(salesRoutePlanningPeriodId);
-
+        if(SRPP == null){
+            log.info("generateSalesRouteDetailOfSalesman, sales_route_planning_period is NULL");
+            return 0;
+        }
         //List<SalesRouteConfigRetailOutlet> SRCC = salesRouteConfigRetailOutletRepo.findByPartySalesman(partySalesman);
         List<SalesRouteConfigRetailOutlet> SRCC = salesRouteConfigRetailOutletRepo.findBySalesRoutePlanningPeriod(SRPP);
-
+        if(SRCC == null){
+            log.info("generateSalesRouteDetailOfSalesman, sales_route_config_retail_outlet is NULL");
+            return 0;
+        }
         log.info("generateSalesRouteDetailOfSalesman, period = " + SRPP.getFromDate().toString() + ", toDate = " + SRPP.getToDate() + ", SRCC.sz = " + SRCC.size());
         Date startDate = SRPP.getFromDate();
         Date endDate = SRPP.getToDate();

@@ -92,14 +92,17 @@ public class OrderServiceImpl implements OrderService {
         //		(salesman != null ? salesman.getUserLoginId(): "null") + ", facility = " +
         //(facility != null ? facility.getFacilityName() : "null"));
 
-        Date orderDate;
+        Date orderDate = new Date();
+        /*
         try {
             orderDate = Constant.DATE_FORMAT.parse(orderInput.getOrderDate());
         } catch (ParseException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             orderDate = new Date();// take current Date
-            log.info("save, input orderDate is null -> take current Date() = " + orderDate.toString());
+            log.info("save, exception input orderDate is null -> take current Date() = " + orderDate.toString());
         }
+        */
+
 
         PostalAddress shipToPostalAddress = postalAddressRepo.findByContactMechId(orderInput.getShipToAddressId());
 
@@ -140,8 +143,8 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setGrandTotal(totalGrand);
 
-        PartyCustomer partyCustomer = partyCustomerRepo.findById(orderInput.getToCustomerId())
-                .orElseThrow(NoSuchElementException::new);
+        //PartyCustomer partyCustomer = partyCustomerRepo.findById(orderInput.getToCustomerId())
+        //        .orElseThrow(NoSuchElementException::new);
 
         Party customer = partyRepo.findByPartyId(orderInput.getToCustomerId());
         Party salesman = userLoginSalesman.getParty();
