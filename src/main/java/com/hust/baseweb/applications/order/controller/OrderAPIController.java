@@ -47,10 +47,9 @@ public class OrderAPIController {
         String inputJson = gson.toJson(input);
         log.info("createOrder, input json = " + inputJson);
 
+        orderService.save(input);
 
-        OrderHeader order = orderService.save(input);
-
-        return ResponseEntity.ok().body(order);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/get-order-detail")

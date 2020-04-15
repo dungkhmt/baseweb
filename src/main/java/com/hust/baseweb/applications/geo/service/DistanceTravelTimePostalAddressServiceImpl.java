@@ -260,8 +260,8 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
 
                 //dis.setEnumID("OPEN_STREET_MAP");
 
-                int t_truck = (int) ((int) d.getDistance() / (speedTruck * 1000.0 / 3600)); // second
-                int t_motobike = (int) ((int) d.getDistance() / (speedMotorbike * 1000.0 / 3600));  // second
+                int t_truck = (int) (d.getDistance() / (speedTruck * 1000.0 / 3600)); // second
+                int t_motobike = (int) (d.getDistance() / (speedMotorbike * 1000.0 / 3600));  // second
 
                 dis.setTravelTimeMotorbike(t_motobike);
                 dis.setTravelTimeTruck(t_truck);

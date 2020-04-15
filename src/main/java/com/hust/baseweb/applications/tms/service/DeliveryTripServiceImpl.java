@@ -58,7 +58,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     @Override
     @Transactional
     public DeliveryTrip save(DeliveryTripModel.Create input,
-                             double totalDistance,
+                             double totalDistance, // meter
                              double totalWeight,
                              double totalPallet,
                              double totalExecutionTime,
@@ -84,10 +84,10 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
             deliveryTrip.setPartyDriver(partyDriver);
         }
 
-        deliveryTrip.setDistance(totalDistance);
+        deliveryTrip.setDistance(totalDistance); // meter
         deliveryTrip.setTotalWeight(totalWeight);
         deliveryTrip.setTotalPallet(totalPallet);
-        deliveryTrip.setTotalExecutionTime(totalExecutionTime);
+        deliveryTrip.setTotalExecutionTime(totalExecutionTime); // second
         deliveryTrip.setTotalLocation(totalLocation);
         deliveryTrip.setCompletedDeliveryTripDetailCount(completedDeliveryTripDetailCount);
         deliveryTrip.setDeliveryTripDetailCount(deliveryTripDetailCount);
