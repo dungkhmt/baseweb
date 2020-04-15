@@ -13,12 +13,14 @@ import java.util.UUID;
 
 @Service
 public interface DeliveryTripService {
-    DeliveryTrip save(com.hust.baseweb.applications.tms.model.DeliveryTripModel.Create input,
+    DeliveryTrip save(DeliveryTripModel.Create input,
                       double totalDistance,
                       double totalWeight,
                       double totalPallet,
                       double totalExecutionTime,
-                      int totalLocation);
+                      int totalLocation,
+                      int completedDeliveryTripDetailCount,
+                      int deliveryTripDetailCount);
 
     Page<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 

@@ -62,7 +62,9 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                              double totalWeight,
                              double totalPallet,
                              double totalExecutionTime,
-                             int totalLocation) {
+                             int totalLocation,
+                             int completedDeliveryTripDetailCount,
+                             int deliveryTripDetailCount) {
         DeliveryTrip deliveryTrip = new DeliveryTrip();
         deliveryTrip.setDeliveryPlan(deliveryPlanRepo.findByDeliveryPlanId(input.getDeliveryPlanId()));
         Date executeDate = null;
@@ -87,6 +89,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         deliveryTrip.setTotalPallet(totalPallet);
         deliveryTrip.setTotalExecutionTime(totalExecutionTime);
         deliveryTrip.setTotalLocation(totalLocation);
+        deliveryTrip.setCompletedDeliveryTripDetailCount(completedDeliveryTripDetailCount);
+        deliveryTrip.setDeliveryTripDetailCount(deliveryTripDetailCount);
 
         StatusItem statusItem = statusItemRepo.findById("DELIVERY_TRIP_CREATED")
                 .orElseThrow(NoSuchElementException::new);

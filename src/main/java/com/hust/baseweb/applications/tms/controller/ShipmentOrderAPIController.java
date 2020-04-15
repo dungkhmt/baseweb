@@ -170,7 +170,7 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> createDeliveryTrip(Principal principal,
                                                 @RequestBody com.hust.baseweb.applications.tms.model.DeliveryTripModel.Create input) {
         log.info("::createDeliveryTrip: " + input);
-        DeliveryTrip deliveryTrip = deliveryTripService.save(input, 0, 0, 0, 0, 0);
+        DeliveryTrip deliveryTrip = deliveryTripService.save(input, 0, 0, 0, 0, 0, 0, 0);
         return ResponseEntity.ok().body(deliveryTrip);
     }
 
