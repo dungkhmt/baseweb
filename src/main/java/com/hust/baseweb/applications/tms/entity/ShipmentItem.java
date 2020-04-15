@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.tms.entity;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.logistics.entity.Facility;
@@ -71,7 +70,7 @@ public class ShipmentItem {
         //if (customer != null) {
         //    customerCode = customer.getCustomerCode();
         //}
-        if(partyCustomer != null){
+        if (partyCustomer != null) {
             customerCode = partyCustomer.getPartyCode();
         }
         if (shipToLocation != null) {
@@ -93,7 +92,8 @@ public class ShipmentItem {
                 locationCode,
                 address,
                 lat + "",
-                lng + ""
+                lng + "",
+                orderItem.getProduct().getWeight() * quantity
         );
     }
 
