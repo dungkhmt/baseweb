@@ -59,6 +59,8 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                         distanceTravelTimePostalAddress -> distanceTravelTimePostalAddress));
         List<DistanceTravelTimePostalAddress> distanceTravelTimePostalAddresses = new ArrayList<>();
 
+        Enumeration haversine = enumerationRepo.findByEnumId("HAVERSINE");
+
         for (int i = 0; i < points.size(); i++) {
             PostalAddress p = points.get(i);
             for (int j = 0; j < points.size(); j++) {
@@ -82,7 +84,7 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                     d.setTravelTime(time);
                     d.setTravelTimeTruck(time);
                     d.setTravelTimeMotorbike(time);
-                    d.setEnumID("HAVERSINE");
+                    d.setEnumeration(haversine);
                     distances.add(d);
 
                     distanceTravelTimePostalAddresses.add(d);
