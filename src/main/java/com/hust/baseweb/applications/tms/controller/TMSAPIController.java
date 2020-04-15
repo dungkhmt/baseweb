@@ -154,10 +154,10 @@ public class TMSAPIController {
                 -1));
     }
 
-    @GetMapping("/solve/{deliveryPlanId}")
-    public ResponseEntity<?> solve(@PathVariable String deliveryPlanId) throws IOException {
+    @PostMapping("/solve")
+    public ResponseEntity<?> solve(SolverService.SolverOption solverOption) throws IOException {
         log.info("::solve()");
 
-        return ResponseEntity.ok(solverService.solve(deliveryPlanId));
+        return ResponseEntity.ok(solverService.solve(solverOption));
     }
 }
