@@ -29,6 +29,7 @@ public class DeliveryTripModel {
     private Double maxVehicleCapacity;
     private String userLoginId;
     private Double distance;
+    private String statusId;
 
     @Getter
     @Setter

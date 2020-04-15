@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -51,14 +51,14 @@ public class UserLogin {
             name = "user_login_security_group",
             joinColumns = @JoinColumn(name = "user_login_id", referencedColumnName = "user_login_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
-    private List<SecurityGroup> roles;
+    private Set<SecurityGroup> roles;
     private Date disabledDateTime;
 
     public UserLogin() {
     }
 
 
-    public UserLogin(String userLoginId, String password, List<SecurityGroup> roles, boolean enabled) {
+    public UserLogin(String userLoginId, String password, Set<SecurityGroup> roles, boolean enabled) {
         this.userLoginId = userLoginId;
         this.password = PASSWORD_ENCODER.encode(password);
         this.roles = roles;

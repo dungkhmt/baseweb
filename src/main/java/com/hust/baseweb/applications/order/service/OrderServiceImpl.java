@@ -13,10 +13,7 @@ import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.service.ProductPriceService;
 import com.hust.baseweb.applications.order.controller.OrderAPIController;
 import com.hust.baseweb.applications.order.entity.*;
-import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
-import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
-import com.hust.baseweb.applications.order.model.OrderDetailView;
-import com.hust.baseweb.applications.order.model.OrderItemDetailView;
+import com.hust.baseweb.applications.order.model.*;
 import com.hust.baseweb.applications.order.repo.*;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
@@ -70,17 +67,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderHeader save(ModelCreateOrderInput orderInput) {
+    //public OrderHeader save(ModelCreateOrderInput orderInput) {
+    public OrderHeader save(CreateOrderDistributor2RetailOutletInputModel orderInput) {
 
 
         OrderType orderType = orderTypeRepo.findByOrderTypeId("SALES_ORDER");
         SalesChannel salesChannel = salesChannelRepo.findBySalesChannelId(orderInput.getSalesChannelId());
         String salesmanId = orderInput.getSalesmanId();
         //System.out.println(module + "::save, salesmanId = " + salesmanId);
-        UserLogin salesman = userLoginRepo.findByUserLoginId(salesmanId);
+        UserLogin userLoginSalesman = userLoginRepo.findByUserLoginId(salesmanId);
+
         //Party salesman = partyRepo.
         log.info("save, salesmanId = " + salesmanId + ", partyId = "
-                + (salesman != null ? salesman.getParty().getPartyId() : "NULL")
+                + (userLoginSalesman != null ? userLoginSalesman.getParty().getPartyId() : "NULL")
                 + ", customerId = " + (orderInput.getToCustomerId() != null ? orderInput.getToCustomerId() : " NULL"));
 
         Facility facility = facilityRepo.findByFacilityId(orderInput.getFacilityId());
@@ -93,14 +92,17 @@ public class OrderServiceImpl implements OrderService {
         //		(salesman != null ? salesman.getUserLoginId(): "null") + ", facility = " +
         //(facility != null ? facility.getFacilityName() : "null"));
 
-        Date orderDate;
+        Date orderDate = new Date();
+        /*
         try {
             orderDate = Constant.DATE_FORMAT.parse(orderInput.getOrderDate());
         } catch (ParseException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             orderDate = new Date();// take current Date
-            log.info("save, input orderDate is null -> take current Date() = " + orderDate.toString());
+            log.info("save, exception input orderDate is null -> take current Date() = " + orderDate.toString());
         }
+        */
+
 
         PostalAddress shipToPostalAddress = postalAddressRepo.findByContactMechId(orderInput.getShipToAddressId());
 
@@ -141,10 +143,17 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setGrandTotal(totalGrand);
 
-        PartyCustomer partyCustomer = partyCustomerRepo.findById(orderInput.getToCustomerId())
-                .orElseThrow(NoSuchElementException::new);
+        //PartyCustomer partyCustomer = partyCustomerRepo.findById(orderInput.getToCustomerId())
+        //        .orElseThrow(NoSuchElementException::new);
 
-        order.setPartyCustomer(partyCustomer);
+        Party customer = partyRepo.findByPartyId(orderInput.getToCustomerId());
+        Party salesman = userLoginSalesman.getParty();
+        Party distributor = partyRepo.findByPartyId(orderInput.getFromVendorId());
+        //order.setPartyCustomer(partyCustomer);
+        order.setPartyCustomer(customer);
+        order.setPartyVendor(distributor);
+        order.setPartySalesman(salesman);
+
         order = orderHeaderRepo.save(order);
 
         List<OrderItem> orderItems = new ArrayList<>();
@@ -196,7 +205,7 @@ public class OrderServiceImpl implements OrderService {
         orderRole = new OrderRole();
         orderRole.setOrderId(order.getOrderId());
         if (salesman != null) {
-            orderRole.setPartyId(salesman.getParty().getPartyId());
+            orderRole.setPartyId(salesman.getPartyId());
         }
         orderRole.setRoleTypeId("SALES_EXECUTIVE");// salesman who sales the order (revenue of the order is accounted for this salesman)
         orderRoleRepo.save(orderRole);
@@ -218,10 +227,12 @@ public class OrderServiceImpl implements OrderService {
         OrderAPIController.revenueOrderCache.addOrderRevenue(dateYYYYMMDD, totalGrand);
 
 
+
         LocalDate orderLocalDate = orderDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         revenueService.updateRevenue(
                 orderItems,
-                orderItem -> partyCustomer,
+                //orderItem -> partyCustomer,
+                orderItem -> customer,
                 orderItem -> orderLocalDate
         );
 
@@ -237,7 +248,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @NotNull
-    private Map<String, Product> buildProductMap(ModelCreateOrderInput orderInput) {
+    //private Map<String, Product> buildProductMap(ModelCreateOrderInput orderInput) {
+    private Map<String, Product> buildProductMap(CreateOrderDistributor2RetailOutletInputModel orderInput) {
         return productRepo.findAllByProductIdIn(Arrays.stream(orderInput.getOrderItems())
                 .map(ModelCreateOrderInputOrderItem::getProductId).distinct()
                 .collect(Collectors.toList()))

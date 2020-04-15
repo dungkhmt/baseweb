@@ -73,7 +73,8 @@ public class DeliveryTrip {
                 externalVehicleType == null ? null : externalVehicleType.getVehicleTypeId(),
                 vehicle == null ? null : vehicle.getCapacity(),
                 partyDriver == null ? null : partyDriver.getParty().getUserLogin().getUserLoginId(),
-                distance
+                distance,
+                statusItem.getStatusId()
         );
     }
 }

@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.salesroutes.service;
 
+import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
@@ -42,10 +43,16 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
         PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
 
         SalesRoutePlanningPeriod SRPP = pSalesRoutePlanningPeriodRepo.findBySalesRoutePlanningPeriodId(salesRoutePlanningPeriodId);
-
+        if(SRPP == null){
+            log.info("generateSalesRouteDetailOfSalesman, sales_route_planning_period is NULL");
+            return 0;
+        }
         //List<SalesRouteConfigRetailOutlet> SRCC = salesRouteConfigRetailOutletRepo.findByPartySalesman(partySalesman);
         List<SalesRouteConfigRetailOutlet> SRCC = salesRouteConfigRetailOutletRepo.findBySalesRoutePlanningPeriod(SRPP);
-
+        if(SRCC == null){
+            log.info("generateSalesRouteDetailOfSalesman, sales_route_config_retail_outlet is NULL");
+            return 0;
+        }
         log.info("generateSalesRouteDetailOfSalesman, period = " + SRPP.getFromDate().toString() + ", toDate = " + SRPP.getToDate() + ", SRCC.sz = " + SRCC.size());
         Date startDate = SRPP.getFromDate();
         Date endDate = SRPP.getToDate();
@@ -54,6 +61,8 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
             RetailOutletSalesmanVendor rosv = srcc.getRetailOutletSalesmanVendor();
             PartyRetailOutlet pc = rosv.getPartyRetailOutlet();// srcc.getPartyRetailOutlet();
             PartySalesman sm = rosv.getPartySalesman();
+            PartyDistributor partyDistributor = rosv.getPartyDistributor();
+
             if(!sm.getPartyId().equals(partySalesmanId)) continue;
 
             SalesRouteConfig src = srcc.getSalesRouteConfig();
@@ -69,6 +78,7 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
                     srd.setExecuteDate(date);
                     srd.setPartyRetailOutlet(pc);
                     srd.setPartySalesman(partySalesman);
+                    srd.setPartyDistributor(partyDistributor);
                     srd.setSalesRoutePlanningPeriod(SRPP);
                     srd.setSalesRouteConfigRetailOutlet(srcc);
                     srd = pSalesRouteDetailRepo.save(srd);

@@ -215,7 +215,10 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         shipmentItem.setStatusItem(statusItem);
         shipmentItem.setQuantity(quantity);
         shipmentItem.setOrderItem(orderItem);
-        shipmentItem.setCustomer(orderHeader.getPartyCustomer());
+
+        //shipmentItem.setCustomer(orderHeader.getPartyCustomer());
+        shipmentItem.setPartyCustomer(orderHeader.getPartyCustomer());
+
         shipmentItem.setShipToLocation(orderHeader.getShipToPostalAddress());
         return shipmentItem;
     }

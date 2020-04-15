@@ -98,7 +98,7 @@ create table shipment_item
     constraint fk_shipment_item_shipment_id foreign key (shipment_id) references shipment (shipment_id),
     constraint fk_shipment_item_ship_to_location_id foreign key (ship_to_location_id) references postal_address (contact_mech_id),
     constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id),
-    constraint fk_shipment_item_party_customer_id foreign key (party_customer_id) references party_customer (party_id),
+    constraint fk_shipment_item_party_customer_id foreign key (party_customer_id) references party(party_id),
     constraint fk_shipment_item_order_id foreign key (order_id) references order_header (order_id),
     CONSTRAINT fk_facility_id FOREIGN KEY (facility_id) REFERENCES facility (facility_id),
     constraint fk_status_item foreign key (status_id) references status_item (status_id)

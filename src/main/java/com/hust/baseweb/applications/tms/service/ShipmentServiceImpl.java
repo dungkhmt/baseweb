@@ -144,8 +144,10 @@ public class ShipmentServiceImpl implements ShipmentService {
             } else {
                 address = addresses.get(0);
             }
+            Party partyCustomer = partyRepo.findByPartyId(customer.getPartyId());
             ShipmentItem shipmentItem = new ShipmentItem();
-            shipmentItem.setCustomer(customer);
+            //shipmentItem.setCustomer(customer);
+            shipmentItem.setPartyCustomer(partyCustomer);
             shipmentItem.setShipToLocation(address);
             shipmentItem.setPallet(shipmentItemInputModel.getPallet());
 //            shipmentItem.setProductId(product.getProductId());
@@ -233,8 +235,11 @@ public class ShipmentServiceImpl implements ShipmentService {
             shipmentItems.add(shipmentItem);
         }
 
-        Map<OrderItem, PartyCustomer> orderItemToCustomerMap = shipmentItems.stream()
-                .collect(Collectors.toMap(ShipmentItem::getOrderItem, ShipmentItem::getCustomer));
+        //Map<OrderItem, PartyCustomer> orderItemToCustomerMap = shipmentItems.stream()
+        //        .collect(Collectors.toMap(ShipmentItem::getOrderItem, ShipmentItem::getCustomer));
+        Map<OrderItem, Party> orderItemToCustomerMap = shipmentItems.stream()
+                .collect(Collectors.toMap(ShipmentItem::getOrderItem, ShipmentItem::getPartyCustomer));
+
 
         StatusItem statusItem = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
                 .orElseThrow(NoSuchElementException::new);
@@ -284,9 +289,12 @@ public class ShipmentServiceImpl implements ShipmentService {
         shipmentItem.setFacility(facility);
 
         PartyCustomer partyCustomer = getOrCreatePartyCustomer(partyCustomerMap, shipmentItemModel, postalAddress);
-        shipmentItem.setCustomer(partyCustomer);
+        //shipmentItem.setCustomer(partyCustomer);
 
-        orderHeader.setPartyCustomer(partyCustomer);
+        Party party = partyRepo.findByPartyId(partyCustomer.getPartyId());
+        shipmentItem.setPartyCustomer(party);
+        //orderHeader.setPartyCustomer(partyCustomer);
+        orderHeader.setPartyCustomer(party);
 
         return shipmentItem;
     }

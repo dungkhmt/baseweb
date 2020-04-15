@@ -3,6 +3,8 @@ package com.hust.baseweb.applications.order.entity;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.logistics.model.InventoryModel;
+import com.hust.baseweb.applications.sales.entity.PartySalesman;
+import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.utils.Constant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,9 +56,20 @@ public class OrderHeader {
 
     @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private PartyCustomer partyCustomer;
+    //private PartyCustomer partyCustomer;
+    private Party partyCustomer;
 
-    private UUID vendorId;
+    @JoinColumn(name = "vendor_id", referencedColumnName = "party_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Party partyVendor;
+
+    @JoinColumn(name = "party_salesman_id", referencedColumnName = "party_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Party partySalesman;
+
+
+    //private UUID vendorId;
+
     private String saleManId;
 
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")

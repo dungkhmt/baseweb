@@ -26,6 +26,7 @@ public class ShipmentItemModel {
     private String address;
     private String lat;
     private String lng;
+    private Double weight;
 
     @Getter
     @Setter

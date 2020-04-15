@@ -11,6 +11,7 @@ import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.order.repo.mongodb.CustomerRevenueRepo;
 import com.hust.baseweb.applications.order.repo.mongodb.ProductRevenueRepo;
 import com.hust.baseweb.applications.order.repo.mongodb.TotalRevenueRepo;
+import com.hust.baseweb.entity.Party;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class RevenueServiceImpl implements RevenueService {
     private CustomerRevenueRepo customerRevenueRepo;
     private TotalRevenueRepo totalRevenueRepo;
     private ProductPriceRepo productPriceRepo;
-
+    /*
     public void updateRevenue(List<OrderItem> orderItems,
                               Function<OrderItem, PartyCustomer> orderItemToCustomerFunction,
                               Function<OrderItem, LocalDate> orderItemToDateFunction) {
@@ -74,10 +75,67 @@ public class RevenueServiceImpl implements RevenueService {
         customerRevenueRepo.saveAll(customerRevenueMap.values());
         productRevenueRepo.saveAll(productRevenueMap.values());
     }
+    */
+    public void updateRevenue(List<OrderItem> orderItems,
+                              Function<OrderItem, Party> orderItemToCustomerFunction,
+                              Function<OrderItem, LocalDate> orderItemToDateFunction) {
 
+        Map<LocalDate, TotalRevenue> totalRevenueMap = getTotalRevenueMap(orderItems, orderItemToDateFunction);
+
+        Map<ProductRevenue.Id, ProductRevenue> productRevenueMap = getProductRevenueMap(orderItems,
+                orderItemToDateFunction);
+
+        Map<CustomerRevenue.Id, CustomerRevenue> customerRevenueMap = getCustomerRevenueMap(orderItems,
+                orderItemToCustomerFunction,
+                orderItemToDateFunction);
+
+        List<Product> products = orderItems.stream().map(OrderItem::getProduct).distinct().collect(Collectors.toList());
+
+        Map<String, ProductPrice> productPriceMap = getProductPriceMap(products);
+
+        for (OrderItem orderItem : orderItems) {
+            int quantity = orderItem.getQuantity();
+            Product product = orderItem.getProduct();
+            //PartyCustomer customer = orderItemToCustomerFunction.apply(orderItem);
+            Party customer = orderItemToCustomerFunction.apply(orderItem);
+            ProductPrice productPrice = productPriceMap.get(product.getProductId());
+            double revenue = quantity * productPrice.getPrice();
+            LocalDate date = orderItemToDateFunction.apply(orderItem);
+
+            totalRevenueMap.get(date).increase(revenue);
+
+            customerRevenueMap.computeIfAbsent(new CustomerRevenue.Id(customer.getPartyId(), date),
+                    id -> new CustomerRevenue(id, 0.0))
+                    .increase(revenue);
+
+            productRevenueMap.computeIfAbsent(new ProductRevenue.Id(product.getProductId(), date),
+                    id -> new ProductRevenue(id, 0.0))
+                    .increase(revenue);
+        }
+
+        totalRevenueRepo.saveAll(totalRevenueMap.values());
+        customerRevenueRepo.saveAll(customerRevenueMap.values());
+        productRevenueRepo.saveAll(productRevenueMap.values());
+    }
+
+    /*
     @NotNull
     private Map<CustomerRevenue.Id, CustomerRevenue> getCustomerRevenueMap(List<OrderItem> orderItems,
                                                                            Function<OrderItem, PartyCustomer> orderItemToCustomerFunction,
+                                                                           Function<OrderItem, LocalDate> orderItemToDateFunction) {
+        return customerRevenueRepo.findAllByIdIn(
+                orderItems.stream()
+                        .map(orderItem -> new CustomerRevenue.Id(orderItemToCustomerFunction.apply(
+                                orderItem).getPartyId(), orderItemToDateFunction.apply(orderItem)))
+                        .distinct()
+                        .collect(Collectors.toList()))
+                .stream()
+                .collect(Collectors.toMap(CustomerRevenue::getId, customerRevenue -> customerRevenue));
+    }
+    */
+    @NotNull
+    private Map<CustomerRevenue.Id, CustomerRevenue> getCustomerRevenueMap(List<OrderItem> orderItems,
+                                                                           Function<OrderItem, Party> orderItemToCustomerFunction,
                                                                            Function<OrderItem, LocalDate> orderItemToDateFunction) {
         return customerRevenueRepo.findAllByIdIn(
                 orderItems.stream()

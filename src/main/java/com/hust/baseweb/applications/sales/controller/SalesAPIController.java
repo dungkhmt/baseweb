@@ -4,7 +4,9 @@ import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.CustomerDistributorSalesmanInputModel;
+import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.repo.RetailOutletPagingRepo;
+import com.hust.baseweb.applications.customer.service.RetailOutletService;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.order.model.GetListSalesmanInputModel;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
@@ -57,7 +59,8 @@ public class SalesAPIController {
     private CustomerSalesmanVendorRepo customerSalesmanVendorRepo;
     private RetailOutletSalesmanVendorPagingRepo retailOutletSalesmanVendorPagingRepo;
     private RetailOutletSalesmanVendorRepo retailOutletSalesmanVendorRepo;
-
+    private RetailOutletService retailOutletService;
+    private DistributorRepo distributorRepo;
     private RetailOutletPagingRepo retailOutletRepo;
 
     @PostMapping("/get-list-salesmans")
@@ -86,7 +89,7 @@ public class SalesAPIController {
         return ResponseEntity.ok().body(lst);
     }
 
-    @GetMapping("get-customers-of-userlogin")
+    @GetMapping("/get-customers-of-userlogin")
     public ResponseEntity<?> getCustomersOfUserLogin(Principal principal) {
         UserLogin userLogin = userService.findById(principal.getName());
 
@@ -95,6 +98,26 @@ public class SalesAPIController {
         List<PartyCustomer> lst = customerSalesmanService.getCustomersOfSalesman(userLogin.getParty().getPartyId());
 
         return ResponseEntity.ok().body(lst);
+    }
+
+    @GetMapping("/get-retail-outlets-of-userlogin-salesman")
+    public ResponseEntity<?> getRetailOutletsOfUserLoginSalesman(Principal principal) {
+        UserLogin userLogin = userService.findById(principal.getName());
+
+        log.info("getRetailOutletsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId());
+
+        //List<PartyCustomer> lst = customerSalesmanService.getCustomersOfSalesman(userLogin.getParty().getPartyId());
+        List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findAll();
+        return ResponseEntity.ok().body(partyRetailOutletList);
+    }
+    @GetMapping("/get-distributors-of-userlogin-salesman")
+    public ResponseEntity<?> getDistributorsOfUserLoginSalesman(Principal principal) {
+        UserLogin userLogin = userService.findById(principal.getName());
+
+        log.info("getDistributorsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId());
+
+        List<PartyDistributor> partyDistributorList = distributorRepo.findAll();
+        return ResponseEntity.ok().body(partyDistributorList);
     }
 
 

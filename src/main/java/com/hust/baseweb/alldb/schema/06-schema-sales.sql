@@ -131,7 +131,7 @@ create table sales_route_detail
     sales_route_detail_id          UUID NOT NULL,
     party_salesman_id              UUID NOT NULL,
     party_retail_outlet_id              UUID NOT NULL,
-    party_distributor              UUID not null,
+    party_distributor_id              UUID not null,
     sequence                       Integer,
     execute_date                   VARCHAR(60),
     sales_route_config_retail_outlet_id UUID NOT NULL,
@@ -142,6 +142,7 @@ create table sales_route_detail
     constraint fk_sales_route_detail_sales_route_config_retail_outlet foreign key (sales_route_config_retail_outlet_id)
                 references sales_route_config_retail_outlet (sales_route_config_retail_outlet_id),
     constraint fk_sales_route_detail_party_retail_outlet foreign key (party_retail_outlet_id) references party_retail_outlet (party_id),
+    constraint fk_sales_route_detail_party_distributor_id foreign key (party_distributor_id) references party_distributor (party_id),
     constraint fk_sales_route_detail_salesman_id foreign key (party_salesman_id) references party_salesman (party_id),
     constraint fk_sales_route_detail_sales_route_planning_period_id foreign key (sales_route_planning_period_id)
                 references sales_route_planning_period (sales_route_planning_period_id)
@@ -200,7 +201,10 @@ CREATE TABLE order_header
     exported             boolean,
     party_customer_id    uuid,
     vendor_id            uuid,
+    party_salesman_id  uuid,
+
     sale_man_id          varchar(60),
+
     last_updated_stamp   TIMESTAMP,
     created_stamp        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_order PRIMARY KEY (order_id),
@@ -210,7 +214,9 @@ CREATE TABLE order_header
     CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES facility (facility_id),
     CONSTRAINT fk_currency_uom_id FOREIGN KEY (currency_uom_id) REFERENCES uom (uom_id),
     CONSTRAINT fk_sales_channel_id FOREIGN KEY (sales_channel_id) REFERENCES sales_channel (sales_channel_id),
-    constraint fk_party_customer_id foreign key (party_customer_id) references party_customer (party_id)
+    constraint fk_order_header_party_salesman_id foreign key(party_salesman_id) references party(party_id),
+    constraint fk_order_header_vendor_id foreign key(vendor_id) references party(party_id),
+    constraint fk_party_customer_id foreign key (party_customer_id) references party (party_id)
 );
 CREATE TABLE order_item_type
 (

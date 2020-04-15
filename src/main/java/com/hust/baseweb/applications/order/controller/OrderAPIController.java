@@ -40,7 +40,8 @@ public class OrderAPIController {
     private OrderHeaderPageRepo orderHeaderPageRepo;
 
     @PostMapping("/create-order-distributor-to-retailoutlet")
-    public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
+    //public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
+    public ResponseEntity createOrder(Principal principal, @RequestBody CreateOrderDistributor2RetailOutletInputModel input) {
         //TODO
         Gson gson = new Gson();
         String inputJson = gson.toJson(input);
