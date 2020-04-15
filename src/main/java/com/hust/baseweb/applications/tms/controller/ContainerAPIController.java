@@ -7,7 +7,6 @@ import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.model.*;
 import com.hust.baseweb.applications.tms.repo.*;
-import jdk.jfr.internal.Repository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

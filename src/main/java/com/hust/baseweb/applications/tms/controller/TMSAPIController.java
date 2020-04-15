@@ -155,7 +155,7 @@ public class TMSAPIController {
     }
 
     @PostMapping("/solve")
-    public ResponseEntity<?> solve(SolverService.SolverOption solverOption) throws IOException {
+    public ResponseEntity<?> solve(@RequestBody SolverService.SolverOption solverOption) throws IOException {
         log.info("::solve()");
 
         return ResponseEntity.ok(solverService.solve(solverOption));
