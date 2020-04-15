@@ -1,4 +1,4 @@
-package com.hust.baseweb.applications.tmscontainer.entity;
+package com.hust.baseweb.applications.tms.entity;
 
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import lombok.AllArgsConstructor;
@@ -14,13 +14,13 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContPort {
+public class ContDepotContainer {
     @Id
-    @Column(name = "port_id")
-    private String portId;
+    @Column(name = "depot_container_id")
+    private String depotContainerId;
 
-    @Column(name = "port_name")
-    private String portName;
+    @Column(name = "depot_container_name")
+    private String depotContainerName;
 
     @JoinColumn(name = "contact_mech_id", referencedColumnName = "contact_mech_id")
     @ManyToOne
