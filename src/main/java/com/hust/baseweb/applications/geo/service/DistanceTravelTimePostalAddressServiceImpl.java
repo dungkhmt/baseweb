@@ -23,7 +23,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 //import java.util.Enumeration;
 
@@ -41,11 +43,27 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
         List<DistanceTravelTimePostalAddress> distances = new ArrayList<DistanceTravelTimePostalAddress>();
         log.info("computeMissingDistance, points.sz = " + points.size());
         int cnt = 0;//points.size() * points.size();
+
+        List<UUID> postalAddressIds = points.stream()
+                .map(PostalAddress::getContactMechId)
+                .distinct()
+                .collect(Collectors.toList());
+
+        Map<DistanceTravelTimePostalAddressEmbeddableId, DistanceTravelTimePostalAddress> distanceTravelTimePostalAddressMap
+                = distanceTraveltimePostalAddressRepo
+                .findAllByDistanceTravelTimePostalAddressEmbeddableId_FromContactMechIdInAndDistanceTravelTimePostalAddressEmbeddableId_ToContactMechIdIn(
+                        postalAddressIds,
+                        postalAddressIds)
+                .stream()
+                .collect(Collectors.toMap(DistanceTravelTimePostalAddress::getDistanceTravelTimePostalAddressEmbeddableId,
+                        distanceTravelTimePostalAddress -> distanceTravelTimePostalAddress));
+        List<DistanceTravelTimePostalAddress> distanceTravelTimePostalAddresses = new ArrayList<>();
+
         for (int i = 0; i < points.size(); i++) {
             PostalAddress p = points.get(i);
             for (int j = 0; j < points.size(); j++) {
                 PostalAddress q = points.get(j);
-                DistanceTravelTimePostalAddress d = distanceTraveltimePostalAddressRepo.findByDistanceTravelTimePostalAddressEmbeddableId(
+                DistanceTravelTimePostalAddress d = distanceTravelTimePostalAddressMap.get(
                         new DistanceTravelTimePostalAddressEmbeddableId(p.getContactMechId(), q.getContactMechId())
                 );
                 if (d == null) {
@@ -54,7 +72,7 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                     double lngFrom = p.getGeoPoint().getLongitude();
                     double latTo = q.getGeoPoint().getLatitude();
                     double lngTo = q.getGeoPoint().getLongitude();
-                    int distance = LatLngUtils.distance(latFrom, lngFrom, latTo, lngTo) * 1000; // meter
+                    int distance = LatLngUtils.distance(latFrom, lngFrom, latTo, lngTo); // meter
                     int time = distance * 3600 / 30_000; // second (30km/h)
                     d = new DistanceTravelTimePostalAddress();
                     DistanceTravelTimePostalAddressEmbeddableId id = new DistanceTravelTimePostalAddressEmbeddableId(p.getContactMechId(),
@@ -67,7 +85,8 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                     d.setEnumID("HAVERSINE");
                     distances.add(d);
 
-                    distanceTraveltimePostalAddressRepo.save(d);
+                    distanceTravelTimePostalAddresses.add(d);
+//                    distanceTraveltimePostalAddressRepo.save(d);
 
                 } else {
 
@@ -83,6 +102,9 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
             }
 //            log.info("computeMissingDistance, finished " + i + "/" + points.size());
         }
+
+        distanceTraveltimePostalAddressRepo.saveAll(distanceTravelTimePostalAddresses);
+
         log.info("computeMissingDistance, cnt = " + cnt);
         //List<DistanceTraveltimePostalAddress> distances = distanceTraveltimePostalAddressRepo.findAll();
         //distanceTraveltimePostalAddressRepo.saveAll(distances);
@@ -98,13 +120,28 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
         List<DistanceTravelTimePostalAddress> distances = new ArrayList<DistanceTravelTimePostalAddress>();
         List<DistanceTravelTimeElement> listDistances = new ArrayList<>();
 
+        List<UUID> postalAddressIds = points.stream()
+                .map(PostalAddress::getContactMechId)
+                .distinct()
+                .collect(Collectors.toList());
+
+        Map<DistanceTravelTimePostalAddressEmbeddableId, DistanceTravelTimePostalAddress> distanceTravelTimePostalAddressMap
+                = distanceTraveltimePostalAddressRepo
+                .findAllByDistanceTravelTimePostalAddressEmbeddableId_FromContactMechIdInAndDistanceTravelTimePostalAddressEmbeddableId_ToContactMechIdIn(
+                        postalAddressIds,
+                        postalAddressIds)
+                .stream()
+                .collect(Collectors.toMap(DistanceTravelTimePostalAddress::getDistanceTravelTimePostalAddressEmbeddableId,
+                        distanceTravelTimePostalAddress -> distanceTravelTimePostalAddress));
+        List<DistanceTravelTimePostalAddress> distanceTravelTimePostalAddresses = new ArrayList<>();
+
         log.info("computeMissingDistanceOpenStreetMap, points.sz = " + points.size());
         int cnt = 0;//points.size() * points.size();
         for (int i = 0; i < points.size(); i++) {
             PostalAddress p = points.get(i);
             for (int j = 0; j < points.size(); j++) {
                 PostalAddress q = points.get(j);
-                DistanceTravelTimePostalAddress d = distanceTraveltimePostalAddressRepo.findByDistanceTravelTimePostalAddressEmbeddableId(
+                DistanceTravelTimePostalAddress d = distanceTravelTimePostalAddressMap.get(
                         new DistanceTravelTimePostalAddressEmbeddableId(p.getContactMechId(), q.getContactMechId())
                 );
                 if (d == null) {
@@ -209,25 +246,27 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
             QueryDistanceTravelTimeInputModel res = gson.fromJson(response.toString(),
                     QueryDistanceTravelTimeInputModel.class);
 
+            Enumeration enumeration = enumerationRepo.findByEnumId("OPEN_STREET_MAP");
+
             for (DistanceTravelTimeElement d : res.getElements()) {
                 DistanceTravelTimePostalAddressEmbeddableId id = new DistanceTravelTimePostalAddressEmbeddableId(
                         UUID.fromString(d.getFromId()),
                         UUID.fromString(d.getToId()));
                 DistanceTravelTimePostalAddress dis = new DistanceTravelTimePostalAddress();
                 dis.setDistanceTravelTimePostalAddressEmbeddableId(id);
-                dis.setDistance((int) d.getDistance());
-                Enumeration enumeration = enumerationRepo.findByEnumId("OPEN_STREET_MAP");
+                dis.setDistance((int) d.getDistance()); // meter
 
                 dis.setEnumeration(enumeration);
 
                 //dis.setEnumID("OPEN_STREET_MAP");
 
-                int t_truck = (int) ((int) d.getDistance() / (speedTruck * 1000.0 / 3600));
-                int t_motobike = (int) ((int) d.getDistance() / (speedMotorbike * 1000.0 / 3600));
+                int t_truck = (int) ((int) d.getDistance() / (speedTruck * 1000.0 / 3600)); // second
+                int t_motobike = (int) ((int) d.getDistance() / (speedMotorbike * 1000.0 / 3600));  // second
 
                 dis.setTravelTimeMotorbike(t_motobike);
                 dis.setTravelTimeTruck(t_truck);
-                dis.setTravelTime(0);
+
+                dis.setTravelTime(t_truck);
 
                 distances.add(dis);
 

@@ -19,16 +19,16 @@ public class DistanceTravelTimePostalAddress {
     private DistanceTravelTimePostalAddressEmbeddableId distanceTravelTimePostalAddressEmbeddableId;
 
     @Column(name = "distance")
-    private Integer distance;
+    private Integer distance;   // meter
 
     @Column(name = "travel_time")
-    private Integer travelTime;
+    private Integer travelTime; // second
 
     @Column(name = "travel_time_truck")
-    private Integer travelTimeTruck;
+    private Integer travelTimeTruck; // second
 
     @Column(name = "travel_time_motorbike")
-    private Integer travelTimeMotorbike;
+    private Integer travelTimeMotorbike; // second
 
     @JoinColumn(name = "source_enum_id", referencedColumnName = "enum_id")
     @ManyToOne
@@ -48,8 +48,6 @@ public class DistanceTravelTimePostalAddress {
 
     @Transient
     private String enumID;
-
-
 
 
 }
