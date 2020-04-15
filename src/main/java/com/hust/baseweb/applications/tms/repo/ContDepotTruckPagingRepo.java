@@ -1,4 +1,7 @@
-package com.hust.baseweb.applications.tms.entity;
+package com.hust.baseweb.applications.tms.repo;
 
-public class ContDepotTruckPagingRepo {
+import com.hust.baseweb.applications.tms.entity.ContDepotTruck;
+import org.springframework.data.repository.PagingAndSortingRepository;
+
+public interface ContDepotTruckPagingRepo extends PagingAndSortingRepository<ContDepotTruck,String> {
 }

@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.tms.entity;
 
-import com.hust.baseweb.applications.tms.entity.container.ContContainerType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +27,12 @@ public class ContContainer {
 
     @Column(name = "created_stamp")
     private Date createdStamp;
+
+    @Column(name = "container_name")
+    private String containerName;
+
+    @Transient
+    private String containerType;
 
 
 

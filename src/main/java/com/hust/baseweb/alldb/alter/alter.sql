@@ -1,6 +1,1 @@
-CREATE DATABASE "baseweb"
-    WITH OWNER "postgres"
-    ENCODING 'UTF8'
-    LC_COLLATE = 'en_US.UTF-8'
-    LC_CTYPE = 'en_US.UTF-8'
-    TEMPLATE template0;
+alter table cont_container add column container_name varchar(60);

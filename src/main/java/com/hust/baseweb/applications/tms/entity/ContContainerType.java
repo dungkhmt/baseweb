@@ -1,4 +1,4 @@
-package com.hust.baseweb.applications.tms.entity.container;
+package com.hust.baseweb.applications.tms.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

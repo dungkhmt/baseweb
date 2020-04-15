@@ -159,7 +159,7 @@ create table cont_request_between_warehouse(
     late_date_time_expected_from_facility TIMESTAMP,
     has_trailer VARCHAR(1),
 
-    to_facility VARCHAR(60),
+    to_facility_id VARCHAR(60),
     early_date_time_expected_to_facility TIMESTAMP,
     late_date_time_expected_to_facility TIMESTAMP,
     leave_trailer VARCHAR(1),
