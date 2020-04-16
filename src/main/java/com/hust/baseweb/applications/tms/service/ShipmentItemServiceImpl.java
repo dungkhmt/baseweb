@@ -194,5 +194,18 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         return false;
     }
 
+    @Override
+    public List<ShipmentItemModel> findAllNotScheduled(String deliveryPlanId) {
+        List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(
+                UUID.fromString(deliveryPlanId));
+        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemDeliveryPlans.stream()
+                .map(ShipmentItemDeliveryPlan::getShipmentItemId)
+                .collect(Collectors.toList()));
+        return shipmentItems.stream()
+                .filter(shipmentItem -> shipmentItem.getScheduledQuantity() < shipmentItem.getQuantity())
+                .map(ShipmentItem::toShipmentItemModel)
+                .collect(Collectors.toList());
+    }
+
 
 }

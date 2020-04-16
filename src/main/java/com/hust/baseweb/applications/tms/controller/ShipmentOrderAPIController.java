@@ -238,4 +238,9 @@ public class ShipmentOrderAPIController {
         return ResponseEntity.ok()
                 .body(deliveryTripDetailService.completeDeliveryTripDetail(UUID.fromString(deliveryTripDetailId)));
     }
+
+    @GetMapping("/shipment-item-not-scheduled/{deliveryPlanId}")
+    public ResponseEntity<?> getShipmentItemNotScheduled(@PathVariable String deliveryPlanId) {
+        return ResponseEntity.ok(shipmentItemService.findAllNotScheduled(deliveryPlanId));
+    }
 }

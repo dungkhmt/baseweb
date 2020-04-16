@@ -28,6 +28,9 @@ public class ShipmentItemModel {
     private String lng;
     private Double weight;
 
+    private Integer scheduledQuantity;
+    private Integer completedQuantity;
+
     @Getter
     @Setter
     @AllArgsConstructor

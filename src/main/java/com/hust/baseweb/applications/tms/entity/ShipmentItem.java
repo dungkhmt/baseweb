@@ -93,7 +93,9 @@ public class ShipmentItem {
                 address,
                 lat + "",
                 lng + "",
-                orderItem.getProduct().getWeight() * quantity
+                orderItem.getProduct().getWeight() * quantity,
+                scheduledQuantity,
+                completedQuantity
         );
     }
 

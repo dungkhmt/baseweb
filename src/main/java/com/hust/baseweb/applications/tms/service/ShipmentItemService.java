@@ -25,4 +25,6 @@ public interface ShipmentItemService {
     String saveShipmentItemDeliveryPlan(com.hust.baseweb.applications.tms.model.ShipmentItemModel.CreateDeliveryPlan createDeliveryPlan);
 
     boolean deleteShipmentItemDeliveryPlan(ShipmentItemModel.DeleteDeliveryPlan deleteDeliveryPlan);
+
+    List<ShipmentItemModel> findAllNotScheduled(String deliveryPlanId);
 }
