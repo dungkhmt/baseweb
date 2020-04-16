@@ -18,7 +18,7 @@ public class Product {
     private String productName;
 
     @Column(name = "weight")
-    private Double weight; // quantity=1
+    private Double weight; // quantity=1, unit=kg
 
     @JoinColumn(name = "quantity_uom_id", referencedColumnName = "uom_id")
     @ManyToOne(fetch = FetchType.EAGER)

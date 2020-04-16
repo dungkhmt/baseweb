@@ -338,7 +338,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         return productMap.computeIfAbsent(shipmentItemModel.getProductId(), productId ->
                 productService.save(productId, shipmentItemModel.getProductName(),
                         shipmentItemModel.getProductTransportCategory(),
-                        shipmentItemModel.getWeight() / shipmentItemModel.getQuantity(),
+                        shipmentItemModel.getWeight() / shipmentItemModel.getQuantity() * 1000, // kg
                         shipmentItemModel.getUom(), shipmentItemModel.getHsThu(), shipmentItemModel.getHsPal()));
     }
 

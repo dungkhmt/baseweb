@@ -182,7 +182,7 @@ public class VehicleServiceImpl implements VehicleService {
             if (vehicle == null) {
                 vehicle = new Vehicle();
                 vehicle.setVehicleId(vm.getVehicleId());
-                vehicle.setCapacity(vm.getCapacity());
+                vehicle.setCapacity(vm.getCapacity()); // kg
                 vehicle.setDescription(vm.getDescription());
                 vehicle.setHeight(vm.getHeight());
                 vehicle.setLength(vm.getLength());

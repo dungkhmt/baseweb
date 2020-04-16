@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     public Product save(String productId,
                         String productName,
                         String productTransportCategory,
-                        double productWeight,
+                        double productWeight, // kg
                         String uomId,
                         Integer hsThu,
                         Integer hsPal) {
