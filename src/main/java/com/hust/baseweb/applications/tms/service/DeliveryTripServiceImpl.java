@@ -259,7 +259,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
                 ShipmentItem shipmentItem = deliveryTripDetails.get(idx).getShipmentItem();
                 //PartyCustomer partyCustomer = shipmentItem.getCustomer();
-                PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(shipmentItem.getPartyCustomer().getPartyId());
+                PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(shipmentItem.getPartyCustomer()
+                        .getPartyId());
 
 
 //                if (partyCustomer != null) {
@@ -341,18 +342,18 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     public boolean approveDeliveryTrip(UUID deliveryTripId) {
         Date now = new Date();
 
+        StatusItem deliveryTripCreated = statusItemRepo.findById("DELIVERY_TRIP_CREATED")
+                .orElseThrow(NoSuchElementException::new);
         StatusItem deliveryTripApprovedTrip = statusItemRepo.findById("DELIVERY_TRIP_APPROVED_TRIP")
                 .orElseThrow(NoSuchElementException::new);
         StatusItem deliveryTripDetailApprovedTrip = statusItemRepo.findById("DELIVERY_TRIP_DETAIL_APPROVED_TRIP")
                 .orElseThrow(NoSuchElementException::new);
 
-        DeliveryTrip deliveryTrip = updateDeliveryTripStatus(deliveryTripId, now, deliveryTripApprovedTrip);
-
-        if (deliveryTrip != null) {
-            updateDeliveryTripDetailStatus(now, deliveryTripDetailApprovedTrip, deliveryTrip);
-            return true;
-        }
-        return false;
+        return updateDeliveryTripStatus(deliveryTripId,
+                now,
+                deliveryTripCreated,
+                deliveryTripApprovedTrip,
+                deliveryTripDetailApprovedTrip);
     }
 
     private void updateDeliveryTripDetailStatus(Date updateDate, StatusItem statusItem, DeliveryTrip deliveryTrip) {
@@ -375,13 +376,12 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                         null)).collect(Collectors.toList()));
     }
 
-    private DeliveryTrip updateDeliveryTripStatus(UUID deliveryTripId, Date updateDate, StatusItem statusItem) {
-        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(deliveryTripId).orElseThrow(NoSuchElementException::new);
+    private DeliveryTrip updateDeliveryTripStatus(DeliveryTrip deliveryTrip, Date updateDate, StatusItem statusItem) {
         if (deliveryTrip.getStatusItem().getStatusId().equals(statusItem.getStatusId())) {
             return null;
         }
         deliveryTrip.setStatusItem(statusItem);
-        deliveryTripRepo.save(deliveryTrip);
+        deliveryTrip = deliveryTripRepo.save(deliveryTrip);
 
         List<DeliveryTripStatus> deliveryTripStatuses = deliveryTripStatusRepo.findAllByDeliveryTripAndThruDateNull(
                 deliveryTrip);
@@ -396,15 +396,33 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     public boolean startExecuteDeliveryTrip(UUID deliveryTripId) {
         Date now = new Date();
 
+        StatusItem deliveryTripApprovedTrip = statusItemRepo.findById("DELIVERY_TRIP_APPROVED_TRIP")
+                .orElseThrow(NoSuchElementException::new);
         StatusItem deliveryTripExecuted = statusItemRepo.findById("DELIVERY_TRIP_EXECUTED")
                 .orElseThrow(NoSuchElementException::new);
         StatusItem deliveryTripDetailOnTrip = statusItemRepo.findById("DELIVERY_TRIP_DETAIL_ON_TRIP")
                 .orElseThrow(NoSuchElementException::new);
 
-        DeliveryTrip deliveryTrip = updateDeliveryTripStatus(deliveryTripId, now, deliveryTripExecuted);
+        return updateDeliveryTripStatus(deliveryTripId,
+                now,
+                deliveryTripApprovedTrip,
+                deliveryTripExecuted,
+                deliveryTripDetailOnTrip);
+    }
+
+    private boolean updateDeliveryTripStatus(UUID deliveryTripId,
+                                             Date updateDate,
+                                             StatusItem deliveryTripPreConditionStatus,
+                                             StatusItem deliveryTripSetStatus,
+                                             StatusItem deliveryTripDetailSetStatus) {
+        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(deliveryTripId).orElseThrow(NoSuchElementException::new);
+        if (!deliveryTrip.getStatusItem().equals(deliveryTripPreConditionStatus)) {
+            return false;
+        }
+        deliveryTrip = updateDeliveryTripStatus(deliveryTrip, updateDate, deliveryTripSetStatus);
 
         if (deliveryTrip != null) {
-            updateDeliveryTripDetailStatus(now, deliveryTripDetailOnTrip, deliveryTrip);
+            updateDeliveryTripDetailStatus(updateDate, deliveryTripDetailSetStatus, deliveryTrip);
             return true;
         }
         return false;

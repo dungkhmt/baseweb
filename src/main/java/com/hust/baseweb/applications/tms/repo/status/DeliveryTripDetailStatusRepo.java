@@ -14,4 +14,6 @@ public interface DeliveryTripDetailStatusRepo extends JpaRepository<DeliveryTrip
     List<DeliveryTripDetailStatus> findAllByDeliveryTripDetailInAndThruDateNull(List<DeliveryTripDetail> deliveryTripDetails);
 
     List<DeliveryTripDetailStatus> findAllByDeliveryTripDetailAndThruDateNull(DeliveryTripDetail deliveryTripDetail);
+
+    List<DeliveryTripDetailStatus> findAllByDeliveryTripDetail(DeliveryTripDetail deliveryTripDetail);
 }

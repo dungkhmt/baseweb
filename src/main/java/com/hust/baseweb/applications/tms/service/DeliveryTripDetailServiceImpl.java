@@ -59,6 +59,12 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         DeliveryTrip deliveryTrip = deliveryTripRepo.findById(deliveryTripIdUuid)
                 .orElseThrow(NoSuchElementException::new);
 
+        StatusItem deliveryTripCreated = statusItemRepo.findById("DELIVERY_TRIP_CREATED")
+                .orElseThrow(NoSuchElementException::new);
+        if (!deliveryTrip.getStatusItem().equals(deliveryTripCreated)) {
+            return 0;
+        }
+
         Map<UUID, ShipmentItem> shipmentItemMap = buildShipmentItemMap(inputs);
 
         List<DeliveryTripDetail> deliveryTripDetails = new ArrayList<>();
@@ -168,11 +174,25 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     @Override
     public boolean delete(String deliveryTripDetailId) {
+
         UUID deliveryTripDetailIdUuid = UUID.fromString(deliveryTripDetailId);
         DeliveryTripDetail deliveryTripDetail = deliveryTripDetailRepo.findById(deliveryTripDetailIdUuid)
                 .orElseThrow(NoSuchElementException::new);
-        DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
+
+        StatusItem deliveryTripDetailScheduledTrip = statusItemRepo.findById("DELIVERY_TRIP_DETAIL_SCHEDULED_TRIP")
+                .orElseThrow(NoSuchElementException::new);
+
+        if (!deliveryTripDetail.getStatusItem().equals(deliveryTripDetailScheduledTrip)) {
+            return false;
+        }
+
+        List<DeliveryTripDetailStatus> deliveryTripDetailStatuses = deliveryTripDetailStatusRepo.findAllByDeliveryTripDetail(
+                deliveryTripDetail);
+        deliveryTripDetailStatusRepo.deleteInBatch(deliveryTripDetailStatuses);
+
         deliveryTripDetailRepo.deleteById(deliveryTripDetailIdUuid);
+
+        DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
         DeliveryTripModel.Tour deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(deliveryTrip.getDeliveryTripId()
                 .toString(), new ArrayList<>());
         deliveryTrip.setTotalWeight(deliveryTripInfo.getTotalWeight());
