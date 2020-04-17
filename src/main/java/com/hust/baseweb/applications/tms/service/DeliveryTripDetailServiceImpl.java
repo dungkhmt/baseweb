@@ -163,7 +163,7 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
                 .collect(Collectors.toMap(ShipmentItem::getShipmentItemId, shipmentItem -> shipmentItem));
     }
 
-    public void updateDeliveryTripDetailSequence(DeliveryTrip deliveryTrip, DeliveryTripModel.Tour deliveryTripInfo) {
+    private void updateDeliveryTripDetailSequence(DeliveryTrip deliveryTrip, DeliveryTripModel.Tour deliveryTripInfo) {
         List<GeoPoint> tour = deliveryTripInfo.getTour();
         Map<GeoPoint, Integer> geoPointIndexMap = new HashMap<>();
         for (int i = 0; i < tour.size(); i++) {
@@ -180,6 +180,7 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     @Override
     public boolean delete(String deliveryTripDetailId) {
+        Date now = new Date();
 
         UUID deliveryTripDetailIdUuid = UUID.fromString(deliveryTripDetailId);
         DeliveryTripDetail deliveryTripDetail = deliveryTripDetailRepo.findById(deliveryTripDetailIdUuid)
@@ -194,23 +195,60 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
         List<DeliveryTripDetailStatus> deliveryTripDetailStatuses = deliveryTripDetailStatusRepo.findAllByDeliveryTripDetail(
                 deliveryTripDetail);
-        deliveryTripDetailStatusRepo.deleteInBatch(deliveryTripDetailStatuses);
+        deliveryTripDetailStatusRepo.deleteInBatch(deliveryTripDetailStatuses); // delete all history
 
         deliveryTripDetailRepo.deleteById(deliveryTripDetailIdUuid);
 
         DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
+
         DeliveryTripModel.Tour deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(deliveryTrip.getDeliveryTripId()
                 .toString(), new ArrayList<>());
-        deliveryTrip.setTotalWeight(deliveryTripInfo.getTotalWeight());
-        deliveryTrip.setTotalPallet(deliveryTripInfo.getTotalPallet());
-        deliveryTrip.setDistance(deliveryTripInfo.getTotalDistance());
-        deliveryTripRepo.save(deliveryTrip);
+
+        updateDeliveryTrip(deliveryTrip, deliveryTripInfo);
+
+        updateShipmentItemStatus(now, deliveryTripDetail);
 
         // TODO: delivery trip status??
 
         updateDeliveryTripDetailSequence(deliveryTrip, deliveryTripInfo);
 
         return true;
+    }
+
+    private void updateDeliveryTrip(DeliveryTrip deliveryTrip, DeliveryTripModel.Tour deliveryTripInfo) {
+        deliveryTrip.setTotalWeight(deliveryTripInfo.getTotalWeight());
+        deliveryTrip.setTotalPallet(deliveryTripInfo.getTotalPallet());
+        deliveryTrip.setDistance(deliveryTripInfo.getTotalDistance());
+        deliveryTripRepo.save(deliveryTrip);
+    }
+
+    private void updateShipmentItemStatus(Date updateDate, DeliveryTripDetail deliveryTripDetail) {
+        // set shipment item status
+        ShipmentItem shipmentItem = deliveryTripDetail.getShipmentItem();
+
+        StatusItem shipmentItemCreated = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
+                .orElseThrow(NoSuchElementException::new);
+        StatusItem shipmentItemScheduledTrip = statusItemRepo.findById("SHIPMENT_ITEM_SCHEDULED_TRIP")
+                .orElseThrow(NoSuchElementException::new);
+
+        if (shipmentItem.getStatusItem().equals(shipmentItemScheduledTrip)) {
+            shipmentItem.setStatusItem(shipmentItemCreated);
+            List<ShipmentItemStatus> shipmentItemStatuses = shipmentItemStatusRepo.findAllByShipmentItemAndThruDateNull(
+                    shipmentItem);
+            for (ShipmentItemStatus shipmentItemStatus : shipmentItemStatuses) {
+                shipmentItemStatus.setThruDate(updateDate);
+            }
+            shipmentItemStatuses.add(new ShipmentItemStatus(null,
+                    shipmentItem,
+                    shipmentItemCreated,
+                    updateDate,
+                    null));
+            shipmentItemStatusRepo.saveAll(shipmentItemStatuses);
+        }
+
+        shipmentItem.setScheduledQuantity(shipmentItem.getScheduledQuantity() -
+                deliveryTripDetail.getDeliveryQuantity());
+        shipmentItemRepo.save(shipmentItem);
     }
 
     @Override
