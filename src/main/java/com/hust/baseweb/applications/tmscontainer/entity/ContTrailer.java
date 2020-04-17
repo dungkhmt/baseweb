@@ -1,4 +1,4 @@
-package com.hust.baseweb.applications.tms.entity;
+package com.hust.baseweb.applications.tmscontainer.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,21 +15,19 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContContainerType {
+public class ContTrailer {
     @Id
-    @Column(name = "container_type_id")
-    private String containerTypeId;
+    @Column(name = "trailer_id")
+    private String trailerId;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "unit")
-    private int unit;
-
     @Column(name = "last_updated_stamp")
-    private Date lastUpdateStamp;
+    private Date lastUpdatedStamp;
 
     @Column(name = "created_stamp")
     private Date createdStamp;
+
 
 }

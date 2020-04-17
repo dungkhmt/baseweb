@@ -1,6 +1,6 @@
-package com.hust.baseweb.applications.tms.repo;
+package com.hust.baseweb.applications.tmscontainer.repo;
 
-import com.hust.baseweb.applications.tms.entity.ContDepotContainer;
+import com.hust.baseweb.applications.tmscontainer.entity.ContDepotContainer;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

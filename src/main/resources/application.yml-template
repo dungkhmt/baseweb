@@ -1,14 +1,15 @@
-
+# POSTGRES_DB: baseweb_dms config database name if in local
 SERVICE_HOST: localhost
 SERVICE_PORT: 8080
-SQL_DB_HOST: pgsql
+SQL_DB_HOST: pgsql #config db host to localhost if in local
 SQL_DB_PORT: 5432
 SQL_DB_USER: postgres
 SQL_DB_PASS: baseweb@123
 server:
   servlet:
     context-path: '/api'
-
+google:
+  api_key: #push google map api key here
 spring:
   redis:
     host : localhost

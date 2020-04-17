@@ -98,7 +98,8 @@ public class TrackLocationApiController {
     public ResponseEntity<?> getTracklocations(Pageable page, @RequestParam(required = false) String param) {
 //        System.out.println(module + "::getTrackLocations, page = pageNumber = " + page.getPageNumber() + ", offSet = " +
 //                page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
-        log.info("getTracklocations, api_key = " + gmap_api_key);
+//        log.info("getTracklocations, api_key = " + gmap_api_key);
+        log.info("getTracklocations()");
         Page<TrackLocations> trackLocationPage = trackLocationPagingRepo.findAll(page);
         return ResponseEntity.ok().body(trackLocationPage);
 

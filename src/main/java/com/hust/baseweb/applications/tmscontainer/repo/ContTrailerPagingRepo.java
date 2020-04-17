@@ -1,6 +1,6 @@
-package com.hust.baseweb.applications.tms.repo;
+package com.hust.baseweb.applications.tmscontainer.repo;
 
-import com.hust.baseweb.applications.tms.entity.ContTrailer;
+import com.hust.baseweb.applications.tmscontainer.entity.ContTrailer;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface ContTrailerPagingRepo extends PagingAndSortingRepository<ContTrailer, String> {

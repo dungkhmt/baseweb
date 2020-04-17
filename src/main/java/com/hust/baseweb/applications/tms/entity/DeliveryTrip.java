@@ -1,13 +1,16 @@
 package com.hust.baseweb.applications.tms.entity;
 
 import com.hust.baseweb.applications.tms.model.DeliveryTripModel;
+import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.StatusItem;
+import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.utils.Constant;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -69,10 +72,14 @@ public class DeliveryTrip {
                 totalPallet,
                 totalExecutionTime,
                 totalLocation,
-                vehicle == null ? null : vehicle.getVehicleId(),
-                externalVehicleType == null ? null : externalVehicleType.getVehicleTypeId(),
-                vehicle == null ? null : vehicle.getCapacity(),
-                partyDriver == null ? null : partyDriver.getParty().getUserLogin().getUserLoginId(),
+                Optional.ofNullable(vehicle).map(Vehicle::getVehicleId).orElse(null),
+                Optional.ofNullable(externalVehicleType).map(VehicleType::getVehicleTypeId).orElse(null),
+                Optional.ofNullable(vehicle).map(Vehicle::getCapacity).orElse(null),
+                Optional.ofNullable(partyDriver)
+                        .map(PartyDriver::getParty)
+                        .map(Party::getUserLogin)
+                        .map(UserLogin::getUserLoginId)
+                        .orElse(null),
                 distance,
                 statusItem.getStatusId()
         );

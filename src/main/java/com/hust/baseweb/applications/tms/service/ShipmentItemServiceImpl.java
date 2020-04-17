@@ -11,6 +11,7 @@ import com.hust.baseweb.applications.tms.repo.DeliveryTripDetailRepo;
 import com.hust.baseweb.applications.tms.repo.DeliveryTripRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemDeliveryPlanRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
+import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.PageUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -205,6 +206,35 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
                 .filter(shipmentItem -> shipmentItem.getScheduledQuantity() < shipmentItem.getQuantity())
                 .map(ShipmentItem::toShipmentItemModel)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ShipmentItemModel.Info getShipmentItemInfo(String shipmentItemId) {
+        ShipmentItem shipmentItem = shipmentItemRepo.findById(UUID.fromString(shipmentItemId))
+                .orElseThrow(NoSuchElementException::new);
+        List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByShipmentItem(shipmentItem);
+
+        return new ShipmentItemModel.Info(
+                shipmentItem.getShipmentItemId().toString(),
+                shipmentItem.getOrderItem().getOrderId(),
+                shipmentItem.getFacility().getFacilityId(),
+                shipmentItem.getOrderItem().getProduct().getProductId(),
+                shipmentItem.getOrderItem().getProduct().getProductName(),
+                shipmentItem.getQuantity(),
+                shipmentItem.getStatusItem().getStatusId(),
+                deliveryTripDetails.stream()
+                        .map(deliveryTripDetail -> new ShipmentItemModel.Info.DeliveryTripDetail(
+                                deliveryTripDetail.getDeliveryTrip().getDeliveryPlan().getDeliveryPlanId().toString(),
+                                deliveryTripDetail.getDeliveryTrip().getDeliveryTripId().toString(),
+                                Constant.DATE_FORMAT.format(deliveryTripDetail.getDeliveryTrip().getExecuteDate()),
+                                deliveryTripDetail.getDeliveryQuantity(),
+                                deliveryTripDetail.getDeliveryTrip().getVehicle().getVehicleId(),
+                                deliveryTripDetail.getDeliveryTrip().getVehicle().getCapacity(),
+                                Optional.ofNullable(deliveryTripDetail.getDeliveryTrip().getPartyDriver())
+                                        .map(PartyDriver::getPartyId)
+                                        .map(UUID::toString)
+                                        .orElse(null)))
+                        .collect(Collectors.toList()));
     }
 
 

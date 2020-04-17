@@ -1,4 +1,4 @@
-package com.hust.baseweb.applications.tms.model;
+package com.hust.baseweb.applications.tmscontainer.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class InputDepotTrailerModel {
+public class InputDepotTruckModel {
     String lat;
     String lng;
     String address;
-    String depotTrailerId;
-    String depotTrailerName;
+    String depotTruckId;
+    String depotTruckName;
 }

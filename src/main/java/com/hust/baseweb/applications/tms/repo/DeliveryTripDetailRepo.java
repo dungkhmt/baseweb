@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.tms.repo;
 
 import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
+import com.hust.baseweb.applications.tms.entity.ShipmentItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -18,4 +19,6 @@ public interface DeliveryTripDetailRepo extends
     List<DeliveryTripDetail> findAllByDeliveryTripIn(List<DeliveryTrip> deliveryTrips);
 
     DeliveryTripDetail findByDeliveryTripDetailId(UUID deliveryTripDetailId);
+
+    List<DeliveryTripDetail> findAllByShipmentItem(ShipmentItem shipmentItem);
 }

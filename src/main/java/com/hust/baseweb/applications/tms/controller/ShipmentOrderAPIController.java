@@ -243,4 +243,9 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> getShipmentItemNotScheduled(@PathVariable String deliveryPlanId) {
         return ResponseEntity.ok(shipmentItemService.findAllNotScheduled(deliveryPlanId));
     }
+
+    @GetMapping("/shipment-item-info/{shipmentItemId}")
+    public ResponseEntity<?> getShipmentItemInfo(@PathVariable String shipmentItemId) {
+        return ResponseEntity.ok(shipmentItemService.getShipmentItemInfo(shipmentItemId));
+    }
 }
