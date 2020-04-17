@@ -69,12 +69,14 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
         List<DeliveryTripDetail> deliveryTripDetails = new ArrayList<>();
 
+        StatusItem shipmentItemCreated = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
+                .orElseThrow(NoSuchElementException::new);
         StatusItem shipmentItemScheduledTripStatus = statusItemRepo.findById("SHIPMENT_ITEM_SCHEDULED_TRIP")
                 .orElseThrow(NoSuchElementException::new);
         StatusItem deliveryTripDetailScheduledTripStatus = statusItemRepo.findById("DELIVERY_TRIP_DETAIL_SCHEDULED_TRIP")
                 .orElseThrow(NoSuchElementException::new);
 
-        Map<ShipmentItem, List<ShipmentItemStatus>> shipmentItemToStatusMap = shipmentItemStatusRepo.findAllByShipmentItemIn(
+        Map<ShipmentItem, List<ShipmentItemStatus>> shipmentItemToStatusMap = shipmentItemStatusRepo.findAllByShipmentItemInAndThruDateNull(
                 shipmentItemMap.values())
                 .stream()
                 .collect(Collectors.groupingBy(ShipmentItemStatus::getShipmentItem));
@@ -85,6 +87,10 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             deliveryTripDetail.setDeliveryTrip(deliveryTrip);
 
             ShipmentItem shipmentItem = shipmentItemMap.get(input.getShipmentItemId());
+
+            if (!shipmentItem.getStatusItem().equals(shipmentItemCreated)) {
+                continue;
+            }
 
             log.info("save, find ShipmentItem " +
                     shipmentItem.getShipment().getShipmentId() +
@@ -97,15 +103,15 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             deliveryTripDetail.setDeliveryQuantity(input.getDeliveryQuantity());
             deliveryTripDetail.setStatusItem(deliveryTripDetailScheduledTripStatus);
 
-            shipmentItem.setScheduledQuantity(shipmentItem.getScheduledQuantity() + input.getDeliveryQuantity());
+            shipmentItem.setScheduledQuantity(Math.min(
+                    shipmentItem.getScheduledQuantity() + input.getDeliveryQuantity(), shipmentItem.getQuantity()));
+
             if (shipmentItem.getScheduledQuantity() == shipmentItem.getQuantity()) {
                 shipmentItem.setStatusItem(shipmentItemScheduledTripStatus);
+
                 List<ShipmentItemStatus> shipmentItemStatuses = shipmentItemToStatusMap.get(shipmentItem);
                 for (ShipmentItemStatus shipmentItemStatus : shipmentItemStatuses) {
-                    if (shipmentItemStatus.getThruDate() == null) {
-                        shipmentItemStatus.setThruDate(now);
-                        break;
-                    }
+                    shipmentItemStatus.setThruDate(now);
                 }
                 shipmentItemStatuses.add(new ShipmentItemStatus(null,
                         shipmentItem,
