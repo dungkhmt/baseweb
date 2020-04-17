@@ -1,4 +1,4 @@
-package com.hust.baseweb.applications.tms.entity;
+package com.hust.baseweb.applications.tmscontainer.entity;
 
 
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
