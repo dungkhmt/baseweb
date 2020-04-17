@@ -39,7 +39,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     private DistanceTravelTimePostalAddressRepo distanceTraveltimePostalAddressRepo;
 
     @Override
-    public Page<ShipmentItemModel> findAllInDeliveryPlanId(String deliveryPlanId, Pageable pageable) {
+    public Page<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
         Page<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlanPage
                 = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId), pageable);
 
@@ -53,7 +53,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public List<ShipmentItemModel> findAllInDeliveryPlanId(String deliveryPlanId) {
+    public List<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId) {
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(
                 UUID.fromString(deliveryPlanId));
         List<UUID> shipmentItemIds = shipmentItemDeliveryPlans.stream()
@@ -65,7 +65,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public List<ShipmentItemModel.DeliveryPlan> findAllInDeliveryPlanIdNearestDeliveryTrip(String deliveryTripId) {
+    public List<ShipmentItemModel.DeliveryPlan> findAllInDeliveryPlanNearestDeliveryTrip(String deliveryTripId) {
         DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId))
                 .orElseThrow(NoSuchElementException::new);
         DeliveryPlan deliveryPlan = deliveryTrip.getDeliveryPlan();
@@ -131,7 +131,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public Page<ShipmentItemModel> findAllNotInDeliveryPlanId(String deliveryPlanId, Pageable pageable) {
+    public Page<ShipmentItemModel> findAllNotInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
         Set<String> shipmentItemInDeliveryPlans
                 = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
                 .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
@@ -146,7 +146,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public List<ShipmentItemModel> findAllNotInDeliveryPlanId(String deliveryPlanId) {
+    public List<ShipmentItemModel> findAllNotInDeliveryPlan(String deliveryPlanId) {
         Set<String> shipmentItemInDeliveryPlans
                 = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
                 .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())

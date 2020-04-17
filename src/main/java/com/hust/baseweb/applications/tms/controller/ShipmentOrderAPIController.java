@@ -84,35 +84,36 @@ public class ShipmentOrderAPIController {
                                                       @PathVariable String deliveryPlanId,
                                                       Pageable pageable) {
         log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanId(deliveryPlanId, pageable));
+        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlan(deliveryPlanId, pageable));
     }
 
     @GetMapping("/shipment-item-delivery-plan/{deliveryPlanId}/all")
     public ResponseEntity<?> getAllOrderShipmentItemDeliveryPlan(Principal principal,
                                                                  @PathVariable String deliveryPlanId) {
         log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanId(deliveryPlanId));
+        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlan(deliveryPlanId));
     }
 
     @GetMapping("/shipment-item-delivery-trip/{deliveryTripId}/all")
     public ResponseEntity<?> getAllOrderShipmentItemDeliveryTrip(Principal principal,
                                                                  @PathVariable String deliveryTripId) {
         log.info("::getOrderShipmentItem deliveryTripId=" + deliveryTripId);
-        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanIdNearestDeliveryTrip(deliveryTripId));
+        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanNearestDeliveryTrip(deliveryTripId));
     }
 
     @GetMapping("/shipment-item-not-in-delivery-plan/{deliveryPlanId}/page")
-    public ResponseEntity<?> getAllOrderShipmentItemNotIn(Principal principal,
-                                                          @PathVariable String deliveryPlanId,
-                                                          Pageable pageable) {
+    public ResponseEntity<?> getAllOrderShipmentItemNotInDeliveryPlan(Principal principal,
+                                                                      @PathVariable String deliveryPlanId,
+                                                                      Pageable pageable) {
         log.info("::getAllOrderShipmentItemNotIn deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlanId(deliveryPlanId, pageable));
+        return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlan(deliveryPlanId, pageable));
     }
 
     @GetMapping("/shipment-item-not-in-delivery-plan/{deliveryPlanId}/all")
-    public ResponseEntity<?> getOrderShipmentItemPageNotIn(Principal principal, @PathVariable String deliveryPlanId) {
+    public ResponseEntity<?> getOrderShipmentItemPageNotInDeliveryPlan(Principal principal,
+                                                                       @PathVariable String deliveryPlanId) {
         log.info("::getOrderShipmentItemPageNotIn deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlanId(deliveryPlanId));
+        return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlan(deliveryPlanId));
     }
 
     @PostMapping("/delete-shipment-item-delivery-plan")

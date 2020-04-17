@@ -18,13 +18,13 @@ public interface VehicleService {
 
     void saveAllMaintenanceHistory(List<VehicleMaintenanceHistory> vehicleMaintenanceHistories);
 
-    Page<VehicleModel> findAllInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
+    Page<VehicleModel> findAllInDeliveryPlan(String deliveryPlanId, Pageable pageable);
 
-    List<VehicleModel> findAllInDeliveryPlanId(String deliveryPlanId);
+    List<VehicleModel> findAllInDeliveryPlan(String deliveryPlanId);
 
-    Page<VehicleModel> findAllNotInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
+    Page<VehicleModel> findAllNotInDeliveryPlan(String deliveryPlanId, Pageable pageable);
 
-    List<VehicleModel> findAllNotInDeliveryPlanId(String deliveryPlanId);
+    List<VehicleModel> findAllNotInDeliveryPlan(String deliveryPlanId);
 
     String saveVehicleDeliveryPlan(VehicleModel.CreateDeliveryPlan createDeliveryPlan);
 

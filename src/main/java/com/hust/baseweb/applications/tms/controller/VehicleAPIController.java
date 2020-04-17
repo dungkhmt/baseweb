@@ -73,14 +73,14 @@ public class VehicleAPIController {
     @GetMapping("/vehicle/{deliveryPlanId}/page")
     public ResponseEntity<?> getVehicle(Principal principal, @PathVariable String deliveryPlanId, Pageable pageable) {
         log.info("::getVehicle deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(vehicleService.findAllInDeliveryPlanId(deliveryPlanId, pageable));
+        return ResponseEntity.ok().body(vehicleService.findAllInDeliveryPlan(deliveryPlanId, pageable));
     }
 
     // list view
     @GetMapping("/vehicle/{deliveryPlanId}/all")
     public ResponseEntity<?> getAllVehicle(Principal principal, @PathVariable String deliveryPlanId) {
         log.info("::getVehicle deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(vehicleService.findAllInDeliveryPlanId(deliveryPlanId));
+        return ResponseEntity.ok().body(vehicleService.findAllInDeliveryPlan(deliveryPlanId));
     }
 
     // submit button
@@ -105,13 +105,13 @@ public class VehicleAPIController {
                                                  @PathVariable String deliveryPlanId,
                                                  Pageable pageable) {
         log.info("::getVehicleNotIn deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlanId(deliveryPlanId, pageable));
+        return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlan(deliveryPlanId, pageable));
     }
 
     // add view
     @GetMapping("/vehicle-not-in/{deliveryPlanId}/all")
     public ResponseEntity<?> getAllVehicleNotIn(Principal principal, @PathVariable String deliveryPlanId) {
         log.info("::getVehicleNotIn deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlanId(deliveryPlanId));
+        return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlan(deliveryPlanId));
     }
 }
