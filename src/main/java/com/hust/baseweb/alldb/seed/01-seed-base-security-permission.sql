@@ -225,11 +225,11 @@ VALUES ('MENU_INVOICE_LIST', 'MENU', 'MENU_INVOICE', 'INVOICE_VIEW', 'Menu invoi
         '2019-12-26 08:00:39.953');
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
-VALUES ('MENU_TMS_CREATE_DELIVERY_PLAN', 'MENU', 'MENU_TMS', 'DELIVERY_PLAN_CREATE', 'Menu Create Delivery Plan', NULL,
-        '2020-03-01 18:41:10.706');
+VALUES ('MENU_TMS', 'MENU', NULL, NULL, 'Menu TMS', '2020-03-01 18:46:31.727', '2020-03-01 18:40:20.478');
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
-VALUES ('MENU_TMS', 'MENU', NULL, NULL, 'Menu TMS', '2020-03-01 18:46:31.727', '2020-03-01 18:40:20.478');
+VALUES ('MENU_TMS_CREATE_DELIVERY_PLAN', 'MENU', 'MENU_TMS', 'DELIVERY_PLAN_CREATE', 'Menu Create Delivery Plan', NULL,
+        '2020-03-01 18:41:10.706');
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description, last_updated_stamp, created_stamp)
 VALUES ('MENU_SALES_ROUTE', 'MENU', NULL, NULL, 'Menu Sales Route', NULL, '2020-03-01 18:54:50.488');
