@@ -24,6 +24,7 @@ public class DeliveryPlanMaintenanceServiceImpl implements DeliveryPlanMaintenan
         deliveryTripRepo.deleteAll();
         vehicleDeliveryPlanRepo.deleteAll();
         deliveryPlanRepo.deleteAll();
+
         return cnt;
     }
 }
