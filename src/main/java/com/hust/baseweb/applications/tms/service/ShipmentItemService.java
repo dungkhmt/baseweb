@@ -27,4 +27,6 @@ public interface ShipmentItemService {
     boolean deleteShipmentItemDeliveryPlan(ShipmentItemModel.DeleteDeliveryPlan deleteDeliveryPlan);
 
     List<ShipmentItemModel> findAllNotScheduled(String deliveryPlanId);
+
+    ShipmentItemModel.Info getShipmentItemInfo(String shipmentItemId);
 }

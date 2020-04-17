@@ -1,9 +1,7 @@
 package com.hust.baseweb.applications.order.entity;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.logistics.model.InventoryModel;
-import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.utils.Constant;
 import lombok.AllArgsConstructor;
@@ -14,8 +12,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -87,7 +85,7 @@ public class OrderHeader {
         return new InventoryModel.OrderHeader(
                 orderId,
                 partyCustomer.getPartyId().toString(),
-                orderDate == null ? null : Constant.DATE_FORMAT.format(orderDate)
+                Optional.ofNullable(orderDate).map(date -> Constant.DATE_FORMAT.format(orderDate)).orElse(null)
         );
     }
 }

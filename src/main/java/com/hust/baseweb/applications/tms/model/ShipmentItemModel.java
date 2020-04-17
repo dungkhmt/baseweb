@@ -118,4 +118,35 @@ public class ShipmentItemModel {
         private String address;
         private String latLng;
     }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Info {
+        private String shipmentItemId;
+        private String orderId;
+        private String facilityId;
+        private String productId;
+        private String productName;
+        private Integer quantity;
+        private String statusId;
+
+        private List<DeliveryTripDetail> details;
+
+        @Getter
+        @Setter
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public static class DeliveryTripDetail {
+            private String deliveryPlanId;
+            private String deliveryTripId;
+            private String executeDate;
+            private Integer deliveryQuantity;
+            private String vehicleId;
+            private Double vehicleCapacity;
+            private String driverId;
+        }
+    }
+
 }
