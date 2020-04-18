@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
-import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
@@ -38,7 +37,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     private DeliveryTripDetailRepo deliveryTripDetailRepo;
     private ShipmentItemRepo shipmentItemRepo;
-    private ProductRepo productRepo;
 
     private DeliveryTripRepo deliveryTripRepo;
     private DeliveryTripService deliveryTripService;
@@ -48,7 +46,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     private ShipmentItemStatusRepo shipmentItemStatusRepo;
     private DeliveryTripDetailStatusRepo deliveryTripDetailStatusRepo;
     private DeliveryTripStatusRepo deliveryTripStatusRepo;
-
 
     @Override
     public int save(String deliveryTripId,
@@ -142,14 +139,21 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
         DeliveryTripModel.Tour deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(deliveryTripId,
                 new ArrayList<>());
-        deliveryTrip.setTotalWeight(deliveryTripInfo.getTotalWeight());
-        deliveryTrip.setTotalPallet(deliveryTripInfo.getTotalPallet());
-        deliveryTrip.setDistance(deliveryTripInfo.getTotalDistance());
-        deliveryTrip = deliveryTripRepo.save(deliveryTrip);
+
+        deliveryTrip = updateDeliveryTripInfo(deliveryTrip, deliveryTripInfo);
 
         updateDeliveryTripDetailSequence(deliveryTrip, deliveryTripInfo);
 
         return inputs.size();
+    }
+
+    @NotNull
+    private DeliveryTrip updateDeliveryTripInfo(DeliveryTrip deliveryTrip, DeliveryTripModel.Tour deliveryTripInfo) {
+        deliveryTrip.setTotalWeight(deliveryTripInfo.getTotalWeight());
+        deliveryTrip.setTotalPallet(deliveryTripInfo.getTotalPallet());
+        deliveryTrip.setDistance(deliveryTripInfo.getTotalDistance());
+        deliveryTrip = deliveryTripRepo.save(deliveryTrip);
+        return deliveryTrip;
     }
 
     @NotNull
@@ -204,7 +208,7 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         DeliveryTripModel.Tour deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(deliveryTrip.getDeliveryTripId()
                 .toString(), new ArrayList<>());
 
-        updateDeliveryTrip(deliveryTrip, deliveryTripInfo);
+        updateDeliveryTripInfo(deliveryTrip, deliveryTripInfo);
 
         updateShipmentItemStatus(now, deliveryTripDetail);
 
@@ -213,13 +217,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         updateDeliveryTripDetailSequence(deliveryTrip, deliveryTripInfo);
 
         return true;
-    }
-
-    private void updateDeliveryTrip(DeliveryTrip deliveryTrip, DeliveryTripModel.Tour deliveryTripInfo) {
-        deliveryTrip.setTotalWeight(deliveryTripInfo.getTotalWeight());
-        deliveryTrip.setTotalPallet(deliveryTripInfo.getTotalPallet());
-        deliveryTrip.setDistance(deliveryTripInfo.getTotalDistance());
-        deliveryTripRepo.save(deliveryTrip);
     }
 
     private void updateShipmentItemStatus(Date updateDate, DeliveryTripDetail deliveryTripDetail) {

@@ -250,4 +250,10 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> getShipmentItemInfo(@PathVariable String shipmentItemId) {
         return ResponseEntity.ok(shipmentItemService.getShipmentItemInfo(shipmentItemId));
     }
+
+    @GetMapping("/get-total-weight-shipment-items-in-delivery-plan/{deliveryPlanId}")
+    public ResponseEntity<?> getTotalWeightShipmentItemsInDeliveryPlan(@PathVariable String deliveryPlanId) {
+        return ResponseEntity.ok(deliveryPlanService.getTotalWeightShipmentItems(UUID.fromString(deliveryPlanId)));
+    }
+
 }

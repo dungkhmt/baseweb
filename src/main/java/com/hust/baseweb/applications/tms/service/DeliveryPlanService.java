@@ -15,4 +15,6 @@ public interface DeliveryPlanService {
     Page<DeliveryPlan> findAll(Pageable pageable);
 
     DeliveryPlan findById(UUID deliveryPlanId);
+
+    Double getTotalWeightShipmentItems(UUID deliveryPlanId);
 }

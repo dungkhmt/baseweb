@@ -7,10 +7,7 @@ import com.hust.baseweb.applications.geo.repo.DistanceTravelTimePostalAddressRep
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.model.ShipmentItemModel;
-import com.hust.baseweb.applications.tms.repo.DeliveryTripDetailRepo;
-import com.hust.baseweb.applications.tms.repo.DeliveryTripRepo;
-import com.hust.baseweb.applications.tms.repo.ShipmentItemDeliveryPlanRepo;
-import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
+import com.hust.baseweb.applications.tms.repo.*;
 import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.PageUtils;
 import lombok.AllArgsConstructor;
@@ -37,6 +34,8 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     private DeliveryTripDetailRepo deliveryTripDetailRepo;
 
     private DistanceTravelTimePostalAddressRepo distanceTraveltimePostalAddressRepo;
+
+    private DeliveryPlanRepo deliveryPlanRepo;
 
     @Override
     public Page<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
@@ -171,13 +170,28 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public String saveShipmentItemDeliveryPlan(com.hust.baseweb.applications.tms.model.ShipmentItemModel.CreateDeliveryPlan createDeliveryPlan) {
+        DeliveryPlan deliveryPlan = deliveryPlanRepo.findById(UUID.fromString(createDeliveryPlan.getDeliveryPlanId()))
+                .orElseThrow(NoSuchElementException::new);
+        Map<UUID, ShipmentItem> shipmentItemMap = shipmentItemRepo.findAllByShipmentItemIdIn(createDeliveryPlan.getShipmentItemIds()
+                .stream()
+                .map(UUID::fromString)
+                .collect(Collectors.toList()))
+                .stream()
+                .collect(Collectors.toMap(ShipmentItem::getShipmentItemId, shipmentItem -> shipmentItem));
+
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = new ArrayList<>();
+        double totalWeight = 0.0;
         for (String shipmentItemId : createDeliveryPlan.getShipmentItemIds()) {
             shipmentItemDeliveryPlans.add(new ShipmentItemDeliveryPlan(
                     UUID.fromString(shipmentItemId),
                     UUID.fromString(createDeliveryPlan.getDeliveryPlanId())
             ));
+            ShipmentItem shipmentItem = shipmentItemMap.get(UUID.fromString(shipmentItemId));
+            totalWeight += shipmentItem.getOrderItem().getProduct().getWeight() * shipmentItem.getQuantity();
         }
+        deliveryPlan.setTotalWeightShipmentItems(deliveryPlan.getTotalWeightShipmentItems() + totalWeight);
+        deliveryPlanRepo.save(deliveryPlan);
+
         shipmentItemDeliveryPlanRepo.saveAll(shipmentItemDeliveryPlans);
         return createDeliveryPlan.getDeliveryPlanId();
     }
@@ -189,6 +203,15 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
                 UUID.fromString(deleteDeliveryPlan.getShipmentItemId())
         );
         if (shipmentItemDeliveryPlan != null) {
+            DeliveryPlan deliveryPlan = deliveryPlanRepo.findById(UUID.fromString(deleteDeliveryPlan.getDeliveryPlanId()))
+                    .orElseThrow(NoSuchElementException::new);
+            ShipmentItem shipmentItem = shipmentItemRepo.findById(UUID.fromString(deleteDeliveryPlan.getShipmentItemId()))
+                    .orElseThrow(NoSuchElementException::new);
+
+            deliveryPlan.setTotalWeightShipmentItems(deliveryPlan.getTotalWeightShipmentItems() -
+                    (shipmentItem.getOrderItem().getProduct().getWeight() * shipmentItem.getQuantity()));
+            deliveryPlanRepo.save(deliveryPlan);
+
             shipmentItemDeliveryPlanRepo.delete(shipmentItemDeliveryPlan);
             return true;
         }
