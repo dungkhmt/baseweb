@@ -67,7 +67,7 @@ public class VehicleServiceImpl implements VehicleService {
 
     // TODO:
     @Override
-    public Page<VehicleModel> findAllInDeliveryPlanId(String deliveryPlanId, Pageable pageable) {
+    public Page<VehicleModel> findAllInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
         List<VehicleDeliveryPlan> vehicleDeliveryPlans
                 = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
 
@@ -83,7 +83,7 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public List<VehicleModel> findAllInDeliveryPlanId(String deliveryPlanId) {
+    public List<VehicleModel> findAllInDeliveryPlan(String deliveryPlanId) {
         List<VehicleDeliveryPlan> vehicleDeliveryPlans = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(
                 deliveryPlanId));
         return vehicleRepo.findAllByVehicleIdIn(
@@ -97,29 +97,16 @@ public class VehicleServiceImpl implements VehicleService {
 
     // TODO:
     @Override
-    public Page<VehicleModel> findAllNotInDeliveryPlanId(String deliveryPlanId, Pageable pageable) {
-        Set<String> vehicleInDeliveryPlans = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(
-                deliveryPlanId))
-                .stream().map(VehicleDeliveryPlan::getVehicleId)
-                .collect(Collectors.toSet());
-        List<VehicleMaintenanceHistory> vehicleMaintenanceHistories = vehicleMaintenanceHistoryRepo.findAllByThruDateIsNull();
-
-        List<Vehicle> vehicles = vehicleRepo.findAllByVehicleIdIn(vehicleMaintenanceHistories.stream()
-                .map(vehicleMaintenanceHistory -> vehicleMaintenanceHistory.getVehicle().getVehicleId())
-                .distinct().collect(Collectors.toList()));
-
-        List<VehicleModel> vehicleModels = vehicles.stream()
-                .filter(vehicle -> !vehicleInDeliveryPlans.contains(vehicle.getVehicleId()))
-                .map(Vehicle::toVehicleModel)
-                .collect(Collectors.toList());
-        return PageUtils.getPage(vehicleModels, pageable);
+    public Page<VehicleModel> findAllNotInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
+        return PageUtils.getPage(findAllNotInDeliveryPlan(deliveryPlanId), pageable);
     }
 
     @Override
-    public List<VehicleModel> findAllNotInDeliveryPlanId(String deliveryPlanId) {
-        Set<String> vehicleInDeliveryPlans
-                = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
-                .stream().map(VehicleDeliveryPlan::getVehicleId).collect(Collectors.toSet());
+    public List<VehicleModel> findAllNotInDeliveryPlan(String deliveryPlanId) {
+        Set<String> vehicleInDeliveryPlans = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(
+                UUID.fromString(deliveryPlanId))
+                .stream().map(VehicleDeliveryPlan::getVehicleId)
+                .collect(Collectors.toSet());
         List<VehicleMaintenanceHistory> vehicleMaintenanceHistories = vehicleMaintenanceHistoryRepo.findAllByThruDateIsNull();
 
         List<Vehicle> vehicles = vehicleRepo.findAllByVehicleIdIn(vehicleMaintenanceHistories.stream()

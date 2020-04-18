@@ -8,15 +8,15 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ShipmentItemService {
-    Page<ShipmentItemModel> findAllInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
+    Page<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId, Pageable pageable);
 
-    List<ShipmentItemModel> findAllInDeliveryPlanId(String deliveryPlanId);
+    List<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId);
 
-    List<ShipmentItemModel.DeliveryPlan> findAllInDeliveryPlanIdNearestDeliveryTrip(String deliveryTripId);
+    List<ShipmentItemModel.DeliveryPlan> findAllInDeliveryPlanNearestDeliveryTrip(String deliveryTripId);
 
-    Page<ShipmentItemModel> findAllNotInDeliveryPlanId(String deliveryPlanId, Pageable pageable);
+    Page<ShipmentItemModel> findAllNotInDeliveryPlan(String deliveryPlanId, Pageable pageable);
 
-    List<ShipmentItemModel> findAllNotInDeliveryPlanId(String deliveryPlanId);
+    List<ShipmentItemModel> findAllNotInDeliveryPlan(String deliveryPlanId);
 
     Page<ShipmentItem> findAll(Pageable pageable);
 
