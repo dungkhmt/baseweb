@@ -18,8 +18,10 @@ public class SalesRouteDetailMaintenanceServiceImpl implements SalesRouteDetailM
 
     @Override
     public long deleteByPartySalesmanId(UUID partySalesmanId) {
-        PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
-        salesRouteDetailRepo.deleteByPartySalesman(partySalesman);
+        //PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
+        //salesRouteDetailRepo.deleteByPartySalesman(partySalesman);
+        //salesRouteDetailRepo.deleteAll();
+        // TODO: to be implemented
         return 0;
     }
 }
