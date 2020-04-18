@@ -49,7 +49,8 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> createOrderShipment(Principal principal, @RequestBody ShipmentItemModel.Create input) {
         log.info("::createOrderShipment");
 
-        Shipment shipment = shipmentService.save(input);
+        Shipment shipment = shipmentService.save(
+                new ShipmentModel.CreateShipmentInputModel(new ShipmentItemModel.Create[]{input}));
         return ResponseEntity.ok().body(shipment);
     }
 
