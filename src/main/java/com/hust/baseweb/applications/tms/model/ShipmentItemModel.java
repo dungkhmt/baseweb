@@ -31,6 +31,8 @@ public class ShipmentItemModel {
     private Integer scheduledQuantity;
     private Integer completedQuantity;
 
+    private String facilityId;
+
     @Getter
     @Setter
     @AllArgsConstructor
