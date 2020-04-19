@@ -49,7 +49,8 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> createOrderShipment(Principal principal, @RequestBody ShipmentItemModel.Create input) {
         log.info("::createOrderShipment");
 
-        Shipment shipment = shipmentService.save(input);
+        Shipment shipment = shipmentService.save(
+                new ShipmentModel.CreateShipmentInputModel(new ShipmentItemModel.Create[]{input}));
         return ResponseEntity.ok().body(shipment);
     }
 
@@ -249,4 +250,10 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> getShipmentItemInfo(@PathVariable String shipmentItemId) {
         return ResponseEntity.ok(shipmentItemService.getShipmentItemInfo(shipmentItemId));
     }
+
+    @GetMapping("/get-total-weight-shipment-items-in-delivery-plan/{deliveryPlanId}")
+    public ResponseEntity<?> getTotalWeightShipmentItemsInDeliveryPlan(@PathVariable String deliveryPlanId) {
+        return ResponseEntity.ok(deliveryPlanService.getTotalWeightShipmentItems(UUID.fromString(deliveryPlanId)));
+    }
+
 }

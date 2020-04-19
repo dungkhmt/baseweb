@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.tms.entity;
 
-import com.hust.baseweb.applications.logistics.entity.Facility;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,5 +25,5 @@ public class DeliveryPlan {
     @Column(name = "delivery_date")
     private Date deliveryDate;
 
-
+    private Double totalWeightShipmentItems = 0.0;
 }

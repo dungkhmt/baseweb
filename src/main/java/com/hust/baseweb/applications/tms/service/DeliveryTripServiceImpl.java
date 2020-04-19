@@ -65,8 +65,11 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                              int totalLocation,
                              int completedDeliveryTripDetailCount,
                              int deliveryTripDetailCount) {
+        DeliveryPlan deliveryPlan = deliveryPlanRepo.findById(input.getDeliveryPlanId())
+                .orElseThrow(NoSuchElementException::new);
+
         DeliveryTrip deliveryTrip = new DeliveryTrip();
-        deliveryTrip.setDeliveryPlan(deliveryPlanRepo.findByDeliveryPlanId(input.getDeliveryPlanId()));
+        deliveryTrip.setDeliveryPlan(deliveryPlan);
         Date executeDate = null;
         try {
             executeDate = Constant.DATE_FORMAT.parse(input.getExecuteDate());

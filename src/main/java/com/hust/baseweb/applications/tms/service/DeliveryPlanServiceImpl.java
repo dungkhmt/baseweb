@@ -51,4 +51,11 @@ public class DeliveryPlanServiceImpl implements DeliveryPlanService {
         return deliveryPlanRepo.findById(deliveryPlanId).orElseThrow(NoSuchElementException::new);
     }
 
+    @Override
+    public Double getTotalWeightShipmentItems(UUID deliveryPlanId) {
+        return deliveryPlanRepo.findById(deliveryPlanId)
+                .orElseThrow(NoSuchElementException::new)
+                .getTotalWeightShipmentItems();
+    }
+
 }
