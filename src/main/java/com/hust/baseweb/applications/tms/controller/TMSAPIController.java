@@ -143,7 +143,7 @@ public class TMSAPIController {
 
         return ResponseEntity.ok().body(new GetAssigned2ShipperDeliveryRouteOutputModel(deliveryCustomers));
     }
-	*/
+    */
 
     @GetMapping("/calc-distance-travel-time")
     public ResponseEntity<?> calcDistanceTravelTime() {
@@ -159,5 +159,10 @@ public class TMSAPIController {
         log.info("::solve()");
 
         return ResponseEntity.ok(solverService.solve(solverOption));
+    }
+
+    @PostMapping("/suggest-trips")
+    public ResponseEntity<SolverService.TripSuggestion.Output> suggestTrips(@RequestBody SolverService.TripSuggestion.Input input) {
+        return ResponseEntity.ok(solverService.suggestTrips(input));
     }
 }
