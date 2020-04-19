@@ -74,6 +74,7 @@ public class DeliveryTrip {
                 totalLocation,
                 Optional.ofNullable(vehicle).map(Vehicle::getVehicleId).orElse(null),
                 Optional.ofNullable(externalVehicleType).map(VehicleType::getVehicleTypeId).orElse(null),
+                Optional.ofNullable(vehicle).map(Vehicle::getProductTransportCategoryId).orElse(null),
                 Optional.ofNullable(vehicle).map(Vehicle::getCapacity).orElse(null),
                 Optional.ofNullable(partyDriver)
                         .map(PartyDriver::getParty)
