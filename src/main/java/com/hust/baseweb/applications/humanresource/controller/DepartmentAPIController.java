@@ -3,6 +3,11 @@ package com.hust.baseweb.applications.humanresource.controller;
 import java.security.Principal;
 import java.util.List;
 
+import com.hust.baseweb.applications.humanresource.entity.PartyDepartment;
+import com.hust.baseweb.applications.humanresource.model.AddParty2DepartmentInputModel;
+import com.hust.baseweb.applications.humanresource.service.PartyDepartmentService;
+import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.service.UserService;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +27,12 @@ public class DepartmentAPIController {
 
 	@Autowired
 	private DepartmentService departmentService;
-	
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private PartyDepartmentService partyDepartmentService;
+
 	@PostMapping("/create-department")
 	public ResponseEntity<?> createDepartment(Principal principal, @RequestBody CreateDepartmentInputModel input){
 		log.info("createDepartment, departmentName = " + input.getDepartmentName());
@@ -38,5 +48,18 @@ public class DepartmentAPIController {
 		return ResponseEntity.ok().body(depts);
 		
 	}
+
+	@PostMapping("/add-user-2-department")
+	public ResponseEntity<?> addUser2Department(Principal principal, @RequestBody AddParty2DepartmentInputModel input){
+		UserLogin userLogin = userService.findById(principal.getName());
+		log.info("addUser2Department, addUser2Department, user login = " + userLogin.getUserLoginId());
+
+		PartyDepartment partyDepartment = partyDepartmentService.save(input.getPartyId(), input.getDepartmentId());
+
+		return ResponseEntity.ok().body("add OK");
+	}
+
+
+
 	
 }

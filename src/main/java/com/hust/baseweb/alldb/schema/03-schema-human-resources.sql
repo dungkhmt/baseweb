@@ -1,7 +1,7 @@
 create table department
 (
     department_id           VARCHAR(60),
-    deaprtment_name         VARCHAR(100),
+    department_name         VARCHAR(100),
     start_date              TIMESTAMP,
     created_by_userLogin_id VARCHAR(255),
     last_updated_stamp      TIMESTAMP,

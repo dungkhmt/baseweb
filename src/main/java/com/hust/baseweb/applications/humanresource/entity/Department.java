@@ -17,12 +17,11 @@ import lombok.Setter;
 
 public class Department {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	//@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="department_id")
-	private UUID departmentId;
+	private String departmentId;
 	
-	@Column(name="deaprtment_name")
+	@Column(name="department_name")
 	private String departmentName;
-	
 	
 }
