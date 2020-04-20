@@ -289,7 +289,8 @@ values ('BILL_TO_CUSTOMER', 'Hóa đơn đến khách hàng'),
        ('SALES_EXECUTIVE', 'Hóa đơn của nhân viên bán hàng');
 
 
-
+INSERT INTO content_type (content_type_id,parent_type_id,description,last_updated_stamp,created_stamp) VALUES (
+'DOCUMENT',NULL,'Document','2017-01-03 10:11:28.217','2017-01-03 10:11:28.217');
 
 
 
