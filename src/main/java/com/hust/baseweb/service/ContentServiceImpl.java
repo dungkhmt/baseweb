@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
+
+
 import com.hust.baseweb.constant.ContentTypeConstant;
 import com.hust.baseweb.entity.Content;
 import com.hust.baseweb.repo.ContentRepo;
@@ -11,6 +13,7 @@ import com.hust.baseweb.repo.FileRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ContentServiceImpl implements ContentService {
@@ -20,6 +23,7 @@ public class ContentServiceImpl implements ContentService {
     private FileRepo fileRepo;
 
     @Override
+    @Transactional
     public Content createContent(InputStream inputStream, String realName) throws IOException {
         Content content = new Content(ContentTypeConstant.DOCUMENT.name(), null, new Date());
         content = contentRepo.save(content);
