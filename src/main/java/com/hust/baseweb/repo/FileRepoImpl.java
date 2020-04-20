@@ -19,6 +19,7 @@ public class FileRepoImpl implements FileRepo {
     @Value("${content-repo.url}")
     private String contentRepoUrl;
     private static final MediaType MEDIA_TYPE_IMAGE = MediaType.parse("image/*");
+    public static final OkHttpClient client = new OkHttpClient();
 
     @Override
     public String create(InputStream input, String name, String realName, String contentType) throws IOException {
@@ -29,13 +30,22 @@ public class FileRepoImpl implements FileRepo {
         Request request = new Request.Builder()
 
                 .url(contentRepoUrl).post(requestBody).build();
-        OkHttpClient client = new OkHttpClient();
+
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful())
                 throw new IOException("Unexpected code " + response);
             return response.body().string();
         }
 
+    }
+
+    @Override
+    public Response get(String url) throws IOException {
+        Request request = new Request.Builder().url(contentRepoUrl + url).build();
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful())
+            throw new IOException("Unexpected code " + response);
+        return response;
     }
 
 }
