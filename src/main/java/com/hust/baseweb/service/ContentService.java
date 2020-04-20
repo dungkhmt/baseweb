@@ -6,6 +6,6 @@ import java.io.InputStream;
 import com.hust.baseweb.entity.Content;
 
 public interface ContentService {
-    public Content createContent(InputStream inputStream, String realName) throws IOException;
-
+    public Content createContent(InputStream inputStream, String realName,String contentType) throws IOException;
+    
 }

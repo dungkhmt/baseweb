@@ -24,7 +24,7 @@ public class ContentController {
     public ResponseEntity<String> createContent(@RequestParam("file") MultipartFile file) {
         Content content = null;
         try {
-            content = contentService.createContent(file.getInputStream(), file.getOriginalFilename());
+            content = contentService.createContent(file.getInputStream(), file.getOriginalFilename(),file.getContentType());
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

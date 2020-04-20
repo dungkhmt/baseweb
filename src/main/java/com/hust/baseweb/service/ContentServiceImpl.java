@@ -24,10 +24,10 @@ public class ContentServiceImpl implements ContentService {
 
     @Override
     @Transactional
-    public Content createContent(InputStream inputStream, String realName) throws IOException {
+    public Content createContent(InputStream inputStream, String realName,String contentType) throws IOException {
         Content content = new Content(ContentTypeConstant.DOCUMENT.name(), null, new Date());
         content = contentRepo.save(content);
-        String url = fileRepo.create(inputStream, content.getContentId().toString(), realName);
+        String url = fileRepo.create(inputStream, content.getContentId().toString(), realName,contentType);
         content.setUrl(url);
         content.setLastUpdatedAt(new Date());
         content = contentRepo.save(content);

@@ -3,6 +3,7 @@ package com.hust.baseweb.repo;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -20,11 +21,10 @@ public class FileRepoImpl implements FileRepo {
     private static final MediaType MEDIA_TYPE_IMAGE = MediaType.parse("image/*");
 
     @Override
-    public String create(InputStream input, String name, String realName) throws IOException {
-        byte[] bytes = new byte[input.available()];
-        input.read(bytes);
+    public String create(InputStream input, String name, String realName, String contentType) throws IOException {
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("id", name)
-                .addFormDataPart("file", realName, RequestBody.create(MEDIA_TYPE_IMAGE, bytes)).build();
+                .addFormDataPart("file", realName, RequestBody.create(MediaType.parse(contentType), IOUtils.toByteArray(input)))
+                .build();
 
         Request request = new Request.Builder()
 
