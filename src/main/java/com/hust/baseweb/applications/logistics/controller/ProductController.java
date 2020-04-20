@@ -68,8 +68,9 @@ public class ProductController {
     public ResponseEntity addNewProductToDatabase(Principal principal, @RequestBody ModelCreateProductInput input) {
         log.info("addNewProductToDatabase");
         log.info("input {}", input.toString());
-        Product product=productService.save(input.getProductId(),input.getProductName(),input.getType(),null, 0,input.getQuantityUomId() , null, null, input.getContent());
-        return ResponseEntity.ok().body(product);
+        Product product = productService.save(input.getProductId(), input.getProductName(), input.getType(), null, 0,
+                input.getQuantityUomId(), null, null, input.getContent());
+        return ResponseEntity.status(HttpStatus.CREATED).body(product.getProductId());
     }
     @GetMapping("/get-list-product-frontend")
     public ResponseEntity<?> getListProductFrontend(Pageable page, @RequestParam(required = false) String param) {
