@@ -1,6 +1,9 @@
 package com.hust.baseweb.applications.logistics.controller;
 
 
+import java.security.Principal;
+import java.util.List;
+
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductType;
 import com.hust.baseweb.applications.logistics.entity.Uom;
@@ -13,16 +16,20 @@ import com.hust.baseweb.applications.logistics.repo.ProductTypeRepo;
 import com.hust.baseweb.applications.logistics.service.ProductService;
 import com.hust.baseweb.applications.logistics.service.ProductTypeService;
 import com.hust.baseweb.applications.logistics.service.UomService;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @RestController
 @CrossOrigin
@@ -61,12 +68,7 @@ public class ProductController {
     public ResponseEntity addNewProductToDatabase(Principal principal, @RequestBody ModelCreateProductInput input) {
         log.info("addNewProductToDatabase");
         log.info("input {}", input.toString());
-        Product product = new Product();
-        product.setProductId(input.getProductId());
-        product.setProductName(input.getProductName());
-        product.setProductType(productTypeService.getProductTypeByProductTypeId(input.getType()));
-        product.setUom(uomService.getUomByUomId(input.getQuantityUomId()));
-        productService.saveProduct(product);
+        Product product=productService.save(input.getProductId(),input.getProductName(),input.getType(),null, 0,input.getQuantityUomId() , null, null, input.getContent());
         return ResponseEntity.ok().body(product);
     }
     @GetMapping("/get-list-product-frontend")
