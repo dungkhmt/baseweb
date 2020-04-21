@@ -46,3 +46,5 @@ logging:
     org:
       springframework: INFO
   config: classpath:logback-dev.xml
+content-repo:
+  url : 'http://localhost:8081/'

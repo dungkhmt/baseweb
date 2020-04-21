@@ -1,7 +1,7 @@
 package com.hust.baseweb.applications.tms.service;
 
+import com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel;
 import com.hust.baseweb.applications.tms.model.DeliveryTripModel;
-import com.hust.baseweb.applications.tms.model.ShipmentItemModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,7 +31,7 @@ public interface SolverService {
         @NoArgsConstructor
         public static class Input {
             private String deliveryPlanId;
-            private List<ShipmentItemModel.Create> shipmentItems;
+            private List<DeliveryTripDetailModel.Create> shipmentItems;
         }
 
         @AllArgsConstructor

@@ -22,6 +22,8 @@ public interface ProductService {
                  String uomId,
                  Integer hsThu,
                  Integer hsPal);
-
+                 
+    Product save(String productId, String productName,String type, String productTransportCategory, double productWeight,
+            String uomId, Integer hsThu, Integer hsPal, List<String> contentIds);
 
 }

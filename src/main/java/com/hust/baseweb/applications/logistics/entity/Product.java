@@ -1,10 +1,23 @@
 package com.hust.baseweb.applications.logistics.entity;
 
+import java.util.Date;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
+import com.hust.baseweb.entity.Content;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -29,7 +42,7 @@ public class Product {
     private ProductType productType;
 
     @Column(name = "product_transport_category_id")
-    private String productTransportCategoryId;  // KHO, LANH, DONG
+    private String productTransportCategoryId; // KHO, LANH, DONG
 
     private Date createdStamp;
     private Date lastUpdatedStamp;
@@ -42,4 +55,7 @@ public class Product {
 
     private Integer hsThu;
     private Integer hsPal;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "product_content", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "product_id"), inverseJoinColumns = @JoinColumn(name = "content_id", referencedColumnName = "content_id"))
+    private Set<Content> contents;
 }

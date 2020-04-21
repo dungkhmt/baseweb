@@ -46,3 +46,15 @@ CREATE TRIGGER track_locations_last_updated_stamp
   BEFORE UPDATE
   ON track_locations
   FOR EACH ROW EXECUTE PROCEDURE set_last_updated_stamp();
+CREATE TRIGGER content_type_last_updated_stamp
+  BEFORE UPDATE
+  ON content_type
+  FOR EACH ROW EXECUTE PROCEDURE set_last_updated_stamp();
+CREATE TRIGGER content_last_updated_stamp
+  BEFORE UPDATE
+  ON content
+  FOR EACH ROW EXECUTE PROCEDURE set_last_updated_stamp();
+CREATE TRIGGER product_content_last_updated_stamp
+  BEFORE UPDATE
+  ON product_content
+  FOR EACH ROW EXECUTE PROCEDURE set_last_updated_stamp();
