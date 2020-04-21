@@ -4,10 +4,13 @@ import com.hust.baseweb.applications.geo.embeddable.DistanceTravelTimePostalAddr
 import com.hust.baseweb.applications.geo.entity.DistanceTravelTimePostalAddress;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.DistanceTravelTimePostalAddressRepo;
+import com.hust.baseweb.applications.logistics.entity.ShipmentItemRole;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
+import com.hust.baseweb.applications.logistics.repo.ShipmentItemRoleRepo;
 import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.model.ShipmentItemModel;
 import com.hust.baseweb.applications.tms.repo.*;
+import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.PageUtils;
 import lombok.AllArgsConstructor;
@@ -36,6 +39,8 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     private DistanceTravelTimePostalAddressRepo distanceTraveltimePostalAddressRepo;
 
     private DeliveryPlanRepo deliveryPlanRepo;
+
+    private ShipmentItemRoleRepo shipmentItemRoleRepo;
 
     @Override
     public Page<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
@@ -146,12 +151,32 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public List<ShipmentItemModel> findAllNotInDeliveryPlan(String deliveryPlanId) {
+        // TODO: to be improved by adding indicator (status) fields to shipment_items
         Set<String> shipmentItemInDeliveryPlans
                 = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
                 .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
                 .collect(Collectors.toSet());
         List<ShipmentItem> allShipmentItems = shipmentItemRepo.findAll();
         return allShipmentItems.stream()
+                .filter(shipmentItem -> shipmentItem.getStatusItem().getStatusId().equals("SHIPMENT_ITEM_CREATED")
+                        && !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId().toString()))
+                .map(ShipmentItem::toShipmentItemModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ShipmentItemModel> findAllByUserLoginNotInDeliveryPlan(UserLogin userLogin, String deliveryPlanId) {
+        // TODO: to be improved by adding indicator (status) fields to shipment_items
+        List<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDate(userLogin.getParty(),null);
+        List<UUID> shipmentItemIds = shipmentItemRoles.stream().map(shipmentItemRole -> shipmentItemRole.getShipmentItem().getShipmentItemId())
+                .collect(Collectors.toList());
+        List<ShipmentItem> list = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemIds);
+        Set<String> shipmentItemInDeliveryPlans
+                = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
+                .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
+                .collect(Collectors.toSet());
+
+        return list.stream()
                 .filter(shipmentItem -> shipmentItem.getStatusItem().getStatusId().equals("SHIPMENT_ITEM_CREATED")
                         && !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId().toString()))
                 .map(ShipmentItem::toShipmentItemModel)
@@ -166,6 +191,16 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     @Override
     public Iterable<ShipmentItem> findAll() {
         return shipmentItemRepo.findAll();
+    }
+
+    @Override
+    public Page<ShipmentItem> findAllByUserLogin(UserLogin userLogin,Pageable pageable) {
+        List<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDate(userLogin.getParty(),null);
+        List<UUID> shipmentItemIds = shipmentItemRoles.stream().map(shipmentItemRole -> shipmentItemRole.getShipmentItem().getShipmentItemId())
+                .collect(Collectors.toList());
+        List<ShipmentItem> list = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemIds);
+        Page<ShipmentItem> page = PageUtils.getPage(list,pageable);
+        return page;
     }
 
     @Override

@@ -349,9 +349,10 @@ values ('WT_kg', 'WEIGHT_MEASURE', 'Kg'),
        ('CUR_vnd', 'CURRENCY_MEASURE', 'VND')
 ;
 
-insert into role_type(role_type_id, description)
-values ('BILL_TO_CUSTOMER', 'Hóa đơn đến khách hàng'),
-       ('SALES_EXECUTIVE', 'Hóa đơn của nhân viên bán hàng');
+insert into role_type(role_type_id, description) values ('BILL_TO_CUSTOMER', 'Hóa đơn đến khách hàng');
+insert into role_type(role_type_id, description) values  ('SALES_EXECUTIVE', 'Hóa đơn của nhân viên bán hàng');
+insert into role_type(role_type_id, description) values  ('CREATE_DELIVERY_TRIP', 'Tạo chuyến giao hàng');
+
 
 
 INSERT INTO content_type (content_type_id,parent_type_id,description,last_updated_stamp,created_stamp) VALUES (

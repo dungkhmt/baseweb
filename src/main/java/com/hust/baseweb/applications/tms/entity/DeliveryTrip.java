@@ -82,7 +82,7 @@ public class DeliveryTrip {
                         .map(UserLogin::getUserLoginId)
                         .orElse(null),
                 distance,
-                statusItem.getStatusId()
+                (statusItem != null ?statusItem.getStatusId():null)
         );
     }
 }

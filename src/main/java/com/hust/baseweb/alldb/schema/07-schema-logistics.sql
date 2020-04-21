@@ -118,3 +118,20 @@ create table shipment_item_status
     constraint fk_shipment_item_status_status_id foreign key (status_id) references status_item (status_id)
 );
 
+
+create table shipment_item_role(
+    shipment_item_role_id UUID not null default uuid_generate_v1(),
+    shipment_item_id UUID not null,
+    party_id uuid not null,
+    role_type_id VARCHAR(60),
+    from_date TIMESTAMP,
+    thru_date TIMESTAMP,
+
+    last_updated_stamp TIMESTAMP,
+    created_stamp TIMESTAMP default CURRENT_TIMESTAMP,
+    constraint pk_shipment_item_role primary key (shipment_item_role_id),
+    constraint fk_shipment_item_role_role_type_id foreign key(role_type_id) references role_type(role_type_id),
+    constraint fk_shipment_item_role_shipment_item_id foreign key(shipment_item_id) references shipment_item(shipment_item_id),
+    constraint fk_shipment_item_role_party_id foreign key(party_id) references party(party_id)
+
+);

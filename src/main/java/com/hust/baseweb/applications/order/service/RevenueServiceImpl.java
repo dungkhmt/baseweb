@@ -99,7 +99,9 @@ public class RevenueServiceImpl implements RevenueService {
             //PartyCustomer customer = orderItemToCustomerFunction.apply(orderItem);
             Party customer = orderItemToCustomerFunction.apply(orderItem);
             ProductPrice productPrice = productPriceMap.get(product.getProductId());
-            double revenue = quantity * productPrice.getPrice();
+            double revenue = 0;
+            if(productPrice != null)
+                revenue = quantity * productPrice.getPrice();
             LocalDate date = orderItemToDateFunction.apply(orderItem);
 
             totalRevenueMap.get(date).increase(revenue);

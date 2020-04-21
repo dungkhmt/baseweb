@@ -13,10 +13,13 @@ import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.geo.service.PostalAddressService;
+import com.hust.baseweb.applications.logistics.constant.LogisticsConstant;
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
+import com.hust.baseweb.applications.logistics.entity.ShipmentItemRole;
 import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
+import com.hust.baseweb.applications.logistics.repo.ShipmentItemRoleRepo;
 import com.hust.baseweb.applications.logistics.service.ProductService;
 import com.hust.baseweb.applications.order.entity.CompositeOrderItemId;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
@@ -35,10 +38,7 @@ import com.hust.baseweb.applications.tms.model.ShipmentModel;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
 import com.hust.baseweb.applications.tms.repo.status.ShipmentItemStatusRepo;
-import com.hust.baseweb.entity.Party;
-import com.hust.baseweb.entity.PartyType;
-import com.hust.baseweb.entity.Status;
-import com.hust.baseweb.entity.StatusItem;
+import com.hust.baseweb.entity.*;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PartyTypeRepo;
 import com.hust.baseweb.repo.StatusItemRepo;
@@ -93,6 +93,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     private StatusItemRepo statusItemRepo;
     private ShipmentItemStatusRepo shipmentItemStatusRepo;
+    private ShipmentItemRoleRepo shipmentItemRoleRepo;
 
     // @Override
     @Transactional
@@ -163,7 +164,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     @Override
     @Transactional
-    public Shipment save(ShipmentModel.CreateShipmentInputModel input) {
+    public Shipment save(UserLogin userLogin, ShipmentModel.CreateShipmentInputModel input) {
         log.info("save, shipmentItem.length = " + input.getShipmentItems().length);
 //        if (true) {
 //            return privateSave(input);
@@ -235,6 +236,18 @@ public class ShipmentServiceImpl implements ShipmentService {
             shipmentItems.add(shipmentItem);
         }
 
+        List<ShipmentItemRole> shipmentItemRoles = new ArrayList<>();
+        for(ShipmentItem shipmentItem: shipmentItems){
+            ShipmentItemRole shipmentItemRole = new ShipmentItemRole();
+            shipmentItemRole.setShipmentItem(shipmentItem);
+            shipmentItemRole.setParty(userLogin.getParty());
+            shipmentItemRole.setRoleTypeId(LogisticsConstant.CREATE_DELIVERY_TRIP);
+            shipmentItemRole.setFromDate(new Date());
+            //shipmentItemRole = shipmentItemRoleRepo.save(shipmentItemRole);
+            shipmentItemRoles.add(shipmentItemRole);
+        }
+
+
         //Map<OrderItem, PartyCustomer> orderItemToCustomerMap = shipmentItems.stream()
         //        .collect(Collectors.toMap(ShipmentItem::getOrderItem, ShipmentItem::getCustomer));
         Map<OrderItem, Party> orderItemToCustomerMap = shipmentItems.stream()
@@ -250,6 +263,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 
         List<ShipmentItemStatus> shipmentItemStatuses = createShipmentItemStatuses(shipmentItems, statusItem);
         shipmentItemStatusRepo.saveAll(shipmentItemStatuses);
+
+        shipmentItemRoleRepo.saveAll(shipmentItemRoles);
 
         revenueService.updateRevenue(orderItems,
                 orderItemToCustomerMap::get,
@@ -317,10 +332,15 @@ public class ShipmentServiceImpl implements ShipmentService {
     private OrderHeader getOrCreateOrderHeader(Map<String, OrderHeader> orderHeaderMap,
                                                ShipmentItemModel.Create shipmentItemModel) {
         Date orderDate = null;
+        log.info("getOrCreateOrderHeader, orderDate = " + shipmentItemModel.getOrderDate());
+        if(shipmentItemModel.getOrderDate() == null)
+            orderDate = new Date();
+        else{
         try {
             orderDate = Constant.ORDER_EXCEL_DATE_FORMAT.parse(shipmentItemModel.getOrderDate());
         } catch (ParseException e) {
 //            e.printStackTrace();
+        }
         }
         final Date finalOrderDate = orderDate;
         return orderHeaderMap.computeIfAbsent(shipmentItemModel.getOrderId(), orderId -> {
@@ -423,7 +443,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     @Override
     @Transactional
-    public Shipment save(ShipmentItemModel.Create shipmentItemModel) {
+    public Shipment save(UserLogin userLogin, ShipmentItemModel.Create shipmentItemModel) {
 
         Shipment shipment = new Shipment();
 
@@ -478,6 +498,14 @@ public class ShipmentServiceImpl implements ShipmentService {
                     shipmentItemModel.getUom(), shipmentItemModel.getHsThu(), shipmentItemModel.getHsPal());
             productRepo.save(product);
         }
+
+        // insert shipment_item_role
+        ShipmentItemRole shipmentItemRole = new ShipmentItemRole();
+        shipmentItemRole.setShipmentItem(shipmentItem);
+        shipmentItemRole.setParty(userLogin.getParty());
+        shipmentItemRole.setRoleTypeId(LogisticsConstant.CREATE_DELIVERY_TRIP);
+        shipmentItemRole.setFromDate(new Date());
+        shipmentItemRole = shipmentItemRoleRepo.save(shipmentItemRole);
 
         return shipment;
     }

@@ -6,12 +6,15 @@ import com.hust.baseweb.applications.tms.entity.Shipment;
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
 import com.hust.baseweb.applications.tms.model.*;
 import com.hust.baseweb.applications.tms.service.*;
+import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.service.UserService;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
 import com.poiji.option.PoijiOptions;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,21 +38,24 @@ public class ShipmentOrderAPIController {
     private DeliveryPlanService deliveryPlanService;
     private DeliveryTripService deliveryTripService;
     private DeliveryTripDetailService deliveryTripDetailService;
+    private UserService userService;
 
     @PostMapping("/create-shipment")
     public ResponseEntity<?> createOrderShipment(Principal principal,
                                                  @RequestBody ShipmentModel.CreateShipmentInputModel input) throws ParseException {
+        UserLogin userLogin = userService.findById(principal.getName());
         log.info("::createOrderShipment, shipment-items = " + input.getShipmentItems().length);
 
-        Shipment shipment = shipmentService.save(input);
+        Shipment shipment = shipmentService.save(userLogin, input);
         return ResponseEntity.ok().body(shipment);
     }
 
     @PostMapping("/create-shipment-item")
     public ResponseEntity<?> createOrderShipment(Principal principal, @RequestBody ShipmentItemModel.Create input) {
+        UserLogin userLogin = userService.findById(principal.getName());
         log.info("::createOrderShipment");
 
-        Shipment shipment = shipmentService.save(
+        Shipment shipment = shipmentService.save(userLogin,
                 new ShipmentModel.CreateShipmentInputModel(new ShipmentItemModel.Create[]{input}));
         return ResponseEntity.ok().body(shipment);
     }
@@ -57,12 +63,14 @@ public class ShipmentOrderAPIController {
     @PostMapping("/shipment/upload")
     public ResponseEntity<?> uploadOrderShipment(Principal principal,
                                                  @RequestParam("file") MultipartFile multipartFile) throws IOException, ParseException {
+        UserLogin userLogin = userService.findById(principal.getName());
+
         log.info("::uploadOrderShipment");
         List<ShipmentItemModel.Create> shipmentItemInputModels =
                 Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, ShipmentItemModel.Create.class,
                         PoijiOptions.PoijiOptionsBuilder.settings().sheetIndex(0).build());
 
-        Shipment shipment = shipmentService.save(new ShipmentModel.CreateShipmentInputModel(shipmentItemInputModels.toArray(
+        Shipment shipment = shipmentService.save(userLogin, new ShipmentModel.CreateShipmentInputModel(shipmentItemInputModels.toArray(
                 new ShipmentItemModel.Create[0])));
         return ResponseEntity.ok().body(shipment);
     }
@@ -79,6 +87,16 @@ public class ShipmentOrderAPIController {
         log.info("::getOrderShipmentItem, ");
         return ResponseEntity.ok().body(shipmentItemService.findAll(pageable).map(ShipmentItem::toShipmentItemModel));
     }
+    @GetMapping("/shipment-item-of-user-login")
+    public ResponseEntity<?> getOrderShipmentItemOfUserLogin(Principal principal, Pageable pageable) {
+        log.info("::getOrderShipmentItem, ");
+        UserLogin userLogin = userService.findById(principal.getName());
+        Page<ShipmentItem> page = shipmentItemService.findAllByUserLogin(userLogin, pageable);
+
+        return ResponseEntity.ok().body(page);
+        //return ResponseEntity.ok().body(shipmentItemService.findAll(pageable).map(ShipmentItem::toShipmentItemModel));
+    }
+
 
     @GetMapping("/shipment-item-delivery-plan/{deliveryPlanId}/page")
     public ResponseEntity<?> getPageOrderShipmentItem(Principal principal,
@@ -116,6 +134,16 @@ public class ShipmentOrderAPIController {
         log.info("::getOrderShipmentItemPageNotIn deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlan(deliveryPlanId));
     }
+    @GetMapping("/shipment-item-of-user-login-not-in-delivery-plan/{deliveryPlanId}/all")
+    public ResponseEntity<?> getOrderShipmentItemOfUserLoginPageNotInDeliveryPlan(Principal principal,
+                                                                       @PathVariable String deliveryPlanId) {
+        UserLogin userLogin = userService.findById(principal.getName());
+
+        log.info("::getOrderShipmentItemPageNotIn deliveryPlanId=" + deliveryPlanId);
+        //return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlan(deliveryPlanId));
+        return ResponseEntity.ok().body(shipmentItemService.findAllByUserLoginNotInDeliveryPlan(userLogin,deliveryPlanId));
+    }
+
 
     @PostMapping("/delete-shipment-item-delivery-plan")
     public ResponseEntity<?> deleteShipmentItemDeliveryPlan(Principal principal,
