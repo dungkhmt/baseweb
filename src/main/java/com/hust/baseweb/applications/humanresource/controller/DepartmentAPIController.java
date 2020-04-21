@@ -59,7 +59,4 @@ public class DepartmentAPIController {
 		return ResponseEntity.ok().body("add OK");
 	}
 
-
-
-	
 }
