@@ -36,4 +36,6 @@ public interface DeliveryTripService {
     boolean approveDeliveryTrip(UUID deliveryTripId);
 
     boolean startExecuteDeliveryTrip(UUID deliveryTripId);
+
+    boolean deleteAll();
 }
