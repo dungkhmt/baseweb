@@ -8,12 +8,14 @@ import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.entity.status.DeliveryTripDetailStatus;
 import com.hust.baseweb.applications.tms.entity.status.DeliveryTripStatus;
+import com.hust.baseweb.applications.tms.entity.status.ShipmentItemStatus;
 import com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel;
 import com.hust.baseweb.applications.tms.model.DeliveryTripModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
 import com.hust.baseweb.applications.tms.repo.*;
 import com.hust.baseweb.applications.tms.repo.status.DeliveryTripDetailStatusRepo;
 import com.hust.baseweb.applications.tms.repo.status.DeliveryTripStatusRepo;
+import com.hust.baseweb.applications.tms.repo.status.ShipmentItemStatusRepo;
 import com.hust.baseweb.entity.StatusItem;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.PartyRepo;
@@ -54,6 +56,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     private StatusItemRepo statusItemRepo;
     private DeliveryTripStatusRepo deliveryTripStatusRepo;
     private DeliveryTripDetailStatusRepo deliveryTripDetailStatusRepo;
+    private ShipmentItemStatusRepo shipmentItemStatusRepo;
 
     @Override
     @Transactional
@@ -411,6 +414,41 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                 deliveryTripApprovedTrip,
                 deliveryTripExecuted,
                 deliveryTripDetailOnTrip);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteAll() {
+        Date now = new Date();
+        List<ShipmentItem> shipmentItems = deliveryTripDetailRepo.findAll()
+                .stream()
+                .map(DeliveryTripDetail::getShipmentItem)
+                .distinct()
+                .collect(Collectors.toList());
+        StatusItem shipmentItemCreated = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
+                .orElseThrow(NoSuchElementException::new);
+        List<ShipmentItemStatus> shipmentItemStatuses = shipmentItemStatusRepo.findAllByShipmentItemInAndThruDateNull(
+                shipmentItems);
+        for (ShipmentItemStatus shipmentItemStatus : shipmentItemStatuses) {
+            shipmentItemStatus.setThruDate(now);
+        }
+
+        for (ShipmentItem shipmentItem : shipmentItems) {
+            shipmentItem.setScheduledQuantity(0);
+            shipmentItem.setStatusItem(shipmentItemCreated);
+            shipmentItemStatuses.add(new ShipmentItemStatus(null, shipmentItem, shipmentItemCreated, now, null));
+        }
+
+        shipmentItemRepo.saveAll(shipmentItems);
+        shipmentItemStatusRepo.saveAll(shipmentItemStatuses);
+
+        deliveryTripDetailStatusRepo.deleteAllInBatch();
+        deliveryTripStatusRepo.deleteAllInBatch();
+
+        deliveryTripDetailRepo.deleteAllInBatch();
+        deliveryTripRepo.deleteAllInBatch();
+
+        return true;
     }
 
     private boolean updateDeliveryTripStatus(UUID deliveryTripId,

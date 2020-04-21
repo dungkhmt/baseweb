@@ -256,4 +256,9 @@ public class ShipmentOrderAPIController {
         return ResponseEntity.ok(deliveryPlanService.getTotalWeightShipmentItems(UUID.fromString(deliveryPlanId)));
     }
 
+    @GetMapping("/delete-all-delivery-trips")
+    public ResponseEntity<?> deleteAllDeliveryTrips() {
+        log.info("deleteAllDeliveryTrips()");
+        return ResponseEntity.ok(deliveryTripService.deleteAll());
+    }
 }
