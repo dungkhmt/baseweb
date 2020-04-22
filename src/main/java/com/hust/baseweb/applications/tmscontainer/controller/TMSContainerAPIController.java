@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.tmscontainer.controller;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
+import com.hust.baseweb.applications.geo.repo.PostalAddressJpaRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.tmscontainer.entity.*;
 import com.hust.baseweb.applications.tmscontainer.model.*;
@@ -12,10 +13,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -37,6 +41,7 @@ public class TMSContainerAPIController {
     private ContDepotTruckPagingRepo contDepotTruckPagingRepo;
     private ContTrailerPagingRepo contTrailerPagingRepo;
     private ContTrailerRepo contTrailerRepo;
+    private PostalAddressJpaRepo postalAddressJpaRepo;
 
 
     @PostMapping("/create-port")
@@ -114,16 +119,29 @@ public class TMSContainerAPIController {
         ContDepotContainer contDepotContainer = new ContDepotContainer();
         contDepotContainer.setDepotContainerId(input.getDepotContainerId());
         contDepotContainer.setDepotContainerName(input.getDepotContainerName());
-        GeoPoint geoPoint = new GeoPoint();
-        geoPoint.setLatitude(Double.parseDouble(input.getLat()));
-        geoPoint.setLongitude(Double.parseDouble(input.getLng()));
         PostalAddress postalAddress = new PostalAddress();
-        postalAddress.setAddress(input.getAddress());
-        postalAddress.setGeoPoint(geoPoint);
+        if(input.getContactMechId() != null){
+            postalAddress = postalAddressJpaRepo.findByContactMechId(UUID.fromString(input.getContactMechId()));
+        }else{
+            GeoPoint geoPoint = new GeoPoint();
+            geoPoint.setLatitude(Double.parseDouble(input.getLat()));
+            geoPoint.setLongitude(Double.parseDouble(input.getLng()));
+
+            postalAddress.setAddress(input.getAddress());
+            postalAddress.setGeoPoint(geoPoint);
+            geoPointRepo.save(geoPoint);
+        }
+
         contDepotContainer.setPostalAddress(postalAddress);
-        geoPointRepo.save(geoPoint);
+
+
+
+
+
+
         postalAddressRepo.save(postalAddress);
         contDepotContainerRepo.save(contDepotContainer);
+        log.info("input : {}", input.toString());
     }
 
     @GetMapping("/get-list-depot-container-page")
@@ -237,6 +255,27 @@ public class TMSContainerAPIController {
         contTrailer.setTrailerId(input.getTrailerId());
         contTrailer.setDescription(input.getDescription());
         contTrailerRepo.save(contTrailer);
+    }
+
+    @PostMapping("/get-list-address-suggestion")
+    ResponseEntity<?> getListAddressSuggestion(@RequestBody AddressInputForSuggestion input){
+        log.info("getListPostalAddressSuggestion");
+        if(input == null || input.getAddress() == null ){
+            PostalAddress postalAddress = new PostalAddress();
+            postalAddress.setAddress("");
+            List<PostalAddress> postalAddressList = new ArrayList<PostalAddress>();
+            postalAddressList.add(postalAddress);
+            return ResponseEntity.ok(new OutputPostalAddressSuggestion(postalAddressList));
+        }
+        List<PostalAddress> postalAddressList = postalAddressJpaRepo.findTop5ByAddressContaining(input.getAddress());
+        //PostalAddress postalAddress = new PostalAddress();
+        //postalAddress.setAddress(input.getAddress());
+        //postalAddressList.add(postalAddress);
+        for(PostalAddress postalAddress: postalAddressList){
+            postalAddress.setLat(postalAddress.getGeoPoint().getLatitude());
+            postalAddress.setLng(postalAddress.getGeoPoint().getLongitude());
+        }
+        return ResponseEntity.ok(new OutputPostalAddressSuggestion(postalAddressList));
     }
 
 
