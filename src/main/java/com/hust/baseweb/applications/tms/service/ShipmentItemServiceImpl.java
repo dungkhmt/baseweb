@@ -167,8 +167,9 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     @Override
     public List<ShipmentItemModel> findAllByUserLoginNotInDeliveryPlan(UserLogin userLogin, String deliveryPlanId) {
         // TODO: to be improved by adding indicator (status) fields to shipment_items
-        List<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDate(userLogin.getParty(),null);
-        List<UUID> shipmentItemIds = shipmentItemRoles.stream().map(shipmentItemRole -> shipmentItemRole.getShipmentItem().getShipmentItemId())
+        List<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDateNull(userLogin.getParty());
+        List<UUID> shipmentItemIds = shipmentItemRoles.stream()
+                .map(shipmentItemRole -> shipmentItemRole.getShipmentItem().getShipmentItemId())
                 .collect(Collectors.toList());
         List<ShipmentItem> list = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemIds);
         Set<String> shipmentItemInDeliveryPlans
@@ -194,13 +195,16 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public Page<ShipmentItem> findAllByUserLogin(UserLogin userLogin,Pageable pageable) {
-        List<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDate(userLogin.getParty(),null);
-        List<UUID> shipmentItemIds = shipmentItemRoles.stream().map(shipmentItemRole -> shipmentItemRole.getShipmentItem().getShipmentItemId())
+    public Page<ShipmentItemModel> findAllByUserLogin(UserLogin userLogin, Pageable pageable) {
+        List<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDateNull(userLogin.getParty());
+        List<UUID> shipmentItemIds = shipmentItemRoles.stream()
+                .map(shipmentItemRole -> shipmentItemRole.getShipmentItem().getShipmentItemId())
                 .collect(Collectors.toList());
-        List<ShipmentItem> list = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemIds);
-        Page<ShipmentItem> page = PageUtils.getPage(list,pageable);
-        return page;
+        List<ShipmentItemModel> shipmentItemModels = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemIds)
+                .stream()
+                .map(ShipmentItem::toShipmentItemModel)
+                .collect(Collectors.toList());
+        return PageUtils.getPage(shipmentItemModels, pageable);
     }
 
     @Override

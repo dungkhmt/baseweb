@@ -14,7 +14,6 @@ import com.poiji.option.PoijiOptions;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -91,9 +90,8 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> getOrderShipmentItemOfUserLogin(Principal principal, Pageable pageable) {
         log.info("::getOrderShipmentItem, ");
         UserLogin userLogin = userService.findById(principal.getName());
-        Page<ShipmentItem> page = shipmentItemService.findAllByUserLogin(userLogin, pageable);
 
-        return ResponseEntity.ok().body(page);
+        return ResponseEntity.ok().body(shipmentItemService.findAllByUserLogin(userLogin, pageable));
         //return ResponseEntity.ok().body(shipmentItemService.findAll(pageable).map(ShipmentItem::toShipmentItemModel));
     }
 
