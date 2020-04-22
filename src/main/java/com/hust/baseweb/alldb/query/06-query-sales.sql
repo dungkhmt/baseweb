@@ -1,3 +1,8 @@
+-- lay ra danh sach khach hang (id,ten, dia chi, toa do), bang party_customer
+select c.party_id,c.customer_name, a.address, g.latitude, g.longitude
+from party_customer as c, postal_address as a, geo_point as g, party_contact_mech_purpose as pcmp
+where a.geo_point_id = g.geo_point_id and pcmp.contact_mech_id = a.contact_mech_id and pcmp.party_id = c.party_id;
+
 -- lay ra danh sach dai li ban le (id,ten, dia chi, toa do), bang party_retail_outlet
 select ro.party_id,ro.retail_outlet_name, a.address, g.latitude, g.longitude
 from party_retail_outlet as ro, postal_address as a, geo_point as g, party_contact_mech_purpose as pcmp

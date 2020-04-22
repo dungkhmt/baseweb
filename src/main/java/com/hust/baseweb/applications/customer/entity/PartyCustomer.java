@@ -37,7 +37,7 @@ public class PartyCustomer {
 
     @JoinTable(name = "PartyContactMechPurpose", inverseJoinColumns = @JoinColumn(name = "contact_mech_id", referencedColumnName = "contact_mech_id"),
             joinColumns = @JoinColumn(name = "party_id", referencedColumnName = "party_id"))
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<PostalAddress> postalAddress;
 
     @Transient
