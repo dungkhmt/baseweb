@@ -171,6 +171,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 //        }
 
         // Tạo shipment
+        mergeDistinctShipmentItems(input);
+
         Shipment shipment = createAndSaveShipment();
 
         // Tạo shipment_item
@@ -272,6 +274,22 @@ public class ShipmentServiceImpl implements ShipmentService {
                         orderItem.getOrderItemSeqId())));
 
         return shipment;
+    }
+
+    private void mergeDistinctShipmentItems(ShipmentModel.CreateShipmentInputModel input) {
+        ShipmentItemModel.Create[] shipmentItems = input.getShipmentItems();
+        Map<List<String>, ShipmentItemModel.Create> orderIdAndProductIdToShipmentItem = new HashMap<>();
+        for (ShipmentItemModel.Create shipmentItem : shipmentItems) {
+            orderIdAndProductIdToShipmentItem.merge(Arrays.asList(shipmentItem.getOrderId(),
+                    shipmentItem.getProductId()),
+                    shipmentItem, (old, other) -> {
+                        old.setQuantity(old.getQuantity() + other.getQuantity());
+                        old.setWeight(old.getWeight() + other.getWeight());
+                        old.setPallet(old.getPallet() + other.getPallet());
+                        return old;
+                    });
+        }
+        input.setShipmentItems(orderIdAndProductIdToShipmentItem.values().toArray(new ShipmentItemModel.Create[0]));
     }
 
     @NotNull
