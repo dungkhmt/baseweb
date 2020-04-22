@@ -38,7 +38,7 @@ public class DeliveryTripDetail {
     @ManyToOne(fetch = FetchType.EAGER)
     private StatusItem statusItem;
 
-    public DeliveryTripDetailModel.OrderItem toDeliveryTripDetailModel(Product product) {
+    public DeliveryTripDetailModel.OrderItem toDeliveryTripDetailModel() {
         DeliveryTripDetailModel.OrderItem orderItemModel = new DeliveryTripDetailModel.OrderItem();
         orderItemModel.setSequence(sequenceId);
         orderItemModel.setDeliveryTripDetailId(deliveryTripDetailId);
@@ -57,16 +57,18 @@ public class DeliveryTripDetail {
                     orderItemModel.setLat(shipmentItem.getShipToLocation().getGeoPoint().getLatitude());
                     orderItemModel.setLng(shipmentItem.getShipToLocation().getGeoPoint().getLongitude());
                 }
+                orderItemModel.setLocationCode(shipmentItem.getShipToLocation().getLocationCode());
             }
             orderItemModel.setShipmentQuantity(shipmentItem.getQuantity());
-        }
-        if (product != null) {
-            orderItemModel.setProductId(product.getProductId());
-            orderItemModel.setProductName(product.getProductName());
-            orderItemModel.setWeight(product.getWeight() * deliveryQuantity);
+
+            Product product = shipmentItem.getOrderItem().getProduct();
+            if (product != null) {
+                orderItemModel.setProductId(product.getProductId());
+                orderItemModel.setProductName(product.getProductName());
+                orderItemModel.setWeight(product.getWeight() * deliveryQuantity);
+            }
         }
         orderItemModel.setDeliveryQuantity(deliveryQuantity);
-        orderItemModel.setLocationCode(shipmentItem.getShipToLocation().getLocationCode());
         return orderItemModel;
     }
 

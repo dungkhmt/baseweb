@@ -64,6 +64,8 @@ public class DeliveryTripModel {
         private String driverUserLoginId;
         private Date executeDate;
         private List<LocationView> deliveryTripLocations;
+
+        private String status;
     }
 
     @AllArgsConstructor
@@ -89,5 +91,6 @@ public class DeliveryTripModel {
         private String productName;
         private int deliveryQuantity;
 
+        private String status;
     }
 }

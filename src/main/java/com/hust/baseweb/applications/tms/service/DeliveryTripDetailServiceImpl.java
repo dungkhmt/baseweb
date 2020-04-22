@@ -270,8 +270,7 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
                 .getGeoPoint();
         return new DeliveryTripDetailModel.OrderItems(
                 deliveryTripDetails.stream()
-                        .map(deliveryTripDetail -> deliveryTripDetail.toDeliveryTripDetailModel(
-                                deliveryTripDetail.getShipmentItem().getOrderItem().getProduct()))
+                        .map(DeliveryTripDetail::toDeliveryTripDetailModel)
                         .collect(Collectors.toList()),
                 facilityGeoPoint.getLatitude(),
                 facilityGeoPoint.getLongitude()

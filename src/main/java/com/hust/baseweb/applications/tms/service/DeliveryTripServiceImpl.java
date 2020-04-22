@@ -263,7 +263,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
             while (idx < deliveryTripDetails.size()) {
                 //List<DeliveryTripLocationView> deliveryTripLocationViews = new ArrayList<>();
 
-                ShipmentItem shipmentItem = deliveryTripDetails.get(idx).getShipmentItem();
+                DeliveryTripDetail deliveryTripDetail = deliveryTripDetails.get(idx);
+                ShipmentItem shipmentItem = deliveryTripDetail.getShipmentItem();
                 //PartyCustomer partyCustomer = shipmentItem.getCustomer();
                 PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(shipmentItem.getPartyCustomer()
                         .getPartyId());
@@ -284,7 +285,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                 //UUID partyCustomerId;
                 List<DeliveryTripModel.LocationItemView> items = new ArrayList<>();
 
-                UUID deliveryTripDetailId = deliveryTripDetails.get(idx).getDeliveryTripDetailId();
+                UUID deliveryTripDetailId = deliveryTripDetail.getDeliveryTripDetailId();
                 UUID shipmentItemId = shipmentItem.getShipmentItemId();
                 Product product = shipmentItem.getOrderItem().getProduct();
 //                if (product == null) {
@@ -292,12 +293,13 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 //                    mID2Product.put(productId, product);
 //                }
                 String productName = product.getProductName();
-                int deliveryQuantity = deliveryTripDetails.get(idx).getDeliveryQuantity();
+                int deliveryQuantity = deliveryTripDetail.getDeliveryQuantity();
                 items.add(new DeliveryTripModel.LocationItemView(deliveryTripDetailId,
                         shipmentItemId,
                         product.getProductId(),
                         productName,
-                        deliveryQuantity));
+                        deliveryQuantity,
+                        deliveryTripDetail.getStatusItem().getStatusId()));
 
                 int j = idx + 1;
                 while (j < deliveryTripDetails.size() &&
@@ -321,7 +323,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                             shipmentItemId,
                             product.getProductId(),
                             productName,
-                            deliveryQuantity));
+                            deliveryQuantity,
+                            deliveryTripDetails.get(j).getStatusItem().getStatusId()));
                     j++;
                 }
 
@@ -338,7 +341,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                     driverPartyId,
                     driverUserLoginId,
                     executeDate,
-                    deliveryTripLocations);
+                    deliveryTripLocations,
+                    deliveryTrip.getStatusItem().getStatusId());
         }
         return new GetDeliveryTripAssignedToDriverOutputModel(headerViews);
     }
