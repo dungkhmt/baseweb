@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface DeliveryTripService {
     DeliveryTrip save(DeliveryTripModel.Create input,
                       double totalDistance,
-                      double totalWeight,
+                      double totalWeight, // kg
                       double totalPallet,
                       double totalExecutionTime,
                       int totalLocation,

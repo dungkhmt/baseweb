@@ -45,7 +45,7 @@ public interface SolverService {
             @Getter
             @Setter
             @NoArgsConstructor
-            static class Trip {
+            public static class Trip {
                 private DeliveryTripModel deliveryTripModel;
                 private Double extraTotalWeight;
                 private Double extraTotalTime;

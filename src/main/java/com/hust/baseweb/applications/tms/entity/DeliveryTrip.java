@@ -40,13 +40,13 @@ public class DeliveryTrip {
     @Column(name = "execute_date")
     private Date executeDate;
 
-    private Double distance;
+    private Double distance;    // meter
 
-    private Double totalWeight;
+    private Double totalWeight; // kg
 
     private Double totalPallet;
 
-    private Double totalExecutionTime;
+    private Double totalExecutionTime; // second
 
     private Integer totalLocation;
 
