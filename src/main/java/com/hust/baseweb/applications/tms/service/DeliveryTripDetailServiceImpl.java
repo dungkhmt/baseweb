@@ -47,6 +47,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     private DeliveryTripDetailStatusRepo deliveryTripDetailStatusRepo;
     private DeliveryTripStatusRepo deliveryTripStatusRepo;
 
+    private TransportService transportService;
+
     @Override
     public int save(String deliveryTripId,
                     List<DeliveryTripDetailModel.Create> inputs) {
@@ -328,18 +330,26 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         return false;
     }
 
-    private void updateDeliveryTrip(Date updateDate, StatusItem statusItem, DeliveryTripDetail deliveryTripDetail) {
+    private void updateDeliveryTrip(Date updateDate,
+                                    StatusItem deliveryTripCompleted,
+                                    DeliveryTripDetail deliveryTripDetail) {
         DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
         deliveryTrip.setCompletedDeliveryTripDetailCount(deliveryTrip.getCompletedDeliveryTripDetailCount() + 1);
         if (deliveryTrip.getCompletedDeliveryTripDetailCount().equals(deliveryTrip.getDeliveryTripDetailCount())) {
-            deliveryTrip.setStatusItem(statusItem);
+            deliveryTrip.setStatusItem(deliveryTripCompleted);
             deliveryTrip = deliveryTripRepo.save(deliveryTrip);
             List<DeliveryTripStatus> deliveryTripStatuses = deliveryTripStatusRepo.findAllByDeliveryTripAndThruDateNull(
                     deliveryTrip);
             deliveryTripStatuses.forEach(deliveryTripStatus -> deliveryTripStatus.setThruDate(updateDate));
             deliveryTripStatusRepo.saveAll(deliveryTripStatuses);
 
-            deliveryTripStatusRepo.save(new DeliveryTripStatus(null, deliveryTrip, statusItem, updateDate, null));
+            deliveryTripStatusRepo.save(new DeliveryTripStatus(null,
+                    deliveryTrip,
+                    deliveryTripCompleted,
+                    updateDate,
+                    null));
+
+            transportService.updateTransport(deliveryTrip);
         } else {
             deliveryTripRepo.save(deliveryTrip);
         }
