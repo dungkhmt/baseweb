@@ -253,4 +253,18 @@ CREATE TABLE product_content (
   CONSTRAINT product_cnt_product FOREIGN KEY (product_id) REFERENCES product (product_id)
 );
 
-
+create table party_relation_ship(
+    party_relationship_id uuid not null default uuid_generate_v1(),
+    from_party_id uuid not null,
+    to_party_id uuid not null,
+    role_type_id VARCHAR(60),
+    from_date TIMESTAMP,
+    thru_date TIMESTAMP,
+    description TEXT,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_party_relationship primary key(party_relationship_id),
+    constraint fk_party_relationship_from_party_id foreign key(from_party_id) references party(party_id),
+    constraint fk_party_relationship_to_party_id foreign key(to_party_id) references party(party_id),
+    constraint fk_party_relationship_role_type_id foreign key(role_type_id) references role_type(role_type_id)
+);

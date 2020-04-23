@@ -19,6 +19,15 @@ where a.geo_point_id = g.geo_point_id and pcmp.contact_mech_id = a.contact_mech_
 select sm.party_id, p.first_name, p.middle_name, p.last_name, u.user_login_id from party_salesman as sm, person as p, user_login as u
 where sm.party_id = p.party_id and u.party_id = sm.party_id;
 
+-- lay ra danh sach dai li ban le duoc phu trach boi 1 salesman nao do
+select to_party_id from party_relation_ship where role_type_id = 'SALESMAN_SELL_TO_RETAILOUTLET' and thru_date is null
+and from_party_id = '847254bb-c0f1-4696-b11f-682976965eed';
+
+--lay ra danh sach nha phan phoi duoc phu trach boi 1 salesman nao do
+select to_party_id from party_relation_ship where role_type_id = 'SALESMAN_SELL_FROM_DISTRIBUTOR' and thru_date is null
+and from_party_id = '847254bb-c0f1-4696-b11f-682976965eed';
+
+
 --lay danh sach san pham (bang product)
 select * from product;
 

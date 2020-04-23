@@ -19,12 +19,16 @@ import com.hust.baseweb.applications.sales.model.customersalesman.AssignCustomer
 import com.hust.baseweb.applications.sales.model.customersalesman.GetCustomersOfSalesmanInputModel;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetSalesmanOutputModel;
 import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.RetailOutletSalesmanDistributorInputModel;
+import com.hust.baseweb.applications.sales.model.salesmandistributor.AddSalesmanDistributorInputModel;
+import com.hust.baseweb.applications.sales.model.salesmanretailoutlet.AddSalesmanRetailOutletInputModel;
 import com.hust.baseweb.applications.sales.repo.*;
 import com.hust.baseweb.applications.sales.service.CustomerSalesmanService;
 import com.hust.baseweb.applications.sales.service.PartySalesmanService;
-import com.hust.baseweb.entity.Person;
-import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.entity.*;
 import com.hust.baseweb.model.PersonModel;
+import com.hust.baseweb.repo.RoleTypeRepo;
+import com.hust.baseweb.service.PartyRelationShipService;
+import com.hust.baseweb.service.PartyService;
 import com.hust.baseweb.service.UserService;
 
 import lombok.AllArgsConstructor;
@@ -62,6 +66,9 @@ public class SalesAPIController {
     private RetailOutletService retailOutletService;
     private DistributorRepo distributorRepo;
     private RetailOutletPagingRepo retailOutletRepo;
+    private PartyRelationShipService partyRelationShipService;
+    private PartyService partyService;
+    private RoleTypeRepo roleTypeRepo;
 
     @PostMapping("/get-list-salesmans")
     public ResponseEntity getListSalesmans(Principal principal, @RequestBody GetListSalesmanInputModel input) {
@@ -118,6 +125,48 @@ public class SalesAPIController {
 
         List<PartyDistributor> partyDistributorList = distributorRepo.findAll();
         return ResponseEntity.ok().body(partyDistributorList);
+    }
+
+    @PostMapping("/add-salesman-sell-from-distributor")
+    public ResponseEntity<?> addSalesmanSellFromDistributor(Principal principal, @RequestBody AddSalesmanDistributorInputModel input){
+        log.info("addSalesmanSellFromDistributor");
+        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_FROM_DISTRIBUTOR");
+        Party fromParty = partyService.findByPartyId(input.getSalesmanId());
+        Party toParty = partyService.findByPartyId(input.getDistributorId());
+        List<PartyRelationShip> partyRelationShips = partyRelationShipService.findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(fromParty,toParty,roleType,null);
+        if(partyRelationShips != null && partyRelationShips.size() > 0){
+            return ResponseEntity.ok().body("ALREADY");
+        }
+        Date now = new Date();
+        PartyRelationShip partyRelationShip = new PartyRelationShip();
+        partyRelationShip.setFromParty(fromParty);
+        partyRelationShip.setToParty(toParty);
+        partyRelationShip.setRoleType(roleType);
+        partyRelationShip.setFromDate(now);
+        partyRelationShip = partyRelationShipService.save(partyRelationShip);
+
+        return ResponseEntity.ok().body("OK");
+    }
+
+    @PostMapping("/add-salesman-sell-to-retail-outlet")
+    public ResponseEntity<?> addSalesmanSellToRetailOutlet(Principal principal, @RequestBody AddSalesmanRetailOutletInputModel input){
+        log.info("addSalesmanSellFromDistributor");
+        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_TO_RETAILOUTLET");
+        Party fromParty = partyService.findByPartyId(input.getSalesmanId());
+        Party toParty = partyService.findByPartyId(input.getRetailOutletId());
+        List<PartyRelationShip> partyRelationShips = partyRelationShipService.findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(fromParty,toParty,roleType,null);
+        if(partyRelationShips != null && partyRelationShips.size() > 0){
+            return ResponseEntity.ok().body("ALREADY");
+        }
+        Date now = new Date();
+        PartyRelationShip partyRelationShip = new PartyRelationShip();
+        partyRelationShip.setFromParty(fromParty);
+        partyRelationShip.setToParty(toParty);
+        partyRelationShip.setRoleType(roleType);
+        partyRelationShip.setFromDate(now);
+        partyRelationShip = partyRelationShipService.save(partyRelationShip);
+
+        return ResponseEntity.ok().body("OK");
     }
 
 

@@ -352,6 +352,8 @@ values ('WT_kg', 'WEIGHT_MEASURE', 'Kg'),
 insert into role_type(role_type_id, description) values ('BILL_TO_CUSTOMER', 'Hóa đơn đến khách hàng');
 insert into role_type(role_type_id, description) values  ('SALES_EXECUTIVE', 'Hóa đơn của nhân viên bán hàng');
 insert into role_type(role_type_id, description) values  ('CREATE_DELIVERY_TRIP', 'Tạo chuyến giao hàng');
+insert into role_type(role_type_id, description) values  ('SALESMAN_SELL_FROM_DISTRIBUTOR', 'Nhân viên bán hàng bán từ nhà phân phối');
+insert into role_type(role_type_id, description) values  ('SALESMAN_SELL_TO_RETAILOUTLET', 'Nhân viên bán hàng đến đại lí bán lẻ');
 
 
 
