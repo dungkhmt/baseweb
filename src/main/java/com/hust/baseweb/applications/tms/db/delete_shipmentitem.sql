@@ -20,6 +20,9 @@ delete
 from delivery_trip;
 
 delete
+from shipment_item_role;
+
+delete
 from shipment_item;
 
 delete
