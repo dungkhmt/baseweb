@@ -118,11 +118,11 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
 
     private int computeMissingDistanceOpenStreetMap(int speedTruck, int speedMotorbike, int maxElements) {
         // speedTruck, speedMotobike in km/h
-        List<PostalAddress> points = postalAddressRepo.findAll();
+        List<PostalAddress> postalAddresses = postalAddressRepo.findAll();
         List<DistanceTravelTimePostalAddress> distances = new ArrayList<DistanceTravelTimePostalAddress>();
         List<DistanceTravelTimeElement> listDistances = new ArrayList<>();
 
-        List<UUID> postalAddressIds = points.stream()
+        List<UUID> postalAddressIds = postalAddresses.stream()
                 .map(PostalAddress::getContactMechId)
                 .distinct()
                 .collect(Collectors.toList());
@@ -137,12 +137,12 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                         distanceTravelTimePostalAddress -> distanceTravelTimePostalAddress));
         List<DistanceTravelTimePostalAddress> distanceTravelTimePostalAddresses = new ArrayList<>();
 
-        log.info("computeMissingDistanceOpenStreetMap, points.sz = " + points.size());
+        log.info("computeMissingDistanceOpenStreetMap, points.sz = " + postalAddresses.size());
         int cnt = 0;//points.size() * points.size();
-        for (int i = 0; i < points.size(); i++) {
-            PostalAddress p = points.get(i);
-            for (int j = 0; j < points.size(); j++) {
-                PostalAddress q = points.get(j);
+        for (int i = 0; i < postalAddresses.size(); i++) {
+            PostalAddress p = postalAddresses.get(i);
+            for (int j = 0; j < postalAddresses.size(); j++) {
+                PostalAddress q = postalAddresses.get(j);
                 DistanceTravelTimePostalAddress d = distanceTravelTimePostalAddressMap.get(
                         new DistanceTravelTimePostalAddressEmbeddableId(p.getContactMechId(), q.getContactMechId())
                 );
@@ -230,8 +230,8 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
             wr.flush();
             wr.close();
             int responseCode = con.getResponseCode();
-            System.out.println("nSending 'POST' request to URL : " + url);
-            System.out.println("Response Code : " + responseCode);
+//            System.out.println("nSending 'POST' request to URL : " + url);
+//            System.out.println("Response Code : " + responseCode);
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -243,7 +243,7 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
             }
             in.close();
 
-            System.out.println("request time = " + (System.currentTimeMillis() - cur));
+//            System.out.println("request time = " + (System.currentTimeMillis() - cur));
 
             QueryDistanceTravelTimeInputModel res = gson.fromJson(response.toString(),
                     QueryDistanceTravelTimeInputModel.class);
@@ -277,7 +277,7 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
             e.printStackTrace();
         }
 
-        log.info("computeMissingDistanceOpenStreetMap, json = " + json);
+//        log.info("computeMissingDistanceOpenStreetMap, json = " + json);
         distanceTraveltimePostalAddressRepo.saveAll(distances);
         log.info("computeMissingDistance, finished saveAll = " + distances.size());
 
