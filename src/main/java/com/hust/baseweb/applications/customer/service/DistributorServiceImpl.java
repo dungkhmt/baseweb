@@ -19,6 +19,8 @@ import com.hust.baseweb.repo.StatusRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,6 +108,16 @@ public class DistributorServiceImpl implements DistributorService {
         log.info("findDistributors, got distributors.sz = " + distributors.size());
 
         return distributors;
+    }
+
+    @Override
+    public List<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds) {
+        return distributorRepo.findAllByPartyIdIn(partyIds);
+    }
+
+    @Override
+    public Page<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds, Pageable page) {
+        return distributorRepo.findAllByPartyIdIn(partyIds, page);
     }
 
 

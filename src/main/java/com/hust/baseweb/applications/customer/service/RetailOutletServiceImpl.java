@@ -19,6 +19,8 @@ import com.hust.baseweb.repo.StatusRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -105,4 +107,21 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
     public List<PartyRetailOutlet> findAll() {
         return partyRetailOutletRepo.findAll();
     }
+
+    @Override
+    public Page<PartyRetailOutlet> findAll(Pageable page) {
+        return partyRetailOutletRepo.findAll(page);
+    }
+
+    @Override
+    public List<PartyRetailOutlet> findByPartyIdIn(List<UUID> partyIds) {
+        return partyRetailOutletRepo.findAllByPartyIdIn(partyIds);
+    }
+
+    @Override
+    public Page<PartyRetailOutlet> findByPartyIdIn(List<UUID> partyIds, Pageable page) {
+        return partyRetailOutletRepo.findAllByPartyIdIn(partyIds, page);
+    }
+
+
 }
