@@ -97,7 +97,8 @@ public class ShipmentItem {
                 orderItem.getProduct().getWeight() * quantity,
                 scheduledQuantity,
                 completedQuantity,
-                Optional.ofNullable(facility).map(Facility::getFacilityId).orElse(null)
+                Optional.ofNullable(facility).map(Facility::getFacilityId).orElse(null),
+                Optional.ofNullable(statusItem).map(StatusItem::getStatusId).orElse(null)
         );
     }
 

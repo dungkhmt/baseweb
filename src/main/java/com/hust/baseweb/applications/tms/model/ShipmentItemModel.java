@@ -33,6 +33,8 @@ public class ShipmentItemModel {
 
     private String facilityId;
 
+    private String statusId;
+
     @Getter
     @Setter
     @AllArgsConstructor
