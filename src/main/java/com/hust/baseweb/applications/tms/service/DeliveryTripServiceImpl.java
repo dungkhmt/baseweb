@@ -62,7 +62,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     @Transactional
     public DeliveryTrip save(DeliveryTripModel.Create input,
                              double totalDistance, // meter
-                             double totalWeight,
+                             double totalWeight, // kg
                              double totalPallet,
                              double totalExecutionTime,
                              int totalLocation,

@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.geo.service.DistanceTravelTimePostalAddress
 import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
+import com.hust.baseweb.applications.tms.model.TransportReportModel;
 import com.hust.baseweb.applications.tms.model.VehicleModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemsInputModel;
@@ -13,6 +14,7 @@ import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssig
 import com.hust.baseweb.applications.tms.service.DeliveryTripDetailService;
 import com.hust.baseweb.applications.tms.service.DeliveryTripService;
 import com.hust.baseweb.applications.tms.service.SolverService;
+import com.hust.baseweb.applications.tms.service.TransportService;
 import com.hust.baseweb.applications.tms.service.statistic.StatisticDeliveryTripService;
 import com.hust.baseweb.repo.UserLoginRepo;
 import lombok.extern.log4j.Log4j2;
@@ -38,6 +40,8 @@ public class TMSAPIController {
     private DeliveryTripService deliveryTripService;
     private DeliveryTripDetailService deliveryTripDetailService;
     private StatisticDeliveryTripService statisticDeliveryTripService;
+
+    private TransportService transportService;
 
     private SolverService solverService;
 
@@ -84,6 +88,7 @@ public class TMSAPIController {
                             DeliveryTripDetailService deliveryTripDetailService,
                             StatisticDeliveryTripService statisticDeliveryTripService,
                             DistanceTravelTimePostalAddressService distanceTravelTimePostalAddressService,
+                            TransportService transportService,
                             SolverService solverService) {
         this.customerRepo = customerRepo;
         this.orderHeaderRepo = orderHeaderRepo;
@@ -93,6 +98,7 @@ public class TMSAPIController {
         this.deliveryTripDetailService = deliveryTripDetailService;
         this.statisticDeliveryTripService = statisticDeliveryTripService;
         this.distanceTravelTimePostalAddressService = distanceTravelTimePostalAddressService;
+        this.transportService = transportService;
         this.solverService = solverService;
     }
 
@@ -164,5 +170,10 @@ public class TMSAPIController {
     @PostMapping("/suggest-trips")
     public ResponseEntity<SolverService.TripSuggestion.Output> suggestTrips(@RequestBody SolverService.TripSuggestion.Input input) {
         return ResponseEntity.ok(solverService.suggestTrips(input));
+    }
+
+    @PostMapping("/get-transport-reports")
+    public ResponseEntity<TransportReportModel.Output> getTransportReports(@RequestBody TransportReportModel.Input input) {
+        return ResponseEntity.ok(transportService.getTransportReports(input));
     }
 }

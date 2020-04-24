@@ -166,20 +166,20 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public List<ShipmentItemModel> findAllByUserLoginNotInDeliveryPlan(UserLogin userLogin, String deliveryPlanId) {
-        // TODO: to be improved by adding indicator (status) fields to shipment_items
+        // to be improved by adding indicator (status) fields to shipment_items --> done
         List<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDateNull(userLogin.getParty());
-        List<UUID> shipmentItemIds = shipmentItemRoles.stream()
-                .map(shipmentItemRole -> shipmentItemRole.getShipmentItem().getShipmentItemId())
+        List<ShipmentItem> shipmentItems = shipmentItemRoles.stream()
+                .map(ShipmentItemRole::getShipmentItem)
                 .collect(Collectors.toList());
-        List<ShipmentItem> list = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemIds);
-        Set<String> shipmentItemInDeliveryPlans
+
+        Set<String> shipmentItemIdsInDeliveryPlans
                 = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
                 .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
                 .collect(Collectors.toSet());
 
-        return list.stream()
+        return shipmentItems.stream()
                 .filter(shipmentItem -> shipmentItem.getStatusItem().getStatusId().equals("SHIPMENT_ITEM_CREATED")
-                        && !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId().toString()))
+                        && !shipmentItemIdsInDeliveryPlans.contains(shipmentItem.getShipmentItemId().toString()))
                 .map(ShipmentItem::toShipmentItemModel)
                 .collect(Collectors.toList());
     }
@@ -196,15 +196,9 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public Page<ShipmentItemModel> findAllByUserLogin(UserLogin userLogin, Pageable pageable) {
-        List<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDateNull(userLogin.getParty());
-        List<UUID> shipmentItemIds = shipmentItemRoles.stream()
-                .map(shipmentItemRole -> shipmentItemRole.getShipmentItem().getShipmentItemId())
-                .collect(Collectors.toList());
-        List<ShipmentItemModel> shipmentItemModels = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemIds)
-                .stream()
-                .map(ShipmentItem::toShipmentItemModel)
-                .collect(Collectors.toList());
-        return PageUtils.getPage(shipmentItemModels, pageable);
+        Page<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDateNull(userLogin.getParty(),
+                pageable);
+        return shipmentItemRoles.map(shipmentItemRole -> shipmentItemRole.getShipmentItem().toShipmentItemModel());
     }
 
     @Override
