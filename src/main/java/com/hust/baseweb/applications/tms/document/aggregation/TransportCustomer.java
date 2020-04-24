@@ -1,5 +1,7 @@
 package com.hust.baseweb.applications.tms.document.aggregation;
 
+import com.hust.baseweb.applications.tms.model.TransportReportModel;
+import com.hust.baseweb.utils.Constant;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -24,6 +26,13 @@ public class TransportCustomer extends TransportReport<TransportCustomer.Id> {
                              Integer totalWeight) {
         super(cost, totalDistance, numberTrips, totalWeight);
         this.id = id;
+    }
+
+    @Override
+    public TransportReportModel.DateReport toDateReport() {
+        TransportReportModel.DateReport dateReport = super.toDateReport();
+        dateReport.setDate(id.getDate().format(Constant.LOCAL_DATE_FORMAT));
+        return dateReport;
     }
 
     @Getter

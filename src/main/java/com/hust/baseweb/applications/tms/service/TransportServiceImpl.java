@@ -6,10 +6,12 @@ import com.hust.baseweb.applications.tms.document.aggregation.TransportFacility;
 import com.hust.baseweb.applications.tms.document.aggregation.TransportReport;
 import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
+import com.hust.baseweb.applications.tms.model.TransportReportModel;
 import com.hust.baseweb.applications.tms.repo.DeliveryTripDetailRepo;
 import com.hust.baseweb.applications.tms.repo.TransportCustomerRepo;
 import com.hust.baseweb.applications.tms.repo.TransportDriverRepo;
 import com.hust.baseweb.applications.tms.repo.TransportFacilityRepo;
+import com.hust.baseweb.utils.Constant;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,39 @@ public class TransportServiceImpl implements TransportService {
         updateTransportDriver(deliveryTripDetails);
 
         updateTransportFacility(deliveryTripDetails);
+    }
+
+    @Override
+    public TransportReportModel.Output getTransportReports(TransportReportModel.Input input) {
+        if (input.getCustomerId() != null) {
+            List<TransportCustomer> transportCustomers = transportCustomerRepo.findAllById_CustomerIdAndId_DateBetween(
+                    UUID.fromString(input.getCustomerId()),
+                    LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT));
+            List<TransportReportModel.DateReport> dateReports = transportCustomers.stream()
+                    .map(TransportCustomer::toDateReport)
+                    .collect(Collectors.toList());
+            return new TransportReportModel.Output(dateReports);
+        } else if (input.getDriverId() != null) {
+            List<TransportDriver> transportDrivers = transportDriverRepo.findAllById_DriverIdAndId_DateBetween(
+                    UUID.fromString(input.getDriverId()),
+                    LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT));
+            List<TransportReportModel.DateReport> dateReports = transportDrivers.stream()
+                    .map(TransportDriver::toDateReport)
+                    .collect(Collectors.toList());
+            return new TransportReportModel.Output(dateReports);
+        } else if (input.getFacilityId() != null) {
+            List<TransportFacility> transportFacilities = transportFacilityRepo.findAllById_FacilityIdAndId_DateBetween(
+                    input.getFacilityId(),
+                    LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT));
+            List<TransportReportModel.DateReport> dateReports = transportFacilities.stream()
+                    .map(TransportFacility::toDateReport)
+                    .collect(Collectors.toList());
+            return new TransportReportModel.Output(dateReports);
+        }
+        return null;
     }
 
     private void updateTransportFacility(List<DeliveryTripDetail> deliveryTripDetails) {

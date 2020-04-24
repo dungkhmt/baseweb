@@ -40,9 +40,6 @@ public class SaleReportModel {
     @Setter
     public static class Output {
         private List<DatePrice> datePrices;
-        public List<DatePrice> getDatePrices(){
-            return datePrices;
-        }
     }
 
     @AllArgsConstructor

@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.tms.document.aggregation;
 
+import com.hust.baseweb.applications.tms.model.TransportReportModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,5 +26,15 @@ public abstract class TransportReport<ID> {
         other.setNumberTrips(other.getNumberTrips() + numberTrips);
         other.setTotalWeight(other.getTotalWeight() + totalWeight);
         return other;
+    }
+
+    public TransportReportModel.DateReport toDateReport() {
+        return new TransportReportModel.DateReport(
+                null,
+                cost,
+                totalDistance,
+                numberTrips,
+                totalWeight
+        );
     }
 }
