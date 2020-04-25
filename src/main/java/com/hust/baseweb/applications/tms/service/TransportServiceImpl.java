@@ -107,7 +107,7 @@ public class TransportServiceImpl implements TransportService {
         return null;
     }
 
-    private void updateTransportFacility(List<DeliveryTripDetail> deliveryTripDetails) {
+    void updateTransportFacility(List<DeliveryTripDetail> deliveryTripDetails) {
         Function<DeliveryTripDetail, TransportFacility> deliveryTripDetailToTransportFacilityFunction =
                 deliveryTripDetail -> {
                     DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
@@ -123,10 +123,11 @@ public class TransportServiceImpl implements TransportService {
                             .getExecuteDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
                     return new TransportFacility(new TransportFacility.Id(facilityId, localDate),
-                            0L,
-                            deliveryTrip.getDistance().intValue(),
-                            1,
-                            deliveryTrip.getTotalWeight().intValue() * 1000);
+                            0.0,
+                            deliveryTrip.getDistance() / deliveryTrip.getDeliveryTripDetailCount(),
+                            1.0 / deliveryTrip.getDeliveryTripDetailCount(),
+                            deliveryTripDetail.getShipmentItem().getOrderItem().getProduct().getWeight() *
+                                    deliveryTripDetail.getDeliveryQuantity() * 1000);
                 };
 
         Collection<TransportFacility> transportFacilities = mergeData(deliveryTripDetails,
@@ -136,7 +137,7 @@ public class TransportServiceImpl implements TransportService {
         transportFacilityRepo.saveAll(transportFacilities);
     }
 
-    private void updateTransportDriver(List<DeliveryTripDetail> deliveryTripDetails) {
+    void updateTransportDriver(List<DeliveryTripDetail> deliveryTripDetails) {
         Function<DeliveryTripDetail, TransportDriver> deliveryTripDetailToTransportDriverFunction =
                 deliveryTripDetail -> {
                     DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
@@ -151,10 +152,11 @@ public class TransportServiceImpl implements TransportService {
                     LocalDate localDate = deliveryTrip
                             .getExecuteDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                     return new TransportDriver(new TransportDriver.Id(driverId, localDate),
-                            0L,
-                            deliveryTrip.getDistance().intValue(),
-                            1,
-                            deliveryTrip.getTotalWeight().intValue() * 1000);
+                            0.0,
+                            deliveryTrip.getDistance() / deliveryTrip.getDeliveryTripDetailCount(),
+                            1.0 / deliveryTrip.getDeliveryTripDetailCount(),
+                            deliveryTripDetail.getShipmentItem().getOrderItem().getProduct().getWeight() *
+                                    deliveryTripDetail.getDeliveryQuantity() * 1000);
                 };
 
         Collection<TransportDriver> transportDrivers = mergeData(deliveryTripDetails,
@@ -164,7 +166,7 @@ public class TransportServiceImpl implements TransportService {
         transportDriverRepo.saveAll(transportDrivers);
     }
 
-    private void updateTransportCustomer(List<DeliveryTripDetail> deliveryTripDetails) {
+    void updateTransportCustomer(List<DeliveryTripDetail> deliveryTripDetails) {
         Function<DeliveryTripDetail, TransportCustomer> deliveryTripDetailToTransportCustomerFunction =
                 deliveryTripDetail -> {
                     DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
@@ -178,10 +180,11 @@ public class TransportServiceImpl implements TransportService {
                     LocalDate localDate = deliveryTrip
                             .getExecuteDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                     return new TransportCustomer(new TransportCustomer.Id(customerId, localDate),
-                            0L,
-                            deliveryTrip.getDistance().intValue(),
-                            1,
-                            deliveryTrip.getTotalWeight().intValue() * 1000);
+                            0.0,
+                            deliveryTrip.getDistance() / deliveryTrip.getDeliveryTripDetailCount(),
+                            1.0 / deliveryTrip.getDeliveryTripDetailCount(),
+                            deliveryTripDetail.getShipmentItem().getOrderItem().getProduct().getWeight() *
+                                    deliveryTripDetail.getDeliveryQuantity() * 1000);
                 };
 
         Collection<TransportCustomer> transportCustomers = mergeData(deliveryTripDetails,
