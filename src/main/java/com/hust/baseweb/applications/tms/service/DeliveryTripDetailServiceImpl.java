@@ -305,6 +305,7 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     }
 
     @Override
+    @Transactional
     public boolean completeDeliveryTripDetail(UUID deliveryTripDetailId) {
         Date now = new Date();
 

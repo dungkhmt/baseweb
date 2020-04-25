@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface DistributorRepo extends PagingAndSortingRepository<PartyDistributor, UUID> {
     List<PartyDistributor> findAll();
-
+    PartyDistributor findByPartyId(UUID partyId);
     List<PartyDistributor> findByPartyType(PartyType partyType);
     List<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds);
     Page<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds, Pageable page);

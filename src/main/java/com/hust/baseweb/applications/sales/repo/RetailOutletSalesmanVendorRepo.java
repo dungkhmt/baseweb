@@ -16,4 +16,8 @@ public interface RetailOutletSalesmanVendorRepo extends JpaRepository<RetailOutl
     RetailOutletSalesmanVendor findByRetailOutletSalesmanVendorId(UUID customerSalesmanVendorId);
     List<RetailOutletSalesmanVendor> findAllByPartySalesmanAndPartyRetailOutletAndPartyDistributorAndThruDate(PartySalesman partySalesman,
                                                                                                           PartyRetailOutlet partyRetailOutlet, PartyDistributor partyDistributor, Date thruDate);
+
+    List<RetailOutletSalesmanVendor> findAllByPartyDistributorAndThruDate(PartyDistributor partyDistributor, Date thruDate);
+    List<RetailOutletSalesmanVendor> findAllByPartyRetailOutletAndThruDate(PartyRetailOutlet partyRetailOutlet, Date thruDate);
+    List<RetailOutletSalesmanVendor> findAllByPartySalesmanAndThruDate(PartySalesman partySalesman, Date thruDate);
 }

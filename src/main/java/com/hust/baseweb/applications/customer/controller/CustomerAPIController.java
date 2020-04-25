@@ -10,6 +10,7 @@ import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.applications.customer.service.DistributorService;
 import com.hust.baseweb.applications.customer.service.RetailOutletService;
 import com.hust.baseweb.applications.logistics.model.InputModel;
+import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
 import com.hust.baseweb.entity.PartyRelationShip;
 import com.hust.baseweb.entity.RoleType;
 import com.hust.baseweb.entity.UserLogin;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -68,6 +70,12 @@ public class CustomerAPIController {
         Page<PartyDistributor> distributors = distributorRepo.findAll(page);
         return ResponseEntity.ok().body(distributors);
     }
+    @GetMapping(path="/distributor/{partyDistributorId}")
+    public ResponseEntity<?> getDetailDistributor(Principal principal, @PathVariable UUID partyDistributorId){
+        log.info("getDetailDistributor, partyDistributorId = " + partyDistributorId);
+        DetailDistributorModel detailDistributorModel = distributorService.getDistributorDetail(partyDistributorId);
+        return ResponseEntity.ok().body(detailDistributorModel);
+    }
 
     @PostMapping("/get-distributors-of-userlogin")
     public ResponseEntity<?> getDistributorsOfUserLogin(Principal principal, @RequestBody GetDistributorsOfUserLoginInputModel input) {
@@ -102,7 +110,9 @@ public class CustomerAPIController {
     @PostMapping("/create-retail-outlet")
     public ResponseEntity<?> createRetailOutlet(Principal principal, @RequestBody CreateRetailOutletInputModel input) {
         UserLogin u = userService.findById(principal.getName());
-        log.info("createRetailOutlet, userlogin = " + u.getUserLoginId());
+        log.info("createRetailOutlet, userlogin = " + u.getUserLoginId() + ", retail-outlet name = " +
+                input.getRetailOutletName() + ", retail-outlet code = " + input.getRetailOutletCode());
+
         PartyRetailOutlet retailOutlet = retailOutletService.save(input);
 
         RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_TO_RETAILOUTLET");

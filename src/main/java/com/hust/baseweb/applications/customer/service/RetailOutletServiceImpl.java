@@ -69,13 +69,16 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
         retailOutlet = retailOutletRepo.save(retailOutlet);
 //        customerRepo.save(customer);
 
-        GeoPoint geoPoint = new GeoPoint();
-        //UUID geoPointId = UUID.randomUUID();
-        geoPoint.setLatitude(input.getLatitude());
-        geoPoint.setLongitude(input.getLongitude());
-        //geoPoint.setGeoPointId(geoPointId);// KHONG WORK vi khi save vao DB thi geoPointId se duoc sinh voi DB engine
-        geoPoint = geoPointRepo.save(geoPoint);
-        UUID geoPointId = geoPoint.getGeoPointId();
+        GeoPoint geoPoint = null;
+        if(input.getLatitude() != null && input.getLongitude() != null) {
+            geoPoint = new GeoPoint();
+            //UUID geoPointId = UUID.randomUUID();
+            geoPoint.setLatitude(input.getLatitude());
+            geoPoint.setLongitude(input.getLongitude());
+            //geoPoint.setGeoPointId(geoPointId);// KHONG WORK vi khi save vao DB thi geoPointId se duoc sinh voi DB engine
+            geoPoint = geoPointRepo.save(geoPoint);
+            UUID geoPointId = geoPoint.getGeoPointId();
+        }
 
         //UUID contactMechId = UUID.randomUUID();
         PostalAddress address = new PostalAddress();

@@ -3,12 +3,16 @@ package com.hust.baseweb.applications.customer.service;
 import com.hust.baseweb.applications.customer.entity.PartyContactMechPurpose;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.model.CreateDistributorInputModel;
+import com.hust.baseweb.applications.customer.model.DetailDistributorModel;
 import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
+import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
+import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.RetailOutletSalesmanDistributorModel;
+import com.hust.baseweb.applications.sales.repo.RetailOutletSalesmanVendorRepo;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.PartyType;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
@@ -25,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -37,6 +42,7 @@ public class DistributorServiceImpl implements DistributorService {
     private StatusRepo statusRepo;
     private PartyContactMechPurposeRepo partyContactMechPurposeRepo;
     private DistributorRepo distributorRepo;
+    private RetailOutletSalesmanVendorRepo retailOutletSalesmanVendorRepo;
 
     @Override
     @Transactional
@@ -70,13 +76,17 @@ public class DistributorServiceImpl implements DistributorService {
         distributor = distributorRepo.save(distributor);
 //        customerRepo.save(customer);
 
-        GeoPoint geoPoint = new GeoPoint();
-        //UUID geoPointId = UUID.randomUUID();
-        geoPoint.setLatitude(Double.parseDouble(input.getLatitude()));
-        geoPoint.setLongitude(Double.parseDouble(input.getLongitude()));
-        //geoPoint.setGeoPointId(geoPointId);// KHONG WORK vi khi save vao DB thi geoPointId se duoc sinh voi DB engine
-        geoPoint = geoPointRepo.save(geoPoint);
-        UUID geoPointId = geoPoint.getGeoPointId();
+
+        GeoPoint geoPoint = null;
+        if(input.getLatitude() != null && input.getLongitude() != null) {
+            geoPoint = new GeoPoint();
+            //UUID geoPointId = UUID.randomUUID();
+            geoPoint.setLatitude(Double.parseDouble(input.getLatitude()));
+            geoPoint.setLongitude(Double.parseDouble(input.getLongitude()));
+            //geoPoint.setGeoPointId(geoPointId);// KHONG WORK vi khi save vao DB thi geoPointId se duoc sinh voi DB engine
+            geoPoint = geoPointRepo.save(geoPoint);
+            UUID geoPointId = geoPoint.getGeoPointId();
+        }
 
         //UUID contactMechId = UUID.randomUUID();
         PostalAddress address = new PostalAddress();
@@ -111,6 +121,11 @@ public class DistributorServiceImpl implements DistributorService {
     }
 
     @Override
+    public PartyDistributor findByPartyId(UUID partyId) {
+        return distributorRepo.findByPartyId(partyId);
+    }
+
+    @Override
     public List<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds) {
         return distributorRepo.findAllByPartyIdIn(partyIds);
     }
@@ -118,6 +133,23 @@ public class DistributorServiceImpl implements DistributorService {
     @Override
     public Page<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds, Pageable page) {
         return distributorRepo.findAllByPartyIdIn(partyIds, page);
+    }
+
+    @Override
+    public DetailDistributorModel getDistributorDetail(UUID partyDistributorId) {
+        PartyDistributor partyDistributor = distributorRepo.findByPartyId(partyDistributorId);
+        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyDistributorAndThruDate(partyDistributor, null);
+
+        DetailDistributorModel detailDistributorModel = new DetailDistributorModel();
+        detailDistributorModel.setPartyDistributorId(partyDistributor.getPartyId());
+        detailDistributorModel.setDistributorCode(partyDistributor.getDistributorCode());
+        detailDistributorModel.setDistributorName(partyDistributor.getDistributorName());
+        List<RetailOutletSalesmanDistributorModel> retailOutletSalesmanDistributorModels =
+                retailOutletSalesmanVendors.stream().map(o -> new RetailOutletSalesmanDistributorModel(o)).collect(Collectors.toList());
+
+        detailDistributorModel.setRetailOutletSalesmanDistributorModels(retailOutletSalesmanDistributorModels);
+
+        return detailDistributorModel;
     }
 
 
