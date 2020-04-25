@@ -15,10 +15,10 @@ public abstract class TransportReport<ID> {
 
     public abstract ID getId();
 
-    private Double cost;
-    private Double totalDistance; // meter
-    private Double numberTrips;
-    private Double totalWeight;    // gram
+    private Long cost;
+    private Integer totalDistance; // meter
+    private Integer numberTrips;
+    private Integer totalWeight;    // gram
 
     public <E extends TransportReport<ID>> E appendTo(E other) {
         other.setCost(other.getCost() + cost);

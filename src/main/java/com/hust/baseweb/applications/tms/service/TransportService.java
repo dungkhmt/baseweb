@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.tms.service;
 
-import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
 import com.hust.baseweb.applications.tms.model.TransportReportModel;
 
@@ -9,9 +8,9 @@ import com.hust.baseweb.applications.tms.model.TransportReportModel;
  */
 public interface TransportService {
 
-    void updateTransport(DeliveryTripDetail... deliveryTripDetails);
+    void updateTransportDeliveryTripDetailCompleted(DeliveryTripDetail... deliveryTripDetails);
 
-    void updateTransport(DeliveryTrip... deliveryTrips);
+    void updateTransportDeliveryTripCompleted(DeliveryTripDetail deliveryTripDetail);
 
     TransportReportModel.Output getTransportReports(TransportReportModel.Input input);
 }

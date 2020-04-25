@@ -19,10 +19,10 @@ public class TransportFacility extends TransportReport<TransportFacility.Id> {
     private Id id;
 
     public TransportFacility(Id id,
-                             Double cost,
-                             Double totalDistance,
-                             Double numberTrips,
-                             Double totalWeight) {
+                             Long cost,
+                             Integer totalDistance,
+                             Integer numberTrips,
+                             Integer totalWeight) {
         super(cost, totalDistance, numberTrips, totalWeight);
         this.id = id;
     }

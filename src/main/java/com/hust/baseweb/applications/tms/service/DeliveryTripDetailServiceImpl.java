@@ -323,7 +323,7 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         if (deliveryTripDetail != null) {
             updateShipmentItemStatus(now, shipmentItemCompleted, deliveryTripDetail);
 
-            transportService.updateTransport(deliveryTripDetail);
+            transportService.updateTransportDeliveryTripDetailCompleted(deliveryTripDetail);
 
             updateDeliveryTrip(now, deliveryTripCompleted, deliveryTripDetail);
 
@@ -354,6 +354,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
                     deliveryTripCompleted,
                     updateDate,
                     null));
+
+            transportService.updateTransportDeliveryTripCompleted(deliveryTripDetail);
         } else {
             deliveryTripRepo.save(deliveryTrip);
         }

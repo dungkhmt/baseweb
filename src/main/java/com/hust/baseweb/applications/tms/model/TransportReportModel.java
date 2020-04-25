@@ -37,9 +37,9 @@ public class TransportReportModel {
     @Setter
     public static class DateReport {
         private String date;
-        private Double cost;
-        private Double totalDistance;
-        private Double numberTrips;
-        private Double totalWeight;
+        private Long cost;
+        private Integer totalDistance;
+        private Integer numberTrips;
+        private Integer totalWeight;
     }
 }
