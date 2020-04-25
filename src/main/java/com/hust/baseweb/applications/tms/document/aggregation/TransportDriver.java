@@ -20,10 +20,10 @@ public class TransportDriver extends TransportReport<TransportDriver.Id> {
     private Id id;
 
     public TransportDriver(Id id,
-                           Long cost,
-                           Integer totalDistance,
-                           Integer numberTrips,
-                           Integer totalWeight) {
+                           Double cost,
+                           Double totalDistance,
+                           Double numberTrips,
+                           Double totalWeight) {
         super(cost, totalDistance, numberTrips, totalWeight);
         this.id = id;
     }

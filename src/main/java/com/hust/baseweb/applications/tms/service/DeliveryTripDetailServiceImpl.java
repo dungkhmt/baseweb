@@ -323,6 +323,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         if (deliveryTripDetail != null) {
             updateShipmentItemStatus(now, shipmentItemCompleted, deliveryTripDetail);
 
+            transportService.updateTransport(deliveryTripDetail);
+
             updateDeliveryTrip(now, deliveryTripCompleted, deliveryTripDetail);
 
             return true;
@@ -336,6 +338,9 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
                                     DeliveryTripDetail deliveryTripDetail) {
         DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
         deliveryTrip.setCompletedDeliveryTripDetailCount(deliveryTrip.getCompletedDeliveryTripDetailCount() + 1);
+
+//        transportService.updateTransport(deliveryTrip);
+
         if (deliveryTrip.getCompletedDeliveryTripDetailCount().equals(deliveryTrip.getDeliveryTripDetailCount())) {
             deliveryTrip.setStatusItem(deliveryTripCompleted);
             deliveryTrip = deliveryTripRepo.save(deliveryTrip);
@@ -349,8 +354,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
                     deliveryTripCompleted,
                     updateDate,
                     null));
-
-            transportService.updateTransport(deliveryTrip);
         } else {
             deliveryTripRepo.save(deliveryTrip);
         }

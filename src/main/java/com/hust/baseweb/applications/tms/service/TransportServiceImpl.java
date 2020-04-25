@@ -1,16 +1,22 @@
 package com.hust.baseweb.applications.tms.service;
 
+import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.tms.document.aggregation.TransportCustomer;
 import com.hust.baseweb.applications.tms.document.aggregation.TransportDriver;
 import com.hust.baseweb.applications.tms.document.aggregation.TransportFacility;
 import com.hust.baseweb.applications.tms.document.aggregation.TransportReport;
 import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
+import com.hust.baseweb.applications.tms.entity.PartyDriver;
+import com.hust.baseweb.applications.tms.entity.ShipmentItem;
 import com.hust.baseweb.applications.tms.model.TransportReportModel;
 import com.hust.baseweb.applications.tms.repo.DeliveryTripDetailRepo;
 import com.hust.baseweb.applications.tms.repo.TransportCustomerRepo;
 import com.hust.baseweb.applications.tms.repo.TransportDriverRepo;
 import com.hust.baseweb.applications.tms.repo.TransportFacilityRepo;
+import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.entity.StatusItem;
+import com.hust.baseweb.repo.StatusItemRepo;
 import com.hust.baseweb.utils.Constant;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +43,29 @@ public class TransportServiceImpl implements TransportService {
 
     private DeliveryTripDetailRepo deliveryTripDetailRepo;
 
+    private StatusItemRepo statusItemRepo;
+
+    @Override
+    public void updateTransport(DeliveryTripDetail... deliveryTripDetails) {
+        List<DeliveryTripDetail> deliveryTripDetailList = Arrays.stream(deliveryTripDetails)
+                .filter(deliveryTripDetail -> deliveryTripDetail.getStatusItem().getStatusId()
+                        .equals("DELIVERY_TRIP_DETAIL_COMPLETED")) // chỉ cập nhật báo cáo cho các delivery trip detail đã hoàn thành
+                .collect(Collectors.toList());
+
+        updateTransportCustomer(deliveryTripDetailList);
+
+        updateTransportDriver(deliveryTripDetailList);
+
+        updateTransportFacility(deliveryTripDetailList);
+    }
+
     @Override
     public void updateTransport(DeliveryTrip... deliveryTrips) {
-        List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripIn(Arrays.asList(
-                deliveryTrips));
+        StatusItem deliveryTripDetailCompleted = statusItemRepo.findById("DELIVERY_TRIP_DETAIL_COMPLETED")
+                .orElseThrow(NoSuchElementException::new);
+        List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripInAndStatusItem(
+                Arrays.asList(deliveryTrips),
+                deliveryTripDetailCompleted); // chỉ cập nhật báo cáo cho các delivery trip detail đã hoàn thành
 
         updateTransportCustomer(deliveryTripDetails);
 
@@ -82,20 +107,27 @@ public class TransportServiceImpl implements TransportService {
         return null;
     }
 
-    private void updateTransportFacility(List<DeliveryTripDetail> deliveryTripDetails) {
+    void updateTransportFacility(List<DeliveryTripDetail> deliveryTripDetails) {
         Function<DeliveryTripDetail, TransportFacility> deliveryTripDetailToTransportFacilityFunction =
                 deliveryTripDetail -> {
                     DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
 
-                    String facilityId = deliveryTripDetail.getShipmentItem().getFacility().getFacilityId();
+                    String facilityId = Optional.ofNullable(deliveryTripDetail.getShipmentItem())
+                            .map(ShipmentItem::getFacility)
+                            .map(Facility::getFacilityId)
+                            .orElse(null);
+                    if (facilityId == null) {
+                        return null;
+                    }
                     LocalDate localDate = deliveryTrip
                             .getExecuteDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
                     return new TransportFacility(new TransportFacility.Id(facilityId, localDate),
-                            0L,
-                            deliveryTrip.getDistance().intValue(),
-                            1,
-                            deliveryTrip.getTotalWeight().intValue() * 1000);
+                            0.0,
+                            deliveryTrip.getDistance() / deliveryTrip.getDeliveryTripDetailCount(),
+                            1.0 / deliveryTrip.getDeliveryTripDetailCount(),
+                            deliveryTripDetail.getShipmentItem().getOrderItem().getProduct().getWeight() *
+                                    deliveryTripDetail.getDeliveryQuantity() * 1000);
                 };
 
         Collection<TransportFacility> transportFacilities = mergeData(deliveryTripDetails,
@@ -105,19 +137,26 @@ public class TransportServiceImpl implements TransportService {
         transportFacilityRepo.saveAll(transportFacilities);
     }
 
-    private void updateTransportDriver(List<DeliveryTripDetail> deliveryTripDetails) {
+    void updateTransportDriver(List<DeliveryTripDetail> deliveryTripDetails) {
         Function<DeliveryTripDetail, TransportDriver> deliveryTripDetailToTransportDriverFunction =
                 deliveryTripDetail -> {
                     DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
 
-                    UUID driverId = deliveryTripDetail.getDeliveryTrip().getPartyDriver().getPartyId();
+                    UUID driverId = Optional.ofNullable(deliveryTripDetail.getDeliveryTrip())
+                            .map(DeliveryTrip::getPartyDriver)
+                            .map(PartyDriver::getPartyId)
+                            .orElse(null);
+                    if (driverId == null) {
+                        return null;
+                    }
                     LocalDate localDate = deliveryTrip
                             .getExecuteDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                     return new TransportDriver(new TransportDriver.Id(driverId, localDate),
-                            0L,
-                            deliveryTrip.getDistance().intValue(),
-                            1,
-                            deliveryTrip.getTotalWeight().intValue() * 1000);
+                            0.0,
+                            deliveryTrip.getDistance() / deliveryTrip.getDeliveryTripDetailCount(),
+                            1.0 / deliveryTrip.getDeliveryTripDetailCount(),
+                            deliveryTripDetail.getShipmentItem().getOrderItem().getProduct().getWeight() *
+                                    deliveryTripDetail.getDeliveryQuantity() * 1000);
                 };
 
         Collection<TransportDriver> transportDrivers = mergeData(deliveryTripDetails,
@@ -127,18 +166,25 @@ public class TransportServiceImpl implements TransportService {
         transportDriverRepo.saveAll(transportDrivers);
     }
 
-    private void updateTransportCustomer(List<DeliveryTripDetail> deliveryTripDetails) {
+    void updateTransportCustomer(List<DeliveryTripDetail> deliveryTripDetails) {
         Function<DeliveryTripDetail, TransportCustomer> deliveryTripDetailToTransportCustomerFunction =
                 deliveryTripDetail -> {
                     DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
-                    UUID customerId = deliveryTripDetail.getShipmentItem().getPartyCustomer().getPartyId();
+                    UUID customerId = Optional.ofNullable(deliveryTripDetail.getShipmentItem())
+                            .map(ShipmentItem::getPartyCustomer)
+                            .map(Party::getPartyId)
+                            .orElse(null);
+                    if (customerId == null) {
+                        return null;
+                    }
                     LocalDate localDate = deliveryTrip
                             .getExecuteDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                     return new TransportCustomer(new TransportCustomer.Id(customerId, localDate),
-                            0L,
-                            deliveryTrip.getDistance().intValue(),
-                            1,
-                            deliveryTrip.getTotalWeight().intValue() * 1000);
+                            0.0,
+                            deliveryTrip.getDistance() / deliveryTrip.getDeliveryTripDetailCount(),
+                            1.0 / deliveryTrip.getDeliveryTripDetailCount(),
+                            deliveryTripDetail.getShipmentItem().getOrderItem().getProduct().getWeight() *
+                                    deliveryTripDetail.getDeliveryQuantity() * 1000);
                 };
 
         Collection<TransportCustomer> transportCustomers = mergeData(deliveryTripDetails,
@@ -154,6 +200,9 @@ public class TransportServiceImpl implements TransportService {
         Map<ID, E> onUpdateMap = new HashMap<>();
         for (DeliveryTripDetail deliveryTripDetail : deliveryTripDetails) {
             E transportReport = convertFunction.apply(deliveryTripDetail);
+            if (transportReport == null) {
+                continue;
+            }
 
             onUpdateMap.merge(transportReport.getId(), transportReport, TransportReport::appendTo);
         }

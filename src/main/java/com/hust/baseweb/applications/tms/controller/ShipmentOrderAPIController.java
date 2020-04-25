@@ -69,8 +69,9 @@ public class ShipmentOrderAPIController {
                 Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, ShipmentItemModel.Create.class,
                         PoijiOptions.PoijiOptionsBuilder.settings().sheetIndex(0).build());
 
-        Shipment shipment = shipmentService.save(userLogin, new ShipmentModel.CreateShipmentInputModel(shipmentItemInputModels.toArray(
-                new ShipmentItemModel.Create[0])));
+        Shipment shipment = shipmentService.save(userLogin,
+                new ShipmentModel.CreateShipmentInputModel(shipmentItemInputModels.toArray(
+                        new ShipmentItemModel.Create[0])));
         return ResponseEntity.ok().body(shipment);
     }
 
@@ -86,6 +87,7 @@ public class ShipmentOrderAPIController {
         log.info("::getOrderShipmentItem, ");
         return ResponseEntity.ok().body(shipmentItemService.findAll(pageable).map(ShipmentItem::toShipmentItemModel));
     }
+
     @GetMapping("/shipment-item-of-user-login")
     public ResponseEntity<?> getOrderShipmentItemOfUserLogin(Principal principal, Pageable pageable) {
         log.info("::getOrderShipmentItem, ");
@@ -132,14 +134,16 @@ public class ShipmentOrderAPIController {
         log.info("::getOrderShipmentItemPageNotIn deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlan(deliveryPlanId));
     }
+
     @GetMapping("/shipment-item-of-user-login-not-in-delivery-plan/{deliveryPlanId}/all")
     public ResponseEntity<?> getOrderShipmentItemOfUserLoginPageNotInDeliveryPlan(Principal principal,
-                                                                       @PathVariable String deliveryPlanId) {
+                                                                                  @PathVariable String deliveryPlanId) {
         UserLogin userLogin = userService.findById(principal.getName());
 
         log.info("::getOrderShipmentItemPageNotIn deliveryPlanId=" + deliveryPlanId);
         //return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlan(deliveryPlanId));
-        return ResponseEntity.ok().body(shipmentItemService.findAllByUserLoginNotInDeliveryPlan(userLogin,deliveryPlanId));
+        return ResponseEntity.ok()
+                .body(shipmentItemService.findAllByUserLoginNotInDeliveryPlan(userLogin, deliveryPlanId));
     }
 
 
@@ -263,6 +267,7 @@ public class ShipmentOrderAPIController {
 
     @GetMapping("/complete-delivery-trip-detail/{deliveryTripDetailId}")
     public ResponseEntity<?> completeDeliveryTripDetail(@PathVariable String deliveryTripDetailId) {
+        log.info("completeDeliveryTrip({})", deliveryTripDetailId);
         return ResponseEntity.ok()
                 .body(deliveryTripDetailService.completeDeliveryTripDetail(UUID.fromString(deliveryTripDetailId)));
     }
