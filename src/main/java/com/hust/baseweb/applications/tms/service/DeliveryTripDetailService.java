@@ -22,5 +22,5 @@ public interface DeliveryTripDetailService {
 
     DeliveryTripDetail updateStatusDeliveryTripDetail(UUID deliveryTripDetailId, String statusId);
 
-    boolean completeDeliveryTripDetail(UUID deliveryTripDetailId);
+    boolean completeDeliveryTripDetail(UUID... deliveryTripDetailIds);
 }

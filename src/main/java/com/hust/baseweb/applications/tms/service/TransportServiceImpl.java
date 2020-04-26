@@ -41,7 +41,7 @@ public class TransportServiceImpl implements TransportService {
 
     @Override
     @Transactional
-    public void updateTransportDeliveryTripDetailCompleted(DeliveryTripDetail... deliveryTripDetails) {
+    public void updateTransportDeliveryTripDetailOnCompleted(DeliveryTripDetail... deliveryTripDetails) {
         List<DeliveryTripDetail> deliveryTripDetailList = Arrays.stream(deliveryTripDetails)
                 .filter(deliveryTripDetail -> deliveryTripDetail.getStatusItem().getStatusId()
                         .equals("DELIVERY_TRIP_DETAIL_COMPLETED")) // chỉ cập nhật báo cáo cho các delivery trip detail đã hoàn thành
@@ -64,24 +64,36 @@ public class TransportServiceImpl implements TransportService {
         // update customer report
         List<TransportCustomer> transportCustomers = getTransportCustomers(deliveryTripDetailList,
                 deliveryTripDetailToTransportReport);
-        transportCustomerRepo.saveAll(mergeData(transportCustomers, ids -> transportCustomerRepo.findAllByIdIn(ids)));
+        transportCustomerRepo.saveAll(mergeData(transportCustomers,
+                ids -> transportCustomerRepo.findAllByIdIn(ids)).values());
 
         // update driver report
         List<TransportDriver> transportDrivers = getTransportDrivers(deliveryTripDetailList,
                 deliveryTripDetailToTransportReport);
-        transportDriverRepo.saveAll(mergeData(transportDrivers, ids -> transportDriverRepo.findAllByIdIn(ids)));
+        transportDriverRepo.saveAll(mergeData(transportDrivers,
+                ids -> transportDriverRepo.findAllByIdIn(ids)).values());
 
         // update facility report
         List<TransportFacility> transportFacilities = getTransportFacilities(deliveryTripDetailList,
                 deliveryTripDetailToTransportReport);
-        transportFacilityRepo.saveAll(mergeData(transportFacilities, ids -> transportFacilityRepo.findAllByIdIn(ids)));
+        transportFacilityRepo.saveAll(mergeData(transportFacilities,
+                ids -> transportFacilityRepo.findAllByIdIn(ids)).values());
     }
 
     @Override
-    public void updateTransportDeliveryTripCompleted(DeliveryTripDetail deliveryTripDetail) {
-        if (deliveryTripDetail.getDeliveryTrip().getStatusItem().getStatusId().equals("DELIVERY_TRIP_COMPLETED")) {
-            DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
+    public void updateTransportDeliveryTripsOnCompleted(DeliveryTripDetail... deliveryTripDetails) {
+        Map<DeliveryTrip, DeliveryTripDetail> deliveryTripToDetailMap = Arrays.stream(deliveryTripDetails)
+                .filter(deliveryTripDetail -> deliveryTripDetail.getDeliveryTrip()
+                        .getStatusItem()
+                        .getStatusId()
+                        .equals("DELIVERY_TRIP_COMPLETED"))
+                .collect(Collectors.toMap(DeliveryTripDetail::getDeliveryTrip, e -> e, (one, two) -> one));
 
+        Map<TransportCustomer.Id, TransportCustomer> transportCustomerMap = new HashMap<>();
+        Map<TransportDriver.Id, TransportDriver> transportDriverMap = new HashMap<>();
+        Map<TransportFacility.Id, TransportFacility> transportFacilityMap = new HashMap<>();
+
+        deliveryTripToDetailMap.forEach((deliveryTrip, deliveryTripDetail) -> {
             TransportCustomer transportCustomer = Optional.ofNullable(getTransportCustomerId(deliveryTripDetail))
                     .map(id -> new TransportCustomer(id, 0L, deliveryTrip.getDistance().intValue(), 1, 0))
                     .orElse(null);
@@ -93,18 +105,22 @@ public class TransportServiceImpl implements TransportService {
                     .orElse(null);
 
             if (transportCustomer != null) {
-                transportCustomerRepo.saveAll(mergeData(Collections.singletonList(transportCustomer),
-                        ids -> transportCustomerRepo.findAllByIdIn(ids)));
+                transportCustomerMap.put(transportCustomer.getId(), transportCustomer);
             }
             if (transportDriver != null) {
-                transportDriverRepo.saveAll(mergeData(Collections.singletonList(transportDriver),
-                        ids -> transportDriverRepo.findAllByIdIn(ids)));
+                transportDriverMap.put(transportDriver.getId(), transportDriver);
             }
             if (transportFacility != null) {
-                transportFacilityRepo.saveAll(mergeData(Collections.singletonList(transportFacility),
-                        ids -> transportFacilityRepo.findAllByIdIn(ids)));
+                transportFacilityMap.put(transportFacility.getId(), transportFacility);
             }
-        }
+        });
+
+        transportCustomerRepo.saveAll(mergeData(transportCustomerMap,
+                ids -> transportCustomerRepo.findAllByIdIn(ids)).values());
+        transportDriverRepo.saveAll(mergeData(transportDriverMap,
+                ids -> transportDriverRepo.findAllByIdIn(ids)).values());
+        transportFacilityRepo.saveAll(mergeData(transportFacilityMap,
+                ids -> transportFacilityRepo.findAllByIdIn(ids)).values());
     }
 
     @Override
@@ -258,8 +274,8 @@ public class TransportServiceImpl implements TransportService {
                 .collect(Collectors.toList());
     }
 
-    private <ID, E extends TransportReport<ID>> Collection<E> mergeData(List<E> transportReports,
-                                                                        Function<List<ID>, List<E>> getDBFunction) {
+    private <ID, E extends TransportReport<ID>> Map<ID, E> mergeData(List<E> transportReports,
+                                                                     Function<List<ID>, List<E>> getDBFunction) {
         Map<ID, E> onUpdateMap = transportReports.stream()
                 .collect(Collectors.toMap(TransportReport::getId, e -> e, TransportReport::appendTo));
 
@@ -268,6 +284,24 @@ public class TransportServiceImpl implements TransportService {
 
         onUpdateMap.forEach((id, transportReport) -> inDBMap.merge(id, transportReport, TransportReport::appendTo));
 
-        return inDBMap.values();
+        return inDBMap;
+    }
+
+    private <ID, E extends TransportReport<ID>> Map<ID, E> mergeData(Map<ID, E> sourceMap,
+                                                                     Function<List<ID>, List<E>> getDBFunction) {
+        Map<ID, E> inDBMap = getDBFunction.apply(new ArrayList<>(sourceMap.keySet())).stream()
+                .collect(Collectors.toMap(TransportReport::getId, e -> e));
+
+        sourceMap.forEach((id, transportReport) -> inDBMap.merge(id, transportReport, TransportReport::appendTo));
+
+        return inDBMap;
+    }
+
+    private <ID, E extends TransportReport<ID>> void mergeData(List<E> transportReports,
+                                                               Map<ID, E> sourceMap) {
+        Map<ID, E> onUpdateMap = transportReports.stream()
+                .collect(Collectors.toMap(TransportReport::getId, e -> e, TransportReport::appendTo));
+
+        onUpdateMap.forEach((id, transportReport) -> sourceMap.merge(id, transportReport, TransportReport::appendTo));
     }
 }

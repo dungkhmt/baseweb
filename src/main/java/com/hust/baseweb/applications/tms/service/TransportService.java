@@ -8,9 +8,9 @@ import com.hust.baseweb.applications.tms.model.TransportReportModel;
  */
 public interface TransportService {
 
-    void updateTransportDeliveryTripDetailCompleted(DeliveryTripDetail... deliveryTripDetails);
+    void updateTransportDeliveryTripDetailOnCompleted(DeliveryTripDetail... deliveryTripDetails);
 
-    void updateTransportDeliveryTripCompleted(DeliveryTripDetail deliveryTripDetail);
+    void updateTransportDeliveryTripsOnCompleted(DeliveryTripDetail... deliveryTripDetails);
 
     TransportReportModel.Output getTransportReports(TransportReportModel.Input input);
 }

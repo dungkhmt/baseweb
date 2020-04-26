@@ -4,7 +4,6 @@ import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.geo.service.DistanceTravelTimePostalAddressService;
 import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
-import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
 import com.hust.baseweb.applications.tms.model.TransportReportModel;
 import com.hust.baseweb.applications.tms.model.VehicleModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemInputModel;
@@ -24,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -69,13 +70,17 @@ public class TMSAPIController {
             return ResponseEntity.ok().body("OK");
         }
         log.info("completeShipmentItems, input.getItems().length = " + input.getItems().length);
-        for (CompleteDeliveryShipmentItemInputModel I : input.getItems()) {
-            log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId());
-            //DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(), TMSConstants.SHIPMENT_ITEM_DELIVERED);
-            DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(),
-                    "SHIPMENT_ITEM_DELIVERED");
-            log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId() + " FINISHED");
-        }
+//        for (CompleteDeliveryShipmentItemInputModel I : input.getItems()) {
+//            log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId());
+//            //DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(), TMSConstants.SHIPMENT_ITEM_DELIVERED);
+//            DeliveryTripDetail dtd = deliveryTripDetailService.updateStatusDeliveryTripDetail(I.getDeliveryTripDetailId(),
+//                    "SHIPMENT_ITEM_DELIVERED");
+//            log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId() + " FINISHED");
+//        }
+
+        deliveryTripDetailService.completeDeliveryTripDetail(Arrays.stream(input.getItems()).map(
+                CompleteDeliveryShipmentItemInputModel::getDeliveryTripDetailId).toArray(UUID[]::new));
+
         return ResponseEntity.ok().body("OK");
     }
 

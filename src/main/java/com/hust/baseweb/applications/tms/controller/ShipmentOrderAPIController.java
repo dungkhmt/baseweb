@@ -272,6 +272,15 @@ public class ShipmentOrderAPIController {
                 .body(deliveryTripDetailService.completeDeliveryTripDetail(UUID.fromString(deliveryTripDetailId)));
     }
 
+    @PostMapping("/complete-delivery-trip-details")
+    public ResponseEntity<?> completeDeliveryTripDetail(@RequestBody List<String> deliveryTripDetailIds) {
+        log.info("completeDeliveryTrip({})", deliveryTripDetailIds.size());
+        return ResponseEntity.ok()
+                .body(deliveryTripDetailService.completeDeliveryTripDetail(deliveryTripDetailIds.stream()
+                        .map(UUID::fromString)
+                        .toArray(UUID[]::new)));
+    }
+
     @GetMapping("/shipment-item-not-scheduled/{deliveryPlanId}")
     public ResponseEntity<?> getShipmentItemNotScheduled(@PathVariable String deliveryPlanId) {
         return ResponseEntity.ok(shipmentItemService.findAllNotScheduled(deliveryPlanId));

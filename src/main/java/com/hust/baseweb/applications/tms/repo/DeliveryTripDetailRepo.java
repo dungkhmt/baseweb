@@ -24,5 +24,7 @@ public interface DeliveryTripDetailRepo extends
 
     DeliveryTripDetail findByDeliveryTripDetailId(UUID deliveryTripDetailId);
 
+    List<DeliveryTripDetail> findAllByDeliveryTripDetailIdIn(List<UUID> deliveryTripDetailIds);
+
     List<DeliveryTripDetail> findAllByShipmentItem(ShipmentItem shipmentItem);
 }
