@@ -19,7 +19,7 @@ import java.util.Date;
 @Service
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesmanVendorService{
+public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesmanVendorService {
     private RetailOutletSalesmanVendorRepo retailOutletSalesmanVendorRepo;
     private PartySalesmanRepo partySalesmanRepo;
     private PartyDistributorRepo partyDistributorRepo;

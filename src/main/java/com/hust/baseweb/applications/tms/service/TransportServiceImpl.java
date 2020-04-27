@@ -128,7 +128,7 @@ public class TransportServiceImpl implements TransportService {
             List<TransportCustomer> transportCustomers = transportCustomerRepo.findAllById_CustomerIdAndId_DateBetween(
                     UUID.fromString(input.getCustomerId()),
                     LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
-                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT));
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT).plusDays(1));
             List<TransportReportModel.DateReport> dateReports = transportCustomers.stream()
                     .map(TransportCustomer::toDateReport)
                     .collect(Collectors.toList());
@@ -137,7 +137,7 @@ public class TransportServiceImpl implements TransportService {
             List<TransportDriver> transportDrivers = transportDriverRepo.findAllById_DriverIdAndId_DateBetween(
                     UUID.fromString(input.getDriverId()),
                     LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
-                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT));
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT).plusDays(1));
             List<TransportReportModel.DateReport> dateReports = transportDrivers.stream()
                     .map(TransportDriver::toDateReport)
                     .collect(Collectors.toList());
@@ -146,7 +146,7 @@ public class TransportServiceImpl implements TransportService {
             List<TransportFacility> transportFacilities = transportFacilityRepo.findAllById_FacilityIdAndId_DateBetween(
                     input.getFacilityId(),
                     LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
-                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT));
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT).plusDays(1));
             List<TransportReportModel.DateReport> dateReports = transportFacilities.stream()
                     .map(TransportFacility::toDateReport)
                     .collect(Collectors.toList());

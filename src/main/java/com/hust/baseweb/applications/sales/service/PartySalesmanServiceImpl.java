@@ -80,19 +80,19 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
         return personRepo.findByPartyId(partyId);
     }
 
-	@Override
-	public PartySalesman save(PersonModel salesman) {
-		// TODO Auto-generated method stub
-		try{
-			Party party = userService.save(salesman);
-			PartySalesman partySalesman = new PartySalesman();
-			partySalesman.setPartyId(party.getPartyId());
-			partySalesmanRepo.save(partySalesman);
-			return partySalesman;
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return null;
-	}
+    @Override
+    public PartySalesman save(PersonModel salesman) {
+        // TODO Auto-generated method stub
+        try {
+            Party party = userService.save(salesman);
+            PartySalesman partySalesman = new PartySalesman();
+            partySalesman.setPartyId(party.getPartyId());
+            partySalesmanRepo.save(partySalesman);
+            return partySalesman;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
