@@ -14,7 +14,7 @@ public class RequestAgent extends Thread {
     public static final String name = RequestAgent.class.getName();
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static String urlRoot = "http://localhost:8080";
-    // public static String url_root = "http://3.1.6.126";
+    // public static String url_root = "http://sscm.dailyopt.ai";
     private OkHttpClient client = new OkHttpClient();
     private Random rand = new Random();
     private Thread thread = null;
@@ -56,7 +56,7 @@ public class RequestAgent extends Thread {
 
     public String login(String username, String password) {
         try {
-            // String url = "http://3.1.6.126/api/";
+            // String url = "http://sscm.dailyopt.ai/api/";
             String url = urlRoot + "/api/";
             String credential = Credentials.basic(username, password);
             Request request = new Request.Builder().url(url)

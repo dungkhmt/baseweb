@@ -12,7 +12,7 @@ public class Login {
 
     static String login(String username, String password) {
         try {
-            // String url = "http://3.1.6.126/api/";
+            // String url = "http://sscm.dailyopt.ai/api/";
             String url = Constants.URL_ROOT + "/api/";
             String credential = Credentials.basic(username, password);
             Request request = new Request.Builder().url(url)
