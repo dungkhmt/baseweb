@@ -36,6 +36,8 @@ public class DeliveryTripDetailModel {
         private Integer deliveryQuantity;
         private Double weight;
         private String locationCode;
+
+        private String statusId;
     }
 
 

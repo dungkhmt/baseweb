@@ -69,6 +69,7 @@ public class DeliveryTripDetail {
             }
         }
         orderItemModel.setDeliveryQuantity(deliveryQuantity);
+        orderItemModel.setStatusId(statusItem.getStatusId());
         return orderItemModel;
     }
 
