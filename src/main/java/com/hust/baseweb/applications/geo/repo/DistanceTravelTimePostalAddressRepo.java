@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface DistanceTravelTimePostalAddressRepo extends CrudRepository<DistanceTravelTimePostalAddress, DistanceTravelTimePostalAddressEmbeddableId> {
     DistanceTravelTimePostalAddress findByDistanceTravelTimePostalAddressEmbeddableId(
-            DistanceTravelTimePostalAddressEmbeddableId distanceTraveltimePostalAddressEmbeddableId);
+            DistanceTravelTimePostalAddressEmbeddableId distanceTravelTimePostalAddressEmbeddableId);
 
     List<DistanceTravelTimePostalAddress> findAllByDistanceTravelTimePostalAddressEmbeddableId_FromContactMechIdInAndDistanceTravelTimePostalAddressEmbeddableId_ToContactMechIdIn(
             List<UUID> froms,

@@ -13,7 +13,7 @@ public class ProductManager {
 		this.token = token;
 	}
 	public List<Product> getProducts() {
-//        System.out.println("createorderagent getProducts");
+//        System.out.println("create order agent getProducts");
         try {
             String json = "{\"statusId\":null}";
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-product", json, token);

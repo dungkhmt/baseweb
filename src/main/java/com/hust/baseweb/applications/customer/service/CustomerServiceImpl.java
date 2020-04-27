@@ -4,7 +4,6 @@ package com.hust.baseweb.applications.customer.service;
 import com.hust.baseweb.applications.customer.entity.PartyContactMechPurpose;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.model.CreateCustomerInputModel;
-import com.hust.baseweb.applications.customer.model.CreateDistributorInputModel;
 import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
@@ -18,10 +17,8 @@ import com.hust.baseweb.entity.Status.StatusEnum;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PartyTypeRepo;
 import com.hust.baseweb.repo.StatusRepo;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
     public PartyCustomer save(CreateCustomerInputModel input) {
 
 
-        PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
+        PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAIL_OUTLET");
 
         //UUID partyId = UUID.randomUUID();
         //Party party = new Party();
@@ -108,10 +105,10 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public List<PartyCustomer> findRetailOutlers() {
-        PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
-        List<PartyCustomer> retailoutlets = customerRepo.findByPartyType(partyType);
-        return retailoutlets;
+    public List<PartyCustomer> findRetailOutlets() {
+        PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAIL_OUTLET");
+        List<PartyCustomer> retailOutlets = customerRepo.findByPartyType(partyType);
+        return retailOutlets;
     }
 
     @Override

@@ -34,7 +34,7 @@ public class Config {
     }
 
     static String updateConfig() throws FileNotFoundException {
-        File googleApiKeyFile = new File(Constant.GGMAP_API_KEY_FILE);
+        File googleApiKeyFile = new File(Constant.GOOGLE_MAP_API_KEY_FILE);
         if (googleApiKeyFile.exists()) {
             String currentApiKey = new Scanner(googleApiKeyFile).useDelimiter("\\Z").next();
             if (!currentApiKey.equals(config.getGoogleApiKey())) {

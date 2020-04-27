@@ -13,6 +13,6 @@ public class Constant {
     public static final DateTimeFormatter LOCAL_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public static final DateFormat ORDER_EXCEL_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
-    static final String GGMAP_API_KEY_FILE = "gg_api_key.txt";
+    static final String GOOGLE_MAP_API_KEY_FILE = "gg_api_key.txt";
 
 }

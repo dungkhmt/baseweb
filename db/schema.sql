@@ -29,22 +29,22 @@ CREATE TABLE party_type (
   CONSTRAINT party_type_par FOREIGN KEY (parent_type_id) REFERENCES party_type (party_type_id)
 );
 CREATE TABLE party (
-  party_id                    UUID NOT NULL default uuid_generate_v1(),
-  party_type_id               VARCHAR(60),
-  external_id                 VARCHAR(60),
-  description                 TEXT,
-  status_id                   VARCHAR(60),
-  created_date                TIMESTAMP   NULL,
-  created_by_user_login       VARCHAR(255),
-  last_modified_date          TIMESTAMP   NULL,
-  last_modified_by_user_login VARCHAR(255),
-  is_unread                   BOOLEAN,
-  last_updated_stamp          TIMESTAMP   ,
-  created_stamp               TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  party_code                  VARCHAR(255),
-  CONSTRAINT pk_party PRIMARY KEY (party_id),
-  CONSTRAINT party_statusitm FOREIGN KEY (status_id) REFERENCES status (status_id),
-  CONSTRAINT party_pty_typ FOREIGN KEY (party_type_id) REFERENCES party_type (party_type_id)
+                       party_id                    UUID NOT NULL default uuid_generate_v1(),
+                       party_type_id               VARCHAR(60),
+                       external_id                 VARCHAR(60),
+                       description                 TEXT,
+                       status_id                   VARCHAR(60),
+                       created_date                TIMESTAMP   NULL,
+                       created_by_user_login       VARCHAR(255),
+                       last_modified_date          TIMESTAMP   NULL,
+                       last_modified_by_user_login VARCHAR(255),
+                       is_unread                   BOOLEAN,
+                       last_updated_stamp          TIMESTAMP   ,
+                       created_stamp               TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       party_code                  VARCHAR(255),
+                       CONSTRAINT pk_party PRIMARY KEY (party_id),
+                       CONSTRAINT party_status_item FOREIGN KEY (status_id) REFERENCES status (status_id),
+                       CONSTRAINT party_pty_typ FOREIGN KEY (party_type_id) REFERENCES party_type (party_type_id)
 );
 CREATE TABLE person (
   party_id                    UUID              NOT NULL,

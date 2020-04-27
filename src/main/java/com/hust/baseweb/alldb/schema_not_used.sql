@@ -47,7 +47,7 @@ CREATE TABLE party
     created_stamp               TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
     party_code                  VARCHAR(255),
     CONSTRAINT pk_party PRIMARY KEY (party_id),
-    CONSTRAINT party_statusitm FOREIGN KEY (status_id) REFERENCES status (status_id),
+    CONSTRAINT party_status_item FOREIGN KEY (status_id) REFERENCES status (status_id),
     CONSTRAINT party_pty_typ FOREIGN KEY (party_type_id) REFERENCES party_type (party_type_id)
 );
 CREATE TABLE person
@@ -155,7 +155,7 @@ CREATE TABLE application
 create table department
 (
     department_id           UUID not null default uuid_generate_v1(),
-    deaprtment_name         VARCHAR(100),
+    department_name         VARCHAR(100),
     start_date              TIMESTAMP,
     created_by_userLogin_id VARCHAR(255),
     last_updated_stamp      TIMESTAMP,
@@ -199,13 +199,13 @@ create table geo_point
 
 );
 
-create table distance_traveltime_geo_points
+create table distance_travel_time_geo_points
 (
     from_geo_point_id  uuid not null
-        constraint distance_traveltime_geo_points_geo_point_geo_point_id_from_fk
+        constraint distance_travel_time_geo_points_geo_point_geo_point_id_from_fk
             references geo_point,
     to_geo_point_id    uuid not null
-        constraint distance_traveltime_geo_points_geo_point_geo_point_id_to_fk
+        constraint distance_travel_time_geo_points_geo_point_geo_point_id_to_fk
             references geo_point,
     distance           numeric,
     travel_time        numeric,
@@ -213,7 +213,7 @@ create table distance_traveltime_geo_points
     created_stamp      timestamp default current_timestamp
 );
 
-create table distance_traveltime_postal_address
+create table distance_travel_time_postal_address
 (
     from_contact_mech_id     uuid not null,
     to_contact_mech_id       uuid not null,
@@ -226,19 +226,19 @@ create table distance_traveltime_postal_address
     source_enum_id           VARCHAR(60),
     last_updated_stamp       timestamp,
     created_stamp            timestamp default current_timestamp,
-    constraint pk_distance_traveltime_postal_address primary key (from_contact_mech_id, to_contact_mech_id),
-    constraint fk_distance_traveltime_postal_address_from foreign key (from_contact_mech_id) references postal_address (contact_mech_id),
-    constraint fk_distance_traveltime_postal_address_to foreign key (to_contact_mech_id) references postal_address (contact_mech_id),
-    constraint fk_distance_traveltime_postal_address_source_enum_id foreign key (source_enum_id) references enumeration (enum_id),
-    constraint fk_distance_traveltime_postal_address_updated_by_user_login foreign key (updated_by_user_login_id) references user_login (user_login_id)
+    constraint pk_distance_travel_time_postal_address primary key (from_contact_mech_id, to_contact_mech_id),
+    constraint fk_distance_travel_time_postal_address_from foreign key (from_contact_mech_id) references postal_address (contact_mech_id),
+    constraint fk_distance_travel_time_postal_address_to foreign key (to_contact_mech_id) references postal_address (contact_mech_id),
+    constraint fk_distance_travel_time_postal_address_source_enum_id foreign key (source_enum_id) references enumeration (enum_id),
+    constraint fk_distance_travel_time_postal_address_updated_by_user_login foreign key (updated_by_user_login_id) references user_login (user_login_id)
 );
 
 
-create unique index distance_traveltime_geo_points_from_geo_point_id_to_geo_point_id_uindex
-    on distance_traveltime_geo_points (from_geo_point_id, to_geo_point_id);
+create unique index distance_travel_time_geo_points_from_geo_point_id_to_geo_point_id_uindex
+    on distance_travel_time_geo_points (from_geo_point_id, to_geo_point_id);
 
-alter table distance_traveltime_geo_points
-    add constraint distance_traveltime_geo_points_pk
+alter table distance_travel_time_geo_points
+    add constraint distance_travel_time_geo_points_pk
         primary key (from_geo_point_id, to_geo_point_id);
 
 
@@ -1141,7 +1141,7 @@ create table delivery_plan_solution
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_delivery_plan_solution primary key (delivery_plan_id, delivery_plan_solution_seq_id),
-    constraint fk_devlivery_plan_solution_status foreign key (status_id) references status_item (status_id),
+    constraint fk_delivery_plan_solution_status foreign key (status_id) references status_item (status_id),
     constraint fk_delivery_plan_solution_delivery_plan foreign key (delivery_plan_id) references delivery_plan (delivery_plan_id)
 );
 

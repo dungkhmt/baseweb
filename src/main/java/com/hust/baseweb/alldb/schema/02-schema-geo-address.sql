@@ -78,7 +78,7 @@ create table postal_address
     constraint fk_postal_address_state_province_geo_id foreign key (state_province_geo_id) references geo (geo_id)
 );
 
-create table distance_traveltime_postal_address
+create table distance_travel_time_postal_address
 (
     from_contact_mech_id     uuid not null,
     to_contact_mech_id       uuid not null,
@@ -91,11 +91,11 @@ create table distance_traveltime_postal_address
     source_enum_id           VARCHAR(60),
     last_updated_stamp       timestamp,
     created_stamp            timestamp default current_timestamp,
-    constraint pk_distance_traveltime_postal_address primary key (from_contact_mech_id, to_contact_mech_id),
-    constraint fk_distance_traveltime_postal_address_from foreign key (from_contact_mech_id) references postal_address (contact_mech_id),
-    constraint fk_distance_traveltime_postal_address_to foreign key (to_contact_mech_id) references postal_address (contact_mech_id),
-    constraint fk_distance_traveltime_postal_address_source_enum_id foreign key (source_enum_id) references enumeration (enum_id),
-    constraint fk_distance_traveltime_postal_address_updated_by_user_login foreign key (updated_by_user_login_id) references user_login (user_login_id)
+    constraint pk_distance_travel_time_postal_address primary key (from_contact_mech_id, to_contact_mech_id),
+    constraint fk_distance_travel_time_postal_address_from foreign key (from_contact_mech_id) references postal_address (contact_mech_id),
+    constraint fk_distance_travel_time_postal_address_to foreign key (to_contact_mech_id) references postal_address (contact_mech_id),
+    constraint fk_distance_travel_time_postal_address_source_enum_id foreign key (source_enum_id) references enumeration (enum_id),
+    constraint fk_distance_travel_time_postal_address_updated_by_user_login foreign key (updated_by_user_login_id) references user_login (user_login_id)
 );
 
 

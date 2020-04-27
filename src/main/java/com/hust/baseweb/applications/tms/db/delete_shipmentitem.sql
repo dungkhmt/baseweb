@@ -62,7 +62,7 @@ delete
 from facility;
 
 delete
-from distance_traveltime_postal_address;
+from distance_travel_time_postal_address;
 
 delete
 from postal_address;
@@ -71,7 +71,7 @@ delete
 from party_customer;
 
 delete
-from distance_traveltime_geo_points;
+from distance_travel_time_geo_points;
 
 delete
 from geo_point;

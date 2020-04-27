@@ -50,7 +50,7 @@ public class CustomerSalesmanVendor {
     private String address;
 
     @Transient
-    private String partyDistritorName;
+    private String partyDistributorName;
 
 
 

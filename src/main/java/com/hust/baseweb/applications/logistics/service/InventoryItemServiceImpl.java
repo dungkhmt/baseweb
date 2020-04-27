@@ -138,7 +138,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                     inventoryItemsMap.size());
 
             List<InventoryItem> selectedInventoryItems = inventoryItemsMap.get(Arrays.asList(facilityId, productId));
-            int totalCount = // total inventory count of productId in the faicilityId
+            int totalCount = // total inventory count of productId in the facilityId
                     productFacilityMap.get(Arrays.asList(facilityId, productId)).getLastInventoryCount()
                             - quantity; // remain total inventory count
             selectedInventoryItems.sort(Comparator.comparingInt(InventoryItem::getQuantityOnHandTotal));

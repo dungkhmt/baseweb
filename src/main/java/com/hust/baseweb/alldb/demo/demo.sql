@@ -48,17 +48,17 @@ VALUES ('875704ac-4026-11ea-9be4-54bf64436441', 'PARTY_DISTRIBUTOR', NULL, NULL,
 INSERT INTO public.party
 (party_id, party_type_id, external_id, description, status_id, created_date, created_by_user_login, last_modified_date,
  last_modified_by_user_login, is_unread, last_updated_stamp, created_stamp, party_code)
-VALUES ('5ae20c48-4d6c-11ea-967e-54bf64436441', 'PARTY_RETAILOUTLET', NULL, NULL, 'PARTY_ENABLED', NULL, 'admin', NULL,
+VALUES ('5ae20c48-4d6c-11ea-967e-54bf64436441', 'PARTY_RETAIL_OUTLET', NULL, NULL, 'PARTY_ENABLED', NULL, 'admin', NULL,
         NULL, NULL, NULL, '2020-02-12 14:50:36.479', NULL);
 INSERT INTO public.party
 (party_id, party_type_id, external_id, description, status_id, created_date, created_by_user_login, last_modified_date,
  last_modified_by_user_login, is_unread, last_updated_stamp, created_stamp, party_code)
-VALUES ('d8d8fb18-4d6f-11ea-9681-54bf64436441', 'PARTY_RETAILOUTLET', NULL, NULL, 'PARTY_ENABLED', NULL, 'admin', NULL,
+VALUES ('d8d8fb18-4d6f-11ea-9681-54bf64436441', 'PARTY_RETAIL_OUTLET', NULL, NULL, 'PARTY_ENABLED', NULL, 'admin', NULL,
         NULL, NULL, NULL, '2020-02-12 15:15:36.302', NULL);
 INSERT INTO public.party
 (party_id, party_type_id, external_id, description, status_id, created_date, created_by_user_login, last_modified_date,
  last_modified_by_user_login, is_unread, last_updated_stamp, created_stamp, party_code)
-VALUES ('5b63a1ea-4d71-11ea-9684-54bf64436441', 'PARTY_RETAILOUTLET', NULL, NULL, 'PARTY_ENABLED', NULL, 'admin', NULL,
+VALUES ('5b63a1ea-4d71-11ea-9684-54bf64436441', 'PARTY_RETAIL_OUTLET', NULL, NULL, 'PARTY_ENABLED', NULL, 'admin', NULL,
         NULL, NULL, NULL, '2020-02-12 15:26:24.812', NULL);
 
 INSERT INTO public.party_customer

@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Service
 public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTravelTimePostalAddressService {
     private PostalAddressJpaRepo postalAddressRepo;
-    private DistanceTravelTimePostalAddressRepo distanceTraveltimePostalAddressRepo;
+    private DistanceTravelTimePostalAddressRepo distanceTravelTimePostalAddressRepo;
     private EnumerationRepo enumerationRepo;
 
     private int computeMissingDistanceHarvsine() {
@@ -50,7 +50,7 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                 .collect(Collectors.toList());
 
         Map<DistanceTravelTimePostalAddressEmbeddableId, DistanceTravelTimePostalAddress> distanceTravelTimePostalAddressMap
-                = distanceTraveltimePostalAddressRepo
+                = distanceTravelTimePostalAddressRepo
                 .findAllByDistanceTravelTimePostalAddressEmbeddableId_FromContactMechIdInAndDistanceTravelTimePostalAddressEmbeddableId_ToContactMechIdIn(
                         postalAddressIds,
                         postalAddressIds)
@@ -88,7 +88,7 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                     distances.add(d);
 
                     distanceTravelTimePostalAddresses.add(d);
-//                    distanceTraveltimePostalAddressRepo.save(d);
+//                    distanceTravelTimePostalAddressRepo.save(d);
 
                 } else {
 
@@ -105,11 +105,11 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
 //            log.info("computeMissingDistance, finished " + i + "/" + points.size());
         }
 
-        distanceTraveltimePostalAddressRepo.saveAll(distanceTravelTimePostalAddresses);
+        distanceTravelTimePostalAddressRepo.saveAll(distanceTravelTimePostalAddresses);
 
         log.info("computeMissingDistance, cnt = " + cnt);
-        //List<DistanceTraveltimePostalAddress> distances = distanceTraveltimePostalAddressRepo.findAll();
-        //distanceTraveltimePostalAddressRepo.saveAll(distances);
+        //List<DistanceTravelTimePostalAddress> distances = distanceTravelTimePostalAddressRepo.findAll();
+        //distanceTravelTimePostalAddressRepo.saveAll(distances);
         log.info("computeMissingDistance, finished saveAll = " + distances.size());
 
         return cnt;
@@ -128,7 +128,7 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                 .collect(Collectors.toList());
 
         Map<DistanceTravelTimePostalAddressEmbeddableId, DistanceTravelTimePostalAddress> distanceTravelTimePostalAddressMap
-                = distanceTraveltimePostalAddressRepo
+                = distanceTravelTimePostalAddressRepo
                 .findAllByDistanceTravelTimePostalAddressEmbeddableId_FromContactMechIdInAndDistanceTravelTimePostalAddressEmbeddableId_ToContactMechIdIn(
                         postalAddressIds,
                         postalAddressIds)
@@ -167,9 +167,9 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                     listDistances.add(e);
 
                     /*
-                    DistanceTraveltimePostalAddressEmbeddableId id = new DistanceTraveltimePostalAddressEmbeddableId(p.getContactMechId(),
+                    DistanceTravelTimePostalAddressEmbeddableId id = new DistanceTravelTimePostalAddressEmbeddableId(p.getContactMechId(),
                             q.getContactMechId());
-                    d.setDistanceTraveltimePostalAddressEmbeddableId(id);
+                    d.setDistanceTravelTimePostalAddressEmbeddableId(id);
                     d.setDistance(distance);
                     d.setTravelTime(time);
                     d.setTravelTimeTruck(time);
@@ -177,7 +177,7 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
                     d.setEnumID(distanceSource);
                     distances.add(d);
 
-                    distanceTraveltimePostalAddressRepo.save(d);
+                    distanceTravelTimePostalAddressRepo.save(d);
                     */
                 } else {
 
@@ -201,8 +201,8 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
             }
         }
         log.info("computeMissingDistance, cnt = " + cnt);
-        //List<DistanceTraveltimePostalAddress> distances = distanceTraveltimePostalAddressRepo.findAll();
-        //distanceTraveltimePostalAddressRepo.saveAll(distances);
+        //List<DistanceTravelTimePostalAddress> distances = distanceTravelTimePostalAddressRepo.findAll();
+        //distanceTravelTimePostalAddressRepo.saveAll(distances);
 
         QueryDistanceTravelTimeInputModel queryDistanceTravelTimeInputModel = new QueryDistanceTravelTimeInputModel();
         queryDistanceTravelTimeInputModel.setParams("OpenStreetMap");
@@ -278,7 +278,7 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
         }
 
 //        log.info("computeMissingDistanceOpenStreetMap, json = " + json);
-        distanceTraveltimePostalAddressRepo.saveAll(distances);
+        distanceTravelTimePostalAddressRepo.saveAll(distances);
         log.info("computeMissingDistance, finished saveAll = " + distances.size());
 
         return cnt;

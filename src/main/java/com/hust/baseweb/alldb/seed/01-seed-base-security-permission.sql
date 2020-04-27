@@ -50,7 +50,7 @@ VALUES ('CUSTOMER_GROUP', 'PARTY_GROUP', FALSE, 'Customer Group', NOW(), NOW());
 INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
 VALUES ('PARTY_DISTRIBUTOR', NULL, FALSE, 'Distributor', NOW(), NOW());
 INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
-VALUES ('PARTY_RETAILOUTLET', NULL, FALSE, 'Distributor', NOW(), NOW());
+VALUES ('PARTY_RETAIL_OUTLET', NULL, FALSE, 'Distributor', NOW(), NOW());
 insert into party_type(party_type_id, description)
 values ('COMPANY', 'Company');
 
@@ -331,7 +331,7 @@ values ('COMPANY', 'PARTY_ENABLED');
 
 
 insert into product_type(product_type_id, description)
-values ('FINISHED_GOOD', 'finised goods');
+values ('FINISHED_GOOD', 'finished goods');
 
 insert into uom_type(uom_type_id, description)
 values ('WEIGHT_MEASURE', 'Weight'),
@@ -354,7 +354,8 @@ insert into role_type(role_type_id, description) values ('BILL_TO_CUSTOMER', 'H�
 insert into role_type(role_type_id, description) values  ('SALES_EXECUTIVE', 'Hóa đơn của nhân viên bán hàng');
 insert into role_type(role_type_id, description) values  ('CREATE_DELIVERY_TRIP', 'Tạo chuyến giao hàng');
 insert into role_type(role_type_id, description) values  ('SALESMAN_SELL_FROM_DISTRIBUTOR', 'Nhân viên bán hàng bán từ nhà phân phối');
-insert into role_type(role_type_id, description) values  ('SALESMAN_SELL_TO_RETAILOUTLET', 'Nhân viên bán hàng đến đại lí bán lẻ');
+insert into role_type(role_type_id, description)
+values ('SALESMAN_SELL_TO_RETAIL_OUTLET', 'Nhân viên bán hàng đến đại lí bán lẻ');
 insert into role_type(role_type_id, description) values  ('SUPERVISOR_OF_SALESMAN', 'Giám sát của nhân viên bán hàng');
 insert into role_type(role_type_id, description) values  ('HEAD_DEPARTMENT', 'Trưởng phòng');
 insert into role_type(role_type_id, description) values  ('EMPLOYEE_DEPARTMENT', 'Nhân viên của phòng');

@@ -388,7 +388,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         return partyCustomerMap.computeIfAbsent(shipmentItemModel.getCustomerCode(),
                 customerCode ->
                 {
-                    PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
+                    PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAIL_OUTLET");
 
                     Party party = new Party(null, partyType, "",
                             statusRepo.findById(Status.StatusEnum.PARTY_ENABLED.name())

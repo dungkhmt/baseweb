@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.UUID;
 
 
-@Entity(name = "distance_traveltime_postal_address")
+@Entity(name = "distance_travel_time_postal_address")
 @Setter
 @Getter
 @AllArgsConstructor

@@ -157,7 +157,7 @@ create table delivery_plan_solution
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_delivery_plan_solution primary key (delivery_plan_id, delivery_plan_solution_seq_id),
-    constraint fk_devlivery_plan_solution_status foreign key (status_id) references status_item (status_id),
+    constraint fk_delivery_plan_solution_status foreign key (status_id) references status_item (status_id),
     constraint fk_delivery_plan_solution_delivery_plan foreign key (delivery_plan_id) references delivery_plan (delivery_plan_id)
 );
 

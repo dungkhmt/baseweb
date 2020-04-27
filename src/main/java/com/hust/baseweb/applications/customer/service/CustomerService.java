@@ -11,7 +11,7 @@ public interface CustomerService {
     PartyCustomer save(CreateCustomerInputModel input);
 
 
-    List<PartyCustomer> findRetailOutlers();
+    List<PartyCustomer> findRetailOutlets();
 
     List<PartyCustomer> findAll();
 }

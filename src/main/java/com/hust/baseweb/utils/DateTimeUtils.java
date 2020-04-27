@@ -207,14 +207,14 @@ public class DateTimeUtils {
         return h + ":" + m + ":" + s;
     }
 
-    public static long computeStartTimePoint(long early1, long late1, long traveltime, long early2, long late2) {
+    public static long computeStartTimePoint(long early1, long late1, long travelTime, long early2, long late2) {
         //[early1,late1] is the time windows of start point
         //[early2,late2] is the time windows of end point
         // travel time from start point to end point
-        if (early1 + traveltime >= early2) {
+        if (early1 + travelTime >= early2) {
             return early1;
         }
-        return early2 - traveltime;
+        return early2 - travelTime;
     }
 
     public static int getHour(String dt) {

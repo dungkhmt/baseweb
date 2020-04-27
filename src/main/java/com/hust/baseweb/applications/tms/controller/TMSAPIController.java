@@ -47,7 +47,7 @@ public class TMSAPIController {
     private SolverService solverService;
 
     @PostMapping("/statistic-vehicle-distance")
-    public ResponseEntity<?> statisticVehicleDistance(Principal prinicpal,
+    public ResponseEntity<?> statisticVehicleDistance(Principal principal,
                                                       @RequestBody VehicleModel.InputDistanceStatistic input) {
         List<VehicleModel.Distance> distances = statisticDeliveryTripService.collectVehicleDistance(input.getFromDate(),
                 input.getThruDate());
@@ -64,7 +64,7 @@ public class TMSAPIController {
     }
 
     @PostMapping("/complete-shipment-items")
-    public ResponseEntity<?> completeShipmentItems(Principal prinicpal,
+    public ResponseEntity<?> completeShipmentItems(Principal principal,
                                                    @RequestBody CompleteDeliveryShipmentItemsInputModel input) {
         if (input.getItems() == null || input.getItems().length == 0) {
             return ResponseEntity.ok().body("OK");

@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.sales.entity;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import lombok.Getter;
@@ -51,6 +50,6 @@ public class RetailOutletSalesmanVendor {
     private String address;
 
     @Transient
-    private String partyDistritorName;
+    private String partyDistributorName;
 
 }

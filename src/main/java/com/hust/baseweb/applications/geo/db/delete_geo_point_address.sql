@@ -7,7 +7,7 @@ delete
 from facility;
 delete from postal_address;
 delete
-from distance_traveltime_geo_points;
+from distance_travel_time_geo_points;
 delete from geo_point;
 
 -------------------

@@ -95,7 +95,7 @@ public class TrackLocationApiController {
     }
 
     @GetMapping("/tracklocations")
-    public ResponseEntity<?> getTracklocations(Pageable page, @RequestParam(required = false) String param) {
+    public ResponseEntity<?> getTrackLocations(Pageable page, @RequestParam(required = false) String param) {
 //        System.out.println(module + "::getTrackLocations, page = pageNumber = " + page.getPageNumber() + ", offSet = " +
 //                page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
 //        log.info("getTracklocations, api_key = " + gmap_api_key);

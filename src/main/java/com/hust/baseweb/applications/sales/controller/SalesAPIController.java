@@ -28,13 +28,11 @@ import com.hust.baseweb.applications.sales.service.PartySalesmanService;
 import com.hust.baseweb.entity.*;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.repo.RoleTypeRepo;
-import com.hust.baseweb.service.PartyRelationShipService;
+import com.hust.baseweb.service.PartyRelationshipService;
 import com.hust.baseweb.service.PartyService;
 import com.hust.baseweb.service.UserService;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -68,12 +66,12 @@ public class SalesAPIController {
     private RetailOutletService retailOutletService;
     private DistributorRepo distributorRepo;
     private RetailOutletPagingRepo retailOutletRepo;
-    private PartyRelationShipService partyRelationShipService;
+    private PartyRelationshipService partyRelationshipService;
     private PartyService partyService;
     private RoleTypeRepo roleTypeRepo;
     private DistributorService distributorService;
     @PostMapping("/get-list-salesmans")
-    public ResponseEntity getListSalesmans(Principal principal, @RequestBody GetListSalesmanInputModel input) {
+    public ResponseEntity getListSalesmen(Principal principal, @RequestBody GetListSalesmanInputModel input) {
         // TODO
         List<GetSalesmanOutputModel> salesman = partySalesmanService.findAllSalesman();
         return ResponseEntity.ok().body(salesman);
@@ -91,62 +89,63 @@ public class SalesAPIController {
     public ResponseEntity<?> getCustomersOfSalesman(Principal principal, @RequestBody GetCustomersOfSalesmanInputModel input) {
         UserLogin userLogin = userService.findById(principal.getName());
 
-        log.info("getCustomersOfSalesman, userlogin = " + userLogin.getUserLoginId());
+        log.info("getCustomersOfSalesman, user-login = " + userLogin.getUserLoginId());
 
         //List<PartyCustomer> lst = customerSalesmanService.getCustomersOfSalesman(userLogin.getParty().getPartyId());
         List<PartyCustomer> lst = customerSalesmanService.getCustomersOfSalesman(input.getPartySalesman());
         return ResponseEntity.ok().body(lst);
     }
 
-    @GetMapping("/get-customers-of-userlogin")
+    @GetMapping("/get-customers-of-user-login")
     public ResponseEntity<?> getCustomersOfUserLogin(Principal principal) {
         UserLogin userLogin = userService.findById(principal.getName());
 
-        log.info("getCustomersOfUserLogin, userlogin = " + userLogin.getUserLoginId());
+        log.info("getCustomersOfUserLogin, user-login = " + userLogin.getUserLoginId());
 
         List<PartyCustomer> lst = customerSalesmanService.getCustomersOfSalesman(userLogin.getParty().getPartyId());
 
         return ResponseEntity.ok().body(lst);
     }
 
-    @GetMapping("/get-retail-outlets-of-userlogin-salesman")
+    @GetMapping("/get-retail-outlets-of-user-login-salesman")
     public ResponseEntity<?> getRetailOutletsOfUserLoginSalesman(Principal principal) {
         UserLogin userLogin = userService.findById(principal.getName());
 
-        log.info("getRetailOutletsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId());
-        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_TO_RETAILOUTLET");
+        log.info("getRetailOutletsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId());
+        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_TO_RETAIL_OUTLET");
         //List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findAll();
-        List<PartyRelationShip> partyRelationShips = partyRelationShipService.findAllByFromPartyAndRoleTypeAndThruDate(
+        List<PartyRelationship> partyRelationships = partyRelationshipService.findAllByFromPartyAndRoleTypeAndThruDate(
                 userLogin.getParty(), roleType, null);
-        //log.info("getRetailOutletsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId() + " got partyRelationShips.sz = "
-        //+ partyRelationShips.size());
-        List<UUID> partyIds = partyRelationShips.stream().map(
+        //log.info("getRetailOutletsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId() + " got partyRelationships.sz = "
+        //+ partyRelationships.size());
+        List<UUID> partyIds = partyRelationships.stream().map(
                 p -> p.getToParty().getPartyId()).collect(Collectors.toList());
-        //log.info("getRetailOutletsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId() + ", partyId = "
+        //log.info("getRetailOutletsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId() + ", partyId = "
         //+ userLogin.getParty().getPartyId() + ", partyIds.sz = " + partyIds.size());
         //for(UUID partyId: partyIds){
-         //   log.info("getRetailOutletsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId() + ", partyId in = " + partyId);
+        //   log.info("getRetailOutletsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId() + ", partyId in = " + partyId);
         //}
         List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findByPartyIdIn(partyIds);
         return ResponseEntity.ok().body(partyRetailOutletList);
     }
-    @GetMapping("/get-page-retail-outlets-of-userlogin-salesman")
+
+    @GetMapping("/get-page-retail-outlets-of-user-login-salesman")
     public ResponseEntity<?> getPageRetailOutletsOfUserLoginSalesman(Principal principal, Pageable page) {
         UserLogin userLogin = userService.findById(principal.getName());
 
-        log.info("getPageRetailOutletsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId());
-        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_TO_RETAILOUTLET");
+        log.info("getPageRetailOutletsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId());
+        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_TO_RETAIL_OUTLET");
         //List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findAll();
-        List<PartyRelationShip> partyRelationShips = partyRelationShipService.findAllByFromPartyAndRoleTypeAndThruDate(
+        List<PartyRelationship> partyRelationships = partyRelationshipService.findAllByFromPartyAndRoleTypeAndThruDate(
                 userLogin.getParty(), roleType, null);
-        //log.info("getRetailOutletsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId() + " got partyRelationShips.sz = "
-        //+ partyRelationShips.size());
-        List<UUID> partyIds = partyRelationShips.stream().map(
+        //log.info("getRetailOutletsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId() + " got partyRelationships.sz = "
+        //+ partyRelationships.size());
+        List<UUID> partyIds = partyRelationships.stream().map(
                 p -> p.getToParty().getPartyId()).collect(Collectors.toList());
-        //log.info("getRetailOutletsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId() + ", partyId = "
+        //log.info("getRetailOutletsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId() + ", partyId = "
         //+ userLogin.getParty().getPartyId() + ", partyIds.sz = " + partyIds.size());
         //for(UUID partyId: partyIds){
-        //   log.info("getRetailOutletsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId() + ", partyId in = " + partyId);
+        //   log.info("getRetailOutletsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId() + ", partyId in = " + partyId);
         //}
 
         Page<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findByPartyIdIn(partyIds, page);
@@ -155,18 +154,18 @@ public class SalesAPIController {
         return ResponseEntity.ok().body(partyRetailOutletList);
     }
 
-    @GetMapping("/get-distributors-of-userlogin-salesman")
+    @GetMapping("/get-distributors-of-user-login-salesman")
     public ResponseEntity<?> getDistributorsOfUserLoginSalesman(Principal principal) {
         UserLogin userLogin = userService.findById(principal.getName());
 
-        log.info("getDistributorsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId());
+        log.info("getDistributorsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId());
         RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_FROM_DISTRIBUTOR");
         //List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findAll();
-        List<PartyRelationShip> partyRelationShips = partyRelationShipService.findAllByFromPartyAndRoleTypeAndThruDate(
+        List<PartyRelationship> partyRelationships = partyRelationshipService.findAllByFromPartyAndRoleTypeAndThruDate(
                 userLogin.getParty(), roleType, null);
-        //log.info("getRetailOutletsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId() + " got partyRelationShips.sz = "
-        //+ partyRelationShips.size());
-        List<UUID> partyIds = partyRelationShips.stream().map(
+        //log.info("getRetailOutletsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId() + " got partyRelationships.sz = "
+        //+ partyRelationships.size());
+        List<UUID> partyIds = partyRelationships.stream().map(
                 p -> p.getToParty().getPartyId()).collect(Collectors.toList());
 
         //List<PartyDistributor> partyDistributorList = distributorRepo.findAll();
@@ -174,18 +173,19 @@ public class SalesAPIController {
 
         return ResponseEntity.ok().body(partyDistributorList);
     }
-    @GetMapping("/get-page-distributors-of-userlogin-salesman")
+
+    @GetMapping("/get-page-distributors-of-user-login-salesman")
     public ResponseEntity<?> getPageDistributorsOfUserLoginSalesman(Principal principal, Pageable page) {
         UserLogin userLogin = userService.findById(principal.getName());
 
-        log.info("getDistributorsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId());
+        log.info("getDistributorsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId());
         RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_FROM_DISTRIBUTOR");
         //List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findAll();
-        List<PartyRelationShip> partyRelationShips = partyRelationShipService.findAllByFromPartyAndRoleTypeAndThruDate(
+        List<PartyRelationship> partyRelationships = partyRelationshipService.findAllByFromPartyAndRoleTypeAndThruDate(
                 userLogin.getParty(), roleType, null);
-        //log.info("getRetailOutletsOfUserLoginSalesman, userlogin = " + userLogin.getUserLoginId() + " got partyRelationShips.sz = "
-        //+ partyRelationShips.size());
-        List<UUID> partyIds = partyRelationShips.stream().map(
+        //log.info("getRetailOutletsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId() + " got partyRelationships.sz = "
+        //+ partyRelationships.size());
+        List<UUID> partyIds = partyRelationships.stream().map(
                 p -> p.getToParty().getPartyId()).collect(Collectors.toList());
 
         //List<PartyDistributor> partyDistributorList = distributorRepo.findAll();
@@ -200,17 +200,21 @@ public class SalesAPIController {
         RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_FROM_DISTRIBUTOR");
         Party fromParty = partyService.findByPartyId(input.getSalesmanId());
         Party toParty = partyService.findByPartyId(input.getDistributorId());
-        List<PartyRelationShip> partyRelationShips = partyRelationShipService.findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(fromParty,toParty,roleType,null);
-        if(partyRelationShips != null && partyRelationShips.size() > 0){
+        List<PartyRelationship> partyRelationships = partyRelationshipService.findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(
+                fromParty,
+                toParty,
+                roleType,
+                null);
+        if (partyRelationships != null && partyRelationships.size() > 0) {
             return ResponseEntity.ok().body("ALREADY");
         }
         Date now = new Date();
-        PartyRelationShip partyRelationShip = new PartyRelationShip();
-        partyRelationShip.setFromParty(fromParty);
-        partyRelationShip.setToParty(toParty);
-        partyRelationShip.setRoleType(roleType);
-        partyRelationShip.setFromDate(now);
-        partyRelationShip = partyRelationShipService.save(partyRelationShip);
+        PartyRelationship partyRelationship = new PartyRelationship();
+        partyRelationship.setFromParty(fromParty);
+        partyRelationship.setToParty(toParty);
+        partyRelationship.setRoleType(roleType);
+        partyRelationship.setFromDate(now);
+        partyRelationship = partyRelationshipService.save(partyRelationship);
 
         return ResponseEntity.ok().body("OK");
     }
@@ -218,20 +222,24 @@ public class SalesAPIController {
     @PostMapping("/add-salesman-sell-to-retail-outlet")
     public ResponseEntity<?> addSalesmanSellToRetailOutlet(Principal principal, @RequestBody AddSalesmanRetailOutletInputModel input){
         log.info("addSalesmanSellFromDistributor");
-        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_TO_RETAILOUTLET");
+        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_TO_RETAIL_OUTLET");
         Party fromParty = partyService.findByPartyId(input.getSalesmanId());
         Party toParty = partyService.findByPartyId(input.getRetailOutletId());
-        List<PartyRelationShip> partyRelationShips = partyRelationShipService.findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(fromParty,toParty,roleType,null);
-        if(partyRelationShips != null && partyRelationShips.size() > 0){
+        List<PartyRelationship> partyRelationships = partyRelationshipService.findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(
+                fromParty,
+                toParty,
+                roleType,
+                null);
+        if (partyRelationships != null && partyRelationships.size() > 0) {
             return ResponseEntity.ok().body("ALREADY");
         }
         Date now = new Date();
-        PartyRelationShip partyRelationShip = new PartyRelationShip();
-        partyRelationShip.setFromParty(fromParty);
-        partyRelationShip.setToParty(toParty);
-        partyRelationShip.setRoleType(roleType);
-        partyRelationShip.setFromDate(now);
-        partyRelationShip = partyRelationShipService.save(partyRelationShip);
+        PartyRelationship partyRelationship = new PartyRelationship();
+        partyRelationship.setFromParty(fromParty);
+        partyRelationship.setToParty(toParty);
+        partyRelationship.setRoleType(roleType);
+        partyRelationship.setFromDate(now);
+        partyRelationship = partyRelationshipService.save(partyRelationship);
 
         return ResponseEntity.ok().body("OK");
     }
@@ -252,8 +260,8 @@ public class SalesAPIController {
     	}
     }
     @GetMapping("/get-list-salesman")
-    public ResponseEntity<?> getListSaleman(Pageable pageable, @RequestParam(required = false) String param){
-        log.info("getListSaleman");
+    public ResponseEntity<?> getListSalesman(Pageable pageable, @RequestParam(required = false) String param) {
+        log.info("getListSalesman");
 
         Page<PartySalesman> partySalesmanPage = partySalesmanPagingRepo.findAll(pageable);
         for(PartySalesman partySalesman: partySalesmanPage){
@@ -276,7 +284,7 @@ public class SalesAPIController {
         for (CustomerSalesmanVendor customerSalesmanVendor: customerSalesmanVendorPage ) {
             customerSalesmanVendor.setCustomerName(customerSalesmanVendor.getPartyCustomer().getCustomerName());
             customerSalesmanVendor.setCustomerCode(customerSalesmanVendor.getPartyCustomer().getCustomerCode());
-            customerSalesmanVendor.setPartyDistritorName(customerSalesmanVendor.getPartyDistributor().getDistributorName());
+            customerSalesmanVendor.setPartyDistributorName(customerSalesmanVendor.getPartyDistributor().getDistributorName());
             String address = "";
             List<PostalAddress> postalAddresses = customerSalesmanVendor.getPartyCustomer().getPostalAddress();
             for (PostalAddress postalAddress: postalAddresses){
@@ -290,7 +298,8 @@ public class SalesAPIController {
         for (RetailOutletSalesmanVendor retailOutletSalesmanVendor: retailOutletSalesmanVendorPage ) {
             retailOutletSalesmanVendor.setRetailOutletName(retailOutletSalesmanVendor.getPartyRetailOutlet().getRetailOutletName());
             retailOutletSalesmanVendor.setRetailOutletCode(retailOutletSalesmanVendor.getPartyRetailOutlet().getRetailOutletCode());
-            retailOutletSalesmanVendor.setPartyDistritorName(retailOutletSalesmanVendor.getPartyDistributor().getDistributorName());
+            retailOutletSalesmanVendor.setPartyDistributorName(retailOutletSalesmanVendor.getPartyDistributor()
+                    .getDistributorName());
             String address = "";
             List<PostalAddress> postalAddresses = retailOutletSalesmanVendor.getPartyRetailOutlet().getPostalAddress();
             for (PostalAddress postalAddress: postalAddresses){

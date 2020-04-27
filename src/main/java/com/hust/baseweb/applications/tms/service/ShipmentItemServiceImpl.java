@@ -36,7 +36,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     private DeliveryTripRepo deliveryTripRepo;
     private DeliveryTripDetailRepo deliveryTripDetailRepo;
 
-    private DistanceTravelTimePostalAddressRepo distanceTraveltimePostalAddressRepo;
+    private DistanceTravelTimePostalAddressRepo distanceTravelTimePostalAddressRepo;
 
     private DeliveryPlanRepo deliveryPlanRepo;
 
@@ -109,7 +109,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         for (PostalAddress postalAddressNotIn : postalAddressNotInDeliveryTrip) {
             int minDistance = Integer.MAX_VALUE;
             for (PostalAddress postalAddressIn : postalAddressInDeliveryTrip) {
-                DistanceTravelTimePostalAddress distanceTravelTimePostalAddress = distanceTraveltimePostalAddressRepo
+                DistanceTravelTimePostalAddress distanceTravelTimePostalAddress = distanceTravelTimePostalAddressRepo
                         .findByDistanceTravelTimePostalAddressEmbeddableId(
                                 new DistanceTravelTimePostalAddressEmbeddableId(postalAddressIn.getContactMechId(),
                                         postalAddressNotIn.getContactMechId()));

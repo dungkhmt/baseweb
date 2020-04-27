@@ -113,8 +113,8 @@ public class SalesRouteAPIController {
         return ResponseEntity.ok().body(customers);
     }
 
-    //@PostMapping("/get-customers-visited-date-of-userlogin")
-    @PostMapping("/get-retail-outlets-visited-date-of-userlogin")
+    //@PostMapping("/get-customers-visited-date-of-user-login")
+    @PostMapping("/get-retail-outlets-visited-date-of-user-login")
     public ResponseEntity<?> getCustomersVisitedDateOfUserLogin(Principal principal, @RequestBody GetCustomersVisitedDayOfUserLogin input) {
         UserLogin userLogin = userService.findById(principal.getName());
         UUID partySalesmanId = userLogin.getParty().getPartyId();

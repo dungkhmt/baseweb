@@ -74,7 +74,7 @@ public class RequestAgent extends Thread {
 
     public String getUserLogins() {
         try {
-            String res = execGetUseToken(urlRoot + "/api/get-list-userlogins",
+            String res = execGetUseToken(urlRoot + "/api/get-list-user-logins",
                     token);
             System.out.println(module + "::getUserLogins, res = " + res);
             return res;
@@ -85,7 +85,7 @@ public class RequestAgent extends Thread {
     }
 
     public String postLocation(double lat, double lng, Date timePoint) {
-        System.out.println("requestagent  postLocation");
+        System.out.println("request-agent  postLocation");
         SimpleDateFormat formatter = new SimpleDateFormat(
                 "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         String json = "{" + "\"lat\":" + lat + ",\"lng\":" + lng

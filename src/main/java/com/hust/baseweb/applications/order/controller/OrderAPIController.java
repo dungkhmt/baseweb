@@ -39,7 +39,7 @@ public class OrderAPIController {
 
     private OrderHeaderPageRepo orderHeaderPageRepo;
 
-    @PostMapping("/create-order-distributor-to-retailoutlet")
+    @PostMapping("/create-order-distributor-to-retail-outlet")
     //public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
     public ResponseEntity createOrder(Principal principal, @RequestBody CreateOrderDistributor2RetailOutletInputModel input) {
         //TODO

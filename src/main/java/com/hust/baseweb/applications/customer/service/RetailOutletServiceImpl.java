@@ -42,7 +42,7 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
     @Override
     @Transactional
     public PartyRetailOutlet save(CreateRetailOutletInputModel input) {
-        PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAILOUTLET");
+        PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAIL_OUTLET");
 
         //UUID partyId = UUID.randomUUID();
         //Party party = new Party();

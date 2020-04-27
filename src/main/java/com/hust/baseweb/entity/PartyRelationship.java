@@ -10,11 +10,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-public class PartyRelationShip {
+public class PartyRelationship {
     @Id
     @Column(name="party_relationship_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID partyRelationShipId;
+    private UUID partyRelationshipId;
 
     @JoinColumn(name="from_party_id", referencedColumnName = "party_id")
     @ManyToOne

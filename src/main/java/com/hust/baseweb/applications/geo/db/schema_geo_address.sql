@@ -33,13 +33,13 @@ create table geo_point
 
 );
 
-create table distance_traveltime_geo_points
+create table distance_travel_time_geo_points
 (
     from_geo_point_id  uuid not null
-        constraint distance_traveltime_geo_points_geo_point_geo_point_id_from_fk
+        constraint distance_travel_time_geo_points_geo_point_geo_point_id_from_fk
             references geo_point,
     to_geo_point_id    uuid not null
-        constraint distance_traveltime_geo_points_geo_point_geo_point_id_to_fk
+        constraint distance_travel_time_geo_points_geo_point_geo_point_id_to_fk
             references geo_point,
     distance           numeric,
     travel_time        numeric,
@@ -47,11 +47,11 @@ create table distance_traveltime_geo_points
     created_stamp      timestamp default current_timestamp
 );
 
-create unique index distance_traveltime_geo_points_from_geo_point_id_to_geo_point_id_uindex
-    on distance_traveltime_geo_points (from_geo_point_id, to_geo_point_id);
+create unique index distance_travel_time_geo_points_from_geo_point_id_to_geo_point_id_uindex
+    on distance_travel_time_geo_points (from_geo_point_id, to_geo_point_id);
 
-alter table distance_traveltime_geo_points
-    add constraint distance_traveltime_geo_points_pk
+alter table distance_travel_time_geo_points
+    add constraint distance_travel_time_geo_points_pk
         primary key (from_geo_point_id, to_geo_point_id);
 
 

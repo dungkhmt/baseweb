@@ -149,7 +149,7 @@ create table post_ship_order_postman_last_mile_assignment
     constraint pk_post_ship_order_postman_last_mile_assignment_id primary key (post_ship_order_postman_last_mile_assignment_id),
     constraint fk_post_ship_order_postman_last_mile_assignment_post_ship_order_id foreign key (post_ship_order_id) references post_ship_order (post_ship_order_id),
     constraint fk_post_ship_order_postman_last_mile_assignment_postman_id foreign key (postman_id) references postman (postman_id),
-    constraint fk_post_ship_order_postman_last_mile_assignment_staus_id foreign key (status_id) references status_item (status_id)
+    constraint fk_post_ship_order_postman_last_mile_assignment_status_id foreign key (status_id) references status_item (status_id)
 
 );
 

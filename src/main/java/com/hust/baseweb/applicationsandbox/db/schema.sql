@@ -40,11 +40,11 @@ create table s_product_price(
 );
 
 create table s_inventory_item(
-	inventory_item_id Integer not null,
-	product_id Integer,
-	quantity Integer,
-	date_recieved TIMESTAMP,
-	constraint pk_s_inventory_item primary key(inventory_item_id)
+                                 inventory_item_id Integer not null,
+                                 product_id        Integer,
+                                 quantity          Integer,
+                                 date_received     TIMESTAMP,
+                                 constraint pk_s_inventory_item primary key(inventory_item_id)
 );
 
 create table s_inventory_item_detail(

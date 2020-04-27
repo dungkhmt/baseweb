@@ -47,7 +47,7 @@ CREATE TABLE party
     created_stamp               TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
     party_code                  VARCHAR(255),
     CONSTRAINT pk_party PRIMARY KEY (party_id),
-    CONSTRAINT party_statusitm FOREIGN KEY (status_id) REFERENCES status (status_id),
+    CONSTRAINT party_status_item FOREIGN KEY (status_id) REFERENCES status (status_id),
     CONSTRAINT party_pty_typ FOREIGN KEY (party_type_id) REFERENCES party_type (party_type_id)
 );
 CREATE TABLE person
@@ -253,7 +253,8 @@ CREATE TABLE product_content (
   CONSTRAINT product_cnt_product FOREIGN KEY (product_id) REFERENCES product (product_id)
 );
 
-create table party_relation_ship(
+create table party_relationship
+(
     party_relationship_id uuid not null default uuid_generate_v1(),
     from_party_id uuid not null,
     to_party_id uuid not null,

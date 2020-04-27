@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class PersonServiceImple implements PersonService{
+public class PersonServiceImpl implements PersonService {
     PersonRepo personRepo;
 
     @Override

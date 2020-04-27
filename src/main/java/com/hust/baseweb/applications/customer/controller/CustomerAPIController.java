@@ -10,17 +10,14 @@ import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.applications.customer.service.DistributorService;
 import com.hust.baseweb.applications.customer.service.RetailOutletService;
 import com.hust.baseweb.applications.logistics.model.InputModel;
-import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
-import com.hust.baseweb.entity.PartyRelationShip;
+import com.hust.baseweb.entity.PartyRelationship;
 import com.hust.baseweb.entity.RoleType;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.RoleTypeRepo;
-import com.hust.baseweb.service.PartyRelationShipService;
+import com.hust.baseweb.service.PartyRelationshipService;
 import com.hust.baseweb.service.UserService;
-
 import lombok.AllArgsConstructor;
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,7 +45,7 @@ public class CustomerAPIController {
     private DistributorService distributorService;
     private UserService userService;
     private RetailOutletService retailOutletService;
-    private PartyRelationShipService partyRelationShipService;
+    private PartyRelationshipService partyRelationshipService;
     private RoleTypeRepo roleTypeRepo;
     private PartyRepo partyRepo;
 
@@ -65,7 +62,7 @@ public class CustomerAPIController {
     }
 
     @GetMapping("/distributors")
-    public ResponseEntity<?> getDIstributors(Pageable page) {
+    public ResponseEntity<?> getDistributors(Pageable page) {
 //        System.out.println(module + "::getDistributors");
         Page<PartyDistributor> distributors = distributorRepo.findAll(page);
         return ResponseEntity.ok().body(distributors);
@@ -77,7 +74,7 @@ public class CustomerAPIController {
         return ResponseEntity.ok().body(detailDistributorModel);
     }
 
-    @PostMapping("/get-distributors-of-userlogin")
+    @PostMapping("/get-distributors-of-user-login")
     public ResponseEntity<?> getDistributorsOfUserLogin(Principal principal, @RequestBody GetDistributorsOfUserLoginInputModel input) {
         UserLogin userLogin = userService.findById(principal.getName());
 //        System.out.println(module + "::getDistributorsOfUserLogin");
@@ -98,30 +95,30 @@ public class CustomerAPIController {
         PartyDistributor distributor = distributorService.save(input);
 
         RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_FROM_DISTRIBUTOR");
-        PartyRelationShip partyRelationShip = new PartyRelationShip();
-        partyRelationShip.setFromParty(u.getParty());
-        partyRelationShip.setToParty(partyRepo.findByPartyId(distributor.getPartyId()));
-        partyRelationShip.setFromDate(new Date());
-        partyRelationShip.setRoleType(roleType);
-        partyRelationShip = partyRelationShipService.save(partyRelationShip);
+        PartyRelationship partyRelationship = new PartyRelationship();
+        partyRelationship.setFromParty(u.getParty());
+        partyRelationship.setToParty(partyRepo.findByPartyId(distributor.getPartyId()));
+        partyRelationship.setFromDate(new Date());
+        partyRelationship.setRoleType(roleType);
+        partyRelationship = partyRelationshipService.save(partyRelationship);
 
         return ResponseEntity.ok().body(distributor);
     }
     @PostMapping("/create-retail-outlet")
     public ResponseEntity<?> createRetailOutlet(Principal principal, @RequestBody CreateRetailOutletInputModel input) {
         UserLogin u = userService.findById(principal.getName());
-        log.info("createRetailOutlet, userlogin = " + u.getUserLoginId() + ", retail-outlet name = " +
+        log.info("createRetailOutlet, user-login = " + u.getUserLoginId() + ", retail-outlet name = " +
                 input.getRetailOutletName() + ", retail-outlet code = " + input.getRetailOutletCode());
 
         PartyRetailOutlet retailOutlet = retailOutletService.save(input);
 
-        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_TO_RETAILOUTLET");
-        PartyRelationShip partyRelationShip = new PartyRelationShip();
-        partyRelationShip.setFromParty(u.getParty());
-        partyRelationShip.setToParty(partyRepo.findByPartyId(retailOutlet.getPartyId()));
-        partyRelationShip.setFromDate(new Date());
-        partyRelationShip.setRoleType(roleType);
-        partyRelationShip = partyRelationShipService.save(partyRelationShip);
+        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_TO_RETAIL_OUTLET");
+        PartyRelationship partyRelationship = new PartyRelationship();
+        partyRelationship.setFromParty(u.getParty());
+        partyRelationship.setToParty(partyRepo.findByPartyId(retailOutlet.getPartyId()));
+        partyRelationship.setFromDate(new Date());
+        partyRelationship.setRoleType(roleType);
+        partyRelationship = partyRelationshipService.save(partyRelationship);
 
         return ResponseEntity.ok().body(retailOutlet);
 

@@ -11,10 +11,8 @@ import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PersonRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
 import com.hust.baseweb.service.UserService;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +51,7 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
             //List<UserLogin> ul = userLoginRepo.findByParty(party);
             //if(ul != null && ul.size() > 0)
             //	u = ul.get(0);
-            log.info("findAllSalesman, GOT userlogin " + (userLogin != null ? userLogin.getUserLoginId() : " NULL"));
+            log.info("findAllSalesman, GOT user-login " + (userLogin != null ? userLogin.getUserLoginId() : " NULL"));
             GetSalesmanOutputModel smm = new GetSalesmanOutputModel();
             smm.setPartySalesman(sm);
             smm.setUserLoginId(userLogin.getUserLoginId());

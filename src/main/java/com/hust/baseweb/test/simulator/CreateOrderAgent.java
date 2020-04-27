@@ -247,7 +247,9 @@ public class CreateOrderAgent extends Thread {
 
             double t0 = System.currentTimeMillis();
             String json = gson.toJson(input);
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-order-distributor-to-retailoutlet", json, token);
+            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-order-distributor-to-retail-outlet",
+                    json,
+                    token);
             //System.out.println(module + "::createOrder, rs = " + rs);
             return System.currentTimeMillis() - t0;
         } catch (Exception ex) {
