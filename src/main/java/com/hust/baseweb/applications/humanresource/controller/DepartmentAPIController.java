@@ -54,7 +54,8 @@ public class DepartmentAPIController {
 		UserLogin userLogin = userService.findById(principal.getName());
 		log.info("addUser2Department, addUser2Department, user login = " + userLogin.getUserLoginId());
 
-		PartyDepartment partyDepartment = partyDepartmentService.save(input.getPartyId(), input.getDepartmentId());
+		PartyDepartment partyDepartment = partyDepartmentService.save(input.getPartyId(),
+				input.getDepartmentId(), input.getRoleTypeId());
 
 		return ResponseEntity.ok().body("add OK");
 	}

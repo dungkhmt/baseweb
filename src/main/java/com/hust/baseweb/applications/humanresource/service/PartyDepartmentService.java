@@ -7,5 +7,5 @@ import java.util.UUID;
 
 @Service
 public interface PartyDepartmentService {
-    PartyDepartment save(UUID partyId, String departmentId);
+    PartyDepartment save(UUID partyId, String departmentId, String roleTypeId);
 }

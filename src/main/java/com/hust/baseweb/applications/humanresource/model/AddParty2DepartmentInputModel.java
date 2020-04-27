@@ -10,4 +10,5 @@ import java.util.UUID;
 public class AddParty2DepartmentInputModel {
     private UUID partyId;
     private String departmentId;
+    private String roleTypeId;
 }

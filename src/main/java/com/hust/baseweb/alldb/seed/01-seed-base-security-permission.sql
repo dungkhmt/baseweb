@@ -87,9 +87,7 @@ VALUES('ROLE_TMS_MANAGER', 'Management of Transportation System', NULL, '2020-03
 INSERT INTO public.security_group
 (group_id, description, last_updated_stamp, created_stamp)
 VALUES('ROLE_SALES_ROUTE_MANAGER', 'Management of Sales Route', NULL, '2020-03-01 18:54:50.488');
-INSERT INTO public.security_group
-(group_id, description, last_updated_stamp, created_stamp)
-VALUES('ROLE_SALESMAN', 'salesman group', NULL, '2020-03-21 14:23:29.816');
+
 INSERT INTO public.security_group
 (group_id, description, last_updated_stamp, created_stamp)
 VALUES('ROLE_TMS_CONTAINER_ADMIN', 'Quản trị vận chuyển container', NULL, '2020-04-10 23:35:36.604');
@@ -135,6 +133,9 @@ VALUES('TMS_ADMIN_VIEW_REPORT', 'Administrator of facility', NULL, '2020-03-01 1
 INSERT INTO public.security_permission
 (permission_id, description, last_updated_stamp, created_stamp)
 VALUES('TMS_CONTAINER_ADMIN', 'Administrator of container transportation', NULL, '2020-03-01 18:54:50.488');
+INSERT INTO public.security_permission
+(permission_id, description, last_updated_stamp, created_stamp)
+VALUES('SALES_ADMIN', 'Administrator of sales', NULL, '2020-03-01 18:54:50.488');
 
 
 
@@ -355,6 +356,9 @@ insert into role_type(role_type_id, description) values  ('CREATE_DELIVERY_TRIP'
 insert into role_type(role_type_id, description) values  ('SALESMAN_SELL_FROM_DISTRIBUTOR', 'Nhân viên bán hàng bán từ nhà phân phối');
 insert into role_type(role_type_id, description) values  ('SALESMAN_SELL_TO_RETAILOUTLET', 'Nhân viên bán hàng đến đại lí bán lẻ');
 insert into role_type(role_type_id, description) values  ('SUPERVISOR_OF_SALESMAN', 'Giám sát của nhân viên bán hàng');
+insert into role_type(role_type_id, description) values  ('HEAD_DEPARTMENT', 'Trưởng phòng');
+insert into role_type(role_type_id, description) values  ('EMPLOYEE_DEPARTMENT', 'Nhân viên của phòng');
+
 
 
 

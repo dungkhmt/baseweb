@@ -20,12 +20,13 @@ select sm.party_id, p.first_name, p.middle_name, p.last_name, u.user_login_id fr
 where sm.party_id = p.party_id and u.party_id = sm.party_id;
 
 -- lay ra danh sach dai li ban le duoc phu trach boi 1 salesman nao do
-select to_party_id from party_relation_ship where role_type_id = 'SALESMAN_SELL_TO_RETAILOUTLET' and thru_date is null
-and from_party_id = '847254bb-c0f1-4696-b11f-682976965eed';
+select ro.retail_outlet_name  from party_relation_ship as r, user_login as u, party_retail_outlet as ro where role_type_id = 'SALESMAN_SELL_TO_RETAILOUTLET' and thru_date is null
+and r.from_party_id = u.party_id and ro.party_id = r.to_party_id and u.user_login_id = 'dungpq';
 
 --lay ra danh sach nha phan phoi duoc phu trach boi 1 salesman nao do
-select to_party_id from party_relation_ship where role_type_id = 'SALESMAN_SELL_FROM_DISTRIBUTOR' and thru_date is null
-and from_party_id = '847254bb-c0f1-4696-b11f-682976965eed';
+select d.distributor_name from party_relation_ship as r, user_login as u, party_distributor as d
+where role_type_id = 'SALESMAN_SELL_FROM_DISTRIBUTOR' and thru_date is null
+and r.from_party_id = u.party_id and d.party_id = r.to_party_id and u.user_login_id = 'dungpq';
 
 
 --lay danh sach san pham (bang product)

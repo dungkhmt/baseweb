@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.humanresource.entity;
 
 import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.entity.RoleType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +25,10 @@ public class PartyDepartment {
     @JoinColumn(name="party_id", referencedColumnName = "party_id")
     @ManyToOne
     private Party party;
+
+    @JoinColumn(name="role_type_id", referencedColumnName = "role_type_id")
+    @ManyToOne
+    private RoleType roleType;
 
     //@Column(name="department_id")
     //private String departmentId;
