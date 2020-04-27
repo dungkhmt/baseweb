@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -190,8 +189,8 @@ public class TransportServiceImpl implements TransportService {
         if (facilityId == null) {
             return null;
         }
-        LocalDate localDate = deliveryTripDetail.getDeliveryTrip()
-                .getExecuteDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = LocalDate.now();
+
         return new TransportFacility.Id(facilityId, localDate);
     }
 
@@ -229,8 +228,7 @@ public class TransportServiceImpl implements TransportService {
         if (driverId == null) {
             return null;
         }
-        LocalDate localDate = deliveryTripDetail.getDeliveryTrip()
-                .getExecuteDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = LocalDate.now();
 
         return new TransportDriver.Id(driverId, localDate);
     }
@@ -244,8 +242,8 @@ public class TransportServiceImpl implements TransportService {
         if (customerId == null) {
             return null;
         }
-        LocalDate localDate = deliveryTripDetail.getDeliveryTrip()
-                .getExecuteDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = LocalDate.now();
+
         return new TransportCustomer.Id(customerId, localDate);
     }
 
