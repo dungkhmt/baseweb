@@ -4,12 +4,14 @@ import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.geo.service.DistanceTravelTimePostalAddressService;
 import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
+import com.hust.baseweb.applications.tms.document.SolverConfigParam;
 import com.hust.baseweb.applications.tms.model.TransportReportModel;
 import com.hust.baseweb.applications.tms.model.VehicleModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.CompleteDeliveryShipmentItemsInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverInputModel;
 import com.hust.baseweb.applications.tms.model.deliverytrip.GetDeliveryTripAssignedToDriverOutputModel;
+import com.hust.baseweb.applications.tms.repo.SolverConfigParamRepo;
 import com.hust.baseweb.applications.tms.service.DeliveryTripDetailService;
 import com.hust.baseweb.applications.tms.service.DeliveryTripService;
 import com.hust.baseweb.applications.tms.service.SolverService;
@@ -23,9 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -45,6 +45,8 @@ public class TMSAPIController {
     private TransportService transportService;
 
     private SolverService solverService;
+
+    private SolverConfigParamRepo solverConfigParamRepo;
 
     @PostMapping("/statistic-vehicle-distance")
     public ResponseEntity<?> statisticVehicleDistance(Principal principal,
@@ -94,7 +96,8 @@ public class TMSAPIController {
                             StatisticDeliveryTripService statisticDeliveryTripService,
                             DistanceTravelTimePostalAddressService distanceTravelTimePostalAddressService,
                             TransportService transportService,
-                            SolverService solverService) {
+                            SolverService solverService,
+                            SolverConfigParamRepo solverConfigParamRepo) {
         this.customerRepo = customerRepo;
         this.orderHeaderRepo = orderHeaderRepo;
         this.orderRoleRepo = orderRoleRepo;
@@ -105,6 +108,7 @@ public class TMSAPIController {
         this.distanceTravelTimePostalAddressService = distanceTravelTimePostalAddressService;
         this.transportService = transportService;
         this.solverService = solverService;
+        this.solverConfigParamRepo = solverConfigParamRepo;
     }
 
     /*
@@ -180,5 +184,24 @@ public class TMSAPIController {
     @PostMapping("/get-transport-reports")
     public ResponseEntity<TransportReportModel.Output> getTransportReports(@RequestBody TransportReportModel.Input input) {
         return ResponseEntity.ok(transportService.getTransportReports(input));
+    }
+
+    @GetMapping("/get-solver-config-param")
+    public ResponseEntity<SolverConfigParam.InputModel> getSolverConfigParam() {
+        return ResponseEntity.ok(Optional.ofNullable(solverConfigParamRepo.findFirstByThruDateNull())
+                .map(SolverConfigParam::toInputModel)
+                // default value
+                .orElse(new SolverConfigParam.InputModel(3000, 15,
+                        15 * 60, 15 * 60, 30.0 * 60, 70.0 / 1000 * 60, 15.0 / 1000 * 60)));
+    }
+
+    @PostMapping("/set-solver-config-param")
+    public ResponseEntity<Boolean> setSolverConfigParam(@RequestBody SolverConfigParam.InputModel inputModel) {
+        Date now = new Date();
+        List<SolverConfigParam> solverConfigParams = solverConfigParamRepo.findAllByThruDateNull();
+        solverConfigParams.forEach(solverConfigParam -> solverConfigParam.setThruDate(now));
+        solverConfigParams.add(new SolverConfigParam(inputModel, now));
+        solverConfigParamRepo.saveAll(solverConfigParams);
+        return ResponseEntity.ok(true);
     }
 }
