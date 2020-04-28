@@ -190,7 +190,9 @@ public class TMSAPIController {
     public ResponseEntity<SolverConfigParam.InputModel> getSolverConfigParam() {
         return ResponseEntity.ok(Optional.ofNullable(solverConfigParamRepo.findFirstByThruDateNull())
                 .map(SolverConfigParam::toInputModel)
-                .orElse(new SolverConfigParam.InputModel(3000, 15, 3600, 0, 0.0, 70.0 / 1000 * 60, 15.0 / 1000 * 60)));
+                // default value
+                .orElse(new SolverConfigParam.InputModel(3000, 15,
+                        15 * 60, 15 * 60, 30.0 * 60, 70.0 / 1000 * 60, 15.0 / 1000 * 60)));
     }
 
     @PostMapping("/set-solver-config-param")
