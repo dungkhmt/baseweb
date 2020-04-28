@@ -26,6 +26,8 @@ create table vehicle
     status_id                     VARCHAR(60),
     product_transport_category_id VARCHAR(60),
     priority                      int,
+    maxDistancePerTrip              int,
+    average_speed                   int,
     description                   TEXT,
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
