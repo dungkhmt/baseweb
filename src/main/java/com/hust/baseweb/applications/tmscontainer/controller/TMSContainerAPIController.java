@@ -49,14 +49,22 @@ public class TMSContainerAPIController {
         ContPort contPort = new ContPort();
         contPort.setPortId(input.getPortId());
         contPort.setPortName(input.getPortName());
-        GeoPoint geoPoint = new GeoPoint();
-        geoPoint.setLatitude(Double.parseDouble(input.getLat()));
-        geoPoint.setLongitude(Double.parseDouble(input.getLng()));
         PostalAddress postalAddress = new PostalAddress();
-        postalAddress.setAddress(input.getAddress());
-        postalAddress.setGeoPoint(geoPoint);
+        if(input.getContactMechId() != null){
+            postalAddress = postalAddressJpaRepo.findByContactMechId(UUID.fromString(input.getContactMechId()));
+        }else{
+            GeoPoint geoPoint = new GeoPoint();
+            geoPoint.setLatitude(Double.parseDouble(input.getLat()));
+            geoPoint.setLongitude(Double.parseDouble(input.getLng()));
+
+            postalAddress.setAddress(input.getAddress());
+            postalAddress.setGeoPoint(geoPoint);
+            geoPointRepo.save(geoPoint);
+        }
+
+
+
         contPort.setPostalAddress(postalAddress);
-        geoPointRepo.save(geoPoint);
         postalAddressRepo.save(postalAddress);
         contPortRepo.save(contPort);
     }
@@ -141,7 +149,6 @@ public class TMSContainerAPIController {
 
         postalAddressRepo.save(postalAddress);
         contDepotContainerRepo.save(contDepotContainer);
-        log.info("input : {}", input.toString());
     }
 
     @GetMapping("/get-list-depot-container-page")
@@ -169,14 +176,24 @@ public class TMSContainerAPIController {
         ContDepotTrailer contDepotTrailer = new ContDepotTrailer();
         contDepotTrailer.setDepotTrailerId(input.getDepotTrailerId());
         contDepotTrailer.setDepotTrailerName(input.getDepotTrailerName());
-        GeoPoint geoPoint = new GeoPoint();
-        geoPoint.setLatitude(Double.parseDouble(input.getLat()));
-        geoPoint.setLongitude(Double.parseDouble(input.getLng()));
+
         PostalAddress postalAddress = new PostalAddress();
-        postalAddress.setAddress(input.getAddress());
-        postalAddress.setGeoPoint(geoPoint);
+        if(input.getContactMechId() != null){
+            postalAddress = postalAddressJpaRepo.findByContactMechId(UUID.fromString(input.getContactMechId()));
+        }else{
+            GeoPoint geoPoint = new GeoPoint();
+            geoPoint.setLatitude(Double.parseDouble(input.getLat()));
+            geoPoint.setLongitude(Double.parseDouble(input.getLng()));
+
+            postalAddress.setAddress(input.getAddress());
+            postalAddress.setGeoPoint(geoPoint);
+            geoPointRepo.save(geoPoint);
+        }
+
+
+
+
         contDepotTrailer.setPostalAddress(postalAddress);
-        geoPointRepo.save(geoPoint);
         postalAddressRepo.save(postalAddress);
         contDepotTrailerRepo.save(contDepotTrailer);
     }
@@ -209,14 +226,23 @@ public class TMSContainerAPIController {
         ContDepotTruck contDepotTruck = new ContDepotTruck();
         contDepotTruck.setDepotTruckId(input.getDepotTruckId());
         contDepotTruck.setDepotTruckName(input.getDepotTruckName());
-        GeoPoint geoPoint = new GeoPoint();
-        geoPoint.setLatitude(Double.parseDouble(input.getLat()));
-        geoPoint.setLongitude(Double.parseDouble(input.getLng()));
+
         PostalAddress postalAddress = new PostalAddress();
-        postalAddress.setAddress(input.getAddress());
-        postalAddress.setGeoPoint(geoPoint);
+        if(input.getContactMechId() != null){
+            postalAddress = postalAddressJpaRepo.findByContactMechId(UUID.fromString(input.getContactMechId()));
+        }else{
+            GeoPoint geoPoint = new GeoPoint();
+            geoPoint.setLatitude(Double.parseDouble(input.getLat()));
+            geoPoint.setLongitude(Double.parseDouble(input.getLng()));
+
+            postalAddress.setAddress(input.getAddress());
+            postalAddress.setGeoPoint(geoPoint);
+            geoPointRepo.save(geoPoint);
+        }
+
+
+
         contDepotTruck.setPostalAddress(postalAddress);
-        geoPointRepo.save(geoPoint);
         postalAddressRepo.save(postalAddress);
         contDepotTruckRepo.save(contDepotTruck);
     }

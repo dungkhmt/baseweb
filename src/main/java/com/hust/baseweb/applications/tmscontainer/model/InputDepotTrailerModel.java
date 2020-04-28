@@ -15,4 +15,5 @@ public class InputDepotTrailerModel {
     String address;
     String depotTrailerId;
     String depotTrailerName;
+    String contactMechId;
 }

@@ -15,4 +15,6 @@ public class InputContPortModel {
     String address;
     String portId;
     String portName;
+    String contactMechId;
+
 }
