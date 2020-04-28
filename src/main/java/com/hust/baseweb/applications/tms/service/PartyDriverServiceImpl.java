@@ -9,6 +9,8 @@ import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -51,6 +53,11 @@ public class PartyDriverServiceImpl implements PartyDriverService {
     @Override
     public List<PartyDriver> findAll() {
         return partyDriverRepo.findAll();
+    }
+
+    @Override
+    public Page<PartyDriver> findAll(Pageable page) {
+        return partyDriverRepo.findAll(page);
     }
 
     @Override

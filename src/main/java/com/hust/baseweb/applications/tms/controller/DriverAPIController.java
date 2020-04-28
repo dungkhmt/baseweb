@@ -8,9 +8,12 @@ import com.hust.baseweb.applications.tms.repo.PartyDriverRepo;
 import com.hust.baseweb.applications.tms.service.PartyDriverService;
 import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.service.UserService;
+import com.hust.baseweb.utils.PageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,11 +42,19 @@ public class DriverAPIController {
     }
 
     @GetMapping("/get-all-drivers")
-    public ResponseEntity<?> findAllDrivers() {
+    public ResponseEntity<?> findAllDrivers(Pageable page) {
         log.info("::findAllDrivers()");
-        List<PartyDriver> drivers = partyDriverService.findAll();
-        return ResponseEntity.ok().body(drivers.stream()
-                .map(partyDriver -> partyDriver.getPerson().getBasicInfoModel()).collect(Collectors.toList()));
+
+        //List<PartyDriver> drivers = partyDriverService.findAll();
+        Page<PartyDriver> drivers = partyDriverService.findAll(page);
+        List<Person.BasicInfoModel> list = drivers.stream()
+                .map(partyDriver -> partyDriver.getPerson().getBasicInfoModel()).collect(Collectors.toList());
+
+        Page<Person.BasicInfoModel> returnPageDrivers = PageUtils.getPage(list,page);
+
+        //return ResponseEntity.ok().body(drivers.stream()
+        //        .map(partyDriver -> partyDriver.getPerson().getBasicInfoModel()).collect(Collectors.toList()));
+        return ResponseEntity.ok().body(returnPageDrivers);
     }
 
     @GetMapping("/get-driver-in-delivery-trip/{deliveryTripId}")
