@@ -29,6 +29,7 @@ public class DeliveryTripModel {
     private String vehicleProductTransportCategoryId;
     private Double maxVehicleCapacity;
     private String userLoginId;
+    private String driverId;
     private Double distance;
     private String statusId;
 

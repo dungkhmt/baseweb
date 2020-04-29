@@ -13,9 +13,9 @@ import java.util.UUID;
 public interface PartyDriverService {
     PartyDriver save(DriverModel.InputCreate input);
 
-	List<PartyDriver> findAll();
+    List<PartyDriver> findAll();
 
-	Page<PartyDriver> findAll(Pageable page);
+    Page<PartyDriver> findAll(Pageable page);
 
-	PartyDriver findByPartyId(UUID partyId);
+    PartyDriver findByPartyId(UUID partyId);
 }

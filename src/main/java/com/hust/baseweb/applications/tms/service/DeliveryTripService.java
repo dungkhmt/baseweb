@@ -38,4 +38,8 @@ public interface DeliveryTripService {
     boolean startExecuteDeliveryTrip(UUID deliveryTripId);
 
     boolean deleteAll();
+
+    List<DeliveryTripModel> findAllByVehicleId(String vehicleId);
+
+    List<DeliveryTripModel> findAllByDriverId(UUID driverId);
 }

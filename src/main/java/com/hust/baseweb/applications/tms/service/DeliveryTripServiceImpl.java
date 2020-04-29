@@ -458,6 +458,20 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         return true;
     }
 
+    @Override
+    public List<DeliveryTripModel> findAllByVehicleId(String vehicleId) {
+        Vehicle vehicle = vehicleRepo.findById(vehicleId).orElseThrow(NoSuchElementException::new);
+        List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findAllByVehicle(vehicle);
+        return deliveryTrips.stream().map(DeliveryTrip::toDeliveryTripModel).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DeliveryTripModel> findAllByDriverId(UUID driverId) {
+        PartyDriver partyDriver = partyDriverRepo.findById(driverId).orElseThrow(NoSuchElementException::new);
+        List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findAllByPartyDriver(partyDriver);
+        return deliveryTrips.stream().map(DeliveryTrip::toDeliveryTripModel).collect(Collectors.toList());
+    }
+
     private boolean updateDeliveryTripStatus(UUID deliveryTripId,
                                              Date updateDate,
                                              StatusItem deliveryTripPreConditionStatus,

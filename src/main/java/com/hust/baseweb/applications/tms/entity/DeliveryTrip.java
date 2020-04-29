@@ -81,8 +81,9 @@ public class DeliveryTrip {
                         .map(Party::getUserLogin)
                         .map(UserLogin::getUserLoginId)
                         .orElse(null),
+                Optional.ofNullable(partyDriver).map(p -> p.getPartyId().toString()).orElse(null),
                 distance,
-                (statusItem != null ?statusItem.getStatusId():null)
+                (statusItem != null ? statusItem.getStatusId() : null)
         );
     }
 }

@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.tms.controller;
 import com.hust.baseweb.applications.tms.entity.Vehicle;
 import com.hust.baseweb.applications.tms.model.LocationModel;
 import com.hust.baseweb.applications.tms.model.VehicleModel;
+import com.hust.baseweb.applications.tms.repo.VehicleRepo;
 import com.hust.baseweb.applications.tms.service.VehicleService;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class VehicleAPIController {
 
     private VehicleService vehicleService;
+    private VehicleRepo vehicleRepo;
 
     @GetMapping("/vehicle/page")
     public ResponseEntity<?> getVehicles(Principal principal, Pageable pageable) {
@@ -42,7 +45,8 @@ public class VehicleAPIController {
     }
 
     @PostMapping("/upload-vehicle")
-    public ResponseEntity<?> uploadVehicles(Principal principal, @RequestParam("file") MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<?> uploadVehicles(Principal principal,
+                                            @RequestParam("file") MultipartFile multipartFile) throws IOException {
         log.info("::uploadVehicle");
         List<VehicleModel.Create> vehicleModels
                 = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, VehicleModel.Create.class,
@@ -109,9 +113,23 @@ public class VehicleAPIController {
     }
 
     // add view
-    @GetMapping("/vehicle-not-in/{deliveryPlanId}/all")
-    public ResponseEntity<?> getAllVehicleNotIn(Principal principal, @PathVariable String deliveryPlanId) {
+    @GetMapping("/vehicle-not-in-delivery-plan/{deliveryPlanId}/all")
+    public ResponseEntity<List<VehicleModel>> getAllVehicleNotIn(Principal principal,
+                                                                 @PathVariable String deliveryPlanId) {
         log.info("::getVehicleNotIn deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlan(deliveryPlanId));
+    }
+
+    @GetMapping("/vehicle-not-in-delivery-trips/{deliveryPlanId}/all")
+    public ResponseEntity<List<VehicleModel>> vehicleNotInDeliveryTrips(Principal principal,
+                                                                        @PathVariable String deliveryPlanId) {
+        log.info("VehicleAPIController::vehicleNotInDeliveryTrips({})", deliveryPlanId);
+        return ResponseEntity.ok(vehicleService.findAllNotInDeliveryTrips(deliveryPlanId));
+    }
+
+    @GetMapping("/get-vehicle-info/{vehicleId}")
+    public ResponseEntity<VehicleModel> getVehicleInfo(@PathVariable String vehicleId) {
+        Vehicle vehicle = vehicleRepo.findById(vehicleId).orElseThrow(NoSuchElementException::new);
+        return ResponseEntity.ok(vehicle.toVehicleModel());
     }
 }

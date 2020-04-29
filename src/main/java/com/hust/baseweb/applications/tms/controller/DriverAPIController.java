@@ -85,4 +85,11 @@ public class DriverAPIController {
         deliveryTrip = deliveryTripRepo.save(deliveryTrip);
         return ResponseEntity.ok().body(deliveryTrip.toDeliveryTripModel());
     }
+
+    @GetMapping("/get-driver-info/{driverId}")
+    public ResponseEntity<PartyDriver.Model> getDriverInfo(@PathVariable String driverId) {
+        PartyDriver partyDriver = partyDriverRepo.findById(UUID.fromString(driverId))
+                .orElseThrow(NoSuchElementException::new);
+        return ResponseEntity.ok(partyDriver.toModel());
+    }
 }
