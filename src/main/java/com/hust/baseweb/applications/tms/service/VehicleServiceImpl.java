@@ -129,7 +129,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .collect(Collectors.groupingBy(deliveryTrip -> deliveryTrip.getVehicle().getVehicleId()));
 
         List<String> vehicleIdsNotInDeliveryTrips = vehicleDeliveryPlans.stream()
-                .filter(vehicleDeliveryPlan -> vehicleIdToDeliveryTrips.containsKey(vehicleDeliveryPlan.getVehicleId()))
+                .filter(vehicleDeliveryPlan -> !vehicleIdToDeliveryTrips.containsKey(vehicleDeliveryPlan.getVehicleId()))
                 .map(VehicleDeliveryPlan::getVehicleId)
                 .distinct()
                 .collect(Collectors.toList());
