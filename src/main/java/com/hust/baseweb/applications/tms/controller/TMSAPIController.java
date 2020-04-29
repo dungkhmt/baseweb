@@ -172,7 +172,7 @@ public class TMSAPIController {
         return ResponseEntity.ok(Optional.ofNullable(solverConfigParamRepo.findFirstByThruDateNull())
                 .map(SolverConfigParam::toInputModel)
                 // default value
-                .orElse(new SolverConfigParam.InputModel(3000, 15,
+                .orElse(new SolverConfigParam.InputModel(80_000, 3000, 15,
                         15 * 60, 15 * 60, 30.0 * 60, 70.0 / 1000 * 60, 15.0 / 1000 * 60)));
     }
 
