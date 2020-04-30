@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.CustomerDistributorSalesmanInputModel;
+import com.hust.baseweb.applications.customer.model.GetListRetailOutletOutputModel;
 import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.repo.RetailOutletPagingRepo;
 import com.hust.baseweb.applications.customer.service.DistributorService;
@@ -250,16 +251,28 @@ public class SalesAPIController {
     @PostMapping("/create-salesman")
     public ResponseEntity<?> createSalesman(Principal principal, @RequestBody PersonModel input){
         log.info("createSalesman");
-    	PartySalesman partySalesman = partySalesmanService.save(input);
-    	log.info("1");
-    	if(partySalesman == null){
-    	    log.info("null");
-    		return ResponseEntity.status(HttpStatus.CONFLICT).body("conflict");
-    	}else{
-    	    log.info("!=null");
-    		return ResponseEntity.ok().body(partySalesman);
-    	}
+        PartySalesman partySalesman = partySalesmanService.save(input);
+        log.info("1");
+        if(partySalesman == null){
+            log.info("null");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("conflict");
+        }else{
+            log.info("!=null");
+            return ResponseEntity.ok().body(partySalesman);
+        }
     }
+
+    @GetMapping("/get-all-salesman")
+    public ResponseEntity<?> getAllSalesman(Principal principal) {
+        /**
+         * Return all salesman in DB
+         */
+
+        log.info("getAllSalesman");
+        List<GetSalesmanOutputModel> partySalesmanList = partySalesmanService.findAllSalesman();
+        return ResponseEntity.ok().body(partySalesmanList);
+    }
+
     @GetMapping("/get-list-salesman")
     public ResponseEntity<?> getListSalesman(Pageable pageable, @RequestParam(required = false) String param) {
         log.info("getListSalesman");
@@ -292,7 +305,6 @@ public class SalesAPIController {
                 address += postalAddress.getAddress() + "; ";
             }
             customerSalesmanVendor.setAddress(address);
-
         }
         */
         Page<RetailOutletSalesmanVendor> retailOutletSalesmanVendorPage = retailOutletSalesmanVendorPagingRepo.findByPartySalesmanAndThruDate(partySalesman,null,pageable);
@@ -319,10 +331,10 @@ public class SalesAPIController {
         PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(UUID.fromString(input.getPartyCustomerId()));
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(UUID.fromString(input.getPartyDistributorId()));
         PartySalesman partySalesman = partySalesmanService.findById(UUID.fromString(partyId));
-        List<CustomerSalesmanVendor> lst = customerSalesmanVendorRepo.findAllByPartySalesmanAndPartyCustomerAndPartyDistributorAndThruDate(partySalesman, 
-        		partyCustomer, partyDistributor, null);
+        List<CustomerSalesmanVendor> lst = customerSalesmanVendorRepo.findAllByPartySalesmanAndPartyCustomerAndPartyDistributorAndThruDate(partySalesman,
+                partyCustomer, partyDistributor, null);
         if(lst != null && lst.size() > 0){
-        	return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("DUPLICATE");
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("DUPLICATE");
         }
         CustomerSalesmanVendor customerSalesmanVendor = new CustomerSalesmanVendor();
         customerSalesmanVendor.setPartyCustomer(partyCustomer);
@@ -337,16 +349,21 @@ public class SalesAPIController {
     //public ResponseEntity<?> addRetailOutletDistributorSalesman(@PathVariable String partyId, @RequestBody RetailOutletSalesmanDistributorInputModel input){
     @PostMapping("/add-retail-outlet-distributor-salesman")
     public ResponseEntity<?> addRetailOutletDistributorSalesman(Principal principal, @RequestBody RetailOutletSalesmanDistributorInputModel input){
-        log.info("addRetailOutletDistributorSalesman salesmanId = ",input.getPartySalesmanId());
+        log.info("addRetailOutletDistributorSalesman salesmanId = ", input.getPartySalesmanId());
         PartyRetailOutlet partyRetailOutlet = retailOutletRepo.findByPartyId(input.getPartyRetailOutletId());
+
         if(partyRetailOutlet == null){
             log.info("addRetailOutletDistributorSalesman, retail outlet " + input.getPartyRetailOutletId() + " cannot be FOUND");
         }
+
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(input.getPartyDistributorId());
+
         if(partyDistributor == null){
             log.info("addRetailOutletDistributorSalesman, distributor " + input.getPartyDistributorId() + " cannot be FOUND");
         }
+
         PartySalesman partySalesman = partySalesmanService.findById(input.getPartySalesmanId());
+
         if(partySalesman == null){
             log.info("addRetailOutletDistributorSalesman, salesman " + input.getPartySalesmanId() + " cannot be FOUND");
         }
@@ -356,6 +373,7 @@ public class SalesAPIController {
             log.info("addRetailOutletDistributorSalesman, lst.sz = " + lst.size() + " --> DUPLICATED ???");
             return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("DUPLICATE");
         }
+
         RetailOutletSalesmanVendor retailOutletSalesmanVendor = new RetailOutletSalesmanVendor();
         retailOutletSalesmanVendor.setPartyRetailOutlet(partyRetailOutlet);
         retailOutletSalesmanVendor.setPartySalesman(partySalesman);
@@ -368,7 +386,7 @@ public class SalesAPIController {
     @GetMapping("/delete-customer-distributor-salesman/{Id}")
     public void deleteCustomerDistributorSalesman (@PathVariable String Id){
         CustomerSalesmanVendor customerSalesmanVendor = customerSalesmanVendorRepo.findByCustomerSalesmanVendorId(UUID.fromString(Id));
-        //customerSalesmanVendorRepo.delete(customerSalesmanVendor);// do not delete physically 
+        //customerSalesmanVendorRepo.delete(customerSalesmanVendor);// do not delete physically
         customerSalesmanVendor.setThruDate(new Date());// set thru_date by current date-time
         customerSalesmanVendorRepo.save(customerSalesmanVendor);
     }
@@ -384,4 +402,4 @@ public class SalesAPIController {
 
 
 
-}	
+}
