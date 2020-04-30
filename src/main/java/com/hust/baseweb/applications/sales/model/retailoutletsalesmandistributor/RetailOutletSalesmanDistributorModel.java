@@ -9,6 +9,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class RetailOutletSalesmanDistributorModel {
+    private UUID retailOutletSalesmanVendorId;
     private UUID partyRetailOutletId;
     private String retailOutletName;
     private String retailOutletCode;
@@ -19,6 +20,7 @@ public class RetailOutletSalesmanDistributorModel {
     private String distributorCode;
 
     public RetailOutletSalesmanDistributorModel(RetailOutletSalesmanVendor retailOutletSalesmanVendor){
+        this.retailOutletSalesmanVendorId = retailOutletSalesmanVendor.getRetailOutletSalesmanVendorId();
         this.partyRetailOutletId = retailOutletSalesmanVendor.getPartyRetailOutlet().getPartyId();
         this.retailOutletName = retailOutletSalesmanVendor.getPartyRetailOutlet().getRetailOutletName();
         this.retailOutletCode= retailOutletSalesmanVendor.getPartyRetailOutlet().getRetailOutletCode();
