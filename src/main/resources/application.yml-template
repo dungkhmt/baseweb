@@ -26,7 +26,13 @@ spring:
   data:
     rest:
       #base-path: /rest
-      detection-strategy:  ANNOTATED 
+      detection-strategy:  ANNOTATED
+
+    mongodb:
+      host: localhost
+      port: 27017
+      database: baseweb
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${SQL_DB_HOST}:${SQL_DB_PORT}/${POSTGRES_DB}

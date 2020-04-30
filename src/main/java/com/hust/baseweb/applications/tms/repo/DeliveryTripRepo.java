@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.tms.repo;
 import com.hust.baseweb.applications.tms.entity.DeliveryPlan;
 import com.hust.baseweb.applications.tms.entity.DeliveryTrip;
 import com.hust.baseweb.applications.tms.entity.PartyDriver;
+import com.hust.baseweb.applications.tms.entity.Vehicle;
 import com.hust.baseweb.entity.StatusItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,8 +17,10 @@ public interface DeliveryTripRepo extends JpaRepository<DeliveryTrip, UUID> {
 
     List<DeliveryTrip> findAllByDeliveryPlan(DeliveryPlan deliveryPlan);
 
-    List<DeliveryTrip> findByPartyDriver(PartyDriver partyDriver);
     List<DeliveryTrip> findByPartyDriverAndStatusItem(PartyDriver partyDriver, StatusItem statusItem);
-    
-    List<DeliveryTrip> findAll();
+
+    List<DeliveryTrip> findAllByVehicle(Vehicle vehicle);
+
+    List<DeliveryTrip> findAllByPartyDriver(PartyDriver partyDriver);
+
 }

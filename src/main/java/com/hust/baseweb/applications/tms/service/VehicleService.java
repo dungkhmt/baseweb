@@ -26,6 +26,8 @@ public interface VehicleService {
 
     List<VehicleModel> findAllNotInDeliveryPlan(String deliveryPlanId);
 
+    List<VehicleModel> findAllNotInDeliveryTrips(String deliveryPlanId);
+
     String saveVehicleDeliveryPlan(VehicleModel.CreateDeliveryPlan createDeliveryPlan);
 
     boolean deleteVehicleDeliveryPlan(VehicleModel.DeleteDeliveryPlan deleteDeliveryPlan);

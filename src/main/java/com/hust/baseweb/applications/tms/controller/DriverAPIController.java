@@ -8,7 +8,6 @@ import com.hust.baseweb.applications.tms.repo.PartyDriverRepo;
 import com.hust.baseweb.applications.tms.service.PartyDriverService;
 import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.service.UserService;
-import com.hust.baseweb.utils.PageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -42,19 +40,19 @@ public class DriverAPIController {
     }
 
     @GetMapping("/get-all-drivers")
-    public ResponseEntity<?> findAllDrivers(Pageable page) {
+    public ResponseEntity<?> findAllDrivers() {
         log.info("::findAllDrivers()");
 
-        //List<PartyDriver> drivers = partyDriverService.findAll();
+        return ResponseEntity.ok().body(partyDriverService.findAll().stream()
+                .map(partyDriver -> partyDriver.getPerson().getBasicInfoModel()).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/get-page-drivers")
+    public ResponseEntity<?> findPageDrivers(Pageable page) {
+        log.info("::findPageDrivers()");
+
         Page<PartyDriver> drivers = partyDriverService.findAll(page);
-        List<Person.BasicInfoModel> list = drivers.stream()
-                .map(partyDriver -> partyDriver.getPerson().getBasicInfoModel()).collect(Collectors.toList());
-
-        Page<Person.BasicInfoModel> returnPageDrivers = PageUtils.getPage(list,page);
-
-        //return ResponseEntity.ok().body(drivers.stream()
-        //        .map(partyDriver -> partyDriver.getPerson().getBasicInfoModel()).collect(Collectors.toList()));
-        return ResponseEntity.ok().body(returnPageDrivers);
+        return ResponseEntity.ok(drivers.map(partyDriver -> partyDriver.getPerson().getBasicInfoModel()));
     }
 
     @GetMapping("/get-driver-in-delivery-trip/{deliveryTripId}")
@@ -84,5 +82,12 @@ public class DriverAPIController {
         }
         deliveryTrip = deliveryTripRepo.save(deliveryTrip);
         return ResponseEntity.ok().body(deliveryTrip.toDeliveryTripModel());
+    }
+
+    @GetMapping("/get-driver-info/{driverId}")
+    public ResponseEntity<PartyDriver.Model> getDriverInfo(@PathVariable String driverId) {
+        PartyDriver partyDriver = partyDriverRepo.findById(UUID.fromString(driverId))
+                .orElseThrow(NoSuchElementException::new);
+        return ResponseEntity.ok(partyDriver.toModel());
     }
 }

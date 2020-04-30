@@ -2,15 +2,10 @@ package com.hust.baseweb.applications.tms.service;
 
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
-import com.hust.baseweb.applications.tms.entity.Vehicle;
-import com.hust.baseweb.applications.tms.entity.VehicleDeliveryPlan;
-import com.hust.baseweb.applications.tms.entity.VehicleMaintenanceHistory;
+import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.model.LocationModel;
 import com.hust.baseweb.applications.tms.model.VehicleModel;
-import com.hust.baseweb.applications.tms.repo.VehicleDeliveryPlanRepo;
-import com.hust.baseweb.applications.tms.repo.VehicleLocationPriorityRepo;
-import com.hust.baseweb.applications.tms.repo.VehicleMaintenanceHistoryRepo;
-import com.hust.baseweb.applications.tms.repo.VehicleRepo;
+import com.hust.baseweb.applications.tms.repo.*;
 import com.hust.baseweb.utils.PageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -33,6 +28,9 @@ public class VehicleServiceImpl implements VehicleService {
     private VehicleDeliveryPlanRepo vehicleDeliveryPlanRepo;
     private VehicleMaintenanceHistoryRepo vehicleMaintenanceHistoryRepo;
     private VehicleLocationPriorityRepo vehicleLocationPriorityRepo;
+
+    private DeliveryTripRepo deliveryTripRepo;
+    private DeliveryPlanRepo deliveryPlanRepo;
 
     @Override
     public Page<Vehicle> findAll(Pageable pageable) {
@@ -115,6 +113,28 @@ public class VehicleServiceImpl implements VehicleService {
 
         return vehicles.stream()
                 .filter(vehicle -> !vehicleInDeliveryPlans.contains(vehicle.getVehicleId()))
+                .map(Vehicle::toVehicleModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VehicleModel> findAllNotInDeliveryTrips(String deliveryPlanId) {
+        DeliveryPlan deliveryPlan = deliveryPlanRepo.findById(UUID.fromString(deliveryPlanId))
+                .orElseThrow(NoSuchElementException::new);
+
+        List<VehicleDeliveryPlan> vehicleDeliveryPlans = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(
+                deliveryPlanId));
+        List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan);
+        Map<String, List<DeliveryTrip>> vehicleIdToDeliveryTrips = deliveryTrips.stream()
+                .collect(Collectors.groupingBy(deliveryTrip -> deliveryTrip.getVehicle().getVehicleId()));
+
+        List<String> vehicleIdsNotInDeliveryTrips = vehicleDeliveryPlans.stream()
+                .filter(vehicleDeliveryPlan -> !vehicleIdToDeliveryTrips.containsKey(vehicleDeliveryPlan.getVehicleId()))
+                .map(VehicleDeliveryPlan::getVehicleId)
+                .distinct()
+                .collect(Collectors.toList());
+        return vehicleRepo.findAllByVehicleIdIn(vehicleIdsNotInDeliveryTrips)
+                .stream()
                 .map(Vehicle::toVehicleModel)
                 .collect(Collectors.toList());
     }
