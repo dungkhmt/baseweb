@@ -5,6 +5,8 @@ import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressJpaRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
+import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
+import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.tmscontainer.entity.*;
 import com.hust.baseweb.applications.tmscontainer.model.*;
 import com.hust.baseweb.applications.tmscontainer.repo.*;
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +45,45 @@ public class TMSContainerAPIController {
     private ContTrailerPagingRepo contTrailerPagingRepo;
     private ContTrailerRepo contTrailerRepo;
     private PostalAddressJpaRepo postalAddressJpaRepo;
+    private FacilityRepo facilityRepo;
+    private PartyCustomerRepo partyCustomerRepo;
+    private ContRequestImportFullRepo contRequestImportFullRepo;
+    private ContRequestImportFullPagingRepo contRequestImportFullPagingRepo;
 
+    @GetMapping("/get-list-cont-request-import-full-page")
+    ResponseEntity<?> getListContRequestImportFullPage(Pageable pageable){
+        Page<ContRequestImportFull> contRequestImportFullPage = contRequestImportFullPagingRepo.findAll(pageable);
+        for(ContRequestImportFull contRequestImportFull: contRequestImportFullPage){
+            contRequestImportFull.setAddress(contRequestImportFull.getFacility().getPostalAddress().getAddress());
+            contRequestImportFull.setFacilityName(contRequestImportFull.getFacility().getFacilityName());
+            contRequestImportFull.setContainerType(contRequestImportFull.getContContainerType().getDescription());
+            contRequestImportFull.setPortName(contRequestImportFull.getContPort().getPortName());
+            contRequestImportFull.setCustomerName(contRequestImportFull.getPartyCustomer().getCustomerName());
+            String time = "" + contRequestImportFull.getEarlyDateTimeExpected() + " - " + contRequestImportFull.getLateDateTimeExpected();
+            contRequestImportFull.setTime(time);
+        }
+        return ResponseEntity.ok(contRequestImportFullPage);
+
+    }
+
+    @PostMapping("/create-request-import-full")
+    void createRequestImportFull(@RequestBody InputContRequestInportFullModel input){
+        log.info("{}", input.toString());
+
+        ContRequestImportFull contRequestImportFull = new ContRequestImportFull();
+        contRequestImportFull.setEarlyDateTimeExpected(input.getEarlyDate());
+        contRequestImportFull.setLateDateTimeExpected(input.getLateDate());
+        contRequestImportFull.setFacility(facilityRepo.findByFacilityId(input.getFacilityId()));
+        contRequestImportFull.setNumberContainers(input.getNumberContainer());
+        contRequestImportFull.setLeaveTrailer(input.getTrailer());
+        contRequestImportFull.setContContainerType(contContainerTypeRepo.findByContainerTypeId(input.getContainerTypeId()));
+        contRequestImportFull.setPartyCustomer(partyCustomerRepo.findByPartyId(UUID.fromString(input.getCustomerId())));
+        contRequestImportFull.setLastUpdatedStamp(null);
+        contRequestImportFull.setCreatedStamp(new Date());
+        contRequestImportFull.setContPort(contPortRepo.findByPortId(input.getPortId()));
+        contRequestImportFullRepo.save(contRequestImportFull);
+
+    }
 
     @PostMapping("/create-port")
     public void createPort(@RequestBody InputContPortModel input){
@@ -267,12 +308,20 @@ public class TMSContainerAPIController {
     }
 
 
-    @GetMapping("/get-list-cont-trailer")
-    public ResponseEntity<?> getListContTrailer(Pageable pageable){
+    @GetMapping("/get-list-cont-trailer-page")
+    public ResponseEntity<?> getListContTrailerPage(Pageable pageable){
         Page<ContTrailer> contTrailers = contTrailerPagingRepo.findAll(pageable);
 
         return ResponseEntity.ok(contTrailers);
 
+    }
+
+
+    @GetMapping("/get-list-cont-trailer")
+    public ResponseEntity<?> getListContTrailer(){
+        log.info("getListContTrailer");
+        List<ContTrailer> contTrailers = contTrailerRepo.findAll();
+        return ResponseEntity.ok(new OutputContTrailerModel(contTrailers));
     }
 
     @PostMapping("/save-trailer-to-db")
@@ -303,6 +352,7 @@ public class TMSContainerAPIController {
         }
         return ResponseEntity.ok(new OutputPostalAddressSuggestion(postalAddressList));
     }
+
 
 
 

@@ -43,4 +43,6 @@ public class PartyCustomer {
     @Transient
     private String type;
 
+
+
 }

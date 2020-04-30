@@ -173,3 +173,7 @@ create table cont_request_between_warehouse(
     constraint fk_cont_request_between_warehouse_to_facility foreign key(to_facility_id) references facility(facility_id),
     constraint fk_cont_request_between_warehouse_container_type foreign key(container_type_id) references cont_container_type(container_type_id)
 );
+
+alter table cont_request_import_full add party_customer_id uuid;
+alter table cont_request_import_full add CONSTRAINT fk_cont_request_import_full_party_customer FOREIGN KEY (party_customer_id) REFERENCES party_customer(party_id);
+
