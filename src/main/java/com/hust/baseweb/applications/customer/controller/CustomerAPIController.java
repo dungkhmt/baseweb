@@ -54,9 +54,9 @@ public class CustomerAPIController {
 //        System.out.println(module + "::getCustomers");
         Page<PartyCustomer> customers = customerRepo.findAll(page);
         for (PartyCustomer c: customers
-             ) {
+        ) {
             if(c.getPartyType() != null)
-            	c.setType(c.getPartyType().getDescription());
+                c.setType(c.getPartyType().getDescription());
         }
         return ResponseEntity.ok().body(customers);
     }
@@ -144,4 +144,10 @@ public class CustomerAPIController {
         return ResponseEntity.ok().body(new GetListDistributorOutPutModel(partyDistributorList));
     }
 
+    @GetMapping("/get-all-retail-outlet")
+    public ResponseEntity<?> getAllRetailOutlet(Principal principal){
+        log.info("getAllRetailOutlet");
+        List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findAll();
+        return ResponseEntity.ok().body(partyRetailOutletList);
+    }
 }
