@@ -148,6 +148,7 @@ public class SalesAPIController {
         //   log.info("getRetailOutletsOfUserLoginSalesman, user-login = " + userLogin.getUserLoginId() + ", partyId in = " + partyId);
         //}
 
+
         Page<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findByPartyIdIn(partyIds, page);
         //Page<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findAll(page);
 

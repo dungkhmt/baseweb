@@ -114,7 +114,4 @@ INSERT INTO public.security_group_permission
 VALUES('ROLE_FULL_ADMIN', 'PERM_DISTRIBUTOR_VIEW_ALL');
 
 -- user_login security group
-INSERT INTO user_login_security_group (user_login_id, group_id)
-VALUES ('dungpq', 'ROLE_SALES_ADMIN');
-INSERT INTO user_login_security_group (user_login_id, group_id)
-VALUES ('ninhpham', 'ROLE_SALESSUP');
+

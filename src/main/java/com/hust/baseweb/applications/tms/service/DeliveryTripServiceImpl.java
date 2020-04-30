@@ -228,7 +228,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         UserLogin userLogin = userLoginRepo.findByUserLoginId(driverUserLoginId);
         PartyDriver partyDriver = partyDriverRepo.findByPartyId(userLogin.getParty().getPartyId());
 
-        StatusItem statusItem = statusItemRepo.findByStatusId("APPROVED_TRIP");
+        //StatusItem statusItem = statusItemRepo.findByStatusId("APPROVED_TRIP");
+        StatusItem statusItem = statusItemRepo.findByStatusId("DELIVERY_TRIP_APPROVED_TRIP");
 
         //List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findByPartyDriver(partyDriver);
         List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findByPartyDriverAndStatusItem(partyDriver, statusItem);
