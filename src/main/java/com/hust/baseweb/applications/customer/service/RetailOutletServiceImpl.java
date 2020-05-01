@@ -1,8 +1,11 @@
 package com.hust.baseweb.applications.customer.service;
 
 import com.hust.baseweb.applications.customer.entity.PartyContactMechPurpose;
+import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.CreateRetailOutletInputModel;
+import com.hust.baseweb.applications.customer.model.DetailDistributorModel;
+import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
 import com.hust.baseweb.applications.customer.repo.PartyRetailOutletRepo;
 import com.hust.baseweb.applications.customer.repo.RetailOutletPagingRepo;
@@ -10,6 +13,9 @@ import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
+import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
+import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.RetailOutletSalesmanDistributorModel;
+import com.hust.baseweb.applications.sales.repo.RetailOutletSalesmanVendorRepo;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.PartyType;
 import com.hust.baseweb.entity.Status;
@@ -25,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -38,6 +45,8 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
     private PartyTypeRepo partyTypeRepo;
     private StatusRepo statusRepo;
     private PartyContactMechPurposeRepo partyContactMechPurposeRepo;
+    private RetailOutletSalesmanVendorRepo retailOutletSalesmanVendorRepo;
+    private DistributorRepo distributorRepo;
 
     @Override
     @Transactional
@@ -124,6 +133,30 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
     @Override
     public Page<PartyRetailOutlet> findByPartyIdIn(List<UUID> partyIds, Pageable page) {
         return partyRetailOutletRepo.findAllByPartyIdIn(partyIds, page);
+    }
+
+    @Override
+    public List<PartyRetailOutlet> getRetailOutletCandidates(UUID partyDistributorId) {
+        /**
+         * Return all retail oulet have not connected with distributor yet
+         */
+
+        PartyDistributor partyDistributor = distributorRepo.findByPartyId(partyDistributorId);
+        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyDistributorAndThruDate(partyDistributor, null);
+        List<UUID> retailOutlets = new ArrayList<>();
+        List<PartyRetailOutlet> retailOutletList;
+
+        for(RetailOutletSalesmanVendor rosv: retailOutletSalesmanVendors) {
+            retailOutlets.add(rosv.getPartyRetailOutlet().getPartyId());
+        }
+
+        if (0 == retailOutlets.size()) {
+            retailOutletList = partyRetailOutletRepo.findAll();
+        } else {
+            retailOutletList = partyRetailOutletRepo.findAllByPartyIdNotIn(retailOutlets);
+        }
+
+        return retailOutletList;
     }
 
 
