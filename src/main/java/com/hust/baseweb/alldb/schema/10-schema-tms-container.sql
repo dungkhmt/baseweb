@@ -180,3 +180,9 @@ alter table cont_container add column container_name varchar(60);
 
 alter table cont_request_import_empty add party_customer_id uuid;
 alter table cont_request_import_empty add CONSTRAINT fk_cont_request_import_empty_party_customer FOREIGN KEY (party_customer_id) REFERENCES party_customer(party_id);
+
+alter table cont_request_export_full add party_customer_id uuid;
+alter table cont_request_export_full add CONSTRAINT fk_cont_request_export_full_party_customer FOREIGN KEY (party_customer_id) REFERENCES party_customer(party_id);
+
+alter table cont_request_export_empty add party_customer_id uuid;
+alter table cont_request_export_empty add CONSTRAINT fk_cont_request_export_empty_party_customer FOREIGN KEY (party_customer_id) REFERENCES party_customer(party_id);
