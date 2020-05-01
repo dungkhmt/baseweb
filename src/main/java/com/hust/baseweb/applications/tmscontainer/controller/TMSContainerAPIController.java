@@ -49,6 +49,42 @@ public class TMSContainerAPIController {
     private PartyCustomerRepo partyCustomerRepo;
     private ContRequestImportFullRepo contRequestImportFullRepo;
     private ContRequestImportFullPagingRepo contRequestImportFullPagingRepo;
+    private ContRequestImportEmptyPagingRepo contRequestImportEmptyPagingRepo;
+    private ContRequestImportEmptyRepo contRequestImportEmptyRepo;
+
+    @PostMapping("/create-request-import-empty")
+    void createRequestImportEmpty(@RequestBody InputContRequestImportEmptyModel input){
+        log.info("{}", input.toString());
+
+        ContRequestImportEmpty contRequestImportEmpty = new ContRequestImportEmpty();
+        contRequestImportEmpty.setEarlyDateTimeExpected(input.getEarlyDate());
+        contRequestImportEmpty.setLateDateTimeExpected(input.getLateDate());
+        contRequestImportEmpty.setFacility(facilityRepo.findByFacilityId(input.getFacilityId()));
+        contRequestImportEmpty.setNumberContainers(input.getNumberContainer());
+        contRequestImportEmpty.setHasTrailer(input.getTrailer());
+        contRequestImportEmpty.setContContainerType(contContainerTypeRepo.findByContainerTypeId(input.getContainerTypeId()));
+        contRequestImportEmpty.setPartyCustomer(partyCustomerRepo.findByPartyId(UUID.fromString(input.getCustomerId())));
+        contRequestImportEmpty.setLastUpdatedStamp(null);
+        contRequestImportEmpty.setCreatedStamp(new Date());
+        contRequestImportEmptyRepo.save(contRequestImportEmpty);
+
+    }
+
+    @GetMapping("/get-list-cont-request-import-empty-page")
+    ResponseEntity<?> getListContRequestImportEmptyPage(Pageable pageable){
+        Page<ContRequestImportEmpty> contRequestImportEmptyPage = contRequestImportEmptyPagingRepo.findAll(pageable);
+        for(ContRequestImportEmpty contRequestImportEmpty: contRequestImportEmptyPage){
+            contRequestImportEmpty.setAddress(contRequestImportEmpty.getFacility().getPostalAddress().getAddress());
+            contRequestImportEmpty.setFacilityName(contRequestImportEmpty.getFacility().getFacilityName());
+            contRequestImportEmpty.setContainerType(contRequestImportEmpty.getContContainerType().getDescription());
+            contRequestImportEmpty.setCustomerName(contRequestImportEmpty.getPartyCustomer().getCustomerName());
+            String time = "" + contRequestImportEmpty.getEarlyDateTimeExpected() + " - " + contRequestImportEmpty.getLateDateTimeExpected();
+            contRequestImportEmpty.setTime(time);
+        }
+        return ResponseEntity.ok(contRequestImportEmptyPage);
+
+    }
+
 
     @GetMapping("/get-list-cont-request-import-full-page")
     ResponseEntity<?> getListContRequestImportFullPage(Pageable pageable){
@@ -352,6 +388,8 @@ public class TMSContainerAPIController {
         }
         return ResponseEntity.ok(new OutputPostalAddressSuggestion(postalAddressList));
     }
+
+
 
 
 

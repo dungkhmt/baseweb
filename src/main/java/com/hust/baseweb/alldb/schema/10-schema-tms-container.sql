@@ -176,4 +176,7 @@ create table cont_request_between_warehouse(
 
 alter table cont_request_import_full add party_customer_id uuid;
 alter table cont_request_import_full add CONSTRAINT fk_cont_request_import_full_party_customer FOREIGN KEY (party_customer_id) REFERENCES party_customer(party_id);
+alter table cont_container add column container_name varchar(60);
 
+alter table cont_request_import_empty add party_customer_id uuid;
+alter table cont_request_import_empty add CONSTRAINT fk_cont_request_import_empty_party_customer FOREIGN KEY (party_customer_id) REFERENCES party_customer(party_id);
