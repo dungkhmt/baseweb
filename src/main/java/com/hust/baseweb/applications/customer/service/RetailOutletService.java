@@ -17,4 +17,6 @@ public interface RetailOutletService {
 
     List<PartyRetailOutlet> findByPartyIdIn(List<UUID> partyIds);
     Page<PartyRetailOutlet> findByPartyIdIn(List<UUID> partyIds, Pageable page);
+
+    List<PartyRetailOutlet> getRetailOutletCandidates(UUID partyDistributorId);
 }
