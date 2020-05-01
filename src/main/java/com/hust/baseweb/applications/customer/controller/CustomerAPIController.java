@@ -144,10 +144,10 @@ public class CustomerAPIController {
         return ResponseEntity.ok().body(new GetListDistributorOutPutModel(partyDistributorList));
     }
 
-    @GetMapping("/get-all-retail-outlet")
-    public ResponseEntity<?> getAllRetailOutlet(Principal principal){
-        log.info("getAllRetailOutlet");
-        List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findAll();
+    @GetMapping("/get-retail-outlet-candidates/{Id}")
+    public ResponseEntity<?> getRetailOutletCandidates(Principal principal, @PathVariable("Id") String Id){
+        log.info("getRetailOutletCandidates");
+        List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.getRetailOutletCandidates(UUID.fromString(Id));
         return ResponseEntity.ok().body(partyRetailOutletList);
     }
 }
