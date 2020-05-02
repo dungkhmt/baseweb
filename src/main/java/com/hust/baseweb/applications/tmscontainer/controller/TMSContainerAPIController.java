@@ -52,10 +52,108 @@ public class TMSContainerAPIController {
     private ContRequestImportEmptyPagingRepo contRequestImportEmptyPagingRepo;
     private ContRequestImportEmptyRepo contRequestImportEmptyRepo;
 
-    @PostMapping("/create-request-import-empty")
-    void createRequestImportEmpty(@RequestBody InputContRequestImportEmptyModel input){
+    private ContRequestExportEmptyRepo contRequestExportEmptyRepo;
+    private ContRequestExportEmptyPagingRepo contRequestExportEmptyPagingRepo;
+
+    private ContRequestExportFullRepo contRequestExportFullRepo;
+    private ContRequestExportFullPagingRepo contRequestExportFullPagingRepo;
+
+
+
+    @GetMapping("/get-list-cont-request-export-full-page")
+    ResponseEntity<?> getListContRequestExportFullPage(Pageable pageable){
+        Page<ContRequestExportFull> contRequestExportFullPage = contRequestExportFullPagingRepo.findAll(pageable);
+        for(ContRequestExportFull contRequestExportFull: contRequestExportFullPage){
+            contRequestExportFull.setAddress(contRequestExportFull.getFacility().getPostalAddress().getAddress());
+            contRequestExportFull.setFacilityName(contRequestExportFull.getFacility().getFacilityName());
+            contRequestExportFull.setContainerType(contRequestExportFull.getContContainerType().getDescription());
+            contRequestExportFull.setPortName(contRequestExportFull.getContPort().getPortName());
+            contRequestExportFull.setCustomerName(contRequestExportFull.getPartyCustomer().getCustomerName());
+            String time = "" + contRequestExportFull.getEarlyDateTimeExpected() + " - " + contRequestExportFull.getLateDateTimeExpected();
+            contRequestExportFull.setTime(time);
+        }
+        return ResponseEntity.ok(contRequestExportFullPage);
+
+    }
+
+    @PostMapping("/create-request-export-full")
+    void createRequestExportFull(@RequestBody InputContRequestExportFullModel input){
         log.info("{}", input.toString());
 
+        ContRequestExportFull contRequestExportFull = new ContRequestExportFull();
+        contRequestExportFull.setEarlyDateTimeExpected(input.getEarlyDate());
+        contRequestExportFull.setLateDateTimeExpected(input.getLateDate());
+        contRequestExportFull.setFacility(facilityRepo.findByFacilityId(input.getFacilityId()));
+        contRequestExportFull.setNumberContainers(input.getNumberContainer());
+        contRequestExportFull.setHasTrailer(input.getTrailer());
+        contRequestExportFull.setContContainerType(contContainerTypeRepo.findByContainerTypeId(input.getContainerTypeId()));
+        contRequestExportFull.setPartyCustomer(partyCustomerRepo.findByPartyId(UUID.fromString(input.getCustomerId())));
+        contRequestExportFull.setLastUpdatedStamp(null);
+        contRequestExportFull.setCreatedStamp(new Date());
+        contRequestExportFull.setContPort(contPortRepo.findByPortId(input.getPortId()));
+        contRequestExportFullRepo.save(contRequestExportFull);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @GetMapping("/get-list-cont-request-export-empty-page")
+    ResponseEntity<?> getListContRequestIExportEmptyPage(Pageable pageable){
+
+        Page<ContRequestExportEmpty> contRequestExportEmptyPage = contRequestExportEmptyPagingRepo.findAll(pageable);
+        for(ContRequestExportEmpty contRequestExportEmpty: contRequestExportEmptyPage){
+            contRequestExportEmpty.setAddress(contRequestExportEmpty.getFacility().getPostalAddress().getAddress());
+            contRequestExportEmpty.setFacilityName(contRequestExportEmpty.getFacility().getFacilityName());
+            contRequestExportEmpty.setContainerType(contRequestExportEmpty.getContContainerType().getDescription());
+            contRequestExportEmpty.setCustomerName(contRequestExportEmpty.getPartyCustomer().getCustomerName());
+            String time = "" + contRequestExportEmpty.getEarlyDateTimeExpected() + " - " + contRequestExportEmpty.getLateDateTimeExpected();
+            contRequestExportEmpty.setTime(time);
+
+        }
+
+        return ResponseEntity.ok(contRequestExportEmptyPage);
+
+    }
+
+
+    @PostMapping("/create-request-export-empty")
+    void createRequestIExportEmpty(@RequestBody InputContRequestExportEmptyModel input){
+        ContRequestExportEmpty contRequestExportEmpty = new ContRequestExportEmpty();
+        contRequestExportEmpty.setEarlyDateTimeExpected(input.getEarlyDate());
+        contRequestExportEmpty.setLateDateTimeExpected(input.getLateDate());
+        contRequestExportEmpty.setFacility(facilityRepo.findByFacilityId(input.getFacilityId()));
+        contRequestExportEmpty.setLeaveTrailer(input.getTrailer());
+        contRequestExportEmpty.setNumberContainers(input.getNumberContainer());
+        contRequestExportEmpty.setContContainerType(contContainerTypeRepo.findByContainerTypeId(input.getContainerTypeId()));
+        contRequestExportEmpty.setPartyCustomer(partyCustomerRepo.findByPartyId(UUID.fromString(input.getCustomerId())));
+        contRequestExportEmpty.setLastUpdatedStamp(null);
+        contRequestExportEmpty.setCreatedStamp(new Date());
+        contRequestExportEmptyRepo.save(contRequestExportEmpty);
+
+    }
+
+
+
+
+
+
+
+    @PostMapping("/create-request-import-empty")
+    void createRequestImportEmpty(@RequestBody InputContRequestImportEmptyModel input){
         ContRequestImportEmpty contRequestImportEmpty = new ContRequestImportEmpty();
         contRequestImportEmpty.setEarlyDateTimeExpected(input.getEarlyDate());
         contRequestImportEmpty.setLateDateTimeExpected(input.getLateDate());
@@ -72,6 +170,7 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-cont-request-import-empty-page")
     ResponseEntity<?> getListContRequestImportEmptyPage(Pageable pageable){
+
         Page<ContRequestImportEmpty> contRequestImportEmptyPage = contRequestImportEmptyPagingRepo.findAll(pageable);
         for(ContRequestImportEmpty contRequestImportEmpty: contRequestImportEmptyPage){
             contRequestImportEmpty.setAddress(contRequestImportEmpty.getFacility().getPostalAddress().getAddress());
@@ -80,12 +179,14 @@ public class TMSContainerAPIController {
             contRequestImportEmpty.setCustomerName(contRequestImportEmpty.getPartyCustomer().getCustomerName());
             String time = "" + contRequestImportEmpty.getEarlyDateTimeExpected() + " - " + contRequestImportEmpty.getLateDateTimeExpected();
             contRequestImportEmpty.setTime(time);
+
         }
+
         return ResponseEntity.ok(contRequestImportEmptyPage);
 
     }
 
-
+/////////////////////////
     @GetMapping("/get-list-cont-request-import-full-page")
     ResponseEntity<?> getListContRequestImportFullPage(Pageable pageable){
         Page<ContRequestImportFull> contRequestImportFullPage = contRequestImportFullPagingRepo.findAll(pageable);
@@ -120,7 +221,7 @@ public class TMSContainerAPIController {
         contRequestImportFullRepo.save(contRequestImportFull);
 
     }
-
+///////////////////////////////////////
     @PostMapping("/create-port")
     public void createPort(@RequestBody InputContPortModel input){
         ContPort contPort = new ContPort();
