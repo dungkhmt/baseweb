@@ -7,12 +7,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public interface PartyRelationshipService {
     public PartyRelationship save(PartyRelationship partyRelationship);
 
-    public List<PartyRelationship> findAllByFromPartyAndRoleTypeAndThruDate(Party fromParty,
+     public List<PartyRelationship> findAllByFromPartyAndRoleTypeAndThruDate(Party fromParty,
                                                                             RoleType roleType,
                                                                             Date thruDate);
 

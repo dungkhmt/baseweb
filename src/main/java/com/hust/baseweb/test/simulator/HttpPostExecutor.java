@@ -12,7 +12,7 @@ public class HttpPostExecutor {
     public static final String module = HttpPostExecutor.class.getName();
     private OkHttpClient client = new OkHttpClient();
 
-    String execPostUseToken(String url, String json, String token)
+    public String execPostUseToken(String url, String json, String token)
             throws IOException {
         //System.out.println(module + "::execPostUseToken, url = " + url + ", json = " + json + ", token = " + token);
 
@@ -24,7 +24,7 @@ public class HttpPostExecutor {
             return Objects.requireNonNull(response.body()).string();
         }
     }
-    String execGetUseToken(String url, String json, String token)
+    public String execGetUseToken(String url, String json, String token)
             throws IOException {
         //System.out.println(module + "::execPostUseToken, url = " + url + ", json = " + json + ", token = " + token);
 

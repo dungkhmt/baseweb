@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Login {
     private static OkHttpClient client = new OkHttpClient();
 
-    static String login(String username, String password) {
+    public static String login(String username, String password) {
         try {
             // String url = "http://sscm.dailyopt.ai/api/";
             String url = Constants.URL_ROOT + "/api/";

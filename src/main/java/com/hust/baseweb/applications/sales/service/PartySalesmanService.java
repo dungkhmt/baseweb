@@ -21,4 +21,6 @@ public interface PartySalesmanService {
     Person findPersonByPartyId(UUID partyId);
 
     PartySalesman save(PersonModel salesman);
+
+    List<PartySalesman> findAll();
 }

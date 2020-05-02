@@ -16,6 +16,10 @@ public class SalesRouteConfig {
     @Column(name = "sales_route_config_id")
     private UUID salesRouteConfigId;
 
+    @JoinColumn(name="visit_frequency_id", referencedColumnName = "visit_frequency_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private SalesRouteVisitFrequency salesRouteVisitFrequency;
+
     @Column(name = "days")
     private String days;
 

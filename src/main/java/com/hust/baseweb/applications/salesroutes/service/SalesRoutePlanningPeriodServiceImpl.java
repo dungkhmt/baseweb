@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.salesroutes.service;
 
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
 import com.hust.baseweb.applications.salesroutes.repo.PSalesRoutePlanningPeriodRepo;
+import com.hust.baseweb.applications.salesroutes.repo.SalesRoutePlanningPeriodRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Log4j2
@@ -16,7 +18,8 @@ import java.util.Date;
 public class SalesRoutePlanningPeriodServiceImpl implements
         SalesRoutePlanningPeriodService {
 
-    private PSalesRoutePlanningPeriodRepo salesRoutePlanningPeriodRepo;
+    private PSalesRoutePlanningPeriodRepo pSalesRoutePlanningPeriodRepo;
+    private SalesRoutePlanningPeriodRepo salesRoutePlanningPeriodRepo;
 
     @Override
     public SalesRoutePlanningPeriod save(String fromDateYYYYMMDD, String toDateYYYYMMDD,
@@ -37,9 +40,14 @@ public class SalesRoutePlanningPeriodServiceImpl implements
         salesRoutePlanningPeriod.setToDate(toDate);
         salesRoutePlanningPeriod.setDescription(description);
 
-        salesRoutePlanningPeriod = salesRoutePlanningPeriodRepo.save(salesRoutePlanningPeriod);
+        salesRoutePlanningPeriod = pSalesRoutePlanningPeriodRepo.save(salesRoutePlanningPeriod);
         return salesRoutePlanningPeriod;
 
+    }
+
+    @Override
+    public List<SalesRoutePlanningPeriod> findAll() {
+        return salesRoutePlanningPeriodRepo.findAll();
     }
 
 }

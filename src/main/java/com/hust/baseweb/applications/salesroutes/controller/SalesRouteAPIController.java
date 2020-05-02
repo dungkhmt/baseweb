@@ -1,17 +1,20 @@
 package com.hust.baseweb.applications.salesroutes.controller;
 
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
-import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
-import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfigRetailOutlet;
-import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
-import com.hust.baseweb.applications.salesroutes.entity.SalesmanCheckinHistory;
+import com.hust.baseweb.applications.salesroutes.entity.*;
 import com.hust.baseweb.applications.salesroutes.model.salesmancheckinout.SalesmanCheckInOutInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.CreateSalesRouteConfigInputModel;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.GetListSalesRouteConfigOutputModel;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.GetSalesRouteConfigInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.CreateSalesRouteConfigRetailOutletInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GenerateSalesRouteDetailInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetCustomersVisitedBySalesmanDayInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetCustomersVisitedDayOfUserLogin;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteplanningperiod.CreateSalesRoutePlanningPeriodInputModel;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteplanningperiod.GetSalesRoutePlanningPeriodInputModel;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteplanningperiod.GetSalesRoutePlanningPeriodOutputModel;
+import com.hust.baseweb.applications.salesroutes.model.salesroutevisitfrequency.ListSalesRouteVisitFrequencyOutputModel;
+import com.hust.baseweb.applications.salesroutes.repo.SalesRouteVisitFrequencyRepo;
 import com.hust.baseweb.applications.salesroutes.service.*;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
@@ -36,6 +39,7 @@ public class SalesRouteAPIController {
     private SalesRouteConfigService salesRouteConfigService;
     private SalesRouteConfigRetailOutletService salesRouteConfigRetailOutletService;
     private SalesRoutePlanningPeriodService salesRoutePlanningPeriodService;
+    private SalesRouteVisitFrequencyRepo salesRouteVisitFrequencyRepo;
     private SalesRouteDetailService salesRouteDetailService;
     private UserService userService;
     private SalesmanCheckinHistoryService salesmanCheckinService;
@@ -74,6 +78,11 @@ public class SalesRouteAPIController {
 
         return ResponseEntity.ok().body(salesRouteConfig);
     }
+    @PostMapping("/get-list-sales-route-config")
+    public ResponseEntity<?> getListSalesRouteConfig(Principal prinicpal, @RequestBody GetSalesRouteConfigInputModel input){
+        List<SalesRouteConfig> salesRouteConfigs = salesRouteConfigService.findAll();
+        return ResponseEntity.ok().body(new GetListSalesRouteConfigOutputModel(salesRouteConfigs));
+    }
 
     //@PostMapping("/create-sales-route-config-customer")
     @PostMapping("/create-sales-route-config-retail-outlet")
@@ -96,7 +105,17 @@ public class SalesRouteAPIController {
         SalesRoutePlanningPeriod salesRoutePlanningPeriod = salesRoutePlanningPeriodService.save(input.getFromDate(), input.getToDate(), input.getDescription());
 
         return ResponseEntity.ok().body(salesRoutePlanningPeriod);
+    }
+    @PostMapping("/get-list-sales-route-planning-period")
+    public ResponseEntity<?> getListSalesRoutePlanningPeriod(Principal principal, @RequestBody GetSalesRoutePlanningPeriodInputModel input){
+        List<SalesRoutePlanningPeriod> salesRoutePlanningPeriodList = salesRoutePlanningPeriodService.findAll();
+        return ResponseEntity.ok().body(new GetSalesRoutePlanningPeriodOutputModel(salesRoutePlanningPeriodList));
 
+    }
+    @GetMapping("/get-list-sales-route-visit-frequency")
+    public ResponseEntity<?> getListSalesRouteVisitFrequency(Principal principal){
+        List<SalesRouteVisitFrequency> salesRouteVisitFrequencies = salesRouteVisitFrequencyRepo.findAll();
+        return ResponseEntity.ok().body(new ListSalesRouteVisitFrequencyOutputModel(salesRouteVisitFrequencies));
     }
 
     @PostMapping("/generate-sales-route-detail")

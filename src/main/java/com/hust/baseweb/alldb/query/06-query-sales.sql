@@ -28,6 +28,24 @@ select d.distributor_name from party_relationship as r, user_login as u, party_d
 where role_type_id = 'SALESMAN_SELL_FROM_DISTRIBUTOR' and thru_date is null
 and r.from_party_id = u.party_id and d.party_id = r.to_party_id and u.user_login_id = 'dungpq';
 
+--lay ra danh sach dai li ban le va nhan vien ban hang tuong ung cua mot NPP nao do (bang retail_outlet_salesman_vendor)
+select ro.retail_outlet_name, u.user_login_id, d.distributor_name from retail_outlet_salesman_vendor as rsv, party_salesman as sm, party_retail_outlet as ro, party_distributor as d,
+user_login as u
+where u.party_id = sm.party_id and sm.party_id = rsv.party_salesman_id and ro.party_id = rsv.party_retail_outlet_id and rsv.party_vendor_id = d.party_id
+and d.distributor_code='NPP009';
+
+--lay ra danh sach nha phan phoi va nhan vien ban hang tuong ung cua 1 dai li ban le nao do (bang retail_outlet_salesman_vendor)
+select ro.retail_outlet_name, u.user_login_id, d.distributor_name from retail_outlet_salesman_vendor as rsv, party_salesman as sm, party_retail_outlet as ro, party_distributor as d,
+user_login as u
+where u.party_id = sm.party_id and sm.party_id = rsv.party_salesman_id and ro.party_id = rsv.party_retail_outlet_id and rsv.party_vendor_id = d.party_id
+and ro.retail_outlet_code='DLBL0008';
+
+--lay ra danh sach dai li ban le va nha phan phoi tuong ung cua 1 nhan vien ban hang nao do (bang retail_outlet_salesman_vendor)
+select ro.retail_outlet_name, u.user_login_id, d.distributor_name from retail_outlet_salesman_vendor as rsv, party_salesman as sm, party_retail_outlet as ro, party_distributor as d,
+user_login as u
+where u.party_id = sm.party_id and sm.party_id = rsv.party_salesman_id and ro.party_id = rsv.party_retail_outlet_id and rsv.party_vendor_id = d.party_id
+and u.user_login_id = 'dungpq';
+
 
 --lay danh sach san pham (bang product)
 select * from product;

@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -40,5 +43,14 @@ public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesm
         retailOutletSalesmanVendor = retailOutletSalesmanVendorRepo.save(retailOutletSalesmanVendor);
 
         return retailOutletSalesmanVendor;
+    }
+
+    @Override
+    public List<PartyRetailOutlet> getListRetailOutletOfSalesmanAndDistributor(UUID partySalesmanId, UUID partyDistributorId) {
+        PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
+        PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);
+        List<RetailOutletSalesmanVendor> list = retailOutletSalesmanVendorRepo.findAllByPartySalesmanAndPartyDistributorAndThruDate(partySalesman, partyDistributor,null);
+        List<PartyRetailOutlet> retailOutlets = list.stream().map(i -> i.getPartyRetailOutlet()).collect(Collectors.toList());
+        return retailOutlets;
     }
 }

@@ -95,4 +95,9 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
         return null;
     }
 
+    @Override
+    public List<PartySalesman> findAll() {
+        return partySalesmanRepo.findAll();
+    }
+
 }
