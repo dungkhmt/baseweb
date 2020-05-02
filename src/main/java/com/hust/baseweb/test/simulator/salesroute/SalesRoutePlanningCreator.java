@@ -1,12 +1,16 @@
 package com.hust.baseweb.test.simulator.salesroute;
 
+import com.google.gson.Gson;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
+import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
 import com.hust.baseweb.applications.sales.model.salesman.SalesmanOutputModel;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteVisitFrequency;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.CreateSalesRouteConfigRetailOutletInputModel;
+import com.hust.baseweb.test.simulator.Constants;
 import com.hust.baseweb.test.simulator.HttpPostExecutor;
 import com.hust.baseweb.test.simulator.Login;
 
@@ -25,6 +29,7 @@ public class SalesRoutePlanningCreator {
     private SalesRoutePlanningPeriodManager salesRoutePlanningPeriodManager;
     private SalesRouteVisitFrequencyManager salesRouteVisitFrequencyManager;
     private SalesRouteConfigManager salesRouteConfigManager;
+    private RetailOutletSalesmanDistributorManager retailOutletSalesmanDistributorManager;
 
     Random R = new Random();
 
@@ -53,6 +58,8 @@ public class SalesRoutePlanningCreator {
         salesmanManager = new SalesmanManager(token);
         salesRoutePlanningPeriodManager = new SalesRoutePlanningPeriodManager(token);
         salesRouteVisitFrequencyManager = new SalesRouteVisitFrequencyManager(token);
+        salesRouteConfigManager = new SalesRouteConfigManager(token);
+        retailOutletSalesmanDistributorManager = new RetailOutletSalesmanDistributorManager(token);
 
         List<SalesRoutePlanningPeriod> salesRoutePlanningPeriodList = salesRoutePlanningPeriodManager.getListSalesRoutePlanningPeriods();
         List<SalesmanOutputModel> partySalesmanList = salesmanManager.getListSalesman();
@@ -76,7 +83,7 @@ public class SalesRoutePlanningCreator {
         List<PartyRetailOutlet> partyRetailOutletList = retailOutletManager.getRetailoutletsOfSalesmanAndDistributor(selectedPartySalesman.getPartyId(),
                 selectedPartyDistributor.getPartyId()); //retailOutletManager.getRetailoutlets();
 
-        PartyRetailOutlet selectedPartyRetailOutletId = selectPartyRetailOutlet(partyRetailOutletList);
+        PartyRetailOutlet selectedPartyRetailOutlet = selectPartyRetailOutlet(partyRetailOutletList);
 
         List<SalesRouteVisitFrequency> salesRouteVisitFrequencies = salesRouteVisitFrequencyManager.getListSalesRouteVisitFrequency();
         SalesRouteVisitFrequency visitFrequency = selectVisitFrequency(salesRouteVisitFrequencies);
@@ -94,7 +101,25 @@ public class SalesRoutePlanningCreator {
         for(PartyRetailOutlet ro: partyRetailOutletList){
             System.out.println("RetailOutlet " + ro.getRetailOutletName());
         }
+        RetailOutletSalesmanVendor retailOutletSalesmanVendor = retailOutletSalesmanDistributorManager.getRetailOutletSalesmanDistributor(
+                selectedPartyRetailOutlet.getPartyId(),selectedPartySalesman.getPartyId(), selectedPartyDistributor.getPartyId());
 
+
+
+        CreateSalesRouteConfigRetailOutletInputModel in = new CreateSalesRouteConfigRetailOutletInputModel();
+        in.setRetailOutletSalesmanVendorId(retailOutletSalesmanVendor.getRetailOutletSalesmanVendorId());
+        in.setSalesRouteConfigId(selectedSalesRouteConfig.getSalesRouteConfigId());
+        in.setSalesRoutePlanningPeriodId(selectedSalesRoutePlanningPeriod.getSalesRoutePlanningPeriodId());
+        in.setStartExecuteDate("2020-01-01");
+
+        Gson gson = new Gson();
+        String json = gson.toJson(in);
+
+        try {
+            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-sales-route-config-retail-outlet", json, token);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     public static void main(String[] args){
         SalesRoutePlanningCreator app = new SalesRoutePlanningCreator();

@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.sales.service;
 
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
+import com.hust.baseweb.applications.customer.repo.PartyRetailOutletRepo;
 import com.hust.baseweb.applications.customer.repo.RetailOutletPagingRepo;
 import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
@@ -27,7 +28,7 @@ public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesm
     private PartySalesmanRepo partySalesmanRepo;
     private PartyDistributorRepo partyDistributorRepo;
     private RetailOutletPagingRepo retailOutletRepo;
-
+    private PartyRetailOutletRepo partyRetailOutletRepo;
     @Override
     public RetailOutletSalesmanVendor save(RetailOutletSalesmanDistributorInputModel input) {
         PartySalesman salesman = partySalesmanRepo.findByPartyId(input.getPartySalesmanId());
@@ -52,5 +53,17 @@ public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesm
         List<RetailOutletSalesmanVendor> list = retailOutletSalesmanVendorRepo.findAllByPartySalesmanAndPartyDistributorAndThruDate(partySalesman, partyDistributor,null);
         List<PartyRetailOutlet> retailOutlets = list.stream().map(i -> i.getPartyRetailOutlet()).collect(Collectors.toList());
         return retailOutlets;
+    }
+
+    @Override
+    public RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(UUID partyRetailOutletId, UUID partySalesmanId, UUID partyDistributorId) {
+        PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
+        PartyRetailOutlet partyRetailOutlet = partyRetailOutletRepo.findByPartyId(partyRetailOutletId);
+        PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);
+        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo
+                .findAllByPartySalesmanAndPartyRetailOutletAndPartyDistributorAndThruDate(partySalesman,partyRetailOutlet,partyDistributor,null);
+        if(retailOutletSalesmanVendors != null && retailOutletSalesmanVendors.size() > 0)
+            return retailOutletSalesmanVendors.get(0);
+        return null;
     }
 }

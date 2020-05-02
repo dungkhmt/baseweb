@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface PartyRetailOutletRepo extends JpaRepository<PartyRetailOutlet, UUID> {
     List<PartyRetailOutlet> findAll();
     Page<PartyRetailOutlet> findAll(Pageable page);
-
+    PartyRetailOutlet findByPartyId(UUID partyId);
     List<PartyRetailOutlet> findAllByPartyIdIn(List<UUID> partyIds);
     List<PartyRetailOutlet> findAllByPartyIdNotIn(List<UUID> partyIds);
     Page<PartyRetailOutlet> findAllByPartyIdIn(List<UUID> partyIds, Pageable page);

@@ -13,4 +13,5 @@ import java.util.UUID;
 public interface RetailOutletSalesmanVendorService {
     RetailOutletSalesmanVendor save(RetailOutletSalesmanDistributorInputModel input);
     public List<PartyRetailOutlet> getListRetailOutletOfSalesmanAndDistributor(UUID partySalesmanId, UUID partyDistributorId);
+    public RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(UUID partyRetailOutletId, UUID partySalesmanId, UUID partyDistributorId);
 }

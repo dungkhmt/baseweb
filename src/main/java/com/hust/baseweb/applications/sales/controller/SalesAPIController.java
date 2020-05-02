@@ -48,6 +48,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -161,6 +162,12 @@ public class SalesAPIController {
     public ResponseEntity<?> getListRetailOutletsOfSalesmanAndDistributor(Principal principal, @RequestBody GetListRetailOutletsOfSalesmanAndDistributorInputModel input){
         List<PartyRetailOutlet> partyRetailOutlets = retailOutletSalesmanVendorService.getListRetailOutletOfSalesmanAndDistributor(input.getPartySalesmanId(), input.getPartyDistributorId());
         return ResponseEntity.ok().body(new GetListRetailOutletOutputModel(partyRetailOutlets));
+    }
+    @PostMapping("/get-retail-outlet-salesman-distributor")
+    public ResponseEntity<?> getRetailOutletSalesmanDistributor(Principal principal, @RequestBody RetailOutletSalesmanDistributorInputModel input){
+        RetailOutletSalesmanVendor retailOutletSalesmanVendor = retailOutletSalesmanVendorService.getRetailOutletSalesmanDistributor(
+                input.getPartyRetailOutletId(), input.getPartySalesmanId(), input.getPartyDistributorId());
+        return ResponseEntity.ok().body(retailOutletSalesmanVendor);
     }
 
     @GetMapping("/get-page-retail-outlets-of-user-login-salesman")
