@@ -33,3 +33,4 @@ build/
 .history
 /gg_api_key.txt
 /.ssh/
+*.bat
