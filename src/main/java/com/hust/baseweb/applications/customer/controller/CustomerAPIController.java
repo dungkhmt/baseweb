@@ -67,11 +67,19 @@ public class CustomerAPIController {
         Page<PartyDistributor> distributors = distributorRepo.findAll(page);
         return ResponseEntity.ok().body(distributors);
     }
+
     @GetMapping(path="/distributor/{partyDistributorId}")
     public ResponseEntity<?> getDetailDistributor(Principal principal, @PathVariable UUID partyDistributorId){
         log.info("getDetailDistributor, partyDistributorId = " + partyDistributorId);
         DetailDistributorModel detailDistributorModel = distributorService.getDistributorDetail(partyDistributorId);
         return ResponseEntity.ok().body(detailDistributorModel);
+    }
+
+    @GetMapping(path="/retailoutlet/{partyRetailOutletId}")
+    public ResponseEntity<?> getDetailRetailOutlet(Principal principal, @PathVariable UUID partyRetailOutletId){
+        log.info("getDetailRetailOutlet, partyRetailOutletId = " + partyRetailOutletId);
+        DetailRetailOutletModel detailRetailOutletModel = retailOutletService.getRetailOutletDetail(partyRetailOutletId);
+        return ResponseEntity.ok().body(detailRetailOutletModel);
     }
 
     @PostMapping("/get-distributors-of-user-login")
@@ -148,6 +156,13 @@ public class CustomerAPIController {
     public ResponseEntity<?> getRetailOutletCandidates(Principal principal, @PathVariable("Id") String Id){
         log.info("getRetailOutletCandidates");
         List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.getRetailOutletCandidates(UUID.fromString(Id));
+        return ResponseEntity.ok().body(partyRetailOutletList);
+    }
+
+    @GetMapping("/get-distributor-candidates/{Id}")
+    public ResponseEntity<?> getDistributorCandidates(Principal principal, @PathVariable("Id") String Id){
+        log.info("getDistributorCandidates");
+        List<PartyDistributor> partyRetailOutletList = distributorService.getDistributorCandidates(UUID.fromString(Id));
         return ResponseEntity.ok().body(partyRetailOutletList);
     }
 }

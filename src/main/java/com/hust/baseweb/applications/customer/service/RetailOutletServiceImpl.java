@@ -4,7 +4,7 @@ import com.hust.baseweb.applications.customer.entity.PartyContactMechPurpose;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.CreateRetailOutletInputModel;
-import com.hust.baseweb.applications.customer.model.DetailDistributorModel;
+import com.hust.baseweb.applications.customer.model.DetailRetailOutletModel;
 import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
 import com.hust.baseweb.applications.customer.repo.PartyRetailOutletRepo;
@@ -136,9 +136,28 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
     }
 
     @Override
+    public DetailRetailOutletModel getRetailOutletDetail(UUID partyRetailOutletId) {
+        PartyRetailOutlet partyRetailOutlet = retailOutletRepo.findByPartyId(partyRetailOutletId);
+        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyRetailOutletAndThruDate(partyRetailOutlet, null);
+
+        DetailRetailOutletModel detailRetailOutletModel = new DetailRetailOutletModel();
+
+        detailRetailOutletModel.setPartyRetailOutletId(partyRetailOutlet.getPartyId());
+        detailRetailOutletModel.setRetailOutletCode(partyRetailOutlet.getRetailOutletCode());
+        detailRetailOutletModel.setRetailOutletName(partyRetailOutlet.getRetailOutletName());
+
+        List<RetailOutletSalesmanDistributorModel> retailOutletSalesmanDistributorModels =
+                retailOutletSalesmanVendors.stream().map(o -> new RetailOutletSalesmanDistributorModel(o)).collect(Collectors.toList());
+
+        detailRetailOutletModel.setRetailOutletSalesmanDistributorModels(retailOutletSalesmanDistributorModels);
+
+        return detailRetailOutletModel;
+    }
+
+    @Override
     public List<PartyRetailOutlet> getRetailOutletCandidates(UUID partyDistributorId) {
         /**
-         * Return all retail oulet have not connected with distributor yet
+         * Return all retail oulet have not been connected with distributor yet
          */
 
         PartyDistributor partyDistributor = distributorRepo.findByPartyId(partyDistributorId);

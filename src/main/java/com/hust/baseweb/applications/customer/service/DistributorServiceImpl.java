@@ -2,10 +2,12 @@ package com.hust.baseweb.applications.customer.service;
 
 import com.hust.baseweb.applications.customer.entity.PartyContactMechPurpose;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
+import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.CreateDistributorInputModel;
 import com.hust.baseweb.applications.customer.model.DetailDistributorModel;
 import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
+import com.hust.baseweb.applications.customer.repo.PartyRetailOutletRepo;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
@@ -43,6 +45,7 @@ public class DistributorServiceImpl implements DistributorService {
     private PartyContactMechPurposeRepo partyContactMechPurposeRepo;
     private DistributorRepo distributorRepo;
     private RetailOutletSalesmanVendorRepo retailOutletSalesmanVendorRepo;
+    private PartyRetailOutletRepo partyRetailOutletRepo;
 
     @Override
     @Transactional
@@ -152,5 +155,28 @@ public class DistributorServiceImpl implements DistributorService {
         return detailDistributorModel;
     }
 
+    @Override
+    public List<PartyDistributor> getDistributorCandidates(UUID partyRetailOutletId) {
+        /**
+         * Return all distributor have not connected with retail outlet yet
+         */
+
+        PartyRetailOutlet partyRetailOutlet = partyRetailOutletRepo.findByPartyId(partyRetailOutletId);
+        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyRetailOutletAndThruDate(partyRetailOutlet, null);
+        List<UUID> distributors = new ArrayList<>();
+        List<PartyDistributor> distributorList;
+
+        for(RetailOutletSalesmanVendor rosv: retailOutletSalesmanVendors) {
+            distributors.add(rosv.getPartyDistributor().getPartyId());
+        }
+
+        if (0 == distributors.size()) {
+            distributorList = distributorRepo.findAll();
+        } else {
+            distributorList = distributorRepo.findAllByPartyIdNotIn(distributors);
+        }
+
+        return distributorList;
+    }
 
 }

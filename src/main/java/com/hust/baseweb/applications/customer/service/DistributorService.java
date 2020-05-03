@@ -20,4 +20,5 @@ public interface DistributorService {
     Page<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds, Pageable page);
 
     DetailDistributorModel getDistributorDetail(UUID partyDistributorId);
+    List<PartyDistributor> getDistributorCandidates(UUID partyRetailOutletId);
 }

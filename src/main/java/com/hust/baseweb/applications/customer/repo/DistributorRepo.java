@@ -14,5 +14,6 @@ public interface DistributorRepo extends PagingAndSortingRepository<PartyDistrib
     PartyDistributor findByPartyId(UUID partyId);
     List<PartyDistributor> findByPartyType(PartyType partyType);
     List<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds);
+    List<PartyDistributor> findAllByPartyIdNotIn(List<UUID> partyIds);
     Page<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds, Pageable page);
 }

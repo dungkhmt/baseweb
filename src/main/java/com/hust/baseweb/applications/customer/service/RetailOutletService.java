@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.customer.service;
 
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.CreateRetailOutletInputModel;
+import com.hust.baseweb.applications.customer.model.DetailRetailOutletModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,5 +19,6 @@ public interface RetailOutletService {
     List<PartyRetailOutlet> findByPartyIdIn(List<UUID> partyIds);
     Page<PartyRetailOutlet> findByPartyIdIn(List<UUID> partyIds, Pageable page);
 
+    DetailRetailOutletModel getRetailOutletDetail(UUID partyRetailOutletId);
     List<PartyRetailOutlet> getRetailOutletCandidates(UUID partyDistributorId);
 }
