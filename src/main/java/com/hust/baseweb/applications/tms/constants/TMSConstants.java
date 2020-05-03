@@ -8,4 +8,6 @@ public class TMSConstants {
     public static final String SHIPMENT_ITEM_DELIVERED = "SHIPMENT_ITEM_DELIVERED";
     public static final String SHIPMENT_ITEM_NOT_DELIVERED = "SHIPMENT_ITEM_NOT_DELIVERED";
     public static final String SHIPMENT_ITEM_CANCELLED = "SHIPMENT_ITEM_CANCELLED";
+    public static final String DELIVERY_TRIP_CREATED = "DELIVERY_TRIP_CREATED";
+
 }

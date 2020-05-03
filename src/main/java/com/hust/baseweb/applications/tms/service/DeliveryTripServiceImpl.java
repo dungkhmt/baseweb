@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
+import com.hust.baseweb.applications.tms.constants.TMSConstants;
 import com.hust.baseweb.applications.tms.entity.*;
 import com.hust.baseweb.applications.tms.entity.status.DeliveryTripDetailStatus;
 import com.hust.baseweb.applications.tms.entity.status.DeliveryTripStatus;
@@ -229,10 +230,10 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         PartyDriver partyDriver = partyDriverRepo.findByPartyId(userLogin.getParty().getPartyId());
 
         //StatusItem statusItem = statusItemRepo.findByStatusId("APPROVED_TRIP");
-        StatusItem statusItem = statusItemRepo.findByStatusId("DELIVERY_TRIP_APPROVED_TRIP");
+        //StatusItem statusItem = statusItemRepo.findByStatusId("DELIVERY_TRIP_APPROVED_TRIP");
 
-        //List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findByPartyDriver(partyDriver);
-        List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findByPartyDriverAndStatusItem(partyDriver, statusItem);
+        List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findAllByPartyDriver(partyDriver);
+        //List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findByPartyDriverAndStatusItem(partyDriver, statusItem);
 
         log.info("getDeliveryTripAssignedToDriver, got deliveryTrips.sz = " + deliveryTrips.size());
 
@@ -240,6 +241,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         HashMap<String, Product> mID2Product = new HashMap<>();
         for (int i = 0; i < deliveryTrips.size(); i++) {
             DeliveryTrip deliveryTrip = deliveryTrips.get(i);
+            if(deliveryTrip.getStatusItem().getStatusId().equals(TMSConstants.DELIVERY_TRIP_CREATED)) continue;
+
             UUID deliveryTripId = deliveryTrip.getDeliveryTripId();
             String vehicleId = deliveryTrip.getVehicle().getVehicleId();
             UUID driverPartyId = deliveryTrip.getPartyDriver().getPartyId();
