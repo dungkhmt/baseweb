@@ -12,9 +12,29 @@ public class Test {
         a.add(new BigDecimal(456));
         System.out.println(a);
     }
-
+    public static void proc(int[] a, int n){
+        for(int k = 2; k <= n; k++){
+            int last = a[k];
+            int j = k;
+            while(j > 1 && a[j-1] > last){
+                a[j] = a[j-1]; j--;
+            }
+            a[j] = last;
+        }
+    }
+    public static int f(int n){
+        if(n <= 1) return 1;
+        if(n % 2 == 1) return 2*f(n-1) + f(n-2);
+        else return f(n-1) + 2*f(n-2);
+    }
     public static void main(String[] args) {
+        System.out.println(f(4));
+        if(true) return;
 
+        int[] a = {0,4,2,6,3,5,1};
+        proc(a,6);
+        for(int i = 1; i <= 6; i++) System.out.print(a[i] + " ");
+        if(true) return;
 
         Test.Test1();
         if (true) {
@@ -44,7 +64,7 @@ public class Test {
             System.out.println("Connected to PostgreSQL database!");
             Statement statement = connection.createStatement();
 
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM public.track_locations");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM track_locations");
             while (resultSet.next()) {
                 System.out.printf("%-30.30s  %-30.30s%n", resultSet.getString("party_id"), resultSet.getString("location"));
             }
