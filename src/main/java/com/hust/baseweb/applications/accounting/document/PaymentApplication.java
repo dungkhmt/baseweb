@@ -1,14 +1,15 @@
 package com.hust.baseweb.applications.accounting.document;
 
+import com.hust.baseweb.utils.Constant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import javax.persistence.Id;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * @author Hien Hoang (hienhoang2702@gmail.com)
@@ -19,8 +20,8 @@ import java.util.UUID;
 @Setter
 @Document
 public class PaymentApplication {
-    @Id
-    private UUID paymentApplicationId; // uuid not null default uuid_generate_v1(),
+    @MongoId
+    private ObjectId paymentApplicationId;
     private String paymentId;             // varchar(60),
     private String invoiceId;             // varchar(60),
     private Double amountApplied;         // decimal(18, 2),
@@ -28,4 +29,29 @@ public class PaymentApplication {
     private Date effectiveDate;         // timestamp,
     private Date lastUpdatedStamp;     // timestamp,
     private Date createdStamp;          // timestamp     default current_timestamp,
+
+    public Model toModel() {
+        return new Model(
+                paymentApplicationId.toString(),
+                paymentId,
+                invoiceId,
+                amountApplied,
+                currencyUomId,
+                Constant.DATE_FORMAT.format(effectiveDate)
+        );
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class Model {
+        private String paymentApplicationId; // uuid not null default uuid_generate_v1(),
+        private String paymentId;             // varchar(60),
+        private String invoiceId;             // varchar(60),
+        private Double amountApplied;         // decimal(18, 2),
+        private String currencyUomId;        // varchar(60),
+        private String effectiveDate;         // timestamp,
+    }
+
 }

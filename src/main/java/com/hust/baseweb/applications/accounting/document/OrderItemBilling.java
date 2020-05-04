@@ -22,6 +22,7 @@ public class OrderItemBilling {
     private Id id;
     private Integer quantity;            // int,
     private Double amount;              // decimal(18, 2),
+    private String currencyUomId;
     private Date lastUpdatedStamp;  // TIMESTAMP,
     private Date createdStamp;       // TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
