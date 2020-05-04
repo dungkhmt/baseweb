@@ -12,13 +12,13 @@ services:
           - '80:80'
         volumes:
           - /var/run/docker.sock:/tmp/docker.sock:ro
-    baseweb:
-        container_name: baseweb
-        image: baseweb:latest
+    dms:
+        container_name: dms 
+        image: dms:latest
         expose:
         - "8080"
         environment:
-          POSTGRES_DB: ${PG_DATABASE:-baseweb}
+          POSTGRES_DB: ${PG_DATABASE:-dms}
           POSTGRES_PASSWORD: ${PG_PASSWORD:-root}
           POSTGRES_USER: ${PG_USER:-root}
         links:
@@ -42,3 +42,11 @@ services:
         restart: on-failure
         volumes:
           - baseweb_data:/var/lib/postgresql/data
+
+    mongodb:
+        container_name: mongodb
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        volumes:
+          - baseweb_data:/var/lib/mongodb/data
