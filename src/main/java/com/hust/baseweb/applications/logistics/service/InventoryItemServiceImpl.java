@@ -205,7 +205,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
             InvoiceItem invoiceItem = new InvoiceItem(new InvoiceItem.Id(invoice.getInvoiceId(), i + ""),
                     InvoiceItemType.SALES_INVOICE_PRODUCT_ITEM,
-                    productPriceMap.getOrDefault(productId, new ProductPrice()).getPrice() * quantity,
+                    productPriceMap.get(productId).getPrice() * quantity,
                     "CUR_vnd",
                     now,
                     now);
