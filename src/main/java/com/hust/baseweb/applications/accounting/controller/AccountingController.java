@@ -41,6 +41,11 @@ public class AccountingController {
         return ResponseEntity.ok(invoiceService.getAllInvoice());
     }
 
+    @GetMapping("/get-invoice-by-id/{invoiceId}")
+    public ResponseEntity<Invoice.Model> getInvoiceById(@PathVariable String invoiceId) {
+        return ResponseEntity.ok(invoiceService.getInvoice(invoiceId));
+    }
+
     @GetMapping("/get-all-invoice-item-by-invoice-id/{invoiceId}")
     public ResponseEntity<List<InvoiceItem.Model>> getAllInvoiceItemByInvoiceId(@PathVariable String invoiceId) {
         return ResponseEntity.ok(invoiceItemService.findByInvoiceId(invoiceId));
