@@ -424,6 +424,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         }
 
         return orderItems.stream()
+                .filter(orderItem -> orderItemInventoryQuantityMap.get(orderItem) > 0)
                 .map(orderItem -> orderItem.toOrderItemModel(
                         exportedQuantityCounter.getOrDefault(orderItem.getOrderItemSeqId(), 0),
                         orderItemInventoryQuantityMap.get(orderItem)))
