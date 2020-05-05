@@ -5,11 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Id;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -34,22 +35,22 @@ public class Payment {
     private Date lastUpdatedStamp; // timestamp,
     private Date createdStamp;      // timestamp default current_timestamp,
 
+    public static String convertSequenceIdToPaymentId(Long id) {
+        return "PAY" + String.format("%010d", id);
+    }
+
     public Model toModel() {
         return new Model(
                 paymentId,
                 paymentType.toString(),
                 paymentMethod.toString(),
-                fromCustomerId.toString(),
-                toVendorId.toString(),
+                Optional.ofNullable(fromCustomerId).map(UUID::toString).orElse(null),
+                Optional.ofNullable(toVendorId).map(UUID::toString).orElse(null),
                 amount,
                 currencyUomId,
                 Constant.DATE_FORMAT.format(effectiveDate),
                 statusId
         );
-    }
-
-    public static String convertSequenceIdToPaymentId(Long id) {
-        return "PAY" + String.format("%010d", id);
     }
 
     @AllArgsConstructor

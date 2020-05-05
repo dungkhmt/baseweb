@@ -10,9 +10,9 @@ public enum PaymentType {
     CUSTOMER_PAYMENT("Khách hàng thanh toán"),
     COMPANY_PAYMENT("Công ty thanh toán");
 
+    private String description;
+
     PaymentType(String description) {
         this.description = description;
     }
-
-    private String description;
 }

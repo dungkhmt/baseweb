@@ -10,9 +10,9 @@ public enum PaymentMethod {
     CASH("Tiền mặt"),
     BANK("Chuyển khoản");
 
+    private String description;
+
     PaymentMethod(String description) {
         this.description = description;
     }
-
-    private String description;
 }

@@ -9,9 +9,9 @@ import lombok.Getter;
 public enum InvoiceType {
     SALES_INVOICE("Hoá đơn bán hàng");
 
+    private String description;
+
     InvoiceType(String description) {
         this.description = description;
     }
-
-    private String description;
 }

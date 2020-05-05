@@ -20,22 +20,13 @@ import java.util.Date;
 @Document
 public class InvoiceItem {
 
-    @javax.persistence.Id
+    @org.springframework.data.annotation.Id
     private Id id;
     private InvoiceItemType invoiceItemType; // varchar(60),
     private Double amount;               // decimal(18, 2),
     private String currencyUomId;      // varchar(60),
     private Date lastUpdatedStamp;   // TIMESTAMP,
     private Date createdStamp;        // TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    public static class Id {
-        private String invoiceId;           // varchar(60),
-        private String invoiceItemSeqId;  // varchar(60),
-    }
 
     public Model toModel(Invoice invoice, Product product) {
         return new Model(
@@ -48,6 +39,15 @@ public class InvoiceItem {
                 product.getProductId(),
                 product.getProductName()
         );
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class Id {
+        private String invoiceId;           // varchar(60),
+        private String invoiceItemSeqId;  // varchar(60),
     }
 
     @AllArgsConstructor

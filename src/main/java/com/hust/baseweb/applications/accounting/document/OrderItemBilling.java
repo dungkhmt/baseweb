@@ -18,7 +18,7 @@ import java.util.Date;
 @Document
 public class OrderItemBilling {
 
-    @javax.persistence.Id
+    @org.springframework.data.annotation.Id
     private Id id;
     private Integer quantity;            // int,
     private Double amount;              // decimal(18, 2),
