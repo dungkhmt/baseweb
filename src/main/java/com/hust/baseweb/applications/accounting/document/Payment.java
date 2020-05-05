@@ -48,6 +48,10 @@ public class Payment {
         );
     }
 
+    public static String convertSequenceIdToPaymentId(Long id) {
+        return "PAY" + String.format("%010d", id);
+    }
+
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter

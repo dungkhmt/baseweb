@@ -61,6 +61,8 @@ INSERT INTO status_type (status_type_id, parent_type_id, description, last_updat
 VALUES ('MARRY_STATUS', NULL, 'Marry status', NOW(), NOW());
 INSERT INTO status_type (status_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
 VALUES ('SERVICE_STATUS', NULL, 'Service status', NOW(), NOW());
+INSERT INTO status_type (status_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
+VALUES ('INVOICE_STATUS', NULL, 'invoice Status', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp)
 VALUES ('SINGLE', 'MARRY_STATUS', 'SINGLE', 0, 'Độc thân', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp)

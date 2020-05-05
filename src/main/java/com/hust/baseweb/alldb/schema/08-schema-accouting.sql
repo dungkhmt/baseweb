@@ -135,3 +135,13 @@ create table payment_application
     constraint fk_payment_application_currency_uom_id foreign key (currency_uom_id) references uom (uom_id),
     constraint fk_payment_application_invoice_id foreign key (invoice_id) references invoice (invoice_id)
 );
+
+create table invoice_sequence_id
+(
+    id SERIAL PRIMARY KEY NOT NULL
+);
+
+create table payment_sequence_id
+(
+    id SERIAL PRIMARY KEY NOT NULL
+);

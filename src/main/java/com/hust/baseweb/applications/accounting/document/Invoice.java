@@ -46,6 +46,10 @@ public class Invoice {
         );
     }
 
+    public static String convertSequenceIdToInvoiceId(Long id) {
+        return "INV" + String.format("%010d", id);
+    }
+
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter

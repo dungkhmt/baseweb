@@ -11,4 +11,7 @@ public interface InvoiceService {
 
     List<Invoice.Model> getAllInvoice();
 
+    Invoice save(Invoice invoice);
+
+    List<Invoice> saveAll(List<Invoice> invoices);
 }

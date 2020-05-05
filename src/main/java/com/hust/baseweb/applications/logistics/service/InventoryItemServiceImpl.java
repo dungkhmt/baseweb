@@ -1,5 +1,9 @@
 package com.hust.baseweb.applications.logistics.service;
 
+import com.hust.baseweb.applications.accounting.document.*;
+import com.hust.baseweb.applications.accounting.repo.InvoiceItemRepo;
+import com.hust.baseweb.applications.accounting.repo.OrderItemBillingRepo;
+import com.hust.baseweb.applications.accounting.service.InvoiceService;
 import com.hust.baseweb.applications.logistics.entity.*;
 import com.hust.baseweb.applications.logistics.model.ExportInventoryItemInputModel;
 import com.hust.baseweb.applications.logistics.model.ExportInventoryItemsInputModel;
@@ -59,6 +63,13 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     private StatusItemRepo statusItemRepo;
     private ShipmentItemStatusRepo shipmentItemStatusRepo;
 
+    private ProductPriceRepo productPriceRepo;
+
+    private InvoiceService invoiceService;
+    private InvoiceItemRepo invoiceItemRepo;
+    private OrderItemBillingRepo orderItemBillingRepo;
+
+
     @Override
     @Transactional
     public InventoryItem importInventoryItem(ImportInventoryItemInputModel input) {
@@ -98,6 +109,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @Override
     @Transactional
+    @org.springframework.transaction.annotation.Transactional
     public String exportInventoryItems(ExportInventoryItemsInputModel inventoryItemsInput) {
         Date now = new Date();
 
@@ -124,6 +136,12 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         List<ShipmentItem> shipmentItems = new ArrayList<>();
         StatusItem statusItem = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
                 .orElseThrow(NoSuchElementException::new);
+
+        Map<String, ProductPrice> productPriceMap = buildProductPriceMap(queryProducts);
+
+        Invoice invoice = createInvoice(now);
+        List<InvoiceItem> invoiceItems = new ArrayList<>();
+        List<OrderItemBilling> orderItemBillings = new ArrayList<>();
 
         for (int i = 0; i < inventoryItemsInput.getInventoryItems().length; i++) {
             ExportInventoryItemInputModel exportModel = inventoryItemsInput.getInventoryItems()[i];
@@ -184,6 +202,22 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             }
 
             productFacilityMap.get(Arrays.asList(facilityId, productId)).setLastInventoryCount(Math.max(totalCount, 0));
+
+            InvoiceItem invoiceItem = new InvoiceItem(new InvoiceItem.Id(invoice.getInvoiceId(), i + ""),
+                    InvoiceItemType.SALES_INVOICE_PRODUCT_ITEM,
+                    productPriceMap.getOrDefault(productId, new ProductPrice()).getPrice() * quantity,
+                    "CUR_vnd",
+                    now,
+                    now);
+            invoiceItems.add(invoiceItem);
+
+            OrderItemBilling orderItemBilling = new OrderItemBilling(new OrderItemBilling.Id(orderItem.getOrderId(),
+                    orderItem.getOrderItemSeqId(),
+                    invoice.getInvoiceId(),
+                    invoiceItem.getId().getInvoiceItemSeqId()),
+                    quantity,
+                    invoiceItem.getAmount(), "CUR_vnd", now, now);
+            orderItemBillings.add(orderItemBilling);
         }
 
         shipmentItems = shipmentItemRepo.saveAll(shipmentItems);
@@ -200,7 +234,30 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         inventoryItemDetailRepo.saveAll(inventoryItemDetails);   // save export history
         productFacilityRepo.saveAll(productFacilityMap.values());   // update inventory
 
+        invoiceItemRepo.saveAll(invoiceItems);
+        orderItemBillingRepo.saveAll(orderItemBillings);
+
         return "ok";
+    }
+
+    private Invoice createInvoice(Date createDate) {
+        return invoiceService.save(new Invoice(null,
+                InvoiceType.SALES_INVOICE,
+                "INVOICE_CREATED",
+                createDate,
+                null,
+                null,
+                0.0,
+                "CUR_vnd",
+                createDate,
+                createDate));
+    }
+
+    @NotNull
+    private Map<String, ProductPrice> buildProductPriceMap(List<Product> products) {
+        return productPriceRepo.findAllByProductInAndThruDateNull(products)
+                .stream()
+                .collect(Collectors.toMap(productPrice -> productPrice.getProduct().getProductId(), p -> p));
     }
 
     @NotNull
