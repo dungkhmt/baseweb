@@ -5,7 +5,6 @@ import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductPrice;
 import com.hust.baseweb.applications.logistics.model.*;
 import com.hust.baseweb.applications.logistics.model.product.GetProductPriceInputModel;
-import com.hust.baseweb.applications.logistics.model.product.SaleReportModel;
 import com.hust.baseweb.applications.logistics.model.product.SetProductPriceInputModel;
 import com.hust.baseweb.applications.logistics.service.FacilityService;
 import com.hust.baseweb.applications.logistics.service.ProductPriceService;
@@ -49,15 +48,17 @@ public class LogisticsAPIController {
     }
 
     @PostMapping("/get-list-facility")
-    public ResponseEntity getListFacilities(Principal principal, @RequestBody GetListFacilityInputModel input) {
+    public ResponseEntity<GetListFacilityOutputModel> getListFacilities(Principal principal,
+                                                                        @RequestBody GetListFacilityInputModel input) {
         // TODO
         List<Facility> facilities = facilityService.getAllFacilities();
         return ResponseEntity.ok().body(new GetListFacilityOutputModel(facilities));
     }
 
     @PostMapping("/get-list-product")
-    public ResponseEntity getListProducts(Principal principal, @RequestBody GetListProductInputModel input) {
-    	log.info("getListProducts...");
+    public ResponseEntity<GetListProductOutputModel> getListProducts(Principal principal,
+                                                                     @RequestBody GetListProductInputModel input) {
+        log.info("getListProducts...");
         // TODO
         List<Product> products = productService.getAllProducts();
         //List<Product> sel_prod = new ArrayList<Product>();

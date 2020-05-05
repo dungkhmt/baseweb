@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.accounting.repo.PaymentRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Transactional
 public class PaymentApplicationServiceImpl implements PaymentApplicationService {
 
     private PaymentApplicationRepo paymentApplicationRepo;

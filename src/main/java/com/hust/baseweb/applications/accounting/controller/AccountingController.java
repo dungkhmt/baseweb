@@ -43,7 +43,7 @@ public class AccountingController {
 
     @GetMapping("/get-all-invoice-item-by-invoice-id/{invoiceId}")
     public ResponseEntity<List<InvoiceItem.Model>> getAllInvoiceItemByInvoiceId(@PathVariable String invoiceId) {
-        return ResponseEntity.ok(invoiceItemService.findByInInvoiceId(invoiceId));
+        return ResponseEntity.ok(invoiceItemService.findByInvoiceId(invoiceId));
     }
 
     @GetMapping("/get-all-payment-by-invoice-id/{invoiceId}")

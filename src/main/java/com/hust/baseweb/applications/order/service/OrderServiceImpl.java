@@ -13,7 +13,10 @@ import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.service.ProductPriceService;
 import com.hust.baseweb.applications.order.controller.OrderAPIController;
 import com.hust.baseweb.applications.order.entity.*;
-import com.hust.baseweb.applications.order.model.*;
+import com.hust.baseweb.applications.order.model.CreateOrderDistributor2RetailOutletInputModel;
+import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
+import com.hust.baseweb.applications.order.model.OrderDetailView;
+import com.hust.baseweb.applications.order.model.OrderItemDetailView;
 import com.hust.baseweb.applications.order.repo.*;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
@@ -23,7 +26,6 @@ import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
 import com.hust.baseweb.utils.CommonUtils;
-import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.DateTimeUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
+@Transactional
 public class OrderServiceImpl implements OrderService {
     public static final String module = OrderServiceImpl.class.getName();
 

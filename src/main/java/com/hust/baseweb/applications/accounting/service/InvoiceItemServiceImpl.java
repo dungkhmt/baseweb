@@ -13,6 +13,7 @@ import com.hust.baseweb.applications.order.repo.OrderItemRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Transactional
 public class InvoiceItemServiceImpl implements InvoiceItemService {
 
     private InvoiceRepo invoiceRepo;
@@ -33,7 +35,7 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
     private OrderItemRepo orderItemRepo;
 
     @Override
-    public List<InvoiceItem.Model> findByInInvoiceId(String invoiceId) {
+    public List<InvoiceItem.Model> findByInvoiceId(String invoiceId) {
         Invoice invoice = invoiceRepo.findById(invoiceId).orElseThrow(NoSuchElementException::new);
 
         List<InvoiceItem> invoiceItems = invoiceItemRepo.findAllById_InvoiceId(invoiceId);

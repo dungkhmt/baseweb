@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Transactional
 public class TransportServiceImpl implements TransportService {
 
     private TransportCustomerRepo transportCustomerRepo;
@@ -39,7 +40,6 @@ public class TransportServiceImpl implements TransportService {
     private TransportFacilityRepo transportFacilityRepo;
 
     @Override
-    @Transactional
     public void updateTransportDeliveryTripDetailOnCompleted(DeliveryTripDetail... deliveryTripDetails) {
         List<DeliveryTripDetail> deliveryTripDetailList = Arrays.stream(deliveryTripDetails)
                 .filter(deliveryTripDetail -> deliveryTripDetail.getStatusItem().getStatusId()

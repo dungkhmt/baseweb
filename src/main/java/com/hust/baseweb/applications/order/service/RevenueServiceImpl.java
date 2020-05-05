@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.order.service;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductPrice;
 import com.hust.baseweb.applications.logistics.repo.ProductPriceRepo;
@@ -16,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Transactional
 public class RevenueServiceImpl implements RevenueService {
 
     private ProductRevenueRepo productRevenueRepo;
