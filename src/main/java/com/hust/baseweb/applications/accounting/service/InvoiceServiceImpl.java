@@ -36,18 +36,24 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Invoice save(Invoice invoice) {
-        InvoiceSequenceId id = invoiceSequenceIdRepo.save(new InvoiceSequenceId());
-        invoice.setInvoiceId(Invoice.convertSequenceIdToInvoiceId(id.getId()));
+        if (invoice.getInvoiceId() == null) {
+            InvoiceSequenceId id = invoiceSequenceIdRepo.save(new InvoiceSequenceId());
+            invoice.setInvoiceId(Invoice.convertSequenceIdToInvoiceId(id.getId()));
+        }
         return invoiceRepo.save(invoice);
     }
 
     @Override
     public List<Invoice> saveAll(List<Invoice> invoices) {
-        List<InvoiceSequenceId> ids = invoiceSequenceIdRepo.saveAll(invoices.stream()
-                .map(invoice -> new InvoiceSequenceId())
-                .collect(Collectors.toList()));
-        for (int i = 0; i < invoices.size(); i++) {
-            invoices.get(i).setInvoiceId(Invoice.convertSequenceIdToInvoiceId(ids.get(i).getId()));
+        List<Invoice> newInvoices = invoices.stream()
+                .filter(invoice -> invoice.getInvoiceId() == null).collect(Collectors.toList());
+        if (!newInvoices.isEmpty()) {
+            List<InvoiceSequenceId> ids = invoiceSequenceIdRepo.saveAll(newInvoices.stream()
+                    .map(invoice -> new InvoiceSequenceId())
+                    .collect(Collectors.toList()));
+            for (int i = 0; i < newInvoices.size(); i++) {
+                invoices.get(i).setInvoiceId(Invoice.convertSequenceIdToInvoiceId(ids.get(i).getId()));
+            }
         }
         return invoiceRepo.saveAll(invoices);
     }

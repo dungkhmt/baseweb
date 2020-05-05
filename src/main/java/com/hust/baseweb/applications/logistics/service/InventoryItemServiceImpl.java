@@ -234,8 +234,11 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         inventoryItemDetailRepo.saveAll(inventoryItemDetails);   // save export history
         productFacilityRepo.saveAll(productFacilityMap.values());   // update inventory
 
-        invoiceItemRepo.saveAll(invoiceItems);
-        orderItemBillingRepo.saveAll(orderItemBillings);
+        invoiceItemRepo.saveAll(invoiceItems); // new
+        orderItemBillingRepo.saveAll(orderItemBillings); // new
+
+        invoice.setAmount(invoiceItems.stream().mapToDouble(InvoiceItem::getAmount).sum()); // update total amount
+        invoiceService.save(invoice);
 
         return "ok";
     }
