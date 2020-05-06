@@ -30,6 +30,7 @@ public class Invoice {
     private UUID toPartyCustomerId; // uuid,
     private UUID fromVendorId;       // uuid,
     private Double amount;               // decimal(18, 2),
+    private Double paidAmount;
     private String currencyUomId;      // varchar(60),
     private Date lastUpdatedStamp;   // TIMESTAMP,
     private Date createdStamp;        // TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -47,6 +48,7 @@ public class Invoice {
                 Optional.ofNullable(toPartyCustomerId).map(UUID::toString).orElse(null),
                 Optional.ofNullable(fromVendorId).map(UUID::toString).orElse(null),
                 amount,
+                paidAmount,
                 currencyUomId
         );
     }
@@ -63,6 +65,7 @@ public class Invoice {
         private String toPartyCustomerId; // uuid,
         private String fromVendorId;       // uuid,
         private Double amount;               // decimal(18, 2),
+        private Double paidAmount;               // decimal(18, 2),
         private String currencyUomId;      // varchar(60),
     }
 }

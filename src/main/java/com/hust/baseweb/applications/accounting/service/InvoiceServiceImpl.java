@@ -30,6 +30,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public List<Invoice.Model> getAllUnpaidInvoices() {
+        return invoiceRepo.findAllByAmountNotEqualWithPaidAmount()
+                .stream()
+                .map(Invoice::toModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Invoice.Model getInvoice(String invoiceId) {
         return invoiceRepo.findById(invoiceId).orElseThrow(NoSuchElementException::new).toModel();
     }

@@ -67,4 +67,9 @@ public class AccountingController {
     public ResponseEntity<Payment.ApplicationModel> getPaymentDetailByPaymentId(@PathVariable String paymentId) {
         return ResponseEntity.ok(paymentApplicationService.findAllByPaymentId(paymentId));
     }
+
+    @GetMapping("/get-all-unpaid-invoices")
+    public ResponseEntity<List<Invoice.Model>> getAllUnpaidInvoices() {
+        return ResponseEntity.ok(invoiceService.getAllUnpaidInvoices());
+    }
 }

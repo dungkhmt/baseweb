@@ -11,6 +11,8 @@ public interface InvoiceService {
 
     List<Invoice.Model> getAllInvoice();
 
+    List<Invoice.Model> getAllUnpaidInvoices();
+
     Invoice.Model getInvoice(String invoiceId);
 
     Invoice save(Invoice invoice);

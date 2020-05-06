@@ -251,6 +251,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                 null,
                 null,
                 0.0,
+                0.0,
                 "CUR_vnd",
                 createDate,
                 createDate));

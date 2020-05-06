@@ -29,6 +29,7 @@ public class Payment {
     private UUID fromCustomerId;      // uuid,
     private UUID toVendorId;        // uuid,
     private Double amount;             // decimal(18, 2),
+    private Double appliedAmount;         // decimal(18, 2),
     private String currencyUomId;    // varchar(60),
     private Date effectiveDate;     // timestamp,
     private StatusItem statusId;          // varchar(60),
@@ -47,6 +48,7 @@ public class Payment {
                 Optional.ofNullable(fromCustomerId).map(UUID::toString).orElse(null),
                 Optional.ofNullable(toVendorId).map(UUID::toString).orElse(null),
                 amount,
+                appliedAmount,
                 currencyUomId,
                 Constant.DATE_FORMAT.format(effectiveDate),
                 statusId.toString()
@@ -64,6 +66,7 @@ public class Payment {
         private String fromCustomerId;      // uuid,
         private String toVendorId;        // uuid,
         private Double amount;             // decimal(18, 2),
+        private Double appliedAmount;         // decimal(18, 2),
         private String currencyUomId;    // varchar(60),
         private String effectiveDate;     // timestamp,
         private String statusId;          // varchar(60),

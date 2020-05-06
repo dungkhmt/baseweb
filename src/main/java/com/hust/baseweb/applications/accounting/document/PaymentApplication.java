@@ -24,7 +24,7 @@ public class PaymentApplication {
     private ObjectId paymentApplicationId;
     private String paymentId;             // varchar(60),
     private String invoiceId;             // varchar(60),
-    private Double amountApplied;         // decimal(18, 2),
+    private Double appliedAmount;         // decimal(18, 2),
     private String currencyUomId;        // varchar(60),
     private Date effectiveDate;         // timestamp,
     private Date lastUpdatedStamp;     // timestamp,
@@ -35,7 +35,7 @@ public class PaymentApplication {
                 paymentApplicationId.toString(),
                 paymentId,
                 invoiceId,
-                amountApplied,
+                appliedAmount,
                 currencyUomId,
                 Constant.DATE_FORMAT.format(effectiveDate)
         );
@@ -49,7 +49,7 @@ public class PaymentApplication {
         private String paymentApplicationId; // uuid not null default uuid_generate_v1(),
         private String paymentId;             // varchar(60),
         private String invoiceId;             // varchar(60),
-        private Double amountApplied;         // decimal(18, 2),
+        private Double appliedAmount;         // decimal(18, 2),
         private String currencyUomId;        // varchar(60),
         private String effectiveDate;         // timestamp,
     }
