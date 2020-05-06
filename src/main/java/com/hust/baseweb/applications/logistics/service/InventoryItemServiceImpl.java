@@ -246,7 +246,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     private Invoice createInvoice(Date createDate) {
         return invoiceService.save(new Invoice(null,
                 InvoiceType.SALES_INVOICE,
-                "INVOICE_CREATED",
+                com.hust.baseweb.applications.accounting.document.StatusItem.INVOICE_CREATED,
                 createDate,
                 null,
                 null,

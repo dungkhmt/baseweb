@@ -25,7 +25,7 @@ public class Invoice {
     @Id
     private String invoiceId;           // varchar(60),
     private InvoiceType invoiceType;      // varchar(60),
-    private String statusId;            // varchar(60),
+    private StatusItem statusId;            // varchar(60),
     private Date invoiceDate;         // TIMESTAMP,
     private UUID toPartyCustomerId; // uuid,
     private UUID fromVendorId;       // uuid,
@@ -42,7 +42,7 @@ public class Invoice {
         return new Model(
                 invoiceId,
                 invoiceType.toString(),
-                statusId,
+                statusId.toString(),
                 Constant.DATE_FORMAT.format(invoiceDate),
                 Optional.ofNullable(toPartyCustomerId).map(UUID::toString).orElse(null),
                 Optional.ofNullable(fromVendorId).map(UUID::toString).orElse(null),
