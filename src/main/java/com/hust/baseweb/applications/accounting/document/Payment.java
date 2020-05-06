@@ -31,7 +31,7 @@ public class Payment {
     private Double amount;             // decimal(18, 2),
     private String currencyUomId;    // varchar(60),
     private Date effectiveDate;     // timestamp,
-    private String statusId;          // varchar(60),
+    private StatusItem statusId;          // varchar(60),
     private Date lastUpdatedStamp; // timestamp,
     private Date createdStamp;      // timestamp default current_timestamp,
 
@@ -49,7 +49,7 @@ public class Payment {
                 amount,
                 currencyUomId,
                 Constant.DATE_FORMAT.format(effectiveDate),
-                statusId
+                statusId.toString()
         );
     }
 
@@ -78,4 +78,12 @@ public class Payment {
         private List<PaymentApplication.Model> paymentApplications;
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class CreateModel {
+        private String partyId;
+        private Double amount;
+    }
 }

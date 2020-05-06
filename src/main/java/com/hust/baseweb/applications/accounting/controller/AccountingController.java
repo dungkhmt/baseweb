@@ -11,10 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,6 +41,16 @@ public class AccountingController {
     @GetMapping("/get-invoice-by-id/{invoiceId}")
     public ResponseEntity<Invoice.Model> getInvoiceById(@PathVariable String invoiceId) {
         return ResponseEntity.ok(invoiceService.getInvoice(invoiceId));
+    }
+
+    @GetMapping("/get-payment-by-id/{paymentId}")
+    public ResponseEntity<Payment.Model> getPaymentById(@PathVariable String paymentId) {
+        return ResponseEntity.ok(paymentService.getPayment(paymentId));
+    }
+
+    @PostMapping("/create-payment")
+    public ResponseEntity<Payment.Model> createPayment(@RequestBody Payment.CreateModel paymentCreateModel) {
+        return ResponseEntity.ok(paymentService.createPayment(paymentCreateModel));
     }
 
     @GetMapping("/get-all-invoice-item-by-invoice-id/{invoiceId}")
