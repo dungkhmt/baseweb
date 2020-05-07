@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.accounting.service;
 
-import com.hust.baseweb.applications.accounting.document.Payment;
-import com.hust.baseweb.applications.accounting.document.PaymentApplication;
+import com.hust.baseweb.applications.accounting.document.*;
 import com.hust.baseweb.applications.accounting.entity.PaymentSequenceId;
 import com.hust.baseweb.applications.accounting.repo.PaymentApplicationRepo;
 import com.hust.baseweb.applications.accounting.repo.PaymentRepo;
@@ -10,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,9 +29,19 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment.Model createPayment(Payment.CreateModel paymentCreateModel) {
+        Date now = new Date();
+
         Payment payment = new Payment();
+        payment.setPaymentType(PaymentType.COMPANY_PAYMENT);
+        payment.setPaymentMethod(PaymentMethod.BANK);
         payment.setFromCustomerId(UUID.fromString(paymentCreateModel.getPartyId()));
         payment.setAmount(paymentCreateModel.getAmount());
+        payment.setAppliedAmount(0.0);
+        payment.setCurrencyUomId("CUR_vnd");
+        payment.setEffectiveDate(now);
+        payment.setCreatedStamp(now);
+        payment.setLastUpdatedStamp(now);
+        payment.setStatusId(StatusItem.PAYMENT_CREATED);
         return save(payment).toModel();
     }
 
