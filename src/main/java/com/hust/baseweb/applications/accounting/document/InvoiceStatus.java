@@ -22,7 +22,7 @@ public class InvoiceStatus {
     @MongoId
     private ObjectId invoiceStatusId;
     private String invoiceId;         // varchar(60),
-    private String statusId;          // varchar(60),
+    private StatusItem statusId;          // varchar(60),
     private Date fromDate;        // timestamp,
     private Date thruDate;        // timestamp,
     private Date lastUpdatedStamp; // timestamp,

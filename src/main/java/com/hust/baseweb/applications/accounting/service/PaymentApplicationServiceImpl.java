@@ -1,7 +1,9 @@
 package com.hust.baseweb.applications.accounting.service;
 
+import com.hust.baseweb.applications.accounting.document.Invoice;
 import com.hust.baseweb.applications.accounting.document.Payment;
 import com.hust.baseweb.applications.accounting.document.PaymentApplication;
+import com.hust.baseweb.applications.accounting.repo.InvoiceRepo;
 import com.hust.baseweb.applications.accounting.repo.PaymentApplicationRepo;
 import com.hust.baseweb.applications.accounting.repo.PaymentRepo;
 import lombok.AllArgsConstructor;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -23,6 +26,7 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
 
     private PaymentApplicationRepo paymentApplicationRepo;
     private PaymentRepo paymentRepo;
+    private InvoiceRepo invoiceRepo;
 
     @Override
     public List<PaymentApplication.Model> findAllByInvoiceId(String invoiceId) {
@@ -33,12 +37,37 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
     }
 
     @Override
-    public Payment.ApplicationModel findAllByPaymentId(String paymentId) {
-        Payment.Model paymentModel = paymentRepo.findById(paymentId).orElseThrow(NoSuchElementException::new).toModel();
-        List<PaymentApplication.Model> paymentApplicationModels = paymentApplicationRepo.findAllByPaymentId(paymentId)
+    public List<PaymentApplication.Model> findAllByPaymentId(String paymentId) {
+        return paymentApplicationRepo.findAllByPaymentId(paymentId)
                 .stream()
                 .map(PaymentApplication::toModel)
                 .collect(Collectors.toList());
-        return new Payment.ApplicationModel(paymentModel, paymentApplicationModels);
+    }
+
+    @Override
+    public PaymentApplication.Model createPaymentApplication(PaymentApplication.CreateModel paymentApplicationCreateModel) {
+        Date now = new Date();
+        PaymentApplication paymentApplication = new PaymentApplication(
+                null,
+                paymentApplicationCreateModel.getPaymentId(),
+                paymentApplicationCreateModel.getInvoiceId(),
+                paymentApplicationCreateModel.getAmount(),
+                "CUR_vnd",
+                now,
+                now,
+                now
+        );
+        paymentApplication = paymentApplicationRepo.save(paymentApplication);
+        Invoice invoice = invoiceRepo.findById(paymentApplication.getInvoiceId())
+                .orElseThrow(NoSuchElementException::new);
+        Payment payment = paymentRepo.findById(paymentApplication.getPaymentId())
+                .orElseThrow(NoSuchElementException::new);
+        invoice.setPaidAmount(invoice.getPaidAmount() + paymentApplication.getAppliedAmount());
+        payment.setAppliedAmount(payment.getAppliedAmount() + paymentApplication.getAppliedAmount());
+
+        invoiceRepo.save(invoice);
+        paymentRepo.save(payment);
+
+        return paymentApplication.toModel();
     }
 }

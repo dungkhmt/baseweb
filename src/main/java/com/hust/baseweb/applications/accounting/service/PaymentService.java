@@ -15,8 +15,6 @@ public interface PaymentService {
 
     List<Payment.Model> getAllPayment();
 
-    List<Payment.Model> getAllByInvoiceId(String invoiceId);
-
     Payment save(Payment payment);
 
     List<Payment> saveAll(List<Payment> payments);

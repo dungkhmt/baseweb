@@ -54,4 +54,13 @@ public class PaymentApplication {
         private String effectiveDate;         // timestamp,
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class CreateModel {
+        private String paymentId;
+        private String invoiceId;
+        private Double amount;
+    }
 }

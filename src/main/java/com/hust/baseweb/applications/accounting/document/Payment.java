@@ -9,7 +9,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -70,15 +69,6 @@ public class Payment {
         private String currencyUomId;    // varchar(60),
         private String effectiveDate;     // timestamp,
         private String statusId;          // varchar(60),
-    }
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    public static class ApplicationModel {
-        private Model payment;
-        private List<PaymentApplication.Model> paymentApplications;
     }
 
     @AllArgsConstructor

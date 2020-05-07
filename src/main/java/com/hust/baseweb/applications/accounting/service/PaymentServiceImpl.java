@@ -1,6 +1,9 @@
 package com.hust.baseweb.applications.accounting.service;
 
-import com.hust.baseweb.applications.accounting.document.*;
+import com.hust.baseweb.applications.accounting.document.Payment;
+import com.hust.baseweb.applications.accounting.document.PaymentMethod;
+import com.hust.baseweb.applications.accounting.document.PaymentType;
+import com.hust.baseweb.applications.accounting.document.StatusItem;
 import com.hust.baseweb.applications.accounting.entity.PaymentSequenceId;
 import com.hust.baseweb.applications.accounting.repo.PaymentApplicationRepo;
 import com.hust.baseweb.applications.accounting.repo.PaymentRepo;
@@ -53,17 +56,6 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<Payment.Model> getAllPayment() {
         return paymentRepo.findAll().stream().map(Payment::toModel).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Payment.Model> getAllByInvoiceId(String invoiceId) {
-        List<PaymentApplication> paymentApplications = paymentApplicationRepo.findAllByInvoiceId(invoiceId);
-        List<String> paymentIds = paymentApplications.stream()
-                .map(PaymentApplication::getPaymentId)
-                .distinct()
-                .collect(Collectors.toList());
-        List<Payment> payments = paymentRepo.findAllByPaymentIdIn(paymentIds);
-        return payments.stream().map(Payment::toModel).collect(Collectors.toList());
     }
 
     @Override

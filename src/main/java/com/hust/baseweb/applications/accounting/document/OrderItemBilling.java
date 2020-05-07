@@ -1,9 +1,6 @@
 package com.hust.baseweb.applications.accounting.document;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -30,6 +27,7 @@ public class OrderItemBilling {
     @NoArgsConstructor
     @Getter
     @Setter
+    @EqualsAndHashCode
     public static class Id {
         private String orderId;            // varchar(60),
         private String orderItemSeqId;   // varchar(60),

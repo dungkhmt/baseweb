@@ -2,10 +2,7 @@ package com.hust.baseweb.applications.accounting.document;
 
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.utils.Constant;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -45,6 +42,7 @@ public class InvoiceItem {
     @NoArgsConstructor
     @Getter
     @Setter
+    @EqualsAndHashCode
     public static class Id {
         private String invoiceId;           // varchar(60),
         private String invoiceItemSeqId;  // varchar(60),

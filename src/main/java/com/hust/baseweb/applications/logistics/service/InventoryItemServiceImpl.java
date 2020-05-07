@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.logistics.service;
 
 import com.hust.baseweb.applications.accounting.document.*;
 import com.hust.baseweb.applications.accounting.repo.InvoiceItemRepo;
+import com.hust.baseweb.applications.accounting.repo.InvoiceStatusRepo;
 import com.hust.baseweb.applications.accounting.repo.OrderItemBillingRepo;
 import com.hust.baseweb.applications.accounting.service.InvoiceService;
 import com.hust.baseweb.applications.logistics.entity.*;
@@ -19,6 +20,7 @@ import com.hust.baseweb.applications.tms.entity.status.ShipmentItemStatus;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
 import com.hust.baseweb.applications.tms.repo.status.ShipmentItemStatusRepo;
+import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.StatusItem;
 import com.hust.baseweb.repo.StatusItemRepo;
 import lombok.AllArgsConstructor;
@@ -68,6 +70,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     private InvoiceService invoiceService;
     private InvoiceItemRepo invoiceItemRepo;
     private OrderItemBillingRepo orderItemBillingRepo;
+
+    private InvoiceStatusRepo invoiceStatusRepo;
 
 
     @Override
@@ -139,7 +143,9 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
         Map<String, ProductPrice> productPriceMap = buildProductPriceMap(queryProducts);
 
-        Invoice invoice = createInvoice(now);
+        Invoice invoice = createInvoice(now, orderHeaderMap);
+        updateInvoiceStatus(now, invoice);
+
         List<InvoiceItem> invoiceItems = new ArrayList<>();
         List<OrderItemBilling> orderItemBillings = new ArrayList<>();
 
@@ -243,13 +249,23 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         return "ok";
     }
 
-    private Invoice createInvoice(Date createDate) {
+    private void updateInvoiceStatus(Date updateDate, Invoice invoice) {
+        invoiceStatusRepo.save(new InvoiceStatus(null, invoice.getInvoiceId(),
+                com.hust.baseweb.applications.accounting.document.StatusItem.INVOICE_CREATED,
+                updateDate, null,
+                updateDate,
+                updateDate));
+    }
+
+    private Invoice createInvoice(Date createDate, Map<String, OrderHeader> orderHeaderMap) {
+        OrderHeader orderHeader = new ArrayList<>(orderHeaderMap.values()).get(0);
+        assert orderHeader != null;
         return invoiceService.save(new Invoice(null,
                 InvoiceType.SALES_INVOICE,
                 com.hust.baseweb.applications.accounting.document.StatusItem.INVOICE_CREATED,
                 createDate,
-                null,
-                null,
+                Optional.ofNullable(orderHeader.getPartyCustomer()).map(Party::getPartyId).orElse(null),
+                Optional.ofNullable(orderHeader.getPartyVendor()).map(Party::getPartyId).orElse(null),
                 0.0,
                 0.0,
                 "CUR_vnd",

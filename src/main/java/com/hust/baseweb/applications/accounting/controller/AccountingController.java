@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.accounting.controller;
 import com.hust.baseweb.applications.accounting.document.Invoice;
 import com.hust.baseweb.applications.accounting.document.InvoiceItem;
 import com.hust.baseweb.applications.accounting.document.Payment;
+import com.hust.baseweb.applications.accounting.document.PaymentApplication;
 import com.hust.baseweb.applications.accounting.service.InvoiceItemService;
 import com.hust.baseweb.applications.accounting.service.InvoiceService;
 import com.hust.baseweb.applications.accounting.service.PaymentApplicationService;
@@ -58,18 +59,23 @@ public class AccountingController {
         return ResponseEntity.ok(invoiceItemService.findByInvoiceId(invoiceId));
     }
 
-    @GetMapping("/get-all-payment-by-invoice-id/{invoiceId}")
-    public ResponseEntity<List<Payment.Model>> getAllPaymentByInvoiceId(@PathVariable String invoiceId) {
-        return ResponseEntity.ok(paymentService.getAllByInvoiceId(invoiceId));
+    @GetMapping("/get-all-payment-application-by-invoice-id/{invoiceId}")
+    public ResponseEntity<List<PaymentApplication.Model>> getAllPaymentApplicationByInvoiceId(@PathVariable String invoiceId) {
+        return ResponseEntity.ok(paymentApplicationService.findAllByInvoiceId(invoiceId));
     }
 
-    @GetMapping("/get-payment-detail-by-payment-id/{paymentId}")
-    public ResponseEntity<Payment.ApplicationModel> getPaymentDetailByPaymentId(@PathVariable String paymentId) {
+    @GetMapping("/get-payment-application-by-payment-id/{paymentId}")
+    public ResponseEntity<List<PaymentApplication.Model>> getPaymentDetailByPaymentId(@PathVariable String paymentId) {
         return ResponseEntity.ok(paymentApplicationService.findAllByPaymentId(paymentId));
     }
 
     @GetMapping("/get-all-unpaid-invoices")
     public ResponseEntity<List<Invoice.Model>> getAllUnpaidInvoices() {
         return ResponseEntity.ok(invoiceService.getAllUnpaidInvoices());
+    }
+
+    @PostMapping("/create-payment-application")
+    public ResponseEntity<PaymentApplication.Model> createPaymentApplication(@RequestBody PaymentApplication.CreateModel paymentApplicationCreateModel) {
+        return ResponseEntity.ok(paymentApplicationService.createPaymentApplication(paymentApplicationCreateModel));
     }
 }
