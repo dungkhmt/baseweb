@@ -4,12 +4,13 @@ import com.hust.baseweb.applications.accounting.document.Invoice;
 import com.hust.baseweb.applications.accounting.entity.InvoiceSequenceId;
 import com.hust.baseweb.applications.accounting.repo.InvoiceRepo;
 import com.hust.baseweb.applications.accounting.repo.sequenceid.InvoiceSequenceIdRepo;
+import com.hust.baseweb.applications.customer.entity.PartyDistributor;
+import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +24,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private InvoiceRepo invoiceRepo;
     private InvoiceSequenceIdRepo invoiceSequenceIdRepo;
+    private PartyDistributorRepo partyDistributorRepo;
 
     @Override
     public List<Invoice.Model> getAllInvoice() {
@@ -35,6 +37,37 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .stream()
                 .map(Invoice::toModel)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Invoice.DistributorUnpaidModel> getAllUnpaidInvoiceGroupByDistributor() {
+        List<Invoice> unpaidInvoices = invoiceRepo.findAllByAmountNotEqualWithPaidAmount();
+        List<UUID> partyDistributorIds = unpaidInvoices.stream()
+                .map(Invoice::getToPartyCustomerId)
+                .distinct()
+                .collect(Collectors.toList());
+        Map<UUID, PartyDistributor> partyDistributorMap = partyDistributorRepo.findAllByPartyIdIn(partyDistributorIds)
+                .stream()
+                .collect(Collectors.toMap(PartyDistributor::getPartyId, p -> p));
+        return Invoice.toUnpaidDistributorModels(unpaidInvoices, partyDistributorMap);
+    }
+
+    @Override
+    public Invoice.DistributorUnpaidModel getUnpaidInvoiceByDistributor(String distributorId) {
+        PartyDistributor partyDistributor = partyDistributorRepo.findById(UUID.fromString(distributorId))
+                .orElseThrow(NoSuchElementException::new);
+        List<Invoice> unpaidInvoices = invoiceRepo.findAllByToPartyCustomerId(UUID.fromString(distributorId))
+                .stream()
+                .filter(invoice -> invoice.getAmount() > invoice.getPaidAmount())
+                .collect(Collectors.toList());
+        Invoice.DistributorUnpaidModel distributorUnpaidModel = new Invoice.DistributorUnpaidModel(partyDistributor.getDistributorCode(),
+                partyDistributor.getDistributorName(),
+                0.0,
+                new ArrayList<>());
+        for (Invoice unpaidInvoice : unpaidInvoices) {
+            distributorUnpaidModel.append(unpaidInvoice);
+        }
+        return distributorUnpaidModel;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.accounting.document;
 
+import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.utils.Constant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,9 +9,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Hien Hoang (hienhoang2702@gmail.com)
@@ -53,6 +53,23 @@ public class Invoice {
         );
     }
 
+    public static List<DistributorUnpaidModel> toUnpaidDistributorModels(List<Invoice> invoices,
+                                                                         Map<UUID, PartyDistributor> partyDistributorMap) {
+        Map<UUID, DistributorUnpaidModel> customerCodeToByDistributorModel = new HashMap<>();
+        for (Invoice invoice : invoices) {
+            customerCodeToByDistributorModel.computeIfAbsent(invoice.getToPartyCustomerId(),
+                    partyCustomerId -> {
+                        PartyDistributor partyDistributor = partyDistributorMap.get(partyCustomerId);
+                        return new DistributorUnpaidModel(partyDistributor.getDistributorCode(),
+                                partyDistributor.getDistributorName(), 0.0, new ArrayList<>());
+                    }).append(invoice);
+        }
+        return customerCodeToByDistributorModel.values()
+                .stream()
+                .filter(distributorUnpaidModel -> distributorUnpaidModel.getTotalUnpaid() > 0)
+                .collect(Collectors.toList());
+    }
+
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
@@ -67,5 +84,22 @@ public class Invoice {
         private Double amount;               // decimal(18, 2),
         private Double paidAmount;               // decimal(18, 2),
         private String currencyUomId;      // varchar(60),
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class DistributorUnpaidModel {
+        private String distributorCode;
+        private String distributorName;
+        private Double totalUnpaid;
+
+        private List<Invoice.Model> unpaidInvoices;
+
+        public void append(Invoice invoice) {
+            totalUnpaid += invoice.getAmount() - invoice.getPaidAmount();
+            unpaidInvoices.add(invoice.toModel());
+        }
     }
 }

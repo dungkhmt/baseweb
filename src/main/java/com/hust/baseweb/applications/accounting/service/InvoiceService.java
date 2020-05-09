@@ -13,6 +13,10 @@ public interface InvoiceService {
 
     List<Invoice.Model> getAllUnpaidInvoices();
 
+    List<Invoice.DistributorUnpaidModel> getAllUnpaidInvoiceGroupByDistributor();
+
+    Invoice.DistributorUnpaidModel getUnpaidInvoiceByDistributor(String distributorId);
+
     Invoice.Model getInvoice(String invoiceId);
 
     Invoice save(Invoice invoice);
