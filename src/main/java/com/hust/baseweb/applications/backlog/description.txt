@@ -1,0 +1,1 @@
+This module provides utilities for managing tasks assigned to members of projects.
