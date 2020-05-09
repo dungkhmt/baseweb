@@ -44,6 +44,16 @@ public class AccountingController {
         return ResponseEntity.ok(invoiceService.getInvoice(invoiceId));
     }
 
+    @GetMapping("/get-unpaid-invoices-group-by-distributor-id")
+    public ResponseEntity<List<Invoice.DistributorUnpaidModel>> getUnpaidInvoicesGroupByDistributorId() {
+        return ResponseEntity.ok(invoiceService.getAllUnpaidInvoiceGroupByDistributor());
+    }
+
+    @GetMapping("/get-unpaid-invoice-by-distributor-id/{distributorId}")
+    public ResponseEntity<Invoice.DistributorUnpaidModel> getUnpaidInvoiceByDistributorId(@PathVariable String distributorId) {
+        return ResponseEntity.ok(invoiceService.getUnpaidInvoiceByDistributor(distributorId));
+    }
+
     @GetMapping("/get-payment-by-id/{paymentId}")
     public ResponseEntity<Payment.Model> getPaymentById(@PathVariable String paymentId) {
         return ResponseEntity.ok(paymentService.getPayment(paymentId));
