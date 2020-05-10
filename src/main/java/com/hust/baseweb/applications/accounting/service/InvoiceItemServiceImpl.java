@@ -6,7 +6,6 @@ import com.hust.baseweb.applications.accounting.document.OrderItemBilling;
 import com.hust.baseweb.applications.accounting.repo.InvoiceItemRepo;
 import com.hust.baseweb.applications.accounting.repo.InvoiceRepo;
 import com.hust.baseweb.applications.accounting.repo.OrderItemBillingRepo;
-import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.order.entity.CompositeOrderItemId;
 import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.order.repo.OrderItemRepo;
@@ -64,8 +63,8 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
         return invoiceItems
                 .stream()
                 .map(invoiceItem -> Optional.ofNullable(orderItemBillingToOrderItem.get(invoiceItem.getId()))
-                        .map(orderItem -> invoiceItem.toModel(invoice, orderItem.getProduct()))
-                        .orElse(invoiceItem.toModel(invoice, new Product()))) // empty product info
+                        .map(orderItem -> invoiceItem.toModel(invoice, orderItem))
+                        .orElse(invoiceItem.toModel(invoice, null))) // empty product info
                 .collect(Collectors.toList());
     }
 }

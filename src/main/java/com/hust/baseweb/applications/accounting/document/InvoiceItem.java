@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.accounting.document;
 
 import com.hust.baseweb.applications.logistics.entity.Product;
+import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.utils.Constant;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -25,7 +26,17 @@ public class InvoiceItem {
     private Date lastUpdatedStamp;   // TIMESTAMP,
     private Date createdStamp;        // TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    public Model toModel(Invoice invoice, Product product) {
+    public Model toModel(Invoice invoice, OrderItem orderItem) {
+        Product product = new Product();
+        String orderId = null;
+        String orderItemSeqId = null;
+        if (orderItem != null) {
+            if (orderItem.getProduct() != null) {
+                product = orderItem.getProduct();
+            }
+            orderId = orderItem.getOrderId();
+            orderItemSeqId = orderItem.getOrderItemSeqId();
+        }
         return new Model(
                 id.invoiceId,
                 id.invoiceItemSeqId,
@@ -34,7 +45,9 @@ public class InvoiceItem {
                 amount,
                 currencyUomId,
                 product.getProductId(),
-                product.getProductName()
+                product.getProductName(),
+                orderId,
+                orderItemSeqId
         );
     }
 
@@ -61,5 +74,7 @@ public class InvoiceItem {
         private String currencyUomId;      // varchar(60),
         private String productId;
         private String productName;
+        private String orderId;
+        private String orderItemSeqId;
     }
 }
