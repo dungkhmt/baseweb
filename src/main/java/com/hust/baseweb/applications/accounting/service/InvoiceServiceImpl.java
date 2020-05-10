@@ -49,6 +49,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         Map<UUID, PartyDistributor> partyDistributorMap = partyDistributorRepo.findAllByPartyIdIn(partyDistributorIds)
                 .stream()
                 .collect(Collectors.toMap(PartyDistributor::getPartyId, p -> p));
+
+        unpaidInvoices = unpaidInvoices.stream()
+                .filter(invoice -> partyDistributorMap.containsKey(invoice.getToPartyCustomerId()))
+                .collect(Collectors.toList()); // lọc các invoice thuộc về khách hàng là distributor
         return Invoice.toUnpaidDistributorModels(unpaidInvoices, partyDistributorMap);
     }
 
@@ -60,7 +64,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .stream()
                 .filter(invoice -> invoice.getAmount() > invoice.getPaidAmount())
                 .collect(Collectors.toList());
-        Invoice.DistributorUnpaidModel distributorUnpaidModel = new Invoice.DistributorUnpaidModel(partyDistributor.getDistributorCode(),
+        Invoice.DistributorUnpaidModel distributorUnpaidModel = new Invoice.DistributorUnpaidModel(
+                partyDistributor.getPartyId().toString(),
+                partyDistributor.getDistributorCode(),
                 partyDistributor.getDistributorName(),
                 0.0,
                 new ArrayList<>());

@@ -60,8 +60,11 @@ public class Invoice {
             customerCodeToByDistributorModel.computeIfAbsent(invoice.getToPartyCustomerId(),
                     partyCustomerId -> {
                         PartyDistributor partyDistributor = partyDistributorMap.get(partyCustomerId);
-                        return new DistributorUnpaidModel(partyDistributor.getDistributorCode(),
-                                partyDistributor.getDistributorName(), 0.0, new ArrayList<>());
+                        return new DistributorUnpaidModel(partyDistributor.getPartyId().toString(),
+                                partyDistributor.getDistributorCode(),
+                                partyDistributor.getDistributorName(),
+                                0.0,
+                                null);
                     }).append(invoice);
         }
         return customerCodeToByDistributorModel.values()
@@ -91,6 +94,7 @@ public class Invoice {
     @Getter
     @Setter
     public static class DistributorUnpaidModel {
+        private String partyId;
         private String distributorCode;
         private String distributorName;
         private Double totalUnpaid;
@@ -99,7 +103,9 @@ public class Invoice {
 
         public void append(Invoice invoice) {
             totalUnpaid += invoice.getAmount() - invoice.getPaidAmount();
-            unpaidInvoices.add(invoice.toModel());
+            if (unpaidInvoices != null) {
+                unpaidInvoices.add(invoice.toModel());
+            }
         }
     }
 }
