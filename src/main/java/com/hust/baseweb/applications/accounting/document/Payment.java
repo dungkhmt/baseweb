@@ -40,11 +40,16 @@ public class Payment {
     }
 
     public Model toModel() {
+        return toModel(null);
+    }
+
+    public Model toModel(String distributorName) {
         return new Model(
                 paymentId,
                 paymentType.toString(),
                 paymentMethod.toString(),
                 Optional.ofNullable(fromCustomerId).map(UUID::toString).orElse(null),
+                distributorName,
                 Optional.ofNullable(toVendorId).map(UUID::toString).orElse(null),
                 amount,
                 appliedAmount,
@@ -63,6 +68,7 @@ public class Payment {
         private String paymentTypeId;    // varchar(60),
         private String paymentMethodId;  // varchar(60),
         private String fromCustomerId;      // uuid,
+        private String fromCustomerName;      // uuid,
         private String toVendorId;        // uuid,
         private Double amount;             // decimal(18, 2),
         private Double appliedAmount;         // decimal(18, 2),

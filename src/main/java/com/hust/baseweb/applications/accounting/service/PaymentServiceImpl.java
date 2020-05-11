@@ -8,6 +8,8 @@ import com.hust.baseweb.applications.accounting.entity.PaymentSequenceId;
 import com.hust.baseweb.applications.accounting.repo.PaymentApplicationRepo;
 import com.hust.baseweb.applications.accounting.repo.PaymentRepo;
 import com.hust.baseweb.applications.accounting.repo.sequenceid.PaymentSequenceIdRepo;
+import com.hust.baseweb.applications.customer.entity.PartyDistributor;
+import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,8 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentSequenceIdRepo paymentSequenceIdRepo;
     private PaymentApplicationRepo paymentApplicationRepo;
 
+    private PartyDistributorRepo partyDistributorRepo;
+
     @Override
     public Payment.Model createPayment(Payment.CreateModel paymentCreateModel) {
         Date now = new Date();
@@ -50,7 +54,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment.Model getPayment(String paymentId) {
-        return paymentRepo.findById(paymentId).orElseThrow(NoSuchFieldError::new).toModel();
+        Payment payment = paymentRepo.findById(paymentId).orElseThrow(NoSuchFieldError::new);
+        PartyDistributor partyDistributor = partyDistributorRepo.findById(payment.getFromCustomerId())
+                .orElse(new PartyDistributor());
+        return payment.toModel(partyDistributor.getDistributorName());
     }
 
     @Override

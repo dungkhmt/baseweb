@@ -79,7 +79,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice.Model getInvoice(String invoiceId) {
         Invoice invoice = invoiceRepo.findById(invoiceId).orElseThrow(NoSuchElementException::new);
-        return invoice.toModel();
+        PartyDistributor partyDistributor = partyDistributorRepo.findById(invoice.getToPartyCustomerId())
+                .orElse(new PartyDistributor());
+        return invoice.toModel(partyDistributor.getDistributorName());
     }
 
     @Override

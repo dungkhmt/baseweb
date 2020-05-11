@@ -40,12 +40,17 @@ public class Invoice {
     }
 
     public Model toModel() {
+        return toModel(null);
+    }
+
+    public Model toModel(String distributorName) {
         return new Model(
                 invoiceId,
                 invoiceType.toString(),
                 statusId.toString(),
                 Constant.DATE_FORMAT.format(invoiceDate),
                 Optional.ofNullable(toPartyCustomerId).map(UUID::toString).orElse(null),
+                distributorName,
                 Optional.ofNullable(fromVendorId).map(UUID::toString).orElse(null),
                 amount,
                 paidAmount,
@@ -83,6 +88,7 @@ public class Invoice {
         private String statusId;            // varchar(60),
         private String invoiceDate;         // TIMESTAMP,
         private String toPartyCustomerId; // uuid,
+        private String toPartyCustomerName; // uuid,
         private String fromVendorId;       // uuid,
         private Double amount;               // decimal(18, 2),
         private Double paidAmount;               // decimal(18, 2),

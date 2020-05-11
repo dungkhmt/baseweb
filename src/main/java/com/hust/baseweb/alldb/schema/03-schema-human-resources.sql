@@ -15,7 +15,7 @@ create table party_department(
     party_department_id uuid not null default uuid_generate_v1(),
     party_id uuid not null,
     department_id VARCHAR(60),
-    role_type_id VARCHA(60),
+    role_type_id VARCHAR(60),
     from_date TIMESTAMP,
     thru_date TIMESTAMP,
 

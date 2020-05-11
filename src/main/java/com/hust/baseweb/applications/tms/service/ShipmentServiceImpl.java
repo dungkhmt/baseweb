@@ -350,7 +350,7 @@ public class ShipmentServiceImpl implements ShipmentService {
     private OrderHeader getOrCreateOrderHeader(Map<String, OrderHeader> orderHeaderMap,
                                                ShipmentItemModel.Create shipmentItemModel) {
         Date orderDate = null;
-        log.info("getOrCreateOrderHeader, orderDate = " + shipmentItemModel.getOrderDate());
+//        log.info("getOrCreateOrderHeader, orderDate = " + shipmentItemModel.getOrderDate());
         if(shipmentItemModel.getOrderDate() == null)
             orderDate = new Date();
         else{
