@@ -1,3 +1,25 @@
+create table receipt(
+    receipt_id varchar(60),
+    receipt_date timestamp,
+    facility_id varchar(60),
+    last_updated_stamp         TIMESTAMP,
+    created_stamp              TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_receipt primary key(receipt_id),
+    constraint fk_receipt_facility_id foreign key(facility_id) references facility(facility_id)
+);
+
+create table receipt_item(
+    receipt_item_id uuid not null default uuid_generate_v1(),
+    receipt_id varchar(60),
+    product_id varchar(60),
+    quantity int,
+    last_updated_stamp         TIMESTAMP,
+    created_stamp              TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_receipt_item primary key (receipt_item_id),
+    constraint fk_receipt_item_product_id foreign key(product_id) references product(product_id),
+    constraint fk_receipt_item_receipt_id foreign key(receipt_id) references receipt(receipt_id)
+);
+
 CREATE TABLE inventory_item
 (
     inventory_item_id          UUID NOT NULL default uuid_generate_v1(),
