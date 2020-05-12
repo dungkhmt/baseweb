@@ -58,6 +58,7 @@ public class OrderServiceImpl implements OrderService {
     private ProductPriceService productPriceService;
     private PostalAddressRepo postalAddressRepo;
     private OrderHeaderPageRepo orderHeaderPageRepo;
+    private OrderHeaderSequenceIdRepo orderHeaderSequenceIdRepo;
     private PartySalesmanRepo partySalesmanRepo;
     private PartyCustomerRepo partyCustomerRepo;
     private PartyRepo partyRepo;
@@ -66,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
     private ProductPriceRepo productPriceRepo;
 
     private RevenueService revenueService;
+
 
     @Override
     @Transactional
@@ -86,8 +88,8 @@ public class OrderServiceImpl implements OrderService {
 
         Facility facility = facilityRepo.findByFacilityId(orderInput.getFacilityId());
 
-        UUID uuid = UUID.randomUUID();
-        String orderId = uuid.toString();
+        OrderHeaderSequenceId id = orderHeaderSequenceIdRepo.save(new OrderHeaderSequenceId());
+        String orderId = OrderHeader.convertSequenceIdToOrderId(id.getId());
 
         //System.out.println(module + "::save, orderId = " + orderId + ", sales channel = " +
         //(salesChannel != null ? salesChannel.getSalesChannelName() : "null") + ", userLogin = " +
@@ -112,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
         Map<String, ProductPrice> productPriceMap = buildProductPriceMap(productMap);
 
         // iterate for computing grand total
-        Double totalGrand = 0.0;
+        double totalGrand = 0.0;
         for (ModelCreateOrderInputOrderItem modelCreateOrderInputOrderItem : orderInput.getOrderItems()) {
             //Product product = productRepo.findByProductId(modelCreateOrderInputOrderItem.getProductId());
             ProductPrice productPrice = productPriceMap.get(modelCreateOrderInputOrderItem.getProductId());
@@ -229,7 +231,6 @@ public class OrderServiceImpl implements OrderService {
         OrderAPIController.revenueOrderCache.addOrderRevenue(dateYYYYMMDD, totalGrand);
 
 
-
         LocalDate orderLocalDate = orderDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         revenueService.updateRevenue(
                 orderItems,
@@ -279,13 +280,13 @@ public class OrderServiceImpl implements OrderService {
         UUID vendorId = null;
         UUID salesmanId = null;
         List<OrderRole> orderRoles = orderRoleRepo.findByOrderId(orderId);
-        for (OrderRole or : orderRoles) {
-            if (or.getRoleTypeId().equals("BILL_TO_CUSTOMER")) {
-                customerId = or.getPartyId();
-            } else if (or.getRoleTypeId().equals("BILL_FROM_VENDOR")) {
-                vendorId = or.getPartyId();
-            } else if (or.getRoleTypeId().equals("SALES_EXECUTIVE")) {
-                salesmanId = or.getPartyId();
+        for (OrderRole orderRole : orderRoles) {
+            if (orderRole.getRoleTypeId().equals("BILL_TO_CUSTOMER")) {
+                customerId = orderRole.getPartyId();
+            } else if (orderRole.getRoleTypeId().equals("BILL_FROM_VENDOR")) {
+                vendorId = orderRole.getPartyId();
+            } else if (orderRole.getRoleTypeId().equals("SALES_EXECUTIVE")) {
+                salesmanId = orderRole.getPartyId();
             }
         }
         PartySalesman salesman = partySalesmanRepo.findByPartyId(salesmanId);
@@ -294,45 +295,47 @@ public class OrderServiceImpl implements OrderService {
         Party partySalesman = partyRepo.findByPartyId(salesmanId);
         UserLogin userLogin = partySalesmanService.findUserLoginOfSalesmanId(salesmanId);
 
-        OrderDetailView odv = new OrderDetailView();
-        odv.setCustomerId(customerId);
-        odv.setOrderId(orderId);
-        odv.setVendorId(vendorId);
+        OrderDetailView orderDetailView = new OrderDetailView();
+        orderDetailView.setOrderDate(order.getOrderDate());
+        orderDetailView.setCustomerId(customerId);
+        orderDetailView.setOrderId(orderId);
+        orderDetailView.setVendorId(vendorId);
         if (customer != null) {
-            odv.setCustomerName(customer.getCustomerName());
+            orderDetailView.setCustomerName(customer.getCustomerName());
         }
         if (vendor != null) {
-            odv.setVendorName(vendor.getCustomerName());
+            orderDetailView.setVendorName(vendor.getCustomerName());
         }
         if (userLogin != null) {
-            odv.setSalesmanLoginId(userLogin.getUserLoginId());
+            orderDetailView.setSalesmanLoginId(userLogin.getUserLoginId());
         }
         if (salesman != null) {
-            odv.setSalesmanName(salesman.getPerson().getLastName() +
+            orderDetailView.setSalesmanName(salesman.getPerson().getLastName() +
                     " " +
                     salesman.getPerson().getMiddleName() +
                     " " +
                     salesman.getPerson().getFirstName());
         }
-        OrderItemDetailView[] oidv = new OrderItemDetailView[order.getOrderItems().size()];
+        OrderItemDetailView[] orderItemDetailViews = new OrderItemDetailView[order.getOrderItems().size()];
         for (int i = 0; i < order.getOrderItems().size(); i++) {
-            OrderItem oi = order.getOrderItems().get(i);
-            oidv[i] = new OrderItemDetailView();
-            oidv[i].setOrderItemId(oi.getOrderItemSeqId());
-            if (oi.getProduct() != null) {
-                oidv[i].setProductId(oi.getProduct().getProductId());
-                oidv[i].setProductName(oi.getProduct().getProductName());
+            OrderItem orderItem = order.getOrderItems().get(i);
+            orderItemDetailViews[i] = new OrderItemDetailView();
+            orderItemDetailViews[i].setOrderItemId(orderItem.getOrderItemSeqId());
+            if (orderItem.getProduct() != null) {
+                orderItemDetailViews[i].setProductId(orderItem.getProduct().getProductId());
+                orderItemDetailViews[i].setProductName(orderItem.getProduct().getProductName());
             }
-            oidv[i].setQuantity(oi.getQuantity());
-            oidv[i].setUnitPrice(oi.getUnitPrice());
-            if (oidv[i].getUnitPrice() != null) {
-                oidv[i].setTotalItemPrice(oidv[i].getUnitPrice() * oi.getQuantity());
+            orderItemDetailViews[i].setQuantity(orderItem.getQuantity());
+            orderItemDetailViews[i].setUnitPrice(orderItem.getUnitPrice());
+            if (orderItemDetailViews[i].getUnitPrice() != null) {
+                orderItemDetailViews[i].setTotalItemPrice(orderItemDetailViews[i].getUnitPrice() *
+                        orderItem.getQuantity());
             }
 
-            oidv[i].setUom(oi.getProduct().getUom().getDescription());
+            orderItemDetailViews[i].setUom(orderItem.getProduct().getUom().getDescription());
         }
-        odv.setOrderItems(oidv);
-        return odv;
+        orderDetailView.setOrderItems(orderItemDetailViews);
+        return orderDetailView;
     }
 
     @Override
@@ -345,13 +348,13 @@ public class OrderServiceImpl implements OrderService {
         UUID vendorId = null;
         UUID salesmanId = null;
         List<OrderRole> orderRoles = orderRoleRepo.findByOrderId(orderId);
-        for (OrderRole or : orderRoles) {
-            if (or.getRoleTypeId().equals("BILL_TO_CUSTOMER")) {
-                customerId = or.getPartyId();
-            } else if (or.getRoleTypeId().equals("BILL_FROM_VENDOR")) {
-                vendorId = or.getPartyId();
-            } else if (or.getRoleTypeId().equals("SALES_EXECUTIVE")) {
-                salesmanId = or.getPartyId();
+        for (OrderRole orderRole : orderRoles) {
+            if (orderRole.getRoleTypeId().equals("BILL_TO_CUSTOMER")) {
+                customerId = orderRole.getPartyId();
+            } else if (orderRole.getRoleTypeId().equals("BILL_FROM_VENDOR")) {
+                vendorId = orderRole.getPartyId();
+            } else if (orderRole.getRoleTypeId().equals("SALES_EXECUTIVE")) {
+                salesmanId = orderRole.getPartyId();
             }
         }
         PartySalesman salesman = partySalesmanRepo.findByPartyId(salesmanId);
@@ -360,44 +363,44 @@ public class OrderServiceImpl implements OrderService {
         Party partySalesman = partyRepo.findByPartyId(salesmanId);
         UserLogin userLogin = partySalesmanService.findUserLoginOfSalesmanId(salesmanId);
 
-        OrderDetailView odv = new OrderDetailView();
-        odv.setCustomerId(customerId);
-        odv.setOrderId(orderId);
-        odv.setVendorId(vendorId);
-        odv.setTotal(order.getGrandTotal());
-        odv.setOrderDate(order.getOrderDate());
+        OrderDetailView orderDetailView = new OrderDetailView();
+        orderDetailView.setCustomerId(customerId);
+        orderDetailView.setOrderId(orderId);
+        orderDetailView.setVendorId(vendorId);
+        orderDetailView.setTotal(order.getGrandTotal());
+        orderDetailView.setOrderDate(order.getOrderDate());
         if (customer != null) {
-            odv.setCustomerName(customer.getCustomerName());
+            orderDetailView.setCustomerName(customer.getCustomerName());
         }
         if (vendor != null) {
-            odv.setVendorName(vendor.getCustomerName());
+            orderDetailView.setVendorName(vendor.getCustomerName());
         }
         if (userLogin != null) {
-            odv.setSalesmanLoginId(userLogin.getUserLoginId());
+            orderDetailView.setSalesmanLoginId(userLogin.getUserLoginId());
         }
         if (salesman != null) {
-            odv.setSalesmanName(salesman.getPerson().getLastName() +
+            orderDetailView.setSalesmanName(salesman.getPerson().getLastName() +
                     " " +
                     salesman.getPerson().getMiddleName() +
                     " " +
                     salesman.getPerson().getFirstName());
         }
-        OrderItemDetailView[] oidv = new OrderItemDetailView[order.getOrderItems().size()];
+        OrderItemDetailView[] orderItemDetailViews = new OrderItemDetailView[order.getOrderItems().size()];
         for (int i = 0; i < order.getOrderItems().size(); i++) {
-            OrderItem oi = order.getOrderItems().get(i);
-            oidv[i] = new OrderItemDetailView();
-            oidv[i].setOrderItemId(oi.getOrderItemSeqId());
-            if (oi.getProduct() != null) {
-                oidv[i].setProductId(oi.getProduct().getProductId());
-                oidv[i].setProductName(oi.getProduct().getProductName());
+            OrderItem orderItem = order.getOrderItems().get(i);
+            orderItemDetailViews[i] = new OrderItemDetailView();
+            orderItemDetailViews[i].setOrderItemId(orderItem.getOrderItemSeqId());
+            if (orderItem.getProduct() != null) {
+                orderItemDetailViews[i].setProductId(orderItem.getProduct().getProductId());
+                orderItemDetailViews[i].setProductName(orderItem.getProduct().getProductName());
             }
-            oidv[i].setQuantity(oi.getQuantity());
-            oidv[i].setUnitPrice(oi.getUnitPrice());
-            oidv[i].setTotalItemPrice(oidv[i].getUnitPrice() * oi.getQuantity());
-            oidv[i].setUom(oi.getProduct().getUom().getDescription());
+            orderItemDetailViews[i].setQuantity(orderItem.getQuantity());
+            orderItemDetailViews[i].setUnitPrice(orderItem.getUnitPrice());
+            orderItemDetailViews[i].setTotalItemPrice(orderItemDetailViews[i].getUnitPrice() * orderItem.getQuantity());
+            orderItemDetailViews[i].setUom(orderItem.getProduct().getUom().getDescription());
         }
-        odv.setOrderItems(oidv);
-        return odv;
+        orderDetailView.setOrderItems(orderItemDetailViews);
+        return orderDetailView;
     }
 
     @Override

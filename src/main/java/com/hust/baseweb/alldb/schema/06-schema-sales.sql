@@ -214,10 +214,16 @@ CREATE TABLE order_header
     CONSTRAINT fk_product_store_id FOREIGN KEY (product_store_id) REFERENCES facility (facility_id),
     CONSTRAINT fk_currency_uom_id FOREIGN KEY (currency_uom_id) REFERENCES uom (uom_id),
     CONSTRAINT fk_sales_channel_id FOREIGN KEY (sales_channel_id) REFERENCES sales_channel (sales_channel_id),
-    constraint fk_order_header_party_salesman_id foreign key(party_salesman_id) references party(party_id),
-    constraint fk_order_header_vendor_id foreign key(vendor_id) references party(party_id),
+    constraint fk_order_header_party_salesman_id foreign key (party_salesman_id) references party (party_id),
+    constraint fk_order_header_vendor_id foreign key (vendor_id) references party (party_id),
     constraint fk_party_customer_id foreign key (party_customer_id) references party (party_id)
 );
+
+create table order_header_sequence_id
+(
+    id SERIAL PRIMARY KEY NOT NULL
+);
+
 CREATE TABLE order_item_type
 (
     order_item_type_id VARCHAR(60) NOT NULL,

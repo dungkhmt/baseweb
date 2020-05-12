@@ -88,4 +88,8 @@ public class OrderHeader {
                 Optional.ofNullable(orderDate).map(date -> Constant.DATE_FORMAT.format(orderDate)).orElse(null)
         );
     }
+
+    public static String convertSequenceIdToOrderId(Long id) {
+        return "ORD" + String.format("%010d", id);
+    }
 }
