@@ -34,13 +34,41 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Page<Invoice.Model> getAllUnpaidInvoices(String invoiceId,
-                                                    String toPartyCustomerId,
-                                                    Pageable pageable) {
-        return invoiceRepo.findAllByInvoiceIdAndToPartyCustomerIdAndAmountNotEqualWithPaidAmount(invoiceId,
-                toPartyCustomerId,
-                pageable)
-                .map(Invoice::toModel);
+    public List<Invoice.Model> getAllUnpaidInvoices() {
+        return invoiceRepo.findAllByAmountNotEqualWithPaidAmount()
+                .stream()
+                .map(Invoice::toModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<Invoice.Model> getPageUnpaidInvoices(Pageable pageable) {
+        return invoiceRepo.findAllByAmountNotEqualWithPaidAmount(pageable).map(Invoice::toModel);
+    }
+
+    @Override
+    public Page<Invoice.Model> getPageUnpaidInvoices(String invoiceId,
+                                                     String toPartyCustomerId,
+                                                     Pageable pageable) {
+        if (invoiceId != null) {
+            if (toPartyCustomerId != null) {
+                return invoiceRepo.findAllByInvoiceIdAndToPartyCustomerIdAndAmountNotEqualWithPaidAmount(invoiceId,
+                        UUID.fromString(toPartyCustomerId),
+                        pageable)
+                        .map(Invoice::toModel);
+            } else {
+                return invoiceRepo.findAllByInvoiceIdAndAmountNotEqualWithPaidAmount(invoiceId,
+                        pageable)
+                        .map(Invoice::toModel);
+            }
+        } else if (toPartyCustomerId != null) {
+            return invoiceRepo.findAllByToPartyCustomerIdAndAmountNotEqualWithPaidAmount(
+                    UUID.fromString(toPartyCustomerId),
+                    pageable)
+                    .map(Invoice::toModel);
+        } else {
+            return invoiceRepo.findAllByAmountNotEqualWithPaidAmount(pageable).map(Invoice::toModel);
+        }
     }
 
     @Override

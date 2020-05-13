@@ -85,14 +85,23 @@ public class AccountingController {
     }
 
     @GetMapping("/get-all-unpaid-invoices")
-    public ResponseEntity<Page<Invoice.Model>> getAllUnpaidInvoices(@RequestParam("filtering") String filtering,
-                                                                    Pageable pageable) {
-        Map<String, String> filterMap = Arrays.stream(filtering.split(","))
-                .map(s -> s.split(":"))
-                .collect(Collectors.toMap(ss -> ss[0], ss -> ss[1]));
-        return ResponseEntity.ok(invoiceService.getAllUnpaidInvoices(filterMap.get("invoiceId"),
-                filterMap.get("toPartyCustomerId"),
-                pageable));
+    public ResponseEntity<List<Invoice.Model>> getAllUnpaidInvoices() {
+        return ResponseEntity.ok(invoiceService.getAllUnpaidInvoices());
+    }
+
+    @GetMapping("/get-page-unpaid-invoices")
+    public ResponseEntity<Page<Invoice.Model>> getPageUnpaidInvoices(@RequestParam(value = "filtering", required = false) String filtering,
+                                                                     Pageable pageable) {
+        if (filtering == null) {
+            return ResponseEntity.ok(invoiceService.getPageUnpaidInvoices(pageable));
+        } else {
+            Map<String, String> filterMap = Arrays.stream(filtering.split(","))
+                    .map(s -> s.split(":"))
+                    .collect(Collectors.toMap(ss -> ss[0], ss -> ss[1]));
+            return ResponseEntity.ok(invoiceService.getPageUnpaidInvoices(filterMap.get("invoiceId"),
+                    filterMap.get("toPartyCustomerId"),
+                    pageable));
+        }
     }
 
     @PostMapping("/create-payment-application")
