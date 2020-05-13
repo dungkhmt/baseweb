@@ -105,7 +105,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         inventoryItem.setFacility(facility);
         inventoryItem.setProduct(product);
         inventoryItem.setLotId(input.getLotId());
-        inventoryItem.setUomId(input.getUomId());
+        inventoryItem.setUomId(product.getUom().getUomId());
         inventoryItem.setQuantityOnHandTotal(input.getQuantityOnHandTotal());
 
         return inventoryItemRepo.save(inventoryItem);

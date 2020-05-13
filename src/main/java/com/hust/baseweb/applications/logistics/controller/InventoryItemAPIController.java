@@ -61,7 +61,7 @@ public class InventoryItemAPIController {
                 inventoryItemInputModels.add(new ImportInventoryItemInputModel(
                         product.getProductId(),
                         facility.getFacilityId(),
-                        null, null,
+                        null,
                         random.nextInt(1000) + 100
                 ));
             }

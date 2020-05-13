@@ -13,6 +13,5 @@ public class ImportInventoryItemInputModel {
     private String productId;
     private String facilityId;
     private String lotId;
-    private String uomId;
     private int quantityOnHandTotal;
 }
