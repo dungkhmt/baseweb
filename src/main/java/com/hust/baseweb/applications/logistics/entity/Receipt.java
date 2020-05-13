@@ -20,7 +20,9 @@ import java.util.Date;
 public class Receipt {
 
     @Id
+    @Column(name = "receipt_id")
     private String receiptId;
+
     private Date receiptDate;
 
     @JoinColumn(name = "facility_id", referencedColumnName = "facility_id")
