@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -89,6 +90,7 @@ public class OrderHeader {
         );
     }
 
+    @NotNull
     public static String convertSequenceIdToOrderId(Long id) {
         return "ORD" + String.format("%010d", id);
     }

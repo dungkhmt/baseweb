@@ -1,23 +1,30 @@
-create table receipt(
-    receipt_id varchar(60),
-    receipt_date timestamp,
-    facility_id varchar(60),
-    last_updated_stamp         TIMESTAMP,
-    created_stamp              TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_receipt primary key(receipt_id),
-    constraint fk_receipt_facility_id foreign key(facility_id) references facility(facility_id)
+create table receipt
+(
+    receipt_id         varchar(60),
+    receipt_date       timestamp,
+    facility_id        varchar(60),
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_receipt primary key (receipt_id),
+    constraint fk_receipt_facility_id foreign key (facility_id) references facility (facility_id)
 );
 
-create table receipt_item(
-    receipt_item_id uuid not null default uuid_generate_v1(),
-    receipt_id varchar(60),
-    product_id varchar(60),
-    quantity int,
-    last_updated_stamp         TIMESTAMP,
-    created_stamp              TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+create table receipt_sequence_id
+(
+    id SERIAL PRIMARY KEY NOT NULL
+);
+
+create table receipt_item
+(
+    receipt_item_id    uuid not null default uuid_generate_v1(),
+    receipt_id         varchar(60),
+    product_id         varchar(60),
+    quantity           int,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_receipt_item primary key (receipt_item_id),
-    constraint fk_receipt_item_product_id foreign key(product_id) references product(product_id),
-    constraint fk_receipt_item_receipt_id foreign key(receipt_id) references receipt(receipt_id)
+    constraint fk_receipt_item_product_id foreign key (product_id) references product (product_id),
+    constraint fk_receipt_item_receipt_id foreign key (receipt_id) references receipt (receipt_id)
 );
 
 CREATE TABLE inventory_item
@@ -120,7 +127,7 @@ create table shipment_item
     constraint fk_shipment_item_shipment_id foreign key (shipment_id) references shipment (shipment_id),
     constraint fk_shipment_item_ship_to_location_id foreign key (ship_to_location_id) references postal_address (contact_mech_id),
     constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id),
-    constraint fk_shipment_item_party_customer_id foreign key (party_customer_id) references party(party_id),
+    constraint fk_shipment_item_party_customer_id foreign key (party_customer_id) references party (party_id),
     constraint fk_shipment_item_order_id foreign key (order_id) references order_header (order_id),
     CONSTRAINT fk_facility_id FOREIGN KEY (facility_id) REFERENCES facility (facility_id),
     constraint fk_status_item foreign key (status_id) references status_item (status_id)
@@ -141,19 +148,20 @@ create table shipment_item_status
 );
 
 
-create table shipment_item_role(
+create table shipment_item_role
+(
     shipment_item_role_id UUID not null default uuid_generate_v1(),
-    shipment_item_id UUID not null,
-    party_id uuid not null,
-    role_type_id VARCHAR(60),
-    from_date TIMESTAMP,
-    thru_date TIMESTAMP,
+    shipment_item_id      UUID not null,
+    party_id              uuid not null,
+    role_type_id          VARCHAR(60),
+    from_date             TIMESTAMP,
+    thru_date             TIMESTAMP,
 
-    last_updated_stamp TIMESTAMP,
-    created_stamp TIMESTAMP default CURRENT_TIMESTAMP,
+    last_updated_stamp    TIMESTAMP,
+    created_stamp         TIMESTAMP     default CURRENT_TIMESTAMP,
     constraint pk_shipment_item_role primary key (shipment_item_role_id),
-    constraint fk_shipment_item_role_role_type_id foreign key(role_type_id) references role_type(role_type_id),
-    constraint fk_shipment_item_role_shipment_item_id foreign key(shipment_item_id) references shipment_item(shipment_item_id),
-    constraint fk_shipment_item_role_party_id foreign key(party_id) references party(party_id)
+    constraint fk_shipment_item_role_role_type_id foreign key (role_type_id) references role_type (role_type_id),
+    constraint fk_shipment_item_role_shipment_item_id foreign key (shipment_item_id) references shipment_item (shipment_item_id),
+    constraint fk_shipment_item_role_party_id foreign key (party_id) references party (party_id)
 
 );

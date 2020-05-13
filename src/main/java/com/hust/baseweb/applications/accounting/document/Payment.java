@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -35,6 +36,7 @@ public class Payment {
     private Date lastUpdatedStamp; // timestamp,
     private Date createdStamp;      // timestamp default current_timestamp,
 
+    @NotNull
     public static String convertSequenceIdToPaymentId(Long id) {
         return "PAY" + String.format("%010d", id);
     }

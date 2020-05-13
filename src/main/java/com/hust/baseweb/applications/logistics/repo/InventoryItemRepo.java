@@ -4,12 +4,12 @@ import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.InventoryItem;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface InventoryItemRepo extends PagingAndSortingRepository<InventoryItem, UUID> {
+public interface InventoryItemRepo extends JpaRepository<InventoryItem, UUID> {
     InventoryItem findByInventoryItemId(UUID inventoryItemId);
 
     @NotNull

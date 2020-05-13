@@ -35,22 +35,24 @@ public class InventoryItemAPIController {
 
     @PostMapping("/import-inventory-items")
     @Transactional
-    public ResponseEntity importInventoryItems(@RequestBody ImportInventoryItemsInputModel input) {
+    public ResponseEntity<List<InventoryItem>> importInventoryItems(@RequestBody ImportInventoryItemsInputModel inventoryItemsInput) {
 //        System.out.println(module + "::importInventoryItems, input.sz = " + input.getInventoryItems().length);
 
-        for (ImportInventoryItemInputModel inputModel : input.getInventoryItems()) {
-            InventoryItem inventoryItem = inventoryItemService.importInventoryItem(inputModel);
-            if (inventoryItem == null) {
-                // THIS SHOULD BE IMPROVE using transaction
-                return ResponseEntity.unprocessableEntity().body("cannot create inventory item");
-            }
-        }
-        return ResponseEntity.ok().body("ok");
+//        for (ImportInventoryItemInputModel inputModel : input.getInventoryItems()) {
+//            InventoryItem inventoryItem = inventoryItemService.importInventoryItems(inputModel);
+//            if (inventoryItem == null) {
+//                // THIS SHOULD BE IMPROVE using transaction
+//                return ResponseEntity.unprocessableEntity().body("cannot create inventory item");
+//            }
+//        }
+//        return ResponseEntity.ok().body("ok");
+
+        return ResponseEntity.ok(inventoryItemService.importInventoryItems(inventoryItemsInput));
     }
 
     @GetMapping("/simulator/import-inventory-items")
     @Transactional
-    public ResponseEntity simulatorImportInventoryItems() {
+    public ResponseEntity<List<InventoryItem>> simulatorImportInventoryItems() {
         Random random = new Random();
         List<Product> products = productRepo.findAll();
         List<Facility> facilities = facilityRepo.findAll();

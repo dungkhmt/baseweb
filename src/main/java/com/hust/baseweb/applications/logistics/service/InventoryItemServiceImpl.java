@@ -6,10 +6,7 @@ import com.hust.baseweb.applications.accounting.repo.InvoiceStatusRepo;
 import com.hust.baseweb.applications.accounting.repo.OrderItemBillingRepo;
 import com.hust.baseweb.applications.accounting.service.InvoiceService;
 import com.hust.baseweb.applications.logistics.entity.*;
-import com.hust.baseweb.applications.logistics.model.ExportInventoryItemInputModel;
-import com.hust.baseweb.applications.logistics.model.ExportInventoryItemsInputModel;
-import com.hust.baseweb.applications.logistics.model.ImportInventoryItemInputModel;
-import com.hust.baseweb.applications.logistics.model.InventoryModel;
+import com.hust.baseweb.applications.logistics.model.*;
 import com.hust.baseweb.applications.logistics.repo.*;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.entity.OrderItem;
@@ -44,7 +41,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     private InventoryItemRepo inventoryItemRepo;
     private FacilityService facilityService;
-    private ProductService productService;
+    //    private ProductService productService;
+    private ProductRepo productRepo;
     private ProductFacilityRepo productFacilityRepo;
     private InventoryItemDetailService inventoryItemDetailService;
 
@@ -55,7 +53,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     private PartyCustomerRepo partyCustomerRepo;
 
     private FacilityRepo facilityRepo;
-    private ProductRepo productRepo;
 
     private ShipmentItemRepo shipmentItemRepo;
 
@@ -73,42 +70,98 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     private InvoiceStatusRepo invoiceStatusRepo;
 
+    private ReceiptService receiptService;
 
     @Override
     @Transactional
-    public InventoryItem importInventoryItem(ImportInventoryItemInputModel input) {
+    public List<InventoryItem> importInventoryItems(ImportInventoryItemsInputModel inventoryItemsInput) {
 
 //        System.out.println(module + "::save(" + input.getProductId() + "," + input.getQuantityOnHandTotal() + ")");
 
-        Product product = productService.findByProductId(input.getProductId());
-        Facility facility = facilityService.findFacilityById(input.getFacilityId());
+//        Product product = productService.findByProductId(inventoryItems.getProductId());
+//        Facility facility = facilityService.findFacilityById(inventoryItems.getFacilityId());
 
-        if (product == null || facility == null) {
-            return null;
+        Map<String, Product> productMap = productRepo.findAllByProductIdIn(Arrays.stream(inventoryItemsInput.getInventoryItems())
+                .map(ImportInventoryItemInputModel::getProductId)
+                .collect(Collectors.toList()))
+                .stream().collect(Collectors.toMap(Product::getProductId, p -> p));
+
+        Map<String, Facility> facilityMap = facilityRepo.findAllByFacilityIdIn(Arrays.stream(inventoryItemsInput.getInventoryItems())
+                .map(ImportInventoryItemInputModel::getFacilityId)
+                .collect(Collectors.toList()))
+                .stream().collect(Collectors.toMap(Facility::getFacilityId, f -> f));
+
+//        if (product == null || facility == null) {
+//            return null;
+//        }
+
+        Map<List<String>, ProductFacility> productFacilityMap = productFacilityRepo.findByProductIdInAndFacilityIdIn(
+                new ArrayList<>(productMap.keySet()), new ArrayList<>(facilityMap.keySet()))
+                .stream()
+                .collect(Collectors.toMap(productFacility -> Arrays.asList(productFacility.getProductId(),
+                        productFacility.getFacilityId()), o -> o));
+
+        for (ImportInventoryItemInputModel inventoryItem : inventoryItemsInput.getInventoryItems()) {
+            ProductFacility productFacility = productFacilityMap.computeIfAbsent(Arrays.asList(inventoryItem.getProductId(),
+                    inventoryItem.getFacilityId()), k -> {
+                ProductFacility pf = new ProductFacility();
+                pf.setProductId(inventoryItem.getProductId());
+                pf.setFacilityId(inventoryItem.getFacilityId());
+                pf.setAtpInventoryCount(inventoryItem.getQuantityOnHandTotal());
+                pf.setLastInventoryCount(0);
+                return pf;
+            });
+            productFacility.setLastInventoryCount(productFacility.getLastInventoryCount() +
+                    inventoryItem.getQuantityOnHandTotal());
         }
+
+        List<InventoryItem> inventoryItems = Arrays.stream(inventoryItemsInput.getInventoryItems())
+                .map(inventoryItemInput -> {
+                    Product product = productMap.get(inventoryItemInput.getProductId());
+
+                    InventoryItem inventoryItem = new InventoryItem();
+                    inventoryItem.setFacility(facilityMap.get(inventoryItemInput.getFacilityId()));
+                    inventoryItem.setProduct(product);
+                    inventoryItem.setLotId(inventoryItemInput.getLotId());
+                    inventoryItem.setUomId(product.getUom().getUomId());
+                    inventoryItem.setQuantityOnHandTotal(inventoryItemInput.getQuantityOnHandTotal());
+                    return inventoryItem;
+                })
+                .collect(Collectors.toList());
+
+        Map<Facility, List<InventoryItem>> facilityToInventoryItems = inventoryItems.stream()
+                .collect(Collectors.groupingBy(InventoryItem::getFacility));
+
+        facilityToInventoryItems.forEach((facility, inventoryItemsList) -> {
+            Receipt receipt = receiptService.create(facility); // saved
+            receiptService.createReceiptItems(receipt, inventoryItemsList); // saved
+        });
+
+        return inventoryItemRepo.saveAll(inventoryItems);
 
         // product processing region
-        ProductFacility productFacility = productFacilityRepo.findByProductIdAndFacilityId(product.getProductId(),
-                facility.getFacilityId());
-        if (productFacility == null) {
-            productFacility = new ProductFacility();
-            productFacility.setProductId(product.getProductId());
-            productFacility.setFacilityId(facility.getFacilityId());
-            productFacility.setAtpInventoryCount(input.getQuantityOnHandTotal());
-            productFacility.setLastInventoryCount(0);
-        }
-        productFacility.setLastInventoryCount(productFacility.getLastInventoryCount() + input.getQuantityOnHandTotal());
-        productFacility = productFacilityRepo.save(productFacility);
+//        ProductFacility productFacility = productFacilityRepo.findByProductIdAndFacilityId(product.getProductId(),
+//                facility.getFacilityId());
+//        if (productFacility == null) {
+//            productFacility = new ProductFacility();
+//            productFacility.setProductId(product.getProductId());
+//            productFacility.setFacilityId(facility.getFacilityId());
+//            productFacility.setAtpInventoryCount(inventoryItems.getQuantityOnHandTotal());
+//            productFacility.setLastInventoryCount(0);
+//        }
+//        productFacility.setLastInventoryCount(productFacility.getLastInventoryCount() +
+//                inventoryItems.getQuantityOnHandTotal());
+//        productFacility = productFacilityRepo.save(productFacility);
 
         // inventory processing region
-        InventoryItem inventoryItem = new InventoryItem();
-        inventoryItem.setFacility(facility);
-        inventoryItem.setProduct(product);
-        inventoryItem.setLotId(input.getLotId());
-        inventoryItem.setUomId(product.getUom().getUomId());
-        inventoryItem.setQuantityOnHandTotal(input.getQuantityOnHandTotal());
+//        InventoryItem inventoryItem = new InventoryItem();
+//        inventoryItem.setFacility(facility);
+//        inventoryItem.setProduct(product);
+//        inventoryItem.setLotId(inventoryItemsInput.getLotId());
+//        inventoryItem.setUomId(product.getUom().getUomId());
+//        inventoryItem.setQuantityOnHandTotal(inventoryItemsInput.getQuantityOnHandTotal());
 
-        return inventoryItemRepo.save(inventoryItem);
+//        return inventoryItemRepo.save(inventoryItem);
     }
 
     @Override
