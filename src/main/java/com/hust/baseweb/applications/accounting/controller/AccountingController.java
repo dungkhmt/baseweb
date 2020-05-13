@@ -11,10 +11,15 @@ import com.hust.baseweb.applications.accounting.service.PaymentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Hien Hoang (hienhoang2702@gmail.com)
@@ -80,8 +85,14 @@ public class AccountingController {
     }
 
     @GetMapping("/get-all-unpaid-invoices")
-    public ResponseEntity<List<Invoice.Model>> getAllUnpaidInvoices() {
-        return ResponseEntity.ok(invoiceService.getAllUnpaidInvoices());
+    public ResponseEntity<Page<Invoice.Model>> getAllUnpaidInvoices(@RequestParam("filtering") String filtering,
+                                                                    Pageable pageable) {
+        Map<String, String> filterMap = Arrays.stream(filtering.split(","))
+                .map(s -> s.split(":"))
+                .collect(Collectors.toMap(ss -> ss[0], ss -> ss[1]));
+        return ResponseEntity.ok(invoiceService.getAllUnpaidInvoices(filterMap.get("invoiceId"),
+                filterMap.get("toPartyCustomerId"),
+                pageable));
     }
 
     @PostMapping("/create-payment-application")

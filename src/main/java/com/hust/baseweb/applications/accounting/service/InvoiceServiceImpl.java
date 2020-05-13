@@ -8,6 +8,8 @@ import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,11 +34,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<Invoice.Model> getAllUnpaidInvoices() {
-        return invoiceRepo.findAllByAmountNotEqualWithPaidAmount()
-                .stream()
-                .map(Invoice::toModel)
-                .collect(Collectors.toList());
+    public Page<Invoice.Model> getAllUnpaidInvoices(String invoiceId,
+                                                    String toPartyCustomerId,
+                                                    Pageable pageable) {
+        return invoiceRepo.findAllByInvoiceIdAndToPartyCustomerIdAndAmountNotEqualWithPaidAmount(invoiceId,
+                toPartyCustomerId,
+                pageable)
+                .map(Invoice::toModel);
     }
 
     @Override
