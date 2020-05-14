@@ -1,20 +1,20 @@
 # POSTGRES_DB: baseweb_dms config database name if in local
 SERVICE_HOST: localhost
 SERVICE_PORT: 8080
-SQL_DB_HOST: pgsql #config db host to localhost if in local
-SQL_DB_PORT: 5432
-SQL_DB_USER: postgres
-SQL_DB_PASS: baseweb@123
+SQL_DB_HOST: ${POSTGRES_HOST} #localhost #config db host to localhost if in local
+SQL_DB_PORT: ${POSTGRES_PORT} #5432
+SQL_DB_USER: ${POSTGRES_USER} #postgres
+SQL_DB_PASS: ${POSTGRES_PASSWORD} #baseweb@123
 server:
   servlet:
     context-path: '/api'
 google:
-  api_key: #push google map api key here
+  api_key: ${GOOGLE_MAP_API_KEY} #push google map api key here
 spring:
   redis:
-    host : localhost
-    port : 6379  
-  jackson: 
+    host : ${REDIS_HOST} #localhost
+    port : ${REDIS_PORT} #6379
+  jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS : false
   servlet:
@@ -29,9 +29,9 @@ spring:
       detection-strategy:  ANNOTATED
 
     mongodb:
-      host: localhost
-      port: 27017
-      database: baseweb
+      host: ${MONGO_HOST} #localhost
+      port: ${MONGO_PORT} #27017
+      database: ${MONGO_DB_NAME} #baseweb
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -53,4 +53,5 @@ logging:
       springframework: INFO
   config: classpath:logback-dev.xml
 content-repo:
-  url : 'http://localhost:8081/'
+  url : http://${CONTENT_SERVICE_HOST}:${CONTENT_SERVICE_PORT}/ #'http://localhost:8081/'
+
