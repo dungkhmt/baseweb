@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface InvoiceRepo extends MongoRepository<Invoice, String> {
     @Query("{\n" +
             "    $and: [\n" +
-            "        { _id:?0, toPartyCustomerId:?1},\n" +
+            "        { _id: { $regex:?0 }, toPartyCustomerId:?1},\n" +
             "        { $expr: { $ne: [\"$amount\", \"$paidAmount\"] } }\n" +
             "    ]\n" +
             "}")
@@ -25,7 +25,7 @@ public interface InvoiceRepo extends MongoRepository<Invoice, String> {
 
     @Query("{\n" +
             "    $and: [\n" +
-            "        { _id:?0},\n" +
+            "        { _id: { $regex:?0 }},\n" +
             "        { $expr: { $ne: [\"$amount\", \"$paidAmount\"] } }\n" +
             "    ]\n" +
             "}")
