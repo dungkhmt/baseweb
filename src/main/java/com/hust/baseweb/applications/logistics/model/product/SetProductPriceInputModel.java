@@ -11,4 +11,6 @@ public class SetProductPriceInputModel {
     private Double price;
     private String taxInPrice;
     private String currencyUomId;
+    private String fromDate;
+    private String thruDate;
 }

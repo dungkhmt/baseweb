@@ -1,23 +1,23 @@
 package com.hust.baseweb.applications.logistics.service;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-
 import com.hust.baseweb.applications.logistics.entity.Product;
+import com.hust.baseweb.applications.logistics.entity.ProductType;
 import com.hust.baseweb.applications.logistics.entity.Uom;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
+import com.hust.baseweb.applications.logistics.repo.ProductTypeRepo;
 import com.hust.baseweb.applications.logistics.repo.UomRepo;
 import com.hust.baseweb.entity.Content;
 import com.hust.baseweb.repo.ContentRepo;
-
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -26,6 +26,9 @@ public class ProductServiceImpl implements ProductService {
     private UomRepo uomRepo;
     private UomService uomService;
     private ContentRepo contentRepo;
+
+    private ProductTypeRepo productTypeRepo;
+
     @Override
     public Product findByProductId(String productId) {
 
@@ -79,6 +82,8 @@ public class ProductServiceImpl implements ProductService {
         if (uom == null) {
             uom = uomService.save(uomId, "UNIT_MEASURE", uomId, uomId);
         }
+        ProductType productType = productTypeRepo.findById(type).orElseThrow(NoSuchElementException::new);
+
         Product product = new Product();
         product.setProductName(productName);
         product.setProductId(productId);
@@ -87,8 +92,11 @@ public class ProductServiceImpl implements ProductService {
         product.setProductTransportCategoryId(productTransportCategory);
         product.setHsThu(hsThu);
         product.setHsPal(hsPal);
-        Set<Content> lC=contentIds.stream().map(id -> contentRepo.getOne(UUID.fromString(id))).collect(Collectors.toSet());
+        Set<Content> lC = contentIds.stream()
+                .map(id -> contentRepo.getOne(UUID.fromString(id)))
+                .collect(Collectors.toSet());
         product.setContents(lC);
+        product.setProductType(productType);
         product = productRepo.save(product);
         return product;
     }

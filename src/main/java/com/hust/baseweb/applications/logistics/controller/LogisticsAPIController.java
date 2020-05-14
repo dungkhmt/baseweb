@@ -15,10 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -77,12 +74,14 @@ public class LogisticsAPIController {
     @PostMapping("/set-product-price")
     public ResponseEntity<?> setProductPrice(Principal principal, @RequestBody SetProductPriceInputModel input) {
         UserLogin userLogin = userService.findById(principal.getName());
-        ProductPrice pp = productPriceService.setProductPrice(userLogin,
+        ProductPrice productPrice = productPriceService.setProductPrice(userLogin,
                 input.getProductId(),
                 input.getPrice(),
                 input.getCurrencyUomId(),
-                input.getTaxInPrice());
-        return ResponseEntity.ok().body(pp);
+                input.getTaxInPrice(),
+                input.getFromDate(),
+                input.getThruDate());
+        return ResponseEntity.ok().body(productPrice);
     }
 
     @PostMapping("/get-product-price")
@@ -91,8 +90,13 @@ public class LogisticsAPIController {
         return ResponseEntity.ok().body(pp);
     }
 
+    @GetMapping("/get-product-price-history/{productId}")
+    public ResponseEntity<List<ProductPrice.Model>> getProductPriceHistory(@PathVariable String productId) {
+        return ResponseEntity.ok(productPriceService.getProductPriceHistory(productId));
+    }
+
     //@PostMapping("/get-sale-reports")
     //public ResponseEntity<?> getSaleReports(@RequestBody SaleReportModel.Input input) {
-     //   return ResponseEntity.ok().body(productPriceService.getSaleReports(input));
+    //   return ResponseEntity.ok().body(productPriceService.getSaleReports(input));
     //}
 }

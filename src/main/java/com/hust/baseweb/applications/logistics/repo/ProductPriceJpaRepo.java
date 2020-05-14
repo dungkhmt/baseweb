@@ -10,5 +10,7 @@ import java.util.UUID;
 public interface ProductPriceJpaRepo extends JpaRepository<ProductPrice, UUID> {
     List<ProductPrice> findByProductAndThruDateNull(Product product);
 
+    List<ProductPrice> findByProduct(Product product);
+
     List<ProductPrice> findAllByProductInAndThruDateNull(List<Product> products);
 }

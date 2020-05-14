@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -54,52 +55,50 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                                         String productId,
                                         Double price,
                                         String currencyUomId,
-                                        String taxInPrice) {
-        Product product = productRepo.findByProductId(productId);
-        if (product != null) {
-            log.info("setProductPrice, find product " + product.getProductId());
+                                        String taxInPrice,
+                                        String fromDate,
+                                        String thruDate) {
+        Product product = productRepo.findById(productId).orElseThrow(NoSuchElementException::new);
+//        if (product != null) {
+//            log.info("setProductPrice, find product " + product.getProductId());
+//        }
+
+        Uom uom = uomRepo.findByUomId(Optional.ofNullable(currencyUomId).orElse("CUR_vnd"));
+
+        Date now = new Date();
+        ProductPrice productPrice = productPriceRepo.findByProductAndThruDateNull(product);
+
+        if (productPrice != null) {
+            log.info("setProductPrice, find productPrice " + productPrice.getProductPriceId());
+
+            productPrice.setThruDate(now);
+            productPriceRepo.save(productPrice);
         }
+        // set thru_date of the current product_price by now() to disable this information
 
-        Uom uom = uomRepo.findByUomId(currencyUomId);
+        productPrice = new ProductPrice();
+        productPrice.setCurrencyUom(uom);
+        productPrice.setProduct(product);
+        productPrice.setPrice(price);
+        productPrice.setTaxInPrice(taxInPrice);
 
-        Date d = new Date();
-        ProductPrice pp = productPriceRepo.findByProductAndThruDateNull(product);
-
-        if (pp != null) {
-            log.info("setProductPrice, find productPrice " + pp.getProductPriceId());
-        }
-
-        if (pp == null) {
-            pp = new ProductPrice();
-            pp.setCurrencyUom(uom);
-            pp.setProduct(product);
-            pp.setPrice(price);
-            pp.setFromDate(d);
-            pp.setTaxInPrice(taxInPrice);
-            //pp.setCreatedByUserLogin(createdByUserLogin);
-            pp.setCreatedByUserLoginId(createdByUserLogin.getUserLoginId());
-            pp = productPriceRepo.save(pp);
-
-            log.info("setProductPrice create DONE");
-            return pp;
+        if (fromDate == null || thruDate == null) {
+            productPrice.setFromDate(now);
         } else {
-            // set thru_date of the current product_price by now() to disable this information
-            pp.setThruDate(d);
-            productPriceRepo.save(pp);
-
-            pp = new ProductPrice();
-            pp.setCurrencyUom(uom);
-            pp.setProduct(product);
-            pp.setPrice(price);
-            pp.setFromDate(d);
-            pp.setTaxInPrice(taxInPrice);
-            //pp.setCreatedByUserLogin(createdByUserLogin);
-            pp.setCreatedByUserLoginId(createdByUserLogin.getUserLoginId());
-            pp = productPriceRepo.save(pp);
-
-            log.info("setProductPrice update DONE");
-            return pp;
+            try {
+                productPrice.setFromDate(Constant.DATE_FORMAT.parse(fromDate));
+                productPrice.setThruDate(Constant.DATE_FORMAT.parse(thruDate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
+
+        //pp.setCreatedByUserLogin(createdByUserLogin);
+        productPrice.setCreatedByUserLoginId(createdByUserLogin.getUserLoginId());
+        productPrice = productPriceRepo.save(productPrice);
+
+        log.info("setProductPrice update DONE");
+        return productPrice;
     }
 
     @Override
@@ -118,6 +117,15 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         } else {
             return lst.get(0);
         }
+    }
+
+    @Override
+    public List<ProductPrice.Model> getProductPriceHistory(String productId) {
+        Product product = productRepo.findById(productId).orElseThrow(NoSuchElementException::new);
+        return productPriceJpaRepo.findByProduct(product)
+                .stream()
+                .map(ProductPrice::toModel)
+                .collect(Collectors.toList());
     }
 
     /*
