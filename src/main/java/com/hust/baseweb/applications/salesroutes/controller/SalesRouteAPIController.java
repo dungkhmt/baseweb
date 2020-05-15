@@ -109,7 +109,7 @@ public class SalesRouteAPIController {
     @PostMapping("/get-list-sales-route-planning-period")
     public ResponseEntity<?> getListSalesRoutePlanningPeriod(Principal principal, @RequestBody GetSalesRoutePlanningPeriodInputModel input){
         List<SalesRoutePlanningPeriod> salesRoutePlanningPeriodList = salesRoutePlanningPeriodService.findAll();
-        return ResponseEntity.ok().body(new GetSalesRoutePlanningPeriodOutputModel(salesRoutePlanningPeriodList));
+        return ResponseEntity.ok().body(salesRoutePlanningPeriodList);
 
     }
     @GetMapping("/get-list-sales-route-visit-frequency")
