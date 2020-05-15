@@ -1,23 +1,42 @@
-INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ('AUTOMATED_AGENT', NULL, FALSE, 'Automated Agent', NOW(), NOW());
-INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'PERSON', NULL, TRUE, 'Person', NOW(), NOW());
-INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'PARTY_GROUP', NULL, TRUE, 'Party Group', NOW(), NOW());
-INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'BANK', 'PARTY_GROUP', TRUE, 'Bank', NOW(), NOW());
-INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'LEGAL_ORGANIZATION', 'PARTY_GROUP', FALSE, 'Legal Organization', '2017-01-03 10:11:27.885', '2017-01-03 10:11:27.608');
-INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'CORPORATION', 'LEGAL_ORGANIZATION', FALSE, 'Corporation', NOW(), NOW());
-INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'CUSTOMER_GROUP', 'PARTY_GROUP', FALSE, 'Customer Group', NOW(), NOW());
-INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp) VALUES ( 'PARTY_DISTRIBUTOR', NULL, FALSE, 'Distributor', NOW(), NOW());
+INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
+VALUES ('AUTOMATED_AGENT', NULL, FALSE, 'Automated Agent', NOW(), NOW());
+INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
+VALUES ('PERSON', NULL, TRUE, 'Person', NOW(), NOW());
+INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
+VALUES ('PARTY_GROUP', NULL, TRUE, 'Party Group', NOW(), NOW());
+INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
+VALUES ('BANK', 'PARTY_GROUP', TRUE, 'Bank', NOW(), NOW());
+INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
+VALUES ('LEGAL_ORGANIZATION', 'PARTY_GROUP', FALSE, 'Legal Organization', '2017-01-03 10:11:27.885',
+        '2017-01-03 10:11:27.608');
+INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
+VALUES ('CORPORATION', 'LEGAL_ORGANIZATION', FALSE, 'Corporation', NOW(), NOW());
+INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
+VALUES ('CUSTOMER_GROUP', 'PARTY_GROUP', FALSE, 'Customer Group', NOW(), NOW());
+INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
+VALUES ('PARTY_DISTRIBUTOR', NULL, FALSE, 'Distributor', NOW(), NOW());
 INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
 VALUES ('PARTY_RETAIL_OUTLET', NULL, FALSE, 'Distributor', NOW(), NOW());
-insert into party_type(party_type_id, description) values('COMPANY','Company');
+INSERT INTO party_type (party_type_id, parent_type_id, has_table, description, last_updated_stamp, created_stamp)
+VALUES ('PARTY_SUPPLIER', NULL, FALSE, 'Supplier', NOW(), NOW());
+insert into party_type(party_type_id, description)
+values ('COMPANY', 'Company');
 
 
-INSERT INTO status_type (status_type_id, parent_type_id, description, last_updated_stamp, created_stamp) VALUES ( 'PARTY_STATUS', NULL, 'Party status', NOW(), NOW());
-INSERT INTO status_type (status_type_id, parent_type_id, description, last_updated_stamp, created_stamp) VALUES ('MARRY_STATUS', NULL, 'Marry status', NOW(), NOW());
-INSERT INTO status_type (status_type_id, parent_type_id, description, last_updated_stamp, created_stamp) VALUES ( 'SERVICE_STATUS', NULL, 'Service status', NOW(), NOW());
-INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('SINGLE', 'MARRY_STATUS', 'SINGLE', 0, 'Độc thân', NOW(), NOW());
-INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('MARRIED', 'MARRY_STATUS', 'MARRIED', 0, 'Đã kết hôn', NOW(), NOW());
-INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('DIVORCED', 'MARRY_STATUS', 'DIVORCED', 0, 'Đã ly dị', NOW(), NOW());
-INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('PARTY_ENABLED', 'PARTY_STATUS', 'ENABLED', 0, 'Đã kích hoạt', NOW(), NOW());
+INSERT INTO status_type (status_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
+VALUES ('PARTY_STATUS', NULL, 'Party status', NOW(), NOW());
+INSERT INTO status_type (status_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
+VALUES ('MARRY_STATUS', NULL, 'Marry status', NOW(), NOW());
+INSERT INTO status_type (status_type_id, parent_type_id, description, last_updated_stamp, created_stamp)
+VALUES ('SERVICE_STATUS', NULL, 'Service status', NOW(), NOW());
+INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp)
+VALUES ('SINGLE', 'MARRY_STATUS', 'SINGLE', 0, 'Độc thân', NOW(), NOW());
+INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp)
+VALUES ('MARRIED', 'MARRY_STATUS', 'MARRIED', 0, 'Đã kết hôn', NOW(), NOW());
+INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp)
+VALUES ('DIVORCED', 'MARRY_STATUS', 'DIVORCED', 0, 'Đã ly dị', NOW(), NOW());
+INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp)
+VALUES ('PARTY_ENABLED', 'PARTY_STATUS', 'ENABLED', 0, 'Đã kích hoạt', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('PARTY_DISABLED', 'PARTY_STATUS', 'DISABLED', 0, 'Đã bị vô hiệu hóa', NOW(), NOW());
 
 INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_SALE_MANAGER', 'Sale manager account owner access security group', '2017-01-03 10:12:23.879', '2017-01-03 10:12:23.878');
