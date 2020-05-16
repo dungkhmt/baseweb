@@ -137,6 +137,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             receiptService.createReceiptItems(receipt, inventoryItemsList); // saved
         });
 
+        productFacilityRepo.saveAll(productFacilityMap.values());
+
         return inventoryItemRepo.saveAll(inventoryItems);
 
         // product processing region
