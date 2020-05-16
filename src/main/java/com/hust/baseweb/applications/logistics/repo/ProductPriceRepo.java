@@ -5,11 +5,12 @@ import com.hust.baseweb.applications.logistics.entity.ProductPrice;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 public interface ProductPriceRepo extends PagingAndSortingRepository<ProductPrice, UUID> {
-    ProductPrice findByProductAndThruDateNull(Product product);
+    ProductPrice findByProductAndThruDateNullOrThruDateAfter(Product product, Date date);
 
-    List<ProductPrice> findAllByProductInAndThruDateNull(Collection<Product> products);
+    List<ProductPrice> findAllByProductInAndThruDateNullOrThruDateAfter(Collection<Product> products, Date date);
 }

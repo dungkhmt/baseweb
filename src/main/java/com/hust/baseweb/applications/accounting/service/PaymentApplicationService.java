@@ -14,5 +14,7 @@ public interface PaymentApplicationService {
 
     PaymentApplication.Model createPaymentApplication(PaymentApplication.CreateModel paymentApplicationCreateModel);
 
+    PaymentApplication.Model quickCreatePaymentApplication(PaymentApplication.CreateModel paymentApplicationCreateModel);
+
 
 }

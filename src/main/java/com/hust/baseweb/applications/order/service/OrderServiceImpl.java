@@ -244,10 +244,11 @@ public class OrderServiceImpl implements OrderService {
 
     @NotNull
     private Map<String, ProductPrice> buildProductPriceMap(Map<String, Product> productMap) {
-        return productPriceRepo.findAllByProductInAndThruDateNull(productMap.values())
+        Date now = new Date();
+        return productPriceRepo.findAllByProductInAndThruDateNullOrThruDateAfter(productMap.values(), now)
                 .stream()
-                .collect(Collectors.toMap(productPrice1 -> productPrice1.getProduct().getProductId(),
-                        productPrice1 -> productPrice1));
+                .collect(Collectors.toMap(productPrice -> productPrice.getProduct().getProductId(),
+                        productPrice -> productPrice));
     }
 
     @NotNull
