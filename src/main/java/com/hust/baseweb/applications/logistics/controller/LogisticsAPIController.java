@@ -1,16 +1,10 @@
 package com.hust.baseweb.applications.logistics.controller;
 
-import com.hust.baseweb.applications.logistics.entity.Facility;
-import com.hust.baseweb.applications.logistics.entity.Product;
-import com.hust.baseweb.applications.logistics.entity.ProductPrice;
-import com.hust.baseweb.applications.logistics.entity.Supplier;
+import com.hust.baseweb.applications.logistics.entity.*;
 import com.hust.baseweb.applications.logistics.model.*;
 import com.hust.baseweb.applications.logistics.model.product.GetProductPriceInputModel;
 import com.hust.baseweb.applications.logistics.model.product.SetProductPriceInputModel;
-import com.hust.baseweb.applications.logistics.service.FacilityService;
-import com.hust.baseweb.applications.logistics.service.ProductPriceService;
-import com.hust.baseweb.applications.logistics.service.ProductService;
-import com.hust.baseweb.applications.logistics.service.SupplierService;
+import com.hust.baseweb.applications.logistics.service.*;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
@@ -33,6 +27,8 @@ public class LogisticsAPIController {
     private FacilityService facilityService;
     private ProductPriceService productPriceService;
     private SupplierService supplierService;
+
+    private ProductPriceSupplierService productPriceSupplierService;
 
     private UserService userService;
 
@@ -111,5 +107,16 @@ public class LogisticsAPIController {
     @PostMapping("/create-supplier")
     public ResponseEntity<Supplier> createSupplier(@RequestBody Supplier.CreateModel supplierModel) {
         return ResponseEntity.ok(supplierService.create(supplierModel));
+    }
+
+    @GetMapping("/get-all-product-price-supplier-by-supplier/{supplierPartyId}")
+    public ResponseEntity<List<ProductPriceSupplier.Model>> getAllProductPriceSupplierBySupplier(@PathVariable String supplierPartyId) {
+        return ResponseEntity.ok(productPriceSupplierService.getAllProductPriceSuppliers(supplierPartyId));
+    }
+
+
+    @PostMapping("/set-product-price-supplier")
+    public ResponseEntity<ProductPriceSupplier> setProductPriceSupplier(@RequestBody ProductPriceSupplier.SetModel setModel) {
+        return ResponseEntity.ok(productPriceSupplierService.setProductPriceSupplier(setModel));
     }
 }
