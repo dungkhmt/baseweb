@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.hust.baseweb.entity.Content;
 import com.hust.baseweb.service.ContentService;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,14 @@ import okhttp3.Response;
 
 @RestController
 @RequestMapping("/content")
+@Log4j2
 public class ContentController {
     @Autowired
     private ContentService contentService;
 
     @PostMapping("/")
     public ResponseEntity<String> createContent(@RequestParam("file") MultipartFile file) {
+        log.info("createContent");
         Content content = null;
         try {
             content = contentService.createContent(file.getInputStream(), file.getOriginalFilename(),
@@ -41,7 +44,7 @@ public class ContentController {
 
     @GetMapping("/{contentId}")
     public ResponseEntity<?> get(@PathVariable String contentId) {
-
+        log.info("contentId {}", contentId);
         try {
             Response response = contentService.getContentData(contentId);
             HttpHeaders headers = new HttpHeaders();
