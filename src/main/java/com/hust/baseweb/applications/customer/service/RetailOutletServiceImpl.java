@@ -59,6 +59,8 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
         Party party = new Party(null, partyTypeRepo.getOne(PartyType.PartyTypeEnum.PERSON.name()), "",
                 statusRepo.findById(Status.StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
                 false);
+        party.setName(input.getRetailOutletName());
+
         party.setType(partyType);
 
         partyRepo.save(party);

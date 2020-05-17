@@ -35,6 +35,7 @@ CREATE TABLE party
 (
     party_id                    UUID      NOT NULL default uuid_generate_v1(),
     party_type_id               VARCHAR(60),
+    name                  varchar(200),
     external_id                 VARCHAR(60),
     description                 TEXT,
     status_id                   VARCHAR(60),

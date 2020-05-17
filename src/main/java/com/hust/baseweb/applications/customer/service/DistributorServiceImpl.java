@@ -60,6 +60,8 @@ public class DistributorServiceImpl implements DistributorService {
         Party party = new Party(null, partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
                 statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
                 false);
+        party.setName(input.getDistributorName());
+
         party.setType(partyType);
 
         partyRepo.save(party);

@@ -25,7 +25,12 @@ public class Party {
     @Column(name = "party_id")
     private UUID partyId;
 
+    @Column(name="party_code")
     private String partyCode;
+
+    @Column(name="name")
+    private String name;
+
 
     @JoinColumn(name = "party_type_id", referencedColumnName = "party_type_id")
     @ManyToOne(fetch = FetchType.EAGER)
