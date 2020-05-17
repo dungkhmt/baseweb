@@ -27,8 +27,35 @@ public class ProductPriceSupplier {
     @ManyToOne(fetch = FetchType.EAGER)
     private Supplier partySupplier; // uuid not null,
 
-    private String productId; // varchar(60),
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Product product; // varchar(60),
+
     private Integer unitPrice; // int,
     private Date fromDate; // timestamp,
     private Date thruDate; // timestamp,
+
+    public Model toModel() {
+        return new Model(product.getProductId(), product.getProductName(), unitPrice);
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class Model {
+        private String productId;
+        private String productName;
+        private Integer unitPrice;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class SetModel {
+        private String supplierPartyId;
+        private String productId;
+        private Integer unitPrice;
+    }
 }

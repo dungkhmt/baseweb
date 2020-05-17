@@ -4,9 +4,11 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class ModelCreateProductInput {
     private String productId;
     private String quantityUomId;
@@ -21,13 +23,5 @@ public class ModelCreateProductInput {
         this.productName = productName;
     }
 
-    @Override
-    public String toString() {
-        return "ModelCreateProductInput{" +
-                "productId='" + productId + '\'' +
-                ", quantityUomId='" + quantityUomId + '\'' +
-                ", type='" + type + '\'' +
-                ", productName='" + productName + '\'' +
-                '}';
-    }
+
 }

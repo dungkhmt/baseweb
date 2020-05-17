@@ -28,6 +28,8 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
     private PaymentRepo paymentRepo;
     private InvoiceRepo invoiceRepo;
 
+    private PaymentService paymentService;
+
     @Override
     public List<PaymentApplication.Model> findAllByInvoiceId(String invoiceId) {
         return paymentApplicationRepo.findAllByInvoiceId(invoiceId)
@@ -69,5 +71,17 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
         paymentRepo.save(payment);
 
         return paymentApplication.toModel();
+    }
+
+    @Override
+    public PaymentApplication.Model quickCreatePaymentApplication(PaymentApplication.CreateModel paymentApplicationCreateModel) {
+        Invoice invoice = invoiceRepo.findById(paymentApplicationCreateModel.getInvoiceId())
+                .orElseThrow(NoSuchElementException::new);
+        Payment.Model paymentModel = paymentService.createPayment(new Payment.CreateModel(invoice.getToPartyCustomerId()
+                .toString(),
+                paymentApplicationCreateModel.getAmount()));
+        return createPaymentApplication(new PaymentApplication.CreateModel(paymentModel.getPaymentId(),
+                invoice.getInvoiceId(),
+                Math.min(invoice.getAmount() - invoice.getPaidAmount(), paymentApplicationCreateModel.getAmount())));
     }
 }

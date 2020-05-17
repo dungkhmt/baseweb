@@ -29,10 +29,10 @@ import java.util.stream.Collectors;
 public class PaymentServiceImpl implements PaymentService {
 
     private PaymentRepo paymentRepo;
+    private PartyDistributorRepo partyDistributorRepo;
     private PaymentSequenceIdRepo paymentSequenceIdRepo;
     private PaymentApplicationRepo paymentApplicationRepo;
 
-    private PartyDistributorRepo partyDistributorRepo;
 
     @Override
     public Payment.Model createPayment(Payment.CreateModel paymentCreateModel) {

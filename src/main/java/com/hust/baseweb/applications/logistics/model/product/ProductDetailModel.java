@@ -8,9 +8,11 @@ import com.hust.baseweb.constant.ContentMappingConstant;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
+@ToString
 public class ProductDetailModel {
     private String productId;
     private String productName;

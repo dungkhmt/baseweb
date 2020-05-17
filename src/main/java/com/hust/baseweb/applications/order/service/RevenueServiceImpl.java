@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -35,6 +36,7 @@ public class RevenueServiceImpl implements RevenueService {
     private CustomerRevenueRepo customerRevenueRepo;
     private TotalRevenueRepo totalRevenueRepo;
     private ProductPriceRepo productPriceRepo;
+
     /*
     public void updateRevenue(List<OrderItem> orderItems,
                               Function<OrderItem, PartyCustomer> orderItemToCustomerFunction,
@@ -101,8 +103,9 @@ public class RevenueServiceImpl implements RevenueService {
             Party customer = orderItemToCustomerFunction.apply(orderItem);
             ProductPrice productPrice = productPriceMap.get(product.getProductId());
             double revenue = 0;
-            if(productPrice != null)
+            if (productPrice != null) {
                 revenue = quantity * productPrice.getPrice();
+            }
             LocalDate date = orderItemToDateFunction.apply(orderItem);
 
             totalRevenueMap.get(date).increase(revenue);
@@ -182,7 +185,8 @@ public class RevenueServiceImpl implements RevenueService {
 
     @NotNull
     private Map<String, ProductPrice> getProductPriceMap(List<Product> products) {
-        return productPriceRepo.findAllByProductInAndThruDateNull(products)
+        Date now = new Date();
+        return productPriceRepo.findAllByProductInAndThruDateNullOrThruDateAfter(products, now)
                 .stream()
                 .collect(Collectors.toMap(
                         productPrice -> productPrice.getProduct().getProductId(),

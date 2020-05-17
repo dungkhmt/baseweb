@@ -30,7 +30,18 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public List<Invoice.Model> getAllInvoice() {
-        return invoiceRepo.findAll().stream().map(Invoice::toModel).collect(Collectors.toList());
+        List<Invoice> invoices = invoiceRepo.findAll();
+        Map<UUID, PartyDistributor> partyDistributorMap = partyDistributorRepo.findAllByPartyIdIn(invoices.stream()
+                .map(Invoice::getToPartyCustomerId)
+                .distinct()
+                .collect(Collectors.toList()))
+                .stream().collect(Collectors.toMap(PartyDistributor::getPartyId, p -> p));
+        return invoices.stream()
+                .map(invoice ->
+                        invoice.toModel(Optional.ofNullable(partyDistributorMap.get(invoice.getToPartyCustomerId()))
+                                .map(PartyDistributor::getDistributorName)
+                                .orElse(null)))
+                .collect(Collectors.toList());
     }
 
     @Override

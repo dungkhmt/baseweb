@@ -106,6 +106,11 @@ public class AccountingController {
 
     @PostMapping("/create-payment-application")
     public ResponseEntity<PaymentApplication.Model> createPaymentApplication(@RequestBody PaymentApplication.CreateModel paymentApplicationCreateModel) {
-        return ResponseEntity.ok(paymentApplicationService.createPaymentApplication(paymentApplicationCreateModel));
+        if (paymentApplicationCreateModel.getPaymentId() != null) {
+            return ResponseEntity.ok(paymentApplicationService.createPaymentApplication(paymentApplicationCreateModel));
+        } else {
+            return ResponseEntity.ok(paymentApplicationService.quickCreatePaymentApplication(
+                    paymentApplicationCreateModel));
+        }
     }
 }
