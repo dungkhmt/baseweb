@@ -8,8 +8,8 @@ import com.hust.baseweb.applications.accounting.entity.PaymentSequenceId;
 import com.hust.baseweb.applications.accounting.repo.PaymentApplicationRepo;
 import com.hust.baseweb.applications.accounting.repo.PaymentRepo;
 import com.hust.baseweb.applications.accounting.repo.sequenceid.PaymentSequenceIdRepo;
-import com.hust.baseweb.applications.customer.entity.PartyDistributor;
-import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
+import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.repo.PartyRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class PaymentServiceImpl implements PaymentService {
 
     private PaymentRepo paymentRepo;
-    private PartyDistributorRepo partyDistributorRepo;
+    private PartyRepo partyRepo;
     private PaymentSequenceIdRepo paymentSequenceIdRepo;
     private PaymentApplicationRepo paymentApplicationRepo;
 
@@ -55,9 +55,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment.Model getPayment(String paymentId) {
         Payment payment = paymentRepo.findById(paymentId).orElseThrow(NoSuchFieldError::new);
-        PartyDistributor partyDistributor = partyDistributorRepo.findById(payment.getFromCustomerId())
-                .orElse(new PartyDistributor());
-        return payment.toModel(partyDistributor.getDistributorName());
+        Party party = partyRepo.findById(payment.getFromCustomerId()).orElse(new Party());
+        return payment.toModel(party.getName());
     }
 
     @Override

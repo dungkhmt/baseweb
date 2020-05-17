@@ -25,7 +25,6 @@ public class Party {
     @Column(name = "party_id")
     private UUID partyId;
 
-    @Column(name = "party_code")
     private String partyCode;
 
     @Column(name = "name")

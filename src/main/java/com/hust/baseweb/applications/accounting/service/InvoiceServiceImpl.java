@@ -6,6 +6,8 @@ import com.hust.baseweb.applications.accounting.repo.InvoiceRepo;
 import com.hust.baseweb.applications.accounting.repo.sequenceid.InvoiceSequenceIdRepo;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
+import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.repo.PartyRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,19 +29,20 @@ public class InvoiceServiceImpl implements InvoiceService {
     private InvoiceRepo invoiceRepo;
     private InvoiceSequenceIdRepo invoiceSequenceIdRepo;
     private PartyDistributorRepo partyDistributorRepo;
+    private PartyRepo partyRepo;
 
     @Override
     public List<Invoice.Model> getAllInvoice() {
         List<Invoice> invoices = invoiceRepo.findAll();
-        Map<UUID, PartyDistributor> partyDistributorMap = partyDistributorRepo.findAllByPartyIdIn(invoices.stream()
+        Map<UUID, Party> partyMap = partyRepo.findAllByPartyIdIn(invoices.stream()
                 .map(Invoice::getToPartyCustomerId)
                 .distinct()
                 .collect(Collectors.toList()))
-                .stream().collect(Collectors.toMap(PartyDistributor::getPartyId, p -> p));
+                .stream().collect(Collectors.toMap(Party::getPartyId, p -> p));
         return invoices.stream()
                 .map(invoice ->
-                        invoice.toModel(Optional.ofNullable(partyDistributorMap.get(invoice.getToPartyCustomerId()))
-                                .map(PartyDistributor::getDistributorName)
+                        invoice.toModel(Optional.ofNullable(partyMap.get(invoice.getToPartyCustomerId()))
+                                .map(Party::getName)
                                 .orElse(null)))
                 .collect(Collectors.toList());
     }
@@ -122,9 +125,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice.Model getInvoice(String invoiceId) {
         Invoice invoice = invoiceRepo.findById(invoiceId).orElseThrow(NoSuchElementException::new);
-        PartyDistributor partyDistributor = partyDistributorRepo.findById(invoice.getToPartyCustomerId())
-                .orElse(new PartyDistributor());
-        return invoice.toModel(partyDistributor.getDistributorName());
+        Party party = partyRepo.findById(invoice.getToPartyCustomerId()).orElse(new Party());
+        return invoice.toModel(party.getName());
     }
 
     @Override
