@@ -41,7 +41,8 @@ public class OrderAPIController {
 
     @PostMapping("/create-order-distributor-to-retail-outlet")
     //public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
-    public ResponseEntity createOrder(Principal principal, @RequestBody CreateOrderDistributor2RetailOutletInputModel input) {
+    public ResponseEntity createOrder(Principal principal,
+                                      @RequestBody CreateOrderDistributor2RetailOutletInputModel input) {
         //TODO
         Gson gson = new Gson();
         String inputJson = gson.toJson(input);
@@ -109,5 +110,15 @@ public class OrderAPIController {
                     OrderAPIController.revenueOrderCache.getRevenue(keys.get(i)));
         }
         return ResponseEntity.ok().body(new GetTotalRevenueOutputModel(itemOutputModels));
+    }
+
+    @GetMapping("/get-all-purchase-order")
+    public ResponseEntity<List<OrderHeader.PurchaseModel>> getAllPurchaseOrder() {
+        return ResponseEntity.ok(orderService.getAllPurchaseOrder());
+    }
+
+    @PostMapping("/create-purchase-order")
+    public ResponseEntity<Boolean> createPurchaseOrder(@RequestBody OrderHeader.PurchaseCreateModel purchaseCreateModel) {
+        return ResponseEntity.ok(orderService.createPurchaseOrder(purchaseCreateModel));
     }
 }

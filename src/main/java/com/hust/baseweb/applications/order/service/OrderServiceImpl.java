@@ -4,12 +4,8 @@ package com.hust.baseweb.applications.order.service;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
-import com.hust.baseweb.applications.logistics.entity.Facility;
-import com.hust.baseweb.applications.logistics.entity.Product;
-import com.hust.baseweb.applications.logistics.entity.ProductPrice;
-import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
-import com.hust.baseweb.applications.logistics.repo.ProductPriceRepo;
-import com.hust.baseweb.applications.logistics.repo.ProductRepo;
+import com.hust.baseweb.applications.logistics.entity.*;
+import com.hust.baseweb.applications.logistics.repo.*;
 import com.hust.baseweb.applications.logistics.service.ProductPriceService;
 import com.hust.baseweb.applications.order.controller.OrderAPIController;
 import com.hust.baseweb.applications.order.entity.*;
@@ -32,8 +28,9 @@ import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -43,6 +40,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 @Transactional
+@org.springframework.transaction.annotation.Transactional
 public class OrderServiceImpl implements OrderService {
     public static final String module = OrderServiceImpl.class.getName();
 
@@ -67,6 +65,9 @@ public class OrderServiceImpl implements OrderService {
     private ProductPriceRepo productPriceRepo;
 
     private RevenueService revenueService;
+
+    private SupplierRepo supplierRepo;
+    private ProductPriceSupplierRepo productPriceSupplierRepo;
 
 
     @Override
@@ -407,6 +408,119 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PartyCustomer findCustomerById(UUID partyId) {
         return partyCustomerRepo.findByPartyId(partyId);
+    }
+
+    @Override
+    public List<OrderHeader.PurchaseModel> getAllPurchaseOrder() {
+        // lấy danh sách order có type PURCHASE_ORDER
+        OrderType purchaseOrder = orderTypeRepo.findById("PURCHASE_ORDER").orElseThrow(NoSuchElementException::new);
+        List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderType(purchaseOrder);
+        Map<String, OrderHeader> orderHeaderMap = orderHeaders.stream()
+                .collect(Collectors.toMap(OrderHeader::getOrderId, o -> o));
+
+        // lấy các nhà cung cấp trong các order và map nó theo uuid
+        List<UUID> vendorIds = orderHeaders.stream()
+                .map(orderHeader -> orderHeader.getPartyVendor().getPartyId())
+                .distinct()
+                .collect(Collectors.toList());
+        Map<UUID, Supplier> supplierMap = supplierRepo.findAllByPartyIdIn(vendorIds)
+                .stream()
+                .collect(Collectors.toMap(Supplier::getPartyId, s -> s));
+
+        // các order item của các order
+        List<OrderItem> orderItems = orderItemRepo.findAllByOrderIdIn(new ArrayList<>(orderHeaderMap.keySet()));
+
+        // các product của các order
+        List<Product> products = orderItems.stream().map(OrderItem::getProduct).collect(Collectors.toList());
+
+        // dựng map về giá sản phẩm từ nhà cung cấp, key = product+supplier
+        Date now = new Date();
+        Map<List<? extends Serializable>, ProductPriceSupplier> productPriceSupplierMap =
+                productPriceSupplierRepo.findAllByPartySupplierInAndProductInAndThruDateNullOrThruDateAfter(
+                        supplierMap.values(), products, now)
+                        .stream()
+                        .collect(Collectors.toMap(productPriceSupplier -> Arrays.asList(productPriceSupplier.getProduct()
+                                .getProductId(), productPriceSupplier.getPartySupplier().getPartyId()), p -> p));
+
+
+        // dựng map order id --> thành tiền
+        Map<String, Double> orderIdToTotalAmount = orderItems.stream()
+                .collect(Collectors.groupingBy(OrderItem::getOrderId,
+                        Collectors.summingDouble(orderItem -> {
+                            UUID supplierPartyId = orderHeaderMap.get(orderItem.getOrderId())
+                                    .getPartyVendor()
+                                    .getPartyId();
+                            String productId = orderItem.getProduct().getProductId();
+                            ProductPriceSupplier productPriceSupplier = productPriceSupplierMap.get(Arrays.asList(
+                                    productId,
+                                    supplierPartyId));
+                            return Optional.ofNullable(productPriceSupplier)
+                                    .map(ProductPriceSupplier::getUnitPrice)
+                                    .orElse(0) * orderItem.getQuantity();
+                        })));
+
+        return orderHeaders.stream().map(orderHeader -> orderHeader.toPurchaseModel(
+                Optional.ofNullable(supplierMap.get(orderHeader.getPartyVendor().getPartyId()))
+                        .map(Supplier::getSupplierName)
+                        .orElse(null),
+                orderIdToTotalAmount.get(orderHeader.getOrderId())
+        )).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean createPurchaseOrder(OrderHeader.PurchaseCreateModel purchaseCreateModel) {
+        OrderHeaderSequenceId id = orderHeaderSequenceIdRepo.save(new OrderHeaderSequenceId());
+        String orderId = OrderHeader.convertSequenceIdToOrderId(id.getId());
+
+        OrderType purchaseOrder = orderTypeRepo.findById("PURCHASE_ORDER").orElseThrow(NoSuchElementException::new);
+        Date now = new Date();
+
+        Party vendorParty = partyRepo.findById(UUID.fromString(purchaseCreateModel.getSupplierPartyId()))
+                .orElseThrow(NoSuchElementException::new);
+
+        OrderHeader orderHeader = new OrderHeader(orderId, purchaseOrder, null, now, 0.0, null,
+                false, now, now, null, vendorParty, null, null, null, null);
+
+        orderHeader = orderHeaderRepo.save(orderHeader);
+
+        List<String> productIds = purchaseCreateModel.getProductQuantities()
+                .stream()
+                .map(OrderHeader.PurchaseCreateModel.ProductQuantity::getProductId)
+                .distinct()
+                .collect(Collectors.toList());
+        Map<String, Product> productMap = productRepo.findAllByProductIdIn(productIds)
+                .stream()
+                .collect(Collectors.toMap(Product::getProductId, p -> p));
+
+        Supplier supplier = supplierRepo.findById(UUID.fromString(purchaseCreateModel.getSupplierPartyId()))
+                .orElseThrow(NoSuchElementException::new);
+        Map<String, Integer> productIdToSupplierUnitPrice = productPriceSupplierRepo.findAllByPartySupplierAndThruDateNullOrThruDateAfter(
+                supplier,
+                now)
+                .stream()
+                .collect(Collectors.toMap(productPriceSupplier -> productPriceSupplier.getProduct().getProductId(),
+                        ProductPriceSupplier::getUnitPrice));
+
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        for (int i = 0; i < purchaseCreateModel.getProductQuantities().size(); i++) {
+            OrderHeader.PurchaseCreateModel.ProductQuantity productQuantity =
+                    purchaseCreateModel.getProductQuantities().get(i);
+            String productId = productQuantity.getProductId();
+            OrderItem orderItem = new OrderItem(orderId,
+                    i + "",
+                    productMap.get(productId),
+                    Optional.ofNullable(productIdToSupplierUnitPrice.get(productId))
+                            .map(unitPrice -> 1.0 * unitPrice)
+                            .orElse(null),
+                    productQuantity.getQuantity(),
+                    0);
+            orderItems.add(orderItem);
+        }
+
+        orderItemRepo.saveAll(orderItems);
+
+        return true;
     }
 
 }

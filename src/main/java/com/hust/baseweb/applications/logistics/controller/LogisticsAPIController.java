@@ -104,6 +104,11 @@ public class LogisticsAPIController {
         return ResponseEntity.ok(supplierService.getAllSupplier());
     }
 
+    @GetMapping("/get-supplier-by-id/{supplierPartyId}")
+    public ResponseEntity<Supplier> getSupplierById(@PathVariable String supplierPartyId) {
+        return ResponseEntity.ok(supplierService.getSupplierById(supplierPartyId));
+    }
+
     @PostMapping("/create-supplier")
     public ResponseEntity<Supplier> createSupplier(@RequestBody Supplier.CreateModel supplierModel) {
         return ResponseEntity.ok(supplierService.create(supplierModel));
@@ -113,7 +118,6 @@ public class LogisticsAPIController {
     public ResponseEntity<List<ProductPriceSupplier.Model>> getAllProductPriceSupplierBySupplier(@PathVariable String supplierPartyId) {
         return ResponseEntity.ok(productPriceSupplierService.getAllProductPriceSuppliers(supplierPartyId));
     }
-
 
     @PostMapping("/set-product-price-supplier")
     public ResponseEntity<ProductPriceSupplier> setProductPriceSupplier(@RequestBody ProductPriceSupplier.SetModel setModel) {

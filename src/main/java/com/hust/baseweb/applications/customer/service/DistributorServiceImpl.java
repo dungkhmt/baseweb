@@ -83,7 +83,7 @@ public class DistributorServiceImpl implements DistributorService {
 
 
         GeoPoint geoPoint = null;
-        if(input.getLatitude() != null && input.getLongitude() != null) {
+        if (input.getLatitude() != null && input.getLongitude() != null) {
             geoPoint = new GeoPoint();
             //UUID geoPointId = UUID.randomUUID();
             geoPoint.setLatitude(Double.parseDouble(input.getLatitude()));
@@ -143,14 +143,18 @@ public class DistributorServiceImpl implements DistributorService {
     @Override
     public DetailDistributorModel getDistributorDetail(UUID partyDistributorId) {
         PartyDistributor partyDistributor = distributorRepo.findByPartyId(partyDistributorId);
-        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyDistributorAndThruDate(partyDistributor, null);
+        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyDistributorAndThruDate(
+                partyDistributor,
+                null);
 
         DetailDistributorModel detailDistributorModel = new DetailDistributorModel();
         detailDistributorModel.setPartyDistributorId(partyDistributor.getPartyId());
         detailDistributorModel.setDistributorCode(partyDistributor.getDistributorCode());
         detailDistributorModel.setDistributorName(partyDistributor.getDistributorName());
         List<RetailOutletSalesmanDistributorModel> retailOutletSalesmanDistributorModels =
-                retailOutletSalesmanVendors.stream().map(o -> new RetailOutletSalesmanDistributorModel(o)).collect(Collectors.toList());
+                retailOutletSalesmanVendors.stream()
+                        .map(o -> new RetailOutletSalesmanDistributorModel(o))
+                        .collect(Collectors.toList());
 
         detailDistributorModel.setRetailOutletSalesmanDistributorModels(retailOutletSalesmanDistributorModels);
 
@@ -164,11 +168,13 @@ public class DistributorServiceImpl implements DistributorService {
          */
 
         PartyRetailOutlet partyRetailOutlet = partyRetailOutletRepo.findByPartyId(partyRetailOutletId);
-        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyRetailOutletAndThruDate(partyRetailOutlet, null);
+        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyRetailOutletAndThruDate(
+                partyRetailOutlet,
+                null);
         List<UUID> distributors = new ArrayList<>();
         List<PartyDistributor> distributorList;
 
-        for(RetailOutletSalesmanVendor rosv: retailOutletSalesmanVendors) {
+        for (RetailOutletSalesmanVendor rosv : retailOutletSalesmanVendors) {
             distributors.add(rosv.getPartyDistributor().getPartyId());
         }
 

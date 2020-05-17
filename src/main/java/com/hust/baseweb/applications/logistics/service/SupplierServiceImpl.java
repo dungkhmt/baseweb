@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 /**
  * @author Hien Hoang (hienhoang2702@gmail.com)
@@ -27,6 +28,11 @@ public class SupplierServiceImpl implements SupplierService {
     private PartyRepo partyRepo;
     private PartyTypeRepo partyTypeRepo;
     private StatusRepo statusRepo;
+
+    @Override
+    public Supplier getSupplierById(String supplierPartyId) {
+        return supplierRepo.findById(UUID.fromString(supplierPartyId)).orElse(null);
+    }
 
     @Override
     public List<Supplier> getAllSupplier() {

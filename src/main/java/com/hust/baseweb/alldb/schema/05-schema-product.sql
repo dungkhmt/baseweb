@@ -39,6 +39,3 @@ CREATE TABLE product
     CONSTRAINT fk_height_uom_id FOREIGN KEY (height_uom_id) REFERENCES uom (uom_id),
     constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id)
 );
-
-
-alter table product add column avatar varchar;
