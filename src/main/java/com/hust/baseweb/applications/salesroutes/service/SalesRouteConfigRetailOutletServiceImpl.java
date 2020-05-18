@@ -8,14 +8,12 @@ import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfigRetailOutlet;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteVisitFrequency;
-import com.hust.baseweb.applications.salesroutes.repo.PSalesRouteConfigRetailOutletRepo;
-import com.hust.baseweb.applications.salesroutes.repo.PSalesRouteConfigRepo;
-import com.hust.baseweb.applications.salesroutes.repo.PSalesRoutePlanningPeriodRepo;
-import com.hust.baseweb.applications.salesroutes.repo.SalesRouteVisitFrequencyRepo;
+import com.hust.baseweb.applications.salesroutes.repo.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,6 +28,7 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
     private PSalesRoutePlanningPeriodRepo salesRoutePlanningPeriodRepo;
     private RetailOutletSalesmanVendorRepo retailOutletSalesmanVendorRepo;
     private SalesRouteVisitFrequencyRepo salesRouteVisitFrequencyRepo;
+    private SalesRouteConfigRetailOutletRepo salesRouteConfigRetailOutletRepo;
 
     @Override
     public SalesRouteConfigRetailOutlet save(UUID retailOutletSalesmanVendorId,
@@ -53,4 +52,8 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
         return salesRouteConfigRetailOutlet;
     }
 
+    @Override
+    public List<SalesRouteConfigRetailOutletRepo.GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(UUID salesRoutePlanningPeriodId) {
+        return salesRouteConfigRetailOutletRepo.getSalesroutesConfigRetailOutlets(salesRoutePlanningPeriodId);
+    }
 }
