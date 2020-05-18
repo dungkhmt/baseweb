@@ -12,7 +12,6 @@ import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetCusto
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetCustomersVisitedDayOfUserLogin;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteplanningperiod.CreateSalesRoutePlanningPeriodInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteplanningperiod.GetSalesRoutePlanningPeriodInputModel;
-import com.hust.baseweb.applications.salesroutes.model.salesrouteplanningperiod.GetSalesRoutePlanningPeriodOutputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesroutevisitfrequency.ListSalesRouteVisitFrequencyOutputModel;
 import com.hust.baseweb.applications.salesroutes.repo.SalesRouteVisitFrequencyRepo;
 import com.hust.baseweb.applications.salesroutes.service.*;
@@ -81,7 +80,7 @@ public class SalesRouteAPIController {
     @PostMapping("/get-list-sales-route-config")
     public ResponseEntity<?> getListSalesRouteConfig(Principal prinicpal, @RequestBody GetSalesRouteConfigInputModel input){
         List<SalesRouteConfig> salesRouteConfigs = salesRouteConfigService.findAll();
-        return ResponseEntity.ok().body(new GetListSalesRouteConfigOutputModel(salesRouteConfigs));
+        return ResponseEntity.ok().body(salesRouteConfigs);
     }
 
     //@PostMapping("/create-sales-route-config-customer")
@@ -106,12 +105,14 @@ public class SalesRouteAPIController {
 
         return ResponseEntity.ok().body(salesRoutePlanningPeriod);
     }
+
     @PostMapping("/get-list-sales-route-planning-period")
     public ResponseEntity<?> getListSalesRoutePlanningPeriod(Principal principal, @RequestBody GetSalesRoutePlanningPeriodInputModel input){
         List<SalesRoutePlanningPeriod> salesRoutePlanningPeriodList = salesRoutePlanningPeriodService.findAll();
         return ResponseEntity.ok().body(salesRoutePlanningPeriodList);
 
     }
+
     @GetMapping("/get-list-sales-route-visit-frequency")
     public ResponseEntity<?> getListSalesRouteVisitFrequency(Principal principal){
         List<SalesRouteVisitFrequency> salesRouteVisitFrequencies = salesRouteVisitFrequencyRepo.findAll();
@@ -141,4 +142,44 @@ public class SalesRouteAPIController {
         List<PartyRetailOutlet> customers = salesRouteDetailService.getRetailOutletsVisitedSalesmanDay(partySalesmanId, input.getDate());
         return ResponseEntity.ok().body(customers);
     }
+
+    /**
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     * @param principal
+     * @param id salesRoutePlanningPeriodId
+     * @return List of GetSalesRouteConfigRetailOutletsOutputModel objects
+     */
+    @GetMapping("/get-sales-route-config-retail-outlets/{id}")
+    public ResponseEntity<?> getSalesroutesConfigRetailOutlets(Principal principal, @PathVariable UUID id) {
+        return ResponseEntity.ok().body(salesRouteConfigRetailOutletService.getSalesroutesConfigRetailOutlets(id));
+    }
+
+    /**
+     * Detail of a specific plan period
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     * @param principal
+     * @param id salesRoutePlanningPeriodId
+     * @return A SalesRoutePlanningPeriod object
+     */
+    @GetMapping("/get-plan-period-detail/{id}")
+    public ResponseEntity<?> getPlanPeriodDetail(Principal principal,@PathVariable UUID id) {
+        return ResponseEntity.ok().body(salesRoutePlanningPeriodService.findById(id));
+    }
+
+    /**
+     * List all sales route details of a specific plan period
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     * @param principal
+     * @param id salesRoutePlanningPeriodId
+     * @return List of GetSalesRouteDetailOfPlanPeriodOutputModel objects
+     */
+    @GetMapping("/get-sales-route-detail-of-plan-period/{id}")
+    public ResponseEntity<?> getSalesRouteDetailOfPlanPeriod(Principal principal, @PathVariable UUID id) {
+        return ResponseEntity.ok().body(salesRouteDetailService.getSalesRouteDetailOfPlanPeriod(id));
+    }
+
+    /*@GetMapping("/get-salesman-detail/{id}")
+    public ResponseEntity<?> getSalesmanDetail(Principal principal, @PathVariable UUID id) {
+
+    }*/
 }
