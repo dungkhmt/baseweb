@@ -108,5 +108,10 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
         //return retList;
     }
 
+    @Override
+    public List<SalesRouteDetailRepo.GetSalesRouteDetailOfPlanPeriodOutputModel> getSalesRouteDetailOfPlanPeriod(UUID salesRoutePlanningPeriodId) {
+        return salesRouteDetailRepo.getSalesRouteDetailOfPlanPeriod(salesRoutePlanningPeriodId);
+    }
+
 
 }
