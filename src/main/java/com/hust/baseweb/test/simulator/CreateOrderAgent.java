@@ -1,6 +1,8 @@
 package com.hust.baseweb.test.simulator;
 
 import com.google.gson.Gson;
+import com.hust.baseweb.applications.customer.entity.PartyDistributor;
+import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.PartyCustomerModel;
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
@@ -10,10 +12,14 @@ import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
 import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.DateTimeUtils;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Getter
+@Setter
 public class CreateOrderAgent extends Thread {
     public static final String module = CreateOrderAgent.class.getName();
     //OkHttpClient client = new OkHttpClient();
@@ -21,6 +27,13 @@ public class CreateOrderAgent extends Thread {
     private Random rand = new Random();
     private Thread thread = null;
     private String token;
+    private String username;
+    private String password;
+    private int idleTime = 120000;// 2 minute of ilde
+
+    public CreateOrderAgent(String username, String password){
+        this.username = username; this.password = password;
+    }
 
     //public static final MediaType JSON = MediaType
     //		.get("application/json; charset=utf-8");
@@ -28,7 +41,7 @@ public class CreateOrderAgent extends Thread {
 
     private int nbIters = 1000;
     private double maxTime = 0;
-    private int id;
+    private int agentId;
     private String fromDate;
     private String toDate;
     
@@ -46,7 +59,7 @@ public class CreateOrderAgent extends Thread {
     */
     
     public CreateOrderAgent(int id) {
-        this.id = id;
+        this.agentId = id;
     }
 
     public String getFromDate() {
@@ -127,34 +140,39 @@ public class CreateOrderAgent extends Thread {
             	orderDate = Constant.DATE_FORMAT.parse(curDate);
 //            	System.out.println("GEN orderDate " + orderDate);
             	
-            }catch(Exception e){
-            	System.out.println("NOT CORRECT date-time " + curDate);
-//            	e.printStackTrace();
-            	return;
-            }
+
             double time = createOrder(orderDate);
             
             double t = System.currentTimeMillis() - t0;
             if (maxTime < time) {
                 maxTime = time;
             }
+
+            Thread.sleep(idleTime);
+
             System.out.println("finished " + i + "/" + nbIters + ", time = " + t + ", maxTime = " + maxTime);
+
+            }catch(Exception e){
+                System.out.println("NOT CORRECT date-time " + curDate);
+//            	e.printStackTrace();break;
+                //return;
+            }
         }
 
-        System.out.println(module + "[" + id + "] finished, maxTime = " + maxTime);
+        System.out.println(module + "[" + agentId + "] finished, maxTime = " + maxTime);
 
     }
     public void run() {
         System.out.println(module + "::run....");
 
-        token = Login.login("admin", "123");
+        token = Login.login(username, password);
 
         createOrders(nbIters, fromDate, toDate);
         
         
     }
     public String name(){
-    	return module + "[" + id + "]";
+    	return module + "[" + agentId + "]";
     }
     public List<Product> getProducts() {
 //        System.out.println("createorderagent getProducts");
@@ -210,18 +228,30 @@ public class CreateOrderAgent extends Thread {
 
     public double createOrder(Date orderDate) {
         try {
+            ProductManager productManager = new ProductManager(token);
+            CustomerManager customerManager  = new CustomerManager(token);
+            FacilityManager facilityManager = new FacilityManager(token);
+
             Gson gson = new Gson();
             String[] salesmanIds = {"dungpq", "datnt", "admin", "nguyenvanseu"};
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            List<Product> products = getProducts();
-            List<Facility> facilities = getFacilities();
+
+            List<Product> products = productManager.getProducts();//getProducts();
+            List<Facility> facilities = facilityManager.getListFacility();//getFacilities();
             List<PartyCustomerModel> customers = getCustomers();
+            List<PartyDistributor> distributors = customerManager.getDistributors();
+            List<PartyRetailOutlet> retailOutlets = customerManager.getRetailOutlets();
+
+
+
 //            System.out.println(name() + "::createOrder, products.sz = " + products.size() + ", facilities.sz = "
 //            + facilities.size() + ", customers.sz = " + customers.size());
             
             //Product sel_p = products.get(rand.nextInt(products.size()));
             Facility selectedFacility = facilities.get(rand.nextInt(facilities.size()));
-            PartyCustomerModel selectedCustomer = customers.get(rand.nextInt(customers.size()));
+            //PartyCustomerModel selectedCustomer = customers.get(rand.nextInt(customers.size()));
+            PartyDistributor selectedDistributor = distributors.get(rand.nextInt(distributors.size()));
+            PartyRetailOutlet selectedRetailOutlet = retailOutlets.get(rand.nextInt(retailOutlets.size()));
 
             ModelCreateOrderInput input = new ModelCreateOrderInput();
             input.setFacilityId(selectedFacility.getFacilityId());
@@ -232,7 +262,10 @@ public class CreateOrderAgent extends Thread {
             input.setOrderDate(formatter.format(orderDate));
             
             //input.setPartyCustomerId(selectedCustomer.getPartyId());
-            input.setToCustomerId(UUID.fromString(selectedCustomer.getPartyCustomerId()));
+            //input.setToCustomerId(UUID.fromString(selectedCustomer.getPartyCustomerId()));
+            input.setToCustomerId(selectedRetailOutlet.getPartyId());
+            input.setFromVendorId(selectedDistributor.getPartyId());
+
             ModelCreateOrderInputOrderItem[] orderItems = new ModelCreateOrderInputOrderItem[products.size()];
             for (int i = 0; i < orderItems.length; i++) {
                 orderItems[i] = new ModelCreateOrderInputOrderItem();
@@ -252,6 +285,8 @@ public class CreateOrderAgent extends Thread {
                     token);
             //System.out.println(module + "::createOrder, rs = " + rs);
             return System.currentTimeMillis() - t0;
+
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }

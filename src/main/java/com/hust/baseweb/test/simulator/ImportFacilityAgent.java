@@ -5,26 +5,35 @@ import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.model.ImportInventoryItemInputModel;
 import com.hust.baseweb.applications.logistics.model.ImportInventoryItemsInputModel;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
+@Getter
+@Setter
 public class ImportFacilityAgent extends Thread {
     public static final String module = ImportFacilityAgent.class.getName();
 
     private Random rand = new Random();
     private Thread thread = null;
     private String token;
+    private String username;
+    private String password;
+
     private HttpPostExecutor executor = new HttpPostExecutor();
 
     private int nbIters = 10;
     private int idleTime = 360;
 
+    public ImportFacilityAgent(String username, String password){
+        this.username = username; this.password = password;
+    }
     public void run() {
         System.out.println(module + "::run....");
 
-        token = Login.login("admin", "123");
+        token = Login.login(username, password);
 
         createReceipts();
 
