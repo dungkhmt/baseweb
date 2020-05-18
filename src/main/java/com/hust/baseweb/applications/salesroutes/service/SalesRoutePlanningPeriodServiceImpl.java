@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Log4j2
@@ -48,6 +50,16 @@ public class SalesRoutePlanningPeriodServiceImpl implements
     @Override
     public List<SalesRoutePlanningPeriod> findAll() {
         return salesRoutePlanningPeriodRepo.findAll();
+    }
+
+    @Override
+    public SalesRoutePlanningPeriod findById(UUID salesRoutePlanningPeriodId) {
+        Optional<SalesRoutePlanningPeriod> salesRoutePlanningPeriod = salesRoutePlanningPeriodRepo.findById(salesRoutePlanningPeriodId);
+        if (salesRoutePlanningPeriod.isPresent()) {
+            return salesRoutePlanningPeriod.get();
+        } else {
+            return new SalesRoutePlanningPeriod();
+        }
     }
 
 }
