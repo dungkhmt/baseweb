@@ -2,7 +2,9 @@ package com.hust.baseweb.applications.order.entity;
 
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.model.InventoryModel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +12,8 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @IdClass(CompositeOrderItemId.class)
 public class OrderItem {
 

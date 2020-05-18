@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.order.repo;
 
 import com.hust.baseweb.applications.order.entity.OrderHeader;
+import com.hust.baseweb.applications.order.entity.OrderType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
@@ -16,4 +17,6 @@ public interface OrderHeaderRepo extends JpaRepository<OrderHeader, String> {
     List<OrderHeader> findAllByOrderIdInAndOrderDateBetween(List<String> orderIds,
                                                             Date fromDate,
                                                             Date toDate);
+
+    List<OrderHeader> findAllByOrderType(OrderType orderType);
 }

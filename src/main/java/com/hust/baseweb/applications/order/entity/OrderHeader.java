@@ -82,6 +82,11 @@ public class OrderHeader {
     @OneToMany(fetch = FetchType.EAGER)
     private Set<OrderRole> orderRoles;
 
+    @NotNull
+    public static String convertSequenceIdToOrderId(Long id) {
+        return "ORD" + String.format("%010d", id);
+    }
+
     public InventoryModel.OrderHeader toOrderHeaderModel() {
         return new InventoryModel.OrderHeader(
                 orderId,
@@ -90,8 +95,45 @@ public class OrderHeader {
         );
     }
 
-    @NotNull
-    public static String convertSequenceIdToOrderId(Long id) {
-        return "ORD" + String.format("%010d", id);
+    public PurchaseModel toPurchaseModel() {
+        return toPurchaseModel(null, null);
+    }
+
+    public PurchaseModel toPurchaseModel(String supplierName, Double totalAmount) {
+        return new PurchaseModel(
+                orderId,
+                Constant.DATE_FORMAT.format(createdStamp),
+                supplierName,
+                totalAmount
+        );
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class PurchaseModel {
+        private String orderId;
+        private String createdStamp;
+        private String supplierName;
+        private Double totalAmount;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class PurchaseCreateModel {
+        private String supplierPartyId;
+        private List<ProductQuantity> productQuantities;
+
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Getter
+        @Setter
+        public static class ProductQuantity {
+            private String productId;
+            private Integer quantity;
+        }
     }
 }

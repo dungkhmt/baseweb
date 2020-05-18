@@ -1,7 +1,10 @@
 package com.hust.baseweb.applications.logistics.controller;
 
+import java.io.IOException;
 import java.security.Principal;
+import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductType;
@@ -17,10 +20,16 @@ import com.hust.baseweb.applications.logistics.service.ProductService;
 import com.hust.baseweb.applications.logistics.service.ProductTypeService;
 import com.hust.baseweb.applications.logistics.service.UomService;
 
+import com.hust.baseweb.constant.ContentMappingConstant;
+import com.hust.baseweb.service.ContentService;
+import lombok.AllArgsConstructor;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +50,10 @@ public class ProductController {
     private ProductService productService;
     private ProductTypeRepo productTypeRepo;
     private ProductPagingRepo productPagingRepo;
+
+    @Autowired
+    private ContentService contentService;
+
 
     @Autowired
     ProductController(UomService uomService, ProductTypeService productTypeService, ProductService productService,
@@ -80,6 +93,10 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(product.getProductId());
     }
 
+
+
+
+
     @GetMapping("/get-list-product-frontend")
     public ResponseEntity<?> getListProductFrontend(Pageable page, @RequestParam(required = false) String param) {
         Page<Product> productPage = productPagingRepo.findAll(page);
@@ -98,6 +115,23 @@ public class ProductController {
     public ResponseEntity<?> getProductDetail(@PathVariable String productId) {
         Product product = productService.findByProductId(productId);
         ProductDetailModel productDetailModel = new ProductDetailModel(product);
+        log.info(productDetailModel.toString());
         return ResponseEntity.ok().body(productDetailModel);
     }
+
+
+    @GetMapping("/get-list-product-with-define-page")
+    public ResponseEntity<?> getListProductWithDefinePage(Pageable pageable){
+        log.info("page {}",pageable);
+        Page<Product> productPage = productPagingRepo.findAll(pageable);
+        for(Product p: productPage){
+            Uom u = p.getUom();
+            if(u!= null){
+                p.setUomDescription(u.getDescription());
+            }
+        }
+        return ResponseEntity.ok(productPage);
+    }
+
+
 }

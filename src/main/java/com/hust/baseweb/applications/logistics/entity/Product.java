@@ -1,18 +1,10 @@
 package com.hust.baseweb.applications.logistics.entity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import com.hust.baseweb.entity.Content;
 
@@ -55,7 +47,26 @@ public class Product {
 
     private Integer hsThu;
     private Integer hsPal;
+
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "product_content", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "product_id"), inverseJoinColumns = @JoinColumn(name = "content_id", referencedColumnName = "content_id"))
     private Set<Content> contents;
+
+
+    @Transient
+    private List<String> contentUrls;
+
+//    @OneToOne
+//    @JoinColumn(name = "avatar", referencedColumnName = "content_id")
+//    private Content avatar;
+//
+//    @Transient
+//    private String avatarUrl;
+//
+//    @Transient
+//    private String ava;
+
+    @Column(name = "avatar")
+    private String avatar;
 }

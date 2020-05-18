@@ -137,6 +137,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             receiptService.createReceiptItems(receipt, inventoryItemsList); // saved
         });
 
+        productFacilityRepo.saveAll(productFacilityMap.values());
+
         return inventoryItemRepo.saveAll(inventoryItems);
 
         // product processing region
@@ -328,7 +330,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @NotNull
     private Map<String, ProductPrice> buildProductPriceMap(List<Product> products) {
-        return productPriceRepo.findAllByProductInAndThruDateNull(products)
+        Date now = new Date();
+        return productPriceRepo.findAllByProductInAndThruDateNullOrThruDateAfter(products, now)
                 .stream()
                 .collect(Collectors.toMap(productPrice -> productPrice.getProduct().getProductId(), p -> p));
     }

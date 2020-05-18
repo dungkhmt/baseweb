@@ -222,7 +222,6 @@ public class ShipmentServiceImpl implements ShipmentService {
                             .toLocalDate());
         }
 
-        facilityRepo.saveAll(facilityMap.values());
         orderItems = orderItemRepo.saveAll(orderItems);
 
         List<ShipmentItem> shipmentItems = new ArrayList<>();
@@ -259,6 +258,8 @@ public class ShipmentServiceImpl implements ShipmentService {
         StatusItem statusItem = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
                 .orElseThrow(NoSuchElementException::new);
         shipmentItems.forEach(shipmentItem -> shipmentItem.setStatusItem(statusItem));
+
+        facilityRepo.saveAll(facilityMap.values());
 
         // lưu tất cả shipment item vào DB
         shipmentItemRepo.saveAll(shipmentItems);

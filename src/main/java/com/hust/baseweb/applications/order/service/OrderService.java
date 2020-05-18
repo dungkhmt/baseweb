@@ -4,7 +4,6 @@ package com.hust.baseweb.applications.order.service;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.model.CreateOrderDistributor2RetailOutletInputModel;
-import com.hust.baseweb.applications.order.model.ModelCreateOrderInput;
 import com.hust.baseweb.applications.order.model.OrderDetailView;
 import org.springframework.stereotype.Service;
 
@@ -25,4 +24,8 @@ public interface OrderService {
     OrderDetailView convertOrderDetail(OrderHeader order);
 
     PartyCustomer findCustomerById(UUID partyId);
+
+    List<OrderHeader.PurchaseModel> getAllPurchaseOrder();
+
+    boolean createPurchaseOrder(OrderHeader.PurchaseCreateModel purchaseCreateModel);
 }

@@ -66,7 +66,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         Uom uom = uomRepo.findByUomId(Optional.ofNullable(currencyUomId).orElse("CUR_vnd"));
 
         Date now = new Date();
-        ProductPrice productPrice = productPriceRepo.findByProductAndThruDateNull(product);
+        ProductPrice productPrice = productPriceRepo.findByProductAndThruDateNullOrThruDateAfter(product, now);
 
         if (productPrice != null) {
             log.info("setProductPrice, find productPrice " + productPrice.getProductPriceId());
@@ -111,7 +111,8 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
         //ProductPrice pp = productPriceRepo.findByProductAndThruDate(product, null);
         //Iterable<ProductPrice> lst = productPriceRepo.findAll();
-        List<ProductPrice> lst = productPriceJpaRepo.findByProductAndThruDateNull(product);
+        Date now = new Date();
+        List<ProductPrice> lst = productPriceJpaRepo.findByProductAndThruDateNullOrThruDateAfter(product, now);
         if (lst == null || lst.size() == 0) {
             return null;
         } else {
@@ -179,8 +180,9 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                 .map(OrderItem::getProduct)
                 .distinct()
                 .collect(Collectors.toList());
-        List<ProductPrice> productPrices = productPriceJpaRepo.findAllByProductInAndThruDateNull(
-                products);
+        Date now = new Date();
+        List<ProductPrice> productPrices = productPriceJpaRepo.findAllByProductInAndThruDateNullOrThruDateAfter(
+                products, now);
         return calcSaleReport(orderHeaders, orderItems, productPrices);
     }
 
@@ -191,7 +193,9 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderDateBetween(fromDate, thruDate);
         List<OrderItem> orderItems = orderItemRepo.findAllByProductAndOrderIdIn(product,
                 orderHeaders.stream().map(OrderHeader::getOrderId).collect(Collectors.toList()));
-        List<ProductPrice> productPrices = productPriceJpaRepo.findByProductAndThruDateNull(product);
+        Date now = new Date();
+        List<ProductPrice> productPrices = productPriceJpaRepo.findByProductAndThruDateNullOrThruDateAfter(product,
+                now);
 
         return calcSaleReport(orderHeaders, orderItems, productPrices);
     }

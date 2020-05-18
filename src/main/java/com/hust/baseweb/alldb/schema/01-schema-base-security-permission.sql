@@ -35,6 +35,7 @@ CREATE TABLE party
 (
     party_id                    UUID      NOT NULL default uuid_generate_v1(),
     party_type_id               VARCHAR(60),
+    name                        varchar(200),
     external_id                 VARCHAR(60),
     description                 TEXT,
     status_id                   VARCHAR(60),
@@ -219,53 +220,56 @@ CREATE TABLE uom
     CONSTRAINT pk_oum PRIMARY KEY (uom_id),
     CONSTRAINT fk_uom_type_id FOREIGN KEY (uom_type_id) REFERENCES uom_type (uom_type_id)
 );
-CREATE TABLE content_type (
-  content_type_id    VARCHAR(60) NOT NULL,
-  parent_type_id     VARCHAR(60),
-  description        VARCHAR(10000),
-  last_updated_stamp TIMESTAMP,
-  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_content_type PRIMARY KEY (content_type_id),
-  CONSTRAINT cntnt_type_parent FOREIGN KEY (parent_type_id) REFERENCES content_type (content_type_id)
+CREATE TABLE content_type
+(
+    content_type_id    VARCHAR(60) NOT NULL,
+    parent_type_id     VARCHAR(60),
+    description        VARCHAR(10000),
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_content_type PRIMARY KEY (content_type_id),
+    CONSTRAINT cntnt_type_parent FOREIGN KEY (parent_type_id) REFERENCES content_type (content_type_id)
 );
 
-CREATE TABLE content (
-  content_id         UUID NOT NULL,
-  content_type_id    VARCHAR(60),
-  mime_type          VARCHAR(255),
-  character_set      VARCHAR(100),
-  url                VARCHAR(255),
-  created_at         TIMESTAMP,
-  last_updated_at    TIMESTAMP,
-  last_updated_stamp TIMESTAMP,
-  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_content PRIMARY KEY (content_id),
-  CONSTRAINT content_to_type FOREIGN KEY (content_type_id) REFERENCES content_type (content_type_id)
+CREATE TABLE content
+(
+    content_id         UUID NOT NULL,
+    content_type_id    VARCHAR(60),
+    mime_type          VARCHAR(255),
+    character_set      VARCHAR(100),
+    url                VARCHAR(255),
+    created_at         TIMESTAMP,
+    last_updated_at    TIMESTAMP,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_content PRIMARY KEY (content_id),
+    CONSTRAINT content_to_type FOREIGN KEY (content_type_id) REFERENCES content_type (content_type_id)
 );
-CREATE TABLE product_content (
-  product_id         VARCHAR(60) NOT NULL,
-  content_id         UUID NOT NULL,
-  last_updated_stamp TIMESTAMP,
-  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT pk_product_content PRIMARY KEY (content_id, product_id),
+CREATE TABLE product_content
+(
+    product_id         VARCHAR(60) NOT NULL,
+    content_id         UUID        NOT NULL,
+    last_updated_stamp TIMESTAMP,
+    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_product_content PRIMARY KEY (content_id, product_id),
 
-  CONSTRAINT product_cnt_cnt FOREIGN KEY (content_id) REFERENCES content (content_id),
-  CONSTRAINT product_cnt_product FOREIGN KEY (product_id) REFERENCES product (product_id)
+    CONSTRAINT product_cnt_cnt FOREIGN KEY (content_id) REFERENCES content (content_id),
+    CONSTRAINT product_cnt_product FOREIGN KEY (product_id) REFERENCES product (product_id)
 );
 
 create table party_relationship
 (
     party_relationship_id uuid not null default uuid_generate_v1(),
-    from_party_id uuid not null,
-    to_party_id uuid not null,
-    role_type_id VARCHAR(60),
-    from_date TIMESTAMP,
-    thru_date TIMESTAMP,
-    description TEXT,
-    last_updated_stamp TIMESTAMP,
-    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_party_relationship primary key(party_relationship_id),
-    constraint fk_party_relationship_from_party_id foreign key(from_party_id) references party(party_id),
-    constraint fk_party_relationship_to_party_id foreign key(to_party_id) references party(party_id),
-    constraint fk_party_relationship_role_type_id foreign key(role_type_id) references role_type(role_type_id)
+    from_party_id         uuid not null,
+    to_party_id           uuid not null,
+    role_type_id          VARCHAR(60),
+    from_date             TIMESTAMP,
+    thru_date             TIMESTAMP,
+    description           TEXT,
+    last_updated_stamp    TIMESTAMP,
+    created_stamp         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_party_relationship primary key (party_relationship_id),
+    constraint fk_party_relationship_from_party_id foreign key (from_party_id) references party (party_id),
+    constraint fk_party_relationship_to_party_id foreign key (to_party_id) references party (party_id),
+    constraint fk_party_relationship_role_type_id foreign key (role_type_id) references role_type (role_type_id)
 );

@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
-public class RetailOutletServiceImpl implements  RetailOutletService {
+public class RetailOutletServiceImpl implements RetailOutletService {
     private RetailOutletPagingRepo retailOutletRepo;
     private PartyRetailOutletRepo partyRetailOutletRepo;
     private GeoPointRepo geoPointRepo;
@@ -59,6 +59,8 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
         Party party = new Party(null, partyTypeRepo.getOne(PartyType.PartyTypeEnum.PERSON.name()), "",
                 statusRepo.findById(Status.StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
                 false);
+        party.setName(input.getRetailOutletName());
+
         party.setType(partyType);
 
         partyRepo.save(party);
@@ -79,7 +81,7 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
 //        customerRepo.save(customer);
 
         GeoPoint geoPoint = null;
-        if(input.getLatitude() != null && input.getLongitude() != null) {
+        if (input.getLatitude() != null && input.getLongitude() != null) {
             geoPoint = new GeoPoint();
             //UUID geoPointId = UUID.randomUUID();
             geoPoint.setLatitude(input.getLatitude());
@@ -138,7 +140,9 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
     @Override
     public DetailRetailOutletModel getRetailOutletDetail(UUID partyRetailOutletId) {
         PartyRetailOutlet partyRetailOutlet = retailOutletRepo.findByPartyId(partyRetailOutletId);
-        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyRetailOutletAndThruDate(partyRetailOutlet, null);
+        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyRetailOutletAndThruDate(
+                partyRetailOutlet,
+                null);
 
         DetailRetailOutletModel detailRetailOutletModel = new DetailRetailOutletModel();
 
@@ -147,7 +151,9 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
         detailRetailOutletModel.setRetailOutletName(partyRetailOutlet.getRetailOutletName());
 
         List<RetailOutletSalesmanDistributorModel> retailOutletSalesmanDistributorModels =
-                retailOutletSalesmanVendors.stream().map(o -> new RetailOutletSalesmanDistributorModel(o)).collect(Collectors.toList());
+                retailOutletSalesmanVendors.stream()
+                        .map(o -> new RetailOutletSalesmanDistributorModel(o))
+                        .collect(Collectors.toList());
 
         detailRetailOutletModel.setRetailOutletSalesmanDistributorModels(retailOutletSalesmanDistributorModels);
 
@@ -161,11 +167,13 @@ public class RetailOutletServiceImpl implements  RetailOutletService {
          */
 
         PartyDistributor partyDistributor = distributorRepo.findByPartyId(partyDistributorId);
-        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyDistributorAndThruDate(partyDistributor, null);
+        List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyDistributorAndThruDate(
+                partyDistributor,
+                null);
         List<UUID> retailOutlets = new ArrayList<>();
         List<PartyRetailOutlet> retailOutletList;
 
-        for(RetailOutletSalesmanVendor rosv: retailOutletSalesmanVendors) {
+        for (RetailOutletSalesmanVendor rosv : retailOutletSalesmanVendors) {
             retailOutlets.add(rosv.getPartyRetailOutlet().getPartyId());
         }
 

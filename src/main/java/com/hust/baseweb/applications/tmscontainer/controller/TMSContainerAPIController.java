@@ -427,6 +427,7 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-depot-truck-page")
     public ResponseEntity<?> getListDepotTruckPage(Pageable pageable){
+        log.info("page {}", pageable);
         Page<ContDepotTruck> contDepotTruckPage = contDepotTruckPagingRepo.findAll(pageable);
         for (ContDepotTruck contDepotTruck: contDepotTruckPage) {
             contDepotTruck.setAddress(contDepotTruck.getPostalAddress().getAddress());

@@ -8,15 +8,16 @@ import com.hust.baseweb.applications.logistics.repo.ProductTypeRepo;
 import com.hust.baseweb.applications.logistics.repo.UomRepo;
 import com.hust.baseweb.entity.Content;
 import com.hust.baseweb.repo.ContentRepo;
+import com.hust.baseweb.repo.FileRepo;
+import com.hust.baseweb.service.ContentService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import okhttp3.Response;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,8 +27,11 @@ public class ProductServiceImpl implements ProductService {
     private UomRepo uomRepo;
     private UomService uomService;
     private ContentRepo contentRepo;
-
     private ProductTypeRepo productTypeRepo;
+
+    @Autowired
+    private ContentService contentService;
+
 
     @Override
     public Product findByProductId(String productId) {
@@ -97,6 +101,23 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toSet());
         product.setContents(lC);
         product.setProductType(productType);
+//        if(contentIds.size() > 0){
+//            product.setAvatar(contentRepo.getOne(UUID.fromString(contentIds.get(0))));
+//        }
+//        UUID a = contentRepo.getOne(UUID.fromString(contentIds.get(0))).getContentId();
+        if(contentIds.size() > 0){
+            String avatarId = contentIds.get(0);
+            try {
+                Response response = contentService.getContentData(avatarId);
+                String base64Flag = "data:image/jpeg;base64,"+ Base64.getEncoder().encodeToString(response.body().bytes());
+                product.setAvatar(base64Flag);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
         product = productRepo.save(product);
         return product;
     }
