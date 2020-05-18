@@ -41,7 +41,7 @@ public class ImportFacilityAgent extends Thread {
     public double createAReceipt(List<Product> products, List<Facility> facilities) throws Exception{
         try{
             Gson gson = new Gson();
-            ImportInventoryItemsInputModel input = null;
+            ImportInventoryItemsInputModel input = new ImportInventoryItemsInputModel();
             List<ImportInventoryItemInputModel> list = new ArrayList<>();
             Facility facility = facilities.get(rand.nextInt(list.size()));
             for(Product p: products){
@@ -49,18 +49,21 @@ public class ImportFacilityAgent extends Thread {
                 item.setFacilityId(facility.getFacilityId());
                 item.setLotId(null);
                 item.setProductId(p.getProductId());
-                item.setQuantityOnHandTotal(rand.nextInt(1000)+1);
+                item.setQuantityOnHandTotal(rand.nextInt(1000) + 1);
                 list.add(item);
             }
             ImportInventoryItemInputModel[] arr = new ImportInventoryItemInputModel[list.size()];
-            for(int i = 0; i < list.size(); i++) arr[i] = list.get(i);
+            for (int i = 0; i < list.size(); i++) {
+                arr[i] = list.get(i);
+            }
             input.setInventoryItems(arr);
 
-            double t0 = System.currentTimeMillis();
             String json = gson.toJson(input);
+
+            double t0 = System.currentTimeMillis();
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/import-inventory-items",
-                    json,
-                    token);
+                json,
+                token);
             //System.out.println(module + "::createOrder, rs = " + rs);
             return System.currentTimeMillis() - t0;
         }catch(Exception e){
