@@ -19,6 +19,7 @@ public class ProductDetailModel {
     private String type;
     private String uom;
     private List<String> contentUrls;
+    private String avatar;
 
     public ProductDetailModel() {
     }
@@ -32,6 +33,8 @@ public class ProductDetailModel {
         this.contentUrls = product.getContents().stream().map(content -> {
             return   ContentMappingConstant.CONTENT_MAPPING +"/"+ content.getContentId().toString();
         }).collect(Collectors.toList());
+
+        this.avatar = product.getAvatar();
     }
 
 }

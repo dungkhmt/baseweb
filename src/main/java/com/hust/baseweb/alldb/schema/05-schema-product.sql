@@ -25,7 +25,7 @@ CREATE TABLE product
     height_uom_id                 VARCHAR(60),
     created_by_user_login_id      VARCHAR(60),
     product_transport_category_id varchar(60),
-
+    product                       varchar,
     description                   TEXT,
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -41,4 +41,4 @@ CREATE TABLE product
 );
 
 
-Alter table product add avatar varchar;
+
