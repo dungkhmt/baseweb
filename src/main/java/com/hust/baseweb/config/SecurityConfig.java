@@ -32,7 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
+            .authorizeRequests()
+            .regexMatchers("/v2/api-docs").permitAll()
+            .regexMatchers("/.*swagger.*").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
