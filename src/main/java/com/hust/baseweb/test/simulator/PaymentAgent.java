@@ -49,7 +49,7 @@ public class PaymentAgent extends Thread {
 
         Gson gson = new Gson();
 
-        executor.execPostUseToken("/create-payment", gson.toJson(createModel), token);
+        executor.execPostUseToken(Constants.URL_ROOT + "/api/create-payment", gson.toJson(createModel), token);
     }
 
     public void createPayments() {

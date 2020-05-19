@@ -42,19 +42,19 @@ public class ImportFacilityAgent extends Thread {
         try{
             Gson gson = new Gson();
             ImportInventoryItemsInputModel input = new ImportInventoryItemsInputModel();
-            List<ImportInventoryItemInputModel> list = new ArrayList<>();
-            Facility facility = facilities.get(rand.nextInt(list.size()));
-            for(Product p: products){
+            List<ImportInventoryItemInputModel> importInventoryItemInputModels = new ArrayList<>();
+            Facility facility = facilities.get(rand.nextInt(facilities.size()));
+            for (Product p : products) {
                 ImportInventoryItemInputModel item = new ImportInventoryItemInputModel();
                 item.setFacilityId(facility.getFacilityId());
                 item.setLotId(null);
                 item.setProductId(p.getProductId());
                 item.setQuantityOnHandTotal(rand.nextInt(1000) + 1);
-                list.add(item);
+                importInventoryItemInputModels.add(item);
             }
-            ImportInventoryItemInputModel[] arr = new ImportInventoryItemInputModel[list.size()];
-            for (int i = 0; i < list.size(); i++) {
-                arr[i] = list.get(i);
+            ImportInventoryItemInputModel[] arr = new ImportInventoryItemInputModel[importInventoryItemInputModels.size()];
+            for (int i = 0; i < importInventoryItemInputModels.size(); i++) {
+                arr[i] = importInventoryItemInputModels.get(i);
             }
             input.setInventoryItems(arr);
 
