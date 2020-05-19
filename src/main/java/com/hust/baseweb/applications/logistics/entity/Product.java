@@ -67,6 +67,13 @@ public class Product {
 //    @Transient
 //    private String ava;
 
-    @Column(name = "avatar")
+//    @Column(name = "avatar")
+//    private String avatar;
+
+    @JoinColumn(name = "primary_img", referencedColumnName = "content_id")
+    @OneToOne
+    private Content primaryImg;
+
+    @Transient
     private String avatar;
 }

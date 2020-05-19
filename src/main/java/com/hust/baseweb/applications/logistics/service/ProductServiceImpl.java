@@ -107,13 +107,16 @@ public class ProductServiceImpl implements ProductService {
 //        UUID a = contentRepo.getOne(UUID.fromString(contentIds.get(0))).getContentId();
         if(contentIds.size() > 0){
             String avatarId = contentIds.get(0);
-            try {
-                Response response = contentService.getContentData(avatarId);
-                String base64Flag = "data:image/jpeg;base64,"+ Base64.getEncoder().encodeToString(response.body().bytes());
-                product.setAvatar(base64Flag);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Content content = contentRepo.findByContentId(UUID.fromString(avatarId));
+            product.setPrimaryImg(content);
+
+//            try {
+//                Response response = contentService.getContentData(avatarId);
+//                String base64Flag = "data:image/jpeg;base64,"+ Base64.getEncoder().encodeToString(response.body().bytes());
+//                product.setAvatar(base64Flag);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
 
 

@@ -25,7 +25,7 @@ CREATE TABLE product
     height_uom_id                 VARCHAR(60),
     created_by_user_login_id      VARCHAR(60),
     product_transport_category_id varchar(60),
-    product                       varchar,
+    primary_img                    uuid,
     description                   TEXT,
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -37,7 +37,8 @@ CREATE TABLE product
     CONSTRAINT fk_length_uom_id FOREIGN KEY (length_uom_id) REFERENCES uom (uom_id),
     CONSTRAINT fk_width_uom_id FOREIGN KEY (width_uom_id) REFERENCES uom (uom_id),
     CONSTRAINT fk_height_uom_id FOREIGN KEY (height_uom_id) REFERENCES uom (uom_id),
-    constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id)
+    constraint fk_vehicle_type_product_transport_category_id foreign key (product_transport_category_id) references enumeration (enum_id),
+    constraint fk_product_avatar_content foreign key (primary_img) references content(content_id)
 );
 
 

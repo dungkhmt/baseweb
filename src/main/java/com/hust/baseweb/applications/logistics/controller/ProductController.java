@@ -21,6 +21,7 @@ import com.hust.baseweb.applications.logistics.service.ProductTypeService;
 import com.hust.baseweb.applications.logistics.service.UomService;
 
 import com.hust.baseweb.constant.ContentMappingConstant;
+import com.hust.baseweb.entity.Content;
 import com.hust.baseweb.service.ContentService;
 import lombok.AllArgsConstructor;
 import okhttp3.Response;
@@ -128,6 +129,16 @@ public class ProductController {
             Uom u = p.getUom();
             if(u!= null){
                 p.setUomDescription(u.getDescription());
+            }
+            Content content = p.getPrimaryImg();
+            if(content != null){
+                try {
+                    Response response = contentService.getContentData(content.getContentId().toString());
+                    String base64Flag = "data:image/jpeg;base64,"+ Base64.getEncoder().encodeToString(response.body().bytes());
+                    p.setAvatar(base64Flag);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return ResponseEntity.ok(productPage);
