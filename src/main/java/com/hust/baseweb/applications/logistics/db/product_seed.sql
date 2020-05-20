@@ -19,10 +19,14 @@ values ('WT_kg', 'WEIGHT_MEASURE', 'Kg'),
 ;
 
 
-insert into enumeration_type(enumeration_type_id) values('PRODUCT_TRANSPORT_CATEGORY');
-insert into enumeration(enum_id, enum_type_id) values('KHO','PRODUCT_TRANSPORT_CATEGORY');    
-insert into enumeration(enum_id, enum_type_id) values('LANH','PRODUCT_TRANSPORT_CATEGORY');    
-insert into enumeration(enum_id, enum_type_id) values('DONG','PRODUCT_TRANSPORT_CATEGORY');    
+insert into enumeration_type(enumeration_type_id)
+values ('PRODUCT_TRANSPORT_CATEGORY');
+insert into enumeration(enum_id, enum_type_id)
+values ('KHO', 'PRODUCT_TRANSPORT_CATEGORY');
+insert into enumeration(enum_id, enum_type_id)
+values ('LANH', 'PRODUCT_TRANSPORT_CATEGORY');
+insert into enumeration(enum_id, enum_type_id)
+values ('DONG', 'PRODUCT_TRANSPORT_CATEGORY');
 
 
 

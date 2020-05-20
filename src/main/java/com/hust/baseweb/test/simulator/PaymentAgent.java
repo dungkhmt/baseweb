@@ -31,12 +31,13 @@ public class PaymentAgent extends Thread {
     }
 
     public void run() {
-        System.out.println(module + "::run....");
+        Simulator.threadRunningCounter.incrementAndGet();
+//        System.out.println(module + "::run....");
 
         token = Login.login(username, password);
 
         createPayments();
-
+        Simulator.threadRunningCounter.decrementAndGet();
     }
 
     public void createAPayment() throws Exception {

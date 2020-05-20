@@ -31,10 +31,10 @@ public class CustomerSalesmanServiceImpl implements CustomerSalesmanService {
         List<PartyCustomer> allCustomers = partyCustomerRepo.findAll();
         for (CustomerSalesman cs : lst) {
             log.info("getCustomersOfSalesman, partySalesmanId = "
-                    + partySalesmanId + ", cs.getPartySalesmanId = "
-                    + cs.getPartySalesmanId());
+                + partySalesmanId + ", cs.getPartySalesmanId = "
+                + cs.getPartySalesmanId());
             if (cs.getThruDate() == null
-                    && cs.getPartySalesmanId().equals(partySalesmanId)) {
+                && cs.getPartySalesmanId().equals(partySalesmanId)) {
                 // PartyCustomer c =
                 // partyCustomerRepo.findByPartyId(cs.getPartyCustomerId());//
                 // WHY thid does not work
@@ -42,10 +42,10 @@ public class CustomerSalesmanServiceImpl implements CustomerSalesmanService {
                     if (c.getPartyId().equals(cs.getPartyCustomerId())) {
                         sel_list.add(c);
                         log.info("getCustomersOfSalesman, partySalesmanId = "
-                                + partySalesmanId
-                                + ", cs.getPartySalesmanId = "
-                                + cs.getPartySalesmanId() + ", add customer "
-                                + c.getPartyId());
+                            + partySalesmanId
+                            + ", cs.getPartySalesmanId = "
+                            + cs.getPartySalesmanId() + ", add customer "
+                            + c.getPartyId());
                     }
                 }
             }

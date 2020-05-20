@@ -36,7 +36,7 @@ public class InventoryItemDetail {
 
     public InventoryModel.ExportDetail toInventoryExportDetail() {
         return new InventoryModel.ExportDetail(
-                inventoryItemDetailId.toString(), orderItem.getOrderId(), Constant.DATE_FORMAT.format(effectiveDate)
+            inventoryItemDetailId.toString(), orderItem.getOrderId(), Constant.DATE_FORMAT.format(effectiveDate)
         );
     }
 }

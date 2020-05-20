@@ -12,20 +12,21 @@ public class SalesRouteConfigManager {
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
-    public SalesRouteConfigManager(String token){
+    public SalesRouteConfigManager(String token) {
         this.token = token;
     }
-    public List<SalesRouteConfig> getListSalesRouteConfigs(){
-        try{
+
+    public List<SalesRouteConfig> getListSalesRouteConfigs() {
+        try {
             String json = "{\"statusId\":null}";
 
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-sales-route-config", json, token);
-            System.out.println("::getListSalesRouteConfigs, rs = " + rs);
+//            System.out.println("::getListSalesRouteConfigs, rs = " + rs);
             Gson gson = new Gson();
 
-            GetListSalesRouteConfigOutputModel out = gson.fromJson(rs,GetListSalesRouteConfigOutputModel.class);
+            GetListSalesRouteConfigOutputModel out = gson.fromJson(rs, GetListSalesRouteConfigOutputModel.class);
             return out.getSalesRouteConfigList();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

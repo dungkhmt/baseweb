@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class DeliveryPlanMaintenanceServiceImpl implements DeliveryPlanMaintenanceService {
@@ -16,6 +14,7 @@ public class DeliveryPlanMaintenanceServiceImpl implements DeliveryPlanMaintenan
     private DeliveryTripDetailRepo deliveryTripDetailRepo;
     private DeliveryTripRepo deliveryTripRepo;
     private VehicleDeliveryPlanRepo vehicleDeliveryPlanRepo;
+
     @Override
     public long deleteAllDeliveryPlan() {
         long cnt = deliveryPlanRepo.count();

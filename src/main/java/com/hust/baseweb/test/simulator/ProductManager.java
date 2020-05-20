@@ -7,12 +7,14 @@ import com.hust.baseweb.applications.logistics.model.GetListProductOutputModel;
 import java.util.List;
 
 public class ProductManager {
-	private HttpPostExecutor executor = new HttpPostExecutor();
-	private String token;
-	public ProductManager(String token){
-		this.token = token;
-	}
-	public List<Product> getProducts() {
+    private HttpPostExecutor executor = new HttpPostExecutor();
+    private String token;
+
+    public ProductManager(String token) {
+        this.token = token;
+    }
+
+    public List<Product> getProducts() {
 //        System.out.println("create order agent getProducts");
         try {
             String json = "{\"statusId\":null}";
@@ -26,10 +28,10 @@ public class ProductManager {
         }
         return null;
     }
-	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
-	}
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+
+    }
 
 }

@@ -1,58 +1,57 @@
-
 -- group
 INSERT INTO public.security_group
-(group_id, description)
-VALUES('ROLE_HR_ADMIN', 'human resources group');
+    (group_id, description)
+VALUES ('ROLE_HR_ADMIN', 'human resources group');
 
 -- permission
 INSERT INTO public.security_permission
-(permission_id, description)
-VALUES('USER_CREATE', 'Create Users');
+    (permission_id, description)
+VALUES ('USER_CREATE', 'Create Users');
 INSERT INTO public.security_permission
-(permission_id, description)
-VALUES('USER_VIEW', 'View Users');
+    (permission_id, description)
+VALUES ('USER_VIEW', 'View Users');
 INSERT INTO public.security_permission
-(permission_id, description)
-VALUES('PERM_DEPARTMENT_CREATE', 'Create department');
+    (permission_id, description)
+VALUES ('PERM_DEPARTMENT_CREATE', 'Create department');
 INSERT INTO public.security_permission
-(permission_id, description)
-VALUES('PERM_DEPARTMENT_VIEW', 'Create department');
+    (permission_id, description)
+VALUES ('PERM_DEPARTMENT_VIEW', 'Create department');
 
 
 --applications
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description)
-VALUES('MENU_USER', 'MENU', NULL, NULL, 'Menu user management',);
+VALUES ('MENU_USER', 'MENU', NULL, NULL, 'Menu user management',);
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description)
-VALUES('MENU_USER_CREATE', 'MENU', 'MENU_USER', 'USER_CREATE', 'Menu user create');
+VALUES ('MENU_USER_CREATE', 'MENU', 'MENU_USER', 'USER_CREATE', 'Menu user create');
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description)
-VALUES('MENU_USER_LIST', 'MENU', 'MENU_USER', 'USER_VIEW', 'Menu user list');
+VALUES ('MENU_USER_LIST', 'MENU', 'MENU_USER', 'USER_VIEW', 'Menu user list');
 
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description)
-VALUES('MENU_DEPARTMENT', 'MENU', NULL, NULL, 'Menu user management');
+VALUES ('MENU_DEPARTMENT', 'MENU', NULL, NULL, 'Menu user management');
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description)
-VALUES('MENU_DEPARTMENT_CREATE', 'MENU', 'MENU_DEPARTMENT', 'PERM_DEPARTMENT_CREATE', 'Menu department create');
+VALUES ('MENU_DEPARTMENT_CREATE', 'MENU', 'MENU_DEPARTMENT', 'PERM_DEPARTMENT_CREATE', 'Menu department create');
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description)
-VALUES('MENU_DEPARTMENT_LIST', 'MENU', 'MENU_DEPARTMENT', 'PERM_DEPARTMENT_VIEW', 'Menu department list');
+VALUES ('MENU_DEPARTMENT_LIST', 'MENU', 'MENU_DEPARTMENT', 'PERM_DEPARTMENT_VIEW', 'Menu department list');
 
 -- group permission
 INSERT INTO public.security_group_permission
-(group_id, permission_id)
-VALUES('ROLE_HR_ADMIN', 'USER_CREATE');
+    (group_id, permission_id)
+VALUES ('ROLE_HR_ADMIN', 'USER_CREATE');
 INSERT INTO public.security_group_permission
-(group_id, permission_id)
-VALUES('ROLE_HR_ADMIN', 'USER_VIEW');
+    (group_id, permission_id)
+VALUES ('ROLE_HR_ADMIN', 'USER_VIEW');
 INSERT INTO public.security_group_permission
-(group_id, permission_id)
-VALUES('ROLE_HR_ADMIN', 'PERM_DEPARTMENT_CREATE');
+    (group_id, permission_id)
+VALUES ('ROLE_HR_ADMIN', 'PERM_DEPARTMENT_CREATE');
 INSERT INTO public.security_group_permission
-(group_id, permission_id)
-VALUES('ROLE_HR_ADMIN', 'PERM_DEPARTMENT_VIEW');
+    (group_id, permission_id)
+VALUES ('ROLE_HR_ADMIN', 'PERM_DEPARTMENT_VIEW');
 
 --userlogin security group
 

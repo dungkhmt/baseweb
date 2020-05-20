@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.tmscontainer.entity;
 
-import com.hust.baseweb.applications.tmscontainer.entity.ContContainerType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,11 +33,6 @@ public class ContContainer {
 
     @Transient
     private String containerType;
-
-
-
-
-
 
 
 }

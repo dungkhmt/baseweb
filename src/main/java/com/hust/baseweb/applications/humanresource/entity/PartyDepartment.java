@@ -14,29 +14,29 @@ import java.util.UUID;
 @Setter
 public class PartyDepartment {
     @Id
-    @Column(name="party_department_id")
+    @Column(name = "party_department_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID partyDepartmentId;
 
-    @JoinColumn(name="department_id", referencedColumnName = "department_id")
+    @JoinColumn(name = "department_id", referencedColumnName = "department_id")
     @ManyToOne
-    private Department  department;
+    private Department department;
 
-    @JoinColumn(name="party_id", referencedColumnName = "party_id")
+    @JoinColumn(name = "party_id", referencedColumnName = "party_id")
     @ManyToOne
     private Party party;
 
-    @JoinColumn(name="role_type_id", referencedColumnName = "role_type_id")
+    @JoinColumn(name = "role_type_id", referencedColumnName = "role_type_id")
     @ManyToOne
     private RoleType roleType;
 
     //@Column(name="department_id")
     //private String departmentId;
 
-    @Column(name="from_date")
+    @Column(name = "from_date")
     private Date fromDate;
 
-    @Column(name="thru_date")
+    @Column(name = "thru_date")
     private Date thruDate;
 
 }

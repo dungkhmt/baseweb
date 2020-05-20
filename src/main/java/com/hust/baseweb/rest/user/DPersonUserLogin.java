@@ -33,9 +33,9 @@ public class DPersonUserLogin {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "user_login_security_group",
-            joinColumns = @JoinColumn(name = "user_login_id", referencedColumnName = "user_login_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
+        name = "user_login_security_group",
+        joinColumns = @JoinColumn(name = "user_login_id", referencedColumnName = "user_login_id"),
+        inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
     private List<SecurityGroup> roles;
     private Date disabledDateTime;
 

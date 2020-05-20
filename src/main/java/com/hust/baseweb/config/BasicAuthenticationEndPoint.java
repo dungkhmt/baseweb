@@ -13,7 +13,7 @@ import java.io.IOException;
 public class BasicAuthenticationEndPoint extends BasicAuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authEx)
-            throws IOException {
+        throws IOException {
         response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
     }
 

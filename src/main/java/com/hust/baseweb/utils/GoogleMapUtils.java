@@ -19,7 +19,8 @@ import java.io.IOException;
  */
 @Component
 public class GoogleMapUtils {
-    private static final org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(GoogleMapUtils.class);
+    private static final org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(
+        GoogleMapUtils.class);
 
     @Value("${google.api_key}")
     public void setGoogleMapApiKey(String googleMapApiKey) {

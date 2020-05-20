@@ -42,8 +42,8 @@ public class PartyRelationshipServiceImpl implements PartyRelationshipService {
                                                                                       RoleType roleType,
                                                                                       Date thruDate) {
         return partyRelationshipRepo.findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(fromParty,
-                toParty,
-                roleType,
-                thruDate);
+            toParty,
+            roleType,
+            thruDate);
     }
 }

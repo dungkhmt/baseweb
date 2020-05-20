@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CustomerRepo extends
-        PagingAndSortingRepository<PartyCustomer, UUID> {
+    PagingAndSortingRepository<PartyCustomer, UUID> {
     //JpaRepository<PartyCustomer, UUID> {
     List<PartyCustomer> findAll();
 

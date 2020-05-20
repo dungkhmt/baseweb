@@ -7,12 +7,13 @@ import lombok.Setter;
 @Setter
 
 public class DateBasedRevenueReportElement {
-	private String date;
-	private Double revenue;
-	public DateBasedRevenueReportElement(String date, Double revenue) {
-		super();
-		this.date = date;
-		this.revenue = revenue;
-	}
-	
+    private String date;
+    private Double revenue;
+
+    public DateBasedRevenueReportElement(String date, Double revenue) {
+        super();
+        this.date = date;
+        this.revenue = revenue;
+    }
+
 }

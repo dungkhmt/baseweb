@@ -70,7 +70,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                              int completedDeliveryTripDetailCount,
                              int deliveryTripDetailCount) {
         DeliveryPlan deliveryPlan = deliveryPlanRepo.findById(input.getDeliveryPlanId())
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
 
         DeliveryTrip deliveryTrip = new DeliveryTrip();
         deliveryTrip.setDeliveryPlan(deliveryPlan);
@@ -100,16 +100,16 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         deliveryTrip.setDeliveryTripDetailCount(deliveryTripDetailCount);
 
         StatusItem statusItem = statusItemRepo.findById("DELIVERY_TRIP_CREATED")
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
 
         deliveryTrip.setStatusItem(statusItem);
         deliveryTrip = deliveryTripRepo.save(deliveryTrip);
 
         DeliveryTripStatus deliveryTripStatus = new DeliveryTripStatus(null,
-                deliveryTrip,
-                statusItem,
-                new Date(),
-                null);
+            deliveryTrip,
+            statusItem,
+            new Date(),
+            null);
         deliveryTripStatusRepo.save(deliveryTripStatus);
 
         return deliveryTrip;
@@ -139,38 +139,38 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     public DeliveryTripModel.Tour getDeliveryTripInfo(String deliveryTripId,
                                                       List<DeliveryTripDetailModel.Create> shipmentItemModels) {
         DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId))
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         DeliveryPlan deliveryPlan = deliveryTrip.getDeliveryPlan();
         String deliveryPlanId = deliveryPlan.getDeliveryPlanId().toString();
 
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans
-                = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
+            = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
 
         List<ShipmentItem> shipmentItemsInDeliveryPlan = shipmentItemRepo.findAllByShipmentItemIdIn(
-                shipmentItemDeliveryPlans.stream()
-                        .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()));
+            shipmentItemDeliveryPlans.stream()
+                .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()));
         Map<String, ShipmentItem> shipmentItemMap = new HashMap<>();
         shipmentItemsInDeliveryPlan.forEach(shipmentItem -> shipmentItemMap.put(shipmentItem.getShipmentItemId()
-                .toString(), shipmentItem));
+            .toString(), shipmentItem));
 
         List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip);
         List<ShipmentItem> shipmentItemsInDeliveryTrip = deliveryTripDetails
-                .stream().map(DeliveryTripDetail::getShipmentItem).collect(Collectors.toList());
+            .stream().map(DeliveryTripDetail::getShipmentItem).collect(Collectors.toList());
 
         List<GeoPoint> geoPointsInDeliveryTrip = shipmentItemsInDeliveryTrip.stream()
-                .map(shipmentItem -> shipmentItem.getShipToLocation().getGeoPoint())
-                .distinct()
-                .collect(Collectors.toList());
+            .map(shipmentItem -> shipmentItem.getShipToLocation().getGeoPoint())
+            .distinct()
+            .collect(Collectors.toList());
 
         List<ShipmentItem> shipmentItemsSelected =
-                shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemModels.stream().map(
-                        DeliveryTripDetailModel.Create::getShipmentItemId
-                ).collect(Collectors.toList()));
+            shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemModels.stream().map(
+                DeliveryTripDetailModel.Create::getShipmentItemId
+            ).collect(Collectors.toList()));
 
         List<GeoPoint> geoPointsSelected = shipmentItemsSelected.stream()
-                .map(shipmentItem -> shipmentItem.getShipToLocation().getGeoPoint())
-                .distinct()
-                .collect(Collectors.toList());
+            .map(shipmentItem -> shipmentItem.getShipToLocation().getGeoPoint())
+            .distinct()
+            .collect(Collectors.toList());
 
         List<GeoPoint> allGeoPoints = new ArrayList<>(geoPointsInDeliveryTrip);
         allGeoPoints.addAll(geoPointsSelected);
@@ -180,21 +180,21 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
             directionSolution = new DistanceUtils.DirectionSolution<>(0.0, new ArrayList<>());
         } else {
             directionSolution = DistanceUtils.calculateGreedyTotalDistance(allGeoPoints,
-                    allGeoPoints.get(0),    // TODO: temporary set the first point to depot
-                    (fromGeoPoint, toGeoPoint) -> {
+                allGeoPoints.get(0),    // TODO: temporary set the first point to depot
+                (fromGeoPoint, toGeoPoint) -> {
 //            DistanceTravelTimeGeoPoint distanceTravelTimeGeoPoint
 //                    = distanceTravelTimeGeoPointRepo.findByFromGeoPointAndToGeoPoint(fromGeoPoint, toGeoPoint);
 //            if (distanceTravelTimeGeoPoint == null) {   // Haversine formula
-                        return LatLngUtils.distance(
-                                toGeoPoint.getLatitude(),
-                                toGeoPoint.getLongitude(),
-                                fromGeoPoint.getLatitude(),
-                                fromGeoPoint.getLongitude()
-                        );
+                    return LatLngUtils.distance(
+                        toGeoPoint.getLatitude(),
+                        toGeoPoint.getLongitude(),
+                        fromGeoPoint.getLatitude(),
+                        fromGeoPoint.getLongitude()
+                    );
 //            } else {
 //                return distanceTravelTimeGeoPoint.getDistance();
 //            }
-                    });
+                });
         }
 
         double totalWeight = 0;
@@ -205,7 +205,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
             Product product = shipmentItem.getOrderItem().getProduct();
             totalWeight += product.getWeight() * deliveryTripDetail.getDeliveryQuantity();
             totalPallet += shipmentItem.getPallet() / shipmentItem.getQuantity() *
-                    deliveryTripDetail.getDeliveryQuantity();
+                deliveryTripDetail.getDeliveryQuantity();
         }
 
         for (DeliveryTripDetailModel.Create shipmentItemModel : shipmentItemModels) {
@@ -213,19 +213,19 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
             Product product = shipmentItem.getOrderItem().getProduct();
             totalWeight += product.getWeight() * shipmentItemModel.getDeliveryQuantity();
             totalPallet += shipmentItem.getPallet() / shipmentItem.getQuantity() *
-                    shipmentItemModel.getDeliveryQuantity();
+                shipmentItemModel.getDeliveryQuantity();
         }
 
         return new DeliveryTripModel.Tour(deliveryTripId,
-                directionSolution.getDistance(),
-                totalWeight,
-                totalPallet,
-                directionSolution.getTour());
+            directionSolution.getDistance(),
+            totalWeight,
+            totalPallet,
+            directionSolution.getTour());
     }
 
     @Override
     public GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(
-            String driverUserLoginId) {
+        String driverUserLoginId) {
         UserLogin userLogin = userLoginRepo.findByUserLoginId(driverUserLoginId);
         PartyDriver partyDriver = partyDriverRepo.findByPartyId(userLogin.getParty().getPartyId());
 
@@ -241,7 +241,9 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         HashMap<String, Product> mID2Product = new HashMap<>();
         for (int i = 0; i < deliveryTrips.size(); i++) {
             DeliveryTrip deliveryTrip = deliveryTrips.get(i);
-            if(deliveryTrip.getStatusItem().getStatusId().equals(TMSConstants.DELIVERY_TRIP_CREATED)) continue;
+            if (deliveryTrip.getStatusItem().getStatusId().equals(TMSConstants.DELIVERY_TRIP_CREATED)) {
+                continue;
+            }
 
             UUID deliveryTripId = deliveryTrip.getDeliveryTripId();
             String vehicleId = deliveryTrip.getVehicle().getVehicleId();
@@ -253,18 +255,18 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
             List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip);
             log.info("getDeliveryTripAssignedToDriver, dtd of deliveryTripId " +
-                    deliveryTripId +
-                    " = " +
-                    deliveryTripDetails.size());
+                deliveryTripId +
+                " = " +
+                deliveryTripDetails.size());
 
             deliveryTripDetails.sort(Comparator.comparingInt(DeliveryTripDetail::getSequenceId));
             for (int j = 0; j < deliveryTripDetails.size(); j++) {
                 log.info("getDeliveryTripAssignedToDriver dtd(" +
-                        j +
-                        ") " +
-                        deliveryTripDetails.get(j).getDeliveryQuantity() +
-                        ", " +
-                        deliveryTripDetails.get(j).getDeliveryTripDetailId());
+                    j +
+                    ") " +
+                    deliveryTripDetails.get(j).getDeliveryQuantity() +
+                    ", " +
+                    deliveryTripDetails.get(j).getDeliveryTripDetailId());
             }
             int idx = 0;
             while (idx < deliveryTripDetails.size()) {
@@ -274,7 +276,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                 ShipmentItem shipmentItem = deliveryTripDetail.getShipmentItem();
                 //PartyCustomer partyCustomer = shipmentItem.getCustomer();
                 PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(shipmentItem.getPartyCustomer()
-                        .getPartyId());
+                    .getPartyId());
 
 
 //                if (partyCustomer != null) {
@@ -302,20 +304,20 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                 String productName = product.getProductName();
                 int deliveryQuantity = deliveryTripDetail.getDeliveryQuantity();
                 items.add(new DeliveryTripModel.LocationItemView(deliveryTripDetailId,
-                        shipmentItemId,
-                        product.getProductId(),
-                        productName,
-                        deliveryQuantity,
-                        deliveryTripDetail.getStatusItem().getStatusId()));
+                    shipmentItemId,
+                    product.getProductId(),
+                    productName,
+                    deliveryQuantity,
+                    deliveryTripDetail.getStatusItem().getStatusId()));
 
                 int j = idx + 1;
                 while (j < deliveryTripDetails.size() &&
-                        deliveryTripDetails.get(j)
-                                .getShipmentItem()
-                                //.getCustomer()
-                                .getPartyCustomer()
-                                .getPartyId()
-                                .equals(partyCustomerId)) {
+                    deliveryTripDetails.get(j)
+                        .getShipmentItem()
+                        //.getCustomer()
+                        .getPartyCustomer()
+                        .getPartyId()
+                        .equals(partyCustomerId)) {
                     shipmentItem = deliveryTripDetails.get(j).getShipmentItem();
                     deliveryTripDetailId = deliveryTripDetails.get(j).getDeliveryTripDetailId();
                     shipmentItemId = shipmentItem.getShipmentItemId();
@@ -327,29 +329,29 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                     productName = product.getProductName();
                     deliveryQuantity = deliveryTripDetails.get(j).getDeliveryQuantity();
                     items.add(new DeliveryTripModel.LocationItemView(deliveryTripDetailId,
-                            shipmentItemId,
-                            product.getProductId(),
-                            productName,
-                            deliveryQuantity,
-                            deliveryTripDetails.get(j).getStatusItem().getStatusId()));
+                        shipmentItemId,
+                        product.getProductId(),
+                        productName,
+                        deliveryQuantity,
+                        deliveryTripDetails.get(j).getStatusItem().getStatusId()));
                     j++;
                 }
 
                 deliveryTripLocations.add(new DeliveryTripModel.LocationView(customerName,
-                        address,
-                        latitude,
-                        longitude,
-                        partyCustomerId,
-                        items));
+                    address,
+                    latitude,
+                    longitude,
+                    partyCustomerId,
+                    items));
                 idx = j;
             }
             headerViews[i] = new DeliveryTripModel.HeaderView(deliveryTripId,
-                    vehicleId,
-                    driverPartyId,
-                    driverUserLoginId,
-                    executeDate,
-                    deliveryTripLocations,
-                    deliveryTrip.getStatusItem().getStatusId());
+                vehicleId,
+                driverPartyId,
+                driverUserLoginId,
+                executeDate,
+                deliveryTripLocations,
+                deliveryTrip.getStatusItem().getStatusId());
         }
         return new GetDeliveryTripAssignedToDriverOutputModel(headerViews);
     }
@@ -360,17 +362,17 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         Date now = new Date();
 
         StatusItem deliveryTripCreated = statusItemRepo.findById("DELIVERY_TRIP_CREATED")
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         StatusItem deliveryTripApprovedTrip = statusItemRepo.findById("DELIVERY_TRIP_APPROVED_TRIP")
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         StatusItem deliveryTripDetailApprovedTrip = statusItemRepo.findById("DELIVERY_TRIP_DETAIL_APPROVED_TRIP")
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
 
         return updateDeliveryTripStatus(deliveryTripId,
-                now,
-                deliveryTripCreated,
-                deliveryTripApprovedTrip,
-                deliveryTripDetailApprovedTrip);
+            now,
+            deliveryTripCreated,
+            deliveryTripApprovedTrip,
+            deliveryTripDetailApprovedTrip);
     }
 
     private void updateDeliveryTripDetailStatus(Date updateDate, StatusItem statusItem, DeliveryTrip deliveryTrip) {
@@ -381,16 +383,16 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         deliveryTripDetailRepo.saveAll(deliveryTripDetails);
 
         List<DeliveryTripDetailStatus> deliveryTripDetailStatuses = deliveryTripDetailStatusRepo.findAllByDeliveryTripDetailInAndThruDateNull(
-                deliveryTripDetails);
+            deliveryTripDetails);
         deliveryTripDetailStatuses.forEach(deliveryTripDetailStatus -> deliveryTripDetailStatus.setThruDate(updateDate));
 
         deliveryTripDetailStatusRepo.saveAll(deliveryTripDetails.stream()
-                .map(deliveryTripDetail -> new DeliveryTripDetailStatus(null,
-                        deliveryTripDetail,
-                        statusItem,
-                        updateDate,
-                        null,
-                        null)).collect(Collectors.toList()));
+            .map(deliveryTripDetail -> new DeliveryTripDetailStatus(null,
+                deliveryTripDetail,
+                statusItem,
+                updateDate,
+                null,
+                null)).collect(Collectors.toList()));
     }
 
     private DeliveryTrip updateDeliveryTripStatus(DeliveryTrip deliveryTrip, Date updateDate, StatusItem statusItem) {
@@ -401,7 +403,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         deliveryTrip = deliveryTripRepo.save(deliveryTrip);
 
         List<DeliveryTripStatus> deliveryTripStatuses = deliveryTripStatusRepo.findAllByDeliveryTripAndThruDateNull(
-                deliveryTrip);
+            deliveryTrip);
         deliveryTripStatuses.forEach(deliveryTripStatus -> deliveryTripStatus.setThruDate(updateDate));
         deliveryTripStatusRepo.saveAll(deliveryTripStatuses);
 
@@ -414,17 +416,17 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         Date now = new Date();
 
         StatusItem deliveryTripApprovedTrip = statusItemRepo.findById("DELIVERY_TRIP_APPROVED_TRIP")
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         StatusItem deliveryTripExecuted = statusItemRepo.findById("DELIVERY_TRIP_EXECUTED")
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         StatusItem deliveryTripDetailOnTrip = statusItemRepo.findById("DELIVERY_TRIP_DETAIL_ON_TRIP")
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
 
         return updateDeliveryTripStatus(deliveryTripId,
-                now,
-                deliveryTripApprovedTrip,
-                deliveryTripExecuted,
-                deliveryTripDetailOnTrip);
+            now,
+            deliveryTripApprovedTrip,
+            deliveryTripExecuted,
+            deliveryTripDetailOnTrip);
     }
 
     @Override
@@ -432,14 +434,14 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     public boolean deleteAll() {
         Date now = new Date();
         List<ShipmentItem> shipmentItems = deliveryTripDetailRepo.findAll()
-                .stream()
-                .map(DeliveryTripDetail::getShipmentItem)
-                .distinct()
-                .collect(Collectors.toList());
+            .stream()
+            .map(DeliveryTripDetail::getShipmentItem)
+            .distinct()
+            .collect(Collectors.toList());
         StatusItem shipmentItemCreated = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         List<ShipmentItemStatus> shipmentItemStatuses = shipmentItemStatusRepo.findAllByShipmentItemInAndThruDateNull(
-                shipmentItems);
+            shipmentItems);
         for (ShipmentItemStatus shipmentItemStatus : shipmentItemStatuses) {
             shipmentItemStatus.setThruDate(now);
         }

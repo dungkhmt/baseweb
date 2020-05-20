@@ -30,11 +30,11 @@ public abstract class TransportReport<ID> {
 
     public TransportReportModel.DateReport toDateReport() {
         return new TransportReportModel.DateReport(
-                null,
-                cost,
-                totalDistance,
-                numberTrips,
-                totalWeight
+            null,
+            cost,
+            totalDistance,
+            numberTrips,
+            totalWeight
         );
     }
 }

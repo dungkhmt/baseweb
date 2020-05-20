@@ -74,12 +74,12 @@ public class LogisticsAPIController {
     public ResponseEntity<?> setProductPrice(Principal principal, @RequestBody SetProductPriceInputModel input) {
         UserLogin userLogin = userService.findById(principal.getName());
         ProductPrice productPrice = productPriceService.setProductPrice(userLogin,
-                input.getProductId(),
-                input.getPrice(),
-                input.getCurrencyUomId(),
-                input.getTaxInPrice(),
-                input.getFromDate(),
-                input.getThruDate());
+            input.getProductId(),
+            input.getPrice(),
+            input.getCurrencyUomId(),
+            input.getTaxInPrice(),
+            input.getFromDate(),
+            input.getThruDate());
         return ResponseEntity.ok().body(productPrice);
     }
 

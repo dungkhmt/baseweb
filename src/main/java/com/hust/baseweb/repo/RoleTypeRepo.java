@@ -4,5 +4,5 @@ import com.hust.baseweb.entity.RoleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoleTypeRepo extends JpaRepository<RoleType, String> {
-    public RoleType findByRoleTypeId(String roleTypeId);
+    RoleType findByRoleTypeId(String roleTypeId);
 }

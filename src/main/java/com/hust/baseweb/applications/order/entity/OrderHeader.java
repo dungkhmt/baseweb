@@ -89,9 +89,9 @@ public class OrderHeader {
 
     public InventoryModel.OrderHeader toOrderHeaderModel() {
         return new InventoryModel.OrderHeader(
-                orderId,
-                partyCustomer.getPartyId().toString(),
-                Optional.ofNullable(orderDate).map(date -> Constant.DATE_FORMAT.format(orderDate)).orElse(null)
+            orderId,
+            partyCustomer.getPartyId().toString(),
+            Optional.ofNullable(orderDate).map(date -> Constant.DATE_FORMAT.format(orderDate)).orElse(null)
         );
     }
 
@@ -101,10 +101,10 @@ public class OrderHeader {
 
     public PurchaseModel toPurchaseModel(String supplierName, Double totalAmount) {
         return new PurchaseModel(
-                orderId,
-                Constant.DATE_FORMAT.format(createdStamp),
-                supplierName,
-                totalAmount
+            orderId,
+            Constant.DATE_FORMAT.format(createdStamp),
+            supplierName,
+            totalAmount
         );
     }
 

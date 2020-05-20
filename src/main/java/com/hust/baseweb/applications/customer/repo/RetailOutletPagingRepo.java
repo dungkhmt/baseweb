@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.customer.repo;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import org.springframework.data.repository.PagingAndSortingRepository;
 

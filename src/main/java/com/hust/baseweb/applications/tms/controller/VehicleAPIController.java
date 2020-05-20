@@ -41,7 +41,7 @@ public class VehicleAPIController {
     public ResponseEntity<?> getAllVehicles(Principal principal) {
         log.info("::getAllVehicles, ");
         return ResponseEntity.ok().body(vehicleService.findAll().stream()
-                .map(Vehicle::toVehicleModel).collect(Collectors.toList()));
+            .map(Vehicle::toVehicleModel).collect(Collectors.toList()));
     }
 
     @PostMapping("/upload-vehicle")
@@ -49,18 +49,18 @@ public class VehicleAPIController {
                                             @RequestParam("file") MultipartFile multipartFile) throws IOException {
         log.info("::uploadVehicle");
         List<VehicleModel.Create> vehicleModels
-                = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, VehicleModel.Create.class,
-                PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải").build());
+            = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, VehicleModel.Create.class,
+            PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải").build());
 
         List<VehicleModel.CreateLocationPriority> vehicleLocationPriorities
-                = Poiji.fromExcel(multipartFile.getInputStream(),
-                PoijiExcelType.XLSX,
-                VehicleModel.CreateLocationPriority.class,
-                PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải - Shipto").build());
+            = Poiji.fromExcel(multipartFile.getInputStream(),
+            PoijiExcelType.XLSX,
+            VehicleModel.CreateLocationPriority.class,
+            PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải - Shipto").build());
 
         List<LocationModel.Create> shipToModels
-                = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, LocationModel.Create.class,
-                PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Shipto").build());
+            = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, LocationModel.Create.class,
+            PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Shipto").build());
 
         /*
         List<Vehicle> vehicles = vehicleModels.stream().map(CreateVehicleModel::toVehicle).collect(Collectors.toList());

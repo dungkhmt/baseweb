@@ -35,11 +35,11 @@ public class ReceiptServiceImpl implements ReceiptService {
     public List<ReceiptItem> createReceiptItems(Receipt receipt,
                                                 List<InventoryItem> inventoryItems) {
         List<ReceiptItem> receiptItems = inventoryItems.stream()
-                .map(inventoryItem -> new ReceiptItem(null,
-                        receipt,
-                        inventoryItem.getProduct(),
-                        inventoryItem.getQuantityOnHandTotal()))
-                .collect(Collectors.toList());
+            .map(inventoryItem -> new ReceiptItem(null,
+                receipt,
+                inventoryItem.getProduct(),
+                inventoryItem.getQuantityOnHandTotal()))
+            .collect(Collectors.toList());
         return receiptItemRepo.saveAll(receiptItems);
     }
 }

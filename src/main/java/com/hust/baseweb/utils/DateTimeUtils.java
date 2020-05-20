@@ -271,13 +271,15 @@ public class DateTimeUtils {
         String new_date_time = unixTimeStamp2DateTime(new_d);
         return new_date_time;
     }
-    public static String std2Digit(int x){
-    	String s = x + "";
-    	while(s.length() < 2){
-    		s = "0" + s;
-    	}
-    	return s;
+
+    public static String std2Digit(int x) {
+        String s = x + "";
+        while (s.length() < 2) {
+            s = "0" + s;
+        }
+        return s;
     }
+
     public static void main(String[] args) {
         String fromDate = "2020-01-01 00:00:00";
         String toDate = "2020-03-04 00:00:00";
@@ -295,7 +297,7 @@ public class DateTimeUtils {
         System.out.println("next 30 days of " + DT1 + " = " + next(DT1, 30));
 
         System.out.println("new date time of " + DT1 + " = " + getRelativeDateTime(DT1) +
-                ", recover = " + recoverDateTimeFromRelative(getRelativeDateTime(DT1)));
+            ", recover = " + recoverDateTimeFromRelative(getRelativeDateTime(DT1)));
         long t1 = DateTimeUtils.dateTime2Int(DT1);
         long t2 = DateTimeUtils.dateTime2Int(DT2);
         long t = t1 - t2;

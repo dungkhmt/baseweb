@@ -29,7 +29,10 @@ public class OrderDetailView {
     private Double total;
     private OrderItemDetailView[] orderItems;
 
-    public OrderDetailView(OrderHeader order, OrderService orderService, PartySalesmanService salesmanService, UserService userService) {
+    public OrderDetailView(OrderHeader order,
+                           OrderService orderService,
+                           PartySalesmanService salesmanService,
+                           UserService userService) {
         // TODO: to be improved
 
         orderId = order.getOrderId();

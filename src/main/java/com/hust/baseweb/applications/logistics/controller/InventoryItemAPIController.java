@@ -61,16 +61,16 @@ public class InventoryItemAPIController {
         for (Facility facility : facilities) {
             for (Product product : products) {
                 inventoryItemInputModels.add(new ImportInventoryItemInputModel(
-                        product.getProductId(),
-                        facility.getFacilityId(),
-                        null,
-                        random.nextInt(1000) + 100
+                    product.getProductId(),
+                    facility.getFacilityId(),
+                    null,
+                    random.nextInt(1000) + 100
                 ));
             }
         }
 
         return importInventoryItems(new ImportInventoryItemsInputModel(
-                inventoryItemInputModels.toArray(new ImportInventoryItemInputModel[0])));
+            inventoryItemInputModels.toArray(new ImportInventoryItemInputModel[0])));
     }
 
     @PostMapping("/export-inventory-items")
@@ -88,8 +88,8 @@ public class InventoryItemAPIController {
     @PostMapping("/get-inventory-order-detail")
     public ResponseEntity<?> getInventoryOrderDetail(@RequestBody InventoryModel.OrderFacility orderFacility) {
         return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderHeaderDetail(
-                orderFacility.getFacilityId(),
-                orderFacility.getOrderId()));
+            orderFacility.getFacilityId(),
+            orderFacility.getOrderId()));
     }
 
     @GetMapping("/facility/all")

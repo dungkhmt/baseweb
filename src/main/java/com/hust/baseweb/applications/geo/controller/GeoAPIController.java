@@ -41,7 +41,7 @@ public class GeoAPIController {
     public ResponseEntity<?> computeMissingAddressDistance(Principal principal,
                                                            @RequestBody ComputeMissingDistanceInputModel input) {
         int cnt = distanceTravelTimePostalAddressService.computeMissingDistance(input.getDistanceSource(),
-                input.getSpeedTruck(), input.getSpeedMotorbike(), input.getMaxElements());
+            input.getSpeedTruck(), input.getSpeedMotorbike(), input.getMaxElements());
         return ResponseEntity.ok().body(cnt);
     }
 
@@ -90,7 +90,7 @@ public class GeoAPIController {
     public ResponseEntity<?> getListDistanceInfo(Pageable page, @RequestParam(required = false) String param) {
         log.info("getListDistanceInfo");
         Page<DistanceTravelTimePostalAddress> distanceTravelTimePostalAddressPage =
-                distanceTravelTimePostalAddressPagingRepo.findAll(page);
+            distanceTravelTimePostalAddressPagingRepo.findAll(page);
 
 
         for (DistanceTravelTimePostalAddress d : distanceTravelTimePostalAddressPage) {
@@ -113,11 +113,11 @@ public class GeoAPIController {
                                                           @RequestBody InputModel inputModel) {
         log.info("getDistancePostalAddressInfoWithKey");
         DistanceTravelTimePostalAddressEmbeddableId distanceTravelTimePostalAddressEmbeddableId =
-                new DistanceTravelTimePostalAddressEmbeddableId(UUID.fromString(fromContactMechId),
-                        UUID.fromString(toContactMechId));
+            new DistanceTravelTimePostalAddressEmbeddableId(UUID.fromString(fromContactMechId),
+                UUID.fromString(toContactMechId));
         DistanceTravelTimePostalAddress distanceTravelTimePostalAddress =
-                distanceTravelTimePostalAddressRepo.findByDistanceTravelTimePostalAddressEmbeddableId(
-                        distanceTravelTimePostalAddressEmbeddableId);
+            distanceTravelTimePostalAddressRepo.findByDistanceTravelTimePostalAddressEmbeddableId(
+                distanceTravelTimePostalAddressEmbeddableId);
         distanceTravelTimePostalAddress.setEnumID(distanceTravelTimePostalAddress.getEnumeration().getEnumId());
         return ResponseEntity.ok().body(distanceTravelTimePostalAddress);
     }
@@ -140,13 +140,13 @@ public class GeoAPIController {
     @PostMapping("/change-distance-travel-time-postal-address-info")
     public void changeDistanceTravelTimePostalAddressInfo(@RequestBody InputModelDistanceTravelTimePostalAddress data) {
         DistanceTravelTimePostalAddressEmbeddableId distanceTravelTimePostalAddressEmbeddableId =
-                new DistanceTravelTimePostalAddressEmbeddableId(
-                        UUID.fromString(data.getFromContactMechId()),
-                        UUID.fromString(data.getToContactMechId())
-                );
+            new DistanceTravelTimePostalAddressEmbeddableId(
+                UUID.fromString(data.getFromContactMechId()),
+                UUID.fromString(data.getToContactMechId())
+            );
         DistanceTravelTimePostalAddress distanceTravelTimePostalAddress
-                = distanceTravelTimePostalAddressRepo.findByDistanceTravelTimePostalAddressEmbeddableId(
-                distanceTravelTimePostalAddressEmbeddableId);
+            = distanceTravelTimePostalAddressRepo.findByDistanceTravelTimePostalAddressEmbeddableId(
+            distanceTravelTimePostalAddressEmbeddableId);
         distanceTravelTimePostalAddress.setDistance((int) data.getDistance());
         distanceTravelTimePostalAddress.setTravelTime((int) data.getTravelTime());
         distanceTravelTimePostalAddress.setTravelTimeMotorbike((int) data.getTravelTimeMotobike());

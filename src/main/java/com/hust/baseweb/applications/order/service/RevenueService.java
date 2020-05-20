@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.order.service;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.entity.Party;
 

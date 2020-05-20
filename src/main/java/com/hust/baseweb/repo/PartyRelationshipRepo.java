@@ -10,18 +10,18 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PartyRelationshipRepo extends JpaRepository<PartyRelationship, UUID> {
-    public PartyRelationship save(PartyRelationship partyRelationship);
+    PartyRelationship save(PartyRelationship partyRelationship);
 
-    public List<PartyRelationship> findAllByFromPartyAndRoleTypeAndThruDate(Party fromParty,
-                                                                            RoleType roleType,
-                                                                            Date thruDate);
+    List<PartyRelationship> findAllByFromPartyAndRoleTypeAndThruDate(Party fromParty,
+                                                                     RoleType roleType,
+                                                                     Date thruDate);
 
-    public List<PartyRelationship> findAllByToPartyAndRoleTypeAndThruDate(Party toParty,
-                                                                          RoleType roleType,
-                                                                          Date thruDate);
+    List<PartyRelationship> findAllByToPartyAndRoleTypeAndThruDate(Party toParty,
+                                                                   RoleType roleType,
+                                                                   Date thruDate);
 
-    public List<PartyRelationship> findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(Party fromParty,
-                                                                                      Party toParty,
-                                                                                      RoleType roleType,
-                                                                                      Date thruDate);
+    List<PartyRelationship> findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(Party fromParty,
+                                                                               Party toParty,
+                                                                               RoleType roleType,
+                                                                               Date thruDate);
 }

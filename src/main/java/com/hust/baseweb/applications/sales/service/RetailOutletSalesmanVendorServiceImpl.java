@@ -29,6 +29,7 @@ public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesm
     private PartyDistributorRepo partyDistributorRepo;
     private RetailOutletPagingRepo retailOutletRepo;
     private PartyRetailOutletRepo partyRetailOutletRepo;
+
     @Override
     public RetailOutletSalesmanVendor save(RetailOutletSalesmanDistributorInputModel input) {
         PartySalesman salesman = partySalesmanRepo.findByPartyId(input.getPartySalesmanId());
@@ -47,23 +48,35 @@ public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesm
     }
 
     @Override
-    public List<PartyRetailOutlet> getListRetailOutletOfSalesmanAndDistributor(UUID partySalesmanId, UUID partyDistributorId) {
+    public List<PartyRetailOutlet> getListRetailOutletOfSalesmanAndDistributor(UUID partySalesmanId,
+                                                                               UUID partyDistributorId) {
         PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);
-        List<RetailOutletSalesmanVendor> list = retailOutletSalesmanVendorRepo.findAllByPartySalesmanAndPartyDistributorAndThruDate(partySalesman, partyDistributor,null);
-        List<PartyRetailOutlet> retailOutlets = list.stream().map(i -> i.getPartyRetailOutlet()).collect(Collectors.toList());
+        List<RetailOutletSalesmanVendor> list = retailOutletSalesmanVendorRepo.findAllByPartySalesmanAndPartyDistributorAndThruDate(
+            partySalesman,
+            partyDistributor,
+            null);
+        List<PartyRetailOutlet> retailOutlets = list.stream()
+            .map(i -> i.getPartyRetailOutlet())
+            .collect(Collectors.toList());
         return retailOutlets;
     }
 
     @Override
-    public RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(UUID partyRetailOutletId, UUID partySalesmanId, UUID partyDistributorId) {
+    public RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(UUID partyRetailOutletId,
+                                                                         UUID partySalesmanId,
+                                                                         UUID partyDistributorId) {
         PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
         PartyRetailOutlet partyRetailOutlet = partyRetailOutletRepo.findByPartyId(partyRetailOutletId);
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);
         List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo
-                .findAllByPartySalesmanAndPartyRetailOutletAndPartyDistributorAndThruDate(partySalesman,partyRetailOutlet,partyDistributor,null);
-        if(retailOutletSalesmanVendors != null && retailOutletSalesmanVendors.size() > 0)
+            .findAllByPartySalesmanAndPartyRetailOutletAndPartyDistributorAndThruDate(partySalesman,
+                partyRetailOutlet,
+                partyDistributor,
+                null);
+        if (retailOutletSalesmanVendors != null && retailOutletSalesmanVendors.size() > 0) {
             return retailOutletSalesmanVendors.get(0);
+        }
         return null;
     }
 }

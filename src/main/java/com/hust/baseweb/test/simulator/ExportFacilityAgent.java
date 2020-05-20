@@ -38,12 +38,14 @@ public class ExportFacilityAgent extends Thread {
     }
 
     public void run() {
-        System.out.println(module + "::run....");
+        Simulator.threadRunningCounter.incrementAndGet();
+//        System.out.println(module + "::run....");
 
         token = Login.login(username, password);
 
         createShipments();
 
+        Simulator.threadRunningCounter.decrementAndGet();
     }
 
     public void createAShipment() throws Exception {

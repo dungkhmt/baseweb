@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DateBasedRevenueReportRecentInputModel {
-	private int nbDays;
+    private int nbDays;
 }

@@ -17,8 +17,8 @@ CREATE TABLE party_customer
 CREATE TABLE party_retail_outlet
 (
     party_id           UUID NOT NULL,
-    retail_outlet_code      VARCHAR(100),
-    retail_outlet_name      VARCHAR(200),
+    retail_outlet_code VARCHAR(100),
+    retail_outlet_name VARCHAR(200),
     status_id          VARCHAR(60),
     party_type_id      VARCHAR(60),
     description        TEXT,

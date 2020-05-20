@@ -39,13 +39,13 @@ public class OrderItem {
 
     public InventoryModel.OrderItem toOrderItemModel(int exportedQuantity, int inventoryQuantity) {
         return new InventoryModel.OrderItem(
-                product.getProductId(),
-                product.getProductName(),
-                quantity,
-                exportedQuantity,
-                inventoryQuantity,
-                orderId,
-                orderItemSeqId
+            product.getProductId(),
+            product.getProductName(),
+            quantity,
+            exportedQuantity,
+            inventoryQuantity,
+            orderId,
+            orderItemSeqId
         );
     }
 

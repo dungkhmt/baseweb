@@ -75,15 +75,15 @@ public class Person {
     @Override
     public String toString() {
         return "Person{" +
-                "partyId=" + partyId +
-                ", firstName='" + firstName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", gender='" + gender + '\'' +
-                ", birthDate=" + birthDate +
-                ", name='" + name + '\'' +
-                ", userName='" + userName + '\'' +
-                '}';
+            "partyId=" + partyId +
+            ", firstName='" + firstName + '\'' +
+            ", middleName='" + middleName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", gender='" + gender + '\'' +
+            ", birthDate=" + birthDate +
+            ", name='" + name + '\'' +
+            ", userName='" + userName + '\'' +
+            '}';
     }
 }
 

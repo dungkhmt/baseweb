@@ -103,14 +103,14 @@ public class ShipmentServiceImpl implements ShipmentService {
         }
 
         log.info("save1, shipmentItem.length = "
-                + input.getShipmentItems().length);
+            + input.getShipmentItems().length);
         Shipment shipment = createAndSaveShipment();
 
         for (int i = 0; i < input.getShipmentItems().length; i++) {
             ShipmentItemModel.Create shipmentItemInputModel = input.getShipmentItems()[i];
 
             List<PartyCustomer> customers = partyCustomerRepo
-                    .findAllByCustomerCode(shipmentItemInputModel.getCustomerCode());
+                .findAllByCustomerCode(shipmentItemInputModel.getCustomerCode());
             PartyCustomer customer;
             if (customers == null || customers.size() == 0) {
                 // insert a customer
@@ -118,7 +118,7 @@ public class ShipmentServiceImpl implements ShipmentService {
                 double lat = Double.parseDouble(s[0].trim());
                 double lng = Double.parseDouble(s[1].trim());
                 customer = customerService.save(new CreateCustomerInputModel(shipmentItemInputModel.getCustomerCode(),
-                        shipmentItemInputModel.getCustomerName(), shipmentItemInputModel.getAddress(), lat, lng));
+                    shipmentItemInputModel.getCustomerName(), shipmentItemInputModel.getAddress(), lat, lng));
             } else {
                 customer = customers.get(0);
             }
@@ -126,22 +126,22 @@ public class ShipmentServiceImpl implements ShipmentService {
             Product product = productRepo.findByProductId(shipmentItemInputModel.getProductId());
             if (product == null) {
                 product = productService.save(shipmentItemInputModel.getProductId(),
-                        shipmentItemInputModel.getProductTransportCategory(),
-                        shipmentItemInputModel.getProductName(),
-                        shipmentItemInputModel.getWeight() / shipmentItemInputModel.getQuantity(),
-                        shipmentItemInputModel.getUom(),
-                        shipmentItemInputModel.getHsThu(),
-                        shipmentItemInputModel.getHsPal());
+                    shipmentItemInputModel.getProductTransportCategory(),
+                    shipmentItemInputModel.getProductName(),
+                    shipmentItemInputModel.getWeight() / shipmentItemInputModel.getQuantity(),
+                    shipmentItemInputModel.getUom(),
+                    shipmentItemInputModel.getHsThu(),
+                    shipmentItemInputModel.getHsPal());
             }
             List<PostalAddress> addresses = postalAddressRepo
-                    .findAllByLocationCode(shipmentItemInputModel.getLocationCode());
+                .findAllByLocationCode(shipmentItemInputModel.getLocationCode());
             PostalAddress address;
             if (addresses == null || addresses.size() == 0) {
                 String[] latlng = shipmentItemInputModel.getLatLng().split(",");
                 address = postalAddressService.save(shipmentItemInputModel.getLocationCode(),
-                        shipmentItemInputModel.getAddress(),
-                        Double.parseDouble(latlng[0]),
-                        Double.parseDouble(latlng[1]));
+                    shipmentItemInputModel.getAddress(),
+                    Double.parseDouble(latlng[0]),
+                    Double.parseDouble(latlng[1]));
             } else {
                 address = addresses.get(0);
             }
@@ -157,7 +157,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 
             shipmentItem = shipmentItemRepo.save(shipmentItem);
             log.info("save1 shipmentItem[" + i + "/"
-                    + input.getShipmentItems().length + " --> DONE OK");
+                + input.getShipmentItems().length + " --> DONE OK");
         }
         return shipment;
     }
@@ -190,11 +190,11 @@ public class ShipmentServiceImpl implements ShipmentService {
         Map<String, OrderHeader> orderHeaderMap = codeListInDb.getOrderHeaderMap();
 
         Map<String, Facility> facilityMap = facilityRepo.findAllByFacilityIdIn(
-                Stream.of(input.getShipmentItems())
-                        .map(ShipmentItemModel.Create::getFacilityId)
-                        .distinct()
-                        .collect(Collectors.toList()))
-                .stream().collect(Collectors.toMap(Facility::getFacilityId, facility -> facility));
+            Stream.of(input.getShipmentItems())
+                .map(ShipmentItemModel.Create::getFacilityId)
+                .distinct()
+                .collect(Collectors.toList()))
+            .stream().collect(Collectors.toMap(Facility::getFacilityId, facility -> facility));
 
         Map<String, Integer> orderSeqIdCounterMap = new HashMap<>();
         Map<CompositeOrderItemId, ShipmentItemModel.Create> orderItemIdToShipmentItemModelMap = new HashMap<>();
@@ -214,12 +214,12 @@ public class ShipmentServiceImpl implements ShipmentService {
             orderItems.add(orderItem);
 
             orderItemIdToShipmentItemModelMap.put(new CompositeOrderItemId(orderItem.getOrderId(),
-                    orderItem.getOrderItemSeqId()), shipmentItemModel);
+                orderItem.getOrderItemSeqId()), shipmentItemModel);
 
             orderItemIdToDateMap.put(new CompositeOrderItemId(orderItem.getOrderId(), orderItem.getOrderItemSeqId()),
-                    orderHeader.getOrderDate().toInstant()
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDate());
+                orderHeader.getOrderDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate());
         }
 
         orderItems = orderItemRepo.saveAll(orderItems);
@@ -227,18 +227,18 @@ public class ShipmentServiceImpl implements ShipmentService {
         List<ShipmentItem> shipmentItems = new ArrayList<>();
         for (OrderItem orderItem : orderItems) {
             ShipmentItem shipmentItem = createShipmentItem(shipment,
-                    partyCustomerMap,
-                    postalAddressMap,
-                    facilityMap,
-                    orderItemIdToShipmentItemModelMap.get(new CompositeOrderItemId(orderItem.getOrderId(),
-                            orderItem.getOrderItemSeqId())),
-                    orderItem, orderHeaderMap.get(orderItem.getOrderId()));
+                partyCustomerMap,
+                postalAddressMap,
+                facilityMap,
+                orderItemIdToShipmentItemModelMap.get(new CompositeOrderItemId(orderItem.getOrderId(),
+                    orderItem.getOrderItemSeqId())),
+                orderItem, orderHeaderMap.get(orderItem.getOrderId()));
 
             shipmentItems.add(shipmentItem);
         }
 
         List<ShipmentItemRole> shipmentItemRoles = new ArrayList<>();
-        for(ShipmentItem shipmentItem: shipmentItems){
+        for (ShipmentItem shipmentItem : shipmentItems) {
             ShipmentItemRole shipmentItemRole = new ShipmentItemRole();
             shipmentItemRole.setShipmentItem(shipmentItem);
             shipmentItemRole.setParty(userLogin.getParty());
@@ -252,11 +252,11 @@ public class ShipmentServiceImpl implements ShipmentService {
         //Map<OrderItem, PartyCustomer> orderItemToCustomerMap = shipmentItems.stream()
         //        .collect(Collectors.toMap(ShipmentItem::getOrderItem, ShipmentItem::getCustomer));
         Map<OrderItem, Party> orderItemToCustomerMap = shipmentItems.stream()
-                .collect(Collectors.toMap(ShipmentItem::getOrderItem, ShipmentItem::getPartyCustomer));
+            .collect(Collectors.toMap(ShipmentItem::getOrderItem, ShipmentItem::getPartyCustomer));
 
 
         StatusItem statusItem = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         shipmentItems.forEach(shipmentItem -> shipmentItem.setStatusItem(statusItem));
 
         facilityRepo.saveAll(facilityMap.values());
@@ -270,9 +270,9 @@ public class ShipmentServiceImpl implements ShipmentService {
         shipmentItemRoleRepo.saveAll(shipmentItemRoles);
 
         revenueService.updateRevenue(orderItems,
-                orderItemToCustomerMap::get,
-                orderItem -> orderItemIdToDateMap.get(new CompositeOrderItemId(orderItem.getOrderId(),
-                        orderItem.getOrderItemSeqId())));
+            orderItemToCustomerMap::get,
+            orderItem -> orderItemIdToDateMap.get(new CompositeOrderItemId(orderItem.getOrderId(),
+                orderItem.getOrderItemSeqId())));
 
         return shipment;
     }
@@ -282,13 +282,13 @@ public class ShipmentServiceImpl implements ShipmentService {
         Map<List<String>, ShipmentItemModel.Create> orderIdAndProductIdToShipmentItem = new HashMap<>();
         for (ShipmentItemModel.Create shipmentItem : shipmentItems) {
             orderIdAndProductIdToShipmentItem.merge(Arrays.asList(shipmentItem.getOrderId(),
-                    shipmentItem.getProductId()),
-                    shipmentItem, (old, other) -> {
-                        old.setQuantity(old.getQuantity() + other.getQuantity());
-                        old.setWeight(old.getWeight() + other.getWeight());
-                        old.setPallet(old.getPallet() + other.getPallet());
-                        return old;
-                    });
+                shipmentItem.getProductId()),
+                shipmentItem, (old, other) -> {
+                    old.setQuantity(old.getQuantity() + other.getQuantity());
+                    old.setWeight(old.getWeight() + other.getWeight());
+                    old.setPallet(old.getPallet() + other.getPallet());
+                    return old;
+                });
         }
         input.setShipmentItems(orderIdAndProductIdToShipmentItem.values().toArray(new ShipmentItemModel.Create[0]));
     }
@@ -298,8 +298,8 @@ public class ShipmentServiceImpl implements ShipmentService {
                                                                 StatusItem statusItem) {
         Date now = new Date();
         return shipmentItems.stream()
-                .map(shipmentItem -> new ShipmentItemStatus(null, shipmentItem, statusItem, now, null))
-                .collect(Collectors.toList());
+            .map(shipmentItem -> new ShipmentItemStatus(null, shipmentItem, statusItem, now, null))
+            .collect(Collectors.toList());
     }
 
     @NotNull
@@ -352,14 +352,14 @@ public class ShipmentServiceImpl implements ShipmentService {
                                                ShipmentItemModel.Create shipmentItemModel) {
         Date orderDate = null;
 //        log.info("getOrCreateOrderHeader, orderDate = " + shipmentItemModel.getOrderDate());
-        if(shipmentItemModel.getOrderDate() == null)
+        if (shipmentItemModel.getOrderDate() == null) {
             orderDate = new Date();
-        else{
-        try {
-            orderDate = Constant.ORDER_EXCEL_DATE_FORMAT.parse(shipmentItemModel.getOrderDate());
-        } catch (ParseException e) {
+        } else {
+            try {
+                orderDate = Constant.ORDER_EXCEL_DATE_FORMAT.parse(shipmentItemModel.getOrderDate());
+            } catch (ParseException e) {
 //            e.printStackTrace();
-        }
+            }
         }
         final Date finalOrderDate = orderDate;
         return orderHeaderMap.computeIfAbsent(shipmentItemModel.getOrderId(), orderId -> {
@@ -375,10 +375,10 @@ public class ShipmentServiceImpl implements ShipmentService {
                                           ShipmentItemModel.Create shipmentItemModel) {
         // Nếu product hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
         return productMap.computeIfAbsent(shipmentItemModel.getProductId(), productId ->
-                productService.save(productId, shipmentItemModel.getProductName(),
-                        shipmentItemModel.getProductTransportCategory(),
-                        shipmentItemModel.getWeight() / shipmentItemModel.getQuantity() * 1000, // kg
-                        shipmentItemModel.getUom(), shipmentItemModel.getHsThu(), shipmentItemModel.getHsPal()));
+            productService.save(productId, shipmentItemModel.getProductName(),
+                shipmentItemModel.getProductTransportCategory(),
+                shipmentItemModel.getWeight() / shipmentItemModel.getQuantity() * 1000, // kg
+                shipmentItemModel.getUom(), shipmentItemModel.getHsThu(), shipmentItemModel.getHsPal()));
     }
 
     @NotNull
@@ -387,43 +387,43 @@ public class ShipmentServiceImpl implements ShipmentService {
                                                    PostalAddress postalAddress) {
         // Nếu party customer hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
         return partyCustomerMap.computeIfAbsent(shipmentItemModel.getCustomerCode(),
-                customerCode ->
-                {
-                    PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAIL_OUTLET");
+            customerCode ->
+            {
+                PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAIL_OUTLET");
 
-                    Party party = new Party(null, partyType, "",
-                            statusRepo.findById(Status.StatusEnum.PARTY_ENABLED.name())
-                                    .orElseThrow(NoSuchElementException::new),
-                            false);
+                Party party = new Party(null, partyType, "",
+                    statusRepo.findById(Status.StatusEnum.PARTY_ENABLED.name())
+                        .orElseThrow(NoSuchElementException::new),
+                    false);
 
-                    party = partyRepo.save(party);
+                party = partyRepo.save(party);
 
-                    UUID partyId = party.getPartyId();
+                UUID partyId = party.getPartyId();
 
-                    PartyCustomer customer = new PartyCustomer();
-                    customer.setPartyId(partyId);
-                    customer.setCustomerCode(shipmentItemModel.getCustomerCode());
-                    customer.setPartyType(partyType);
-                    customer.setCustomerName(shipmentItemModel.getCustomerName());
-                    customer.setPostalAddress(new ArrayList<>());
+                PartyCustomer customer = new PartyCustomer();
+                customer.setPartyId(partyId);
+                customer.setCustomerCode(shipmentItemModel.getCustomerCode());
+                customer.setPartyType(partyType);
+                customer.setCustomerName(shipmentItemModel.getCustomerName());
+                customer.setPostalAddress(new ArrayList<>());
 
-                    customer = customerRepo.save(customer);
+                customer = customerRepo.save(customer);
 
-                    PartyContactMechPurpose partyContactMechPurpose = new PartyContactMechPurpose();
-                    partyContactMechPurpose.setContactMechId(postalAddress.getContactMechId());
-                    partyContactMechPurpose.setPartyId(partyId);
-                    partyContactMechPurpose.setContactMechPurposeTypeId("PRIMARY_LOCATION");
-                    partyContactMechPurpose.setFromDate(new Date());
-                    partyContactMechPurposeRepo.save(partyContactMechPurpose);
+                PartyContactMechPurpose partyContactMechPurpose = new PartyContactMechPurpose();
+                partyContactMechPurpose.setContactMechId(postalAddress.getContactMechId());
+                partyContactMechPurpose.setPartyId(partyId);
+                partyContactMechPurpose.setContactMechPurposeTypeId("PRIMARY_LOCATION");
+                partyContactMechPurpose.setFromDate(new Date());
+                partyContactMechPurposeRepo.save(partyContactMechPurpose);
 
-                    OrderRole orderRole = new OrderRole();
-                    orderRole.setOrderId(shipmentItemModel.getOrderId());
-                    orderRole.setPartyId(customer.getPartyId());
-                    orderRole.setRoleTypeId("BILL_TO_CUSTOMER");
-                    orderRole = orderRoleRepo.save(orderRole);
+                OrderRole orderRole = new OrderRole();
+                orderRole.setOrderId(shipmentItemModel.getOrderId());
+                orderRole.setPartyId(customer.getPartyId());
+                orderRole.setRoleTypeId("BILL_TO_CUSTOMER");
+                orderRole = orderRoleRepo.save(orderRole);
 
-                    return customer;
-                });
+                return customer;
+            });
     }
 
     @NotNull
@@ -432,24 +432,24 @@ public class ShipmentServiceImpl implements ShipmentService {
         // Nếu portal address hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
         // đồng thời với Geopoint, query GGMap
         return postalAddressMap.computeIfAbsent(shipmentItemModel.getLocationCode(),
-                locationCode -> {
-                    GeoPoint geoPoint;
-                    if (shipmentItemModel.getLatLng() != null) {
-                        LatLng location = LatLngUtils.parse(shipmentItemModel.getLatLng());
-                        geoPoint = new GeoPoint(null, location.lat, location.lng);
-                    } else {
-                        geoPoint = new GeoPoint();
-                    }
-                    geoPoint = geoPointRepo.save(geoPoint);
+            locationCode -> {
+                GeoPoint geoPoint;
+                if (shipmentItemModel.getLatLng() != null) {
+                    LatLng location = LatLngUtils.parse(shipmentItemModel.getLatLng());
+                    geoPoint = new GeoPoint(null, location.lat, location.lng);
+                } else {
+                    geoPoint = new GeoPoint();
+                }
+                geoPoint = geoPointRepo.save(geoPoint);
 
-                    PostalAddress pa = new PostalAddress();
-                    pa.setAddress(shipmentItemModel.getAddress());
-                    pa.setLocationCode(locationCode);
-                    pa.setGeoPoint(geoPoint);
-                    pa.setMaxLoadWeight(Double.MAX_VALUE);
-                    pa = postalAddressRepo.save(pa);
-                    return pa;
-                });
+                PostalAddress pa = new PostalAddress();
+                pa.setAddress(shipmentItemModel.getAddress());
+                pa.setLocationCode(locationCode);
+                pa.setGeoPoint(geoPoint);
+                pa.setMaxLoadWeight(Double.MAX_VALUE);
+                pa = postalAddressRepo.save(pa);
+                return pa;
+            });
     }
 
     @NotNull
@@ -499,11 +499,11 @@ public class ShipmentServiceImpl implements ShipmentService {
         List<PartyCustomer> partyCustomers = partyCustomerRepo.findAllByCustomerCode(customerCode);
         if (partyCustomers.isEmpty()) {
             PartyCustomer partyCustomer = customerService.save(new CreateCustomerInputModel(
-                    shipmentItemModel.getCustomerCode(),
-                    shipmentItemModel.getCustomerName(),
-                    shipmentItemModel.getAddress(),
-                    postalAddresses.get(0).getGeoPoint().getLatitude(),
-                    postalAddresses.get(0).getGeoPoint().getLongitude()
+                shipmentItemModel.getCustomerCode(),
+                shipmentItemModel.getCustomerName(),
+                shipmentItemModel.getAddress(),
+                postalAddresses.get(0).getGeoPoint().getLatitude(),
+                postalAddresses.get(0).getGeoPoint().getLongitude()
             ));
             partyCustomerRepo.save(partyCustomer);
         }
@@ -512,9 +512,9 @@ public class ShipmentServiceImpl implements ShipmentService {
         Product product = productRepo.findByProductId(productId);
         if (product == null) {
             product = productService.save(productId, shipmentItemModel.getProductName(),
-                    shipmentItemModel.getProductTransportCategory(),
-                    shipmentItemModel.getWeight() / shipmentItemModel.getQuantity(),
-                    shipmentItemModel.getUom(), shipmentItemModel.getHsThu(), shipmentItemModel.getHsPal());
+                shipmentItemModel.getProductTransportCategory(),
+                shipmentItemModel.getWeight() / shipmentItemModel.getQuantity(),
+                shipmentItemModel.getUom(), shipmentItemModel.getHsThu(), shipmentItemModel.getHsPal());
             productRepo.save(product);
         }
 
@@ -569,25 +569,25 @@ public class ShipmentServiceImpl implements ShipmentService {
 
             // Danh sách customerCode khác nhau đã có trong input
             customerCodes = shipmentItemInputModels.stream()
-                    .map(ShipmentItemModel.Create::getCustomerCode).distinct().collect(Collectors.toList());
+                .map(ShipmentItemModel.Create::getCustomerCode).distinct().collect(Collectors.toList());
 
             log.info("save, customerCodes = " + customerCodes.size());
 
             // Danh sách locationCode khác nhau đã có trong input
             locationCodes = shipmentItemInputModels.stream()
-                    .map(ShipmentItemModel.Create::getLocationCode).distinct().collect(Collectors.toList());
+                .map(ShipmentItemModel.Create::getLocationCode).distinct().collect(Collectors.toList());
 
             log.info("save, locationCodes = " + locationCodes.size());
 
             // Danh sách product id khác nhau đã có trong input
             productIds = shipmentItemInputModels.stream()
-                    .map(ShipmentItemModel.Create::getProductId).distinct().collect(Collectors.toList());
+                .map(ShipmentItemModel.Create::getProductId).distinct().collect(Collectors.toList());
 
             log.info("save, productIds = " + productIds.size());
 
             // Danh sách order id khác nhau đã có trong input
             orderIds = shipmentItemInputModels.stream()
-                    .map(ShipmentItemModel.Create::getOrderId).distinct().collect(Collectors.toList());
+                .map(ShipmentItemModel.Create::getOrderId).distinct().collect(Collectors.toList());
             return this;
         }
     }
@@ -632,22 +632,22 @@ public class ShipmentServiceImpl implements ShipmentService {
             // partyCustomerMap: danh sách party customer đã có trong DB
             partyCustomerMap = new HashMap<>();
             partyCustomerRepo.findAllByCustomerCodeIn(customerCodes)
-                    .forEach(partyCustomer -> partyCustomerMap.put(partyCustomer.getCustomerCode(), partyCustomer));
+                .forEach(partyCustomer -> partyCustomerMap.put(partyCustomer.getCustomerCode(), partyCustomer));
 
             // partyCustomerMap: danh sách postal address và geo point đã có trong DB
             postalAddressMap = new HashMap<>();
             postalAddressRepo.findAllByLocationCodeIn(locationCodes)
-                    .forEach(postalAddress -> postalAddressMap.put(postalAddress.getLocationCode(), postalAddress));
+                .forEach(postalAddress -> postalAddressMap.put(postalAddress.getLocationCode(), postalAddress));
 
             // productMap: danh sách product đã có trong DB
             productMap = new HashMap<>();
             productRepo.findAllByProductIdIn(productIds)
-                    .forEach(product -> productMap.put(product.getProductId(), product));
+                .forEach(product -> productMap.put(product.getProductId(), product));
 
             // orderHeaderMap: danh sách order đã có trong DB
             orderHeaderMap = new HashMap<>();
             orderHeaderRepo.findAllByOrderIdIn(orderIds)
-                    .forEach(orderHeader -> orderHeaderMap.put(orderHeader.getOrderId(), orderHeader));
+                .forEach(orderHeader -> orderHeaderMap.put(orderHeader.getOrderId(), orderHeader));
             return this;
         }
     }

@@ -124,9 +124,9 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     public List<ProductPrice.Model> getProductPriceHistory(String productId) {
         Product product = productRepo.findById(productId).orElseThrow(NoSuchElementException::new);
         return productPriceJpaRepo.findByProduct(product)
-                .stream()
-                .map(ProductPrice::toModel)
-                .collect(Collectors.toList());
+            .stream()
+            .map(ProductPrice::toModel)
+            .collect(Collectors.toList());
     }
 
     /*
@@ -165,24 +165,24 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                                                                  Date fromDate,
                                                                  Date thruDate) {
         List<OrderRole> orderRoles = orderRoleRepo.findAllByPartyIdAndRoleTypeId(
-                UUID.fromString(input.getPartyCustomerId()),
-                "BILL_TO_CUSTOMER");
+            UUID.fromString(input.getPartyCustomerId()),
+            "BILL_TO_CUSTOMER");
         List<String> orderIds = orderRoles.stream()
-                .map(OrderRole::getOrderId) // TODO: use party customer in order header
-                .distinct()
-                .collect(Collectors.toList());
+            .map(OrderRole::getOrderId) // TODO: use party customer in order header
+            .distinct()
+            .collect(Collectors.toList());
         List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderIdInAndOrderDateBetween(
-                orderIds,
-                fromDate,
-                thruDate);
+            orderIds,
+            fromDate,
+            thruDate);
         List<OrderItem> orderItems = orderItemRepo.findAllByOrderIdIn(orderIds);
         List<Product> products = orderItems.stream()
-                .map(OrderItem::getProduct)
-                .distinct()
-                .collect(Collectors.toList());
+            .map(OrderItem::getProduct)
+            .distinct()
+            .collect(Collectors.toList());
         Date now = new Date();
         List<ProductPrice> productPrices = productPriceJpaRepo.findAllByProductInAndThruDateNullOrThruDateAfter(
-                products, now);
+            products, now);
         return calcSaleReport(orderHeaders, orderItems, productPrices);
     }
 
@@ -192,10 +192,10 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
         List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderDateBetween(fromDate, thruDate);
         List<OrderItem> orderItems = orderItemRepo.findAllByProductAndOrderIdIn(product,
-                orderHeaders.stream().map(OrderHeader::getOrderId).collect(Collectors.toList()));
+            orderHeaders.stream().map(OrderHeader::getOrderId).collect(Collectors.toList()));
         Date now = new Date();
         List<ProductPrice> productPrices = productPriceJpaRepo.findByProductAndThruDateNullOrThruDateAfter(product,
-                now);
+            now);
 
         return calcSaleReport(orderHeaders, orderItems, productPrices);
     }
@@ -207,9 +207,9 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         Map<LocalDate, List<OrderHeader>> dateToOrders = new HashMap<>();
         for (OrderHeader orderHeader : orderHeaders) {
             dateToOrders.computeIfAbsent(orderHeader.getOrderDate()
-                    .toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate(), k -> new ArrayList<>()).add(orderHeader);
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate(), k -> new ArrayList<>()).add(orderHeader);
         }
 
         Map<String, List<OrderItem>> orderIdToOrderItems = new HashMap<>();
@@ -232,7 +232,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                 }
             }
             saleReportOutput.getDatePrices()
-                    .add(new SaleReportModel.DatePrice(dateOrderEntry.getKey().toString(), totalPrice));
+                .add(new SaleReportModel.DatePrice(dateOrderEntry.getKey().toString(), totalPrice));
         }
         return saleReportOutput;
     }

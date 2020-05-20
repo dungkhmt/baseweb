@@ -25,8 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .userDetailsService(this.userDetailsService)
-                .passwordEncoder(UserLogin.PASSWORD_ENCODER);
+            .userDetailsService(this.userDetailsService)
+            .passwordEncoder(UserLogin.PASSWORD_ENCODER);
     }
 
     @Override
@@ -35,14 +35,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .regexMatchers("/v2/api-docs").permitAll()
             .regexMatchers("/.*swagger.*").permitAll()
-                .anyRequest().authenticated()
+            .anyRequest().authenticated()
 
-                .and()
-                .httpBasic().authenticationEntryPoint(basicAuthenticationEndPoint)
-                .and()
-                .csrf().disable()
-                .logout()
-                .logoutSuccessUrl("/");
+            .and()
+            .httpBasic().authenticationEntryPoint(basicAuthenticationEndPoint)
+            .and()
+            .csrf().disable()
+            .logout()
+            .logoutSuccessUrl("/");
 
     }
 

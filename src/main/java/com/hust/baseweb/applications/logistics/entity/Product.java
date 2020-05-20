@@ -1,15 +1,13 @@
 package com.hust.baseweb.applications.logistics.entity;
 
+import com.hust.baseweb.entity.Content;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import javax.persistence.*;
-
-import com.hust.baseweb.entity.Content;
-
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Getter

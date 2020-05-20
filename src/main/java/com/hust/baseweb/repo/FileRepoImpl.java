@@ -1,18 +1,12 @@
 package com.hust.baseweb.repo;
 
-import java.io.IOException;
-import java.io.InputStream;
-
+import okhttp3.*;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Repository
 public class FileRepoImpl implements FileRepo {
@@ -24,16 +18,19 @@ public class FileRepoImpl implements FileRepo {
     @Override
     public String create(InputStream input, String name, String realName, String contentType) throws IOException {
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("id", name)
-                .addFormDataPart("file", realName, RequestBody.create(MediaType.parse(contentType), IOUtils.toByteArray(input)))
-                .build();
+            .addFormDataPart("file",
+                realName,
+                RequestBody.create(MediaType.parse(contentType), IOUtils.toByteArray(input)))
+            .build();
 
         Request request = new Request.Builder()
 
-                .url(contentRepoUrl).post(requestBody).build();
+            .url(contentRepoUrl).post(requestBody).build();
 
         try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful())
+            if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response);
+            }
             return response.body().string();
         }
 
@@ -43,8 +40,9 @@ public class FileRepoImpl implements FileRepo {
     public Response get(String url) throws IOException {
         Request request = new Request.Builder().url(contentRepoUrl + url).build();
         Response response = client.newCall(request).execute();
-        if (!response.isSuccessful())
+        if (!response.isSuccessful()) {
             throw new IOException("Unexpected code " + response);
+        }
         return response;
     }
 

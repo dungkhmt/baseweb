@@ -11,12 +11,15 @@ import java.util.UUID;
 public class RetailOutletSalesmanDistributorManager {
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
-    public RetailOutletSalesmanDistributorManager(String token){
+
+    public RetailOutletSalesmanDistributorManager(String token) {
         this.token = token;
     }
 
-    public RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(UUID retailOutletId, UUID salesmanId, UUID distributorId){
-        try{
+    public RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(UUID retailOutletId,
+                                                                         UUID salesmanId,
+                                                                         UUID distributorId) {
+        try {
             RetailOutletSalesmanDistributorInputModel in = new RetailOutletSalesmanDistributorInputModel();
             in.setPartyDistributorId(distributorId);
             in.setPartyRetailOutletId(retailOutletId);
@@ -25,12 +28,14 @@ public class RetailOutletSalesmanDistributorManager {
             Gson gson = new Gson();
             String json = gson.toJson(in);
 
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-retail-outlet-salesman-distributor", json, token);
+            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-retail-outlet-salesman-distributor",
+                json,
+                token);
 
-            RetailOutletSalesmanVendor retailOutletSalesmanVendor = gson.fromJson(rs,RetailOutletSalesmanVendor.class);
+            RetailOutletSalesmanVendor retailOutletSalesmanVendor = gson.fromJson(rs, RetailOutletSalesmanVendor.class);
             return retailOutletSalesmanVendor;
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

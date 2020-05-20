@@ -63,27 +63,27 @@ public class DeliveryTrip {
 
     public DeliveryTripModel toDeliveryTripModel() {
         return new DeliveryTripModel(
-                deliveryPlan.getDeliveryPlanId().toString(),
-                deliveryPlanSolutionSeqId,
-                deliveryTripId.toString(),
-                Constant.DATE_FORMAT.format(executeDate),
-                distance,
-                totalWeight,
-                totalPallet,
-                totalExecutionTime,
-                totalLocation,
-                Optional.ofNullable(vehicle).map(Vehicle::getVehicleId).orElse(null),
-                Optional.ofNullable(externalVehicleType).map(VehicleType::getVehicleTypeId).orElse(null),
-                Optional.ofNullable(vehicle).map(Vehicle::getProductTransportCategoryId).orElse(null),
-                Optional.ofNullable(vehicle).map(Vehicle::getCapacity).orElse(null),
-                Optional.ofNullable(partyDriver)
-                        .map(PartyDriver::getParty)
-                        .map(Party::getUserLogin)
-                        .map(UserLogin::getUserLoginId)
-                        .orElse(null),
-                Optional.ofNullable(partyDriver).map(p -> p.getPartyId().toString()).orElse(null),
-                distance,
-                (statusItem != null ? statusItem.getStatusId() : null)
+            deliveryPlan.getDeliveryPlanId().toString(),
+            deliveryPlanSolutionSeqId,
+            deliveryTripId.toString(),
+            Constant.DATE_FORMAT.format(executeDate),
+            distance,
+            totalWeight,
+            totalPallet,
+            totalExecutionTime,
+            totalLocation,
+            Optional.ofNullable(vehicle).map(Vehicle::getVehicleId).orElse(null),
+            Optional.ofNullable(externalVehicleType).map(VehicleType::getVehicleTypeId).orElse(null),
+            Optional.ofNullable(vehicle).map(Vehicle::getProductTransportCategoryId).orElse(null),
+            Optional.ofNullable(vehicle).map(Vehicle::getCapacity).orElse(null),
+            Optional.ofNullable(partyDriver)
+                .map(PartyDriver::getParty)
+                .map(Party::getUserLogin)
+                .map(UserLogin::getUserLoginId)
+                .orElse(null),
+            Optional.ofNullable(partyDriver).map(p -> p.getPartyId().toString()).orElse(null),
+            distance,
+            (statusItem != null ? statusItem.getStatusId() : null)
         );
     }
 }

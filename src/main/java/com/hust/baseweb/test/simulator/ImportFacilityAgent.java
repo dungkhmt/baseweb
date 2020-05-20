@@ -11,6 +11,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 @Getter
 @Setter
 public class ImportFacilityAgent extends Thread {
@@ -27,19 +28,24 @@ public class ImportFacilityAgent extends Thread {
     private int nbIters = 10;
     private int idleTime = 360;
 
-    public ImportFacilityAgent(String username, String password){
-        this.username = username; this.password = password;
+    public ImportFacilityAgent(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
+
     public void run() {
-        System.out.println(module + "::run....");
+//        System.out.println(module + "::run....");
+        Simulator.threadRunningCounter.incrementAndGet();
 
         token = Login.login(username, password);
 
         createReceipts();
 
+        Simulator.threadRunningCounter.decrementAndGet();
     }
-    public double createAReceipt(List<Product> products, List<Facility> facilities) throws Exception{
-        try{
+
+    public double createAReceipt(List<Product> products, List<Facility> facilities) throws Exception {
+        try {
             Gson gson = new Gson();
             ImportInventoryItemsInputModel input = new ImportInventoryItemsInputModel();
             List<ImportInventoryItemInputModel> importInventoryItemInputModels = new ArrayList<>();
@@ -66,22 +72,23 @@ public class ImportFacilityAgent extends Thread {
                 token);
             //System.out.println(module + "::createOrder, rs = " + rs);
             return System.currentTimeMillis() - t0;
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new Exception(e);
         }
     }
-    public void createReceipts(){
+
+    public void createReceipts() {
         FacilityManager facilityManager = new FacilityManager(token);
         ProductManager productManager = new ProductManager(token);
         List<Facility> facilities = facilityManager.getListFacility();
         List<Product> products = productManager.getProducts();
 
-        for(int i = 0; i < nbIters; i++){
-            try{
-                double time = createAReceipt(products,facilities);
+        for (int i = 0; i < nbIters; i++) {
+            try {
+                double time = createAReceipt(products, facilities);
                 Thread.sleep(idleTime);
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

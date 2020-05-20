@@ -32,7 +32,7 @@ public class PartyRetailOutlet {
     private String retailOutletName;
 
     @JoinTable(name = "PartyContactMechPurpose", inverseJoinColumns = @JoinColumn(name = "contact_mech_id", referencedColumnName = "contact_mech_id"),
-            joinColumns = @JoinColumn(name = "party_id", referencedColumnName = "party_id"))
+        joinColumns = @JoinColumn(name = "party_id", referencedColumnName = "party_id"))
     @OneToMany(fetch = FetchType.LAZY)
     private List<PostalAddress> postalAddress;
 

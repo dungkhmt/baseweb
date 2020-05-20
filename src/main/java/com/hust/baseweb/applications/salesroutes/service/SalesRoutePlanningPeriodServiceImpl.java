@@ -18,7 +18,7 @@ import java.util.UUID;
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesRoutePlanningPeriodServiceImpl implements
-        SalesRoutePlanningPeriodService {
+    SalesRoutePlanningPeriodService {
 
     private PSalesRoutePlanningPeriodRepo pSalesRoutePlanningPeriodRepo;
     private SalesRoutePlanningPeriodRepo salesRoutePlanningPeriodRepo;
@@ -54,7 +54,8 @@ public class SalesRoutePlanningPeriodServiceImpl implements
 
     @Override
     public SalesRoutePlanningPeriod findById(UUID salesRoutePlanningPeriodId) {
-        Optional<SalesRoutePlanningPeriod> salesRoutePlanningPeriod = salesRoutePlanningPeriodRepo.findById(salesRoutePlanningPeriodId);
+        Optional<SalesRoutePlanningPeriod> salesRoutePlanningPeriod = salesRoutePlanningPeriodRepo.findById(
+            salesRoutePlanningPeriodId);
         if (salesRoutePlanningPeriod.isPresent()) {
             return salesRoutePlanningPeriod.get();
         } else {

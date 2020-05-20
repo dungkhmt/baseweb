@@ -14,10 +14,11 @@ CREATE TABLE party_customer
     CONSTRAINT fp_party_customer_status_id FOREIGN KEY (status_id) REFERENCES status_item (status_id)
 );
 
-create table party_distributor(
-	party_id           UUID NOT NULL,
-    distributor_code      VARCHAR(100),
-    distributor_name      VARCHAR(100),
+create table party_distributor
+(
+    party_id           UUID NOT NULL,
+    distributor_code   VARCHAR(100),
+    distributor_name   VARCHAR(100),
     status_id          VARCHAR(60),
     party_type_id      VARCHAR(60),
     description        TEXT,

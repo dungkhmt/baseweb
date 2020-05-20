@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -61,7 +60,6 @@ public class ContRequestImportFull {
     private Date createdStamp;
 
 
-
     @Transient
     private String customerName;
 
@@ -77,6 +75,7 @@ public class ContRequestImportFull {
     @Transient
     private String containerType;
 
-    @Transient String time;
+    @Transient
+    String time;
 
 }

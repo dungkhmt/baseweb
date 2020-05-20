@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface ContPortRepo extends CrudRepository<ContPort, String> {
     List<ContPort> findAll();
+
     ContPort findByPortId(String id);
 }

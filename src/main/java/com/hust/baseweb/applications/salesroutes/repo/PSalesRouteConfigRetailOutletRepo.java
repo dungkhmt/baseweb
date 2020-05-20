@@ -6,6 +6,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.UUID;
 
 public interface PSalesRouteConfigRetailOutletRepo extends
-        PagingAndSortingRepository<SalesRouteConfigRetailOutlet, UUID> {
+    PagingAndSortingRepository<SalesRouteConfigRetailOutlet, UUID> {
 
 }

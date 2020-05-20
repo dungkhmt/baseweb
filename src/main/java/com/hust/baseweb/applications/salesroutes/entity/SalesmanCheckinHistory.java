@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.salesroutes.entity;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.entity.Party;
 import lombok.Getter;
 import lombok.Setter;

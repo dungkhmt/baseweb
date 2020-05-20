@@ -43,14 +43,14 @@ public class Vehicle {
 
     public VehicleModel toVehicleModel() {
         return new VehicleModel(
-                vehicleId,
-                capacity,
-                length,
-                width,
-                height,
-                pallet,
-                statusId,
-                description
+            vehicleId,
+            capacity,
+            length,
+            width,
+            height,
+            pallet,
+            statusId,
+            description
         );
     }
 

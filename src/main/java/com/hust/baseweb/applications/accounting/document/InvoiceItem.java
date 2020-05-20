@@ -38,16 +38,16 @@ public class InvoiceItem {
             orderItemSeqId = orderItem.getOrderItemSeqId();
         }
         return new Model(
-                id.invoiceId,
-                id.invoiceItemSeqId,
-                invoiceItemType.toString(),
-                Constant.DATE_FORMAT.format(invoice.getInvoiceDate()),
-                amount,
-                currencyUomId,
-                product.getProductId(),
-                product.getProductName(),
-                orderId,
-                orderItemSeqId
+            id.invoiceId,
+            id.invoiceItemSeqId,
+            invoiceItemType.toString(),
+            Constant.DATE_FORMAT.format(invoice.getInvoiceDate()),
+            amount,
+            currencyUomId,
+            product.getProductId(),
+            product.getProductName(),
+            orderId,
+            orderItemSeqId
         );
     }
 

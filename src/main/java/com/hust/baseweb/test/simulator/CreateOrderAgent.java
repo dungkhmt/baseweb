@@ -16,10 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Getter
 @Setter
@@ -32,7 +29,8 @@ public class CreateOrderAgent extends Thread {
     private String token;
     private String username;
     private String password;
-    private int idleTime = 120000;// 2 minute of ilde
+    //    private int idleTime = 120000;// 2 minute of ilde
+    private int idleTime = 10;
 
     public CreateOrderAgent(String username, String password) {
         this.username = username;
@@ -93,7 +91,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     public void start() {
-        System.out.println(module + ":: start running...");
+//        System.out.println(module + ":: start running...");
         if (thread == null) {
             thread = new Thread(this, module);
             thread.start();
@@ -154,10 +152,10 @@ public class CreateOrderAgent extends Thread {
 
                 Thread.sleep(idleTime);
 
-                System.out.println("finished " + i + "/" + nbIters + ", time = " + t + ", maxTime = " + maxTime);
+                System.out.println("finished " + i + "/" + nbIters + ", time = " + time + ", maxTime = " + maxTime);
 
             } catch (Exception e) {
-                System.out.println("NOT CORRECT date-time " + curDate);
+//                System.out.println("NOT CORRECT date-time " + curDate);
 //            	e.printStackTrace();break;
                 //return;
             }
@@ -168,13 +166,14 @@ public class CreateOrderAgent extends Thread {
     }
 
     public void run() {
-        System.out.println(module + "::run....");
+        Simulator.threadRunningCounter.incrementAndGet();
+//        System.out.println(module + "::run....");
 
         token = Login.login(username, password);
 
         createOrders(nbIters, fromDate, toDate);
 
-
+        Simulator.threadRunningCounter.decrementAndGet();
     }
 
     public String name() {
@@ -223,9 +222,7 @@ public class CreateOrderAgent extends Thread {
             PartyCustomerModel[] arr = gson.fromJson(rs, PartyCustomerModel[].class);
             List<PartyCustomerModel> lst = new ArrayList<PartyCustomerModel>();
             if (arr != null) {
-                for (int i = 0; i < arr.length; i++) {
-                    lst.add(arr[i]);
-                }
+                lst.addAll(Arrays.asList(arr));
             }
 
             return lst;
@@ -252,7 +249,7 @@ public class CreateOrderAgent extends Thread {
             List<PartyRetailOutlet> retailOutlets = customerManager.getRetailOutlets();
 
             if (facilities.isEmpty() || customers.isEmpty() || distributors.isEmpty() || retailOutlets.isEmpty()) {
-                return Double.POSITIVE_INFINITY;
+                return 0;
             }
 
 //            System.out.println(name() + "::createOrder, products.sz = " + products.size() + ", facilities.sz = "
@@ -288,9 +285,9 @@ public class CreateOrderAgent extends Thread {
             }
 
             input.setOrderItems(orderItems);
+            String json = gson.toJson(input);
 
             double t0 = System.currentTimeMillis();
-            String json = gson.toJson(input);
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-order-distributor-to-retail-outlet",
                 json,
                 token);

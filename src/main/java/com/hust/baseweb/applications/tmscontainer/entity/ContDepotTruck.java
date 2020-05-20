@@ -42,6 +42,4 @@ public class ContDepotTruck {
     private Double lng;
 
 
-
-
 }

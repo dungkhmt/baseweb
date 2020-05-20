@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface SalesReportService {
-    public DateBasedRevenueReportOutputModel computeDateBasedRevenue(String fromDate, String toDate);
+    DateBasedRevenueReportOutputModel computeDateBasedRevenue(String fromDate, String toDate);
 
-    public SaleReportModel.Output getSaleReports(SaleReportModel.Input input);
+    SaleReportModel.Output getSaleReports(SaleReportModel.Input input);
 
-    public SaleReportModel.Output getDateBasedSalesReport(SaleReportModel.DateBasedInput input);
+    SaleReportModel.Output getDateBasedSalesReport(SaleReportModel.DateBasedInput input);
 }

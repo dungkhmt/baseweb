@@ -32,31 +32,31 @@ public class ProductPriceSupplierServiceImpl implements ProductPriceSupplierServ
     @Override
     public List<ProductPriceSupplier.Model> getAllProductPriceSuppliers(String supplierPartyId) {
         Supplier supplier = supplierRepo.findById(UUID.fromString(supplierPartyId))
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         Date now = new Date();
         return productPriceSupplierRepo.findAllByPartySupplierAndThruDateNullOrThruDateAfter(supplier, now)
-                .stream()
-                .map(ProductPriceSupplier::toModel)
-                .collect(Collectors.toList());
+            .stream()
+            .map(ProductPriceSupplier::toModel)
+            .collect(Collectors.toList());
     }
 
     @Override
     public ProductPriceSupplier setProductPriceSupplier(ProductPriceSupplier.SetModel setModel) {
         Supplier supplier = supplierRepo.findById(UUID.fromString(setModel.getSupplierPartyId()))
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         Product product = productRepo.findById(setModel.getProductId()).orElseThrow(NoSuchElementException::new);
         Date now = new Date();
 
         List<ProductPriceSupplier> productPriceSupplierHistories = productPriceSupplierRepo
-                .findAllByPartySupplierAndProductAndThruDateNullOrThruDateAfter(supplier, product, now);
+            .findAllByPartySupplierAndProductAndThruDateNullOrThruDateAfter(supplier, product, now);
         productPriceSupplierHistories.forEach(productPriceSupplier -> productPriceSupplier.setThruDate(now));
 
         ProductPriceSupplier productPriceSupplier = new ProductPriceSupplier(null,
-                supplier,
-                product,
-                setModel.getUnitPrice(),
-                now,
-                null);
+            supplier,
+            product,
+            setModel.getUnitPrice(),
+            now,
+            null);
         productPriceSupplierHistories.add(productPriceSupplier);
 
         productPriceSupplierRepo.saveAll(productPriceSupplierHistories);

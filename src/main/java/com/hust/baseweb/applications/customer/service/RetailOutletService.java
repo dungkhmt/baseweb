@@ -13,12 +13,16 @@ import java.util.UUID;
 @Service
 public interface RetailOutletService {
     PartyRetailOutlet save(CreateRetailOutletInputModel input);
+
     List<PartyRetailOutlet> findAll();
+
     Page<PartyRetailOutlet> findAll(Pageable page);
 
     List<PartyRetailOutlet> findByPartyIdIn(List<UUID> partyIds);
+
     Page<PartyRetailOutlet> findByPartyIdIn(List<UUID> partyIds, Pageable page);
 
     DetailRetailOutletModel getRetailOutletDetail(UUID partyRetailOutletId);
+
     List<PartyRetailOutlet> getRetailOutletCandidates(UUID partyDistributorId);
 }

@@ -53,7 +53,8 @@ public class SaleReportModel {
         public String getDate() {
             return date;
         }
-        public Double getPrice(){
+
+        public Double getPrice() {
             return price;
         }
     }

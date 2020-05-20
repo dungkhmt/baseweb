@@ -5,7 +5,6 @@ import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.CreateRetailOutletInputModel;
 import com.hust.baseweb.applications.customer.model.DetailRetailOutletModel;
-import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
 import com.hust.baseweb.applications.customer.repo.PartyRetailOutletRepo;
 import com.hust.baseweb.applications.customer.repo.RetailOutletPagingRepo;
@@ -13,6 +12,7 @@ import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
+import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
 import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
 import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.RetailOutletSalesmanDistributorModel;
 import com.hust.baseweb.applications.sales.repo.RetailOutletSalesmanVendorRepo;
@@ -46,7 +46,7 @@ public class RetailOutletServiceImpl implements RetailOutletService {
     private StatusRepo statusRepo;
     private PartyContactMechPurposeRepo partyContactMechPurposeRepo;
     private RetailOutletSalesmanVendorRepo retailOutletSalesmanVendorRepo;
-    private DistributorRepo distributorRepo;
+    private PartyDistributorRepo partyDistributorRepo;
 
     @Override
     @Transactional
@@ -57,8 +57,8 @@ public class RetailOutletServiceImpl implements RetailOutletService {
         //Party party = new Party();
         //party.setPartyId(partyId);// KHONG WORK vi partyId khi insert vao DB se duoc sinh tu dong, no se khac voi partyId sinh ra boi SPRING
         Party party = new Party(null, partyTypeRepo.getOne(PartyType.PartyTypeEnum.PERSON.name()), "",
-                statusRepo.findById(Status.StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
-                false);
+            statusRepo.findById(Status.StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
+            false);
         party.setName(input.getRetailOutletName());
 
         party.setType(partyType);
@@ -141,8 +141,8 @@ public class RetailOutletServiceImpl implements RetailOutletService {
     public DetailRetailOutletModel getRetailOutletDetail(UUID partyRetailOutletId) {
         PartyRetailOutlet partyRetailOutlet = retailOutletRepo.findByPartyId(partyRetailOutletId);
         List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyRetailOutletAndThruDate(
-                partyRetailOutlet,
-                null);
+            partyRetailOutlet,
+            null);
 
         DetailRetailOutletModel detailRetailOutletModel = new DetailRetailOutletModel();
 
@@ -151,9 +151,9 @@ public class RetailOutletServiceImpl implements RetailOutletService {
         detailRetailOutletModel.setRetailOutletName(partyRetailOutlet.getRetailOutletName());
 
         List<RetailOutletSalesmanDistributorModel> retailOutletSalesmanDistributorModels =
-                retailOutletSalesmanVendors.stream()
-                        .map(o -> new RetailOutletSalesmanDistributorModel(o))
-                        .collect(Collectors.toList());
+            retailOutletSalesmanVendors.stream()
+                .map(o -> new RetailOutletSalesmanDistributorModel(o))
+                .collect(Collectors.toList());
 
         detailRetailOutletModel.setRetailOutletSalesmanDistributorModels(retailOutletSalesmanDistributorModels);
 
@@ -166,10 +166,10 @@ public class RetailOutletServiceImpl implements RetailOutletService {
          * Return all retail oulet have not been connected with distributor yet
          */
 
-        PartyDistributor partyDistributor = distributorRepo.findByPartyId(partyDistributorId);
+        PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);
         List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyDistributorAndThruDate(
-                partyDistributor,
-                null);
+            partyDistributor,
+            null);
         List<UUID> retailOutlets = new ArrayList<>();
         List<PartyRetailOutlet> retailOutletList;
 

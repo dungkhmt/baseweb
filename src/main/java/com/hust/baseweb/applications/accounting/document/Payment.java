@@ -47,17 +47,17 @@ public class Payment {
 
     public Model toModel(String distributorName) {
         return new Model(
-                paymentId,
-                paymentType.toString(),
-                paymentMethod.toString(),
-                Optional.ofNullable(fromCustomerId).map(UUID::toString).orElse(null),
-                distributorName,
-                Optional.ofNullable(toVendorId).map(UUID::toString).orElse(null),
-                amount,
-                appliedAmount,
-                currencyUomId,
-                Constant.DATE_FORMAT.format(effectiveDate),
-                statusId.toString()
+            paymentId,
+            paymentType.toString(),
+            paymentMethod.toString(),
+            Optional.ofNullable(fromCustomerId).map(UUID::toString).orElse(null),
+            distributorName,
+            Optional.ofNullable(toVendorId).map(UUID::toString).orElse(null),
+            amount,
+            appliedAmount,
+            currencyUomId,
+            Constant.DATE_FORMAT.format(effectiveDate),
+            statusId.toString()
         );
     }
 
