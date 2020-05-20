@@ -5,7 +5,6 @@ import com.google.maps.model.LatLng;
 import com.hust.baseweb.applications.customer.entity.PartyContactMechPurpose;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.model.CreateCustomerInputModel;
-import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
 import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
@@ -86,7 +85,6 @@ public class ShipmentServiceImpl implements ShipmentService {
     private PartyRepo partyRepo;
     private PartyTypeRepo partyTypeRepo;
     private StatusRepo statusRepo;
-    private CustomerRepo customerRepo;
     private PartyContactMechPurposeRepo partyContactMechPurposeRepo;
 
     private RevenueService revenueService;
@@ -407,7 +405,7 @@ public class ShipmentServiceImpl implements ShipmentService {
                 customer.setCustomerName(shipmentItemModel.getCustomerName());
                 customer.setPostalAddress(new ArrayList<>());
 
-                customer = customerRepo.save(customer);
+                customer = partyCustomerRepo.save(customer);
 
                 PartyContactMechPurpose partyContactMechPurpose = new PartyContactMechPurpose();
                 partyContactMechPurpose.setContactMechId(postalAddress.getContactMechId());

@@ -8,16 +8,16 @@ import com.hust.baseweb.applications.logistics.repo.ProductTypeRepo;
 import com.hust.baseweb.applications.logistics.repo.UomRepo;
 import com.hust.baseweb.entity.Content;
 import com.hust.baseweb.repo.ContentRepo;
-import com.hust.baseweb.repo.FileRepo;
 import com.hust.baseweb.service.ContentService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import okhttp3.Response;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,6 +70,7 @@ public class ProductServiceImpl implements ProductService {
         product = productRepo.save(product);
         return product;
     }
+
     @Override
     @Transactional
     public Product save(String productId,
@@ -97,15 +98,15 @@ public class ProductServiceImpl implements ProductService {
         product.setHsThu(hsThu);
         product.setHsPal(hsPal);
         Set<Content> lC = contentIds.stream()
-                .map(id -> contentRepo.getOne(UUID.fromString(id)))
-                .collect(Collectors.toSet());
+            .map(id -> contentRepo.getOne(UUID.fromString(id)))
+            .collect(Collectors.toSet());
         product.setContents(lC);
         product.setProductType(productType);
 //        if(contentIds.size() > 0){
 //            product.setAvatar(contentRepo.getOne(UUID.fromString(contentIds.get(0))));
 //        }
 //        UUID a = contentRepo.getOne(UUID.fromString(contentIds.get(0))).getContentId();
-        if(contentIds.size() > 0){
+        if (contentIds.size() > 0) {
             String avatarId = contentIds.get(0);
             Content content = contentRepo.findByContentId(UUID.fromString(avatarId));
             product.setPrimaryImg(content);
@@ -120,10 +121,10 @@ public class ProductServiceImpl implements ProductService {
         }
 
 
-
         product = productRepo.save(product);
         return product;
     }
+
     @Override
     public void saveProduct(Product product) {
         productRepo.save(product);

@@ -4,12 +4,12 @@ package com.hust.baseweb.applications.customer.service;
 import com.hust.baseweb.applications.customer.entity.PartyContactMechPurpose;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.model.CreateCustomerInputModel;
-import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
+import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.PartyType;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
@@ -30,7 +30,7 @@ import java.util.*;
 @Log4j2
 public class CustomerServiceImpl implements CustomerService {
 
-    private CustomerRepo customerRepo;
+    private PartyCustomerRepo partyCustomerRepo;
     private GeoPointRepo geoPointRepo;
     private PostalAddressRepo postalAddressRepo;
     private PartyRepo partyRepo;
@@ -67,7 +67,7 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setPostalAddress(new ArrayList<>());
 
         log.info("save, prepare save customer partyId = " + customer.getPartyId());
-        customer = customerRepo.save(customer);
+        customer = partyCustomerRepo.save(customer);
 //        customerRepo.save(customer);
 
         GeoPoint geoPoint = new GeoPoint();
@@ -107,13 +107,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<PartyCustomer> findRetailOutlets() {
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAIL_OUTLET");
-        List<PartyCustomer> retailOutlets = customerRepo.findByPartyType(partyType);
+        List<PartyCustomer> retailOutlets = partyCustomerRepo.findByPartyType(partyType);
         return retailOutlets;
     }
 
     @Override
     public List<PartyCustomer> findAll() {
-        return customerRepo.findAll();
+        return partyCustomerRepo.findAll();
     }
 
 }

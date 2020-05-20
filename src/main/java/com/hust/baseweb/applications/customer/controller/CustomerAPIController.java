@@ -4,11 +4,11 @@ import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.*;
-import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.applications.customer.service.DistributorService;
 import com.hust.baseweb.applications.customer.service.RetailOutletService;
 import com.hust.baseweb.applications.logistics.model.InputModel;
+import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
 import com.hust.baseweb.entity.PartyRelationship;
 import com.hust.baseweb.entity.RoleType;
@@ -39,7 +39,7 @@ import java.util.UUID;
 public class CustomerAPIController {
     public static final String module = CustomerAPIController.class.getName();
 
-    private CustomerRepo customerRepo;
+    private PartyCustomerRepo partyCustomerRepo;
     private CustomerService customerService;
     private PartyDistributorRepo partyDistributorRepo;
     private DistributorService distributorService;
@@ -52,7 +52,7 @@ public class CustomerAPIController {
     @GetMapping("/customers")
     public ResponseEntity<?> getCustomers(Pageable page) {
 //        System.out.println(module + "::getCustomers");
-        Page<PartyCustomer> customers = customerRepo.findAll(page);
+        Page<PartyCustomer> customers = partyCustomerRepo.findAll(page);
         for (PartyCustomer c : customers
         ) {
             if (c.getPartyType() != null) {

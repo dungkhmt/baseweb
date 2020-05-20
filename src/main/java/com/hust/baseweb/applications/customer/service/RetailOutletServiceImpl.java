@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class RetailOutletServiceImpl implements RetailOutletService {
-    private RetailOutletPagingRepo retailOutletRepo;
+    private RetailOutletPagingRepo partyRetailOutlet;
     private PartyRetailOutletRepo partyRetailOutletRepo;
     private GeoPointRepo geoPointRepo;
     private PostalAddressRepo postalAddressRepo;
@@ -77,7 +77,7 @@ public class RetailOutletServiceImpl implements RetailOutletService {
         retailOutlet.setPostalAddress(new ArrayList<>());
 
         log.info("save, prepare save retailOutlet partyId = " + retailOutlet.getPartyId());
-        retailOutlet = retailOutletRepo.save(retailOutlet);
+        retailOutlet = partyRetailOutlet.save(retailOutlet);
 //        customerRepo.save(customer);
 
         GeoPoint geoPoint = null;
@@ -139,7 +139,7 @@ public class RetailOutletServiceImpl implements RetailOutletService {
 
     @Override
     public DetailRetailOutletModel getRetailOutletDetail(UUID partyRetailOutletId) {
-        PartyRetailOutlet partyRetailOutlet = retailOutletRepo.findByPartyId(partyRetailOutletId);
+        PartyRetailOutlet partyRetailOutlet = this.partyRetailOutlet.findByPartyId(partyRetailOutletId);
         List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyRetailOutletAndThruDate(
             partyRetailOutlet,
             null);

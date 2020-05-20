@@ -1,9 +1,9 @@
 package com.hust.baseweb.applications.tms.controller;
 
-import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.geo.service.DistanceTravelTimePostalAddressService;
 import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
+import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.tms.document.SolverConfigParam;
 import com.hust.baseweb.applications.tms.model.DeliveryTripModel;
 import com.hust.baseweb.applications.tms.model.TransportReportModel;
@@ -37,7 +37,7 @@ import java.util.*;
 public class TMSAPIController {
 //    public static final String module = TMSAPIController.class.getName();
 
-    private CustomerRepo customerRepo;
+    private PartyCustomerRepo partyCustomerRepo;
     private OrderHeaderRepo orderHeaderRepo;
     private OrderRoleRepo orderRoleRepo;
     private UserLoginRepo userLoginRepo;
