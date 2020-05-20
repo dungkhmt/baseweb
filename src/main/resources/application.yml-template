@@ -29,9 +29,10 @@ spring:
       detection-strategy:  ANNOTATED
 
     mongodb:
-      host: ${MONGO_HOST} #localhost
-      port: ${MONGO_PORT} #27017
-      database: ${MONGO_DB_NAME} #baseweb
+      uri: mongodb://${MONGO_URI}
+      #host: ${MONGO_HOST} #localhost 
+      #port: ${MONGO_PORT} #27017
+      #database: ${MONGO_DB_NAME} #baseweb
 
   datasource:
     driver-class-name: org.postgresql.Driver
