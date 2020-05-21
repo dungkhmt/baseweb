@@ -152,7 +152,7 @@ public class OrderServiceImpl implements OrderService {
         //        .orElseThrow(NoSuchElementException::new);
 
         Party customer = partyRepo.findByPartyId(orderInput.getToCustomerId());
-        Party salesman = userLoginSalesman.getParty();
+        Party salesman = Optional.ofNullable(userLoginSalesman).map(UserLogin::getParty).orElse(null);
         Party distributor = partyRepo.findByPartyId(orderInput.getFromVendorId());
         //order.setPartyCustomer(partyCustomer);
         order.setPartyCustomer(customer);

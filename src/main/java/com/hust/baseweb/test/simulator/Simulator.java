@@ -23,7 +23,7 @@ public class Simulator {
 
     public static void main(String[] arg) {
         Simulator app = new Simulator();
-        app.run(1000);
+        app.run(100);
     }
 
     private void run(int nbAgents) {
@@ -43,7 +43,7 @@ public class Simulator {
 
             agents[i].setAgentId(i);
 
-            agents[i].setNbIters(10000);
+            agents[i].setNbIters(5);
             agents[i].setFromDate("2020-01-01");
             agents[i].setToDate("2020-05-05");
             agents[i].start();
