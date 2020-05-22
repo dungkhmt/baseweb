@@ -23,7 +23,7 @@ public class Simulator {
 
     public static void main(String[] arg) throws InterruptedException {
         Simulator app = new Simulator();
-        app.run(1000);
+        app.run(100);
     }
 
     private void run(int nbAgents) throws InterruptedException {

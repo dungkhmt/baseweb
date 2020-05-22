@@ -109,6 +109,7 @@ public class ExportFacilityAgent extends Thread {
                         orderItem.getInventoryQuantity())
             .map(orderItem -> {
                 ExportInventoryItemInputModel exportInventoryItemInputModel = new ExportInventoryItemInputModel();
+                exportInventoryItemInputModel.setProductId(orderItem.getProductId());
                 exportInventoryItemInputModel.setFacilityId(randomFacility.getFacilityId());
                 exportInventoryItemInputModel.setOrderId(orderItem.getOrderId());
                 exportInventoryItemInputModel.setQuantity(rand.nextInt((Math.min(orderItem.getQuantity() -

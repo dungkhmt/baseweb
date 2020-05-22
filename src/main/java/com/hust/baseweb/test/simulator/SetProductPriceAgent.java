@@ -56,7 +56,7 @@ public class SetProductPriceAgent extends Thread {
                 SetProductPriceInputModel input = new SetProductPriceInputModel();
                 input.setCurrencyUomId("CUR_vnd");
                 input.setProductId(p.getProductId());
-                input.setPrice(new Double(1));
+                input.setPrice(1.0);
                 input.setTaxInPrice("N");
 
                 String json = gson.toJson(input);
