@@ -239,7 +239,7 @@ public class CreateOrderAgent extends Thread {
             FacilityManager facilityManager = new FacilityManager(token);
 
             Gson gson = new Gson();
-            String[] salesmanIds = {"dungpq", "datnt", "admin", "nguyenvanseu"};
+            String[] salesmanIds = {"admin", "nguyenvanseu"};
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             List<Product> products = productManager.getProducts();//getProducts();

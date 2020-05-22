@@ -21,12 +21,12 @@ public class Simulator {
         }, 1000, 1000);
     }
 
-    public static void main(String[] arg) {
+    public static void main(String[] arg) throws InterruptedException {
         Simulator app = new Simulator();
-        app.run(100);
+        app.run(1000);
     }
 
-    private void run(int nbAgents) {
+    private void run(int nbAgents) throws InterruptedException {
         CreateOrderAgent[] agents = new CreateOrderAgent[nbAgents];
         ImportFacilityAgent importFacilityAgent = new ImportFacilityAgent("admin", "123");
         ExportFacilityAgent exportFacilityAgent = new ExportFacilityAgent("admin", "123");
@@ -34,9 +34,16 @@ public class Simulator {
 
         importFacilityAgent.start();
 
+        // chờ import xong thì export
+        importFacilityAgent.join();
+
         exportFacilityAgent.start();
 
+        exportFacilityAgent.join();
+
         paymentAgent.start();
+
+        paymentAgent.join();
 
         for (int i = 0; i < agents.length; i++) {
             agents[i] = new CreateOrderAgent("admin", "123");
