@@ -216,10 +216,15 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             log.info("exportInventoryItems, productId = " + productId + ", facilityId = " + facilityId + ", list = " +
                 inventoryItemsMap.size());
 
-            List<InventoryItem> selectedInventoryItems = inventoryItemsMap.get(Arrays.asList(facilityId, productId));
+            ProductFacility productFacility = productFacilityMap.get(Arrays.asList(facilityId, productId));
+            if (productFacility == null) {
+                continue;
+            }
+
             int totalCount = // total inventory count of productId in the facilityId
-                productFacilityMap.get(Arrays.asList(facilityId, productId)).getLastInventoryCount()
-                    - quantity; // remain total inventory count
+                productFacility.getLastInventoryCount() - quantity; // remain total inventory count"
+
+            List<InventoryItem> selectedInventoryItems = inventoryItemsMap.get(Arrays.asList(facilityId, productId));
             selectedInventoryItems.sort(Comparator.comparingInt(InventoryItem::getQuantityOnHandTotal));
 
             for (InventoryItem inventoryItem : selectedInventoryItems) {
@@ -262,7 +267,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                 }
             }
 
-            productFacilityMap.get(Arrays.asList(facilityId, productId)).setLastInventoryCount(Math.max(totalCount, 0));
+            productFacility.setLastInventoryCount(Math.max(totalCount, 0));
 
             InvoiceItem invoiceItem = new InvoiceItem(new InvoiceItem.Id(invoice.getInvoiceId(), i + ""),
                 InvoiceItemType.SALES_INVOICE_PRODUCT_ITEM,
@@ -392,24 +397,18 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @NotNull
     private List<Product> buildProducts(ExportInventoryItemsInputModel inventoryItemsInput) {
-        return Stream.of(inventoryItemsInput.getInventoryItems())
-            .map(exportInventoryItemInputModel -> {
-                Product product = new Product();
-                product.setProductId(exportInventoryItemInputModel.getProductId());
-                return product;
-            })
+        List<String> productIds = Stream.of(inventoryItemsInput.getInventoryItems())
+            .map(ExportInventoryItemInputModel::getProductId)
             .collect(Collectors.toList());
+        return productRepo.findAllByProductIdIn(productIds);
     }
 
     @NotNull
     private List<Facility> buildFacilities(ExportInventoryItemsInputModel inventoryItemsInput) {
-        return Stream.of(inventoryItemsInput.getInventoryItems())
-            .map(exportInventoryItemInputModel -> {
-                Facility facility = new Facility();
-                facility.setFacilityId(exportInventoryItemInputModel.getFacilityId());
-                return facility;
-            })
+        List<String> facilityIds = Stream.of(inventoryItemsInput.getInventoryItems())
+            .map(ExportInventoryItemInputModel::getFacilityId)
             .collect(Collectors.toList());
+        return facilityRepo.findAllByFacilityIdIn(facilityIds);
     }
 
     @NotNull
