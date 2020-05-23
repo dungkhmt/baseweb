@@ -7,23 +7,22 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public interface PartyRelationshipService {
-    public PartyRelationship save(PartyRelationship partyRelationship);
+    PartyRelationship save(PartyRelationship partyRelationship);
 
-     public List<PartyRelationship> findAllByFromPartyAndRoleTypeAndThruDate(Party fromParty,
-                                                                            RoleType roleType,
-                                                                            Date thruDate);
+    List<PartyRelationship> findAllByFromPartyAndRoleTypeAndThruDate(Party fromParty,
+                                                                     RoleType roleType,
+                                                                     Date thruDate);
 
-    public List<PartyRelationship> findAllByToPartyAndRoleTypeAndThruDate(Party toParty,
-                                                                          RoleType roleType,
-                                                                          Date thruDate);
+    List<PartyRelationship> findAllByToPartyAndRoleTypeAndThruDate(Party toParty,
+                                                                   RoleType roleType,
+                                                                   Date thruDate);
 
-    public List<PartyRelationship> findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(Party fromParty,
-                                                                                      Party toParty,
-                                                                                      RoleType roleType,
-                                                                                      Date thruDate);
+    List<PartyRelationship> findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(Party fromParty,
+                                                                               Party toParty,
+                                                                               RoleType roleType,
+                                                                               Date thruDate);
 
 }

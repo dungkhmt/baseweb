@@ -36,11 +36,11 @@ public class PartyDriver {
 
     public Model toModel() {
         return new Model(
-                partyId.toString(),
-                Optional.ofNullable(party)
-                        .map(Party::getUserLogin)
-                        .map(UserLogin::getUserLoginId)
-                        .orElse(null)
+            partyId.toString(),
+            Optional.ofNullable(party)
+                .map(Party::getUserLogin)
+                .map(UserLogin::getUserLoginId)
+                .orElse(null)
         );
     }
 

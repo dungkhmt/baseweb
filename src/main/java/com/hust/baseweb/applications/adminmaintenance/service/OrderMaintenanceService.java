@@ -4,5 +4,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface OrderMaintenanceService {
-    public int deleteOrder(String orderId);
+    int deleteOrder(String orderId);
 }

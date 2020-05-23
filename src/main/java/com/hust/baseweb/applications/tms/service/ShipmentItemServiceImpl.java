@@ -45,25 +45,25 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     @Override
     public Page<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
         Page<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlanPage
-                = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId), pageable);
+            = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId), pageable);
 
         return new PageImpl<>(shipmentItemRepo.findAllByShipmentItemIdIn(
-                shipmentItemDeliveryPlanPage.map(ShipmentItemDeliveryPlan::getShipmentItemId).getContent())
-                .stream().map(ShipmentItem::toShipmentItemModel)
-                .collect(Collectors.toList()),
-                pageable,
-                shipmentItemDeliveryPlanPage.getTotalElements()
+            shipmentItemDeliveryPlanPage.map(ShipmentItemDeliveryPlan::getShipmentItemId).getContent())
+            .stream().map(ShipmentItem::toShipmentItemModel)
+            .collect(Collectors.toList()),
+            pageable,
+            shipmentItemDeliveryPlanPage.getTotalElements()
         );
     }
 
     @Override
     public List<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId) {
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(
-                UUID.fromString(deliveryPlanId));
+            UUID.fromString(deliveryPlanId));
         List<UUID> shipmentItemIds = shipmentItemDeliveryPlans.stream()
-                .map(ShipmentItemDeliveryPlan::getShipmentItemId)
-                .distinct()
-                .collect(Collectors.toList());
+            .map(ShipmentItemDeliveryPlan::getShipmentItemId)
+            .distinct()
+            .collect(Collectors.toList());
         List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemIds);
         return shipmentItems.stream().map(ShipmentItem::toShipmentItemModel).collect(Collectors.toList());
     }
@@ -71,38 +71,38 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     @Override
     public List<ShipmentItemModel.DeliveryPlan> findAllInDeliveryPlanNearestDeliveryTrip(String deliveryTripId) {
         DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId))
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         DeliveryPlan deliveryPlan = deliveryTrip.getDeliveryPlan();
         String deliveryPlanId = deliveryPlan.getDeliveryPlanId().toString();
         List<DeliveryTrip> deliveryTripsInDeliveryPlan = deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan);
 
         List<ShipmentItem> shipmentItemsInDeliveryPlan = shipmentItemRepo.findAllByShipmentItemIdIn(
-                shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId)).stream()
-                        .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()));
+            shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId)).stream()
+                .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()));
 
         List<ShipmentItem> shipmentItemsInDeliveryTrip
-                = deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip)
-                .stream().map(DeliveryTripDetail::getShipmentItem).collect(Collectors.toList());
+            = deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip)
+            .stream().map(DeliveryTripDetail::getShipmentItem).collect(Collectors.toList());
 
         Map<ShipmentItem, Integer> shipmentItemAssignedQuantityMap = new HashMap<>();
         deliveryTripDetailRepo.findAllByDeliveryTripIn(deliveryTripsInDeliveryPlan)
-                .forEach(deliveryTripDetail ->
-                        shipmentItemAssignedQuantityMap.merge(deliveryTripDetail.getShipmentItem(),
-                                deliveryTripDetail.getDeliveryQuantity(), Integer::sum));
+            .forEach(deliveryTripDetail ->
+                shipmentItemAssignedQuantityMap.merge(deliveryTripDetail.getShipmentItem(),
+                    deliveryTripDetail.getDeliveryQuantity(), Integer::sum));
 
         List<ShipmentItem> shipmentItemsNotInDeliveryTrip = shipmentItemsInDeliveryPlan.stream()
-                .filter(shipmentItem ->
-                        shipmentItemAssignedQuantityMap.getOrDefault(shipmentItem, 0) < shipmentItem.getQuantity())
-                .collect(Collectors.toList());
+            .filter(shipmentItem ->
+                shipmentItemAssignedQuantityMap.getOrDefault(shipmentItem, 0) < shipmentItem.getQuantity())
+            .collect(Collectors.toList());
 
         List<PostalAddress> postalAddressInDeliveryTrip = shipmentItemsInDeliveryTrip.stream()
-                .map(ShipmentItem::getShipToLocation)
-                .distinct()
-                .collect(Collectors.toList());
+            .map(ShipmentItem::getShipToLocation)
+            .distinct()
+            .collect(Collectors.toList());
         List<PostalAddress> postalAddressNotInDeliveryTrip = shipmentItemsNotInDeliveryTrip.stream()
-                .map(ShipmentItem::getShipToLocation)
-                .distinct()
-                .collect(Collectors.toList());
+            .map(ShipmentItem::getShipToLocation)
+            .distinct()
+            .collect(Collectors.toList());
 
         // TODO
         Map<PostalAddress, Integer> postalAddressToMinDistanceMap = new HashMap<>();
@@ -110,9 +110,9 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
             int minDistance = Integer.MAX_VALUE;
             for (PostalAddress postalAddressIn : postalAddressInDeliveryTrip) {
                 DistanceTravelTimePostalAddress distanceTravelTimePostalAddress = distanceTravelTimePostalAddressRepo
-                        .findByDistanceTravelTimePostalAddressEmbeddableId(
-                                new DistanceTravelTimePostalAddressEmbeddableId(postalAddressIn.getContactMechId(),
-                                        postalAddressNotIn.getContactMechId()));
+                    .findByDistanceTravelTimePostalAddressEmbeddableId(
+                        new DistanceTravelTimePostalAddressEmbeddableId(postalAddressIn.getContactMechId(),
+                            postalAddressNotIn.getContactMechId()));
                 int distance;
                 if (distanceTravelTimePostalAddress == null) {   // Haversine formula
                     distance = Integer.MAX_VALUE;
@@ -127,25 +127,25 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         }
 
         return shipmentItemsNotInDeliveryTrip.stream()
-                .sorted(Comparator.comparingDouble(o -> postalAddressToMinDistanceMap.getOrDefault(
-                        o.getShipToLocation(), 0)))
-                .map(shipmentItem -> shipmentItem.toShipmentItemDeliveryPlanModel(
-                        shipmentItemAssignedQuantityMap.getOrDefault(shipmentItem, 0)))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparingDouble(o -> postalAddressToMinDistanceMap.getOrDefault(
+                o.getShipToLocation(), 0)))
+            .map(shipmentItem -> shipmentItem.toShipmentItemDeliveryPlanModel(
+                shipmentItemAssignedQuantityMap.getOrDefault(shipmentItem, 0)))
+            .collect(Collectors.toList());
     }
 
     @Override
     public Page<ShipmentItemModel> findAllNotInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
         Set<String> shipmentItemInDeliveryPlans
-                = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
-                .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
-                .collect(Collectors.toSet());
+            = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
+            .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
+            .collect(Collectors.toSet());
         List<ShipmentItem> allShipmentItems = shipmentItemRepo.findAll();
         List<ShipmentItemModel> shipmentItemModels = allShipmentItems.stream()
-                .filter(shipmentItem -> !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId()
-                        .toString()))
-                .map(ShipmentItem::toShipmentItemModel)
-                .collect(Collectors.toList());
+            .filter(shipmentItem -> !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId()
+                .toString()))
+            .map(ShipmentItem::toShipmentItemModel)
+            .collect(Collectors.toList());
         return PageUtils.getPage(shipmentItemModels, pageable);
     }
 
@@ -153,15 +153,15 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     public List<ShipmentItemModel> findAllNotInDeliveryPlan(String deliveryPlanId) {
         // TODO: to be improved by adding indicator (status) fields to shipment_items
         Set<String> shipmentItemInDeliveryPlans
-                = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
-                .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
-                .collect(Collectors.toSet());
+            = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
+            .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
+            .collect(Collectors.toSet());
         List<ShipmentItem> allShipmentItems = shipmentItemRepo.findAll();
         return allShipmentItems.stream()
-                .filter(shipmentItem -> shipmentItem.getStatusItem().getStatusId().equals("SHIPMENT_ITEM_CREATED")
-                        && !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId().toString()))
-                .map(ShipmentItem::toShipmentItemModel)
-                .collect(Collectors.toList());
+            .filter(shipmentItem -> shipmentItem.getStatusItem().getStatusId().equals("SHIPMENT_ITEM_CREATED")
+                && !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId().toString()))
+            .map(ShipmentItem::toShipmentItemModel)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -169,19 +169,19 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         // to be improved by adding indicator (status) fields to shipment_items --> done
         List<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDateNull(userLogin.getParty());
         List<ShipmentItem> shipmentItems = shipmentItemRoles.stream()
-                .map(ShipmentItemRole::getShipmentItem)
-                .collect(Collectors.toList());
+            .map(ShipmentItemRole::getShipmentItem)
+            .collect(Collectors.toList());
 
         Set<String> shipmentItemIdsInDeliveryPlans
-                = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
-                .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
-                .collect(Collectors.toSet());
+            = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
+            .stream().map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
+            .collect(Collectors.toSet());
 
         return shipmentItems.stream()
-                .filter(shipmentItem -> shipmentItem.getStatusItem().getStatusId().equals("SHIPMENT_ITEM_CREATED")
-                        && !shipmentItemIdsInDeliveryPlans.contains(shipmentItem.getShipmentItemId().toString()))
-                .map(ShipmentItem::toShipmentItemModel)
-                .collect(Collectors.toList());
+            .filter(shipmentItem -> shipmentItem.getStatusItem().getStatusId().equals("SHIPMENT_ITEM_CREATED")
+                && !shipmentItemIdsInDeliveryPlans.contains(shipmentItem.getShipmentItemId().toString()))
+            .map(ShipmentItem::toShipmentItemModel)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -197,27 +197,27 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     @Override
     public Page<ShipmentItemModel> findAllByUserLogin(UserLogin userLogin, Pageable pageable) {
         Page<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDateNull(userLogin.getParty(),
-                pageable);
+            pageable);
         return shipmentItemRoles.map(shipmentItemRole -> shipmentItemRole.getShipmentItem().toShipmentItemModel());
     }
 
     @Override
     public String saveShipmentItemDeliveryPlan(com.hust.baseweb.applications.tms.model.ShipmentItemModel.CreateDeliveryPlan createDeliveryPlan) {
         DeliveryPlan deliveryPlan = deliveryPlanRepo.findById(UUID.fromString(createDeliveryPlan.getDeliveryPlanId()))
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         Map<UUID, ShipmentItem> shipmentItemMap = shipmentItemRepo.findAllByShipmentItemIdIn(createDeliveryPlan.getShipmentItemIds()
-                .stream()
-                .map(UUID::fromString)
-                .collect(Collectors.toList()))
-                .stream()
-                .collect(Collectors.toMap(ShipmentItem::getShipmentItemId, shipmentItem -> shipmentItem));
+            .stream()
+            .map(UUID::fromString)
+            .collect(Collectors.toList()))
+            .stream()
+            .collect(Collectors.toMap(ShipmentItem::getShipmentItemId, shipmentItem -> shipmentItem));
 
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = new ArrayList<>();
         double totalWeight = 0.0;
         for (String shipmentItemId : createDeliveryPlan.getShipmentItemIds()) {
             shipmentItemDeliveryPlans.add(new ShipmentItemDeliveryPlan(
-                    UUID.fromString(shipmentItemId),
-                    UUID.fromString(createDeliveryPlan.getDeliveryPlanId())
+                UUID.fromString(shipmentItemId),
+                UUID.fromString(createDeliveryPlan.getDeliveryPlanId())
             ));
             ShipmentItem shipmentItem = shipmentItemMap.get(UUID.fromString(shipmentItemId));
             totalWeight += shipmentItem.getOrderItem().getProduct().getWeight() * shipmentItem.getQuantity();
@@ -232,17 +232,17 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     @Override
     public boolean deleteShipmentItemDeliveryPlan(ShipmentItemModel.DeleteDeliveryPlan deleteDeliveryPlan) {
         ShipmentItemDeliveryPlan shipmentItemDeliveryPlan = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanIdAndShipmentItemId(
-                UUID.fromString(deleteDeliveryPlan.getDeliveryPlanId()),
-                UUID.fromString(deleteDeliveryPlan.getShipmentItemId())
+            UUID.fromString(deleteDeliveryPlan.getDeliveryPlanId()),
+            UUID.fromString(deleteDeliveryPlan.getShipmentItemId())
         );
         if (shipmentItemDeliveryPlan != null) {
             DeliveryPlan deliveryPlan = deliveryPlanRepo.findById(UUID.fromString(deleteDeliveryPlan.getDeliveryPlanId()))
-                    .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NoSuchElementException::new);
             ShipmentItem shipmentItem = shipmentItemRepo.findById(UUID.fromString(deleteDeliveryPlan.getShipmentItemId()))
-                    .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NoSuchElementException::new);
 
             deliveryPlan.setTotalWeightShipmentItems(deliveryPlan.getTotalWeightShipmentItems() -
-                    (shipmentItem.getOrderItem().getProduct().getWeight() * shipmentItem.getQuantity()));
+                (shipmentItem.getOrderItem().getProduct().getWeight() * shipmentItem.getQuantity()));
             deliveryPlanRepo.save(deliveryPlan);
 
             shipmentItemDeliveryPlanRepo.delete(shipmentItemDeliveryPlan);
@@ -254,43 +254,43 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     @Override
     public List<ShipmentItemModel> findAllNotScheduled(String deliveryPlanId) {
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(
-                UUID.fromString(deliveryPlanId));
+            UUID.fromString(deliveryPlanId));
         List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemDeliveryPlans.stream()
-                .map(ShipmentItemDeliveryPlan::getShipmentItemId)
-                .collect(Collectors.toList()));
+            .map(ShipmentItemDeliveryPlan::getShipmentItemId)
+            .collect(Collectors.toList()));
         return shipmentItems.stream()
-                .filter(shipmentItem -> shipmentItem.getScheduledQuantity() < shipmentItem.getQuantity())
-                .map(ShipmentItem::toShipmentItemModel)
-                .collect(Collectors.toList());
+            .filter(shipmentItem -> shipmentItem.getScheduledQuantity() < shipmentItem.getQuantity())
+            .map(ShipmentItem::toShipmentItemModel)
+            .collect(Collectors.toList());
     }
 
     @Override
     public ShipmentItemModel.Info getShipmentItemInfo(String shipmentItemId) {
         ShipmentItem shipmentItem = shipmentItemRepo.findById(UUID.fromString(shipmentItemId))
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByShipmentItem(shipmentItem);
 
         return new ShipmentItemModel.Info(
-                shipmentItem.getShipmentItemId().toString(),
-                shipmentItem.getOrderItem().getOrderId(),
-                shipmentItem.getFacility().getFacilityId(),
-                shipmentItem.getOrderItem().getProduct().getProductId(),
-                shipmentItem.getOrderItem().getProduct().getProductName(),
-                shipmentItem.getQuantity(),
-                shipmentItem.getStatusItem().getStatusId(),
-                deliveryTripDetails.stream()
-                        .map(deliveryTripDetail -> new ShipmentItemModel.Info.DeliveryTripDetail(
-                                deliveryTripDetail.getDeliveryTrip().getDeliveryPlan().getDeliveryPlanId().toString(),
-                                deliveryTripDetail.getDeliveryTrip().getDeliveryTripId().toString(),
-                                Constant.DATE_FORMAT.format(deliveryTripDetail.getDeliveryTrip().getExecuteDate()),
-                                deliveryTripDetail.getDeliveryQuantity(),
-                                deliveryTripDetail.getDeliveryTrip().getVehicle().getVehicleId(),
-                                deliveryTripDetail.getDeliveryTrip().getVehicle().getCapacity(),
-                                Optional.ofNullable(deliveryTripDetail.getDeliveryTrip().getPartyDriver())
-                                        .map(PartyDriver::getPartyId)
-                                        .map(UUID::toString)
-                                        .orElse(null)))
-                        .collect(Collectors.toList()));
+            shipmentItem.getShipmentItemId().toString(),
+            shipmentItem.getOrderItem().getOrderId(),
+            shipmentItem.getFacility().getFacilityId(),
+            shipmentItem.getOrderItem().getProduct().getProductId(),
+            shipmentItem.getOrderItem().getProduct().getProductName(),
+            shipmentItem.getQuantity(),
+            shipmentItem.getStatusItem().getStatusId(),
+            deliveryTripDetails.stream()
+                .map(deliveryTripDetail -> new ShipmentItemModel.Info.DeliveryTripDetail(
+                    deliveryTripDetail.getDeliveryTrip().getDeliveryPlan().getDeliveryPlanId().toString(),
+                    deliveryTripDetail.getDeliveryTrip().getDeliveryTripId().toString(),
+                    Constant.DATE_FORMAT.format(deliveryTripDetail.getDeliveryTrip().getExecuteDate()),
+                    deliveryTripDetail.getDeliveryQuantity(),
+                    deliveryTripDetail.getDeliveryTrip().getVehicle().getVehicleId(),
+                    deliveryTripDetail.getDeliveryTrip().getVehicle().getCapacity(),
+                    Optional.ofNullable(deliveryTripDetail.getDeliveryTrip().getPartyDriver())
+                        .map(PartyDriver::getPartyId)
+                        .map(UUID::toString)
+                        .orElse(null)))
+                .collect(Collectors.toList()));
     }
 
 

@@ -3,8 +3,6 @@ package com.hust.baseweb.applications.tmscontainer.repo;
 import com.hust.baseweb.applications.tmscontainer.entity.ContPort;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.List;
-
-public interface ContPortPagingRepo extends PagingAndSortingRepository<ContPort,String> {
+public interface ContPortPagingRepo extends PagingAndSortingRepository<ContPort, String> {
 
 }

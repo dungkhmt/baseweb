@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface EnumerationRepo extends CrudRepository<Enumeration, String> {
     List<Enumeration> findAll();
+
     Enumeration findByEnumId(String enumId);
+
     List<Enumeration> findByEnumTypeId(String enumTypeId);
 }

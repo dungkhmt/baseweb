@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DeliveryTripDetailRepo extends
-        JpaRepository<DeliveryTripDetail, UUID> {
+    JpaRepository<DeliveryTripDetail, UUID> {
     Page<DeliveryTripDetail> findAllByDeliveryTrip(DeliveryTrip deliveryTrip, Pageable pageable);
 
     List<DeliveryTripDetail> findAllByDeliveryTrip(DeliveryTrip deliveryTrip);

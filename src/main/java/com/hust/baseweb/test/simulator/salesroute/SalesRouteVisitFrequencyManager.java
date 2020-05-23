@@ -12,18 +12,21 @@ public class SalesRouteVisitFrequencyManager {
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
-    public SalesRouteVisitFrequencyManager(String token){
+    public SalesRouteVisitFrequencyManager(String token) {
         this.token = token;
     }
 
-    public List<SalesRouteVisitFrequency> getListSalesRouteVisitFrequency(){
-        try{
-            String rs = executor.execGetUseToken(Constants.URL_ROOT + "/api/get-list-sales-route-visit-frequency", "", token);
-            System.out.println("::getListSalesRouteVisitFrequency, rs = " + rs);
+    public List<SalesRouteVisitFrequency> getListSalesRouteVisitFrequency() {
+        try {
+            String rs = executor.execGetUseToken(Constants.URL_ROOT + "/api/get-list-sales-route-visit-frequency",
+                "",
+                token);
+//            System.out.println("::getListSalesRouteVisitFrequency, rs = " + rs);
             Gson gson = new Gson();
-            ListSalesRouteVisitFrequencyOutputModel out = gson.fromJson(rs,ListSalesRouteVisitFrequencyOutputModel.class);
+            ListSalesRouteVisitFrequencyOutputModel out = gson.fromJson(rs,
+                ListSalesRouteVisitFrequencyOutputModel.class);
             return out.getList();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

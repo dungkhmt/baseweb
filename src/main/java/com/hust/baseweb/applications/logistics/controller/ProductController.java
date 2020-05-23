@@ -1,11 +1,5 @@
 package com.hust.baseweb.applications.logistics.controller;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.Base64;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductType;
 import com.hust.baseweb.applications.logistics.entity.Uom;
@@ -19,27 +13,21 @@ import com.hust.baseweb.applications.logistics.repo.ProductTypeRepo;
 import com.hust.baseweb.applications.logistics.service.ProductService;
 import com.hust.baseweb.applications.logistics.service.ProductTypeService;
 import com.hust.baseweb.applications.logistics.service.UomService;
-
-import com.hust.baseweb.constant.ContentMappingConstant;
+import com.hust.baseweb.entity.Content;
 import com.hust.baseweb.service.ContentService;
-import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.extern.log4j.Log4j2;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.Base64;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -57,7 +45,7 @@ public class ProductController {
 
     @Autowired
     ProductController(UomService uomService, ProductTypeService productTypeService, ProductService productService,
-            ProductTypeRepo productTypeRepo, ProductPagingRepo productPagingRepo) {
+                      ProductTypeRepo productTypeRepo, ProductPagingRepo productPagingRepo) {
         this.uomService = uomService;
         this.productTypeService = productTypeService;
         this.productService = productService;
@@ -89,12 +77,9 @@ public class ProductController {
         log.info("addNewProductToDatabase");
         log.info("input {}", input.toString());
         Product product = productService.save(input.getProductId(), input.getProductName(), input.getType(), null, 0,
-                input.getQuantityUomId(), null, null, input.getContent());
+            input.getQuantityUomId(), null, null, input.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(product.getProductId());
     }
-
-
-
 
 
     @GetMapping("/get-list-product-frontend")
@@ -121,13 +106,24 @@ public class ProductController {
 
 
     @GetMapping("/get-list-product-with-define-page")
-    public ResponseEntity<?> getListProductWithDefinePage(Pageable pageable){
-        log.info("page {}",pageable);
+    public ResponseEntity<?> getListProductWithDefinePage(Pageable pageable) {
+        log.info("page {}", pageable);
         Page<Product> productPage = productPagingRepo.findAll(pageable);
-        for(Product p: productPage){
+        for (Product p : productPage) {
             Uom u = p.getUom();
-            if(u!= null){
+            if (u != null) {
                 p.setUomDescription(u.getDescription());
+            }
+            Content content = p.getPrimaryImg();
+            if (content != null) {
+                try {
+                    Response response = contentService.getContentData(content.getContentId().toString());
+                    String base64Flag = "data:image/jpeg;base64," +
+                        Base64.getEncoder().encodeToString(response.body().bytes());
+                    p.setAvatar(base64Flag);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return ResponseEntity.ok(productPage);

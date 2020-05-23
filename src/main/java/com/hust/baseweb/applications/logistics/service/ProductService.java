@@ -9,11 +9,11 @@ import java.util.List;
 public interface ProductService {
     Product findByProductId(String productId);
 
-    public List<Product> getAllProducts();
+    List<Product> getAllProducts();
 
-    public Product save(String productId, String productName, String uomId);
+    Product save(String productId, String productName, String uomId);
 
-    public void saveProduct(Product product);
+    void saveProduct(Product product);
 
     Product save(String productId,
                  String productName,
@@ -22,8 +22,15 @@ public interface ProductService {
                  String uomId,
                  Integer hsThu,
                  Integer hsPal);
-                 
-    Product save(String productId, String productName,String type, String productTransportCategory, double productWeight,
-            String uomId, Integer hsThu, Integer hsPal, List<String> contentIds);
+
+    Product save(String productId,
+                 String productName,
+                 String type,
+                 String productTransportCategory,
+                 double productWeight,
+                 String uomId,
+                 Integer hsThu,
+                 Integer hsPal,
+                 List<String> contentIds);
 
 }

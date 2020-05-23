@@ -53,8 +53,4 @@ public class CustomerSalesmanVendor {
     private String partyDistributorName;
 
 
-
-
-
-
 }

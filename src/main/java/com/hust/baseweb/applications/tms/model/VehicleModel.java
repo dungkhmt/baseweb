@@ -83,16 +83,16 @@ public class VehicleModel {
 
         public Vehicle toVehicle() {
             return new Vehicle(
-                    vehicleId,
-                    capacity,
-                    length,
-                    width,
-                    height,
-                    pallet,
-                    statusId,
-                    description,
-                    productTransportCategoryId,
-                    priority.equals("Y") ? 1 : 2
+                vehicleId,
+                capacity,
+                length,
+                width,
+                height,
+                pallet,
+                statusId,
+                description,
+                productTransportCategoryId,
+                priority.equals("Y") ? 1 : 2
             );
         }
     }

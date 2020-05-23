@@ -19,7 +19,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesRouteConfigRetailOutletServiceImpl implements
-        SalesRouteConfigRetailOutletService {
+    SalesRouteConfigRetailOutletService {
 
     private PSalesRouteConfigRetailOutletRepo pSalesRouteConfigRetailOutletRepo;
     private RetailOutletPagingRepo partyRetailOutletRepo;
@@ -32,14 +32,19 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
 
     @Override
     public SalesRouteConfigRetailOutlet save(UUID retailOutletSalesmanVendorId,
-            String visitFrequencyId,
-            UUID salesRouteConfigId, UUID salesRoutePlanningPeriodId, String startExecuteDate) {
+                                             String visitFrequencyId,
+                                             UUID salesRouteConfigId,
+                                             UUID salesRoutePlanningPeriodId,
+                                             String startExecuteDate) {
 
         SalesRouteConfigRetailOutlet salesRouteConfigRetailOutlet = new SalesRouteConfigRetailOutlet();
         SalesRouteConfig salesRouteConfig = pSalesRouteConfigRepo.findBySalesRouteConfigId(salesRouteConfigId);
-        SalesRoutePlanningPeriod salesRoutePlanningPeriod = salesRoutePlanningPeriodRepo.findBySalesRoutePlanningPeriodId(salesRoutePlanningPeriodId);
-        RetailOutletSalesmanVendor retailOutletSalesmanVendor = retailOutletSalesmanVendorRepo.findByRetailOutletSalesmanVendorId(retailOutletSalesmanVendorId);
-        SalesRouteVisitFrequency salesRouteVisitFrequency = salesRouteVisitFrequencyRepo.findByVisitFrequencyId(visitFrequencyId);
+        SalesRoutePlanningPeriod salesRoutePlanningPeriod = salesRoutePlanningPeriodRepo.findBySalesRoutePlanningPeriodId(
+            salesRoutePlanningPeriodId);
+        RetailOutletSalesmanVendor retailOutletSalesmanVendor = retailOutletSalesmanVendorRepo.findByRetailOutletSalesmanVendorId(
+            retailOutletSalesmanVendorId);
+        SalesRouteVisitFrequency salesRouteVisitFrequency = salesRouteVisitFrequencyRepo.findByVisitFrequencyId(
+            visitFrequencyId);
 
         salesRouteConfigRetailOutlet.setSalesRouteVisitFrequency(salesRouteVisitFrequency);
         salesRouteConfigRetailOutlet.setSalesRoutePlanningPeriod(salesRoutePlanningPeriod);
@@ -53,7 +58,8 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
     }
 
     @Override
-    public List<SalesRouteConfigRetailOutletRepo.GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(UUID salesRoutePlanningPeriodId) {
+    public List<SalesRouteConfigRetailOutletRepo.GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(
+        UUID salesRoutePlanningPeriodId) {
         return salesRouteConfigRetailOutletRepo.getSalesroutesConfigRetailOutlets(salesRoutePlanningPeriodId);
     }
 }

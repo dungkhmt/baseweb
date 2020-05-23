@@ -21,14 +21,14 @@ public class Predicate {
 
     public BooleanExpression getPredicate() {
         PathBuilder<DPerson> entityPath = new PathBuilder<>(DPerson.class,
-                "dPerson");
+            "dPerson");
         if (criteria.getValue() instanceof Boolean) {
             BooleanPath path = entityPath.getBoolean(criteria.getKey());
             return path.eq((Boolean) criteria.getValue());
         }
         if (isNumeric(criteria.getValue())) {
             NumberPath<Integer> path = entityPath.getNumber(criteria.getKey(),
-                    Integer.class);
+                Integer.class);
             int value = Integer.parseInt(criteria.getValue().toString());
             switch (criteria.getOperation()) {
                 case ":":
@@ -46,9 +46,9 @@ public class Predicate {
                 // return
                 // path.containsIgnoreCase(criteria.getValue().toString());
                 return emptyIfNull(pathFirstName).concat(
-                        emptyIfNull(pathMiddleName).concat(
-                                emptyIfNull(pathLastName))).containsIgnoreCase(
-                        criteria.getValue().toString());
+                    emptyIfNull(pathMiddleName).concat(
+                        emptyIfNull(pathLastName))).containsIgnoreCase(
+                    criteria.getValue().toString());
             }
         } else {
             StringPath path = entityPath.getString(criteria.getKey());

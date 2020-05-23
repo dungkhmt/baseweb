@@ -33,37 +33,37 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
     @Override
     public List<PaymentApplication.Model> findAllByInvoiceId(String invoiceId) {
         return paymentApplicationRepo.findAllByInvoiceId(invoiceId)
-                .stream()
-                .map(PaymentApplication::toModel)
-                .collect(Collectors.toList());
+            .stream()
+            .map(PaymentApplication::toModel)
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<PaymentApplication.Model> findAllByPaymentId(String paymentId) {
         return paymentApplicationRepo.findAllByPaymentId(paymentId)
-                .stream()
-                .map(PaymentApplication::toModel)
-                .collect(Collectors.toList());
+            .stream()
+            .map(PaymentApplication::toModel)
+            .collect(Collectors.toList());
     }
 
     @Override
     public PaymentApplication.Model createPaymentApplication(PaymentApplication.CreateModel paymentApplicationCreateModel) {
         Date now = new Date();
         PaymentApplication paymentApplication = new PaymentApplication(
-                null,
-                paymentApplicationCreateModel.getPaymentId(),
-                paymentApplicationCreateModel.getInvoiceId(),
-                paymentApplicationCreateModel.getAmount(),
-                "CUR_vnd",
-                now,
-                now,
-                now
+            null,
+            paymentApplicationCreateModel.getPaymentId(),
+            paymentApplicationCreateModel.getInvoiceId(),
+            paymentApplicationCreateModel.getAmount(),
+            "CUR_vnd",
+            now,
+            now,
+            now
         );
         paymentApplication = paymentApplicationRepo.save(paymentApplication);
         Invoice invoice = invoiceRepo.findById(paymentApplication.getInvoiceId())
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         Payment payment = paymentRepo.findById(paymentApplication.getPaymentId())
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         invoice.setPaidAmount(invoice.getPaidAmount() + paymentApplication.getAppliedAmount());
         payment.setAppliedAmount(payment.getAppliedAmount() + paymentApplication.getAppliedAmount());
 
@@ -76,12 +76,12 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
     @Override
     public PaymentApplication.Model quickCreatePaymentApplication(PaymentApplication.CreateModel paymentApplicationCreateModel) {
         Invoice invoice = invoiceRepo.findById(paymentApplicationCreateModel.getInvoiceId())
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
         Payment.Model paymentModel = paymentService.createPayment(new Payment.CreateModel(invoice.getToPartyCustomerId()
-                .toString(),
-                paymentApplicationCreateModel.getAmount()));
+            .toString(),
+            paymentApplicationCreateModel.getAmount()));
         return createPaymentApplication(new PaymentApplication.CreateModel(paymentModel.getPaymentId(),
-                invoice.getInvoiceId(),
-                Math.min(invoice.getAmount() - invoice.getPaidAmount(), paymentApplicationCreateModel.getAmount())));
+            invoice.getInvoiceId(),
+            Math.min(invoice.getAmount() - invoice.getPaidAmount(), paymentApplicationCreateModel.getAmount())));
     }
 }

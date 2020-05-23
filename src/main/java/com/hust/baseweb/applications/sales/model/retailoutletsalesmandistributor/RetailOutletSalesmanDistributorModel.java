@@ -19,11 +19,11 @@ public class RetailOutletSalesmanDistributorModel {
     private String distributorName;
     private String distributorCode;
 
-    public RetailOutletSalesmanDistributorModel(RetailOutletSalesmanVendor retailOutletSalesmanVendor){
+    public RetailOutletSalesmanDistributorModel(RetailOutletSalesmanVendor retailOutletSalesmanVendor) {
         this.retailOutletSalesmanVendorId = retailOutletSalesmanVendor.getRetailOutletSalesmanVendorId();
         this.partyRetailOutletId = retailOutletSalesmanVendor.getPartyRetailOutlet().getPartyId();
         this.retailOutletName = retailOutletSalesmanVendor.getPartyRetailOutlet().getRetailOutletName();
-        this.retailOutletCode= retailOutletSalesmanVendor.getPartyRetailOutlet().getRetailOutletCode();
+        this.retailOutletCode = retailOutletSalesmanVendor.getPartyRetailOutlet().getRetailOutletCode();
         this.partySalesmanId = retailOutletSalesmanVendor.getPartySalesman().getPartyId();
         this.salesmanName = retailOutletSalesmanVendor.getPartySalesman().getUserName();
         this.partyDistributorId = retailOutletSalesmanVendor.getPartyDistributor().getPartyId();

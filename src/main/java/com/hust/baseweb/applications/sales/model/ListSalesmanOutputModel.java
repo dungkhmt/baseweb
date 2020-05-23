@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.sales.model;
 
-import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.model.salesman.SalesmanOutputModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

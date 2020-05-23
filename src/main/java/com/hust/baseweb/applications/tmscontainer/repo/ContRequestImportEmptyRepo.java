@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public interface ContRequestImportEmptyRepo extends CrudRepository<ContRequestImportEmpty, UUID> {
     ContRequestImportEmpty findByRequestImportEmptyId(UUID id);
+
     List<ContRequestImportEmpty> findAll();
 
 }

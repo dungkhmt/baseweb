@@ -24,6 +24,7 @@ public class PartyDepartmentServiceImpl implements PartyDepartmentService {
     private DepartmentRepo departmentRepo;
     private PartyRepo partyRepo;
     private RoleTypeRepo roleTypeRepo;
+
     @Override
     public PartyDepartment save(UUID partyId, String departmentId, String roleTypeId) {
         Department dept = departmentRepo.findByDepartmentId(departmentId);
@@ -32,7 +33,7 @@ public class PartyDepartmentServiceImpl implements PartyDepartmentService {
 
         List<PartyDepartment> lst = partyDepartmentRepo.findByPartyAndThruDate(party, null);
 
-        for(PartyDepartment pd: lst){
+        for (PartyDepartment pd : lst) {
             Date thruDate = new Date();// get current date-time
             pd.setThruDate(thruDate);
             partyDepartmentRepo.save(pd);

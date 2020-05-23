@@ -7,15 +7,14 @@ import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.GetListCustomerOutputModel;
 import com.hust.baseweb.applications.customer.model.GetListDistributorOutPutModel;
 import com.hust.baseweb.applications.customer.model.GetListRetailOutletOutputModel;
-import com.hust.baseweb.applications.customer.model.PartyCustomerModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerManager {
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
-    public CustomerManager(String token){
+
+    public CustomerManager(String token) {
         this.token = token;
     }
 
@@ -26,11 +25,11 @@ public class CustomerManager {
             //String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", json, token);
             //String rs = executor.execGetUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", null, token);
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-customer", json, token);
-            System.out.println("::getCustomers, rs = " + rs);
+//            System.out.println("::getCustomers, rs = " + rs);
             Gson gson = new Gson();
             //GetListPartyCustomerOutputModel customers = gson.fromJson(rs, GetListPartyCustomerOutputModel.class);
             //return customers.getCustomers();
-            GetListCustomerOutputModel listCustomers = gson.fromJson(rs,GetListCustomerOutputModel.class);
+            GetListCustomerOutputModel listCustomers = gson.fromJson(rs, GetListCustomerOutputModel.class);
             List<PartyCustomer> lst = listCustomers.getLists();
 
             return lst;
@@ -47,11 +46,11 @@ public class CustomerManager {
             //String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", json, token);
             //String rs = executor.execGetUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", null, token);
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-distributor", json, token);
-            System.out.println("::getDistributors, rs = " + rs);
+//            System.out.println("::getDistributors, rs = " + rs);
             Gson gson = new Gson();
             //GetListPartyCustomerOutputModel customers = gson.fromJson(rs, GetListPartyCustomerOutputModel.class);
             //return customers.getCustomers();
-            GetListDistributorOutPutModel listDistributors = gson.fromJson(rs,GetListDistributorOutPutModel.class);
+            GetListDistributorOutPutModel listDistributors = gson.fromJson(rs, GetListDistributorOutPutModel.class);
             List<PartyDistributor> lst = listDistributors.getLists();
 
             return lst;
@@ -68,11 +67,11 @@ public class CustomerManager {
             //String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", json, token);
             //String rs = executor.execGetUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", null, token);
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-retail-outlet", json, token);
-            System.out.println("::getRetailOutlets, rs = " + rs);
+//            System.out.println("::getRetailOutlets, rs = " + rs);
             Gson gson = new Gson();
             //GetListPartyCustomerOutputModel customers = gson.fromJson(rs, GetListPartyCustomerOutputModel.class);
             //return customers.getCustomers();
-            GetListRetailOutletOutputModel list = gson.fromJson(rs,GetListRetailOutletOutputModel.class);
+            GetListRetailOutletOutputModel list = gson.fromJson(rs, GetListRetailOutletOutputModel.class);
             List<PartyRetailOutlet> lst = list.getList();
 
             return lst;

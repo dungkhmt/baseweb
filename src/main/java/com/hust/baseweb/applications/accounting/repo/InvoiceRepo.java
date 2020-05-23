@@ -14,30 +14,30 @@ import java.util.UUID;
  */
 public interface InvoiceRepo extends MongoRepository<Invoice, String> {
     @Query("{\n" +
-            "    $and: [\n" +
-            "        { _id: { $regex:?0 }, toPartyCustomerId:?1},\n" +
-            "        { $expr: { $ne: [\"$amount\", \"$paidAmount\"] } }\n" +
-            "    ]\n" +
-            "}")
+        "    $and: [\n" +
+        "        { _id: { $regex:?0 }, toPartyCustomerId:?1},\n" +
+        "        { $expr: { $ne: [\"$amount\", \"$paidAmount\"] } }\n" +
+        "    ]\n" +
+        "}")
     Page<Invoice> findAllByInvoiceIdAndToPartyCustomerIdAndAmountNotEqualWithPaidAmount(String invoiceId,
                                                                                         UUID toPartyCustomerId,
                                                                                         Pageable pageable);
 
     @Query("{\n" +
-            "    $and: [\n" +
-            "        { _id: { $regex:?0 }},\n" +
-            "        { $expr: { $ne: [\"$amount\", \"$paidAmount\"] } }\n" +
-            "    ]\n" +
-            "}")
+        "    $and: [\n" +
+        "        { _id: { $regex:?0 }},\n" +
+        "        { $expr: { $ne: [\"$amount\", \"$paidAmount\"] } }\n" +
+        "    ]\n" +
+        "}")
     Page<Invoice> findAllByInvoiceIdAndAmountNotEqualWithPaidAmount(String invoiceId,
                                                                     Pageable pageable);
 
     @Query("{\n" +
-            "    $and: [\n" +
-            "        { toPartyCustomerId:?0},\n" +
-            "        { $expr: { $ne: [\"$amount\", \"$paidAmount\"] } }\n" +
-            "    ]\n" +
-            "}")
+        "    $and: [\n" +
+        "        { toPartyCustomerId:?0},\n" +
+        "        { $expr: { $ne: [\"$amount\", \"$paidAmount\"] } }\n" +
+        "    ]\n" +
+        "}")
     Page<Invoice> findAllByToPartyCustomerIdAndAmountNotEqualWithPaidAmount(UUID toPartyCustomerId,
                                                                             Pageable pageable);
 

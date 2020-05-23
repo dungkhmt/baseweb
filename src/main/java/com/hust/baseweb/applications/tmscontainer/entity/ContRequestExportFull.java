@@ -61,7 +61,6 @@ public class ContRequestExportFull {
     private Date createdStamp;
 
 
-
     @Transient
     private String customerName;
 
@@ -77,6 +76,7 @@ public class ContRequestExportFull {
     @Transient
     private String containerType;
 
-    @Transient String time;
+    @Transient
+    String time;
 
 }

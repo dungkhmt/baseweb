@@ -1,10 +1,4 @@
 package com.hust.baseweb.utils.algorithm.tsp;
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Scanner;
 
 //import com.google.ortools.linearsolver.MPConstraint;
 //import com.google.ortools.linearsolver.MPObjective;

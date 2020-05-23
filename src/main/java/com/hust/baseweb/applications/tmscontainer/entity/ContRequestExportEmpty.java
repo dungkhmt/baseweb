@@ -68,5 +68,6 @@ public class ContRequestExportEmpty {
     @Transient
     private String containerType;
 
-    @Transient String time;
+    @Transient
+    String time;
 }

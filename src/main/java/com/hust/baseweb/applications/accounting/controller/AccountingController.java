@@ -96,11 +96,11 @@ public class AccountingController {
             return ResponseEntity.ok(invoiceService.getPageUnpaidInvoices(pageable));
         } else {
             Map<String, String> filterMap = Arrays.stream(filtering.split(","))
-                    .map(s -> s.split(":"))
-                    .collect(Collectors.toMap(ss -> ss[0], ss -> ss[1]));
+                .map(s -> s.split(":"))
+                .collect(Collectors.toMap(ss -> ss[0], ss -> ss[1]));
             return ResponseEntity.ok(invoiceService.getPageUnpaidInvoices(filterMap.get("invoiceId"),
-                    filterMap.get("toPartyCustomerId"),
-                    pageable));
+                filterMap.get("toPartyCustomerId"),
+                pageable));
         }
     }
 
@@ -110,7 +110,7 @@ public class AccountingController {
             return ResponseEntity.ok(paymentApplicationService.createPaymentApplication(paymentApplicationCreateModel));
         } else {
             return ResponseEntity.ok(paymentApplicationService.quickCreatePaymentApplication(
-                    paymentApplicationCreateModel));
+                paymentApplicationCreateModel));
         }
     }
 }

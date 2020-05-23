@@ -6,9 +6,9 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.List;
 
 public interface UomRepo extends PagingAndSortingRepository<Uom, String> {
-    public Uom findByUomId(String uomId);
+    Uom findByUomId(String uomId);
 
-    public List<Uom> findAll();
-	
+    List<Uom> findAll();
+
 
 }

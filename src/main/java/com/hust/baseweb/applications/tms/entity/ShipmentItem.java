@@ -85,33 +85,33 @@ public class ShipmentItem {
         }
 
         return new ShipmentItemModel(
-                shipmentItemId.toString(),
-                quantity,
-                pallet,
-                orderItem.getProduct().getProductId(),
-                customerCode,
-                locationCode,
-                address,
-                lat + "",
-                lng + "",
-                orderItem.getProduct().getWeight() * quantity,
-                scheduledQuantity,
-                completedQuantity,
-                Optional.ofNullable(facility).map(Facility::getFacilityId).orElse(null),
-                Optional.ofNullable(statusItem).map(StatusItem::getStatusId).orElse(null)
+            shipmentItemId.toString(),
+            quantity,
+            pallet,
+            orderItem.getProduct().getProductId(),
+            customerCode,
+            locationCode,
+            address,
+            lat + "",
+            lng + "",
+            orderItem.getProduct().getWeight() * quantity,
+            scheduledQuantity,
+            completedQuantity,
+            Optional.ofNullable(facility).map(Facility::getFacilityId).orElse(null),
+            Optional.ofNullable(statusItem).map(StatusItem::getStatusId).orElse(null)
         );
     }
 
     public ShipmentItemModel.DeliveryPlan toShipmentItemDeliveryPlanModel(int assignedQuantity) {
         return new ShipmentItemModel.DeliveryPlan(
-                shipmentItemId,
-                orderItem.getProduct().getProductName(),
-                orderItem.getProduct().getWeight(),
-                quantity - assignedQuantity,
-                pallet,
-                shipToLocation.getAddress(),
-                shipToLocation.getGeoPoint().getLatitude() + "," +
-                        shipToLocation.getGeoPoint().getLongitude()
+            shipmentItemId,
+            orderItem.getProduct().getProductName(),
+            orderItem.getProduct().getWeight(),
+            quantity - assignedQuantity,
+            pallet,
+            shipToLocation.getAddress(),
+            shipToLocation.getGeoPoint().getLatitude() + "," +
+                shipToLocation.getGeoPoint().getLongitude()
         );
     }
 }

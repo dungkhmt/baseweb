@@ -67,12 +67,12 @@ public class OrderAPIController {
     @GetMapping("/orders")
     public ResponseEntity<?> getOrders(Pageable page, @RequestParam(required = false) String param) {
         log.info("getOrders, page = pageNumber = " + page.getPageNumber() + ", offSet = " +
-                page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
+            page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
         Page<OrderHeader> orders = orderHeaderPageRepo.findAll(page);
 
         List<OrderDetailView> odv = orders.stream()
-                .map(p -> new OrderDetailView(p, orderService, partySalesmanService, userService))
-                .collect(Collectors.toList());
+            .map(p -> new OrderDetailView(p, orderService, partySalesmanService, userService))
+            .collect(Collectors.toList());
 
         //Page<DTOPerson> dtoPerson = new PageImpl<DTOPerson>(lst, page,
         //	       pg.getTotalElements());
@@ -107,7 +107,7 @@ public class OrderAPIController {
         GetTotalRevenueItemOutputModel[] itemOutputModels = new GetTotalRevenueItemOutputModel[keys.size()];
         for (int i = 0; i < itemOutputModels.length; i++) {
             itemOutputModels[i] = new GetTotalRevenueItemOutputModel(keys.get(i),
-                    OrderAPIController.revenueOrderCache.getRevenue(keys.get(i)));
+                OrderAPIController.revenueOrderCache.getRevenue(keys.get(i)));
         }
         return ResponseEntity.ok().body(new GetTotalRevenueOutputModel(itemOutputModels));
     }

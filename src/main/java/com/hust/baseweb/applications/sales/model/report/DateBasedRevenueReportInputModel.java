@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DateBasedRevenueReportInputModel {
-	private String fromDate;
-	private String toDate;
-	
+    private String fromDate;
+    private String toDate;
+
 }

@@ -38,9 +38,9 @@ public class TrackLocationApiController {
 
     @Autowired
     public TrackLocationApiController(
-            SecurityGroupService securityGroupService, UserService userService,
-            TrackLocationsService trackLocationsService,
-            TrackLocationPagingRepo trackLocationPagingRepo) {
+        SecurityGroupService securityGroupService, UserService userService,
+        TrackLocationsService trackLocationsService,
+        TrackLocationPagingRepo trackLocationPagingRepo) {
         super();
         this.securityGroupService = securityGroupService;
         this.userService = userService;
@@ -89,7 +89,7 @@ public class TrackLocationApiController {
         UserLogin userLogin = userService.findById(principal.getName());
         List<TrackLocations> listLocationList = trackLocationsService.getListLocations();
         List<TrackLocationsOutputModel> trackLocationsOutputModels =
-                listLocationList.stream().map(TrackLocationsOutputModel::new).collect(Collectors.toList());
+            listLocationList.stream().map(TrackLocationsOutputModel::new).collect(Collectors.toList());
 
         return ResponseEntity.ok().body(trackLocationsOutputModels);
     }

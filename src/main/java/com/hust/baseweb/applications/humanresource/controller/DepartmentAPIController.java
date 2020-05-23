@@ -23,39 +23,39 @@ import java.util.List;
 @Log4j2
 public class DepartmentAPIController {
 
-	@Autowired
-	private DepartmentService departmentService;
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private UserService userService;
 
-	@Autowired
-	private PartyDepartmentService partyDepartmentService;
+    @Autowired
+    private PartyDepartmentService partyDepartmentService;
 
-	@PostMapping("/create-department")
-	public ResponseEntity<?> createDepartment(Principal principal, @RequestBody CreateDepartmentInputModel input){
-		log.info("createDepartment, departmentName = " + input.getDepartmentName());
-		Department dept = departmentService.save(input.getDepartmentName());
-		
-		return ResponseEntity.ok().body(dept);
-	}
-	
-	@GetMapping("/get-all-departments")
+    @PostMapping("/create-department")
+    public ResponseEntity<?> createDepartment(Principal principal, @RequestBody CreateDepartmentInputModel input) {
+        log.info("createDepartment, departmentName = " + input.getDepartmentName());
+        Department dept = departmentService.save(input.getDepartmentName());
+
+        return ResponseEntity.ok().body(dept);
+    }
+
+    @GetMapping("/get-all-departments")
     public ResponseEntity<?> getAllDepartments(Principal principal) {
         log.info("getAllDepartments...");
         List<Department> departments = departmentService.findAll();
         return ResponseEntity.ok().body(departments);
-		
-	}
 
-	@PostMapping("/add-user-2-department")
-	public ResponseEntity<?> addUser2Department(Principal principal, @RequestBody AddParty2DepartmentInputModel input){
-		UserLogin userLogin = userService.findById(principal.getName());
-		log.info("addUser2Department, addUser2Department, user login = " + userLogin.getUserLoginId());
+    }
 
-		PartyDepartment partyDepartment = partyDepartmentService.save(input.getPartyId(),
-				input.getDepartmentId(), input.getRoleTypeId());
+    @PostMapping("/add-user-2-department")
+    public ResponseEntity<?> addUser2Department(Principal principal, @RequestBody AddParty2DepartmentInputModel input) {
+        UserLogin userLogin = userService.findById(principal.getName());
+        log.info("addUser2Department, addUser2Department, user login = " + userLogin.getUserLoginId());
 
-		return ResponseEntity.ok().body("add OK");
-	}
+        PartyDepartment partyDepartment = partyDepartmentService.save(input.getPartyId(),
+            input.getDepartmentId(), input.getRoleTypeId());
+
+        return ResponseEntity.ok().body("add OK");
+    }
 
 }

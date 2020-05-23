@@ -1,14 +1,18 @@
 package com.hust.baseweb.test.simulator;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.model.ExportInventoryItemInputModel;
 import com.hust.baseweb.applications.logistics.model.ExportInventoryItemsInputModel;
 import com.hust.baseweb.applications.logistics.model.InventoryModel;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -34,37 +38,51 @@ public class ExportFacilityAgent extends Thread {
     }
 
     public void run() {
-        System.out.println(module + "::run....");
+        Simulator.threadRunningCounter.incrementAndGet();
+//        System.out.println(module + "::run....");
 
         token = Login.login(username, password);
 
         createShipments();
 
+        Simulator.threadRunningCounter.decrementAndGet();
     }
 
     public void createAShipment() throws Exception {
         // get first Page<InventoryModel.OrderHeader> (call API /get-inventory-order-header/page)
         String response = executor.execGetUseToken(Constants.URL_ROOT +
-                "/get-inventory-order-header/page?size=5&page=0",
+                "/api/get-inventory-order-header/page?size=5&page=0",
             null,
             token);
+
         Gson gson = new Gson();
-        Page page = gson.fromJson(response, Page.class);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+//        new InstanceCreator<PageImpl<InventoryModel.OrderHeader>>()
+        PageImpl<InventoryModel.OrderHeader> pageInventoryOrder = objectMapper.readValue(response,
+            new TypeReference<RestResponsePage<InventoryModel.OrderHeader>>() {
+            });
+//        PageImpl<InventoryModel.OrderHeader> pageInventoryOrder = gson.fromJson(response,
+//            new TypeToken<PageImpl<InventoryModel.OrderHeader>>() {
+//            }.getType());
 
         // select random a page index (pid)
-        int randomPageIndex = rand.nextInt(page.getTotalPages());
+        int randomPageIndex = rand.nextInt(pageInventoryOrder.getTotalPages());
 
         // get the pid(th) Page<InventoryModel.OrderHeader> (call API /get-inventory-order-header/page)
         response = executor.execGetUseToken(Constants.URL_ROOT +
-                "/get-inventory-order-header/page?size=5&page=" + randomPageIndex,
+                "/api/get-inventory-order-header/page?size=5&page=" + randomPageIndex,
             null,
             token);
-        page = gson.fromJson(response, Page.class);
-        List content = page.getContent();
+        pageInventoryOrder = objectMapper.readValue(response,
+            new TypeReference<RestResponsePage<InventoryModel.OrderHeader>>() {
+            });
+        List<InventoryModel.OrderHeader> content = pageInventoryOrder.getContent();
 
         // select randomly an order from the page
         int randomOrderId = rand.nextInt(5);
-        InventoryModel.OrderHeader orderHeader = (InventoryModel.OrderHeader) (content.get(randomOrderId));
+        InventoryModel.OrderHeader orderHeader = content.get(randomOrderId);
 
         FacilityManager facilityManager = new FacilityManager(token);
         List<Facility> facilities = facilityManager.getListFacility();
@@ -78,19 +96,24 @@ public class ExportFacilityAgent extends Thread {
                 randomFacility.getFacilityId() +
                 "\"}",
             token);
-        List<InventoryModel.OrderItem> orderItems = gson.fromJson(response, List.class);
+        List<InventoryModel.OrderItem> orderItems = gson.fromJson(response,
+            new TypeToken<ArrayList<InventoryModel.OrderItem>>() {
+            }.getType());
 
         // enter randomly the quantity to be exported for each order-item
         ExportInventoryItemsInputModel exportInventoryItemsInputModel = new ExportInventoryItemsInputModel();
         ExportInventoryItemInputModel[] exportInventoryItemInputModels = orderItems.stream()
-            .filter(orderItem -> orderItem.getQuantity() - orderItem.getExportedQuantity() <
-                orderItem.getInventoryQuantity())
+            .filter(orderItem ->
+                orderItem.getQuantity() > orderItem.getExportedQuantity() &&
+                    orderItem.getQuantity() - orderItem.getExportedQuantity() <
+                        orderItem.getInventoryQuantity())
             .map(orderItem -> {
                 ExportInventoryItemInputModel exportInventoryItemInputModel = new ExportInventoryItemInputModel();
+                exportInventoryItemInputModel.setProductId(orderItem.getProductId());
                 exportInventoryItemInputModel.setFacilityId(randomFacility.getFacilityId());
                 exportInventoryItemInputModel.setOrderId(orderItem.getOrderId());
                 exportInventoryItemInputModel.setQuantity(rand.nextInt((Math.min(orderItem.getQuantity() -
-                    orderItem.getExportedQuantity(), orderItem.getInventoryQuantity())) - 1) + 1);
+                    orderItem.getExportedQuantity(), orderItem.getInventoryQuantity()))) + 1);
                 exportInventoryItemInputModel.setOrderItemSeqId(orderItem.getOrderItemSeqId());
                 return exportInventoryItemInputModel;
             }).toArray(ExportInventoryItemInputModel[]::new);

@@ -9,6 +9,8 @@ import java.util.UUID;
 @Service
 public interface SalesRoutePlanningPeriodService {
     SalesRoutePlanningPeriod save(String fromDate, String toDate, String description);
-    public List<SalesRoutePlanningPeriod> findAll();
+
+    List<SalesRoutePlanningPeriod> findAll();
+
     SalesRoutePlanningPeriod findById(UUID salesRoutePlanningPeriodId);
 }

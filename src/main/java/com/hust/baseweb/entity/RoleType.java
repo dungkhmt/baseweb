@@ -6,14 +6,13 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 public class RoleType {
     @Id
-    @Column(name="role_type_id")
+    @Column(name = "role_type_id")
     private String roleTypeId;
 
 }

@@ -66,11 +66,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Party save(PersonModel personModel) throws Exception {
         Party party = new Party(personModel.getPartyCode(), partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
-                statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
-                false);
+            statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
+            false);
         party = partyRepo.save(party);
         personRepo.save(new Person(party.getPartyId(), personModel.getFirstName(), personModel.getMiddleName(),
-                personModel.getLastName(), personModel.getGender(), personModel.getBirthDate()));
+            personModel.getLastName(), personModel.getGender(), personModel.getBirthDate()));
 
         Set<SecurityGroup> roles = securityGroupRepo.findAllByGroupIdIn(personModel.getRoles());
 
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<UserRestBriefProjection> findPersonByFullName(Pageable page, String sString) {
         return userRestRepository.findByTypeAndStatusAndFullNameLike(page, PartyTypeEnum.PERSON.name(),
-                StatusEnum.PARTY_ENABLED.name(), sString);
+            StatusEnum.PARTY_ENABLED.name(), sString);
     }
 
     @Override

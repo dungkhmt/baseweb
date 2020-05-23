@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface InventoryItemDetailRepo extends
-        PagingAndSortingRepository<InventoryItemDetail, UUID> {
+    PagingAndSortingRepository<InventoryItemDetail, UUID> {
 
     List<InventoryItemDetail> findAllByOrderItemIn(List<OrderItem> orderItems);
 }

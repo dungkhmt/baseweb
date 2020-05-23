@@ -32,12 +32,12 @@ public class PaymentApplication {
 
     public Model toModel() {
         return new Model(
-                paymentApplicationId.toString(),
-                paymentId,
-                invoiceId,
-                appliedAmount,
-                currencyUomId,
-                Constant.DATE_FORMAT.format(effectiveDate)
+            paymentApplicationId.toString(),
+            paymentId,
+            invoiceId,
+            appliedAmount,
+            currencyUomId,
+            Constant.DATE_FORMAT.format(effectiveDate)
         );
     }
 

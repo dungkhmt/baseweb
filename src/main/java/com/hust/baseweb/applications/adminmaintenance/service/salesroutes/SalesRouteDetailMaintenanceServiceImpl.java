@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.adminmaintenance.service.salesroutes;
 
-import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
 import com.hust.baseweb.applications.salesroutes.repo.SalesRouteDetailRepo;
 import lombok.AllArgsConstructor;
@@ -12,7 +11,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 
-public class SalesRouteDetailMaintenanceServiceImpl implements SalesRouteDetailMaintenanceService{
+public class SalesRouteDetailMaintenanceServiceImpl implements SalesRouteDetailMaintenanceService {
     private SalesRouteDetailRepo salesRouteDetailRepo;
     private PartySalesmanRepo partySalesmanRepo;
 

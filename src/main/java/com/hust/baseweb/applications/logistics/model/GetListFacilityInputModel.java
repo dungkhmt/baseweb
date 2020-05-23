@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetListFacilityInputModel {
-	private String statusId;
+    private String statusId;
 }

@@ -42,18 +42,24 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
         log.info("generateSalesRouteDetailOfSalesman, salesmanId = " + partySalesmanId);
         PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
 
-        SalesRoutePlanningPeriod SRPP = pSalesRoutePlanningPeriodRepo.findBySalesRoutePlanningPeriodId(salesRoutePlanningPeriodId);
-        if(SRPP == null){
+        SalesRoutePlanningPeriod SRPP = pSalesRoutePlanningPeriodRepo.findBySalesRoutePlanningPeriodId(
+            salesRoutePlanningPeriodId);
+        if (SRPP == null) {
             log.info("generateSalesRouteDetailOfSalesman, sales_route_planning_period is NULL");
             return 0;
         }
         //List<SalesRouteConfigRetailOutlet> SRCC = salesRouteConfigRetailOutletRepo.findByPartySalesman(partySalesman);
         List<SalesRouteConfigRetailOutlet> SRCC = salesRouteConfigRetailOutletRepo.findBySalesRoutePlanningPeriod(SRPP);
-        if(SRCC == null){
+        if (SRCC == null) {
             log.info("generateSalesRouteDetailOfSalesman, sales_route_config_retail_outlet is NULL");
             return 0;
         }
-        log.info("generateSalesRouteDetailOfSalesman, period = " + SRPP.getFromDate().toString() + ", toDate = " + SRPP.getToDate() + ", SRCC.sz = " + SRCC.size());
+        log.info("generateSalesRouteDetailOfSalesman, period = " +
+            SRPP.getFromDate().toString() +
+            ", toDate = " +
+            SRPP.getToDate() +
+            ", SRCC.sz = " +
+            SRCC.size());
         Date startDate = SRPP.getFromDate();
         Date endDate = SRPP.getToDate();
         int cnt = 0;
@@ -63,7 +69,9 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
             PartySalesman sm = rosv.getPartySalesman();
             PartyDistributor partyDistributor = rosv.getPartyDistributor();
 
-            if(!sm.getPartyId().equals(partySalesmanId)) continue;
+            if (!sm.getPartyId().equals(partySalesmanId)) {
+                continue;
+            }
 
             SalesRouteConfig src = srcc.getSalesRouteConfig();
             String startExecuteDate = srcc.getStartExecuteDate();
@@ -71,9 +79,19 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
             for (String day : days) {
                 int d = Integer.parseInt(day.trim());
                 //List<String> dates = DateTimeUtils.getListDateHavingDay(d, DateTimeUtils.date2YYYYMMDD(startDate), DateTimeUtils.date2YYYYMMDD(endDate), startExecuteDate);
-                List<String> dates = DateTimeUtils.getListDateHavingDay(d, startDate, endDate, startExecuteDate + " 00:00:00");
+                List<String> dates = DateTimeUtils.getListDateHavingDay(d,
+                    startDate,
+                    endDate,
+                    startExecuteDate + " 00:00:00");
                 for (String date : dates) {
-                    log.info("generateSalesRouteDetailOfSalesman, get date " + date + " day " + d + " customer " + pc.getRetailOutletName() + ", salesman " + partySalesman.getPartyId());
+                    log.info("generateSalesRouteDetailOfSalesman, get date " +
+                        date +
+                        " day " +
+                        d +
+                        " customer " +
+                        pc.getRetailOutletName() +
+                        ", salesman " +
+                        partySalesman.getPartyId());
                     SalesRouteDetail srd = new SalesRouteDetail();
                     srd.setExecuteDate(date);
                     srd.setPartyRetailOutlet(pc);
@@ -91,7 +109,7 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
 
     @Override
     public List<PartyRetailOutlet> getRetailOutletsVisitedSalesmanDay(
-            UUID partySalesmanId, String date) {
+        UUID partySalesmanId, String date) {
         String executeDate = date;//DateTimeUtils.date2YYYYMMDD(date);
 
         log.info("getCustomersVisitedSalesmanDay, partySalesmanId = " + partySalesmanId + ", date = " + executeDate);

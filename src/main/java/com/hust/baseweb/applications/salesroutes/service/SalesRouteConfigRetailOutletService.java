@@ -10,7 +10,11 @@ import java.util.UUID;
 @Service
 public interface SalesRouteConfigRetailOutletService {
     SalesRouteConfigRetailOutlet save(UUID retailOutletSalesmanVendorId,
-         String visitFrequencyId,
-         UUID salesRouteConfigId, UUID salesRoutePlanningPeriodId, String startExecuteDate);
-    List<SalesRouteConfigRetailOutletRepo.GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(UUID salesRoutePlanningPeriodId);
+                                      String visitFrequencyId,
+                                      UUID salesRouteConfigId,
+                                      UUID salesRoutePlanningPeriodId,
+                                      String startExecuteDate);
+
+    List<SalesRouteConfigRetailOutletRepo.GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(
+        UUID salesRoutePlanningPeriodId);
 }

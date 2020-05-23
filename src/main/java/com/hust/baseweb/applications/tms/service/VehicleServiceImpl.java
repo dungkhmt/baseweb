@@ -35,27 +35,27 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public Page<Vehicle> findAll(Pageable pageable) {
         return vehicleMaintenanceHistoryRepo.findAllByThruDateIsNull(pageable)
-                .map(VehicleMaintenanceHistory::getVehicle);
+            .map(VehicleMaintenanceHistory::getVehicle);
     }
 
     @Override
     public List<Vehicle> findAll() {
         return vehicleMaintenanceHistoryRepo.findAllByThruDateIsNull().stream()
-                .map(VehicleMaintenanceHistory::getVehicle).collect(Collectors.toList());
+            .map(VehicleMaintenanceHistory::getVehicle).collect(Collectors.toList());
     }
 
     @Override
     public void saveAll(List<Vehicle> vehicles) {
         Set<String> vehicleIdSet = vehicleMaintenanceHistoryRepo
-                .findAllByThruDateIsNullAndVehicleIn(vehicles)
-                .stream().map(vehicleMaintenanceHistory -> vehicleMaintenanceHistory.getVehicle().getVehicleId())
-                .collect(Collectors.toSet());
+            .findAllByThruDateIsNullAndVehicleIn(vehicles)
+            .stream().map(vehicleMaintenanceHistory -> vehicleMaintenanceHistory.getVehicle().getVehicleId())
+            .collect(Collectors.toSet());
         vehicles = vehicles.stream()
-                .filter(vehicle -> !vehicleIdSet.contains(vehicle.getVehicleId()))
-                .collect(Collectors.toList());
+            .filter(vehicle -> !vehicleIdSet.contains(vehicle.getVehicleId()))
+            .collect(Collectors.toList());
         vehicleRepo.saveAll(vehicles);
         vehicleMaintenanceHistoryRepo.saveAll(vehicles.stream()
-                .map(Vehicle::createVehicleMaintenanceHistory).collect(Collectors.toList()));
+            .map(Vehicle::createVehicleMaintenanceHistory).collect(Collectors.toList()));
     }
 
     @Override
@@ -67,15 +67,15 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public Page<VehicleModel> findAllInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
         List<VehicleDeliveryPlan> vehicleDeliveryPlans
-                = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
+            = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
 
         List<VehicleModel> vehicleModels = vehicleRepo.findAllByVehicleIdIn(
-                vehicleDeliveryPlans.stream()
-                        .map(VehicleDeliveryPlan::getVehicleId)
-                        .distinct()
-                        .collect(Collectors.toList()))
-                .stream().map(Vehicle::toVehicleModel)
-                .collect(Collectors.toList());
+            vehicleDeliveryPlans.stream()
+                .map(VehicleDeliveryPlan::getVehicleId)
+                .distinct()
+                .collect(Collectors.toList()))
+            .stream().map(Vehicle::toVehicleModel)
+            .collect(Collectors.toList());
 
         return PageUtils.getPage(vehicleModels, pageable);
     }
@@ -83,14 +83,14 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public List<VehicleModel> findAllInDeliveryPlan(String deliveryPlanId) {
         List<VehicleDeliveryPlan> vehicleDeliveryPlans = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(
-                deliveryPlanId));
+            deliveryPlanId));
         return vehicleRepo.findAllByVehicleIdIn(
-                vehicleDeliveryPlans.stream()
-                        .map(VehicleDeliveryPlan::getVehicleId)
-                        .distinct()
-                        .collect(Collectors.toList()))
-                .stream().map(Vehicle::toVehicleModel)
-                .collect(Collectors.toList());
+            vehicleDeliveryPlans.stream()
+                .map(VehicleDeliveryPlan::getVehicleId)
+                .distinct()
+                .collect(Collectors.toList()))
+            .stream().map(Vehicle::toVehicleModel)
+            .collect(Collectors.toList());
     }
 
     // TODO:
@@ -102,62 +102,62 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public List<VehicleModel> findAllNotInDeliveryPlan(String deliveryPlanId) {
         Set<String> vehicleInDeliveryPlans = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(
-                UUID.fromString(deliveryPlanId))
-                .stream().map(VehicleDeliveryPlan::getVehicleId)
-                .collect(Collectors.toSet());
+            UUID.fromString(deliveryPlanId))
+            .stream().map(VehicleDeliveryPlan::getVehicleId)
+            .collect(Collectors.toSet());
         List<VehicleMaintenanceHistory> vehicleMaintenanceHistories = vehicleMaintenanceHistoryRepo.findAllByThruDateIsNull();
 
         List<Vehicle> vehicles = vehicleRepo.findAllByVehicleIdIn(vehicleMaintenanceHistories.stream()
-                .map(vehicleMaintenanceHistory -> vehicleMaintenanceHistory.getVehicle().getVehicleId())
-                .distinct().collect(Collectors.toList()));
+            .map(vehicleMaintenanceHistory -> vehicleMaintenanceHistory.getVehicle().getVehicleId())
+            .distinct().collect(Collectors.toList()));
 
         return vehicles.stream()
-                .filter(vehicle -> !vehicleInDeliveryPlans.contains(vehicle.getVehicleId()))
-                .map(Vehicle::toVehicleModel)
-                .collect(Collectors.toList());
+            .filter(vehicle -> !vehicleInDeliveryPlans.contains(vehicle.getVehicleId()))
+            .map(Vehicle::toVehicleModel)
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<VehicleModel> findAllNotInDeliveryTrips(String deliveryPlanId) {
         DeliveryPlan deliveryPlan = deliveryPlanRepo.findById(UUID.fromString(deliveryPlanId))
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
 
         List<VehicleDeliveryPlan> vehicleDeliveryPlans = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(
-                deliveryPlanId));
+            deliveryPlanId));
         List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan);
         Map<String, List<DeliveryTrip>> vehicleIdToDeliveryTrips = deliveryTrips.stream()
-                .collect(Collectors.groupingBy(deliveryTrip -> deliveryTrip.getVehicle().getVehicleId()));
+            .collect(Collectors.groupingBy(deliveryTrip -> deliveryTrip.getVehicle().getVehicleId()));
 
         List<String> vehicleIdsNotInDeliveryTrips = vehicleDeliveryPlans.stream()
-                .filter(vehicleDeliveryPlan -> !vehicleIdToDeliveryTrips.containsKey(vehicleDeliveryPlan.getVehicleId()))
-                .map(VehicleDeliveryPlan::getVehicleId)
-                .distinct()
-                .collect(Collectors.toList());
+            .filter(vehicleDeliveryPlan -> !vehicleIdToDeliveryTrips.containsKey(vehicleDeliveryPlan.getVehicleId()))
+            .map(VehicleDeliveryPlan::getVehicleId)
+            .distinct()
+            .collect(Collectors.toList());
         return vehicleRepo.findAllByVehicleIdIn(vehicleIdsNotInDeliveryTrips)
-                .stream()
-                .map(Vehicle::toVehicleModel)
-                .collect(Collectors.toList());
+            .stream()
+            .map(Vehicle::toVehicleModel)
+            .collect(Collectors.toList());
     }
 
     @Override
     public String saveVehicleDeliveryPlan(VehicleModel.CreateDeliveryPlan createDeliveryPlan) {
         List<VehicleDeliveryPlan> vehicleDeliveryPlans = new ArrayList<>();
         Set<String> vehicleIdSet = vehicleMaintenanceHistoryRepo.findAllByThruDateIsNullAndVehicleIn(
-                vehicleRepo.findAllByVehicleIdIn(createDeliveryPlan.getVehicleIds()
-                        .stream()
-                        .distinct()
-                        .collect(Collectors.toList())))
+            vehicleRepo.findAllByVehicleIdIn(createDeliveryPlan.getVehicleIds()
                 .stream()
-                .map(vehicleMaintenanceHistory -> vehicleMaintenanceHistory.getVehicle().getVehicleId())
-                .collect(Collectors.toSet());
+                .distinct()
+                .collect(Collectors.toList())))
+            .stream()
+            .map(vehicleMaintenanceHistory -> vehicleMaintenanceHistory.getVehicle().getVehicleId())
+            .collect(Collectors.toSet());
 
         for (String vehicleId : createDeliveryPlan.getVehicleIds()) {
             if (!vehicleIdSet.contains(vehicleId)) {
                 continue;
             }
             vehicleDeliveryPlans.add(new VehicleDeliveryPlan(
-                    vehicleId,
-                    UUID.fromString(createDeliveryPlan.getDeliveryPlanId())
+                vehicleId,
+                UUID.fromString(createDeliveryPlan.getDeliveryPlanId())
             ));
         }
         vehicleDeliveryPlanRepo.saveAll(vehicleDeliveryPlans);
@@ -167,8 +167,8 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public boolean deleteVehicleDeliveryPlan(VehicleModel.DeleteDeliveryPlan deleteDeliveryPlan) {
         VehicleDeliveryPlan vehicleDeliveryPlan = vehicleDeliveryPlanRepo.findByDeliveryPlanIdAndVehicleId(
-                UUID.fromString(deleteDeliveryPlan.getDeliveryPlanId()),
-                deleteDeliveryPlan.getVehicleId()
+            UUID.fromString(deleteDeliveryPlan.getDeliveryPlanId()),
+            deleteDeliveryPlan.getVehicleId()
         );
         if (vehicleDeliveryPlan != null) {
             vehicleDeliveryPlanRepo.delete(vehicleDeliveryPlan);
@@ -212,24 +212,24 @@ public class VehicleServiceImpl implements VehicleService {
         Map<String, PostalAddress> postalAddressMap = new HashMap<>();
 
         vehicleRepo.findAllByVehicleIdIn(vehicleLocationPriorities.stream()
-                .map(VehicleModel.CreateLocationPriority::getVehicleId).collect(Collectors.toList()))
-                .forEach(vehicle -> vehicleMap.put(vehicle.getVehicleId(), vehicle));
+            .map(VehicleModel.CreateLocationPriority::getVehicleId).collect(Collectors.toList()))
+            .forEach(vehicle -> vehicleMap.put(vehicle.getVehicleId(), vehicle));
         postalAddressRepo.findAllByLocationCodeIn(vehicleLocationPriorities.stream()
-                .map(VehicleModel.CreateLocationPriority::getLocationCode).collect(Collectors.toList()))
-                .forEach(postalAddress -> postalAddressMap.put(postalAddress.getLocationCode(), postalAddress));
+            .map(VehicleModel.CreateLocationPriority::getLocationCode).collect(Collectors.toList()))
+            .forEach(postalAddress -> postalAddressMap.put(postalAddress.getLocationCode(), postalAddress));
 
         vehicleLocationPriorityRepo.saveAll(
-                vehicleLocationPriorities.stream().map(vlp -> vlp.toVehicleLocationPriority(
-                        vehicleMap.get(vlp.getVehicleId()), postalAddressMap.get(vlp.getLocationCode())
-                )).filter(Objects::nonNull).collect(Collectors.toList()));
+            vehicleLocationPriorities.stream().map(vlp -> vlp.toVehicleLocationPriority(
+                vehicleMap.get(vlp.getVehicleId()), postalAddressMap.get(vlp.getLocationCode())
+            )).filter(Objects::nonNull).collect(Collectors.toList()));
 
         Map<String, LocationModel.Create> shipToModelMap = new HashMap<>();
         shipToModels.forEach(create -> shipToModelMap.put(create.getLocationCode(),
-                create));
+            create));
 
         List<PostalAddress> postalAddresses = postalAddressRepo.findAllByLocationCodeIn(new ArrayList<>(shipToModelMap.keySet()));
         postalAddresses.forEach(postalAddress -> postalAddress.setMaxLoadWeight(shipToModelMap.get(postalAddress.getLocationCode())
-                .getMaxLoadWeight()));
+            .getMaxLoadWeight()));
         postalAddressRepo.saveAll(postalAddresses);
 
         return listVehicles;

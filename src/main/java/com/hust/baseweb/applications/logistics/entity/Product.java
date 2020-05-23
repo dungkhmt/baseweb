@@ -1,15 +1,13 @@
 package com.hust.baseweb.applications.logistics.entity;
 
+import com.hust.baseweb.entity.Content;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import javax.persistence.*;
-
-import com.hust.baseweb.entity.Content;
-
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Getter
@@ -67,6 +65,13 @@ public class Product {
 //    @Transient
 //    private String ava;
 
-    @Column(name = "avatar")
+//    @Column(name = "avatar")
+//    private String avatar;
+
+    @JoinColumn(name = "primary_img", referencedColumnName = "content_id")
+    @OneToOne
+    private Content primaryImg;
+
+    @Transient
     private String avatar;
 }

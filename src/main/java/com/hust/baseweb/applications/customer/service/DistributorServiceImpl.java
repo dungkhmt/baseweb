@@ -5,13 +5,13 @@ import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.CreateDistributorInputModel;
 import com.hust.baseweb.applications.customer.model.DetailDistributorModel;
-import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.repo.PartyContactMechPurposeRepo;
 import com.hust.baseweb.applications.customer.repo.PartyRetailOutletRepo;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
+import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
 import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
 import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.RetailOutletSalesmanDistributorModel;
 import com.hust.baseweb.applications.sales.repo.RetailOutletSalesmanVendorRepo;
@@ -43,7 +43,7 @@ public class DistributorServiceImpl implements DistributorService {
     private PartyTypeRepo partyTypeRepo;
     private StatusRepo statusRepo;
     private PartyContactMechPurposeRepo partyContactMechPurposeRepo;
-    private DistributorRepo distributorRepo;
+    private PartyDistributorRepo partyDistributorRepo;
     private RetailOutletSalesmanVendorRepo retailOutletSalesmanVendorRepo;
     private PartyRetailOutletRepo partyRetailOutletRepo;
 
@@ -58,8 +58,8 @@ public class DistributorServiceImpl implements DistributorService {
         //Party party = new Party();
         //party.setPartyId(partyId);// KHONG WORK vi partyId khi insert vao DB se duoc sinh tu dong, no se khac voi partyId sinh ra boi SPRING
         Party party = new Party(null, partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
-                statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
-                false);
+            statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
+            false);
         party.setName(input.getDistributorName());
 
         party.setType(partyType);
@@ -78,7 +78,7 @@ public class DistributorServiceImpl implements DistributorService {
         distributor.setPostalAddress(new ArrayList<>());
 
         log.info("save, prepare save distributor partyId = " + distributor.getPartyId());
-        distributor = distributorRepo.save(distributor);
+        distributor = partyDistributorRepo.save(distributor);
 //        customerRepo.save(customer);
 
 
@@ -119,7 +119,7 @@ public class DistributorServiceImpl implements DistributorService {
     @Override
     public List<PartyDistributor> findDistributors() {
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");
-        List<PartyDistributor> distributors = distributorRepo.findByPartyType(partyType);
+        List<PartyDistributor> distributors = partyDistributorRepo.findByPartyType(partyType);
         log.info("findDistributors, got distributors.sz = " + distributors.size());
 
         return distributors;
@@ -127,34 +127,34 @@ public class DistributorServiceImpl implements DistributorService {
 
     @Override
     public PartyDistributor findByPartyId(UUID partyId) {
-        return distributorRepo.findByPartyId(partyId);
+        return partyDistributorRepo.findByPartyId(partyId);
     }
 
     @Override
     public List<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds) {
-        return distributorRepo.findAllByPartyIdIn(partyIds);
+        return partyDistributorRepo.findAllByPartyIdIn(partyIds);
     }
 
     @Override
     public Page<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds, Pageable page) {
-        return distributorRepo.findAllByPartyIdIn(partyIds, page);
+        return partyDistributorRepo.findAllByPartyIdIn(partyIds, page);
     }
 
     @Override
     public DetailDistributorModel getDistributorDetail(UUID partyDistributorId) {
-        PartyDistributor partyDistributor = distributorRepo.findByPartyId(partyDistributorId);
+        PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);
         List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyDistributorAndThruDate(
-                partyDistributor,
-                null);
+            partyDistributor,
+            null);
 
         DetailDistributorModel detailDistributorModel = new DetailDistributorModel();
         detailDistributorModel.setPartyDistributorId(partyDistributor.getPartyId());
         detailDistributorModel.setDistributorCode(partyDistributor.getDistributorCode());
         detailDistributorModel.setDistributorName(partyDistributor.getDistributorName());
         List<RetailOutletSalesmanDistributorModel> retailOutletSalesmanDistributorModels =
-                retailOutletSalesmanVendors.stream()
-                        .map(o -> new RetailOutletSalesmanDistributorModel(o))
-                        .collect(Collectors.toList());
+            retailOutletSalesmanVendors.stream()
+                .map(o -> new RetailOutletSalesmanDistributorModel(o))
+                .collect(Collectors.toList());
 
         detailDistributorModel.setRetailOutletSalesmanDistributorModels(retailOutletSalesmanDistributorModels);
 
@@ -169,8 +169,8 @@ public class DistributorServiceImpl implements DistributorService {
 
         PartyRetailOutlet partyRetailOutlet = partyRetailOutletRepo.findByPartyId(partyRetailOutletId);
         List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyRetailOutletAndThruDate(
-                partyRetailOutlet,
-                null);
+            partyRetailOutlet,
+            null);
         List<UUID> distributors = new ArrayList<>();
         List<PartyDistributor> distributorList;
 
@@ -179,9 +179,9 @@ public class DistributorServiceImpl implements DistributorService {
         }
 
         if (0 == distributors.size()) {
-            distributorList = distributorRepo.findAll();
+            distributorList = partyDistributorRepo.findAll();
         } else {
-            distributorList = distributorRepo.findAllByPartyIdNotIn(distributors);
+            distributorList = partyDistributorRepo.findAllByPartyIdNotIn(distributors);
         }
 
         return distributorList;

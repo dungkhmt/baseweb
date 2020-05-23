@@ -1,9 +1,9 @@
 package com.hust.baseweb.applications.tms.controller;
 
-import com.hust.baseweb.applications.customer.repo.CustomerRepo;
 import com.hust.baseweb.applications.geo.service.DistanceTravelTimePostalAddressService;
 import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
 import com.hust.baseweb.applications.order.repo.OrderRoleRepo;
+import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.tms.document.SolverConfigParam;
 import com.hust.baseweb.applications.tms.model.DeliveryTripModel;
 import com.hust.baseweb.applications.tms.model.TransportReportModel;
@@ -37,7 +37,7 @@ import java.util.*;
 public class TMSAPIController {
 //    public static final String module = TMSAPIController.class.getName();
 
-    private CustomerRepo customerRepo;
+    private PartyCustomerRepo partyCustomerRepo;
     private OrderHeaderRepo orderHeaderRepo;
     private OrderRoleRepo orderRoleRepo;
     private UserLoginRepo userLoginRepo;
@@ -58,7 +58,7 @@ public class TMSAPIController {
     public ResponseEntity<?> statisticVehicleDistance(Principal principal,
                                                       @RequestBody VehicleModel.InputDistanceStatistic input) {
         List<VehicleModel.Distance> distances = statisticDeliveryTripService.collectVehicleDistance(input.getFromDate(),
-                input.getThruDate());
+            input.getThruDate());
         return ResponseEntity.ok().body(distances);
     }
 
@@ -66,7 +66,7 @@ public class TMSAPIController {
     public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal,
                                                              @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
         GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(
-                input.getDriverUserLoginId());
+            input.getDriverUserLoginId());
 
         return ResponseEntity.ok().body(deliveryTrip);
     }
@@ -87,7 +87,7 @@ public class TMSAPIController {
 //        }
 
         deliveryTripDetailService.completeDeliveryTripDetail(Arrays.stream(input.getItems()).map(
-                CompleteDeliveryShipmentItemInputModel::getDeliveryTripDetailId).toArray(UUID[]::new));
+            CompleteDeliveryShipmentItemInputModel::getDeliveryTripDetailId).toArray(UUID[]::new));
 
         return ResponseEntity.ok().body("OK");
     }
@@ -145,9 +145,9 @@ public class TMSAPIController {
     public ResponseEntity<?> calcDistanceTravelTime() {
         log.info("::calcDistanceTravelTime()");
         return ResponseEntity.ok(distanceTravelTimePostalAddressService.computeMissingDistance("HAVERSINE",
-                -1,
-                -1,
-                -1));
+            -1,
+            -1,
+            -1));
     }
 
     @PostMapping("/solve")
@@ -170,10 +170,10 @@ public class TMSAPIController {
     @GetMapping("/get-solver-config-param")
     public ResponseEntity<SolverConfigParam.InputModel> getSolverConfigParam() {
         return ResponseEntity.ok(Optional.ofNullable(solverConfigParamRepo.findFirstByThruDateNull())
-                .map(SolverConfigParam::toInputModel)
-                // default value
-                .orElse(new SolverConfigParam.InputModel(80_000, 3000, 15,
-                        15 * 60, 15 * 60, 30.0 * 60, 70.0 / 1000 * 60, 15.0 / 1000 * 60)));
+            .map(SolverConfigParam::toInputModel)
+            // default value
+            .orElse(new SolverConfigParam.InputModel(80_000, 3000, 15,
+                15 * 60, 15 * 60, 30.0 * 60, 70.0 / 1000 * 60, 15.0 / 1000 * 60)));
     }
 
     @PostMapping("/set-solver-config-param")

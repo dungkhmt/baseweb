@@ -41,8 +41,11 @@ public class PostalAddress {
     private Double lng;
 
 
-
-    public PostalAddress(UUID contactMechId, String locationCode, String address, GeoPoint geoPoint, Double maxLoadWeight) {
+    public PostalAddress(UUID contactMechId,
+                         String locationCode,
+                         String address,
+                         GeoPoint geoPoint,
+                         Double maxLoadWeight) {
         this.contactMechId = contactMechId;
         this.locationCode = locationCode;
         this.address = address;

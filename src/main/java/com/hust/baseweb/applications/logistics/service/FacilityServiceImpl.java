@@ -47,10 +47,10 @@ public class FacilityServiceImpl implements FacilityService {
             GeoPoint geoPoint = new GeoPoint(null, location.lat, location.lng);
             geoPoint = geoPointRepo.save(geoPoint);
             postalAddress = new PostalAddress(null,
-                    UUID.randomUUID().toString(),
-                    facilityModel.getAddress(),
-                    geoPoint,
-                    Double.MAX_VALUE);
+                UUID.randomUUID().toString(),
+                facilityModel.getAddress(),
+                geoPoint,
+                Double.MAX_VALUE);
             postalAddress = postalAddressRepo.save(postalAddress);
         } else {
             throw new RuntimeException("Address lat lng not found");

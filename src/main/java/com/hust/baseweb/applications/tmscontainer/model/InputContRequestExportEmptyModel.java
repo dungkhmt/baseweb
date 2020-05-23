@@ -1,7 +1,8 @@
 package com.hust.baseweb.applications.tmscontainer.model;
 
-import java.util.Date;
 import lombok.*;
+
+import java.util.Date;
 
 
 @AllArgsConstructor
@@ -9,7 +10,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class InputContRequestExportEmptyModel{
+public class InputContRequestExportEmptyModel {
     String customerId;
     String facilityId;
     String containerTypeId;

@@ -29,10 +29,12 @@ public class CreateOrderAgent extends Thread {
     private String token;
     private String username;
     private String password;
-    private int idleTime = 120000;// 2 minute of ilde
+    //    private int idleTime = 120000;// 2 minute of ilde
+    private int idleTime = 10;
 
-    public CreateOrderAgent(String username, String password){
-        this.username = username; this.password = password;
+    public CreateOrderAgent(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     //public static final MediaType JSON = MediaType
@@ -57,28 +59,28 @@ public class CreateOrderAgent extends Thread {
         }
     }
     */
-    
+
     public CreateOrderAgent(int id) {
         this.agentId = id;
     }
 
     public String getFromDate() {
-		return fromDate;
-	}
+        return fromDate;
+    }
 
-	public void setFromDate(String fromDate) {
-		this.fromDate = fromDate;
-	}
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public String getToDate() {
-		return toDate;
-	}
+    public String getToDate() {
+        return toDate;
+    }
 
-	public void setToDate(String toDate) {
-		this.toDate = toDate;
-	}
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
         CreateOrderAgent a = new CreateOrderAgent(0);
         a.start();
@@ -89,7 +91,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     public void start() {
-        System.out.println(module + ":: start running...");
+//        System.out.println(module + ":: start running...");
         if (thread == null) {
             thread = new Thread(this, module);
             thread.start();
@@ -100,60 +102,60 @@ public class CreateOrderAgent extends Thread {
         return this.maxTime;
     }
 
-    public void createOrders(int nbIters, String fromDateStr, String toDateStr){
-    	maxTime = 0;
-    	List<String> dates = new ArrayList<String>();
-    	String curDate = fromDateStr;
-    	int cnt = 0;
-    	while(!curDate.equals(toDateStr)){
-    		dates.add(curDate);
-    		String s = curDate + " 00:00:00";
-    		s = DateTimeUtils.next(s, 1);
-    		String[] tmp = s.split(" ");
-    		curDate = tmp[0].trim();
-    		
-    		if(cnt > 1000){
-    			System.out.println("EXCEPTION too many dates!!!!");
-    			assert(false);
-    		}
-    		cnt++;
-    	}
-    	Random R = new Random();
-    	
+    public void createOrders(int nbIters, String fromDateStr, String toDateStr) {
+        maxTime = 0;
+        List<String> dates = new ArrayList<String>();
+        String curDate = fromDateStr;
+        int cnt = 0;
+        while (!curDate.equals(toDateStr)) {
+            dates.add(curDate);
+            String s = curDate + " 00:00:00";
+            s = DateTimeUtils.next(s, 1);
+            String[] tmp = s.split(" ");
+            curDate = tmp[0].trim();
+
+            if (cnt > 1000) {
+                System.out.println("EXCEPTION too many dates!!!!");
+                assert (false);
+            }
+            cnt++;
+        }
+        Random R = new Random();
+
         for (int i = 1; i <= nbIters; i++) {
             Date timePoint = new Date();
             Random random = new Random();
             double t0 = System.currentTimeMillis();
-            
+
             curDate = dates.get(R.nextInt(dates.size()));// pickup a random date
             // genrate random hh:mm:ss
             String hh = DateTimeUtils.std2Digit(R.nextInt(24));
             String mm = DateTimeUtils.std2Digit(R.nextInt(60));
             String ss = DateTimeUtils.std2Digit(R.nextInt(60));
-            
+
             curDate = curDate + " " + hh + ":" + mm + ":" + ss;
-            
+
             //Date orderDate = new Date();// take current date-time
             Date orderDate = null;
-            try{
+            try {
 //            	System.out.println("Consider curDate = " + curDate);
-            	orderDate = Constant.DATE_FORMAT.parse(curDate);
+                orderDate = Constant.DATE_FORMAT.parse(curDate);
 //            	System.out.println("GEN orderDate " + orderDate);
-            	
 
-            double time = createOrder(orderDate);
-            
-            double t = System.currentTimeMillis() - t0;
-            if (maxTime < time) {
-                maxTime = time;
-            }
 
-            Thread.sleep(idleTime);
+                double time = createOrder(orderDate);
 
-            System.out.println("finished " + i + "/" + nbIters + ", time = " + t + ", maxTime = " + maxTime);
+                double t = System.currentTimeMillis() - t0;
+                if (maxTime < time) {
+                    maxTime = time;
+                }
 
-            }catch(Exception e){
-                System.out.println("NOT CORRECT date-time " + curDate);
+                Thread.sleep(idleTime);
+
+                System.out.println("finished " + i + "/" + nbIters + ", time = " + time + ", maxTime = " + maxTime);
+
+            } catch (Exception e) {
+//                System.out.println("NOT CORRECT date-time " + curDate);
 //            	e.printStackTrace();break;
                 //return;
             }
@@ -162,18 +164,22 @@ public class CreateOrderAgent extends Thread {
         System.out.println(module + "[" + agentId + "] finished, maxTime = " + maxTime);
 
     }
+
     public void run() {
-        System.out.println(module + "::run....");
+        Simulator.threadRunningCounter.incrementAndGet();
+//        System.out.println(module + "::run....");
 
         token = Login.login(username, password);
 
         createOrders(nbIters, fromDate, toDate);
-        
-        
+
+        Simulator.threadRunningCounter.decrementAndGet();
     }
-    public String name(){
-    	return module + "[" + agentId + "]";
+
+    public String name() {
+        return module + "[" + agentId + "]";
     }
+
     public List<Product> getProducts() {
 //        System.out.println("createorderagent getProducts");
         try {
@@ -206,7 +212,7 @@ public class CreateOrderAgent extends Thread {
     public List<PartyCustomerModel> getCustomers() {
         try {
             String json = "{\"statusId\":null}";
-            
+
             //String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", json, token);
             String rs = executor.execGetUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", null, token);
 //            System.out.println(name() + "::getCustomers, rs = " + rs);
@@ -215,10 +221,10 @@ public class CreateOrderAgent extends Thread {
             //return customers.getCustomers();
             PartyCustomerModel[] arr = gson.fromJson(rs, PartyCustomerModel[].class);
             List<PartyCustomerModel> lst = new ArrayList<PartyCustomerModel>();
-            if(arr != null)
-            	for(int i = 0; i < arr.length; i++)
-            		lst.add(arr[i]);
-            
+            if (arr != null) {
+                lst.addAll(Arrays.asList(arr));
+            }
+
             return lst;
         } catch (Exception e) {
             e.printStackTrace();
@@ -229,11 +235,11 @@ public class CreateOrderAgent extends Thread {
     public double createOrder(Date orderDate) {
         try {
             ProductManager productManager = new ProductManager(token);
-            CustomerManager customerManager  = new CustomerManager(token);
+            CustomerManager customerManager = new CustomerManager(token);
             FacilityManager facilityManager = new FacilityManager(token);
 
             Gson gson = new Gson();
-            String[] salesmanIds = {"dungpq", "datnt", "admin", "nguyenvanseu"};
+            String[] salesmanIds = {"admin", "nguyenvanseu"};
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             List<Product> products = productManager.getProducts();//getProducts();
@@ -242,11 +248,13 @@ public class CreateOrderAgent extends Thread {
             List<PartyDistributor> distributors = customerManager.getDistributors();
             List<PartyRetailOutlet> retailOutlets = customerManager.getRetailOutlets();
 
-
+            if (facilities.isEmpty() || customers.isEmpty() || distributors.isEmpty() || retailOutlets.isEmpty()) {
+                return 0;
+            }
 
 //            System.out.println(name() + "::createOrder, products.sz = " + products.size() + ", facilities.sz = "
 //            + facilities.size() + ", customers.sz = " + customers.size());
-            
+
             //Product sel_p = products.get(rand.nextInt(products.size()));
             Facility selectedFacility = facilities.get(rand.nextInt(facilities.size()));
             //PartyCustomerModel selectedCustomer = customers.get(rand.nextInt(customers.size()));
@@ -257,10 +265,10 @@ public class CreateOrderAgent extends Thread {
             input.setFacilityId(selectedFacility.getFacilityId());
             input.setSalesChannelId(null);
             input.setSalesmanId(salesmanIds[rand.nextInt(salesmanIds.length)]);
-            
+
             //input.setOrderDate(formatter.format(new Date()));
             input.setOrderDate(formatter.format(orderDate));
-            
+
             //input.setPartyCustomerId(selectedCustomer.getPartyId());
             //input.setToCustomerId(UUID.fromString(selectedCustomer.getPartyCustomerId()));
             input.setToCustomerId(selectedRetailOutlet.getPartyId());
@@ -277,12 +285,12 @@ public class CreateOrderAgent extends Thread {
             }
 
             input.setOrderItems(orderItems);
+            String json = gson.toJson(input);
 
             double t0 = System.currentTimeMillis();
-            String json = gson.toJson(input);
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-order-distributor-to-retail-outlet",
-                    json,
-                    token);
+                json,
+                token);
             //System.out.println(module + "::createOrder, rs = " + rs);
             return System.currentTimeMillis() - t0;
 

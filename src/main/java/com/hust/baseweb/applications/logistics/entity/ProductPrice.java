@@ -50,11 +50,11 @@ public class ProductPrice {
 
     public Model toModel() {
         return new Model(
-                product.getProductId(),
-                price,
-                Optional.ofNullable(currencyUom).map(Uom::getUomId).orElse(null),
-                Optional.ofNullable(fromDate).map(Constant.DATE_FORMAT::format).orElse(null),
-                Optional.ofNullable(thruDate).map(Constant.DATE_FORMAT::format).orElse(null)
+            product.getProductId(),
+            price,
+            Optional.ofNullable(currencyUom).map(Uom::getUomId).orElse(null),
+            Optional.ofNullable(fromDate).map(Constant.DATE_FORMAT::format).orElse(null),
+            Optional.ofNullable(thruDate).map(Constant.DATE_FORMAT::format).orElse(null)
         );
     }
 

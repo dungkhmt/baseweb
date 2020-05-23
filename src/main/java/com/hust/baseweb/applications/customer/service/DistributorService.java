@@ -15,10 +15,14 @@ public interface DistributorService {
     PartyDistributor save(CreateDistributorInputModel input);
 
     List<PartyDistributor> findDistributors();
+
     PartyDistributor findByPartyId(UUID partyId);
+
     List<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds);
+
     Page<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds, Pageable page);
 
     DetailDistributorModel getDistributorDetail(UUID partyDistributorId);
+
     List<PartyDistributor> getDistributorCandidates(UUID partyRetailOutletId);
 }

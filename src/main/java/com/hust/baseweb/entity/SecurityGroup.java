@@ -18,10 +18,10 @@ public class SecurityGroup {
     private String description;
 
     @JoinTable(name = "SecurityGroupPermission",
-            joinColumns = @JoinColumn(name = "group_id",
-                    referencedColumnName = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id",
-                    referencedColumnName = "permission_id"))
+        joinColumns = @JoinColumn(name = "group_id",
+            referencedColumnName = "group_id"),
+        inverseJoinColumns = @JoinColumn(name = "permission_id",
+            referencedColumnName = "permission_id"))
     @OneToMany(fetch = FetchType.LAZY)
     private List<SecurityPermission> permissions;
 

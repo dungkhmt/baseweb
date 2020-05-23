@@ -4,5 +4,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface DeliveryPlanMaintenanceService {
-    public long deleteAllDeliveryPlan();
+    long deleteAllDeliveryPlan();
 }

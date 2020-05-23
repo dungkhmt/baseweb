@@ -4,7 +4,6 @@ import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.salesroutes.entity.*;
 import com.hust.baseweb.applications.salesroutes.model.salesmancheckinout.SalesmanCheckInOutInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.CreateSalesRouteConfigInputModel;
-import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.GetListSalesRouteConfigOutputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.GetSalesRouteConfigInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.CreateSalesRouteConfigRetailOutletInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GenerateSalesRouteDetailInputModel;
@@ -44,21 +43,31 @@ public class SalesRouteAPIController {
     private SalesmanCheckinHistoryService salesmanCheckinService;
 
     @PostMapping("/salesman-checkin-customer")
-    public ResponseEntity<?> salesmanCheckInCustomer(Principal principal, @RequestBody SalesmanCheckInOutInputModel input) {
+    public ResponseEntity<?> salesmanCheckInCustomer(Principal principal,
+                                                     @RequestBody SalesmanCheckInOutInputModel input) {
         UserLogin userLogin = userService.findById(principal.getName());
-        SalesmanCheckinHistory sch = salesmanCheckinService.save(userLogin, input.getPartyId(), "Y", input.getLatitude() + "," + input.getLongitude());
+        SalesmanCheckinHistory sch = salesmanCheckinService.save(userLogin,
+            input.getPartyId(),
+            "Y",
+            input.getLatitude() + "," + input.getLongitude());
         return ResponseEntity.ok().body(sch);
     }
 
     @PostMapping("/salesman-checkout-customer")
-    public ResponseEntity<?> salesmanCheckOutCustomer(Principal principal, @RequestBody SalesmanCheckInOutInputModel input) {
+    public ResponseEntity<?> salesmanCheckOutCustomer(Principal principal,
+                                                      @RequestBody SalesmanCheckInOutInputModel input) {
         UserLogin userLogin = userService.findById(principal.getName());
-        SalesmanCheckinHistory sch = salesmanCheckinService.save(userLogin, input.getPartyId(), "N", input.getLatitude() + "," + input.getLongitude());
+        SalesmanCheckinHistory sch = salesmanCheckinService.save(userLogin,
+            input.getPartyId(),
+            "N",
+            input.getLatitude() + "," + input.getLongitude());
         return ResponseEntity.ok().body(sch);
     }
 
     @GetMapping("/salesman-checkin-history")
-    public ResponseEntity<?> getSalesmanCheckInHistory(Principal principal, Pageable page, @RequestParam(required = false) String param) {
+    public ResponseEntity<?> getSalesmanCheckInHistory(Principal principal,
+                                                       Pageable page,
+                                                       @RequestParam(required = false) String param) {
         UserLogin userLogin = userService.findById(principal.getName());
 
         log.info("getSalesmanCheckInHistory, user = " + userLogin.getUserLoginId());
@@ -77,77 +86,98 @@ public class SalesRouteAPIController {
 
         return ResponseEntity.ok().body(salesRouteConfig);
     }
+
     @PostMapping("/get-list-sales-route-config")
-    public ResponseEntity<?> getListSalesRouteConfig(Principal prinicpal, @RequestBody GetSalesRouteConfigInputModel input){
+    public ResponseEntity<?> getListSalesRouteConfig(Principal prinicpal,
+                                                     @RequestBody GetSalesRouteConfigInputModel input) {
         List<SalesRouteConfig> salesRouteConfigs = salesRouteConfigService.findAll();
         return ResponseEntity.ok().body(salesRouteConfigs);
     }
 
     //@PostMapping("/create-sales-route-config-customer")
     @PostMapping("/create-sales-route-config-retail-outlet")
-    public ResponseEntity<?> createSalesRouteConfigRetailOutlet(Principal principal, @RequestBody CreateSalesRouteConfigRetailOutletInputModel input) {
-        log.info("createSalesRouteConfigRetailOutlet, salesRouteConfigId = " + input.getSalesRouteConfigId() );
+    public ResponseEntity<?> createSalesRouteConfigRetailOutlet(Principal principal,
+                                                                @RequestBody CreateSalesRouteConfigRetailOutletInputModel input) {
+        log.info("createSalesRouteConfigRetailOutlet, salesRouteConfigId = " + input.getSalesRouteConfigId());
 
         SalesRouteConfigRetailOutlet salesRouteConfigRetailOutlet = salesRouteConfigRetailOutletService.save(
-                input.getRetailOutletSalesmanVendorId(),
-                input.getVisitFrequencyId(),
-                input.getSalesRouteConfigId(),
-                input.getSalesRoutePlanningPeriodId(),
-                input.getStartExecuteDate());
+            input.getRetailOutletSalesmanVendorId(),
+            input.getVisitFrequencyId(),
+            input.getSalesRouteConfigId(),
+            input.getSalesRoutePlanningPeriodId(),
+            input.getStartExecuteDate());
 
         return ResponseEntity.ok().body(salesRouteConfigRetailOutlet);
     }
 
     @PostMapping("/create-sales-route-planning-period")
-    public ResponseEntity<?> createSalesRoutePlanningPeriod(Principal principal, @RequestBody CreateSalesRoutePlanningPeriodInputModel input) {
-        log.info("createSalesRoutePlanningPeriod, fromDate = " + input.getFromDate() + ", toDate = " + input.getToDate() + ", description = " + input.getDescription());
-        SalesRoutePlanningPeriod salesRoutePlanningPeriod = salesRoutePlanningPeriodService.save(input.getFromDate(), input.getToDate(), input.getDescription());
+    public ResponseEntity<?> createSalesRoutePlanningPeriod(Principal principal,
+                                                            @RequestBody CreateSalesRoutePlanningPeriodInputModel input) {
+        log.info("createSalesRoutePlanningPeriod, fromDate = " +
+            input.getFromDate() +
+            ", toDate = " +
+            input.getToDate() +
+            ", description = " +
+            input.getDescription());
+        SalesRoutePlanningPeriod salesRoutePlanningPeriod = salesRoutePlanningPeriodService.save(input.getFromDate(),
+            input.getToDate(),
+            input.getDescription());
 
         return ResponseEntity.ok().body(salesRoutePlanningPeriod);
     }
 
     @PostMapping("/get-list-sales-route-planning-period")
-    public ResponseEntity<?> getListSalesRoutePlanningPeriod(Principal principal, @RequestBody GetSalesRoutePlanningPeriodInputModel input){
+    public ResponseEntity<?> getListSalesRoutePlanningPeriod(Principal principal,
+                                                             @RequestBody GetSalesRoutePlanningPeriodInputModel input) {
         List<SalesRoutePlanningPeriod> salesRoutePlanningPeriodList = salesRoutePlanningPeriodService.findAll();
         return ResponseEntity.ok().body(salesRoutePlanningPeriodList);
 
     }
 
     @GetMapping("/get-list-sales-route-visit-frequency")
-    public ResponseEntity<?> getListSalesRouteVisitFrequency(Principal principal){
+    public ResponseEntity<?> getListSalesRouteVisitFrequency(Principal principal) {
         List<SalesRouteVisitFrequency> salesRouteVisitFrequencies = salesRouteVisitFrequencyRepo.findAll();
         return ResponseEntity.ok().body(new ListSalesRouteVisitFrequencyOutputModel(salesRouteVisitFrequencies));
     }
 
     @PostMapping("/generate-sales-route-detail")
-    public ResponseEntity<?> generateSalesRouteDetail(Principal principal, @RequestBody GenerateSalesRouteDetailInputModel input) {
+    public ResponseEntity<?> generateSalesRouteDetail(Principal principal,
+                                                      @RequestBody GenerateSalesRouteDetailInputModel input) {
         log.info("generateSalesRouteDetail, salesmanId = " + input.getPartySalesmanId());
-        int cnt = salesRouteDetailService.generateSalesRouteDetailOfSalesman(input.getPartySalesmanId(), input.getSalesRoutePlanningPeriodId());
+        int cnt = salesRouteDetailService.generateSalesRouteDetailOfSalesman(input.getPartySalesmanId(),
+            input.getSalesRoutePlanningPeriodId());
         return ResponseEntity.ok().body(cnt);
     }
 
     //@PostMapping("/get-customers-visited-salesman-date")
     @PostMapping("/get-retail-outlets-visited-salesman-date")
-    public ResponseEntity<?> getCustomersVisitedSalesmanDay(Principal principal, @RequestBody GetCustomersVisitedBySalesmanDayInputModel input) {
-        List<PartyRetailOutlet> customers = salesRouteDetailService.getRetailOutletsVisitedSalesmanDay(input.getPartySalesmanId(), input.getDate());
+    public ResponseEntity<?> getCustomersVisitedSalesmanDay(Principal principal,
+                                                            @RequestBody GetCustomersVisitedBySalesmanDayInputModel input) {
+        List<PartyRetailOutlet> customers = salesRouteDetailService.getRetailOutletsVisitedSalesmanDay(input.getPartySalesmanId(),
+            input.getDate());
         return ResponseEntity.ok().body(customers);
     }
 
     //@PostMapping("/get-customers-visited-date-of-user-login")
     @PostMapping("/get-retail-outlets-visited-date-of-user-login")
-    public ResponseEntity<?> getCustomersVisitedDateOfUserLogin(Principal principal, @RequestBody GetCustomersVisitedDayOfUserLogin input) {
+    public ResponseEntity<?> getCustomersVisitedDateOfUserLogin(Principal principal,
+                                                                @RequestBody GetCustomersVisitedDayOfUserLogin input) {
         UserLogin userLogin = userService.findById(principal.getName());
         UUID partySalesmanId = userLogin.getParty().getPartyId();
-        log.info("getCustomersVisitedDateOfUserLogin, partySalesmanId = " + partySalesmanId + ", date = " + input.getDate());
-        List<PartyRetailOutlet> customers = salesRouteDetailService.getRetailOutletsVisitedSalesmanDay(partySalesmanId, input.getDate());
+        log.info("getCustomersVisitedDateOfUserLogin, partySalesmanId = " +
+            partySalesmanId +
+            ", date = " +
+            input.getDate());
+        List<PartyRetailOutlet> customers = salesRouteDetailService.getRetailOutletsVisitedSalesmanDay(partySalesmanId,
+            input.getDate());
         return ResponseEntity.ok().body(customers);
     }
 
     /**
-     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      * @param principal
-     * @param id salesRoutePlanningPeriodId
+     * @param id        salesRoutePlanningPeriodId
      * @return List of GetSalesRouteConfigRetailOutletsOutputModel objects
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
     @GetMapping("/get-sales-route-config-retail-outlets/{id}")
     public ResponseEntity<?> getSalesroutesConfigRetailOutlets(Principal principal, @PathVariable UUID id) {
@@ -156,22 +186,24 @@ public class SalesRouteAPIController {
 
     /**
      * Detail of a specific plan period
-     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     *
      * @param principal
-     * @param id salesRoutePlanningPeriodId
+     * @param id        salesRoutePlanningPeriodId
      * @return A SalesRoutePlanningPeriod object
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
     @GetMapping("/get-plan-period-detail/{id}")
-    public ResponseEntity<?> getPlanPeriodDetail(Principal principal,@PathVariable UUID id) {
+    public ResponseEntity<?> getPlanPeriodDetail(Principal principal, @PathVariable UUID id) {
         return ResponseEntity.ok().body(salesRoutePlanningPeriodService.findById(id));
     }
 
     /**
      * List all sales route details of a specific plan period
-     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     *
      * @param principal
-     * @param id salesRoutePlanningPeriodId
+     * @param id        salesRoutePlanningPeriodId
      * @return List of GetSalesRouteDetailOfPlanPeriodOutputModel objects
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
     @GetMapping("/get-sales-route-detail-of-plan-period/{id}")
     public ResponseEntity<?> getSalesRouteDetailOfPlanPeriod(Principal principal, @PathVariable UUID id) {

@@ -4,12 +4,12 @@ import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.*;
-import com.hust.baseweb.applications.customer.repo.CustomerRepo;
-import com.hust.baseweb.applications.customer.repo.DistributorRepo;
 import com.hust.baseweb.applications.customer.service.CustomerService;
 import com.hust.baseweb.applications.customer.service.DistributorService;
 import com.hust.baseweb.applications.customer.service.RetailOutletService;
 import com.hust.baseweb.applications.logistics.model.InputModel;
+import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
+import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
 import com.hust.baseweb.entity.PartyRelationship;
 import com.hust.baseweb.entity.RoleType;
 import com.hust.baseweb.entity.UserLogin;
@@ -39,9 +39,9 @@ import java.util.UUID;
 public class CustomerAPIController {
     public static final String module = CustomerAPIController.class.getName();
 
-    private CustomerRepo customerRepo;
+    private PartyCustomerRepo partyCustomerRepo;
     private CustomerService customerService;
-    private DistributorRepo distributorRepo;
+    private PartyDistributorRepo partyDistributorRepo;
     private DistributorService distributorService;
     private UserService userService;
     private RetailOutletService retailOutletService;
@@ -52,11 +52,12 @@ public class CustomerAPIController {
     @GetMapping("/customers")
     public ResponseEntity<?> getCustomers(Pageable page) {
 //        System.out.println(module + "::getCustomers");
-        Page<PartyCustomer> customers = customerRepo.findAll(page);
-        for (PartyCustomer c: customers
+        Page<PartyCustomer> customers = partyCustomerRepo.findAll(page);
+        for (PartyCustomer c : customers
         ) {
-            if(c.getPartyType() != null)
+            if (c.getPartyType() != null) {
                 c.setType(c.getPartyType().getDescription());
+            }
         }
         return ResponseEntity.ok().body(customers);
     }
@@ -64,26 +65,27 @@ public class CustomerAPIController {
     @GetMapping("/distributors")
     public ResponseEntity<?> getDistributors(Pageable page) {
 //        System.out.println(module + "::getDistributors");
-        Page<PartyDistributor> distributors = distributorRepo.findAll(page);
+        Page<PartyDistributor> distributors = partyDistributorRepo.findAll(page);
         return ResponseEntity.ok().body(distributors);
     }
 
-    @GetMapping(path="/distributor/{partyDistributorId}")
-    public ResponseEntity<?> getDetailDistributor(Principal principal, @PathVariable UUID partyDistributorId){
+    @GetMapping(path = "/distributor/{partyDistributorId}")
+    public ResponseEntity<?> getDetailDistributor(Principal principal, @PathVariable UUID partyDistributorId) {
         log.info("getDetailDistributor, partyDistributorId = " + partyDistributorId);
         DetailDistributorModel detailDistributorModel = distributorService.getDistributorDetail(partyDistributorId);
         return ResponseEntity.ok().body(detailDistributorModel);
     }
 
-    @GetMapping(path="/retailoutlet/{partyRetailOutletId}")
-    public ResponseEntity<?> getDetailRetailOutlet(Principal principal, @PathVariable UUID partyRetailOutletId){
+    @GetMapping(path = "/retailoutlet/{partyRetailOutletId}")
+    public ResponseEntity<?> getDetailRetailOutlet(Principal principal, @PathVariable UUID partyRetailOutletId) {
         log.info("getDetailRetailOutlet, partyRetailOutletId = " + partyRetailOutletId);
         DetailRetailOutletModel detailRetailOutletModel = retailOutletService.getRetailOutletDetail(partyRetailOutletId);
         return ResponseEntity.ok().body(detailRetailOutletModel);
     }
 
     @PostMapping("/get-distributors-of-user-login")
-    public ResponseEntity<?> getDistributorsOfUserLogin(Principal principal, @RequestBody GetDistributorsOfUserLoginInputModel input) {
+    public ResponseEntity<?> getDistributorsOfUserLogin(Principal principal,
+                                                        @RequestBody GetDistributorsOfUserLoginInputModel input) {
         UserLogin userLogin = userService.findById(principal.getName());
 //        System.out.println(module + "::getDistributorsOfUserLogin");
         // TODO: to be upgrade and revise
@@ -112,11 +114,12 @@ public class CustomerAPIController {
 
         return ResponseEntity.ok().body(distributor);
     }
+
     @PostMapping("/create-retail-outlet")
     public ResponseEntity<?> createRetailOutlet(Principal principal, @RequestBody CreateRetailOutletInputModel input) {
         UserLogin u = userService.findById(principal.getName());
         log.info("createRetailOutlet, user-login = " + u.getUserLoginId() + ", retail-outlet name = " +
-                input.getRetailOutletName() + ", retail-outlet code = " + input.getRetailOutletCode());
+            input.getRetailOutletName() + ", retail-outlet code = " + input.getRetailOutletCode());
 
         PartyRetailOutlet retailOutlet = retailOutletService.save(input);
 
@@ -132,34 +135,35 @@ public class CustomerAPIController {
     }
 
     @PostMapping("/get-list-customer")
-    public ResponseEntity<?> getListCustomer(Principal principal, @RequestBody InputModel input){
+    public ResponseEntity<?> getListCustomer(Principal principal, @RequestBody InputModel input) {
         log.info("getListCustomer");
         List<PartyCustomer> partyCustomerList = customerService.findAll();
         return ResponseEntity.ok().body(new GetListCustomerOutputModel(partyCustomerList));
     }
+
     @PostMapping("/get-list-retail-outlet")
-    public ResponseEntity<?> getListRetailOutlet(Principal principal, @RequestBody InputModel input){
+    public ResponseEntity<?> getListRetailOutlet(Principal principal, @RequestBody InputModel input) {
         log.info("getListCustomer");
         List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findAll();
         return ResponseEntity.ok().body(new GetListRetailOutletOutputModel(partyRetailOutletList));
     }
 
     @PostMapping("/get-list-distributor")
-    public ResponseEntity<?> getListDistributor(Principal principal, @RequestBody InputModel input){
+    public ResponseEntity<?> getListDistributor(Principal principal, @RequestBody InputModel input) {
         log.info("getListDistributor");
-        List<PartyDistributor> partyDistributorList = distributorRepo.findAll();
+        List<PartyDistributor> partyDistributorList = partyDistributorRepo.findAll();
         return ResponseEntity.ok().body(new GetListDistributorOutPutModel(partyDistributorList));
     }
 
     @GetMapping("/get-retail-outlet-candidates/{Id}")
-    public ResponseEntity<?> getRetailOutletCandidates(Principal principal, @PathVariable("Id") String Id){
+    public ResponseEntity<?> getRetailOutletCandidates(Principal principal, @PathVariable("Id") String Id) {
         log.info("getRetailOutletCandidates");
         List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.getRetailOutletCandidates(UUID.fromString(Id));
         return ResponseEntity.ok().body(partyRetailOutletList);
     }
 
     @GetMapping("/get-distributor-candidates/{Id}")
-    public ResponseEntity<?> getDistributorCandidates(Principal principal, @PathVariable("Id") String Id){
+    public ResponseEntity<?> getDistributorCandidates(Principal principal, @PathVariable("Id") String Id) {
         log.info("getDistributorCandidates");
         List<PartyDistributor> partyRetailOutletList = distributorService.getDistributorCandidates(UUID.fromString(Id));
         return ResponseEntity.ok().body(partyRetailOutletList);

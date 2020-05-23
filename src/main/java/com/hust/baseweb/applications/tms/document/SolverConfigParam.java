@@ -54,14 +54,14 @@ public class SolverConfigParam {
 
     public InputModel toInputModel() {
         return new InputModel(
-                maxTripDistance,
-                maxDistanceConsecutiveLocationTripAllowed,
-                maxLocationsPerTripAllowed,
-                fixLoadTime,
-                fixUnloadTime,
-                loadRate,
-                manualUnloadTime,
-                palletUnloadTime
+            maxTripDistance,
+            maxDistanceConsecutiveLocationTripAllowed,
+            maxLocationsPerTripAllowed,
+            fixLoadTime,
+            fixUnloadTime,
+            loadRate,
+            manualUnloadTime,
+            palletUnloadTime
         );
     }
 

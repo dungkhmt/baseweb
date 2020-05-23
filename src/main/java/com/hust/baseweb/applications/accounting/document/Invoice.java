@@ -47,16 +47,16 @@ public class Invoice {
 
     public Model toModel(String distributorName) {
         return new Model(
-                invoiceId,
-                invoiceType.toString(),
-                statusId.toString(),
-                Constant.DATE_FORMAT.format(invoiceDate),
-                Optional.ofNullable(toPartyCustomerId).map(UUID::toString).orElse(null),
-                distributorName,
-                Optional.ofNullable(fromVendorId).map(UUID::toString).orElse(null),
-                amount,
-                paidAmount,
-                currencyUomId
+            invoiceId,
+            invoiceType.toString(),
+            statusId.toString(),
+            Constant.DATE_FORMAT.format(invoiceDate),
+            Optional.ofNullable(toPartyCustomerId).map(UUID::toString).orElse(null),
+            distributorName,
+            Optional.ofNullable(fromVendorId).map(UUID::toString).orElse(null),
+            amount,
+            paidAmount,
+            currencyUomId
         );
     }
 
@@ -65,19 +65,19 @@ public class Invoice {
         Map<UUID, DistributorUnpaidModel> customerCodeToByDistributorModel = new HashMap<>();
         for (Invoice invoice : invoices) {
             customerCodeToByDistributorModel.computeIfAbsent(invoice.getToPartyCustomerId(),
-                    partyCustomerId -> {
-                        PartyDistributor partyDistributor = partyDistributorMap.get(partyCustomerId);
-                        return new DistributorUnpaidModel(partyDistributor.getPartyId().toString(),
-                                partyDistributor.getDistributorCode(),
-                                partyDistributor.getDistributorName(),
-                                0.0,
-                                null);
-                    }).append(invoice);
+                partyCustomerId -> {
+                    PartyDistributor partyDistributor = partyDistributorMap.get(partyCustomerId);
+                    return new DistributorUnpaidModel(partyDistributor.getPartyId().toString(),
+                        partyDistributor.getDistributorCode(),
+                        partyDistributor.getDistributorName(),
+                        0.0,
+                        null);
+                }).append(invoice);
         }
         return customerCodeToByDistributorModel.values()
-                .stream()
-                .filter(distributorUnpaidModel -> distributorUnpaidModel.getTotalUnpaid() > 0)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(distributorUnpaidModel -> distributorUnpaidModel.getTotalUnpaid() > 0)
+            .collect(Collectors.toList());
     }
 
     @AllArgsConstructor

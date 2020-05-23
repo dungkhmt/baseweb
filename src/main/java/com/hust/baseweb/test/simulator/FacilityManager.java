@@ -9,18 +9,20 @@ import java.util.List;
 public class FacilityManager {
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
-    public FacilityManager(String token){
+
+    public FacilityManager(String token) {
         this.token = token;
     }
-    public List<Facility> getListFacility(){
-        try{
+
+    public List<Facility> getListFacility() {
+        try {
             String json = "{\"statusId\":null}";
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-facility", json, token);
-            System.out.println("::getListFacility, rs = " + rs);
+//            System.out.println("::getListFacility, rs = " + rs);
             Gson gson = new Gson();
-            GetListFacilityOutputModel list = gson.fromJson(rs,GetListFacilityOutputModel.class);
+            GetListFacilityOutputModel list = gson.fromJson(rs, GetListFacilityOutputModel.class);
             return list.getFacilities();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

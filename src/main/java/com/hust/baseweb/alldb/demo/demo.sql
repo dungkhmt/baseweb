@@ -1,38 +1,60 @@
-INSERT INTO party (party_id, party_type_id, external_id, description, status_id, created_date, created_by_user_login, last_modified_date, last_modified_by_user_login, is_unread, last_updated_stamp, created_stamp, party_code)
-VALUES ('7e8b6ed2-265c-11ea-aca9-f77013972e0d', 'PERSON', NULL, NULL, 'PARTY_ENABLED', NOW(), 'admin', NULL, NULL, FALSE,NULL, NOW(), NULL);
-INSERT  INTO person (party_id, first_name, middle_name, last_name, gender, birth_date, last_updated_stamp, created_stamp)
-VALUES ('7e8b6ed2-265c-11ea-aca9-f77013972e0d','Nguyễn','Văn','Sêu','M',NOW(),null,NOW());
-INSERT INTO user_login (user_login_id, current_password, password_hint, is_system, enabled, has_logged_out, require_password_change, disabled_date_time, successive_failed_logins, last_updated_stamp, created_stamp, party_id)
-VALUES ( 'nguyenvanseu', '$2a$04$cqFXgdkB.8u2HwT3QUTVZuePtHdzi.rWFCjdgNbVB7l6vn/yAU7F6', NULL, FALSE, TRUE, FALSE, FALSE, NULL, NULL, NOW(), NOW(), '7e8b6ed2-265c-11ea-aca9-f77013972e0d');
-INSERT INTO user_login_security_group (user_login_id, group_id, last_updated_stamp, created_stamp) VALUES ('nguyenvanseu', 'ROLE_SALE_MANAGER', NOW(), NOW());
+INSERT INTO party (party_id, party_type_id, external_id, description, status_id, created_date, created_by_user_login,
+                   last_modified_date, last_modified_by_user_login, is_unread, last_updated_stamp, created_stamp,
+                   party_code)
+VALUES ('7e8b6ed2-265c-11ea-aca9-f77013972e0d', 'PERSON', NULL, NULL, 'PARTY_ENABLED', NOW(), 'admin', NULL, NULL,
+        FALSE, NULL, NOW(), NULL);
+INSERT INTO person (party_id, first_name, middle_name, last_name, gender, birth_date, last_updated_stamp, created_stamp)
+VALUES ('7e8b6ed2-265c-11ea-aca9-f77013972e0d', 'Nguyễn', 'Văn', 'Sêu', 'M', NOW(), null, NOW());
+INSERT INTO user_login (user_login_id, current_password, password_hint, is_system, enabled, has_logged_out,
+                        require_password_change, disabled_date_time, successive_failed_logins, last_updated_stamp,
+                        created_stamp, party_id)
+VALUES ('nguyenvanseu', '$2a$04$cqFXgdkB.8u2HwT3QUTVZuePtHdzi.rWFCjdgNbVB7l6vn/yAU7F6', NULL, FALSE, TRUE, FALSE, FALSE,
+        NULL, NULL, NOW(), NOW(), '7e8b6ed2-265c-11ea-aca9-f77013972e0d');
+INSERT INTO user_login_security_group (user_login_id, group_id, last_updated_stamp, created_stamp)
+VALUES ('nguyenvanseu', 'ROLE_SALE_MANAGER', NOW(), NOW());
 
-INSERT INTO party (party_id, party_type_id, external_id, description, status_id, created_date, created_by_user_login, last_modified_date, last_modified_by_user_login, is_unread, last_updated_stamp, created_stamp, party_code)
-VALUES ('9a8e40d2-265c-11ea-acaa-eb83ca2329f6', 'PERSON', NULL, NULL, 'PARTY_ENABLED', NOW(), 'admin', NULL, NULL, FALSE, NULL, NOW(), NULL);
-INSERT  INTO person (party_id, first_name, middle_name, last_name, gender, birth_date, last_updated_stamp, created_stamp)
-VALUES ('9a8e40d2-265c-11ea-acaa-eb83ca2329f6','Trần','Thị','Toán','M',NOW(),null,NOW());
-INSERT INTO user_login (user_login_id, current_password, password_hint, is_system, enabled, has_logged_out, require_password_change, disabled_date_time, successive_failed_logins, last_updated_stamp, created_stamp, party_id)
-VALUES ( 'tranthitoan', '$2a$04$cqFXgdkB.8u2HwT3QUTVZuePtHdzi.rWFCjdgNbVB7l6vn/yAU7F6', NULL, FALSE, TRUE, FALSE, FALSE, NULL, NULL, NOW(), NOW(), '9a8e40d2-265c-11ea-acaa-eb83ca2329f6');
-INSERT INTO user_login_security_group (user_login_id, group_id, last_updated_stamp, created_stamp) VALUES ('tranthitoan', 'ROLE_ACCOUNTANT', NOW(), NOW());
+INSERT INTO party (party_id, party_type_id, external_id, description, status_id, created_date, created_by_user_login,
+                   last_modified_date, last_modified_by_user_login, is_unread, last_updated_stamp, created_stamp,
+                   party_code)
+VALUES ('9a8e40d2-265c-11ea-acaa-eb83ca2329f6', 'PERSON', NULL, NULL, 'PARTY_ENABLED', NOW(), 'admin', NULL, NULL,
+        FALSE, NULL, NOW(), NULL);
+INSERT INTO person (party_id, first_name, middle_name, last_name, gender, birth_date, last_updated_stamp, created_stamp)
+VALUES ('9a8e40d2-265c-11ea-acaa-eb83ca2329f6', 'Trần', 'Thị', 'Toán', 'M', NOW(), null, NOW());
+INSERT INTO user_login (user_login_id, current_password, password_hint, is_system, enabled, has_logged_out,
+                        require_password_change, disabled_date_time, successive_failed_logins, last_updated_stamp,
+                        created_stamp, party_id)
+VALUES ('tranthitoan', '$2a$04$cqFXgdkB.8u2HwT3QUTVZuePtHdzi.rWFCjdgNbVB7l6vn/yAU7F6', NULL, FALSE, TRUE, FALSE, FALSE,
+        NULL, NULL, NOW(), NOW(), '9a8e40d2-265c-11ea-acaa-eb83ca2329f6');
+INSERT INTO user_login_security_group (user_login_id, group_id, last_updated_stamp, created_stamp)
+VALUES ('tranthitoan', 'ROLE_ACCOUNTANT', NOW(), NOW());
 
 
-insert into security_group(group_id, description) values('ROLE_TMS_MANAGER','Management of Transportation System');
-insert into security_permission(permission_id,description) values('DELIVERY_PLAN_CREATE','Creation of delivery plan and trips');
-insert into security_group_permission(group_id, permission_id) values('ROLE_TMS_MANAGER','DELIVERY_PLAN_CREATE');
-insert into security_group_permission(group_id, permission_id) values('ROLE_FULL_ADMIN','DELIVERY_PLAN_CREATE');
-insert into application(application_id, application_type_id, module_id, permission_id, description) values 
-('MENU_TMS','MENU',null,null,'Menu TMS');
-insert into application(application_id, application_type_id, module_id, permission_id, description) values 
-('MENU_TMS_CREATE_DELIVERY_PLAN','MENU','MENU_TMS','DELIVERY_PLAN_CREATE','Menu Create Delivery Plan');
+insert into security_group(group_id, description)
+values ('ROLE_TMS_MANAGER', 'Management of Transportation System');
+insert into security_permission(permission_id, description)
+values ('DELIVERY_PLAN_CREATE', 'Creation of delivery plan and trips');
+insert into security_group_permission(group_id, permission_id)
+values ('ROLE_TMS_MANAGER', 'DELIVERY_PLAN_CREATE');
+insert into security_group_permission(group_id, permission_id)
+values ('ROLE_FULL_ADMIN', 'DELIVERY_PLAN_CREATE');
+insert into application(application_id, application_type_id, module_id, permission_id, description)
+values ('MENU_TMS', 'MENU', null, null, 'Menu TMS');
+insert into application(application_id, application_type_id, module_id, permission_id, description)
+values ('MENU_TMS_CREATE_DELIVERY_PLAN', 'MENU', 'MENU_TMS', 'DELIVERY_PLAN_CREATE', 'Menu Create Delivery Plan');
 
 
-insert into security_group(group_id, description) values('ROLE_SALES_ROUTE_MANAGER','Management of Sales Route');
-insert into security_permission(permission_id,description) values('SALES_ROUTE_PLAN_CREATE','Creation of Sales Route');
-insert into security_group_permission(group_id, permission_id) values('ROLE_SALES_ROUTE_MANAGER','SALES_ROUTE_PLAN_CREATE');
-insert into security_group_permission(group_id, permission_id) values('ROLE_FULL_ADMIN','SALES_ROUTE_PLAN_CREATE');
-insert into application(application_id, application_type_id, module_id, permission_id, description) values 
-('MENU_SALES_ROUTE','MENU',null,null,'Menu Sales Route');
-insert into application(application_id, application_type_id, module_id, permission_id, description) values 
-('MENU_SALES_ROUTE_PLAN_CREATE','MENU','MENU_SALES_ROUTE','SALES_ROUTE_PLAN_CREATE','Menu Sales Route');
+insert into security_group(group_id, description)
+values ('ROLE_SALES_ROUTE_MANAGER', 'Management of Sales Route');
+insert into security_permission(permission_id, description)
+values ('SALES_ROUTE_PLAN_CREATE', 'Creation of Sales Route');
+insert into security_group_permission(group_id, permission_id)
+values ('ROLE_SALES_ROUTE_MANAGER', 'SALES_ROUTE_PLAN_CREATE');
+insert into security_group_permission(group_id, permission_id)
+values ('ROLE_FULL_ADMIN', 'SALES_ROUTE_PLAN_CREATE');
+insert into application(application_id, application_type_id, module_id, permission_id, description)
+values ('MENU_SALES_ROUTE', 'MENU', null, null, 'Menu Sales Route');
+insert into application(application_id, application_type_id, module_id, permission_id, description)
+values ('MENU_SALES_ROUTE_PLAN_CREATE', 'MENU', 'MENU_SALES_ROUTE', 'SALES_ROUTE_PLAN_CREATE', 'Menu Sales Route');
 
 
 INSERT INTO public.party
@@ -124,7 +146,7 @@ VALUES ('b6a4f66c-4d71-11ea-9686-54bf64436441',
         'Tầng hầm B1, N05, khu đô thị Trung Hòa Nhân Chính, phường Hoàng Đạo Thúy, quận Cầu Giấy, thành phố Hà Nội',
         NULL, '9d0e8cd6-4d71-11ea-9685-54bf64436441', NULL, NULL, NULL, NULL, '2020-02-12 15:28:57.913');
 
-        
+
 insert into facility_type(facility_type_id, description)
 values ('WAREHOUSE', 'Warehouse'),
        ('RETAIL_STORE', 'Retail Store');
@@ -132,8 +154,8 @@ values ('WAREHOUSE', 'Warehouse'),
 insert into facility(facility_id, facility_type_id, facility_name)
 values ('FAHN00001', 'WAREHOUSE', 'Kho Hà Nội'),
        ('FAHCM00002', 'WAREHOUSE', 'Kho HCM')
-;        
-        
+;
+
 insert into product(product_id, product_type_id, product_name, quantity_uom_id)
 values ('20201260001', 'FINISHED_GOOD', 'Nước mắm chinsu', 'WT_jar'),
        ('20201260002', 'FINISHED_GOOD', 'Tương ớt chinsu', 'WT_jar'),
@@ -144,7 +166,7 @@ values ('20201260001', 'FINISHED_GOOD', 'Nước mắm chinsu', 'WT_jar'),
        ('20201260007', 'FINISHED_GOOD', 'Dầu ăn tường an', 'WT_jar'),
        ('20201260008', 'FINISHED_GOOD', 'Dầu ăn hướng dương', 'WT_jar')
 ;
-        
+
 
 insert into party(party_id, party_type_id)
 values ('8161d37e-4026-11ea-9be3-54bf64436441', 'PARTY_DISTRIBUTOR'),

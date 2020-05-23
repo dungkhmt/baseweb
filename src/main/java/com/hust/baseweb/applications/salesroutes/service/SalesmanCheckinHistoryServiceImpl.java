@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.salesroutes.service;
 
-import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.order.service.PartyCustomerService;
 import com.hust.baseweb.applications.salesroutes.entity.SalesmanCheckinHistory;
@@ -20,7 +19,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesmanCheckinHistoryServiceImpl implements
-        SalesmanCheckinHistoryService {
+    SalesmanCheckinHistoryService {
 
     private SalesmanCheckinHistoryRepo salesmanCheckinHistoryRepo;
     private PartyCustomerService partyCustomerService;

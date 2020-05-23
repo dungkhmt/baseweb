@@ -7,10 +7,10 @@ import java.util.List;
 
 @Service
 public interface UomService {
-	public Uom save(String uomId, String uomTypeId, String abbreviation, String description);
+    Uom save(String uomId, String uomTypeId, String abbreviation, String description);
 
-	public List<Uom> getAllUoms();
+    List<Uom> getAllUoms();
 
-	public Uom getUomByUomId(String uomId);
+    Uom getUomByUomId(String uomId);
 
 }

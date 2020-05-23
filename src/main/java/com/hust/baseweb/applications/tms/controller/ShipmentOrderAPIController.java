@@ -55,7 +55,7 @@ public class ShipmentOrderAPIController {
         log.info("::createOrderShipment");
 
         Shipment shipment = shipmentService.save(userLogin,
-                new ShipmentModel.CreateShipmentInputModel(new ShipmentItemModel.Create[]{input}));
+            new ShipmentModel.CreateShipmentInputModel(new ShipmentItemModel.Create[]{input}));
         return ResponseEntity.ok().body(shipment);
     }
 
@@ -66,12 +66,12 @@ public class ShipmentOrderAPIController {
 
         log.info("::uploadOrderShipment");
         List<ShipmentItemModel.Create> shipmentItemInputModels =
-                Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, ShipmentItemModel.Create.class,
-                        PoijiOptions.PoijiOptionsBuilder.settings().sheetIndex(0).build());
+            Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, ShipmentItemModel.Create.class,
+                PoijiOptions.PoijiOptionsBuilder.settings().sheetIndex(0).build());
 
         Shipment shipment = shipmentService.save(userLogin,
-                new ShipmentModel.CreateShipmentInputModel(shipmentItemInputModels.toArray(
-                        new ShipmentItemModel.Create[0])));
+            new ShipmentModel.CreateShipmentInputModel(shipmentItemInputModels.toArray(
+                new ShipmentItemModel.Create[0])));
         return ResponseEntity.ok().body(shipment);
     }
 
@@ -143,7 +143,7 @@ public class ShipmentOrderAPIController {
         log.info("::getOrderShipmentItemPageNotIn deliveryPlanId=" + deliveryPlanId);
         //return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlan(deliveryPlanId));
         return ResponseEntity.ok()
-                .body(shipmentItemService.findAllByUserLoginNotInDeliveryPlan(userLogin, deliveryPlanId));
+            .body(shipmentItemService.findAllByUserLoginNotInDeliveryPlan(userLogin, deliveryPlanId));
     }
 
 
@@ -152,7 +152,7 @@ public class ShipmentOrderAPIController {
                                                             @RequestBody ShipmentItemModel.DeleteDeliveryPlan deleteVehicleDeliveryPlanModel) {
         log.info("::deleteShipmentItemDeliveryPlan: " + deleteVehicleDeliveryPlanModel.getDeliveryPlanId());
         return ResponseEntity.ok()
-                .body(shipmentItemService.deleteShipmentItemDeliveryPlan(deleteVehicleDeliveryPlanModel));
+            .body(shipmentItemService.deleteShipmentItemDeliveryPlan(deleteVehicleDeliveryPlanModel));
     }
 
     @PostMapping("/create-delivery-plan")
@@ -226,7 +226,7 @@ public class ShipmentOrderAPIController {
                                                             @RequestBody ShipmentItemModel.CreateDeliveryPlan createDeliveryPlan) {
         log.info("::createShipmentItemDeliveryPlan: " + createDeliveryPlan.getDeliveryPlanId());
         return ResponseEntity.ok()
-                .body(shipmentItemService.saveShipmentItemDeliveryPlan(createDeliveryPlan));
+            .body(shipmentItemService.saveShipmentItemDeliveryPlan(createDeliveryPlan));
     }
 
     @PostMapping("/delivery-trip/{deliveryTripId}/capacity-info")
@@ -245,7 +245,7 @@ public class ShipmentOrderAPIController {
         for (String deliveryTripId : deliveryTripIds) {
             DeliveryTripModel deliveryTripModel = deliveryTripService.findById(UUID.fromString(deliveryTripId));
             DeliveryTripModel.Tour tour = deliveryTripService.getDeliveryTripInfo(deliveryTripId,
-                    new ArrayList<>());
+                new ArrayList<>());
             deliveryTripModel.setTotalDistance(tour.getTotalDistance());
             deliveryTripModel.setTotalWeight(tour.getTotalWeight());
             deliveryTripModels.add(deliveryTripModel);
@@ -269,16 +269,16 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> completeDeliveryTripDetail(@PathVariable String deliveryTripDetailId) {
         log.info("completeDeliveryTrip({})", deliveryTripDetailId);
         return ResponseEntity.ok()
-                .body(deliveryTripDetailService.completeDeliveryTripDetail(UUID.fromString(deliveryTripDetailId)));
+            .body(deliveryTripDetailService.completeDeliveryTripDetail(UUID.fromString(deliveryTripDetailId)));
     }
 
     @PostMapping("/complete-delivery-trip-details")
     public ResponseEntity<?> completeDeliveryTripDetail(@RequestBody List<String> deliveryTripDetailIds) {
         log.info("completeDeliveryTrip({})", deliveryTripDetailIds.size());
         return ResponseEntity.ok()
-                .body(deliveryTripDetailService.completeDeliveryTripDetail(deliveryTripDetailIds.stream()
-                        .map(UUID::fromString)
-                        .toArray(UUID[]::new)));
+            .body(deliveryTripDetailService.completeDeliveryTripDetail(deliveryTripDetailIds.stream()
+                .map(UUID::fromString)
+                .toArray(UUID[]::new)));
     }
 
     @GetMapping("/shipment-item-not-scheduled/{deliveryPlanId}")
