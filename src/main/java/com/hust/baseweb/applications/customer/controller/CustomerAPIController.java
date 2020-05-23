@@ -129,7 +129,6 @@ public class CustomerAPIController {
         partyRelationship = partyRelationshipService.save(partyRelationship);
 
         return ResponseEntity.ok().body(retailOutlet);
-
     }
 
     @PostMapping("/get-list-customer")
