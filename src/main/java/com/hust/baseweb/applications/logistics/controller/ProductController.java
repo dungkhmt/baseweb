@@ -3,10 +3,7 @@ package com.hust.baseweb.applications.logistics.controller;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductType;
 import com.hust.baseweb.applications.logistics.entity.Uom;
-import com.hust.baseweb.applications.logistics.model.GetListProductTypeOutputModel;
-import com.hust.baseweb.applications.logistics.model.GetListUomOutputModel;
-import com.hust.baseweb.applications.logistics.model.InputModel;
-import com.hust.baseweb.applications.logistics.model.ModelCreateProductInput;
+import com.hust.baseweb.applications.logistics.model.*;
 import com.hust.baseweb.applications.logistics.model.product.ProductDetailModel;
 import com.hust.baseweb.applications.logistics.repo.ProductPagingRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductTypeRepo;
@@ -14,6 +11,7 @@ import com.hust.baseweb.applications.logistics.service.ProductService;
 import com.hust.baseweb.applications.logistics.service.ProductTypeService;
 import com.hust.baseweb.applications.logistics.service.UomService;
 import com.hust.baseweb.entity.Content;
+import com.hust.baseweb.repo.ContentRepo;
 import com.hust.baseweb.service.ContentService;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
@@ -26,8 +24,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -41,6 +41,9 @@ public class ProductController {
 
     @Autowired
     private ContentService contentService;
+
+    @Autowired
+    private ContentRepo contentRepo;
 
 
     @Autowired
@@ -127,6 +130,70 @@ public class ProductController {
             }
         }
         return ResponseEntity.ok(productPage);
+
+
+    }
+    @GetMapping("/get-product-for-edit/{productId}")
+    public ResponseEntity<?> getProductForEdit(@PathVariable String productId){
+        Product product = productService.findByProductId(productId);
+        Content primaryImg = product.getPrimaryImg();
+        if(primaryImg != null){
+            try {
+                Response response = contentService.getContentData(primaryImg.getContentId().toString());
+                String base64Flag = "data:image/jpeg;base64," +
+                    Base64.getEncoder().encodeToString(response.body().bytes());
+                product.setAvatar(base64Flag);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+
+
+
+
+
+
+        return ResponseEntity.ok(new ProductDetailModel(product));
+
+
+    }
+
+    @GetMapping("/get-list-product-img/{productId}")
+    public ResponseEntity<?> getListProductImg(@PathVariable String productId){
+        log.info("getListProductImg");
+        Product product = productService.findByProductId(productId);
+        UUID primaryImgId = product.getPrimaryImg().getContentId();
+        List<ProductImageInfoModel> productImageInfoModels = new ArrayList<ProductImageInfoModel>();
+
+        for (Content content: product.getContents()){
+            if(content != null){
+
+                try {
+                    Response response = contentService.getContentData(content.getContentId().toString());
+
+                    String base64Flag = "data:image/jpeg;base64," +
+                        Base64.getEncoder().encodeToString(response.body().bytes());
+                    productImageInfoModels.add(new ProductImageInfoModel(base64Flag,content.getContentId().toString()));
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        return ResponseEntity.ok(new ListProductImageModel(productImageInfoModels,primaryImgId.toString()));
+
+    }
+
+    @PostMapping("/set-product-primary-img/{productId}")
+    public  void setProductPrimaryImg(@PathVariable String productId, @RequestBody PrimaryImgIdModel imput){
+        Product product = productService.findByProductId(productId);
+        product.setPrimaryImg(contentRepo.findByContentId(UUID.fromString(imput.getPrimaryImgId())));
+        productService.saveProduct(product);
     }
 
 
