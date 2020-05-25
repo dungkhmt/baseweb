@@ -97,7 +97,7 @@ public class CreateOrderAgent extends Thread {
         createOrderAgent.setNbIters(5);
         createOrderAgent.setFromDate("2020-01-01");
         createOrderAgent.setToDate("2020-05-05");
-        createOrderAgent.start();
+        createOrderAgent.start(NUMBER_THREADS);
 
         log.info("MAX_TIME = " + createOrderAgent.getMaxTimeAtomicInteger().get());
     }
@@ -108,14 +108,14 @@ public class CreateOrderAgent extends Thread {
 
     private static int NUMBER_THREADS = 500;
 
-    public void start() {
+    public void start(int numberThreads) {
 //        System.out.println(module + ":: start running...");
 //        if (thread == null) {
 //            thread = new Thread(this, module);
 //            thread.start();
 //        }
         List<Thread> threads = new ArrayList<>();
-        for (int i = 0; i < NUMBER_THREADS; i++) {
+        for (int i = 0; i < numberThreads; i++) {
             Thread thread = new Thread(this, "THREAD_" + i);
             threads.add(thread);
             thread.start();

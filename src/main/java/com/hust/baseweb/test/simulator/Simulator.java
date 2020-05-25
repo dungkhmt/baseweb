@@ -1,6 +1,7 @@
 package com.hust.baseweb.test.simulator;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.cli.*;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -12,7 +13,7 @@ public class Simulator {
     public final static AtomicLong threadRunningCounter = new AtomicLong(0);
 
     private int nbCreateOrderAgents = 1;
-    private int nbIterCreateOrder = 10;
+    private int nbIterCreateOrder = 5;
 
     static {
         Timer timer = new Timer();
@@ -24,25 +25,56 @@ public class Simulator {
         }, 1000, 1000);
     }
 
-    public Simulator(int nbCreateOrderAgents, int nbIterCreateOrder){
+    public Simulator(int nbCreateOrderAgents, int nbIterCreateOrder) {
         this.nbCreateOrderAgents = nbCreateOrderAgents;
         this.nbIterCreateOrder = nbIterCreateOrder;
     }
 
-    public static void main(String[] arg) throws InterruptedException {
-        int nbCreateOrderAgents = 1;
-        int nbIterCreateOrder = 10;
-        if(arg != null){
-            for(int i = 0; i < arg.length; i++){
-                if(arg[i].equals("--nbCreateOrderAgents")){
-                    nbCreateOrderAgents = Integer.valueOf(arg[i+1]);
-                }else if(arg[i].equals("--nbIterCreateOrder")){
-                    nbIterCreateOrder = Integer.valueOf(arg[i+1]);
-                }
-            }
+    public static void main(String[] arg) throws InterruptedException, ParseException {
+//        int nbCreateOrderAgents = 1;
+//        int nbIterCreateOrder = 10;
+//        if (arg != null) {
+//            for (int i = 0; i < arg.length; i++) {
+//                if (arg[i].equals("--nbCreateOrderAgents")) {
+//                    nbCreateOrderAgents = Integer.parseInt(arg[i + 1]);
+//                } else if (arg[i].equals("--nbIterCreateOrder")) {
+//                    nbIterCreateOrder = Integer.parseInt(arg[i + 1]);
+//                }
+//            }
+//        }
+
+        CommandLine commandLine = buildCommandLine(arg);
+
+        int nbCreateOrderAgents = Integer.parseInt(commandLine.getOptionValue("nbCreateOrderAgents"));
+        int nbIterCreateOrder = Integer.parseInt(commandLine.getOptionValue("nbIterCreateOrder"));
+        if (commandLine.hasOption("hostIpAddress")) {
+            Constants.URL_ROOT = "http://" + commandLine.getOptionValue("hostIpAddress");
         }
+
+        log.info("Simulator start, numberThreads = {}, numberIterators = {}, hostIp = {}",
+            nbCreateOrderAgents,
+            nbIterCreateOrder,
+            Constants.URL_ROOT);
+
         Simulator app = new Simulator(nbCreateOrderAgents, nbIterCreateOrder);
         app.run();
+    }
+
+    private static CommandLine buildCommandLine(String[] arg) throws ParseException {
+        Options options = new Options();
+        Option numberThreadsOption = new Option("nt", "nbCreateOrderAgents", true, "number threads");
+        numberThreadsOption.setRequired(true);
+        Option numberIteratorsOption = new Option("ni", "nbIterCreateOrder", true, "number iterators");
+        numberIteratorsOption.setRequired(true);
+        Option hostIpAddressOption = new Option("ip", "hostIpAddress", true, "host ip address");
+        hostIpAddressOption.setRequired(false);
+
+        options.addOption(numberThreadsOption);
+        options.addOption(numberIteratorsOption);
+        options.addOption(hostIpAddressOption);
+
+        CommandLineParser commandLineParser = new DefaultParser();
+        return commandLineParser.parse(options, arg);
     }
 
     private void run() throws InterruptedException {
