@@ -14,12 +14,15 @@ import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.DateTimeUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
+@Log4j2
 public class CreateOrderAgent extends Thread {
     public static final String module = CreateOrderAgent.class.getName();
     //OkHttpClient client = new OkHttpClient();
@@ -47,7 +50,7 @@ public class CreateOrderAgent extends Thread {
     //		.get("application/json; charset=utf-8");
     private HttpPostExecutor executor = new HttpPostExecutor();
 
-    private int nbIters = 1000;
+    private int nbIters = 10;
     private double maxTime = 0;
     private int agentId = 0;
     private String fromDate;
@@ -87,18 +90,23 @@ public class CreateOrderAgent extends Thread {
     }
 
     public static void main(String[] args) {
-        CreateOrderAgent createOrderAgent = new CreateOrderAgent(Login.login("admin", "123"));
-        createOrderAgent.setNbIters(1_000);
+        NUMBER_THREADS = 1000;
+
+        String token = Login.login("admin", "123");
+        CreateOrderAgent createOrderAgent = new CreateOrderAgent(token);
+        createOrderAgent.setNbIters(5);
         createOrderAgent.setFromDate("2020-01-01");
         createOrderAgent.setToDate("2020-05-05");
         createOrderAgent.start();
+
+        log.info("MAX_TIME = " + createOrderAgent.getMaxTimeAtomicInteger().get());
     }
 
     public void setNbIters(int nbIters) {
         this.nbIters = nbIters;
     }
 
-    private static final int NUMBER_THREAD = 465;
+    private static int NUMBER_THREADS = 500;
 
     public void start() {
 //        System.out.println(module + ":: start running...");
@@ -107,8 +115,8 @@ public class CreateOrderAgent extends Thread {
 //            thread.start();
 //        }
         List<Thread> threads = new ArrayList<>();
-        for (int i = 0; i < NUMBER_THREAD; i++) {
-            Thread thread = new Thread(this, module);
+        for (int i = 0; i < NUMBER_THREADS; i++) {
+            Thread thread = new Thread(this, "THREAD_" + i);
             threads.add(thread);
             thread.start();
         }
@@ -128,6 +136,8 @@ public class CreateOrderAgent extends Thread {
     }
 
     private DataManager dataManager;
+
+    private AtomicInteger maxTimeAtomicInteger = new AtomicInteger();
 
     public void createOrders(int nbIters, String fromDateStr, String toDateStr) {
         maxTime = 0;
@@ -177,12 +187,19 @@ public class CreateOrderAgent extends Thread {
                 double t = System.currentTimeMillis() - t0;
                 if (maxTime < time) {
                     maxTime = time;
+                    maxTimeAtomicInteger.set((int) maxTime);
                 }
 
                 Thread.sleep(idleTime);
 
                 sumTime += time;
-                System.out.println("finished " + i + "/" + nbIters + ", time = " + time + ", avgTime = " + sumTime / i);
+//                log.info("finished " + i + "/" + nbIters + ", time = " + time + ", avgTime = " + sumTime / i);
+                log.info("Finished {}/{}, time = {}, maxTime = {}",
+                    i,
+                    nbIters,
+                    time,
+//                    sumTime / i);
+                    maxTime);
 
             } catch (Exception e) {
 //                System.out.println("NOT CORRECT date-time " + curDate);
@@ -191,7 +208,7 @@ public class CreateOrderAgent extends Thread {
             }
         }
 
-        System.out.println(module + "[" + agentId + "] finished, avgTime = " + sumTime / nbIters);
+        System.out.println(module + "[" + agentId + "] finished, maxTime = " + maxTime);
 
     }
 
