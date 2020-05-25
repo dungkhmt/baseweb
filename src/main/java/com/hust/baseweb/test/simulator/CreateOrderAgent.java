@@ -90,7 +90,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     public static void main(String[] args) {
-        NUMBER_THREADS = 1000;
+        NUMBER_THREADS = 1;
 
         String token = Login.login("admin", "123");
         CreateOrderAgent createOrderAgent = new CreateOrderAgent(token);
@@ -164,7 +164,7 @@ public class CreateOrderAgent extends Thread {
         for (int i = 1; i <= nbIters; i++) {
             Date timePoint = new Date();
             Random random = new Random();
-            double t0 = System.currentTimeMillis();
+//            double t0 = System.currentTimeMillis();
 
             curDate = dates.get(R.nextInt(dates.size()));// pickup a random date
             // genrate random hh:mm:ss
@@ -184,10 +184,10 @@ public class CreateOrderAgent extends Thread {
 
                 double time = createOrder(orderDate, dataManager);
 
-                double t = System.currentTimeMillis() - t0;
+//                double t = System.currentTimeMillis() - t0;
                 if (maxTime < time) {
                     maxTime = time;
-                    maxTimeAtomicInteger.set((int) maxTime);
+                    maxTimeAtomicInteger.getAndAccumulate((int) maxTime, Math::max);
                 }
 
                 Thread.sleep(idleTime);

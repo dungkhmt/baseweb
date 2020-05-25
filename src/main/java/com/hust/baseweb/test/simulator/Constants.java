@@ -10,7 +10,8 @@ public class Constants {
 //    public static final String URL_ROOT = "http://sscm.dailyopt.ai";
 //    public static final String URL_ROOT = "http://13.229.144.211";
 //    public static final String URL_ROOT = "http://18.140.200.142";
-    public static final String URL_ROOT = "http://18.138.229.203";
+//    public static final String URL_ROOT = "http://18.138.229.203";
+    public static final String URL_ROOT = "http://13.250.182.4";
 
 
 }
