@@ -36,6 +36,13 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maxLifetime: 300000
+      minimumIdle: 2
+      maximumPoolSize: 10
+      idleTimeout: 120000
+      connectionTimeout: 300000
+      leakDetectionThreshold: 300000
     url: jdbc:postgresql://${SQL_DB_HOST}:${SQL_DB_PORT}/${POSTGRES_DB}
 
     username: ${SQL_DB_USER}
