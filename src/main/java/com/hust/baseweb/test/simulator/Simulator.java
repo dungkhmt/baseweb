@@ -11,6 +11,9 @@ public class Simulator {
 
     public final static AtomicLong threadRunningCounter = new AtomicLong(0);
 
+    private int nbCreateOrderAgents = 1;
+    private int nbIterCreateOrder = 10;
+
     static {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -21,13 +24,29 @@ public class Simulator {
         }, 1000, 1000);
     }
 
-    public static void main(String[] arg) throws InterruptedException {
-        Simulator app = new Simulator();
-        app.run(1);
+    public Simulator(int nbCreateOrderAgents, int nbIterCreateOrder){
+        this.nbCreateOrderAgents = nbCreateOrderAgents;
+        this.nbIterCreateOrder = nbIterCreateOrder;
     }
 
-    private void run(int nbAgents) throws InterruptedException {
-        CreateOrderAgent[] agents = new CreateOrderAgent[nbAgents];
+    public static void main(String[] arg) throws InterruptedException {
+        int nbCreateOrderAgents = 1;
+        int nbIterCreateOrder = 10;
+        if(arg != null){
+            for(int i = 0; i < arg.length; i++){
+                if(arg[i].equals("--nbCreateOrderAgents")){
+                    nbCreateOrderAgents = Integer.valueOf(arg[i+1]);
+                }else if(arg[i].equals("--nbIterCreateOrder")){
+                    nbIterCreateOrder = Integer.valueOf(arg[i+1]);
+                }
+            }
+        }
+        Simulator app = new Simulator(nbCreateOrderAgents, nbIterCreateOrder);
+        app.run();
+    }
+
+    private void run() throws InterruptedException {
+        CreateOrderAgent[] agents = new CreateOrderAgent[nbCreateOrderAgents];
         ImportFacilityAgent importFacilityAgent = new ImportFacilityAgent("admin", "123");
         ExportFacilityAgent exportFacilityAgent = new ExportFacilityAgent("admin", "123");
         PaymentAgent paymentAgent = new PaymentAgent("admin", "123");
@@ -50,7 +69,7 @@ public class Simulator {
 
             agents[i].setAgentId(i);
 
-            agents[i].setNbIters(5);
+            agents[i].setNbIters(nbIterCreateOrder);
             agents[i].setFromDate("2020-01-01");
             agents[i].setToDate("2020-05-05");
             agents[i].start();
