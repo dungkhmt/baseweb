@@ -46,7 +46,7 @@ public class Simulator {
         paymentAgent.join();
 
         for (int i = 0; i < agents.length; i++) {
-            agents[i] = new CreateOrderAgent("admin", "123");
+            agents[i] = new CreateOrderAgent(Login.login("admin", "123"));
 
             agents[i].setAgentId(i);
 

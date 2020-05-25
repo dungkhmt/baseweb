@@ -27,14 +27,20 @@ public class CreateOrderAgent extends Thread {
     private Random rand = new Random();
     private Thread thread = null;
     private String token;
-    private String username;
-    private String password;
+    //    private String username;
+//    private String password;
     //    private int idleTime = 120000;// 2 minute of ilde
     private int idleTime = 10;
 
-    public CreateOrderAgent(String username, String password) {
-        this.username = username;
-        this.password = password;
+//    public CreateOrderAgent(String username, String password) {
+//        this.username = username;
+//        this.password = password;
+//    }
+
+
+    public CreateOrderAgent(String token) {
+        this.token = token;
+        dataManager = new DataManager().invoke();
     }
 
     //public static final MediaType JSON = MediaType
@@ -43,7 +49,7 @@ public class CreateOrderAgent extends Thread {
 
     private int nbIters = 1000;
     private double maxTime = 0;
-    private int agentId;
+    private int agentId = 0;
     private String fromDate;
     private String toDate;
     
@@ -81,29 +87,51 @@ public class CreateOrderAgent extends Thread {
     }
 
     public static void main(String[] args) {
-
-        CreateOrderAgent a = new CreateOrderAgent(0);
-        a.start();
+        CreateOrderAgent createOrderAgent = new CreateOrderAgent(Login.login("admin", "123"));
+        createOrderAgent.setNbIters(1_000);
+        createOrderAgent.setFromDate("2020-01-01");
+        createOrderAgent.setToDate("2020-05-05");
+        createOrderAgent.start();
     }
 
     public void setNbIters(int nbIters) {
         this.nbIters = nbIters;
     }
 
+    private static final int NUMBER_THREAD = 465;
+
     public void start() {
 //        System.out.println(module + ":: start running...");
-        if (thread == null) {
-            thread = new Thread(this, module);
+//        if (thread == null) {
+//            thread = new Thread(this, module);
+//            thread.start();
+//        }
+        List<Thread> threads = new ArrayList<>();
+        for (int i = 0; i < NUMBER_THREAD; i++) {
+            Thread thread = new Thread(this, module);
+            threads.add(thread);
             thread.start();
         }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public double getMaxTime() {
         return this.maxTime;
     }
 
+    private DataManager dataManager;
+
     public void createOrders(int nbIters, String fromDateStr, String toDateStr) {
         maxTime = 0;
+        double sumTime = 0;
         List<String> dates = new ArrayList<String>();
         String curDate = fromDateStr;
         int cnt = 0;
@@ -121,6 +149,7 @@ public class CreateOrderAgent extends Thread {
             cnt++;
         }
         Random R = new Random();
+
 
         for (int i = 1; i <= nbIters; i++) {
             Date timePoint = new Date();
@@ -143,7 +172,7 @@ public class CreateOrderAgent extends Thread {
 //            	System.out.println("GEN orderDate " + orderDate);
 
 
-                double time = createOrder(orderDate);
+                double time = createOrder(orderDate, dataManager);
 
                 double t = System.currentTimeMillis() - t0;
                 if (maxTime < time) {
@@ -152,7 +181,8 @@ public class CreateOrderAgent extends Thread {
 
                 Thread.sleep(idleTime);
 
-                System.out.println("finished " + i + "/" + nbIters + ", time = " + time + ", maxTime = " + maxTime);
+                sumTime += time;
+                System.out.println("finished " + i + "/" + nbIters + ", time = " + time + ", avgTime = " + sumTime / i);
 
             } catch (Exception e) {
 //                System.out.println("NOT CORRECT date-time " + curDate);
@@ -161,15 +191,13 @@ public class CreateOrderAgent extends Thread {
             }
         }
 
-        System.out.println(module + "[" + agentId + "] finished, maxTime = " + maxTime);
+        System.out.println(module + "[" + agentId + "] finished, avgTime = " + sumTime / nbIters);
 
     }
 
     public void run() {
         Simulator.threadRunningCounter.incrementAndGet();
 //        System.out.println(module + "::run....");
-
-        token = Login.login(username, password);
 
         createOrders(nbIters, fromDate, toDate);
 
@@ -209,7 +237,7 @@ public class CreateOrderAgent extends Thread {
         return null;
     }
 
-    public List<PartyCustomerModel> getCustomers() {
+    public List<PartyCustomerModel> executeGetCustomers() {
         try {
             String json = "{\"statusId\":null}";
 
@@ -232,21 +260,18 @@ public class CreateOrderAgent extends Thread {
         return null;
     }
 
-    public double createOrder(Date orderDate) {
+    public double createOrder(Date orderDate, DataManager dataManager) {
         try {
-            ProductManager productManager = new ProductManager(token);
-            CustomerManager customerManager = new CustomerManager(token);
-            FacilityManager facilityManager = new FacilityManager(token);
+
+            List<Product> products = dataManager.getProducts();
+            List<Facility> facilities = dataManager.getFacilities();
+            List<PartyCustomerModel> customers = dataManager.getCustomers();
+            List<PartyDistributor> distributors = dataManager.getDistributors();
+            List<PartyRetailOutlet> retailOutlets = dataManager.getRetailOutlets();
 
             Gson gson = new Gson();
-            String[] salesmanIds = {"admin", "nguyenvanseu"};
+            String[] salesmanIds = {"admin"};
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-            List<Product> products = productManager.getProducts();//getProducts();
-            List<Facility> facilities = facilityManager.getListFacility();//getFacilities();
-            List<PartyCustomerModel> customers = getCustomers();
-            List<PartyDistributor> distributors = customerManager.getDistributors();
-            List<PartyRetailOutlet> retailOutlets = customerManager.getRetailOutlets();
 
             if (facilities.isEmpty() || customers.isEmpty() || distributors.isEmpty() || retailOutlets.isEmpty()) {
                 return 0;
@@ -301,4 +326,44 @@ public class CreateOrderAgent extends Thread {
         return 0;
     }
 
+    private class DataManager {
+        private List<Product> products;
+        private List<Facility> facilities;
+        private List<PartyCustomerModel> customers;
+        private List<PartyDistributor> distributors;
+        private List<PartyRetailOutlet> retailOutlets;
+
+        public List<Product> getProducts() {
+            return products;
+        }
+
+        public List<Facility> getFacilities() {
+            return facilities;
+        }
+
+        public List<PartyCustomerModel> getCustomers() {
+            return customers;
+        }
+
+        public List<PartyDistributor> getDistributors() {
+            return distributors;
+        }
+
+        public List<PartyRetailOutlet> getRetailOutlets() {
+            return retailOutlets;
+        }
+
+        public DataManager invoke() {
+            ProductManager productManager = new ProductManager(token);
+            CustomerManager customerManager = new CustomerManager(token);
+            FacilityManager facilityManager = new FacilityManager(token);
+
+            products = productManager.getProducts();
+            facilities = facilityManager.getListFacility();
+            customers = executeGetCustomers();
+            distributors = customerManager.getDistributors();
+            retailOutlets = customerManager.getRetailOutlets();
+            return this;
+        }
+    }
 }
