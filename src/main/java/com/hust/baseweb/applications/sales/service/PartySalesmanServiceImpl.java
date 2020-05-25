@@ -87,8 +87,7 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
             Party party = userService.save(salesman);
             PartySalesman partySalesman = new PartySalesman();
             partySalesman.setPartyId(party.getPartyId());
-            partySalesmanRepo.save(partySalesman);
-            return partySalesman;
+            return partySalesmanRepo.save(partySalesman);
         } catch (Exception e) {
             e.printStackTrace();
         }
