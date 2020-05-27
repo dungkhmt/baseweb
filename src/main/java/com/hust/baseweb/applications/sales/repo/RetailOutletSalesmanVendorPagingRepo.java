@@ -9,11 +9,14 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.Date;
 import java.util.UUID;
 
-public interface RetailOutletSalesmanVendorPagingRepo extends PagingAndSortingRepository<RetailOutletSalesmanVendor, UUID> {
+public interface RetailOutletSalesmanVendorPagingRepo
+    extends PagingAndSortingRepository<RetailOutletSalesmanVendor, UUID> {
+
     Page<RetailOutletSalesmanVendor> findByPartySalesman(PartySalesman partySalesman, Pageable pageable);
 
-    Page<RetailOutletSalesmanVendor> findByPartySalesmanAndThruDate(PartySalesman partySalesman,
-                                                                    Date thruDate,
-                                                                    Pageable pageable);
+    Page<RetailOutletSalesmanVendor> findByPartySalesmanAndThruDate(
+        PartySalesman partySalesman,
+        Date thruDate,
+        Pageable pageable);
 
 }

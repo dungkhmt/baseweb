@@ -20,6 +20,7 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 public class Party {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "party_id")
@@ -72,6 +73,7 @@ public class Party {
     Person person;
 
     public Party(String partyCode, PartyType type, String description, Status partyStatus, boolean isUnread) {
+
         super();
         this.partyCode = partyCode;
         this.type = type;

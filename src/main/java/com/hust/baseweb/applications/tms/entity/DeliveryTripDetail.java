@@ -14,6 +14,7 @@ import java.util.UUID;
 @Setter
 
 public class DeliveryTripDetail {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "delivery_trip_detail_id")
@@ -39,6 +40,7 @@ public class DeliveryTripDetail {
     private StatusItem statusItem;
 
     public DeliveryTripDetailModel.OrderItem toDeliveryTripDetailModel() {
+
         DeliveryTripDetailModel.OrderItem orderItemModel = new DeliveryTripDetailModel.OrderItem();
         orderItemModel.setSequence(sequenceId);
         orderItemModel.setDeliveryTripDetailId(deliveryTripDetailId);

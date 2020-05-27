@@ -6,5 +6,6 @@ import java.util.UUID;
 
 @Service
 public interface SalesRouteDetailMaintenanceService {
+
     long deleteByPartySalesmanId(UUID partySalesmanId);
 }

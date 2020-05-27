@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LPVariable {
+
     private double upperBound;
     private double lowerBound;
 }

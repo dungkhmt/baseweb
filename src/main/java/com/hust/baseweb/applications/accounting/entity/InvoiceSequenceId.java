@@ -16,6 +16,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 public class InvoiceSequenceId {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial")

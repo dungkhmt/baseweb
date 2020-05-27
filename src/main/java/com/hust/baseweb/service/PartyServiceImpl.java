@@ -15,6 +15,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PartyServiceImpl implements PartyService {
+
     PartyRepo partyRepo;
     PartyTypeRepo partyTypeRepo;
     StatusRepo statusRepo;
@@ -32,6 +33,7 @@ public class PartyServiceImpl implements PartyService {
 
     @Override
     public Party disableParty(String partyId) {
+
         Party party = partyRepo.findById(UUID.fromString(partyId)).get();
         party.setPartyStatus(statusRepo.getOne(StatusEnum.PARTY_DISABLED.name()));
         return partyRepo.save(party);
@@ -39,6 +41,7 @@ public class PartyServiceImpl implements PartyService {
 
     @Override
     public Party findByPartyId(UUID partyId) {
+
         return partyRepo.findByPartyId(partyId);
     }
 

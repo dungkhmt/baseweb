@@ -19,6 +19,7 @@ import java.util.Map;
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ApiController {
+
     public static final String module = ApiController.class.getName();
     private SecurityGroupService securityGroupService;
     //private TrackLocationsService trackLocationsService;

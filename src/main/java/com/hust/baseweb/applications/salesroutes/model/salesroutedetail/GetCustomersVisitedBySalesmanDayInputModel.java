@@ -9,6 +9,7 @@ import java.util.UUID;
 @Setter
 
 public class GetCustomersVisitedBySalesmanDayInputModel {
+
     private UUID partySalesmanId;
     private String date;
 }

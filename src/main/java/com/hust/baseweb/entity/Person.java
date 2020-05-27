@@ -22,6 +22,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Person {
+
     @Id
     @Column(name = "party_id")
     private UUID partyId;
@@ -43,6 +44,7 @@ public class Person {
     //private String birthDate;
 
     public Person(UUID partyId, String firstName, String middleName, String lastName, String gender, Date birthDate) {
+
         this.partyId = partyId;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -52,6 +54,7 @@ public class Person {
     }
 
     public BasicInfoModel getBasicInfoModel() {
+
         return new BasicInfoModel(partyId, firstName + " " + middleName + " " + lastName, gender);
     }
 
@@ -59,6 +62,7 @@ public class Person {
     @NoArgsConstructor
     @Getter
     public static class BasicInfoModel {
+
         private UUID partyId;
         private String fullName;
         private String gender;
@@ -74,16 +78,17 @@ public class Person {
 
     @Override
     public String toString() {
+
         return "Person{" +
-            "partyId=" + partyId +
-            ", firstName='" + firstName + '\'' +
-            ", middleName='" + middleName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", gender='" + gender + '\'' +
-            ", birthDate=" + birthDate +
-            ", name='" + name + '\'' +
-            ", userName='" + userName + '\'' +
-            '}';
+               "partyId=" + partyId +
+               ", firstName='" + firstName + '\'' +
+               ", middleName='" + middleName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", gender='" + gender + '\'' +
+               ", birthDate=" + birthDate +
+               ", name='" + name + '\'' +
+               ", userName='" + userName + '\'' +
+               '}';
     }
 }
 

@@ -11,15 +11,18 @@ import java.util.List;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductTypeServiceImpl implements ProductTypeService {
+
     private ProductTypeRepo productTypeRepo;
 
     @Override
     public List<ProductType> getAllProductType() {
+
         return productTypeRepo.findAll();
     }
 
     @Override
     public ProductType getProductTypeByProductTypeId(String productTypeId) {
+
         return productTypeRepo.findByProductTypeId(productTypeId);
     }
 }

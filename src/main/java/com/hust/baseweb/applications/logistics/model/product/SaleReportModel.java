@@ -17,6 +17,7 @@ public class SaleReportModel {
     @Getter
     @Setter
     public static class Input {
+
         private String fromDate;
         private String thruDate;
         private String productId;
@@ -28,6 +29,7 @@ public class SaleReportModel {
     @Getter
     @Setter
     public static class DateBasedInput {
+
         private String fromDate;
         private String thruDate;
 
@@ -39,6 +41,7 @@ public class SaleReportModel {
     @Getter
     @Setter
     public static class Output {
+
         private List<DatePrice> datePrices;
     }
 
@@ -47,14 +50,17 @@ public class SaleReportModel {
     @Getter
     @Setter
     public static class DatePrice {
+
         private String date;
         private Double price;
 
         public String getDate() {
+
             return date;
         }
 
         public Double getPrice() {
+
             return price;
         }
     }

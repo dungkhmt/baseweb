@@ -22,6 +22,7 @@ import java.util.UUID;
 @Setter
 @Document
 public class Payment {
+
     @Id
     private String paymentId;         // varchar(60),
     private PaymentType paymentType;    // varchar(60),
@@ -38,14 +39,17 @@ public class Payment {
 
     @NotNull
     public static String convertSequenceIdToPaymentId(Long id) {
+
         return "PAY" + String.format("%010d", id);
     }
 
     public Model toModel() {
+
         return toModel(null);
     }
 
     public Model toModel(String distributorName) {
+
         return new Model(
             paymentId,
             paymentType.toString(),
@@ -66,6 +70,7 @@ public class Payment {
     @Getter
     @Setter
     public static class Model {
+
         private String paymentId;         // varchar(60),
         private String paymentTypeId;    // varchar(60),
         private String paymentMethodId;  // varchar(60),
@@ -84,6 +89,7 @@ public class Payment {
     @Getter
     @Setter
     public static class CreateModel {
+
         private String partyId;
         private Double amount;
     }

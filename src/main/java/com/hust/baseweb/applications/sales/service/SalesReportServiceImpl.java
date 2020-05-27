@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Log4j2
 @Transactional
 public class SalesReportServiceImpl implements SalesReportService {
+
     private OrderHeaderRepo orderHeaderRepo;
     private TotalRevenueRepo totalRevenueRepo;
     private CustomerRevenueRepo customerRevenueRepo;
@@ -32,27 +33,36 @@ public class SalesReportServiceImpl implements SalesReportService {
 
     @Override
     public SaleReportModel.Output getSaleReports(SaleReportModel.Input input) {
+
         if (input.getProductId() != null) {
-            List<SaleReportModel.DatePrice> datePrices = productRevenueRepo.findAllById_ProductIdAndId_DateBetween(
-                input.getProductId(),
-                LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_TIME_FORMAT),
-                LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_TIME_FORMAT).plusDays(1))
+            List<SaleReportModel.DatePrice> datePrices = productRevenueRepo
+                .findAllById_ProductIdAndId_DateBetween(
+                    input.getProductId(),
+                    LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_TIME_FORMAT),
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_TIME_FORMAT).plusDays(1))
                 .stream()
-                .map(productRevenue -> new SaleReportModel.DatePrice(productRevenue.getId()
-                    .getDate()
-                    .format(Constant.LOCAL_DATE_FORMAT), productRevenue.getRevenue()))
+                .map(productRevenue -> new SaleReportModel.DatePrice(
+                    productRevenue
+                        .getId()
+                        .getDate()
+                        .format(Constant.LOCAL_DATE_FORMAT),
+                    productRevenue.getRevenue()))
                 .collect(Collectors.toList());
             return new SaleReportModel.Output(datePrices);
 
         } else if (input.getPartyCustomerId() != null) {
-            List<SaleReportModel.DatePrice> datePrices = customerRevenueRepo.findAllById_CustomerIdAndId_DateBetween(
-                UUID.fromString(input.getPartyCustomerId()),
-                LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_TIME_FORMAT),
-                LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_TIME_FORMAT).plusDays(1))
+            List<SaleReportModel.DatePrice> datePrices = customerRevenueRepo
+                .findAllById_CustomerIdAndId_DateBetween(
+                    UUID.fromString(input.getPartyCustomerId()),
+                    LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_TIME_FORMAT),
+                    LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_TIME_FORMAT).plusDays(1))
                 .stream()
-                .map(customerRevenue -> new SaleReportModel.DatePrice(customerRevenue.getId()
-                    .getDate()
-                    .format(Constant.LOCAL_DATE_FORMAT), customerRevenue.getRevenue()))
+                .map(customerRevenue -> new SaleReportModel.DatePrice(
+                    customerRevenue
+                        .getId()
+                        .getDate()
+                        .format(Constant.LOCAL_DATE_FORMAT),
+                    customerRevenue.getRevenue()))
                 .collect(Collectors.toList());
             return new SaleReportModel.Output(datePrices);
         }
@@ -73,13 +83,13 @@ public class SalesReportServiceImpl implements SalesReportService {
                 //String yyyymmhh = o.getOrderDate().getYear() + "-" + o.getOrderDate().getMonth() + "-" + o.getOrderDate().getDate();
                 String yyyyMMdd = DateTimeUtils.date2YYYYMMDD(o.getOrderDate());
                 log.info("computeDateBasedRevenue, on date " +
-                    yyyyMMdd +
-                    ": has order " +
-                    o.getOrderId() +
-                    ", date " +
-                    o.getOrderDate() +
-                    ", revenue = " +
-                    o.getGrandTotal());
+                         yyyyMMdd +
+                         ": has order " +
+                         o.getOrderId() +
+                         ", date " +
+                         o.getOrderDate() +
+                         ", revenue = " +
+                         o.getGrandTotal());
                 if (mDate2Revenue.get(yyyyMMdd) == null) {
                     mDate2Revenue.put(yyyyMMdd, o.getGrandTotal());
                 } else {
@@ -102,16 +112,15 @@ public class SalesReportServiceImpl implements SalesReportService {
     }
 
     public SaleReportModel.Output getDateBasedSalesReport(SaleReportModel.DateBasedInput input) {
+
         String fromDateTime = input.getFromDate();// + " 00:00:00";
         String thruDateTime = input.getThruDate();// + " 00:00:00";
         List<SaleReportModel.DatePrice> datePrices = totalRevenueRepo.findAllByIdBetween(
             LocalDate.parse(fromDateTime, Constant.LOCAL_DATE_TIME_FORMAT),
             LocalDate.parse(thruDateTime, Constant.LOCAL_DATE_TIME_FORMAT)
-        ).stream()
-            .map(totalRevenue -> new SaleReportModel.DatePrice(totalRevenue.getId()
-                .format(Constant.LOCAL_DATE_FORMAT),
-                totalRevenue.getRevenue()))
-            .collect(Collectors.toList());
+        ).stream().map(totalRevenue -> new SaleReportModel.DatePrice(
+            totalRevenue.getId().format(Constant.LOCAL_DATE_FORMAT),
+            totalRevenue.getRevenue())).collect(Collectors.toList());
         return new SaleReportModel.Output(datePrices);
     }
 }

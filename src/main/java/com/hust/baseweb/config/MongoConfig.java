@@ -14,7 +14,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 @Configuration
-@EnableMongoRepositories(basePackages = {"com.hust.baseweb.applications.accounting.repo",
+@EnableMongoRepositories(basePackages = {
+    "com.hust.baseweb.applications.accounting.repo",
     "com.hust.baseweb.applications.tms.repo", "com.hust.baseweb.applications.order.repo.mongodb"})
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
@@ -22,6 +23,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 //    @Autowired
 //    @ConditionalOnExpression("'${mongo.transactions}'=='enabled'")
     MongoTransactionManager transactionManager(MongoDbFactory dbFactory) {
+
         return new MongoTransactionManager(dbFactory);
     }
 
@@ -34,11 +36,13 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Override
     public MongoClient mongoClient() {
+
         return MongoClients.create(uri);
     }
 
     @Override
     protected String getDatabaseName() {
+
         return databaseName;
     }
 }

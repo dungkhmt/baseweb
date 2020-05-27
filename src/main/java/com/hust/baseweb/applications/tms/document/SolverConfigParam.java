@@ -38,6 +38,7 @@ public class SolverConfigParam {
      */
 
     public SolverConfigParam(InputModel inputModel, Date fromDate) {
+
         this.maxTripDistance = inputModel.maxTripDistance;
         this.maxDistanceConsecutiveLocationTripAllowed = inputModel.maxDistanceConsecutiveLocationTripAllowed;
         this.maxLocationsPerTripAllowed = inputModel.maxLocationsPerTripAllowed;
@@ -53,6 +54,7 @@ public class SolverConfigParam {
     private Date thruDate;
 
     public InputModel toInputModel() {
+
         return new InputModel(
             maxTripDistance,
             maxDistanceConsecutiveLocationTripAllowed,
@@ -70,6 +72,7 @@ public class SolverConfigParam {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class InputModel {
+
         private Integer maxTripDistance; // meter
         // do dai quang duong toi da cho phep giua 2 location lien tiep trong moi trip
         private Integer maxDistanceConsecutiveLocationTripAllowed;

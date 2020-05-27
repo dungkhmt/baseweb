@@ -18,16 +18,18 @@ import java.io.IOException;
 @RequestMapping("/content")
 @Log4j2
 public class ContentController {
+
     @Autowired
     private ContentService contentService;
 
     @PostMapping("/")
     public ResponseEntity<String> createContent(@RequestParam("file") MultipartFile file) {
+
         log.info("createContent");
         Content content = null;
         try {
             content = contentService.createContent(file.getInputStream(), file.getOriginalFilename(),
-                file.getContentType());
+                                                   file.getContentType());
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -37,6 +39,7 @@ public class ContentController {
 
     @GetMapping("/{contentId}")
     public ResponseEntity<?> get(@PathVariable String contentId) {
+
         log.info("contentId {}", contentId);
         try {
             Response response = contentService.getContentData(contentId);

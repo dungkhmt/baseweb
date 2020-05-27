@@ -31,10 +31,13 @@ public class ProductPriceSupplierServiceImpl implements ProductPriceSupplierServ
 
     @Override
     public List<ProductPriceSupplier.Model> getAllProductPriceSuppliers(String supplierPartyId) {
-        Supplier supplier = supplierRepo.findById(UUID.fromString(supplierPartyId))
+
+        Supplier supplier = supplierRepo
+            .findById(UUID.fromString(supplierPartyId))
             .orElseThrow(NoSuchElementException::new);
         Date now = new Date();
-        return productPriceSupplierRepo.findAllByPartySupplierAndThruDateNullOrThruDateAfter(supplier, now)
+        return productPriceSupplierRepo
+            .findAllByPartySupplierAndThruDateNullOrThruDateAfter(supplier, now)
             .stream()
             .map(ProductPriceSupplier::toModel)
             .collect(Collectors.toList());
@@ -42,16 +45,21 @@ public class ProductPriceSupplierServiceImpl implements ProductPriceSupplierServ
 
     @Override
     public ProductPriceSupplier setProductPriceSupplier(ProductPriceSupplier.SetModel setModel) {
-        Supplier supplier = supplierRepo.findById(UUID.fromString(setModel.getSupplierPartyId()))
+
+        Supplier supplier = supplierRepo
+            .findById(UUID.fromString(setModel.getSupplierPartyId()))
             .orElseThrow(NoSuchElementException::new);
         Product product = productRepo.findById(setModel.getProductId()).orElseThrow(NoSuchElementException::new);
         Date now = new Date();
 
-        List<ProductPriceSupplier> productPriceSupplierHistories = productPriceSupplierRepo
-            .findAllByPartySupplierAndProductAndThruDateNullOrThruDateAfter(supplier, product, now);
+        List<ProductPriceSupplier> productPriceSupplierHistories = productPriceSupplierRepo.findAllByPartySupplierAndProductAndThruDateNullOrThruDateAfter(
+            supplier,
+            product,
+            now);
         productPriceSupplierHistories.forEach(productPriceSupplier -> productPriceSupplier.setThruDate(now));
 
-        ProductPriceSupplier productPriceSupplier = new ProductPriceSupplier(null,
+        ProductPriceSupplier productPriceSupplier = new ProductPriceSupplier(
+            null,
             supplier,
             product,
             setModel.getUnitPrice(),

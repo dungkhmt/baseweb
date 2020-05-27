@@ -14,6 +14,7 @@ public class Crawler {
     }
 
     public void run() {
+
         try {
             String stringUrl = "http://www.vantaiduongviet.com/dich_vu/van_tai/danh_sach_cac_cong_ty_van_tai";
             URL url = new URL(stringUrl);

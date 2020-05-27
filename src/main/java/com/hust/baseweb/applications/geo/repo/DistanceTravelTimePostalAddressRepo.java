@@ -7,7 +7,9 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 import java.util.UUID;
 
-public interface DistanceTravelTimePostalAddressRepo extends CrudRepository<DistanceTravelTimePostalAddress, DistanceTravelTimePostalAddressEmbeddableId> {
+public interface DistanceTravelTimePostalAddressRepo
+    extends CrudRepository<DistanceTravelTimePostalAddress, DistanceTravelTimePostalAddressEmbeddableId> {
+
     DistanceTravelTimePostalAddress findByDistanceTravelTimePostalAddressEmbeddableId(
         DistanceTravelTimePostalAddressEmbeddableId distanceTravelTimePostalAddressEmbeddableId);
 

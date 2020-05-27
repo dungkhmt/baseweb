@@ -14,6 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class InventoryItemDetail {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "inventory_item_detail_id")
@@ -35,6 +36,7 @@ public class InventoryItemDetail {
     private OrderItem orderItem;
 
     public InventoryModel.ExportDetail toInventoryExportDetail() {
+
         return new InventoryModel.ExportDetail(
             inventoryItemDetailId.toString(), orderItem.getOrderId(), Constant.DATE_FORMAT.format(effectiveDate)
         );

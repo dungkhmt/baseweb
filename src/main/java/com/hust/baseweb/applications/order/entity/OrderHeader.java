@@ -22,6 +22,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderHeader {
+
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
@@ -84,10 +85,12 @@ public class OrderHeader {
 
     @NotNull
     public static String convertSequenceIdToOrderId(Long id) {
+
         return "ORD" + String.format("%010d", id);
     }
 
     public InventoryModel.OrderHeader toOrderHeaderModel() {
+
         return new InventoryModel.OrderHeader(
             orderId,
             partyCustomer.getPartyId().toString(),
@@ -96,10 +99,12 @@ public class OrderHeader {
     }
 
     public PurchaseModel toPurchaseModel() {
+
         return toPurchaseModel(null, null);
     }
 
     public PurchaseModel toPurchaseModel(String supplierName, Double totalAmount) {
+
         return new PurchaseModel(
             orderId,
             Constant.DATE_FORMAT.format(createdStamp),
@@ -113,6 +118,7 @@ public class OrderHeader {
     @Getter
     @Setter
     public static class PurchaseModel {
+
         private String orderId;
         private String createdStamp;
         private String supplierName;
@@ -124,6 +130,7 @@ public class OrderHeader {
     @Getter
     @Setter
     public static class PurchaseCreateModel {
+
         private String supplierPartyId;
         private List<ProductQuantity> productQuantities;
 
@@ -132,6 +139,7 @@ public class OrderHeader {
         @Getter
         @Setter
         public static class ProductQuantity {
+
             private String productId;
             private Integer quantity;
         }

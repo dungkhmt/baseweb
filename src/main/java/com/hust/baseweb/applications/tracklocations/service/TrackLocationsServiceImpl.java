@@ -14,6 +14,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class TrackLocationsServiceImpl implements TrackLocationsService {
+
     public static final String module = TrackLocationsServiceImpl.class.getName();
     //public static final String GROUP = "GROUP";
 
@@ -39,6 +40,7 @@ public class TrackLocationsServiceImpl implements TrackLocationsService {
     }
 
     public List<TrackLocations> getListLocations() {
+
         return trackLocationsRepo.findAll();
     }
 

@@ -20,10 +20,8 @@ public class TestMongoDB {
             // Accessing the database
             MongoDatabase database = mongo.getDatabase("vinamilk");
             // Retrieving a collection
-            MongoCollection<Document> collection = database
-                .getCollection("distance");
-            System.out
-                .println("Collection sampleCollection selected successfully");
+            MongoCollection<Document> collection = database.getCollection("distance");
+            System.out.println("Collection sampleCollection selected successfully");
 
             // Getting the iterable object
             FindIterable<Document> iterDoc = collection.find();

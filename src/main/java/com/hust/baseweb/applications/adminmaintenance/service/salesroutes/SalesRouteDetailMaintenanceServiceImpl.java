@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 
 public class SalesRouteDetailMaintenanceServiceImpl implements SalesRouteDetailMaintenanceService {
+
     private SalesRouteDetailRepo salesRouteDetailRepo;
     private PartySalesmanRepo partySalesmanRepo;
 

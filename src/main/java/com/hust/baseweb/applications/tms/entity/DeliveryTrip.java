@@ -17,6 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DeliveryTrip {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "delivery_trip_id")
@@ -62,6 +63,7 @@ public class DeliveryTrip {
     private Integer deliveryTripDetailCount = 0;
 
     public DeliveryTripModel toDeliveryTripModel() {
+
         return new DeliveryTripModel(
             deliveryPlan.getDeliveryPlanId().toString(),
             deliveryPlanSolutionSeqId,
@@ -76,7 +78,8 @@ public class DeliveryTrip {
             Optional.ofNullable(externalVehicleType).map(VehicleType::getVehicleTypeId).orElse(null),
             Optional.ofNullable(vehicle).map(Vehicle::getProductTransportCategoryId).orElse(null),
             Optional.ofNullable(vehicle).map(Vehicle::getCapacity).orElse(null),
-            Optional.ofNullable(partyDriver)
+            Optional
+                .ofNullable(partyDriver)
                 .map(PartyDriver::getParty)
                 .map(Party::getUserLogin)
                 .map(UserLogin::getUserLoginId)

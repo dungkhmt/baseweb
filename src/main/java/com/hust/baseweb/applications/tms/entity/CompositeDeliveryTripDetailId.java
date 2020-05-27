@@ -5,11 +5,13 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class CompositeDeliveryTripDetailId implements Serializable {
+
     private UUID deliveryTripId;
     private String deliveryTripItemSeqId;
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) {
             return true;
         }
@@ -25,6 +27,7 @@ public class CompositeDeliveryTripDetailId implements Serializable {
 
     @Override
     public int hashCode() {
+
         return Objects.hash(deliveryTripId, deliveryTripItemSeqId);
     }
 

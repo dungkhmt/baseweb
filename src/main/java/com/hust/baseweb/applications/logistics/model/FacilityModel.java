@@ -13,6 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FacilityModel {
+
     private String facilityId;
     private String facilityName;
     private String address;

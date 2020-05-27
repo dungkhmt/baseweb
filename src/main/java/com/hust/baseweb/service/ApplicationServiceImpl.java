@@ -18,31 +18,41 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class ApplicationServiceImpl implements ApplicationService {
+
     private ApplicationRepo applicationRepo;
     private ApplicationTypeRepo applicationTypeRepo;
 
     @Override
     public List<Application> getListByPermissionAndType(List<SecurityPermission> permissionList, String type) {
+
         String permissionStr = "";
         for (SecurityPermission sp : permissionList) {
             permissionStr += sp.getPermissionId() + ",";
         }
         log.info("getListByPermissionAndType, permissionList = " + permissionStr + ", type = " + type);
 
-        List<Application> applicationList = applicationRepo.findByTypeAndPermissionIn(applicationTypeRepo.getOne(type),
+        List<Application> applicationList = applicationRepo.findByTypeAndPermissionIn(
+            applicationTypeRepo.getOne(type),
             permissionList);
         log.info("getListByPermissionAndType, permissionList = " +
-            permissionStr +
-            ", type = " +
-            type +
-            ", applicationList.sz = " +
-            applicationList.size());
+                 permissionStr +
+                 ", type = " +
+                 type +
+                 ", applicationList.sz = " +
+                 applicationList.size());
 
-        List<Application> applicationList1 = applicationList.stream()
+        List<Application> applicationList1 = applicationList
+            .stream()
             .map(Application::getModule)
             .collect(Collectors.toList());
-        log.info("getListByPermissionAndType, permissionList = " + permissionStr + ", type = " + type +
-            ", applicationList.sz = " + applicationList.size() + ", applicationList1.sz = " + applicationList1.size());
+        log.info("getListByPermissionAndType, permissionList = " +
+                 permissionStr +
+                 ", type = " +
+                 type +
+                 ", applicationList.sz = " +
+                 applicationList.size() +
+                 ", applicationList1.sz = " +
+                 applicationList1.size());
 
 
         for (Application a : applicationList1) {
@@ -58,8 +68,14 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         }
 
-        log.info("getListByPermissionAndType, permissionList = " + permissionStr + ", type = " + type +
-            ", applicationList.sz = " + applicationList.size() + ", applicationList2.sz = " + applicationList2.size());
+        log.info("getListByPermissionAndType, permissionList = " +
+                 permissionStr +
+                 ", type = " +
+                 type +
+                 ", applicationList.sz = " +
+                 applicationList.size() +
+                 ", applicationList2.sz = " +
+                 applicationList2.size());
 
         applicationList.addAll(applicationList1);
         applicationList.addAll(applicationList2);

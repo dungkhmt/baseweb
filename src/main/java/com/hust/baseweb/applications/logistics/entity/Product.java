@@ -13,6 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class Product {
+
     @Id
     @Column(name = "product_id")
     private String productId;
@@ -48,7 +49,9 @@ public class Product {
 
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "product_content", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "product_id"), inverseJoinColumns = @JoinColumn(name = "content_id", referencedColumnName = "content_id"))
+    @JoinTable(name = "product_content",
+               joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "product_id"),
+               inverseJoinColumns = @JoinColumn(name = "content_id", referencedColumnName = "content_id"))
     private Set<Content> contents;
 
 

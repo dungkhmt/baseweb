@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class VehicleType {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "vehicle_type_id")

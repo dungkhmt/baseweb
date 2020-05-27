@@ -8,6 +8,7 @@ import java.util.List;
 
 @Service
 public interface CustomerService {
+
     PartyCustomer save(CreateCustomerInputModel input);
 
 

@@ -10,13 +10,15 @@ import java.util.List;
 import java.util.UUID;
 
 public interface InventoryItemRepo extends JpaRepository<InventoryItem, UUID> {
+
     InventoryItem findByInventoryItemId(UUID inventoryItemId);
 
     @NotNull
     List<InventoryItem> findAll();
     //public List<InventoryItem> findAllByProductIdAndFacilityId(String productId, String facilityId); NOT ALLOWED
 
-    List<InventoryItem> findAllByProductInAndFacilityInAndQuantityOnHandTotalGreaterThan(List<Product> products,
-                                                                                         List<Facility> facilities,
-                                                                                         int quantity);
+    List<InventoryItem> findAllByProductInAndFacilityInAndQuantityOnHandTotalGreaterThan(
+        List<Product> products,
+        List<Facility> facilities,
+        int quantity);
 }

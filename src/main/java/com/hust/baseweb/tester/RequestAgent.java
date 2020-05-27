@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Random;
 
 public class RequestAgent extends Thread {
+
     public static final String module = RequestAgent.class.getName();
     public static final String name = RequestAgent.class.getName();
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
@@ -21,15 +22,14 @@ public class RequestAgent extends Thread {
     private String token;
 
     public static void main(String[] args) {
+
         RequestAgent agent = new RequestAgent();
         agent.start();
     }
 
     String execGetUseToken(String url, String token) throws IOException {
 
-        Request request = new Request.Builder().url(url)
-            // .header("Authorization", token)
-            .header("X-Auth-Token", token).build();
+        Request request = new Request.Builder().url(url).header("X-Auth-Token", token).build();
         try (Response response = client.newCall(request).execute()) {
             return Objects.requireNonNull(response.body()).string();
         }
@@ -37,16 +37,17 @@ public class RequestAgent extends Thread {
 
     String execPostUseToken(String url, String json, String token)
         throws IOException {
+
         System.out.println(module + "::execPostUseToken, url = " + url + ", json = " + json + ", token = " + token);
         RequestBody body = RequestBody.create(json, JSON);
-        Request request = new Request.Builder().url(url)
-            .header("X-Auth-Token", token).post(body).build();
+        Request request = new Request.Builder().url(url).header("X-Auth-Token", token).post(body).build();
         try (Response response = client.newCall(request).execute()) {
             return Objects.requireNonNull(response.body()).string();
         }
     }
 
     public void start() {
+
         System.out.println(name + ":: start running...");
         if (thread == null) {
             thread = new Thread(this, name);
@@ -55,12 +56,12 @@ public class RequestAgent extends Thread {
     }
 
     public String login(String username, String password) {
+
         try {
             // String url = "http://sscm.dailyopt.ai/api/";
             String url = urlRoot + "/api/";
             String credential = Credentials.basic(username, password);
-            Request request = new Request.Builder().url(url)
-                .header("Authorization", credential).build();
+            Request request = new Request.Builder().url(url).header("Authorization", credential).build();
             Response response = client.newCall(request).execute();
             String res = Objects.requireNonNull(response.body()).string();
             String token = response.header("X-Auth-Token");
@@ -73,8 +74,10 @@ public class RequestAgent extends Thread {
     }
 
     public String getUserLogins() {
+
         try {
-            String res = execGetUseToken(urlRoot + "/api/get-list-user-logins",
+            String res = execGetUseToken(
+                urlRoot + "/api/get-list-user-logins",
                 token);
             System.out.println(module + "::getUserLogins, res = " + res);
             return res;
@@ -85,21 +88,22 @@ public class RequestAgent extends Thread {
     }
 
     public String postLocation(double lat, double lng, Date timePoint) {
+
         System.out.println("request-agent  postLocation");
         SimpleDateFormat formatter = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         String json = "{" + "\"lat\":" + lat + ",\"lng\":" + lng
-            + ",\"timePoint\":\"" + formatter.format(timePoint) + "\""
-            + "}";
+                      + ",\"timePoint\":\"" + formatter.format(timePoint) + "\""
+                      + "}";
         System.out.println(module + "::postLocation, input json = " + json);
         try {
             String res = execPostUseToken(urlRoot + "/api/post-location",
-                json, token);
+                                          json, token);
             System.out.println(module + "::postLocation, res = " + res);
 
             json = "{\"statusId\":null}";
             res = execPostUseToken(Constants.URL_ROOT + "/api/get-list-product",
-                json, token);
+                                   json, token);
             System.out.println(module + "::postLocation, res = " + res);
 
 
@@ -111,6 +115,7 @@ public class RequestAgent extends Thread {
     }
 
     public void run() {
+
         System.out.println(name + "::run....");
 
         token = login("dungpq", "123");

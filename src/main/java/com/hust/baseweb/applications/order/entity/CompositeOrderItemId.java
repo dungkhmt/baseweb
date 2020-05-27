@@ -10,6 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class CompositeOrderItemId implements Serializable {
+
     private String orderId;
     private String orderItemSeqId;
 }

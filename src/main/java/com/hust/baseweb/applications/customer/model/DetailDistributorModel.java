@@ -10,6 +10,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DetailDistributorModel {
+
     private UUID partyDistributorId;
     private String distributorName;
     private String distributorCode;

@@ -20,6 +20,7 @@ public class ProductRevenue {
     private double revenue;
 
     public double increase(double value) {
+
         revenue += value;
         return revenue;
     }
@@ -30,6 +31,7 @@ public class ProductRevenue {
     @NoArgsConstructor
     @EqualsAndHashCode
     public static class Id {
+
         private String productId;
         private LocalDate date;
     }

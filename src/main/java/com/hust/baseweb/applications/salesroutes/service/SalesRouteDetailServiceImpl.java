@@ -39,6 +39,7 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
     @Override
     @Transactional
     public int generateSalesRouteDetailOfSalesman(UUID partySalesmanId, UUID salesRoutePlanningPeriodId) {
+
         log.info("generateSalesRouteDetailOfSalesman, salesmanId = " + partySalesmanId);
         PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
 
@@ -55,11 +56,11 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
             return 0;
         }
         log.info("generateSalesRouteDetailOfSalesman, period = " +
-            SRPP.getFromDate().toString() +
-            ", toDate = " +
-            SRPP.getToDate() +
-            ", SRCC.sz = " +
-            SRCC.size());
+                 SRPP.getFromDate().toString() +
+                 ", toDate = " +
+                 SRPP.getToDate() +
+                 ", SRCC.sz = " +
+                 SRCC.size());
         Date startDate = SRPP.getFromDate();
         Date endDate = SRPP.getToDate();
         int cnt = 0;
@@ -79,19 +80,20 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
             for (String day : days) {
                 int d = Integer.parseInt(day.trim());
                 //List<String> dates = DateTimeUtils.getListDateHavingDay(d, DateTimeUtils.date2YYYYMMDD(startDate), DateTimeUtils.date2YYYYMMDD(endDate), startExecuteDate);
-                List<String> dates = DateTimeUtils.getListDateHavingDay(d,
+                List<String> dates = DateTimeUtils.getListDateHavingDay(
+                    d,
                     startDate,
                     endDate,
                     startExecuteDate + " 00:00:00");
                 for (String date : dates) {
                     log.info("generateSalesRouteDetailOfSalesman, get date " +
-                        date +
-                        " day " +
-                        d +
-                        " customer " +
-                        pc.getRetailOutletName() +
-                        ", salesman " +
-                        partySalesman.getPartyId());
+                             date +
+                             " day " +
+                             d +
+                             " customer " +
+                             pc.getRetailOutletName() +
+                             ", salesman " +
+                             partySalesman.getPartyId());
                     SalesRouteDetail srd = new SalesRouteDetail();
                     srd.setExecuteDate(date);
                     srd.setPartyRetailOutlet(pc);
@@ -110,6 +112,7 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
     @Override
     public List<PartyRetailOutlet> getRetailOutletsVisitedSalesmanDay(
         UUID partySalesmanId, String date) {
+
         String executeDate = date;//DateTimeUtils.date2YYYYMMDD(date);
 
         log.info("getCustomersVisitedSalesmanDay, partySalesmanId = " + partySalesmanId + ", date = " + executeDate);
@@ -128,6 +131,7 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
 
     @Override
     public List<SalesRouteDetailRepo.GetSalesRouteDetailOfPlanPeriodOutputModel> getSalesRouteDetailOfPlanPeriod(UUID salesRoutePlanningPeriodId) {
+
         return salesRouteDetailRepo.getSalesRouteDetailOfPlanPeriod(salesRoutePlanningPeriodId);
     }
 

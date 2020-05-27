@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter
 @Log4j2
 public class CreateOrderAgent extends Thread {
+
     public static final String module = CreateOrderAgent.class.getName();
     //OkHttpClient client = new OkHttpClient();
 
@@ -42,6 +43,7 @@ public class CreateOrderAgent extends Thread {
 
 
     public CreateOrderAgent(String token) {
+
         this.token = token;
         dataManager = new DataManager().invoke();
     }
@@ -70,26 +72,32 @@ public class CreateOrderAgent extends Thread {
     */
 
     public CreateOrderAgent(int id) {
+
         this.agentId = id;
     }
 
     public String getFromDate() {
+
         return fromDate;
     }
 
     public void setFromDate(String fromDate) {
+
         this.fromDate = fromDate;
     }
 
     public String getToDate() {
+
         return toDate;
     }
 
     public void setToDate(String toDate) {
+
         this.toDate = toDate;
     }
 
     public static void main(String[] args) {
+
         NUMBER_THREADS = 1;
 
         String token = Login.login("admin", "123");
@@ -103,6 +111,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     public void setNbIters(int nbIters) {
+
         this.nbIters = nbIters;
     }
 
@@ -132,6 +141,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     public double getMaxTime() {
+
         return this.maxTime;
     }
 
@@ -140,6 +150,7 @@ public class CreateOrderAgent extends Thread {
     private AtomicInteger maxTimeAtomicInteger = new AtomicInteger();
 
     public void createOrders(int nbIters, String fromDateStr, String toDateStr) {
+
         maxTime = 0;
         double sumTime = 0;
         List<String> dates = new ArrayList<String>();
@@ -194,7 +205,8 @@ public class CreateOrderAgent extends Thread {
 
                 sumTime += time;
 //                log.info("finished " + i + "/" + nbIters + ", time = " + time + ", avgTime = " + sumTime / i);
-                log.info("Finished {}/{}, time = {}, maxTime = {}",
+                log.info(
+                    "Finished {}/{}, time = {}, maxTime = {}",
                     i,
                     nbIters,
                     time,
@@ -213,6 +225,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     public void run() {
+
         Simulator.threadRunningCounter.incrementAndGet();
 //        System.out.println(module + "::run....");
 
@@ -222,6 +235,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     public String name() {
+
         return module + "[" + agentId + "]";
     }
 
@@ -241,6 +255,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     public List<Facility> getFacilities() {
+
         try {
             String json = "{\"statusId\":null}";
             String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-facility", json, token);
@@ -255,6 +270,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     public List<PartyCustomerModel> executeGetCustomers() {
+
         try {
             String json = "{\"statusId\":null}";
 
@@ -278,6 +294,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     public double createOrder(Date orderDate, DataManager dataManager) {
+
         try {
 
             List<Product> products = dataManager.getProducts();
@@ -330,7 +347,8 @@ public class CreateOrderAgent extends Thread {
             String json = gson.toJson(input);
 
             double t0 = System.currentTimeMillis();
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-order-distributor-to-retail-outlet",
+            String rs = executor.execPostUseToken(
+                Constants.URL_ROOT + "/api/create-order-distributor-to-retail-outlet",
                 json,
                 token);
             //System.out.println(module + "::createOrder, rs = " + rs);
@@ -344,6 +362,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     private class DataManager {
+
         private List<Product> products;
         private List<Facility> facilities;
         private List<PartyCustomerModel> customers;
@@ -351,26 +370,32 @@ public class CreateOrderAgent extends Thread {
         private List<PartyRetailOutlet> retailOutlets;
 
         public List<Product> getProducts() {
+
             return products;
         }
 
         public List<Facility> getFacilities() {
+
             return facilities;
         }
 
         public List<PartyCustomerModel> getCustomers() {
+
             return customers;
         }
 
         public List<PartyDistributor> getDistributors() {
+
             return distributors;
         }
 
         public List<PartyRetailOutlet> getRetailOutlets() {
+
             return retailOutlets;
         }
 
         public DataManager invoke() {
+
             ProductManager productManager = new ProductManager(token);
             CustomerManager customerManager = new CustomerManager(token);
             FacilityManager facilityManager = new FacilityManager(token);

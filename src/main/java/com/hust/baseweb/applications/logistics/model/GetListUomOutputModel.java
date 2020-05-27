@@ -9,9 +9,11 @@ import java.util.List;
 @Getter
 @Setter
 public class GetListUomOutputModel {
+
     private List<Uom> uoms;
 
     public GetListUomOutputModel(List<Uom> uoms) {
+
         super();
         this.uoms = uoms;
     }

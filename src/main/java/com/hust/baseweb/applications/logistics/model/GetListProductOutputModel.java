@@ -9,9 +9,11 @@ import java.util.List;
 @Getter
 @Setter
 public class GetListProductOutputModel {
+
     private List<Product> products;
 
     public GetListProductOutputModel(List<Product> products) {
+
         super();
         this.products = products;
     }

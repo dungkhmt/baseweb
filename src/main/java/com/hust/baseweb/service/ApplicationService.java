@@ -6,6 +6,7 @@ import com.hust.baseweb.entity.SecurityPermission;
 import java.util.List;
 
 public interface ApplicationService {
+
     List<Application> getListByPermissionAndType(List<SecurityPermission> permissionList, String type);
 
 }

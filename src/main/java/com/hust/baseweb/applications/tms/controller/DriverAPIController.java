@@ -35,20 +35,28 @@ public class DriverAPIController {
 
     @PostMapping("/create-driver")
     public ResponseEntity<?> createDriver(Principal principal, @RequestBody DriverModel.InputCreate input) {
+
         PartyDriver driver = partyDriverService.save(input);
         return ResponseEntity.ok().body(driver);
     }
 
     @GetMapping("/get-all-drivers")
     public ResponseEntity<?> findAllDrivers() {
+
         log.info("::findAllDrivers()");
 
-        return ResponseEntity.ok().body(partyDriverService.findAll().stream()
-            .map(partyDriver -> partyDriver.getPerson().getBasicInfoModel()).collect(Collectors.toList()));
+        return ResponseEntity
+            .ok()
+            .body(partyDriverService
+                      .findAll()
+                      .stream()
+                      .map(partyDriver -> partyDriver.getPerson().getBasicInfoModel())
+                      .collect(Collectors.toList()));
     }
 
     @GetMapping("/get-page-drivers")
     public ResponseEntity<?> findPageDrivers(Pageable page) {
+
         log.info("::findPageDrivers()");
 
         Page<PartyDriver> drivers = partyDriverService.findAll(page);
@@ -57,8 +65,10 @@ public class DriverAPIController {
 
     @GetMapping("/get-driver-in-delivery-trip/{deliveryTripId}")
     public ResponseEntity<?> findDriver(@PathVariable String deliveryTripId) {
+
         log.info("::findDriver(), deliveryTripId=" + deliveryTripId);
-        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId))
+        DeliveryTrip deliveryTrip = deliveryTripRepo
+            .findById(UUID.fromString(deliveryTripId))
             .orElseThrow(NoSuchElementException::new);
         PartyDriver partyDriver = deliveryTrip.getPartyDriver();
         if (partyDriver == null || partyDriver.getPerson() == null) {
@@ -68,15 +78,19 @@ public class DriverAPIController {
     }
 
     @GetMapping("/set-driver-to-delivery-trip/{deliveryTripId}/{driverPartyId}")
-    public ResponseEntity<?> setDriverToDeliveryTrip(@PathVariable String deliveryTripId,
-                                                     @PathVariable String driverPartyId) {
+    public ResponseEntity<?> setDriverToDeliveryTrip(
+        @PathVariable String deliveryTripId,
+        @PathVariable String driverPartyId) {
+
         log.info("::setDriverToDeliveryTrip(), deliveryTripId=" + deliveryTripId + ", driverPartyId=" + driverPartyId);
-        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId))
+        DeliveryTrip deliveryTrip = deliveryTripRepo
+            .findById(UUID.fromString(deliveryTripId))
             .orElseThrow(NoSuchElementException::new);
         if (driverPartyId.equals("unSelected")) {
             deliveryTrip.setPartyDriver(null);
         } else {
-            PartyDriver partyDriver = partyDriverRepo.findById(UUID.fromString(driverPartyId))
+            PartyDriver partyDriver = partyDriverRepo
+                .findById(UUID.fromString(driverPartyId))
                 .orElseThrow(NoSuchElementException::new);
             deliveryTrip.setPartyDriver(partyDriver);
         }
@@ -86,7 +100,9 @@ public class DriverAPIController {
 
     @GetMapping("/get-driver-info/{driverId}")
     public ResponseEntity<PartyDriver.Model> getDriverInfo(@PathVariable String driverId) {
-        PartyDriver partyDriver = partyDriverRepo.findById(UUID.fromString(driverId))
+
+        PartyDriver partyDriver = partyDriverRepo
+            .findById(UUID.fromString(driverId))
             .orElseThrow(NoSuchElementException::new);
         return ResponseEntity.ok(partyDriver.toModel());
     }

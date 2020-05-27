@@ -27,6 +27,7 @@ public class InvoiceItem {
     private Date createdStamp;        // TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     public Model toModel(Invoice invoice, OrderItem orderItem) {
+
         Product product = new Product();
         String orderId = null;
         String orderItemSeqId = null;
@@ -57,6 +58,7 @@ public class InvoiceItem {
     @Setter
     @EqualsAndHashCode
     public static class Id {
+
         private String invoiceId;           // varchar(60),
         private String invoiceItemSeqId;  // varchar(60),
     }
@@ -66,6 +68,7 @@ public class InvoiceItem {
     @Getter
     @Setter
     public static class Model {
+
         private String invoiceId;           // varchar(60),
         private String invoiceItemSeqId;  // varchar(60),
         private String invoiceItemType; // varchar(60),

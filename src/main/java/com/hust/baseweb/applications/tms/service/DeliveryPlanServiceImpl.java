@@ -43,17 +43,21 @@ public class DeliveryPlanServiceImpl implements DeliveryPlanService {
 
     @Override
     public Page<DeliveryPlan> findAll(Pageable pageable) {
+
         return deliveryPlanRepo.findAll(pageable);
     }
 
     @Override
     public DeliveryPlan findById(UUID deliveryPlanId) {
+
         return deliveryPlanRepo.findById(deliveryPlanId).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
     public Double getTotalWeightShipmentItems(UUID deliveryPlanId) {
-        return deliveryPlanRepo.findById(deliveryPlanId)
+
+        return deliveryPlanRepo
+            .findById(deliveryPlanId)
             .orElseThrow(NoSuchElementException::new)
             .getTotalWeightShipmentItems();
     }

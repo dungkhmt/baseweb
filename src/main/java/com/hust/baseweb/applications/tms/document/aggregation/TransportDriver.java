@@ -19,17 +19,20 @@ public class TransportDriver extends TransportReport<TransportDriver.Id> {
     @org.springframework.data.annotation.Id
     private Id id;
 
-    public TransportDriver(Id id,
-                           Long cost,
-                           Integer totalDistance,
-                           Integer numberTrips,
-                           Integer totalWeight) {
+    public TransportDriver(
+        Id id,
+        Long cost,
+        Integer totalDistance,
+        Integer numberTrips,
+        Integer totalWeight) {
+
         super(cost, totalDistance, numberTrips, totalWeight);
         this.id = id;
     }
 
     @Override
     public TransportReportModel.DateReport toDateReport() {
+
         TransportReportModel.DateReport dateReport = super.toDateReport();
         dateReport.setDate(id.getDate().format(Constant.LOCAL_DATE_FORMAT));
         return dateReport;
@@ -41,6 +44,7 @@ public class TransportDriver extends TransportReport<TransportDriver.Id> {
     @NoArgsConstructor
     @EqualsAndHashCode
     public static class Id {
+
         private UUID driverId;
         private LocalDate date;
     }

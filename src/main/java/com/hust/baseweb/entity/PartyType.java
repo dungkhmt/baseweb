@@ -10,6 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class PartyType {
+
     @Id
     @Column(name = "party_type_id")
     //private String id;
@@ -24,6 +25,7 @@ public class PartyType {
     private Date lastUpdatedStamp;
 
     public PartyType(String partyTypeId, PartyType parentType, boolean hasTable, String description) {
+
         this.partyTypeId = partyTypeId;
         this.parentType = parentType;
         this.hasTable = hasTable;
@@ -31,6 +33,7 @@ public class PartyType {
     }
 
     public PartyType() {
+
     }
 
     public enum PartyTypeEnum {

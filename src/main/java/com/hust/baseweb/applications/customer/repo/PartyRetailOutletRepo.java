@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PartyRetailOutletRepo extends JpaRepository<PartyRetailOutlet, UUID> {
+
     List<PartyRetailOutlet> findAll();
 
     Page<PartyRetailOutlet> findAll(Pageable page);

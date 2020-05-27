@@ -24,12 +24,14 @@ import java.util.stream.Collectors;
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MenuController {
+
     public static final String module = MenuController.class.getName();
     private ApplicationService applicationService;
     private UserService userService;
 
     @GetMapping("/menu")
     public ResponseEntity<Set> getMenu(Principal principal) {
+
         UserLogin userLogin = userService.findById(principal.getName());
 //        System.out.println(module + "::getMenu, userName = " + principal.getName());
 
@@ -39,8 +41,11 @@ public class MenuController {
         }
 //        System.out.println(module + "::getMenu, userName = " + principal.getName() + ", meu.lst = " + permissionList.size());
         return ResponseEntity.ok().body(
-            applicationService.getListByPermissionAndType(permissionList, ApplicationTypeConstant.MENU)
-                .stream().map(Application::getApplicationId).collect(Collectors.toSet())
+            applicationService
+                .getListByPermissionAndType(permissionList, ApplicationTypeConstant.MENU)
+                .stream()
+                .map(Application::getApplicationId)
+                .collect(Collectors.toSet())
         );
     }
 }

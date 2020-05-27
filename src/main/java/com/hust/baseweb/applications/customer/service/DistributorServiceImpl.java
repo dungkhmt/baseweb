@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class DistributorServiceImpl implements DistributorService {
+
     private GeoPointRepo geoPointRepo;
     private PostalAddressRepo postalAddressRepo;
     private PartyRepo partyRepo;
@@ -57,11 +58,15 @@ public class DistributorServiceImpl implements DistributorService {
         //UUID partyId = UUID.randomUUID();
         //Party party = new Party();
         //party.setPartyId(partyId);// KHONG WORK vi partyId khi insert vao DB se duoc sinh tu dong, no se khac voi partyId sinh ra boi SPRING
-        Party party = new Party(null, partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
-            statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
+        Party party = new Party(
+            null,
+            partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()),
+            "",
+            statusRepo
+                .findById(StatusEnum.PARTY_ENABLED.name())
+                .orElseThrow(NoSuchElementException::new),
             false);
         party.setName(input.getDistributorName());
-
         party.setType(partyType);
 
         partyRepo.save(party);
@@ -118,6 +123,7 @@ public class DistributorServiceImpl implements DistributorService {
 
     @Override
     public List<PartyDistributor> findDistributors() {
+
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");
         List<PartyDistributor> distributors = partyDistributorRepo.findByPartyType(partyType);
         log.info("findDistributors, got distributors.sz = " + distributors.size());
@@ -127,21 +133,25 @@ public class DistributorServiceImpl implements DistributorService {
 
     @Override
     public PartyDistributor findByPartyId(UUID partyId) {
+
         return partyDistributorRepo.findByPartyId(partyId);
     }
 
     @Override
     public List<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds) {
+
         return partyDistributorRepo.findAllByPartyIdIn(partyIds);
     }
 
     @Override
     public Page<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds, Pageable page) {
+
         return partyDistributorRepo.findAllByPartyIdIn(partyIds, page);
     }
 
     @Override
     public DetailDistributorModel getDistributorDetail(UUID partyDistributorId) {
+
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);
         List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyDistributorAndThruDate(
             partyDistributor,
@@ -152,7 +162,8 @@ public class DistributorServiceImpl implements DistributorService {
         detailDistributorModel.setDistributorCode(partyDistributor.getDistributorCode());
         detailDistributorModel.setDistributorName(partyDistributor.getDistributorName());
         List<RetailOutletSalesmanDistributorModel> retailOutletSalesmanDistributorModels =
-            retailOutletSalesmanVendors.stream()
+            retailOutletSalesmanVendors
+                .stream()
                 .map(o -> new RetailOutletSalesmanDistributorModel(o))
                 .collect(Collectors.toList());
 

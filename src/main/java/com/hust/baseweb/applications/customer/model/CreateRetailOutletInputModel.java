@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateRetailOutletInputModel {
+
     private String retailOutletCode;
     private String retailOutletName;
     private String address;

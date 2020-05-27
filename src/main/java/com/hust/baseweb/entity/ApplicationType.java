@@ -12,6 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class ApplicationType {
+
     @Id
     @Column(name = "application_type_id")
     private String applicationTypeId;
@@ -20,10 +21,12 @@ public class ApplicationType {
     private Date lastUpdatedStamp;
 
     public ApplicationType(String applicationTypeId, String description) {
+
         this.applicationTypeId = applicationTypeId;
         this.description = description;
     }
 
     public ApplicationType() {
+
     }
 }

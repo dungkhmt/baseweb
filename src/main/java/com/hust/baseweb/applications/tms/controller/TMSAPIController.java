@@ -55,16 +55,21 @@ public class TMSAPIController {
     private VehicleRepo vehicleRepo;
 
     @PostMapping("/statistic-vehicle-distance")
-    public ResponseEntity<?> statisticVehicleDistance(Principal principal,
-                                                      @RequestBody VehicleModel.InputDistanceStatistic input) {
-        List<VehicleModel.Distance> distances = statisticDeliveryTripService.collectVehicleDistance(input.getFromDate(),
+    public ResponseEntity<?> statisticVehicleDistance(
+        Principal principal,
+        @RequestBody VehicleModel.InputDistanceStatistic input) {
+
+        List<VehicleModel.Distance> distances = statisticDeliveryTripService.collectVehicleDistance(
+            input.getFromDate(),
             input.getThruDate());
         return ResponseEntity.ok().body(distances);
     }
 
     @PostMapping("/get-assigned-delivery-routes")
-    public ResponseEntity<?> getDeliveryTripAssignedToDriver(Principal principal,
-                                                             @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
+    public ResponseEntity<?> getDeliveryTripAssignedToDriver(
+        Principal principal,
+        @RequestBody GetDeliveryTripAssignedToDriverInputModel input) {
+
         GetDeliveryTripAssignedToDriverOutputModel deliveryTrip = deliveryTripService.getDeliveryTripAssignedToDriver(
             input.getDriverUserLoginId());
 
@@ -72,8 +77,10 @@ public class TMSAPIController {
     }
 
     @PostMapping("/complete-shipment-items")
-    public ResponseEntity<?> completeShipmentItems(Principal principal,
-                                                   @RequestBody CompleteDeliveryShipmentItemsInputModel input) {
+    public ResponseEntity<?> completeShipmentItems(
+        Principal principal,
+        @RequestBody CompleteDeliveryShipmentItemsInputModel input) {
+
         if (input.getItems() == null || input.getItems().length == 0) {
             return ResponseEntity.ok().body("OK");
         }
@@ -143,8 +150,10 @@ public class TMSAPIController {
 
     @GetMapping("/calc-distance-travel-time")
     public ResponseEntity<?> calcDistanceTravelTime() {
+
         log.info("::calcDistanceTravelTime()");
-        return ResponseEntity.ok(distanceTravelTimePostalAddressService.computeMissingDistance("HAVERSINE",
+        return ResponseEntity.ok(distanceTravelTimePostalAddressService.computeMissingDistance(
+            "HAVERSINE",
             -1,
             -1,
             -1));
@@ -152,32 +161,46 @@ public class TMSAPIController {
 
     @PostMapping("/solve")
     public ResponseEntity<?> solve(@RequestBody SolverService.SolverOption solverOption) throws IOException {
+
         log.info("::solve()");
 
         return ResponseEntity.ok(solverService.solve(solverOption));
     }
 
     @PostMapping("/suggest-trips")
-    public ResponseEntity<SolverService.TripSuggestion.Output> suggestTrips(@RequestBody SolverService.TripSuggestion.Input input) {
+    public ResponseEntity<SolverService.TripSuggestion.Output> suggestTrips(
+        @RequestBody SolverService.TripSuggestion.Input input) {
+
         return ResponseEntity.ok(solverService.suggestTrips(input));
     }
 
     @PostMapping("/get-transport-reports")
-    public ResponseEntity<TransportReportModel.Output> getTransportReports(@RequestBody TransportReportModel.Input input) {
+    public ResponseEntity<TransportReportModel.Output> getTransportReports(
+        @RequestBody TransportReportModel.Input input) {
+
         return ResponseEntity.ok(transportService.getTransportReports(input));
     }
 
     @GetMapping("/get-solver-config-param")
     public ResponseEntity<SolverConfigParam.InputModel> getSolverConfigParam() {
+
         return ResponseEntity.ok(Optional.ofNullable(solverConfigParamRepo.findFirstByThruDateNull())
-            .map(SolverConfigParam::toInputModel)
-            // default value
-            .orElse(new SolverConfigParam.InputModel(80_000, 3000, 15,
-                15 * 60, 15 * 60, 30.0 * 60, 70.0 / 1000 * 60, 15.0 / 1000 * 60)));
+                                         .map(SolverConfigParam::toInputModel)
+                                         // default value
+                                         .orElse(new SolverConfigParam.InputModel(
+                                             80_000,
+                                             3000,
+                                             15,
+                                             15 * 60,
+                                             15 * 60,
+                                             30.0 * 60,
+                                             70.0 / 1000 * 60,
+                                             15.0 / 1000 * 60)));
     }
 
     @PostMapping("/set-solver-config-param")
     public ResponseEntity<Boolean> setSolverConfigParam(@RequestBody SolverConfigParam.InputModel inputModel) {
+
         Date now = new Date();
         List<SolverConfigParam> solverConfigParams = solverConfigParamRepo.findAllByThruDateNull();
         solverConfigParams.forEach(solverConfigParam -> solverConfigParam.setThruDate(now));
@@ -188,11 +211,13 @@ public class TMSAPIController {
 
     @GetMapping("/get-delivery-trips-by-vehicle/{vehicleId}")
     public ResponseEntity<List<DeliveryTripModel>> getDeliveryTripsByVehicle(@PathVariable String vehicleId) {
+
         return ResponseEntity.ok(deliveryTripService.findAllByVehicleId(vehicleId));
     }
 
     @GetMapping("/get-delivery-trips-by-driver/{driverId}")
     public ResponseEntity<List<DeliveryTripModel>> getDeliveryTripsByDriver(@PathVariable String driverId) {
+
         return ResponseEntity.ok(deliveryTripService.findAllByDriverId(UUID.fromString(driverId)));
     }
 }

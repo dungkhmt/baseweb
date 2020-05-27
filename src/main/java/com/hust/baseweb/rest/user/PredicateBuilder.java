@@ -7,18 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PredicateBuilder {
+
     private final List<SearchCriteria> params;
 
     public PredicateBuilder() {
+
         params = new ArrayList<SearchCriteria>();
     }
 
     public PredicateBuilder with(final String key, final String operation, final Object value) {
+
         params.add(new SearchCriteria(key, operation, value));
         return this;
     }
 
     public BooleanExpression build() {
+
         if (params.size() == 0) {
             return null;
         }

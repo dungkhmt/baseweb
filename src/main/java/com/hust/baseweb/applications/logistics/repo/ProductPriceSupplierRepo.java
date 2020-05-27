@@ -15,14 +15,17 @@ import java.util.UUID;
  */
 public interface ProductPriceSupplierRepo extends JpaRepository<ProductPriceSupplier, UUID> {
 
-    List<ProductPriceSupplier> findAllByPartySupplierAndThruDateNullOrThruDateAfter(Supplier partySupplier,
-                                                                                    Date thruDateAfter);
+    List<ProductPriceSupplier> findAllByPartySupplierAndThruDateNullOrThruDateAfter(
+        Supplier partySupplier,
+        Date thruDateAfter);
 
-    List<ProductPriceSupplier> findAllByPartySupplierAndProductAndThruDateNullOrThruDateAfter(Supplier partySupplier,
-                                                                                              Product product,
-                                                                                              Date thruDateAfter);
+    List<ProductPriceSupplier> findAllByPartySupplierAndProductAndThruDateNullOrThruDateAfter(
+        Supplier partySupplier,
+        Product product,
+        Date thruDateAfter);
 
-    List<ProductPriceSupplier> findAllByPartySupplierInAndProductInAndThruDateNullOrThruDateAfter(Collection<Supplier> partySuppliers,
-                                                                                                  Collection<Product> products,
-                                                                                                  Date thruDateAfter);
+    List<ProductPriceSupplier> findAllByPartySupplierInAndProductInAndThruDateNullOrThruDateAfter(
+        Collection<Supplier> partySuppliers,
+        Collection<Product> products,
+        Date thruDateAfter);
 }

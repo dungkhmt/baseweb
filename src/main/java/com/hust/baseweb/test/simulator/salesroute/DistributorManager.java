@@ -12,14 +12,17 @@ import java.util.List;
 import java.util.UUID;
 
 public class DistributorManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
     public DistributorManager(String token) {
+
         this.token = token;
     }
 
     public List<PartyDistributor> getListDistributors() {
+
         try {
             String json = "{\"statusId\":null}";
 
@@ -37,13 +40,15 @@ public class DistributorManager {
     }
 
     public List<PartyDistributor> getListDistributorsOfSalesman(UUID partySalesmanId) {
+
         try {
             Gson gson = new Gson();
             GetListDistributorsOfSalesmanInputModel in = new GetListDistributorsOfSalesmanInputModel(partySalesmanId);
             //in.setPartySalesmanId(partySalesmanId);
             String json = gson.toJson(in);
 //            System.out.println("::getListDistributorsOfSalesman, input json = " + json);
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-distributors-of-salesman",
+            String rs = executor.execPostUseToken(
+                Constants.URL_ROOT + "/api/get-distributors-of-salesman",
                 json,
                 token);
 

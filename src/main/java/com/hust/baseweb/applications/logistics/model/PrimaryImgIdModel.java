@@ -10,5 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PrimaryImgIdModel {
+
     private String primaryImgId;
 }

@@ -7,14 +7,17 @@ import com.hust.baseweb.applications.customer.model.PartyCustomerModel;
 import java.util.List;
 
 public class PartyManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
     public PartyManager(String token) {
+
         this.token = token;
     }
 
     public List<PartyCustomerModel> getListParty() {
+
         try {
             String rs = executor.execGetUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", "", token);
             Gson gson = new Gson();

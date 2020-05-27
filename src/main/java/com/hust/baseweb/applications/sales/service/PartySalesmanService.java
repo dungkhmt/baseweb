@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @Service
 public interface PartySalesmanService {
+
     List<GetSalesmanOutputModel> findAllSalesman();
 
     UserLogin findUserLoginOfSalesmanId(UUID partySalesmanId);

@@ -15,6 +15,7 @@ import java.util.Random;
 @Getter
 @Setter
 public class ImportFacilityAgent extends Thread {
+
     public static final String module = ImportFacilityAgent.class.getName();
 
     private Random rand = new Random();
@@ -29,6 +30,7 @@ public class ImportFacilityAgent extends Thread {
     private int idleTime = 360;
 
     public ImportFacilityAgent(String username, String password) {
+
         this.username = username;
         this.password = password;
     }
@@ -45,6 +47,7 @@ public class ImportFacilityAgent extends Thread {
     }
 
     public double createAReceipt(List<Product> products, List<Facility> facilities) throws Exception {
+
         try {
             Gson gson = new Gson();
             ImportInventoryItemsInputModel input = new ImportInventoryItemsInputModel();
@@ -67,7 +70,8 @@ public class ImportFacilityAgent extends Thread {
             String json = gson.toJson(input);
 
             double t0 = System.currentTimeMillis();
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/import-inventory-items",
+            String rs = executor.execPostUseToken(
+                Constants.URL_ROOT + "/api/import-inventory-items",
                 json,
                 token);
             //System.out.println(module + "::createOrder, rs = " + rs);
@@ -79,6 +83,7 @@ public class ImportFacilityAgent extends Thread {
     }
 
     public void createReceipts() {
+
         FacilityManager facilityManager = new FacilityManager(token);
         ProductManager productManager = new ProductManager(token);
         List<Facility> facilities = facilityManager.getListFacility();

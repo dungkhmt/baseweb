@@ -27,6 +27,7 @@ public class PartyDepartmentServiceImpl implements PartyDepartmentService {
 
     @Override
     public PartyDepartment save(UUID partyId, String departmentId, String roleTypeId) {
+
         Department dept = departmentRepo.findByDepartmentId(departmentId);
         Party party = partyRepo.findByPartyId(partyId);
         RoleType roleType = roleTypeRepo.findByRoleTypeId(roleTypeId);

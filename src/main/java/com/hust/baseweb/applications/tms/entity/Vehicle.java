@@ -17,6 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Vehicle {
+
     @Id
     @Column(name = "vehicle_id")
     private String vehicleId;
@@ -42,6 +43,7 @@ public class Vehicle {
     private Integer priority;
 
     public VehicleModel toVehicleModel() {
+
         return new VehicleModel(
             vehicleId,
             capacity,
@@ -55,6 +57,7 @@ public class Vehicle {
     }
 
     public VehicleMaintenanceHistory createVehicleMaintenanceHistory() {
+
         VehicleMaintenanceHistory vehicleMaintenanceHistory = new VehicleMaintenanceHistory();
         vehicleMaintenanceHistory.setVehicle(this);
         vehicleMaintenanceHistory.setMaintenanceDate(new Date());

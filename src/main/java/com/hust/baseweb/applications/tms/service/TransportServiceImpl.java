@@ -41,48 +41,62 @@ public class TransportServiceImpl implements TransportService {
 
     @Override
     public void updateTransportDeliveryTripDetailOnCompleted(DeliveryTripDetail... deliveryTripDetails) {
-        List<DeliveryTripDetail> deliveryTripDetailList = Arrays.stream(deliveryTripDetails)
-            .filter(deliveryTripDetail -> deliveryTripDetail.getStatusItem().getStatusId()
-                .equals("DELIVERY_TRIP_DETAIL_COMPLETED")) // chỉ cập nhật báo cáo cho các delivery trip detail đã hoàn thành
-            .collect(Collectors.toList());
 
-        Function<DeliveryTripDetail, TransportReport> deliveryTripDetailToTransportReport
-            = deliveryTripDetail -> new TransportReport(
+        List<DeliveryTripDetail> deliveryTripDetailList =
+            Arrays.stream(deliveryTripDetails)
+                  .filter(deliveryTripDetail -> deliveryTripDetail
+                      .getStatusItem()
+                      .getStatusId()
+                      .equals("DELIVERY_TRIP_DETAIL_COMPLETED")) // chỉ cập nhật báo cáo cho các delivery trip detail đã hoàn thành
+                  .collect(Collectors.toList());
+
+        Function<DeliveryTripDetail, TransportReport<Object>> deliveryTripDetailToTransportReport
+            = deliveryTripDetail -> new TransportReport<Object>(
             0L,
             0,
             0,
             (int) (deliveryTripDetail.getDeliveryQuantity() *
-                deliveryTripDetail.getShipmentItem().getOrderItem().getProduct().getWeight() *
-                1000)) {
+                   deliveryTripDetail.getShipmentItem().getOrderItem().getProduct().getWeight() *
+                   1000)) {
             @Override
             public Object getId() {
+
                 return null;
             }
         };
 
         // update customer report
-        List<TransportCustomer> transportCustomers = getTransportCustomers(deliveryTripDetailList,
+        List<TransportCustomer> transportCustomers = getTransportCustomers(
+            deliveryTripDetailList,
             deliveryTripDetailToTransportReport);
-        transportCustomerRepo.saveAll(mergeData(transportCustomers,
+        transportCustomerRepo.saveAll(mergeData(
+            transportCustomers,
             ids -> transportCustomerRepo.findAllByIdIn(ids)).values());
 
         // update driver report
-        List<TransportDriver> transportDrivers = getTransportDrivers(deliveryTripDetailList,
+        List<TransportDriver> transportDrivers = getTransportDrivers(
+            deliveryTripDetailList,
             deliveryTripDetailToTransportReport);
-        transportDriverRepo.saveAll(mergeData(transportDrivers,
+        transportDriverRepo.saveAll(mergeData(
+            transportDrivers,
             ids -> transportDriverRepo.findAllByIdIn(ids)).values());
 
         // update facility report
-        List<TransportFacility> transportFacilities = getTransportFacilities(deliveryTripDetailList,
+        List<TransportFacility> transportFacilities = getTransportFacilities(
+            deliveryTripDetailList,
             deliveryTripDetailToTransportReport);
-        transportFacilityRepo.saveAll(mergeData(transportFacilities,
+        transportFacilityRepo.saveAll(mergeData(
+            transportFacilities,
             ids -> transportFacilityRepo.findAllByIdIn(ids)).values());
     }
 
     @Override
     public void updateTransportDeliveryTripsOnCompleted(DeliveryTripDetail... deliveryTripDetails) {
-        Map<DeliveryTrip, DeliveryTripDetail> deliveryTripToDetailMap = Arrays.stream(deliveryTripDetails)
-            .filter(deliveryTripDetail -> deliveryTripDetail.getDeliveryTrip()
+
+        Map<DeliveryTrip, DeliveryTripDetail> deliveryTripToDetailMap = Arrays
+            .stream(deliveryTripDetails)
+            .filter(deliveryTripDetail -> deliveryTripDetail
+                .getDeliveryTrip()
                 .getStatusItem()
                 .getStatusId()
                 .equals("DELIVERY_TRIP_COMPLETED"))
@@ -93,13 +107,16 @@ public class TransportServiceImpl implements TransportService {
         Map<TransportFacility.Id, TransportFacility> transportFacilityMap = new HashMap<>();
 
         deliveryTripToDetailMap.forEach((deliveryTrip, deliveryTripDetail) -> {
-            TransportCustomer transportCustomer = Optional.ofNullable(getTransportCustomerId(deliveryTripDetail))
+            TransportCustomer transportCustomer = Optional
+                .ofNullable(getTransportCustomerId(deliveryTripDetail))
                 .map(id -> new TransportCustomer(id, 0L, deliveryTrip.getDistance().intValue(), 1, 0))
                 .orElse(null);
-            TransportDriver transportDriver = Optional.ofNullable(getTransportDriverId(deliveryTripDetail))
+            TransportDriver transportDriver = Optional
+                .ofNullable(getTransportDriverId(deliveryTripDetail))
                 .map(id -> new TransportDriver(id, 0L, deliveryTrip.getDistance().intValue(), 1, 0))
                 .orElse(null);
-            TransportFacility transportFacility = Optional.ofNullable(getTransportFacilityId(deliveryTripDetail))
+            TransportFacility transportFacility = Optional
+                .ofNullable(getTransportFacilityId(deliveryTripDetail))
                 .map(id -> new TransportFacility(id, 0L, deliveryTrip.getDistance().intValue(), 1, 0))
                 .orElse(null);
 
@@ -114,22 +131,27 @@ public class TransportServiceImpl implements TransportService {
             }
         });
 
-        transportCustomerRepo.saveAll(mergeData(transportCustomerMap,
+        transportCustomerRepo.saveAll(mergeData(
+            transportCustomerMap,
             ids -> transportCustomerRepo.findAllByIdIn(ids)).values());
-        transportDriverRepo.saveAll(mergeData(transportDriverMap,
+        transportDriverRepo.saveAll(mergeData(
+            transportDriverMap,
             ids -> transportDriverRepo.findAllByIdIn(ids)).values());
-        transportFacilityRepo.saveAll(mergeData(transportFacilityMap,
+        transportFacilityRepo.saveAll(mergeData(
+            transportFacilityMap,
             ids -> transportFacilityRepo.findAllByIdIn(ids)).values());
     }
 
     @Override
     public TransportReportModel.Output getTransportReports(TransportReportModel.Input input) {
+
         if (input.getCustomerId() != null) {
             List<TransportCustomer> transportCustomers = transportCustomerRepo.findAllById_CustomerIdAndId_DateBetween(
                 UUID.fromString(input.getCustomerId()),
                 LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
                 LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT).plusDays(1));
-            List<TransportReportModel.DateReport> dateReports = transportCustomers.stream()
+            List<TransportReportModel.DateReport> dateReports = transportCustomers
+                .stream()
                 .map(TransportCustomer::toDateReport)
                 .collect(Collectors.toList());
             return new TransportReportModel.Output(dateReports);
@@ -138,7 +160,8 @@ public class TransportServiceImpl implements TransportService {
                 UUID.fromString(input.getDriverId()),
                 LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
                 LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT).plusDays(1));
-            List<TransportReportModel.DateReport> dateReports = transportDrivers.stream()
+            List<TransportReportModel.DateReport> dateReports = transportDrivers
+                .stream()
                 .map(TransportDriver::toDateReport)
                 .collect(Collectors.toList());
             return new TransportReportModel.Output(dateReports);
@@ -147,7 +170,8 @@ public class TransportServiceImpl implements TransportService {
                 input.getFacilityId(),
                 LocalDate.parse(input.getFromDate(), Constant.LOCAL_DATE_FORMAT),
                 LocalDate.parse(input.getThruDate(), Constant.LOCAL_DATE_FORMAT).plusDays(1));
-            List<TransportReportModel.DateReport> dateReports = transportFacilities.stream()
+            List<TransportReportModel.DateReport> dateReports = transportFacilities
+                .stream()
                 .map(TransportFacility::toDateReport)
                 .collect(Collectors.toList());
             return new TransportReportModel.Output(dateReports);
@@ -156,8 +180,10 @@ public class TransportServiceImpl implements TransportService {
     }
 
     @NotNull
-    private List<TransportFacility> getTransportFacilities(List<DeliveryTripDetail> deliveryTripDetails,
-                                                           Function<DeliveryTripDetail, TransportReport> deliveryTripDetailToTransportReport) {
+    private List<TransportFacility> getTransportFacilities(
+        List<DeliveryTripDetail> deliveryTripDetails,
+        Function<DeliveryTripDetail, TransportReport<Object>> deliveryTripDetailToTransportReport) {
+
         Function<DeliveryTripDetail, TransportFacility> deliveryTripDetailToTransportFacilityFunction =
             deliveryTripDetail -> {
                 TransportFacility.Id transportFacilityId = getTransportFacilityId(deliveryTripDetail);
@@ -165,16 +191,18 @@ public class TransportServiceImpl implements TransportService {
                     return null;
                 }
 
-                TransportReport transportReport = deliveryTripDetailToTransportReport.apply(deliveryTripDetail);
+                TransportReport<Object> transportReport = deliveryTripDetailToTransportReport.apply(deliveryTripDetail);
 
-                return new TransportFacility(transportFacilityId,
+                return new TransportFacility(
+                    transportFacilityId,
                     transportReport.getCost(),
                     transportReport.getTotalDistance(),
                     transportReport.getNumberTrips(),
                     transportReport.getTotalWeight());
             };
 
-        return deliveryTripDetails.stream()
+        return deliveryTripDetails
+            .stream()
             .map(deliveryTripDetailToTransportFacilityFunction)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -182,7 +210,9 @@ public class TransportServiceImpl implements TransportService {
 
     @Nullable
     private TransportFacility.Id getTransportFacilityId(DeliveryTripDetail deliveryTripDetail) {
-        String facilityId = Optional.ofNullable(deliveryTripDetail.getShipmentItem())
+
+        String facilityId = Optional
+            .ofNullable(deliveryTripDetail.getShipmentItem())
             .map(ShipmentItem::getFacility)
             .map(Facility::getFacilityId)
             .orElse(null);
@@ -195,8 +225,10 @@ public class TransportServiceImpl implements TransportService {
     }
 
     @NotNull
-    private List<TransportDriver> getTransportDrivers(List<DeliveryTripDetail> deliveryTripDetails,
-                                                      Function<DeliveryTripDetail, TransportReport> deliveryTripDetailToTransportReport) {
+    private List<TransportDriver> getTransportDrivers(
+        List<DeliveryTripDetail> deliveryTripDetails,
+        Function<DeliveryTripDetail, TransportReport<Object>> deliveryTripDetailToTransportReport) {
+
         Function<DeliveryTripDetail, TransportDriver> deliveryTripDetailToTransportDriverFunction =
             deliveryTripDetail -> {
                 TransportDriver.Id transportDriverId = getTransportDriverId(deliveryTripDetail);
@@ -204,16 +236,18 @@ public class TransportServiceImpl implements TransportService {
                     return null;
                 }
 
-                TransportReport transportReport = deliveryTripDetailToTransportReport.apply(deliveryTripDetail);
+                TransportReport<Object> transportReport = deliveryTripDetailToTransportReport.apply(deliveryTripDetail);
 
-                return new TransportDriver(transportDriverId,
+                return new TransportDriver(
+                    transportDriverId,
                     transportReport.getCost(),
                     transportReport.getTotalDistance(),
                     transportReport.getNumberTrips(),
                     transportReport.getTotalWeight());
             };
 
-        return deliveryTripDetails.stream()
+        return deliveryTripDetails
+            .stream()
             .map(deliveryTripDetailToTransportDriverFunction)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -221,7 +255,9 @@ public class TransportServiceImpl implements TransportService {
 
     @Nullable
     private TransportDriver.Id getTransportDriverId(DeliveryTripDetail deliveryTripDetail) {
-        UUID driverId = Optional.ofNullable(deliveryTripDetail.getDeliveryTrip())
+
+        UUID driverId = Optional
+            .ofNullable(deliveryTripDetail.getDeliveryTrip())
             .map(DeliveryTrip::getPartyDriver)
             .map(PartyDriver::getPartyId)
             .orElse(null);
@@ -235,7 +271,9 @@ public class TransportServiceImpl implements TransportService {
 
     @Nullable
     private TransportCustomer.Id getTransportCustomerId(DeliveryTripDetail deliveryTripDetail) {
-        UUID customerId = Optional.ofNullable(deliveryTripDetail.getShipmentItem())
+
+        UUID customerId = Optional
+            .ofNullable(deliveryTripDetail.getShipmentItem())
             .map(ShipmentItem::getPartyCustomer)
             .map(Party::getPartyId)
             .orElse(null);
@@ -248,8 +286,10 @@ public class TransportServiceImpl implements TransportService {
     }
 
     @NotNull
-    private List<TransportCustomer> getTransportCustomers(List<DeliveryTripDetail> deliveryTripDetails,
-                                                          Function<DeliveryTripDetail, TransportReport> deliveryTripDetailToTransportReport) {
+    private List<TransportCustomer> getTransportCustomers(
+        List<DeliveryTripDetail> deliveryTripDetails,
+        Function<DeliveryTripDetail, TransportReport<Object>> deliveryTripDetailToTransportReport) {
+
         Function<DeliveryTripDetail, TransportCustomer> deliveryTripDetailToTransportCustomerFunction =
             deliveryTripDetail -> {
                 TransportCustomer.Id transportCustomerId = getTransportCustomerId(deliveryTripDetail);
@@ -257,27 +297,34 @@ public class TransportServiceImpl implements TransportService {
                     return null;
                 }
 
-                TransportReport transportReport = deliveryTripDetailToTransportReport.apply(deliveryTripDetail);
+                TransportReport<Object> transportReport = deliveryTripDetailToTransportReport.apply(deliveryTripDetail);
 
-                return new TransportCustomer(transportCustomerId,
+                return new TransportCustomer(
+                    transportCustomerId,
                     transportReport.getCost(),
                     transportReport.getTotalDistance(),
                     transportReport.getNumberTrips(),
                     transportReport.getTotalWeight());
             };
 
-        return deliveryTripDetails.stream()
+        return deliveryTripDetails
+            .stream()
             .map(deliveryTripDetailToTransportCustomerFunction)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
-    private <ID, E extends TransportReport<ID>> Map<ID, E> mergeData(List<E> transportReports,
-                                                                     Function<List<ID>, List<E>> getDBFunction) {
-        Map<ID, E> onUpdateMap = transportReports.stream()
+    private <ID, E extends TransportReport<ID>> Map<ID, E> mergeData(
+        List<E> transportReports,
+        Function<List<ID>, List<E>> getDBFunction) {
+
+        Map<ID, E> onUpdateMap = transportReports
+            .stream()
             .collect(Collectors.toMap(TransportReport::getId, e -> e, TransportReport::appendTo));
 
-        Map<ID, E> inDBMap = getDBFunction.apply(new ArrayList<>(onUpdateMap.keySet())).stream()
+        Map<ID, E> inDBMap = getDBFunction
+            .apply(new ArrayList<>(onUpdateMap.keySet()))
+            .stream()
             .collect(Collectors.toMap(TransportReport::getId, e -> e));
 
         onUpdateMap.forEach((id, transportReport) -> inDBMap.merge(id, transportReport, TransportReport::appendTo));
@@ -285,9 +332,13 @@ public class TransportServiceImpl implements TransportService {
         return inDBMap;
     }
 
-    private <ID, E extends TransportReport<ID>> Map<ID, E> mergeData(Map<ID, E> sourceMap,
-                                                                     Function<List<ID>, List<E>> getDBFunction) {
-        Map<ID, E> inDBMap = getDBFunction.apply(new ArrayList<>(sourceMap.keySet())).stream()
+    private <ID, E extends TransportReport<ID>> Map<ID, E> mergeData(
+        Map<ID, E> sourceMap,
+        Function<List<ID>, List<E>> getDBFunction) {
+
+        Map<ID, E> inDBMap = getDBFunction
+            .apply(new ArrayList<>(sourceMap.keySet()))
+            .stream()
             .collect(Collectors.toMap(TransportReport::getId, e -> e));
 
         sourceMap.forEach((id, transportReport) -> inDBMap.merge(id, transportReport, TransportReport::appendTo));
@@ -295,9 +346,12 @@ public class TransportServiceImpl implements TransportService {
         return inDBMap;
     }
 
-    private <ID, E extends TransportReport<ID>> void mergeData(List<E> transportReports,
-                                                               Map<ID, E> sourceMap) {
-        Map<ID, E> onUpdateMap = transportReports.stream()
+    private <ID, E extends TransportReport<ID>> void mergeData(
+        List<E> transportReports,
+        Map<ID, E> sourceMap) {
+
+        Map<ID, E> onUpdateMap = transportReports
+            .stream()
             .collect(Collectors.toMap(TransportReport::getId, e -> e, TransportReport::appendTo));
 
         onUpdateMap.forEach((id, transportReport) -> sourceMap.merge(id, transportReport, TransportReport::appendTo));

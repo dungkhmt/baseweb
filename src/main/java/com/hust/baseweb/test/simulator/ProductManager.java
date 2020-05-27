@@ -7,10 +7,12 @@ import com.hust.baseweb.applications.logistics.model.GetListProductOutputModel;
 import java.util.List;
 
 public class ProductManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
     public ProductManager(String token) {
+
         this.token = token;
     }
 

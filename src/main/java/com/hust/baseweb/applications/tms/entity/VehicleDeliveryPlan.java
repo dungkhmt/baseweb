@@ -18,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VehicleDeliveryPlan {
+
     @Id
     @Column(name = "vehicle_id")
     private String vehicleId;

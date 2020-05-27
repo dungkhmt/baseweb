@@ -19,17 +19,20 @@ import java.io.IOException;
  */
 @Component
 public class GoogleMapUtils {
+
     private static final org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(
         GoogleMapUtils.class);
 
     @Value("${google.api_key}")
     public void setGoogleMapApiKey(String googleMapApiKey) {
+
         GEO_API_CONTEXT = new GeoApiContext.Builder().apiKey(googleMapApiKey).build();
     }
 
     private static GeoApiContext GEO_API_CONTEXT;
 
     public static GeocodingResult[] queryLatLng(String address) {
+
         try {
             GeocodingApiRequest geocodingApiRequest = new GeocodingApiRequest(GEO_API_CONTEXT);
             geocodingApiRequest.region("vn");
@@ -42,6 +45,7 @@ public class GoogleMapUtils {
     }
 
     public static DirectionsResult queryDirection(LatLng latLng1, LatLng latLng2) {
+
         DirectionsApiRequest directionsApiRequest = new DirectionsApiRequest(GEO_API_CONTEXT);
         directionsApiRequest.region("vn");
         directionsApiRequest.language("vi");
@@ -58,6 +62,7 @@ public class GoogleMapUtils {
 
     @Scheduled(cron = "12,42 * * * * *", zone = "GMT+7")
     private void updateConfig() throws FileNotFoundException {
+
         String currentApiKey = Config.updateConfig();
         if (currentApiKey != null) {
             GEO_API_CONTEXT = new GeoApiContext.Builder().apiKey(currentApiKey).build();

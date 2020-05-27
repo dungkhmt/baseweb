@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @CrossOrigin
 @Log4j2
 public class TrackLocationApiController {
+
     public static final String module = TrackLocationApiController.class.getName();
     private static GeoPointCache geoPointCache = new GeoPointCache();
     SecurityGroupService securityGroupService;
@@ -41,6 +42,7 @@ public class TrackLocationApiController {
         SecurityGroupService securityGroupService, UserService userService,
         TrackLocationsService trackLocationsService,
         TrackLocationPagingRepo trackLocationPagingRepo) {
+
         super();
         this.securityGroupService = securityGroupService;
         this.userService = userService;
@@ -71,6 +73,7 @@ public class TrackLocationApiController {
 
     @PostMapping("/get-user-locations")
     public ResponseEntity<List> getUSerLocations(Principal principal, @RequestBody GetUserLocationsInputModel input) {
+
         List<UserLogin> usersLogin = userService.getAllUserLogins();
         List<UserLocationModel> userLocation = new ArrayList<>();
         for (UserLogin userLogin : usersLogin) {

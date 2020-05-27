@@ -52,16 +52,19 @@ public class PartyDriverServiceImpl implements PartyDriverService {
 
     @Override
     public List<PartyDriver> findAll() {
+
         return partyDriverRepo.findAll();
     }
 
     @Override
     public Page<PartyDriver> findAll(Pageable page) {
+
         return partyDriverRepo.findAll(page);
     }
 
     @Override
     public PartyDriver findByPartyId(UUID partyId) {
+
         return partyDriverRepo.findByPartyId(partyId);
     }
 

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface OrderRoleRepo extends JpaRepository<OrderRole, String> {
+
     List<OrderRole> findByOrderId(String orderId);
 
     List<OrderRole> findAllByOrderIdIn(List<String> orderIds);

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RestConfig implements RepositoryRestConfigurer {
+
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration restConfig) {
 

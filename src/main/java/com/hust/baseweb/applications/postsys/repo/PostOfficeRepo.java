@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PostOfficeRepo extends JpaRepository<PostOffice, String> {
+
     PostOffice save(PostOffice postOffice);
 
     PostOffice findByPostOfficeId(String postOfficeId);

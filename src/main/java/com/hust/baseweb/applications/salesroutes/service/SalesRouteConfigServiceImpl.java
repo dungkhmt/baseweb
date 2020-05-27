@@ -14,11 +14,13 @@ import java.util.List;
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesRouteConfigServiceImpl implements SalesRouteConfigService {
+
     private PSalesRouteConfigRepo pSalesRouteConfigRepo;
     private SalesRouteConfigRepo salesRouteConfigRepo;
 
     @Override
     public SalesRouteConfig save(String days, int repeatWeek) {
+
         SalesRouteConfig salesRouteConfig = new SalesRouteConfig();
         salesRouteConfig.setDays(days);
         salesRouteConfig.setRepeatWeek(repeatWeek);
@@ -30,6 +32,7 @@ public class SalesRouteConfigServiceImpl implements SalesRouteConfigService {
 
     @Override
     public List<SalesRouteConfig> findAll() {
+
         return salesRouteConfigRepo.findAll();
     }
 

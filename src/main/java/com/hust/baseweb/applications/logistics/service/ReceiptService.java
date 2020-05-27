@@ -11,8 +11,10 @@ import java.util.List;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface ReceiptService {
+
     Receipt create(Facility facility);
 
-    List<ReceiptItem> createReceiptItems(Receipt receipt,
-                                         List<InventoryItem> inventoryItems);
+    List<ReceiptItem> createReceiptItems(
+        Receipt receipt,
+        List<InventoryItem> inventoryItems);
 }

@@ -11,6 +11,7 @@ import java.util.UUID;
 @Setter
 @Entity
 public class PartyRelationship {
+
     @Id
     @Column(name = "party_relationship_id")
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -8,5 +8,6 @@ import java.util.List;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface InvoiceItemService {
+
     List<InvoiceItem.Model> findByInvoiceId(String invoiceId);
 }

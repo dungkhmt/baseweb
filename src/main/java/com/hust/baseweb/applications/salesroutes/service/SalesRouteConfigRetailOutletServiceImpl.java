@@ -31,11 +31,12 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
     private SalesRouteConfigRetailOutletRepo salesRouteConfigRetailOutletRepo;
 
     @Override
-    public SalesRouteConfigRetailOutlet save(UUID retailOutletSalesmanVendorId,
-                                             String visitFrequencyId,
-                                             UUID salesRouteConfigId,
-                                             UUID salesRoutePlanningPeriodId,
-                                             String startExecuteDate) {
+    public SalesRouteConfigRetailOutlet save(
+        UUID retailOutletSalesmanVendorId,
+        String visitFrequencyId,
+        UUID salesRouteConfigId,
+        UUID salesRoutePlanningPeriodId,
+        String startExecuteDate) {
 
         SalesRouteConfigRetailOutlet salesRouteConfigRetailOutlet = new SalesRouteConfigRetailOutlet();
         SalesRouteConfig salesRouteConfig = pSalesRouteConfigRepo.findBySalesRouteConfigId(salesRouteConfigId);
@@ -60,6 +61,7 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
     @Override
     public List<SalesRouteConfigRetailOutletRepo.GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(
         UUID salesRoutePlanningPeriodId) {
+
         return salesRouteConfigRetailOutletRepo.getSalesroutesConfigRetailOutlets(salesRoutePlanningPeriodId);
     }
 }

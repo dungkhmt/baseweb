@@ -20,6 +20,7 @@ import java.util.Date;
 @Setter
 @Document
 public class PaymentApplication {
+
     @MongoId
     private ObjectId paymentApplicationId;
     private String paymentId;             // varchar(60),
@@ -31,6 +32,7 @@ public class PaymentApplication {
     private Date createdStamp;          // timestamp     default current_timestamp,
 
     public Model toModel() {
+
         return new Model(
             paymentApplicationId.toString(),
             paymentId,
@@ -46,6 +48,7 @@ public class PaymentApplication {
     @Getter
     @Setter
     public static class Model {
+
         private String paymentApplicationId; // uuid not null default uuid_generate_v1(),
         private String paymentId;             // varchar(60),
         private String invoiceId;             // varchar(60),
@@ -59,6 +62,7 @@ public class PaymentApplication {
     @Getter
     @Setter
     public static class CreateModel {
+
         private String paymentId;
         private String invoiceId;
         private Double amount;

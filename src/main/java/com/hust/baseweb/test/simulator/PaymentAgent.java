@@ -12,6 +12,7 @@ import java.util.Random;
 @Getter
 @Setter
 public class PaymentAgent extends Thread {
+
     public static final String module = ExportFacilityAgent.class.getName();
 
     private Random rand = new Random();
@@ -26,11 +27,13 @@ public class PaymentAgent extends Thread {
     private int idleTime = 360;
 
     public PaymentAgent(String username, String password) {
+
         this.username = username;
         this.password = password;
     }
 
     public void run() {
+
         Simulator.threadRunningCounter.incrementAndGet();
 //        System.out.println(module + "::run....");
 
@@ -41,11 +44,13 @@ public class PaymentAgent extends Thread {
     }
 
     public void createAPayment() throws Exception {
+
         PartyManager partyManager = new PartyManager(token);
         List<PartyCustomerModel> partyCustomerModels = partyManager.getListParty();
 
         PartyCustomerModel randomPartyCustomerModel = partyCustomerModels.get(rand.nextInt(partyCustomerModels.size()));
-        Payment.CreateModel createModel = new Payment.CreateModel(randomPartyCustomerModel.getPartyCustomerId(),
+        Payment.CreateModel createModel = new Payment.CreateModel(
+            randomPartyCustomerModel.getPartyCustomerId(),
             (double) (rand.nextInt(60000) + 10000));
 
         Gson gson = new Gson();
@@ -54,6 +59,7 @@ public class PaymentAgent extends Thread {
     }
 
     public void createPayments() {
+
         for (int i = 0; i < nbIters; i++) {
             try {
                 createAPayment();

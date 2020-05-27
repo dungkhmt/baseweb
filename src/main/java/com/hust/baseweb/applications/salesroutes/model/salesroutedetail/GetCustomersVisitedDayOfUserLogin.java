@@ -6,5 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetCustomersVisitedDayOfUserLogin {
+
     private String date;// format YYYY-MM-DD
 }

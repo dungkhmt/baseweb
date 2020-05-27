@@ -10,6 +10,7 @@ import java.util.Date;
 @Setter
 @Getter
 public class StatusType {
+
     @Id
     @Column(name = "status_type_id")
     private String id;
@@ -24,12 +25,14 @@ public class StatusType {
     private Date lastUpdatedStamp;
 
     public StatusType(String id, StatusType parentType, String description) {
+
         this.id = id;
         this.parentType = parentType;
         this.description = description;
     }
 
     public StatusType() {
+
     }
 }
 

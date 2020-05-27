@@ -24,6 +24,7 @@ public class TotalRevenue {
     private double revenue;
 
     public double increase(double value) {
+
         revenue += value;
         return revenue;
     }

@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 @Transactional
 @org.springframework.transaction.annotation.Transactional
 public class OrderServiceImpl implements OrderService {
+
     public static final String module = OrderServiceImpl.class.getName();
 
     private UserLoginRepo userLoginRepo;
@@ -84,8 +85,8 @@ public class OrderServiceImpl implements OrderService {
 
         //Party salesman = partyRepo.
         log.info("save, salesmanId = " + salesmanId + ", partyId = "
-            + (userLoginSalesman != null ? userLoginSalesman.getParty().getPartyId() : "NULL")
-            + ", customerId = " + (orderInput.getToCustomerId() != null ? orderInput.getToCustomerId() : " NULL"));
+                 + (userLoginSalesman != null ? userLoginSalesman.getParty().getPartyId() : "NULL")
+                 + ", customerId = " + (orderInput.getToCustomerId() != null ? orderInput.getToCustomerId() : " NULL"));
 
         Facility facility = facilityRepo.findByFacilityId(orderInput.getFacilityId());
 
@@ -245,35 +246,45 @@ public class OrderServiceImpl implements OrderService {
 
     @NotNull
     private Map<String, ProductPrice> buildProductPriceMap(Map<String, Product> productMap) {
+
         Date now = new Date();
-        return productPriceRepo.findAllByProductInAndThruDateNullOrThruDateAfter(productMap.values(), now)
+        return productPriceRepo
+            .findAllByProductInAndThruDateNullOrThruDateAfter(productMap.values(), now)
             .stream()
-            .collect(Collectors.toMap(productPrice -> productPrice.getProduct().getProductId(),
+            .collect(Collectors.toMap(
+                productPrice -> productPrice.getProduct().getProductId(),
                 productPrice -> productPrice));
     }
 
     @NotNull
     //private Map<String, Product> buildProductMap(ModelCreateOrderInput orderInput) {
     private Map<String, Product> buildProductMap(CreateOrderDistributor2RetailOutletInputModel orderInput) {
-        return productRepo.findAllByProductIdIn(Arrays.stream(orderInput.getOrderItems())
-            .map(ModelCreateOrderInputOrderItem::getProductId).distinct()
-            .collect(Collectors.toList()))
+
+        return productRepo
+            .findAllByProductIdIn(Arrays
+                                      .stream(orderInput.getOrderItems())
+                                      .map(ModelCreateOrderInputOrderItem::getProductId)
+                                      .distinct()
+                                      .collect(Collectors.toList()))
             .stream()
             .collect(Collectors.toMap(Product::getProductId, product -> product));
     }
 
     @Override
     public List<OrderHeader> findAll() {
+
         return orderHeaderRepo.findAll();
     }
 
     @Override
     public OrderHeader findByOrderId(String orderId) {
+
         return orderHeaderRepo.findByOrderId(orderId);
     }
 
     @Override
     public OrderDetailView getOrderDetail(String orderId) {
+
         OrderHeader order = orderHeaderRepo.findByOrderId(orderId);
         if (order == null) {
             return null;
@@ -313,10 +324,10 @@ public class OrderServiceImpl implements OrderService {
         }
         if (salesman != null) {
             orderDetailView.setSalesmanName(salesman.getPerson().getLastName() +
-                " " +
-                salesman.getPerson().getMiddleName() +
-                " " +
-                salesman.getPerson().getFirstName());
+                                            " " +
+                                            salesman.getPerson().getMiddleName() +
+                                            " " +
+                                            salesman.getPerson().getFirstName());
         }
         OrderItemDetailView[] orderItemDetailViews = new OrderItemDetailView[order.getOrderItems().size()];
         for (int i = 0; i < order.getOrderItems().size(); i++) {
@@ -331,7 +342,7 @@ public class OrderServiceImpl implements OrderService {
             orderItemDetailViews[i].setUnitPrice(orderItem.getUnitPrice());
             if (orderItemDetailViews[i].getUnitPrice() != null) {
                 orderItemDetailViews[i].setTotalItemPrice(orderItemDetailViews[i].getUnitPrice() *
-                    orderItem.getQuantity());
+                                                          orderItem.getQuantity());
             }
 
             orderItemDetailViews[i].setUom(orderItem.getProduct().getUom().getDescription());
@@ -342,6 +353,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDetailView convertOrderDetail(OrderHeader order) {
+
         if (order == null) {
             return null;
         }
@@ -382,10 +394,10 @@ public class OrderServiceImpl implements OrderService {
         }
         if (salesman != null) {
             orderDetailView.setSalesmanName(salesman.getPerson().getLastName() +
-                " " +
-                salesman.getPerson().getMiddleName() +
-                " " +
-                salesman.getPerson().getFirstName());
+                                            " " +
+                                            salesman.getPerson().getMiddleName() +
+                                            " " +
+                                            salesman.getPerson().getFirstName());
         }
         OrderItemDetailView[] orderItemDetailViews = new OrderItemDetailView[order.getOrderItems().size()];
         for (int i = 0; i < order.getOrderItems().size(); i++) {
@@ -407,6 +419,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PartyCustomer findCustomerById(UUID partyId) {
+
         return partyCustomerRepo.findByPartyId(partyId);
     }
 
@@ -415,15 +428,18 @@ public class OrderServiceImpl implements OrderService {
         // lấy danh sách order có type PURCHASE_ORDER
         OrderType purchaseOrder = orderTypeRepo.findById("PURCHASE_ORDER").orElseThrow(NoSuchElementException::new);
         List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderType(purchaseOrder);
-        Map<String, OrderHeader> orderHeaderMap = orderHeaders.stream()
+        Map<String, OrderHeader> orderHeaderMap = orderHeaders
+            .stream()
             .collect(Collectors.toMap(OrderHeader::getOrderId, o -> o));
 
         // lấy các nhà cung cấp trong các order và map nó theo uuid
-        List<UUID> vendorIds = orderHeaders.stream()
+        List<UUID> vendorIds = orderHeaders
+            .stream()
             .map(orderHeader -> orderHeader.getPartyVendor().getPartyId())
             .distinct()
             .collect(Collectors.toList());
-        Map<UUID, Supplier> supplierMap = supplierRepo.findAllByPartyIdIn(vendorIds)
+        Map<UUID, Supplier> supplierMap = supplierRepo
+            .findAllByPartyIdIn(vendorIds)
             .stream()
             .collect(Collectors.toMap(Supplier::getPartyId, s -> s));
 
@@ -436,31 +452,35 @@ public class OrderServiceImpl implements OrderService {
         // dựng map về giá sản phẩm từ nhà cung cấp, key = product+supplier
         Date now = new Date();
         Map<List<? extends Serializable>, ProductPriceSupplier> productPriceSupplierMap =
-            productPriceSupplierRepo.findAllByPartySupplierInAndProductInAndThruDateNullOrThruDateAfter(
-                supplierMap.values(), products, now)
+            productPriceSupplierRepo
+                .findAllByPartySupplierInAndProductInAndThruDateNullOrThruDateAfter(
+                    supplierMap.values(), products, now)
                 .stream()
-                .collect(Collectors.toMap(productPriceSupplier -> Arrays.asList(productPriceSupplier.getProduct()
-                    .getProductId(), productPriceSupplier.getPartySupplier().getPartyId()), p -> p));
+                .collect(Collectors.toMap(productPriceSupplier -> Arrays.asList(
+                    productPriceSupplier
+                        .getProduct()
+                        .getProductId(),
+                    productPriceSupplier
+                        .getPartySupplier()
+                        .getPartyId()), p -> p));
 
 
         // dựng map order id --> thành tiền
-        Map<String, Double> orderIdToTotalAmount = orderItems.stream()
-            .collect(Collectors.groupingBy(OrderItem::getOrderId,
-                Collectors.summingDouble(orderItem -> {
-                    UUID supplierPartyId = orderHeaderMap.get(orderItem.getOrderId())
-                        .getPartyVendor()
-                        .getPartyId();
-                    String productId = orderItem.getProduct().getProductId();
-                    ProductPriceSupplier productPriceSupplier = productPriceSupplierMap.get(Arrays.asList(
-                        productId,
-                        supplierPartyId));
-                    return Optional.ofNullable(productPriceSupplier)
-                        .map(ProductPriceSupplier::getUnitPrice)
-                        .orElse(0) * orderItem.getQuantity();
-                })));
+        Map<String, Double> orderIdToTotalAmount = orderItems.stream().collect(Collectors.groupingBy(
+            OrderItem::getOrderId,
+            Collectors.summingDouble(orderItem -> {
+                UUID supplierPartyId = orderHeaderMap.get(orderItem.getOrderId()).getPartyVendor().getPartyId();
+                String productId = orderItem.getProduct().getProductId();
+                ProductPriceSupplier productPriceSupplier = productPriceSupplierMap.get(Arrays.asList(
+                    productId,
+                    supplierPartyId));
+                return Optional.ofNullable(productPriceSupplier).map(ProductPriceSupplier::getUnitPrice).orElse(0) *
+                       orderItem.getQuantity();
+            })));
 
         return orderHeaders.stream().map(orderHeader -> orderHeader.toPurchaseModel(
-            Optional.ofNullable(supplierMap.get(orderHeader.getPartyVendor().getPartyId()))
+            Optional
+                .ofNullable(supplierMap.get(orderHeader.getPartyVendor().getPartyId()))
                 .map(Supplier::getSupplierName)
                 .orElse(null),
             orderIdToTotalAmount.get(orderHeader.getOrderId())
@@ -469,36 +489,43 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean createPurchaseOrder(OrderHeader.PurchaseCreateModel purchaseCreateModel) {
+
         OrderHeaderSequenceId id = orderHeaderSequenceIdRepo.save(new OrderHeaderSequenceId());
         String orderId = OrderHeader.convertSequenceIdToOrderId(id.getId());
 
         OrderType purchaseOrder = orderTypeRepo.findById("PURCHASE_ORDER").orElseThrow(NoSuchElementException::new);
         Date now = new Date();
 
-        Party vendorParty = partyRepo.findById(UUID.fromString(purchaseCreateModel.getSupplierPartyId()))
+        Party vendorParty = partyRepo
+            .findById(UUID.fromString(purchaseCreateModel.getSupplierPartyId()))
             .orElseThrow(NoSuchElementException::new);
 
         OrderHeader orderHeader = new OrderHeader(orderId, purchaseOrder, null, now, 0.0, null,
-            false, now, now, null, vendorParty, null, null, null, null);
+                                                  false, now, now, null, vendorParty, null, null, null, null);
 
         orderHeader = orderHeaderRepo.save(orderHeader);
 
-        List<String> productIds = purchaseCreateModel.getProductQuantities()
+        List<String> productIds = purchaseCreateModel
+            .getProductQuantities()
             .stream()
             .map(OrderHeader.PurchaseCreateModel.ProductQuantity::getProductId)
             .distinct()
             .collect(Collectors.toList());
-        Map<String, Product> productMap = productRepo.findAllByProductIdIn(productIds)
+        Map<String, Product> productMap = productRepo
+            .findAllByProductIdIn(productIds)
             .stream()
             .collect(Collectors.toMap(Product::getProductId, p -> p));
 
-        Supplier supplier = supplierRepo.findById(UUID.fromString(purchaseCreateModel.getSupplierPartyId()))
+        Supplier supplier = supplierRepo
+            .findById(UUID.fromString(purchaseCreateModel.getSupplierPartyId()))
             .orElseThrow(NoSuchElementException::new);
-        Map<String, Integer> productIdToSupplierUnitPrice = productPriceSupplierRepo.findAllByPartySupplierAndThruDateNullOrThruDateAfter(
-            supplier,
-            now)
+        Map<String, Integer> productIdToSupplierUnitPrice = productPriceSupplierRepo
+            .findAllByPartySupplierAndThruDateNullOrThruDateAfter(
+                supplier,
+                now)
             .stream()
-            .collect(Collectors.toMap(productPriceSupplier -> productPriceSupplier.getProduct().getProductId(),
+            .collect(Collectors.toMap(
+                productPriceSupplier -> productPriceSupplier.getProduct().getProductId(),
                 ProductPriceSupplier::getUnitPrice));
 
         List<OrderItem> orderItems = new ArrayList<>();
@@ -507,10 +534,12 @@ public class OrderServiceImpl implements OrderService {
             OrderHeader.PurchaseCreateModel.ProductQuantity productQuantity =
                 purchaseCreateModel.getProductQuantities().get(i);
             String productId = productQuantity.getProductId();
-            OrderItem orderItem = new OrderItem(orderId,
+            OrderItem orderItem = new OrderItem(
+                orderId,
                 i + "",
                 productMap.get(productId),
-                Optional.ofNullable(productIdToSupplierUnitPrice.get(productId))
+                Optional
+                    .ofNullable(productIdToSupplierUnitPrice.get(productId))
                     .map(unitPrice -> 1.0 * unitPrice)
                     .orElse(null),
                 productQuantity.getQuantity(),

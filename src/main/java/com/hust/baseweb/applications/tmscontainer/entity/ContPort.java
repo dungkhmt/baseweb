@@ -15,6 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContPort {
+
     @Id
     @Column(name = "port_id")
     private String portId;

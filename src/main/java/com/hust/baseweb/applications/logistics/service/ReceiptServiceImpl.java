@@ -27,19 +27,21 @@ public class ReceiptServiceImpl implements ReceiptService {
 
     @Override
     public Receipt create(Facility facility) {
+
         ReceiptSequenceId id = receiptSequenceIdRepo.save(new ReceiptSequenceId());
         return receiptRepo.save(new Receipt(Receipt.convertSequenceIdToReceiptId(id.getId()), new Date(), facility));
     }
 
     @Override
-    public List<ReceiptItem> createReceiptItems(Receipt receipt,
-                                                List<InventoryItem> inventoryItems) {
-        List<ReceiptItem> receiptItems = inventoryItems.stream()
-            .map(inventoryItem -> new ReceiptItem(null,
-                receipt,
-                inventoryItem.getProduct(),
-                inventoryItem.getQuantityOnHandTotal()))
-            .collect(Collectors.toList());
+    public List<ReceiptItem> createReceiptItems(
+        Receipt receipt,
+        List<InventoryItem> inventoryItems) {
+
+        List<ReceiptItem> receiptItems = inventoryItems.stream().map(inventoryItem -> new ReceiptItem(
+            null,
+            receipt,
+            inventoryItem.getProduct(),
+            inventoryItem.getQuantityOnHandTotal())).collect(Collectors.toList());
         return receiptItemRepo.saveAll(receiptItems);
     }
 }

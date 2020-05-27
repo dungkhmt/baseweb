@@ -20,6 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShipmentItemStatus {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID shipmentItemStatusId;

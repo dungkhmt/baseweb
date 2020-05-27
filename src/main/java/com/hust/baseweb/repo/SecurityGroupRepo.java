@@ -9,6 +9,7 @@ import java.util.Set;
 
 @RepositoryRestResource(exported = false)
 public interface SecurityGroupRepo extends JpaRepository<SecurityGroup, String> {
+
     List<SecurityGroup> findAll();
 
     Set<SecurityGroup> findAllByGroupIdIn(List<String> groupIds);

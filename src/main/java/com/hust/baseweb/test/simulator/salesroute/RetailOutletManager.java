@@ -11,14 +11,17 @@ import java.util.List;
 import java.util.UUID;
 
 public class RetailOutletManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
     public RetailOutletManager(String token) {
+
         this.token = token;
     }
 
     public List<PartyRetailOutlet> getRetailoutlets() {
+
         try {
             String json = "{\"statusId\":null}";
 
@@ -37,8 +40,10 @@ public class RetailOutletManager {
         return null;
     }
 
-    public List<PartyRetailOutlet> getRetailoutletsOfSalesmanAndDistributor(UUID partySalesmanId,
-                                                                            UUID partyDistributorId) {
+    public List<PartyRetailOutlet> getRetailoutletsOfSalesmanAndDistributor(
+        UUID partySalesmanId,
+        UUID partyDistributorId) {
+
         try {
             Gson gson = new Gson();
             GetListRetailOutletsOfSalesmanAndDistributorInputModel in = new GetListRetailOutletsOfSalesmanAndDistributorInputModel(
@@ -49,8 +54,11 @@ public class RetailOutletManager {
 
             //String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", json, token);
             //String rs = executor.execGetUseToken(Constants.URL_ROOT + "/api/get-list-party-customers", null, token);
-            String rs = executor.execPostUseToken(Constants.URL_ROOT +
-                "/api/get-list-retail-outlets-of-salesman-and-distributor", json, token);
+            String rs = executor.execPostUseToken(
+                Constants.URL_ROOT +
+                "/api/get-list-retail-outlets-of-salesman-and-distributor",
+                json,
+                token);
 //            System.out.println("::getRetailoutletsOfSalesmanAndDistributor, rs = " + rs);
 
             GetListRetailOutletOutputModel listRetailOutlets = gson.fromJson(rs, GetListRetailOutletOutputModel.class);

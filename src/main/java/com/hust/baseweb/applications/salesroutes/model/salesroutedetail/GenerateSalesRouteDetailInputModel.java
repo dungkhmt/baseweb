@@ -8,6 +8,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class GenerateSalesRouteDetailInputModel {
+
     private UUID partySalesmanId;
     private UUID salesRoutePlanningPeriodId;
 

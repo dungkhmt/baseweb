@@ -8,15 +8,17 @@ import java.util.Date;
 import java.util.List;
 
 public interface OrderHeaderRepo extends JpaRepository<OrderHeader, String> {
+
     OrderHeader findByOrderId(String orderId);
 
     List<OrderHeader> findAllByOrderIdIn(List<String> orderIds);
 
     List<OrderHeader> findAllByOrderDateBetween(Date from, Date to);
 
-    List<OrderHeader> findAllByOrderIdInAndOrderDateBetween(List<String> orderIds,
-                                                            Date fromDate,
-                                                            Date toDate);
+    List<OrderHeader> findAllByOrderIdInAndOrderDateBetween(
+        List<String> orderIds,
+        Date fromDate,
+        Date toDate);
 
     List<OrderHeader> findAllByOrderType(OrderType orderType);
 }

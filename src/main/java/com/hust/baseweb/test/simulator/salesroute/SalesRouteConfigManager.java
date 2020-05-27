@@ -9,14 +9,17 @@ import com.hust.baseweb.test.simulator.HttpPostExecutor;
 import java.util.List;
 
 public class SalesRouteConfigManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
     public SalesRouteConfigManager(String token) {
+
         this.token = token;
     }
 
     public List<SalesRouteConfig> getListSalesRouteConfigs() {
+
         try {
             String json = "{\"statusId\":null}";
 

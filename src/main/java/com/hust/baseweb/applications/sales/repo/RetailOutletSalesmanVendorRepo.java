@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface RetailOutletSalesmanVendorRepo extends JpaRepository<RetailOutletSalesmanVendor, UUID> {
+
     RetailOutletSalesmanVendor findByRetailOutletSalesmanVendorId(UUID customerSalesmanVendorId);
 
     List<RetailOutletSalesmanVendor> findAllByPartySalesmanAndPartyRetailOutletAndPartyDistributorAndThruDate(
@@ -19,15 +20,18 @@ public interface RetailOutletSalesmanVendorRepo extends JpaRepository<RetailOutl
         PartyDistributor partyDistributor,
         Date thruDate);
 
-    List<RetailOutletSalesmanVendor> findAllByPartyDistributorAndThruDate(PartyDistributor partyDistributor,
-                                                                          Date thruDate);
+    List<RetailOutletSalesmanVendor> findAllByPartyDistributorAndThruDate(
+        PartyDistributor partyDistributor,
+        Date thruDate);
 
-    List<RetailOutletSalesmanVendor> findAllByPartyRetailOutletAndThruDate(PartyRetailOutlet partyRetailOutlet,
-                                                                           Date thruDate);
+    List<RetailOutletSalesmanVendor> findAllByPartyRetailOutletAndThruDate(
+        PartyRetailOutlet partyRetailOutlet,
+        Date thruDate);
 
     List<RetailOutletSalesmanVendor> findAllByPartySalesmanAndThruDate(PartySalesman partySalesman, Date thruDate);
 
-    List<RetailOutletSalesmanVendor> findAllByPartySalesmanAndPartyDistributorAndThruDate(PartySalesman partySalesman,
-                                                                                          PartyDistributor partyDistributor,
-                                                                                          Date thruDate);
+    List<RetailOutletSalesmanVendor> findAllByPartySalesmanAndPartyDistributorAndThruDate(
+        PartySalesman partySalesman,
+        PartyDistributor partyDistributor,
+        Date thruDate);
 }

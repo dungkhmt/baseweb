@@ -17,6 +17,7 @@ import java.util.UUID;
 @Setter
 @Entity
 public class ReceiptItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID receiptItemId; // uuid not null default uuid_generate_v1(),

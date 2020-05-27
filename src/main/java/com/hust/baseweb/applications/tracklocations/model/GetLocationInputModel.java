@@ -6,9 +6,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetLocationInputModel {
+
     private String userLoginId;
 
     public GetLocationInputModel() {
+
         super();
 
     }

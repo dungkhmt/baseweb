@@ -9,6 +9,7 @@ import java.util.List;
 
 
 public class SortBuilder {
+
     private final String fullNamePath = "wrappedPerson.fullName";
     private final String firstNamePath = "wrappedPerson.firstName";
     private final String middleNamePath = "wrappedPerson.middleName";
@@ -16,11 +17,13 @@ public class SortBuilder {
     List<SortCriteria> sort;
 
     public SortBuilder() {
+
         super();
         this.sort = new ArrayList<SortCriteria>();
     }
 
     public void add(String key, boolean isAsc) {
+
         if (key.equals(fullNamePath)) {
             sort.add(new SortCriteria(lastNamePath, isAsc));
             sort.add(new SortCriteria(middleNamePath, isAsc));
@@ -31,6 +34,7 @@ public class SortBuilder {
     }
 
     public Sort build() {
+
         return CommonUtils.buildSortBySortCriteria(sort);
     }
 }

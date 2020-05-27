@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @RepositoryRestResource(exported = false)
 public interface PartyRepo extends JpaRepository<Party, UUID> {
+
     Party findByPartyId(UUID partyId);
 
     List<Party> findAllByPartyIdIn(Collection<UUID> partyIds);

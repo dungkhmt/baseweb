@@ -4,6 +4,7 @@ import com.hust.baseweb.model.querydsl.SearchCriteria;
 import com.querydsl.core.types.dsl.*;
 
 public class Predicate {
+
     private final String fullNamePath = "person.fullName";
     private final String firstNamePath = "person.firstName";
     private final String middleNamePath = "person.middleName";
@@ -12,22 +13,27 @@ public class Predicate {
     private SearchCriteria criteria;
 
     public Predicate(final SearchCriteria criteria) {
+
         this.criteria = criteria;
     }
 
     public static boolean isNumeric(final Object str) {
+
         return str instanceof Number;
     }
 
     public BooleanExpression getPredicate() {
-        PathBuilder<DPerson> entityPath = new PathBuilder<>(DPerson.class,
+
+        PathBuilder<DPerson> entityPath = new PathBuilder<>(
+            DPerson.class,
             "dPerson");
         if (criteria.getValue() instanceof Boolean) {
             BooleanPath path = entityPath.getBoolean(criteria.getKey());
             return path.eq((Boolean) criteria.getValue());
         }
         if (isNumeric(criteria.getValue())) {
-            NumberPath<Integer> path = entityPath.getNumber(criteria.getKey(),
+            NumberPath<Integer> path = entityPath.getNumber(
+                criteria.getKey(),
                 Integer.class);
             int value = Integer.parseInt(criteria.getValue().toString());
             switch (criteria.getOperation()) {
@@ -60,14 +66,17 @@ public class Predicate {
     }
 
     public SearchCriteria getCriteria() {
+
         return criteria;
     }
 
     public void setCriteria(final SearchCriteria criteria) {
+
         this.criteria = criteria;
     }
 
     public StringExpression emptyIfNull(StringExpression stringExpression) {
+
         return stringExpression.coalesce("").asString();
     }
 }

@@ -13,6 +13,7 @@ import java.util.UUID;
 @Setter
 
 public class InventoryItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "inventory_item_id")
@@ -39,6 +40,7 @@ public class InventoryItem {
     private Date lastUpdatedStamp;
 
     public InventoryItem() {
+
         super();
 
     }

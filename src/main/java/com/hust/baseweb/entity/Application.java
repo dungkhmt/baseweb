@@ -10,6 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class Application {
+
     @Id
     @Column(name = "application_id")
     private String applicationId;
@@ -26,6 +27,7 @@ public class Application {
     private Date lastUpdatedStamp;
 
     public Application(String applicationId, ApplicationType type, Application module, SecurityPermission permission) {
+
         this.applicationId = applicationId;
         this.type = type;
         this.module = module;
@@ -34,5 +36,6 @@ public class Application {
     }
 
     public Application() {
+
     }
 }

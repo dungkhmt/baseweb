@@ -13,14 +13,16 @@ import java.util.UUID;
 
 public interface DeliveryTripDetailRepo extends
     JpaRepository<DeliveryTripDetail, UUID> {
+
     Page<DeliveryTripDetail> findAllByDeliveryTrip(DeliveryTrip deliveryTrip, Pageable pageable);
 
     List<DeliveryTripDetail> findAllByDeliveryTrip(DeliveryTrip deliveryTrip);
 
     List<DeliveryTripDetail> findAllByDeliveryTripIn(List<DeliveryTrip> deliveryTrips);
 
-    List<DeliveryTripDetail> findAllByDeliveryTripInAndStatusItem(List<DeliveryTrip> deliveryTrips,
-                                                                  StatusItem statusItem);
+    List<DeliveryTripDetail> findAllByDeliveryTripInAndStatusItem(
+        List<DeliveryTrip> deliveryTrips,
+        StatusItem statusItem);
 
     DeliveryTripDetail findByDeliveryTripDetailId(UUID deliveryTripDetailId);
 

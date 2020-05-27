@@ -15,8 +15,9 @@ public interface RevenueService {
     //                   Function<OrderItem, PartyCustomer> orderItemToCustomerFunction,
     //                   Function<OrderItem, LocalDate> orderItemToDateFunction);
 
-    void updateRevenue(List<OrderItem> orderItems,
-                       Function<OrderItem, Party> orderItemToCustomerFunction,
-                       Function<OrderItem, LocalDate> orderItemToDateFunction);
+    void updateRevenue(
+        List<OrderItem> orderItems,
+        Function<OrderItem, Party> orderItemToCustomerFunction,
+        Function<OrderItem, LocalDate> orderItemToDateFunction);
 
 }

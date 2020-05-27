@@ -17,6 +17,7 @@ public class LocationModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Create {
+
         @ExcelCellName("Mã Ship To")
         private String locationCode;
 

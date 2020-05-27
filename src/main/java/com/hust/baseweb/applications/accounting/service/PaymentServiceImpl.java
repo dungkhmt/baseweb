@@ -36,6 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment.Model createPayment(Payment.CreateModel paymentCreateModel) {
+
         Date now = new Date();
 
         Payment payment = new Payment();
@@ -54,6 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment.Model getPayment(String paymentId) {
+
         Payment payment = paymentRepo.findById(paymentId).orElseThrow(NoSuchFieldError::new);
         Party party = partyRepo.findById(payment.getFromCustomerId()).orElse(new Party());
         return payment.toModel(party.getName());
@@ -61,11 +63,13 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<Payment.Model> getAllPayment() {
+
         return paymentRepo.findAll().stream().map(Payment::toModel).collect(Collectors.toList());
     }
 
     @Override
     public Payment save(Payment payment) {
+
         if (payment.getPaymentId() == null) {
             PaymentSequenceId id = paymentSequenceIdRepo.save(new PaymentSequenceId());
             payment.setPaymentId(Payment.convertSequenceIdToPaymentId(id.getId()));
@@ -75,12 +79,16 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<Payment> saveAll(List<Payment> payments) {
-        List<Payment> newPayments = payments.stream()
-            .filter(payment -> payment.getPaymentId() == null).collect(Collectors.toList());
+
+        List<Payment> newPayments = payments
+            .stream()
+            .filter(payment -> payment.getPaymentId() == null)
+            .collect(Collectors.toList());
         if (!newPayments.isEmpty()) {
-            List<PaymentSequenceId> ids = paymentSequenceIdRepo.saveAll(newPayments.stream()
-                .map(payment -> new PaymentSequenceId())
-                .collect(Collectors.toList()));
+            List<PaymentSequenceId> ids = paymentSequenceIdRepo.saveAll(newPayments
+                                                                            .stream()
+                                                                            .map(payment -> new PaymentSequenceId())
+                                                                            .collect(Collectors.toList()));
             for (int i = 0; i < newPayments.size(); i++) {
                 payments.get(i).setPaymentId(Payment.convertSequenceIdToPaymentId(ids.get(i).getId()));
             }

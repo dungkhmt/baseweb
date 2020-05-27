@@ -7,13 +7,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Test {
+
     public static void Test1() {
+
         BigDecimal a = new BigDecimal(123);
         a.add(new BigDecimal(456));
         System.out.println(a);
     }
 
     public static void proc(int[] a, int n) {
+
         for (int k = 2; k <= n; k++) {
             int last = a[k];
             int j = k;
@@ -26,6 +29,7 @@ public class Test {
     }
 
     public static int f(int n) {
+
         if (n <= 1) {
             return 1;
         }
@@ -37,6 +41,7 @@ public class Test {
     }
 
     public static void main(String[] args) {
+
         System.out.println(f(4));
         if (true) {
             return;
@@ -69,7 +74,8 @@ public class Test {
         }).collect(Collectors.toList());
         list.forEach(sg -> System.out.println(sg));
 
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/baseweb",
+        try (Connection connection = DriverManager.getConnection(
+            "jdbc:postgresql://localhost:5432/baseweb",
             "postgres",
             "123456")) {
 
@@ -83,7 +89,8 @@ public class Test {
 
             ResultSet resultSet = statement.executeQuery("SELECT * FROM track_locations");
             while (resultSet.next()) {
-                System.out.printf("%-30.30s  %-30.30s%n",
+                System.out.printf(
+                    "%-30.30s  %-30.30s%n",
                     resultSet.getString("party_id"),
                     resultSet.getString("location"));
             }

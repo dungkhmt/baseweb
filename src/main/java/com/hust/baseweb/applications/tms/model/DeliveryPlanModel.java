@@ -16,6 +16,7 @@ public class DeliveryPlanModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Create {
+
         private String deliveryDate;
         private String createdByUserLoginId;
         private String facilityId;

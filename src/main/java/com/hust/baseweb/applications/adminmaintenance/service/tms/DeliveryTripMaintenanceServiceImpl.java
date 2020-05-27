@@ -12,6 +12,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class DeliveryTripMaintenanceServiceImpl implements DeliveryTripMaintenanceService {
+
     private DeliveryTripDetailRepo deliveryTripDetailRepo;
     private DeliveryTripStatusRepo deliveryTripStatusRepo;
     private DeliveryTripRepo deliveryTripRepo;
@@ -24,6 +25,7 @@ public class DeliveryTripMaintenanceServiceImpl implements DeliveryTripMaintenan
 
     @Override
     public long deleteAllDeliveryTrip() {
+
         long cnt = deliveryTripRepo.count();
         deliveryTripDetailRepo.deleteAll();
         deliveryTripStatusRepo.deleteAll();

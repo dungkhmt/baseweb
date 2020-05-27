@@ -7,11 +7,13 @@ public class SolverServiceImpl implements SolverService {
 
     @Override
     public boolean solve(SolverOption solverOption) {
+
         return false;
     }
 
     @Override
     public TripSuggestion.Output suggestTrips(TripSuggestion.Input input) {
+
         return null;
     }
 }

@@ -19,6 +19,7 @@ import java.util.UUID;
 @Setter
 //@IdClass(CompositeShipmentItemId.class)
 public class ShipmentItem {
+
     @Id
     @Column(name = "shipment_item_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -63,6 +64,7 @@ public class ShipmentItem {
     private Integer completedQuantity = 0;
 
     public ShipmentItemModel toShipmentItemModel() {
+
         String customerCode = null;
         String locationCode = null;
         String address = null;
@@ -103,6 +105,7 @@ public class ShipmentItem {
     }
 
     public ShipmentItemModel.DeliveryPlan toShipmentItemDeliveryPlanModel(int assignedQuantity) {
+
         return new ShipmentItemModel.DeliveryPlan(
             shipmentItemId,
             orderItem.getProduct().getProductName(),
@@ -111,7 +114,7 @@ public class ShipmentItem {
             pallet,
             shipToLocation.getAddress(),
             shipToLocation.getGeoPoint().getLatitude() + "," +
-                shipToLocation.getGeoPoint().getLongitude()
+            shipToLocation.getGeoPoint().getLongitude()
         );
     }
 }

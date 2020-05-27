@@ -9,14 +9,17 @@ import com.hust.baseweb.test.simulator.HttpPostExecutor;
 import java.util.List;
 
 public class SalesmanManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
     public SalesmanManager(String token) {
+
         this.token = token;
     }
 
     List<SalesmanOutputModel> getListSalesman() {
+
         try {
             String json = "{\"statusId\":null}";
 

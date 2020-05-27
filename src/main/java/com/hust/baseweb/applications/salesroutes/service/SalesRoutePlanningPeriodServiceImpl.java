@@ -24,8 +24,10 @@ public class SalesRoutePlanningPeriodServiceImpl implements
     private SalesRoutePlanningPeriodRepo salesRoutePlanningPeriodRepo;
 
     @Override
-    public SalesRoutePlanningPeriod save(String fromDateYYYYMMDD, String toDateYYYYMMDD,
-                                         String description) {
+    public SalesRoutePlanningPeriod save(
+        String fromDateYYYYMMDD, String toDateYYYYMMDD,
+        String description) {
+
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date fromDate = null;
         Date toDate = null;
@@ -49,11 +51,13 @@ public class SalesRoutePlanningPeriodServiceImpl implements
 
     @Override
     public List<SalesRoutePlanningPeriod> findAll() {
+
         return salesRoutePlanningPeriodRepo.findAll();
     }
 
     @Override
     public SalesRoutePlanningPeriod findById(UUID salesRoutePlanningPeriodId) {
+
         Optional<SalesRoutePlanningPeriod> salesRoutePlanningPeriod = salesRoutePlanningPeriodRepo.findById(
             salesRoutePlanningPeriodId);
         if (salesRoutePlanningPeriod.isPresent()) {

@@ -15,6 +15,7 @@ import java.util.UUID;
 @Setter
 @IdClass(CompositePartyContactMechPurposeId.class)
 public class PartyContactMechPurpose {
+
     @Id
     @Column(name = "party_id")
     private UUID partyId;

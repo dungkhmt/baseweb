@@ -12,6 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class SecurityPermission {
+
     @Id
     @Column(name = "permission_id")
     private String permissionId;
@@ -25,5 +26,6 @@ public class SecurityPermission {
     private Date lastUpdatedStamp;
 
     public SecurityPermission() {
+
     }
 }

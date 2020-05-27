@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Getter
 @ToString
 public class ProductDetailModel {
+
     private String productId;
     private String productName;
     private String type;
@@ -21,9 +22,11 @@ public class ProductDetailModel {
     private String avatar;
 
     public ProductDetailModel() {
+
     }
 
     public ProductDetailModel(Product product) {
+
         this.productId = product.getProductId();
         this.productName = product.getProductName();
         this.type = product.getProductType() == null ? "UNKNOWN" : product.getProductType().getDescription();

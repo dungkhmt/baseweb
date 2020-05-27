@@ -20,6 +20,7 @@ public enum StatusItem {
     private String description;
 
     StatusItem(String description) {
+
         this.description = description;
     }
 }

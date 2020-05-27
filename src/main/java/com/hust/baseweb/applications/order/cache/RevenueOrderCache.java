@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class RevenueOrderCache {
+
     public static final String module = RevenueOrderCache.class.getName();
 
     private ConcurrentHashMap<String, RPTDayRevenue> mDate2Revenue = new ConcurrentHashMap<>();
@@ -26,10 +27,12 @@ public class RevenueOrderCache {
     }
 
     public Enumeration<String> keys() {
+
         return mDate2Revenue.keys();
     }
 
     public Double getRevenue(String date) {
+
         return mDate2Revenue.get(date).getRevenue();
     }
 }

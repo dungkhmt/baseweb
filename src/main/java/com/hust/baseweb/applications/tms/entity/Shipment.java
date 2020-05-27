@@ -11,6 +11,7 @@ import java.util.UUID;
 @Setter
 @Getter
 public class Shipment {
+
     @Id
     @Column(name = "shipment_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,6 +21,7 @@ public class Shipment {
     private String shipmentTypeId;
 
     public ShipmentModel toShipmentModel() {
+
         return new ShipmentModel(
             shipmentId.toString(),
             shipmentTypeId

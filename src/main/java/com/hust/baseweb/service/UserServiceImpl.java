@@ -30,6 +30,7 @@ import java.util.*;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class UserServiceImpl implements UserService {
+
     public static final String module = UserService.class.getName();
     private UserLoginRepo userLoginRepo;
     private UserRestRepository userRestRepository;
@@ -42,16 +43,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserLogin findById(String userLoginId) {
+
         return userLoginRepo.findByUserLoginId(userLoginId);
     }
 
     public List<UserLogin> getAllUserLogins() {
+
         return userLoginRepo.findAll();
     }
 
     @Override
     @Transactional
     public UserLogin save(String userName, String password) throws Exception {
+
         Party party = partyService.save("PERSON");
         UserLogin userLogin = new UserLogin(userName, password, null, true);
         userLogin.setParty(party);
@@ -65,12 +69,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Party save(PersonModel personModel) throws Exception {
+
         Party party = new Party(personModel.getPartyCode(), partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
-            statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
-            false);
+                                statusRepo
+                                    .findById(StatusEnum.PARTY_ENABLED.name())
+                                    .orElseThrow(NoSuchElementException::new),
+                                false);
         party = partyRepo.save(party);
         personRepo.save(new Person(party.getPartyId(), personModel.getFirstName(), personModel.getMiddleName(),
-            personModel.getLastName(), personModel.getGender(), personModel.getBirthDate()));
+                                   personModel.getLastName(), personModel.getGender(), personModel.getBirthDate()));
 
         Set<SecurityGroup> roles = securityGroupRepo.findAllByGroupIdIn(personModel.getRoles());
 
@@ -87,6 +94,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<DPerson> findAllPerson(Pageable page, SortAndFiltersInput query) {
+
         BooleanExpression expression = null;
         List<SearchCriteria> fNew = new ArrayList<>();
 
@@ -111,17 +119,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserRestBriefProjection> findPersonByFullName(Pageable page, String sString) {
+
         return userRestRepository.findByTypeAndStatusAndFullNameLike(page, PartyTypeEnum.PERSON.name(),
-            StatusEnum.PARTY_ENABLED.name(), sString);
+                                                                     StatusEnum.PARTY_ENABLED.name(), sString);
     }
 
     @Override
     public DPerson findByPartyId(String partyId) {
+
         return userRestRepository.findById(UUID.fromString(partyId)).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
     public Party update(PersonUpdateModel personUpdateModel, UUID partyId) {
+
         Person person = personRepo.getOne(partyId);
         person.setBirthDate(personUpdateModel.getBirthDate());
         person.setFirstName(personUpdateModel.getFirstName());
@@ -140,6 +151,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserLogin findUserLoginByPartyId(UUID partyId) {
+
         Party party = partyService.findByPartyId(partyId);
         return userLoginRepo.findByParty(party).get(0);
     }

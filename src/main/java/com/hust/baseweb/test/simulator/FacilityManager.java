@@ -7,14 +7,17 @@ import com.hust.baseweb.applications.logistics.model.GetListFacilityOutputModel;
 import java.util.List;
 
 public class FacilityManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
     public FacilityManager(String token) {
+
         this.token = token;
     }
 
     public List<Facility> getListFacility() {
+
         String json = "{\"statusId\":null}";
         String rs = null;
         Gson gson = new Gson();

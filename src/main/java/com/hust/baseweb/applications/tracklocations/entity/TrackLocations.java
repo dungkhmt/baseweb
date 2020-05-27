@@ -11,6 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class TrackLocations {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "track_location_id")
@@ -36,6 +37,7 @@ public class TrackLocations {
     private Date lastUpdatedStamp;
 
     public TrackLocations() {
+
         super();
 
     }

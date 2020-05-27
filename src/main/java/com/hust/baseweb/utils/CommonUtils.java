@@ -16,11 +16,13 @@ import java.util.List;
 import java.util.Map;
 
 public class CommonUtils {
+
     public static Logger LOG = LoggerFactory.getLogger(CommonUtils.class);
     public static int SEQ_ID_LEN = 6;
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> json2MapObject(String json) {
+
         Gson gson = new Gson();
         Map<String, Object> map = new HashMap<>();
         map = (Map<String, Object>) gson.fromJson(json, map.getClass());
@@ -28,6 +30,7 @@ public class CommonUtils {
     }
 
     public static Sort buildSortBySortCriteria(SortCriteria[] sort) {
+
         if (sort.length == 0) {
             return null;
         }
@@ -44,6 +47,7 @@ public class CommonUtils {
     }
 
     public static Sort buildSortBySortCriteria(List<SortCriteria> sort) {
+
         if (sort.size() == 0) {
             return null;
         }
@@ -60,6 +64,7 @@ public class CommonUtils {
     }
 
     public static SortAndFiltersInput rebuildQueryDsl(Map<String, String> map, SortAndFiltersInput query) {
+
         SortCriteria[] sort = query.getSort();
         SearchCriteria[] filter = query.getFilters();
         if (sort != null) {
@@ -78,6 +83,7 @@ public class CommonUtils {
     public static SortAndFiltersInput rebuildQueryDsl(
         @SuppressWarnings("rawtypes") Pair<Map<String, String>, Map<String, Pair>> pair,
         SortAndFiltersInput query) {
+
         SortCriteria[] sort = query.getSort();
         SearchCriteria[] filter = query.getFilters();
         if (sort != null) {
@@ -96,6 +102,7 @@ public class CommonUtils {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static String buildQueryDslPath(Pair<Map<String, String>, Map<String, Pair>> pair, String field) {
+
         String[] elm = field.split("\\.");
         StringBuilder result = new StringBuilder();
         Pair<Map<String, String>, Map<String, Pair>> pairTmp = pair;
@@ -108,6 +115,7 @@ public class CommonUtils {
     }
 
     public static String buildSeqId(int idx) {
+
         StringBuilder stringBuilder = new StringBuilder(idx + "");
         while (stringBuilder.length() < SEQ_ID_LEN) {
             stringBuilder.insert(0, "0");

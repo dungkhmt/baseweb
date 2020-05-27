@@ -7,5 +7,6 @@ import java.util.List;
 
 @Service
 public interface StatisticDeliveryTripService {
+
     List<VehicleModel.Distance> collectVehicleDistance(String fromDate, String thruDate);
 }

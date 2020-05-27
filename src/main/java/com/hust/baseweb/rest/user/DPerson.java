@@ -20,6 +20,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DPerson {
+
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -62,6 +63,7 @@ public class DPerson {
     }
 
     public String getStatus() {
+
         return this.status != null ? this.status.getId() : null;
     }
 }

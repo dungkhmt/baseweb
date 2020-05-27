@@ -11,6 +11,7 @@ public class JpaAuditConfig {
 
     @Bean
     public AuditorAware<String> auditorProvider() {
+
         return new SpringSecurityAuditorAware();
     }
 }

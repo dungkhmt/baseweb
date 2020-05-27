@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 public class SetProductPriceAgent extends Thread {
+
     public static final String module = SetProductPriceAgent.class.getName();
     // OkHttpClient client = new OkHttpClient();
 
@@ -24,10 +25,12 @@ public class SetProductPriceAgent extends Thread {
     private int id;
 
     public String name() {
+
         return module + "[" + id + "[";
     }
 
     public SetProductPriceAgent(int id) {
+
         this.id = id;
     }
 
@@ -40,6 +43,7 @@ public class SetProductPriceAgent extends Thread {
     }
 
     public void run() {
+
         try {
 //			System.out.println(name() + "::run....");
 
@@ -64,7 +68,7 @@ public class SetProductPriceAgent extends Thread {
 //						+ p.getProductId() + ", json = " + json);
 
                 String rs = executor.execPostUseToken(Constants.URL_ROOT
-                    + "/api/set-product-price", json, token);
+                                                      + "/api/set-product-price", json, token);
 //				System.out.println(name() + "::run, set price of product "
 //						+ p.getProductId() + ", rs = " + rs);
             }
@@ -74,6 +78,7 @@ public class SetProductPriceAgent extends Thread {
     }
 
     public static void main(String[] args) {
+
         SetProductPriceAgent a = new SetProductPriceAgent(0);
         a.start();
     }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ShipmentItemRoleRepo extends JpaRepository<ShipmentItemRole, UUID> {
+
     List<ShipmentItemRole> findByPartyAndThruDateNull(Party party);
 
     Page<ShipmentItemRole> findByPartyAndThruDateNull(Party party, Pageable pageable);

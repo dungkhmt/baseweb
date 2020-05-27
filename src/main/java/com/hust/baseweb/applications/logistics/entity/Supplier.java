@@ -19,6 +19,7 @@ import java.util.UUID;
 @Setter
 @Entity
 public class Supplier {
+
     @Id
     @Column(name = "party_id")
     private UUID partyId; // uuid not null default uuid_generate_v1(),
@@ -31,6 +32,7 @@ public class Supplier {
     @Getter
     @Setter
     public static class CreateModel {
+
         private String supplierName; // varchar(200),
         private String supplierCode; // varchar(60),
     }

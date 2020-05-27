@@ -15,6 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GeoPoint {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "geo_point_id")

@@ -33,6 +33,7 @@ import java.util.UUID;
 @CrossOrigin
 @Log4j2
 public class ProductController {
+
     private UomService uomService;
     private ProductTypeService productTypeService;
     private ProductService productService;
@@ -47,8 +48,10 @@ public class ProductController {
 
 
     @Autowired
-    ProductController(UomService uomService, ProductTypeService productTypeService, ProductService productService,
-                      ProductTypeRepo productTypeRepo, ProductPagingRepo productPagingRepo) {
+    ProductController(
+        UomService uomService, ProductTypeService productTypeService, ProductService productService,
+        ProductTypeRepo productTypeRepo, ProductPagingRepo productPagingRepo) {
+
         this.uomService = uomService;
         this.productTypeService = productTypeService;
         this.productService = productService;
@@ -58,6 +61,7 @@ public class ProductController {
 
     @PostMapping("/get-list-uoms")
     public ResponseEntity getListUoms(Principal principal, @RequestBody InputModel input) {
+
         log.info("getListUoms {}", input.getStatusId());
         List<Uom> uoms = uomService.getAllUoms();
         log.info("uoms size: {}", uoms.size());
@@ -68,6 +72,7 @@ public class ProductController {
 
     @PostMapping("/get-list-product-type")
     public ResponseEntity getListProductType(Principal principal, @RequestBody InputModel input) {
+
         log.info("getListProductType");
         List<ProductType> productTypes = productTypeService.getAllProductType();
         // List<ProductType> productTypes = productTypeRepo.findAll();
@@ -77,16 +82,18 @@ public class ProductController {
 
     @PostMapping("/add-new-product-to-db")
     public ResponseEntity addNewProductToDatabase(Principal principal, @RequestBody ModelCreateProductInput input) {
+
         log.info("addNewProductToDatabase");
         log.info("input {}", input.toString());
         Product product = productService.save(input.getProductId(), input.getProductName(), input.getType(), null, 0,
-            input.getQuantityUomId(), null, null, input.getContent());
+                                              input.getQuantityUomId(), null, null, input.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(product.getProductId());
     }
 
 
     @GetMapping("/get-list-product-frontend")
     public ResponseEntity<?> getListProductFrontend(Pageable page, @RequestParam(required = false) String param) {
+
         Page<Product> productPage = productPagingRepo.findAll(page);
         for (Product p : productPage) {
             if (p.getProductType() != null) {
@@ -101,6 +108,7 @@ public class ProductController {
 
     @GetMapping("/product/{productId}")
     public ResponseEntity<?> getProductDetail(@PathVariable String productId) {
+
         Product product = productService.findByProductId(productId);
         ProductDetailModel productDetailModel = new ProductDetailModel(product);
         log.info(productDetailModel.toString());
@@ -110,6 +118,7 @@ public class ProductController {
 
     @GetMapping("/get-list-product-with-define-page")
     public ResponseEntity<?> getListProductWithDefinePage(Pageable pageable) {
+
         log.info("page {}", pageable);
         Page<Product> productPage = productPagingRepo.findAll(pageable);
         for (Product p : productPage) {
@@ -122,7 +131,7 @@ public class ProductController {
                 try {
                     Response response = contentService.getContentData(content.getContentId().toString());
                     String base64Flag = "data:image/jpeg;base64," +
-                        Base64.getEncoder().encodeToString(response.body().bytes());
+                                        Base64.getEncoder().encodeToString(response.body().bytes());
                     p.setAvatar(base64Flag);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -133,27 +142,22 @@ public class ProductController {
 
 
     }
+
     @GetMapping("/get-product-for-edit/{productId}")
-    public ResponseEntity<?> getProductForEdit(@PathVariable String productId){
+    public ResponseEntity<?> getProductForEdit(@PathVariable String productId) {
+
         Product product = productService.findByProductId(productId);
         Content primaryImg = product.getPrimaryImg();
-        if(primaryImg != null){
+        if (primaryImg != null) {
             try {
                 Response response = contentService.getContentData(primaryImg.getContentId().toString());
                 String base64Flag = "data:image/jpeg;base64," +
-                    Base64.getEncoder().encodeToString(response.body().bytes());
+                                    Base64.getEncoder().encodeToString(response.body().bytes());
                 product.setAvatar(base64Flag);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
-
-
-
-
-
-
 
 
         return ResponseEntity.ok(new ProductDetailModel(product));
@@ -162,21 +166,24 @@ public class ProductController {
     }
 
     @GetMapping("/get-list-product-img/{productId}")
-    public ResponseEntity<?> getListProductImg(@PathVariable String productId){
+    public ResponseEntity<?> getListProductImg(@PathVariable String productId) {
+
         log.info("getListProductImg");
         Product product = productService.findByProductId(productId);
         UUID primaryImgId = product.getPrimaryImg().getContentId();
         List<ProductImageInfoModel> productImageInfoModels = new ArrayList<ProductImageInfoModel>();
 
-        for (Content content: product.getContents()){
-            if(content != null){
+        for (Content content : product.getContents()) {
+            if (content != null) {
 
                 try {
                     Response response = contentService.getContentData(content.getContentId().toString());
 
                     String base64Flag = "data:image/jpeg;base64," +
-                        Base64.getEncoder().encodeToString(response.body().bytes());
-                    productImageInfoModels.add(new ProductImageInfoModel(base64Flag,content.getContentId().toString()));
+                                        Base64.getEncoder().encodeToString(response.body().bytes());
+                    productImageInfoModels.add(new ProductImageInfoModel(
+                        base64Flag,
+                        content.getContentId().toString()));
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -185,12 +192,13 @@ public class ProductController {
 
         }
 
-        return ResponseEntity.ok(new ListProductImageModel(productImageInfoModels,primaryImgId.toString()));
+        return ResponseEntity.ok(new ListProductImageModel(productImageInfoModels, primaryImgId.toString()));
 
     }
 
     @PostMapping("/set-product-primary-img/{productId}")
-    public  void setProductPrimaryImg(@PathVariable String productId, @RequestBody PrimaryImgIdModel imput){
+    public void setProductPrimaryImg(@PathVariable String productId, @RequestBody PrimaryImgIdModel imput) {
+
         Product product = productService.findByProductId(productId);
         product.setPrimaryImg(contentRepo.findByContentId(UUID.fromString(imput.getPrimaryImgId())));
         productService.saveProduct(product);

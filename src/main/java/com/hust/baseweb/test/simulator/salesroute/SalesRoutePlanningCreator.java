@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Random;
 
 public class SalesRoutePlanningCreator {
+
     private Random rand = new Random();
     private Thread thread = null;
     private String token;
@@ -32,30 +33,37 @@ public class SalesRoutePlanningCreator {
     Random R = new Random();
 
     public SalesRoutePlanningPeriod selectSalesRoutePlanningPeriod(List<SalesRoutePlanningPeriod> salesRoutePlanningPeriods) {
+
         return salesRoutePlanningPeriods.get(R.nextInt(salesRoutePlanningPeriods.size()));
     }
 
     public SalesmanOutputModel selectPartySalesman(List<SalesmanOutputModel> partySalesmanList) {
+
         return partySalesmanList.get(R.nextInt(partySalesmanList.size()));
     }
 
     public PartyDistributor selectPartyDistributor(List<PartyDistributor> partyDistributors) {
+
         return partyDistributors.get(R.nextInt(partyDistributors.size()));
     }
 
     public PartyRetailOutlet selectPartyRetailOutlet(List<PartyRetailOutlet> partyRetailOutlets) {
+
         return partyRetailOutlets.get(R.nextInt(partyRetailOutlets.size()));
     }
 
     public SalesRouteVisitFrequency selectVisitFrequency(List<SalesRouteVisitFrequency> salesRouteVisitFrequencies) {
+
         return salesRouteVisitFrequencies.get(R.nextInt(salesRouteVisitFrequencies.size()));
     }
 
     public SalesRouteConfig selectSalesRouteConfig(List<SalesRouteConfig> salesRouteConfigs) {
+
         return salesRouteConfigs.get(R.nextInt(salesRouteConfigs.size()));
     }
 
     public void run() {
+
         token = Login.login("admin", "123");
         distributorManager = new DistributorManager(token);
         retailOutletManager = new RetailOutletManager(token);
@@ -123,7 +131,8 @@ public class SalesRoutePlanningCreator {
         String json = gson.toJson(in);
 
         try {
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-sales-route-config-retail-outlet",
+            String rs = executor.execPostUseToken(
+                Constants.URL_ROOT + "/api/create-sales-route-config-retail-outlet",
                 json,
                 token);
         } catch (Exception e) {
@@ -132,6 +141,7 @@ public class SalesRoutePlanningCreator {
     }
 
     public static void main(String[] args) {
+
         SalesRoutePlanningCreator app = new SalesRoutePlanningCreator();
         app.run();
     }

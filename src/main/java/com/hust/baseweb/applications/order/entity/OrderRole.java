@@ -14,6 +14,7 @@ import java.util.UUID;
 @Setter
 @IdClass(CompositeOrderRoleId.class)
 public class OrderRole {
+
     @Id
     @Column(name = "order_id")
     private String orderId;

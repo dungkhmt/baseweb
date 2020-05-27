@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PartyDistributorRepo extends JpaRepository<PartyDistributor, UUID> {
+
     PartyDistributor findByPartyId(UUID partyId);
 
     List<PartyDistributor> findAllByPartyIdIn(List<UUID> ids);

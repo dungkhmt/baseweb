@@ -18,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PartyDriver {
+
     @Id
     @Column(name = "party_id")
     private UUID partyId;
@@ -35,12 +36,10 @@ public class PartyDriver {
     //private UserLogin userLogin;
 
     public Model toModel() {
+
         return new Model(
             partyId.toString(),
-            Optional.ofNullable(party)
-                .map(Party::getUserLogin)
-                .map(UserLogin::getUserLoginId)
-                .orElse(null)
+            Optional.ofNullable(party).map(Party::getUserLogin).map(UserLogin::getUserLoginId).orElse(null)
         );
     }
 
@@ -49,6 +48,7 @@ public class PartyDriver {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Model {
+
         private String partyId;
         private String userLoginId;
     }

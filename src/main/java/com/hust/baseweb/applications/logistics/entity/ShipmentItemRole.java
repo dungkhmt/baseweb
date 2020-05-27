@@ -13,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ShipmentItemRole {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "shipment_item_role_id")

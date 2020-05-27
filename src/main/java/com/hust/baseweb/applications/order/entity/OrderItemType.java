@@ -11,6 +11,7 @@ import javax.persistence.Id;
 @Getter
 @Setter
 public class OrderItemType {
+
     @Id
     @Column(name = "order_item_type_id")
     private String orderItemTypeId;

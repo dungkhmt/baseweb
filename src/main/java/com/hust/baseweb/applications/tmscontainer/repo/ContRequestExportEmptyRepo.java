@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ContRequestExportEmptyRepo extends CrudRepository<ContRequestExportEmpty, UUID> {
+
     ContRequestExportEmpty findByRequestExportEmptyId(UUID id);
 
     List<ContRequestExportEmpty> findAll();

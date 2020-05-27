@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class FacilityServiceImpl implements FacilityService {
+
     private FacilityRepo facilityRepo;
 
     private PostalAddressRepo postalAddressRepo;
@@ -40,13 +41,15 @@ public class FacilityServiceImpl implements FacilityService {
 
     @Override
     public Facility save(FacilityModel facilityModel) {
+
         GeocodingResult[] geocodingResults = GoogleMapUtils.queryLatLng(facilityModel.getAddress());
         PostalAddress postalAddress;
         if (geocodingResults != null && geocodingResults.length > 0) {
             LatLng location = geocodingResults[0].geometry.location;
             GeoPoint geoPoint = new GeoPoint(null, location.lat, location.lng);
             geoPoint = geoPointRepo.save(geoPoint);
-            postalAddress = new PostalAddress(null,
+            postalAddress = new PostalAddress(
+                null,
                 UUID.randomUUID().toString(),
                 facilityModel.getAddress(),
                 geoPoint,
@@ -64,6 +67,7 @@ public class FacilityServiceImpl implements FacilityService {
 
     @Override
     public List<Facility> saveAll(List<FacilityModel> facilityModels) {
+
         return facilityModels.stream().map(this::save).collect(Collectors.toList());
     }
 

@@ -19,6 +19,7 @@ public class PostalAddressServiceImpl implements PostalAddressService {
 
     @Override
     public PostalAddress save(String locationCode, String address, double latitude, double longitude) {
+
         GeoPoint geoPoint = new GeoPoint();
         geoPoint.setLatitude(latitude);
         geoPoint.setLongitude(longitude);

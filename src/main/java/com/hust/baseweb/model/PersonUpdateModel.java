@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class PersonUpdateModel {
+
     private String firstName;
     private String lastName;
     private String middleName;

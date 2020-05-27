@@ -35,34 +35,44 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
 
     @Override
     public List<InvoiceItem.Model> findByInvoiceId(String invoiceId) {
+
         Invoice invoice = invoiceRepo.findById(invoiceId).orElseThrow(NoSuchElementException::new);
 
         List<InvoiceItem> invoiceItems = invoiceItemRepo.findAllById_InvoiceId(invoiceId);
         List<OrderItemBilling> orderItemBillings = orderItemBillingRepo.findAllById_InvoiceId(invoiceId);
 
-        List<String> orderIds = orderItemBillings.stream()
+        List<String> orderIds = orderItemBillings
+            .stream()
             .map(orderItemBilling -> orderItemBilling.getId().getOrderId())
             .distinct()
             .collect(Collectors.toList());
-        List<String> orderItemSeqIds = orderItemBillings.stream()
+        List<String> orderItemSeqIds = orderItemBillings
+            .stream()
             .map(orderItemBilling -> orderItemBilling.getId().getOrderItemSeqId())
             .distinct()
             .collect(Collectors.toList());
 
-        Map<CompositeOrderItemId, OrderItem> orderItemMap = orderItemRepo.findAllByOrderIdInAndOrderItemSeqIdIn(orderIds,
-            orderItemSeqIds)
+        Map<CompositeOrderItemId, OrderItem> orderItemMap = orderItemRepo.findAllByOrderIdInAndOrderItemSeqIdIn(
+            orderIds,
+            orderItemSeqIds).stream().collect(Collectors.toMap(orderItem -> new CompositeOrderItemId(
+            orderItem.getOrderId(),
+            orderItem.getOrderItemSeqId()), orderItem -> orderItem));
+        Map<InvoiceItem.Id, OrderItem> orderItemBillingToOrderItem = orderItemBillings
             .stream()
-            .collect(Collectors.toMap(orderItem -> new CompositeOrderItemId(orderItem.getOrderId(),
-                orderItem.getOrderItemSeqId()), orderItem -> orderItem));
-        Map<InvoiceItem.Id, OrderItem> orderItemBillingToOrderItem = orderItemBillings.stream()
-            .collect(Collectors.toMap(orderItemBilling -> new InvoiceItem.Id(orderItemBilling.getId()
-                    .getInvoiceId(), orderItemBilling.getId().getInvoiceItemSeqId()),
-                orderItemBilling -> orderItemMap.get(new CompositeOrderItemId(orderItemBilling.getId()
-                    .getOrderId(), orderItemBilling.getId().getOrderItemSeqId()))));
+            .collect(Collectors.toMap(
+                orderItemBilling -> new InvoiceItem.Id(
+                    orderItemBilling.getId().getInvoiceId(),
+                    orderItemBilling.getId().getInvoiceItemSeqId()),
+                orderItemBilling -> orderItemMap.get(new CompositeOrderItemId(
+                    orderItemBilling.getId().getOrderId(),
+                    orderItemBilling
+                        .getId()
+                        .getOrderItemSeqId()))));
 
         return invoiceItems
             .stream()
-            .map(invoiceItem -> Optional.ofNullable(orderItemBillingToOrderItem.get(invoiceItem.getId()))
+            .map(invoiceItem -> Optional
+                .ofNullable(orderItemBillingToOrderItem.get(invoiceItem.getId()))
                 .map(orderItem -> invoiceItem.toModel(invoice, orderItem))
                 .orElse(invoiceItem.toModel(invoice, null))) // empty product info
             .collect(Collectors.toList());

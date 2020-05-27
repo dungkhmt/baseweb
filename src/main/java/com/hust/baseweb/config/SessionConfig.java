@@ -20,11 +20,13 @@ public class SessionConfig {
 
     @Autowired
     public void setRedisConnectionFactory(RedisConnectionFactory redisConnectionFactory) {
+
         this.redisConnectionFactory = redisConnectionFactory;
     }
 
     @Bean
     public RedisOperations<String, Object> sessionRedisOperations() {
+
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(this.redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
@@ -34,11 +36,13 @@ public class SessionConfig {
 
     @Bean
     public RedisSessionRepository sessionRepository(RedisOperations<String, Object> sessionRedisOperations) {
+
         return new RedisSessionRepository(sessionRedisOperations);
     }
 
     @Bean
     public HttpSessionIdResolver httpSessionIdResolver() {
+
         return HeaderHttpSessionIdResolver.xAuthToken();
     }
 }

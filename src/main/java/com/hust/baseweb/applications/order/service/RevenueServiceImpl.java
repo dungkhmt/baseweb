@@ -83,20 +83,25 @@ public class RevenueServiceImpl implements RevenueService {
         productRevenueRepo.saveAll(productRevenueMap.values());
     }
     */
-    public void updateRevenue(List<OrderItem> orderItems,
-                              Function<OrderItem, Party> orderItemToCustomerFunction,
-                              Function<OrderItem, LocalDate> orderItemToDateFunction) {
+    public void updateRevenue(
+        List<OrderItem> orderItems,
+        Function<OrderItem, Party> orderItemToCustomerFunction,
+        Function<OrderItem, LocalDate> orderItemToDateFunction) {
+
         executorService.execute(() -> {
             Map<LocalDate, TotalRevenue> totalRevenueMap = getTotalRevenueMap(orderItems, orderItemToDateFunction);
 
-            Map<ProductRevenue.Id, ProductRevenue> productRevenueMap = getProductRevenueMap(orderItems,
+            Map<ProductRevenue.Id, ProductRevenue> productRevenueMap = getProductRevenueMap(
+                orderItems,
                 orderItemToDateFunction);
 
-            Map<CustomerRevenue.Id, CustomerRevenue> customerRevenueMap = getCustomerRevenueMap(orderItems,
+            Map<CustomerRevenue.Id, CustomerRevenue> customerRevenueMap = getCustomerRevenueMap(
+                orderItems,
                 orderItemToCustomerFunction,
                 orderItemToDateFunction);
 
-            List<Product> products = orderItems.stream()
+            List<Product> products = orderItems
+                .stream()
                 .map(OrderItem::getProduct)
                 .distinct()
                 .collect(Collectors.toList());
@@ -117,13 +122,13 @@ public class RevenueServiceImpl implements RevenueService {
 
                 totalRevenueMap.get(date).increase(revenue);
 
-                customerRevenueMap.computeIfAbsent(new CustomerRevenue.Id(customer.getPartyId(), date),
-                    id -> new CustomerRevenue(id, 0.0))
-                    .increase(revenue);
+                customerRevenueMap.computeIfAbsent(
+                    new CustomerRevenue.Id(customer.getPartyId(), date),
+                    id -> new CustomerRevenue(id, 0.0)).increase(revenue);
 
-                productRevenueMap.computeIfAbsent(new ProductRevenue.Id(product.getProductId(), date),
-                    id -> new ProductRevenue(id, 0.0))
-                    .increase(revenue);
+                productRevenueMap.computeIfAbsent(
+                    new ProductRevenue.Id(product.getProductId(), date),
+                    id -> new ProductRevenue(id, 0.0)).increase(revenue);
             }
 
             totalRevenueRepo.saveAll(totalRevenueMap.values());
@@ -149,41 +154,50 @@ public class RevenueServiceImpl implements RevenueService {
     }
     */
     @NotNull
-    private Map<CustomerRevenue.Id, CustomerRevenue> getCustomerRevenueMap(List<OrderItem> orderItems,
-                                                                           Function<OrderItem, Party> orderItemToCustomerFunction,
-                                                                           Function<OrderItem, LocalDate> orderItemToDateFunction) {
-        return customerRevenueRepo.findAllByIdIn(
-            orderItems.stream()
-                .map(orderItem -> new CustomerRevenue.Id(orderItemToCustomerFunction.apply(
-                    orderItem).getPartyId(), orderItemToDateFunction.apply(orderItem)))
-                .distinct()
-                .collect(Collectors.toList()))
+    private Map<CustomerRevenue.Id, CustomerRevenue> getCustomerRevenueMap(
+        List<OrderItem> orderItems,
+        Function<OrderItem, Party> orderItemToCustomerFunction,
+        Function<OrderItem, LocalDate> orderItemToDateFunction) {
+
+        return customerRevenueRepo
+            .findAllByIdIn(
+                orderItems
+                    .stream()
+                    .map(orderItem -> new CustomerRevenue.Id(orderItemToCustomerFunction.apply(
+                        orderItem).getPartyId(), orderItemToDateFunction.apply(orderItem)))
+                    .distinct()
+                    .collect(Collectors.toList()))
             .stream()
             .collect(Collectors.toMap(CustomerRevenue::getId, customerRevenue -> customerRevenue));
     }
 
     @NotNull
-    private Map<ProductRevenue.Id, ProductRevenue> getProductRevenueMap(List<OrderItem> orderItems,
-                                                                        Function<OrderItem, LocalDate> orderItemToDateFunction) {
-        return productRevenueRepo.findAllByIdIn(
-            orderItems.stream()
-                .map(orderItem -> new ProductRevenue.Id(orderItem.getProduct().getProductId(),
-                    orderItemToDateFunction.apply(orderItem)))
-                .distinct()
-                .collect(Collectors.toList()))
+    private Map<ProductRevenue.Id, ProductRevenue> getProductRevenueMap(
+        List<OrderItem> orderItems,
+        Function<OrderItem, LocalDate> orderItemToDateFunction) {
+
+        return productRevenueRepo
+            .findAllByIdIn(
+                orderItems.stream().map(orderItem -> new ProductRevenue.Id(
+                    orderItem.getProduct().getProductId(),
+                    orderItemToDateFunction.apply(orderItem))).distinct().collect(Collectors.toList()))
             .stream()
             .collect(Collectors.toMap(ProductRevenue::getId, productRevenue -> productRevenue));
     }
 
     @NotNull
-    private Map<LocalDate, TotalRevenue> getTotalRevenueMap(List<OrderItem> orderItems,
-                                                            Function<OrderItem, LocalDate> orderItemToDateFunction) {
-        List<LocalDate> localDates = orderItems.stream()
+    private Map<LocalDate, TotalRevenue> getTotalRevenueMap(
+        List<OrderItem> orderItems,
+        Function<OrderItem, LocalDate> orderItemToDateFunction) {
+
+        List<LocalDate> localDates = orderItems
+            .stream()
             .map(orderItemToDateFunction)
             .distinct()
             .collect(Collectors.toList());
 
-        Map<LocalDate, TotalRevenue> totalRevenueMap = totalRevenueRepo.findAllByIdIn(localDates)
+        Map<LocalDate, TotalRevenue> totalRevenueMap = totalRevenueRepo
+            .findAllByIdIn(localDates)
             .stream()
             .collect(Collectors.toMap(TotalRevenue::getId, totalRevenue -> totalRevenue));
         for (LocalDate localDate : localDates) {
@@ -194,8 +208,10 @@ public class RevenueServiceImpl implements RevenueService {
 
     @NotNull
     private Map<String, ProductPrice> getProductPriceMap(List<Product> products) {
+
         Date now = new Date();
-        return productPriceRepo.findAllByProductInAndThruDateNullOrThruDateAfter(products, now)
+        return productPriceRepo
+            .findAllByProductInAndThruDateNullOrThruDateAfter(products, now)
             .stream()
             .collect(Collectors.toMap(
                 productPrice -> productPrice.getProduct().getProductId(),

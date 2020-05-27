@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class Uom {
+
     @Id
     @Column(name = "uom_id")
     private String uomId;

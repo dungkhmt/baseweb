@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface InventoryItemService {
+
     List<InventoryItem> importInventoryItems(ImportInventoryItemsInputModel inventoryItems);
 
     String exportInventoryItems(ExportInventoryItemsInputModel inventoryItems);

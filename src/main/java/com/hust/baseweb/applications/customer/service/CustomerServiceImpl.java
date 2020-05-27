@@ -49,8 +49,10 @@ public class CustomerServiceImpl implements CustomerService {
         //Party party = new Party();
         //party.setPartyId(partyId);// KHONG WORK vi partyId khi insert vao DB se duoc sinh tu dong, no se khac voi partyId sinh ra boi SPRING
         Party party = new Party(null, partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
-            statusRepo.findById(StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
-            false);
+                                statusRepo
+                                    .findById(StatusEnum.PARTY_ENABLED.name())
+                                    .orElseThrow(NoSuchElementException::new),
+                                false);
         party.setType(partyType);
 
         partyRepo.save(party);
@@ -106,6 +108,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<PartyCustomer> findRetailOutlets() {
+
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAIL_OUTLET");
         List<PartyCustomer> retailOutlets = partyCustomerRepo.findByPartyType(partyType);
         return retailOutlets;
@@ -113,6 +116,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<PartyCustomer> findAll() {
+
         return partyCustomerRepo.findAll();
     }
 

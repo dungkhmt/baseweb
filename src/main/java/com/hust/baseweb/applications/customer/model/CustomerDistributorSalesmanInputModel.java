@@ -9,6 +9,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class CustomerDistributorSalesmanInputModel {
+
     String partyCustomerId;
     String partyDistributorId;
 }

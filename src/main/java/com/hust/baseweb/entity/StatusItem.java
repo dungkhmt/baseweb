@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class StatusItem {
+
     @Id
     @Column(name = "status_id")
     private String statusId;

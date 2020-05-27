@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ShipmentItemRepo extends JpaRepository<ShipmentItem, UUID> {
+
     //public ShipmentItem findByShipmentIdAndShipmentItemSeqId(UUID shipmentId, String shipmentItemSeqId);
     ShipmentItem findByShipmentItemId(UUID shipmentItemId);
 

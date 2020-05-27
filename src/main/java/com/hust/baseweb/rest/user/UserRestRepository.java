@@ -22,11 +22,13 @@ public interface UserRestRepository extends PagingAndSortingRepository<DPerson, 
 
     Page<DPerson> findByType(PartyType type, Pageable page);
 
-    @Query("select p from DPerson p where p.type.id = :type and status.id = :status and concat(trim(p.person.firstName), trim(p.person.middleName), trim(p.person.lastName)) like %:fullNameString%")
-    Page<UserRestBriefProjection> findByTypeAndStatusAndFullNameLike(Pageable page,
-                                                                     String type,
-                                                                     String status,
-                                                                     String fullNameString);
+    @Query(
+        "select p from DPerson p where p.type.id = :type and status.id = :status and concat(trim(p.person.firstName), trim(p.person.middleName), trim(p.person.lastName)) like %:fullNameString%")
+    Page<UserRestBriefProjection> findByTypeAndStatusAndFullNameLike(
+        Pageable page,
+        String type,
+        String status,
+        String fullNameString);
 
     default void customize(final QuerydslBindings bindings, final QDPerson store) {
         // bindings.bind(store.address.city).single((path, value) ->
@@ -34,7 +36,8 @@ public interface UserRestRepository extends PagingAndSortingRepository<DPerson, 
         // bindings.bind(String.class).s
         // single((StringPath path, String value) -> path.contains(value));
 
-        bindings.bind(String.class)
+        bindings
+            .bind(String.class)
             .first((SingleValueBinding<StringPath, String>) StringExpression::containsIgnoreCase);
     }
 }

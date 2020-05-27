@@ -13,6 +13,7 @@ import java.util.UUID;
 @Setter
 
 public class SalesRoutePlanningPeriod {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "sales_route_planning_period_id")
