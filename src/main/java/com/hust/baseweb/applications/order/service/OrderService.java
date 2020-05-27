@@ -29,4 +29,6 @@ public interface OrderService {
     List<OrderHeader.PurchaseModel> getAllPurchaseOrder();
 
     boolean createPurchaseOrder(OrderHeader.PurchaseCreateModel purchaseCreateModel);
+
+    boolean deleteOrder(OrderHeader.DeleteModel deleteModel);
 }

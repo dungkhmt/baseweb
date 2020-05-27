@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
 import com.hust.baseweb.applications.tms.entity.status.DeliveryTripDetailStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,4 +18,6 @@ public interface DeliveryTripDetailStatusRepo extends JpaRepository<DeliveryTrip
     List<DeliveryTripDetailStatus> findAllByDeliveryTripDetailAndThruDateNull(DeliveryTripDetail deliveryTripDetail);
 
     List<DeliveryTripDetailStatus> findAllByDeliveryTripDetail(DeliveryTripDetail deliveryTripDetail);
+
+    void deleteAllByDeliveryTripDetailIn(Collection<DeliveryTripDetail> deliveryTripDetails);
 }

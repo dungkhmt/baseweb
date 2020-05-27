@@ -15,6 +15,8 @@ public interface ShipmentItemStatusRepo extends JpaRepository<ShipmentItemStatus
 
     List<ShipmentItemStatus> findAllByShipmentItemIn(Collection<ShipmentItem> shipmentItems);
 
+    void deleteAllByShipmentItemIn(Collection<ShipmentItem> shipmentItems);
+
     List<ShipmentItemStatus> findAllByShipmentItemInAndThruDateNull(Collection<ShipmentItem> shipmentItems);
 
     List<ShipmentItemStatus> findAllByShipmentItemAndThruDateNull(ShipmentItem shipmentItem);

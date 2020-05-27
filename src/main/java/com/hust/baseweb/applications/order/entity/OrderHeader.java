@@ -83,6 +83,9 @@ public class OrderHeader {
     @OneToMany(fetch = FetchType.EAGER)
     private Set<OrderRole> orderRoles;
 
+    @Transient
+    private List<OrderStatus> orderStatuses;
+
     @NotNull
     public static String convertSequenceIdToOrderId(Long id) {
 
@@ -143,5 +146,15 @@ public class OrderHeader {
             private String productId;
             private Integer quantity;
         }
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class DeleteModel {
+
+        private String fromDate;
+        private String toDate;
     }
 }

@@ -8,29 +8,42 @@ import com.hust.baseweb.applications.logistics.entity.*;
 import com.hust.baseweb.applications.logistics.repo.*;
 import com.hust.baseweb.applications.logistics.service.ProductPriceService;
 import com.hust.baseweb.applications.order.controller.OrderAPIController;
+import com.hust.baseweb.applications.order.document.OrderHeaderRemoved;
 import com.hust.baseweb.applications.order.entity.*;
 import com.hust.baseweb.applications.order.model.CreateOrderDistributor2RetailOutletInputModel;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
 import com.hust.baseweb.applications.order.model.OrderDetailView;
 import com.hust.baseweb.applications.order.model.OrderItemDetailView;
 import com.hust.baseweb.applications.order.repo.*;
+import com.hust.baseweb.applications.order.repo.mongodb.OrderHeaderRemovedRepo;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
 import com.hust.baseweb.applications.sales.service.PartySalesmanService;
+import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
+import com.hust.baseweb.applications.tms.entity.ShipmentItem;
+import com.hust.baseweb.applications.tms.repo.DeliveryTripDetailRepo;
+import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
+import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
+import com.hust.baseweb.applications.tms.repo.status.DeliveryTripDetailStatusRepo;
+import com.hust.baseweb.applications.tms.repo.status.ShipmentItemStatusRepo;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
 import com.hust.baseweb.utils.CommonUtils;
+import com.hust.baseweb.utils.Constant;
 import com.hust.baseweb.utils.DateTimeUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.Serializable;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -70,12 +83,23 @@ public class OrderServiceImpl implements OrderService {
     private SupplierRepo supplierRepo;
     private ProductPriceSupplierRepo productPriceSupplierRepo;
 
+    private OrderHeaderRemovedRepo orderHeaderRemovedRepo;
+
+    private ShipmentRepo shipmentRepo;
+    private ShipmentItemRepo shipmentItemRepo;
+
+    private ShipmentItemStatusRepo shipmentItemStatusRepo;
+    private ShipmentItemRoleRepo shipmentItemRoleRepo;
+    private DeliveryTripDetailRepo deliveryTripDetailRepo;
+
+    private InventoryItemDetailRepo inventoryItemDetailRepo;
+
+    private DeliveryTripDetailStatusRepo deliveryTripDetailStatusRepo;
 
     @Override
     @Transactional
     //public OrderHeader save(ModelCreateOrderInput orderInput) {
     public OrderHeader save(CreateOrderDistributor2RetailOutletInputModel orderInput) {
-
 
         OrderType orderType = orderTypeRepo.findByOrderTypeId("SALES_ORDER");
         SalesChannel salesChannel = salesChannelRepo.findBySalesChannelId(orderInput.getSalesChannelId());
@@ -501,7 +525,7 @@ public class OrderServiceImpl implements OrderService {
             .orElseThrow(NoSuchElementException::new);
 
         OrderHeader orderHeader = new OrderHeader(orderId, purchaseOrder, null, now, 0.0, null,
-                                                  false, now, now, null, vendorParty, null, null, null, null);
+                                                  false, now, now, null, vendorParty, null, null, null, null, null);
 
         orderHeader = orderHeaderRepo.save(orderHeader);
 
@@ -550,6 +574,76 @@ public class OrderServiceImpl implements OrderService {
         orderItemRepo.saveAll(orderItems);
 
         return true;
+    }
+
+    @Override
+    public boolean deleteOrder(OrderHeader.DeleteModel deleteModel) {
+
+        try {
+            List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderDateBetween(
+                Constant.DATE_FORMAT.parse(deleteModel.getFromDate()),
+                Constant.DATE_FORMAT.parse(deleteModel.getToDate()));
+
+            List<String> orderIds = orderHeaders.stream().map(OrderHeader::getOrderId).collect(Collectors.toList());
+
+            orderRoleRepo.deleteAllByOrderIdIn(orderIds);
+
+            Map<String, List<OrderStatus>> orderIdToOrderStatuses = orderStatusRepo
+                .findAllByOrderIn(orderHeaders)
+                .stream()
+                .collect(Collectors.groupingBy(orderStatus -> orderStatus.getOrder().getOrderId()));
+            for (OrderHeader orderHeader : orderHeaders) {
+                orderHeader.setOrderStatuses(orderIdToOrderStatuses.get(orderHeader.getOrderId()));
+            }
+
+            orderStatusRepo.deleteAllByOrderIn(orderHeaders);
+
+            List<OrderItem> orderItems = orderItemRepo.findAllByOrderIdIn(orderIds);
+
+            List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByOrderItemIn(orderItems);
+
+            shipmentItemStatusRepo.deleteAllByShipmentItemIn(shipmentItems);
+
+            shipmentItemRoleRepo.deleteAllByShipmentItemIn(shipmentItems);
+
+            List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByShipmentItemIn(shipmentItems);
+
+            deliveryTripDetailStatusRepo.deleteAllByDeliveryTripDetailIn(deliveryTripDetails);
+
+            // TODO: exception PSQLException: ERROR: update or delete on table "shipment_item" violates foreign key
+            //  constraint "fk_shipment_item_status_shipment_item_id" on table "shipment_item_status"
+            shipmentItemRepo.deleteInBatch(shipmentItems);
+
+            shipmentRepo.deleteAllByShipmentIdIn(shipmentItems
+                                                     .stream()
+                                                     .map(shipmentItem -> shipmentItem
+                                                         .getShipment()
+                                                         .getShipmentId())
+                                                     .collect(Collectors.toList()));
+
+            inventoryItemDetailRepo.deleteAllByOrderItemIn(orderItems);
+
+            orderItemRepo.deleteAllByOrderIdIn(orderIds);
+
+            orderHeaderRepo.deleteAllByOrderIdIn(orderIds);
+
+            ModelMapper modelMapper = new ModelMapper();
+            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+
+            List<OrderHeaderRemoved> orderHeadersRemoved = orderHeaders
+                .stream()
+                .map(orderHeader -> modelMapper.map(orderHeader, OrderHeaderRemoved.class))
+                .collect(Collectors.toList());
+
+            orderHeaderRemovedRepo.saveAll(orderHeadersRemoved);
+
+            // TODO: update revenue
+
+            return true;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
