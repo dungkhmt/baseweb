@@ -12,7 +12,6 @@ public class Login {
     private static OkHttpClient client = new OkHttpClient();
 
     public static String login(String username, String password) {
-
         try {
             // String url = "http://sscm.dailyopt.ai/api/";
             String url = Constants.URL_ROOT + "/api/";

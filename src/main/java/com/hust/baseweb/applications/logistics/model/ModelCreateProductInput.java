@@ -18,7 +18,6 @@ public class ModelCreateProductInput {
     private List<String> content;
 
     public ModelCreateProductInput(String productId, String quantityUomId, String type, String productName) {
-
         this.productId = productId;
         this.quantityUomId = quantityUomId;
         this.type = type;

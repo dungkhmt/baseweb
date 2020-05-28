@@ -35,14 +35,12 @@ public class DriverAPIController {
 
     @PostMapping("/create-driver")
     public ResponseEntity<?> createDriver(Principal principal, @RequestBody DriverModel.InputCreate input) {
-
         PartyDriver driver = partyDriverService.save(input);
         return ResponseEntity.ok().body(driver);
     }
 
     @GetMapping("/get-all-drivers")
     public ResponseEntity<?> findAllDrivers() {
-
         log.info("::findAllDrivers()");
 
         return ResponseEntity
@@ -56,7 +54,6 @@ public class DriverAPIController {
 
     @GetMapping("/get-page-drivers")
     public ResponseEntity<?> findPageDrivers(Pageable page) {
-
         log.info("::findPageDrivers()");
 
         Page<PartyDriver> drivers = partyDriverService.findAll(page);
@@ -65,7 +62,6 @@ public class DriverAPIController {
 
     @GetMapping("/get-driver-in-delivery-trip/{deliveryTripId}")
     public ResponseEntity<?> findDriver(@PathVariable String deliveryTripId) {
-
         log.info("::findDriver(), deliveryTripId=" + deliveryTripId);
         DeliveryTrip deliveryTrip = deliveryTripRepo
             .findById(UUID.fromString(deliveryTripId))
@@ -80,8 +76,8 @@ public class DriverAPIController {
     @GetMapping("/set-driver-to-delivery-trip/{deliveryTripId}/{driverPartyId}")
     public ResponseEntity<?> setDriverToDeliveryTrip(
         @PathVariable String deliveryTripId,
-        @PathVariable String driverPartyId) {
-
+        @PathVariable String driverPartyId
+    ) {
         log.info("::setDriverToDeliveryTrip(), deliveryTripId=" + deliveryTripId + ", driverPartyId=" + driverPartyId);
         DeliveryTrip deliveryTrip = deliveryTripRepo
             .findById(UUID.fromString(deliveryTripId))
@@ -100,7 +96,6 @@ public class DriverAPIController {
 
     @GetMapping("/get-driver-info/{driverId}")
     public ResponseEntity<PartyDriver.Model> getDriverInfo(@PathVariable String driverId) {
-
         PartyDriver partyDriver = partyDriverRepo
             .findById(UUID.fromString(driverId))
             .orElseThrow(NoSuchElementException::new);

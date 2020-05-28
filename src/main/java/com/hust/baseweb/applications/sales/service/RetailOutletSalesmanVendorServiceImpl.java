@@ -33,7 +33,6 @@ public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesm
 
     @Override
     public RetailOutletSalesmanVendor save(RetailOutletSalesmanDistributorInputModel input) {
-
         PartySalesman salesman = partySalesmanRepo.findByPartyId(input.getPartySalesmanId());
         PartyDistributor distributor = partyDistributorRepo.findByPartyId(input.getPartyDistributorId());
         PartyRetailOutlet retailOutlet = retailOutletRepo.findByPartyId(input.getPartyRetailOutletId());
@@ -52,8 +51,8 @@ public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesm
     @Override
     public List<PartyRetailOutlet> getListRetailOutletOfSalesmanAndDistributor(
         UUID partySalesmanId,
-        UUID partyDistributorId) {
-
+        UUID partyDistributorId
+    ) {
         PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);
         List<RetailOutletSalesmanVendor> list = retailOutletSalesmanVendorRepo.findAllByPartySalesmanAndPartyDistributorAndThruDate(
@@ -71,8 +70,8 @@ public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesm
     public RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(
         UUID partyRetailOutletId,
         UUID partySalesmanId,
-        UUID partyDistributorId) {
-
+        UUID partyDistributorId
+    ) {
         PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
         PartyRetailOutlet partyRetailOutlet = partyRetailOutletRepo.findByPartyId(partyRetailOutletId);
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);

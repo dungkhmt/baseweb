@@ -12,7 +12,6 @@ public enum InvoiceType {
     private String description;
 
     InvoiceType(String description) {
-
         this.description = description;
     }
 }

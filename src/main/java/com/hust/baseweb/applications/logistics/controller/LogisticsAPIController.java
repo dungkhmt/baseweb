@@ -35,21 +35,20 @@ public class LogisticsAPIController {
 
     @PostMapping("/create-facility")
     public ResponseEntity<?> createFacility(@RequestBody FacilityModel facilityModel) {
-
         log.info("::createFacility(), facilityId=" + facilityModel.getFacilityId());
         return ResponseEntity.ok(facilityService.save(facilityModel));
     }
 
     @PostMapping("/create-facilities")
     public ResponseEntity<?> createFacility(@RequestBody List<FacilityModel> facilityModels) {
-
         return ResponseEntity.ok(facilityService.saveAll(facilityModels));
     }
 
     @PostMapping("/get-list-facility")
     public ResponseEntity<GetListFacilityOutputModel> getListFacilities(
         Principal principal,
-        @RequestBody GetListFacilityInputModel input) {
+        @RequestBody GetListFacilityInputModel input
+    ) {
         // TODO
         List<Facility> facilities = facilityService.getAllFacilities();
         return ResponseEntity.ok().body(new GetListFacilityOutputModel(facilities));
@@ -58,8 +57,8 @@ public class LogisticsAPIController {
     @PostMapping("/get-list-product")
     public ResponseEntity<GetListProductOutputModel> getListProducts(
         Principal principal,
-        @RequestBody GetListProductInputModel input) {
-
+        @RequestBody GetListProductInputModel input
+    ) {
         log.info("getListProducts...");
         // TODO
         List<Product> products = productService.getAllProducts();
@@ -78,7 +77,6 @@ public class LogisticsAPIController {
 
     @PostMapping("/set-product-price")
     public ResponseEntity<?> setProductPrice(Principal principal, @RequestBody SetProductPriceInputModel input) {
-
         UserLogin userLogin = userService.findById(principal.getName());
         ProductPrice productPrice = productPriceService.setProductPrice(
             userLogin,
@@ -93,14 +91,12 @@ public class LogisticsAPIController {
 
     @PostMapping("/get-product-price")
     public ResponseEntity<?> getProductPrice(Principal principal, @RequestBody GetProductPriceInputModel input) {
-
         ProductPrice pp = productPriceService.getProductPrice(input.getProductId());
         return ResponseEntity.ok().body(pp);
     }
 
     @GetMapping("/get-product-price-history/{productId}")
     public ResponseEntity<List<ProductPrice.Model>> getProductPriceHistory(@PathVariable String productId) {
-
         return ResponseEntity.ok(productPriceService.getProductPriceHistory(productId));
     }
 
@@ -111,33 +107,30 @@ public class LogisticsAPIController {
 
     @GetMapping("/get-all-supplier")
     public ResponseEntity<List<Supplier>> getAllSupplier() {
-
         return ResponseEntity.ok(supplierService.getAllSupplier());
     }
 
     @GetMapping("/get-supplier-by-id/{supplierPartyId}")
     public ResponseEntity<Supplier> getSupplierById(@PathVariable String supplierPartyId) {
-
         return ResponseEntity.ok(supplierService.getSupplierById(supplierPartyId));
     }
 
     @PostMapping("/create-supplier")
     public ResponseEntity<Supplier> createSupplier(@RequestBody Supplier.CreateModel supplierModel) {
-
         return ResponseEntity.ok(supplierService.create(supplierModel));
     }
 
     @GetMapping("/get-all-product-price-supplier-by-supplier/{supplierPartyId}")
     public ResponseEntity<List<ProductPriceSupplier.Model>> getAllProductPriceSupplierBySupplier(
-        @PathVariable String supplierPartyId) {
-
+        @PathVariable String supplierPartyId
+    ) {
         return ResponseEntity.ok(productPriceSupplierService.getAllProductPriceSuppliers(supplierPartyId));
     }
 
     @PostMapping("/set-product-price-supplier")
     public ResponseEntity<ProductPriceSupplier> setProductPriceSupplier(
-        @RequestBody ProductPriceSupplier.SetModel setModel) {
-
+        @RequestBody ProductPriceSupplier.SetModel setModel
+    ) {
         return ResponseEntity.ok(productPriceSupplierService.setProductPriceSupplier(setModel));
     }
 }

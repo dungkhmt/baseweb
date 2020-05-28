@@ -11,15 +11,14 @@ public class CompositeOrderRoleId implements Serializable {
     private String roleTypeId;
 
     public CompositeOrderRoleId() {
-
         super();
 
     }
 
     public CompositeOrderRoleId(
         String orderId, UUID partyId,
-        String roleTypeId) {
-
+        String roleTypeId
+    ) {
         super();
         this.orderId = orderId;
         this.partyId = partyId;
@@ -28,7 +27,6 @@ public class CompositeOrderRoleId implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) {
             return true;
         }
@@ -47,7 +45,6 @@ public class CompositeOrderRoleId implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(orderId, partyId, roleTypeId);
     }
 }

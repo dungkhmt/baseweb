@@ -17,15 +17,18 @@ public interface ProductPriceSupplierRepo extends JpaRepository<ProductPriceSupp
 
     List<ProductPriceSupplier> findAllByPartySupplierAndThruDateNullOrThruDateAfter(
         Supplier partySupplier,
-        Date thruDateAfter);
+        Date thruDateAfter
+    );
 
     List<ProductPriceSupplier> findAllByPartySupplierAndProductAndThruDateNullOrThruDateAfter(
         Supplier partySupplier,
         Product product,
-        Date thruDateAfter);
+        Date thruDateAfter
+    );
 
     List<ProductPriceSupplier> findAllByPartySupplierInAndProductInAndThruDateNullOrThruDateAfter(
         Collection<Supplier> partySuppliers,
         Collection<Product> products,
-        Date thruDateAfter);
+        Date thruDateAfter
+    );
 }

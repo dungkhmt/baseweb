@@ -27,7 +27,6 @@ public class ApiController {
 
     @GetMapping("/")
     public ResponseEntity<Map> home(Principal principal) {
-
         System.out.println(module + "::home");
         Map<String, String> response = new HashMap<>();
         response.put("user", principal.getName());

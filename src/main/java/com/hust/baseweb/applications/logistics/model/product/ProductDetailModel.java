@@ -22,11 +22,9 @@ public class ProductDetailModel {
     private String avatar;
 
     public ProductDetailModel() {
-
     }
 
     public ProductDetailModel(Product product) {
-
         this.productId = product.getProductId();
         this.productName = product.getProductName();
         this.type = product.getProductType() == null ? "UNKNOWN" : product.getProductType().getDescription();

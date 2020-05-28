@@ -50,7 +50,6 @@ public class ProductPrice {
     private String createdByUserLoginId;
 
     public Model toModel() {
-
         return new Model(
             product.getProductId(),
             price,

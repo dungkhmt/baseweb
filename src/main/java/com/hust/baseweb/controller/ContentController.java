@@ -24,7 +24,6 @@ public class ContentController {
 
     @PostMapping("/")
     public ResponseEntity<String> createContent(@RequestParam("file") MultipartFile file) {
-
         log.info("createContent");
         Content content = null;
         try {
@@ -39,7 +38,6 @@ public class ContentController {
 
     @GetMapping("/{contentId}")
     public ResponseEntity<?> get(@PathVariable String contentId) {
-
         log.info("contentId {}", contentId);
         try {
             Response response = contentService.getContentData(contentId);

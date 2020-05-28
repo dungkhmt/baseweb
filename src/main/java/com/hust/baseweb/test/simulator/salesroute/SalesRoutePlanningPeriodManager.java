@@ -14,12 +14,10 @@ public class SalesRoutePlanningPeriodManager {
     private String token;
 
     public SalesRoutePlanningPeriodManager(String token) {
-
         this.token = token;
     }
 
     public List<SalesRoutePlanningPeriod> getListSalesRoutePlanningPeriods() {
-
         try {
             String json = "{\"statusId\":null}";
 

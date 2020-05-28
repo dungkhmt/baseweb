@@ -44,7 +44,8 @@ public class OrderAPIController {
     //public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
     public ResponseEntity createOrder(
         Principal principal,
-        @RequestBody CreateOrderDistributor2RetailOutletInputModel input) {
+        @RequestBody CreateOrderDistributor2RetailOutletInputModel input
+    ) {
         //TODO
         Gson gson = new Gson();
         String inputJson = gson.toJson(input);
@@ -63,13 +64,11 @@ public class OrderAPIController {
 
     @GetMapping("/get-orders/all")
     public ResponseEntity getAllOrders() {
-
         return ResponseEntity.ok().body(orderService.findAll());
     }
 
     @GetMapping("/orders")
     public ResponseEntity<?> getOrders(Pageable page, @RequestParam(required = false) String param) {
-
         log.info("getOrders, page = pageNumber = " + page.getPageNumber() + ", offSet = " +
                  page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
         Page<OrderHeader> orders = orderHeaderPageRepo.findAll(page);
@@ -91,7 +90,6 @@ public class OrderAPIController {
 
     @GetMapping(path = "/orders/{orderId}")
     public ResponseEntity<?> getOrderDetail(@PathVariable String orderId, Principal principal) {
-
         log.info("getOrderDetail, orderId = " + orderId);
 
         //OrderHeader order = orderService.findByOrderId(orderId);
@@ -102,14 +100,12 @@ public class OrderAPIController {
 
     @GetMapping("/get-list-party-customers")
     public ResponseEntity getListPartyCustomers() {
-
         return ResponseEntity.ok().body(partyCustomerService.getListPartyCustomers());
     }
 
 
     @PostMapping("/get-total-revenue")
     public ResponseEntity getTotalRevenue(Principal principal, @RequestBody GetTotalRevenueInputModel input) {
-
         List<String> keys = Collections.list(OrderAPIController.revenueOrderCache.keys());
         GetTotalRevenueItemOutputModel[] itemOutputModels = new GetTotalRevenueItemOutputModel[keys.size()];
         for (int i = 0; i < itemOutputModels.length; i++) {
@@ -122,20 +118,18 @@ public class OrderAPIController {
 
     @GetMapping("/get-all-purchase-order")
     public ResponseEntity<List<OrderHeader.PurchaseModel>> getAllPurchaseOrder() {
-
         return ResponseEntity.ok(orderService.getAllPurchaseOrder());
     }
 
     @PostMapping("/create-purchase-order")
     public ResponseEntity<Boolean> createPurchaseOrder(
-        @RequestBody OrderHeader.PurchaseCreateModel purchaseCreateModel) {
-
+        @RequestBody OrderHeader.PurchaseCreateModel purchaseCreateModel
+    ) {
         return ResponseEntity.ok(orderService.createPurchaseOrder(purchaseCreateModel));
     }
 
     @PostMapping("/delete-all-orders")
     public ResponseEntity<?> deleteAllOrders(@RequestBody OrderHeader.DeleteModel deleteModel) {
-
         return ResponseEntity.ok(orderService.deleteOrder(deleteModel));
     }
 }

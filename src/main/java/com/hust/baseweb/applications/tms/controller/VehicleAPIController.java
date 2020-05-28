@@ -33,14 +33,12 @@ public class VehicleAPIController {
 
     @GetMapping("/vehicle/page")
     public ResponseEntity<?> getVehicles(Principal principal, Pageable pageable) {
-
         log.info("::getVehicles, ");
         return ResponseEntity.ok().body(vehicleService.findAll(pageable).map(Vehicle::toVehicleModel));
     }
 
     @GetMapping("/vehicle/all")
     public ResponseEntity<?> getAllVehicles(Principal principal) {
-
         log.info("::getAllVehicles, ");
         return ResponseEntity
             .ok()
@@ -50,7 +48,8 @@ public class VehicleAPIController {
     @PostMapping("/upload-vehicle")
     public ResponseEntity<?> uploadVehicles(
         Principal principal,
-        @RequestParam("file") MultipartFile multipartFile) throws IOException {
+        @RequestParam("file") MultipartFile multipartFile
+    ) throws IOException {
 
         log.info("::uploadVehicle");
         List<VehicleModel.Create> vehicleModels
@@ -82,7 +81,6 @@ public class VehicleAPIController {
     // list view
     @GetMapping("/vehicle/{deliveryPlanId}/page")
     public ResponseEntity<?> getVehicle(Principal principal, @PathVariable String deliveryPlanId, Pageable pageable) {
-
         log.info("::getVehicle deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(vehicleService.findAllInDeliveryPlan(deliveryPlanId, pageable));
     }
@@ -90,7 +88,6 @@ public class VehicleAPIController {
     // list view
     @GetMapping("/vehicle/{deliveryPlanId}/all")
     public ResponseEntity<?> getAllVehicle(Principal principal, @PathVariable String deliveryPlanId) {
-
         log.info("::getVehicle deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(vehicleService.findAllInDeliveryPlan(deliveryPlanId));
     }
@@ -99,8 +96,8 @@ public class VehicleAPIController {
     @PostMapping("/create-vehicle-delivery-plan")
     public ResponseEntity<?> createVehicleDeliveryPlan(
         Principal principal,
-        @RequestBody VehicleModel.CreateDeliveryPlan createDeliveryPlan) {
-
+        @RequestBody VehicleModel.CreateDeliveryPlan createDeliveryPlan
+    ) {
         log.info("::createVehicleDeliveryPlan: " + createDeliveryPlan.getDeliveryPlanId());
         return ResponseEntity.ok().body(vehicleService.saveVehicleDeliveryPlan(createDeliveryPlan));
     }
@@ -109,8 +106,8 @@ public class VehicleAPIController {
     @PostMapping("/delete-vehicle-delivery-plan")
     public ResponseEntity<?> deleteVehicleDeliveryPlan(
         Principal principal,
-        @RequestBody VehicleModel.DeleteDeliveryPlan deleteDeliveryPlan) {
-
+        @RequestBody VehicleModel.DeleteDeliveryPlan deleteDeliveryPlan
+    ) {
         log.info("::deleteVehicleDeliveryPlan: " + deleteDeliveryPlan.getDeliveryPlanId());
         return ResponseEntity.ok().body(vehicleService.deleteVehicleDeliveryPlan(deleteDeliveryPlan));
     }
@@ -120,8 +117,8 @@ public class VehicleAPIController {
     public ResponseEntity<?> getVehiclePageNotIn(
         Principal principal,
         @PathVariable String deliveryPlanId,
-        Pageable pageable) {
-
+        Pageable pageable
+    ) {
         log.info("::getVehicleNotIn deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlan(deliveryPlanId, pageable));
     }
@@ -130,8 +127,8 @@ public class VehicleAPIController {
     @GetMapping("/vehicle-not-in-delivery-plan/{deliveryPlanId}/all")
     public ResponseEntity<List<VehicleModel>> getAllVehicleNotIn(
         Principal principal,
-        @PathVariable String deliveryPlanId) {
-
+        @PathVariable String deliveryPlanId
+    ) {
         log.info("::getVehicleNotIn deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlan(deliveryPlanId));
     }
@@ -139,15 +136,14 @@ public class VehicleAPIController {
     @GetMapping("/vehicle-not-in-delivery-trips/{deliveryPlanId}/all")
     public ResponseEntity<List<VehicleModel>> vehicleNotInDeliveryTrips(
         Principal principal,
-        @PathVariable String deliveryPlanId) {
-
+        @PathVariable String deliveryPlanId
+    ) {
         log.info("VehicleAPIController::vehicleNotInDeliveryTrips({})", deliveryPlanId);
         return ResponseEntity.ok(vehicleService.findAllNotInDeliveryTrips(deliveryPlanId));
     }
 
     @GetMapping("/get-vehicle-info/{vehicleId}")
     public ResponseEntity<VehicleModel> getVehicleInfo(@PathVariable String vehicleId) {
-
         Vehicle vehicle = vehicleRepo.findById(vehicleId).orElseThrow(NoSuchElementException::new);
         return ResponseEntity.ok(vehicle.toVehicleModel());
     }

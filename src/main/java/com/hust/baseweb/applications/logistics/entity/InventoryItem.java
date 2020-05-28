@@ -40,7 +40,6 @@ public class InventoryItem {
     private Date lastUpdatedStamp;
 
     public InventoryItem() {
-
         super();
 
     }

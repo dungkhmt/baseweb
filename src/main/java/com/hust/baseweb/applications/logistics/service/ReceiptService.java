@@ -16,5 +16,6 @@ public interface ReceiptService {
 
     List<ReceiptItem> createReceiptItems(
         Receipt receipt,
-        List<InventoryItem> inventoryItems);
+        List<InventoryItem> inventoryItems
+    );
 }

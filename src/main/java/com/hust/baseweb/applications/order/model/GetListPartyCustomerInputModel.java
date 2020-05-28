@@ -10,13 +10,11 @@ public class GetListPartyCustomerInputModel {
     private String statusId;
 
     public GetListPartyCustomerInputModel() {
-
         super();
 
     }
 
     public GetListPartyCustomerInputModel(String statusId) {
-
         super();
         this.statusId = statusId;
     }

@@ -37,7 +37,8 @@ public class InventoryItemAPIController {
     @PostMapping("/import-inventory-items")
     @Transactional
     public ResponseEntity<List<InventoryItem>> importInventoryItems(
-        @RequestBody ImportInventoryItemsInputModel inventoryItemsInput) {
+        @RequestBody ImportInventoryItemsInputModel inventoryItemsInput
+    ) {
 //        System.out.println(module + "::importInventoryItems, input.sz = " + input.getInventoryItems().length);
 
 //        for (ImportInventoryItemInputModel inputModel : input.getInventoryItems()) {
@@ -55,7 +56,6 @@ public class InventoryItemAPIController {
     @GetMapping("/simulator/import-inventory-items")
     @Transactional
     public ResponseEntity<List<InventoryItem>> simulatorImportInventoryItems() {
-
         Random random = new Random();
         List<Product> products = productRepo.findAll();
         List<Facility> facilities = facilityRepo.findAll();
@@ -79,21 +79,19 @@ public class InventoryItemAPIController {
     @PostMapping("/export-inventory-items")
     public ResponseEntity<?> exportInventoryItems(
         Principal principal,
-        @RequestBody ExportInventoryItemsInputModel input) {
-
+        @RequestBody ExportInventoryItemsInputModel input
+    ) {
         String response = inventoryItemService.exportInventoryItems(input);
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/get-inventory-order-header/page")
     public ResponseEntity<?> getInventoryOrderHeaderPage(Pageable pageable) {
-
         return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderHeaderPage(pageable));
     }
 
     @PostMapping("/get-inventory-order-detail")
     public ResponseEntity<?> getInventoryOrderDetail(@RequestBody InventoryModel.OrderFacility orderFacility) {
-
         return ResponseEntity.ok().body(inventoryItemService.getInventoryOrderHeaderDetail(
             orderFacility.getFacilityId(),
             orderFacility.getOrderId()));
@@ -101,19 +99,16 @@ public class InventoryItemAPIController {
 
     @GetMapping("/facility/all")
     public ResponseEntity<?> getAllFacility() {
-
         return ResponseEntity.ok().body(facilityRepo.findAll());
     }
 
     @GetMapping("/get-inventory-order-export-list/{facilityId}")
     public ResponseEntity<?> getInventoryOrderExportList(@PathVariable String facilityId) {
-
         return ResponseEntity.ok().body(inventoryItemService.getInventoryExportList(facilityId));
     }
 
     @GetMapping("/get-inventory-list/{facilityId}")
     public ResponseEntity<?> getInventoryList(@PathVariable String facilityId) {
-
         return ResponseEntity.ok().body(inventoryItemService.getInventoryList(facilityId));
     }
 }

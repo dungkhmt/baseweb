@@ -19,7 +19,8 @@ public interface OrderHeaderRepo extends JpaRepository<OrderHeader, String> {
     List<OrderHeader> findAllByOrderIdInAndOrderDateBetween(
         List<String> orderIds,
         Date fromDate,
-        Date toDate);
+        Date toDate
+    );
 
     List<OrderHeader> findAllByOrderType(OrderType orderType);
 

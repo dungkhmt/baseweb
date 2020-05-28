@@ -11,9 +11,11 @@ public interface DistanceTravelTimePostalAddressRepo
     extends CrudRepository<DistanceTravelTimePostalAddress, DistanceTravelTimePostalAddressEmbeddableId> {
 
     DistanceTravelTimePostalAddress findByDistanceTravelTimePostalAddressEmbeddableId(
-        DistanceTravelTimePostalAddressEmbeddableId distanceTravelTimePostalAddressEmbeddableId);
+        DistanceTravelTimePostalAddressEmbeddableId distanceTravelTimePostalAddressEmbeddableId
+    );
 
     List<DistanceTravelTimePostalAddress> findAllByDistanceTravelTimePostalAddressEmbeddableId_FromContactMechIdInAndDistanceTravelTimePostalAddressEmbeddableId_ToContactMechIdIn(
         List<UUID> froms,
-        List<UUID> tos);
+        List<UUID> tos
+    );
 }

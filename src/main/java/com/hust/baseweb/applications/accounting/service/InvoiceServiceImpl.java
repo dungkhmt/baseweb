@@ -33,7 +33,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public List<Invoice.Model> getAllInvoice() {
-
         List<Invoice> invoices = invoiceRepo.findAll();
         Map<UUID, Party> partyMap = partyRepo
             .findAllByPartyIdIn(invoices
@@ -52,7 +51,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public List<Invoice.Model> getAllUnpaidInvoices() {
-
         return invoiceRepo
             .findAllByAmountNotEqualWithPaidAmount()
             .stream()
@@ -62,7 +60,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Page<Invoice.Model> getPageUnpaidInvoices(Pageable pageable) {
-
         return invoiceRepo.findAllByAmountNotEqualWithPaidAmount(pageable).map(Invoice::toModel);
     }
 
@@ -70,8 +67,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Page<Invoice.Model> getPageUnpaidInvoices(
         String invoiceId,
         String toPartyCustomerId,
-        Pageable pageable) {
-
+        Pageable pageable
+    ) {
         if (invoiceId != null) {
             if (toPartyCustomerId != null) {
                 return invoiceRepo.findAllByInvoiceIdAndToPartyCustomerIdAndAmountNotEqualWithPaidAmount(
@@ -94,7 +91,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public List<Invoice.DistributorUnpaidModel> getAllUnpaidInvoiceGroupByDistributor() {
-
         List<Invoice> unpaidInvoices = invoiceRepo.findAllByAmountNotEqualWithPaidAmount();
         List<UUID> partyDistributorIds = unpaidInvoices
             .stream()
@@ -115,7 +111,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Invoice.DistributorUnpaidModel getUnpaidInvoiceByDistributor(String distributorId) {
-
         PartyDistributor partyDistributor = partyDistributorRepo
             .findById(UUID.fromString(distributorId))
             .orElseThrow(NoSuchElementException::new);
@@ -138,7 +133,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Invoice.Model getInvoice(String invoiceId) {
-
         Invoice invoice = invoiceRepo.findById(invoiceId).orElseThrow(NoSuchElementException::new);
         Party party = partyRepo.findById(invoice.getToPartyCustomerId()).orElse(new Party());
         return invoice.toModel(party.getName());
@@ -146,7 +140,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Invoice save(Invoice invoice) {
-
         if (invoice.getInvoiceId() == null) {
             InvoiceSequenceId id = invoiceSequenceIdRepo.save(new InvoiceSequenceId());
             invoice.setInvoiceId(Invoice.convertSequenceIdToInvoiceId(id.getId()));
@@ -156,7 +149,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public List<Invoice> saveAll(List<Invoice> invoices) {
-
         List<Invoice> newInvoices = invoices
             .stream()
             .filter(invoice -> invoice.getInvoiceId() == null)

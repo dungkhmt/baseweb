@@ -16,13 +16,11 @@ public class ProductTypeServiceImpl implements ProductTypeService {
 
     @Override
     public List<ProductType> getAllProductType() {
-
         return productTypeRepo.findAll();
     }
 
     @Override
     public ProductType getProductTypeByProductTypeId(String productTypeId) {
-
         return productTypeRepo.findByProductTypeId(productTypeId);
     }
 }

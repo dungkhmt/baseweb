@@ -16,12 +16,10 @@ public class CustomerManager {
     private String token;
 
     public CustomerManager(String token) {
-
         this.token = token;
     }
 
     public List<PartyCustomer> getCustomers() {
-
         try {
             String json = "{\"statusId\":null}";
 
@@ -43,7 +41,6 @@ public class CustomerManager {
     }
 
     public List<PartyDistributor> getDistributors() {
-
         try {
             String json = "{\"statusId\":null}";
 
@@ -65,7 +62,6 @@ public class CustomerManager {
     }
 
     public List<PartyRetailOutlet> getRetailOutlets() {
-
         try {
             String json = "{\"statusId\":null}";
 

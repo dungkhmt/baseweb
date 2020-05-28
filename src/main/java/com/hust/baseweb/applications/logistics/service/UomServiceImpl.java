@@ -20,8 +20,8 @@ public class UomServiceImpl implements UomService {
     @Override
     public Uom save(
         String uomId, String uomTypeId, String abbreviation,
-        String description) {
-
+        String description
+    ) {
         UomType uomType = uomTypeRepo.findByUomTypeId(uomTypeId);
         Uom uom = new Uom();
         uom.setUomId(uomId);
@@ -34,13 +34,11 @@ public class UomServiceImpl implements UomService {
 
     @Override
     public List<Uom> getAllUoms() {
-
         return uomRepo.findAll();
     }
 
     @Override
     public Uom getUomByUomId(String uomId) {
-
         return uomRepo.findByUomId(uomId);
     }
 }

@@ -64,7 +64,6 @@ public class ShipmentItem {
     private Integer completedQuantity = 0;
 
     public ShipmentItemModel toShipmentItemModel() {
-
         String customerCode = null;
         String locationCode = null;
         String address = null;
@@ -105,7 +104,6 @@ public class ShipmentItem {
     }
 
     public ShipmentItemModel.DeliveryPlan toShipmentItemDeliveryPlanModel(int assignedQuantity) {
-
         return new ShipmentItemModel.DeliveryPlan(
             shipmentItemId,
             orderItem.getProduct().getProductName(),

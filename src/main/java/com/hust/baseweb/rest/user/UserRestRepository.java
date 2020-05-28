@@ -28,7 +28,8 @@ public interface UserRestRepository extends PagingAndSortingRepository<DPerson, 
         Pageable page,
         String type,
         String status,
-        String fullNameString);
+        String fullNameString
+    );
 
     default void customize(final QuerydslBindings bindings, final QDPerson store) {
         // bindings.bind(store.address.city).single((path, value) ->

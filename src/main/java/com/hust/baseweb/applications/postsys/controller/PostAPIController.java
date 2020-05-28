@@ -20,7 +20,6 @@ public class PostAPIController {
 
     @PostMapping("/create-post-office")
     public ResponseEntity<?> createPostOffice(Principal principal, @RequestBody CreatePostOfficeInputModel input) {
-
         PostOffice newPostOffice = postOfficeService.save(input);
         log.info("createPostOffice, new post office name = " + newPostOffice.getPostOfficeName());
         return ResponseEntity.ok().body(newPostOffice);
@@ -28,7 +27,6 @@ public class PostAPIController {
 
     @GetMapping("/get-all-post-office")
     public ResponseEntity<?> getAllPostOffice(Principal principal) {
-
         List<PostOffice> result = postOfficeService.findAll();
         log.info("getAllPostOffice, " + result.size() + " item(s) sent.");
         return ResponseEntity.ok().body(result);
@@ -36,7 +34,6 @@ public class PostAPIController {
 
     @GetMapping("/get-post-office-by-id/{postOfficeId}")
     public ResponseEntity<?> getPostOfficeById(Principal principal, @PathVariable String postOfficeId) {
-
         PostOffice result = postOfficeService.findByPostOfficeId(postOfficeId);
         log.info("getPostOfficeById = " + postOfficeId);
         return ResponseEntity.ok().body(result);
@@ -44,7 +41,6 @@ public class PostAPIController {
 
     @DeleteMapping("/delete-post-office/{postOfficeId}")
     public ResponseEntity<?> deletePostOfficeById(Principal principal, @PathVariable String postOfficeId) {
-
         postOfficeService.deleteByPostOfficeId(postOfficeId);
         log.info("deletePostOfficeById = " + postOfficeId);
         return ResponseEntity.ok().body(null);

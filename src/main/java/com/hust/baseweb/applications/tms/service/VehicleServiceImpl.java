@@ -34,7 +34,6 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public Page<Vehicle> findAll(Pageable pageable) {
-
         return vehicleMaintenanceHistoryRepo
             .findAllByThruDateIsNull(pageable)
             .map(VehicleMaintenanceHistory::getVehicle);
@@ -42,7 +41,6 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public List<Vehicle> findAll() {
-
         return vehicleMaintenanceHistoryRepo
             .findAllByThruDateIsNull()
             .stream()
@@ -52,7 +50,6 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public void saveAll(List<Vehicle> vehicles) {
-
         Set<String> vehicleIdSet = vehicleMaintenanceHistoryRepo
             .findAllByThruDateIsNullAndVehicleIn(vehicles)
             .stream()
@@ -71,14 +68,12 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public void saveAllMaintenanceHistory(List<VehicleMaintenanceHistory> vehicleMaintenanceHistories) {
-
         vehicleMaintenanceHistoryRepo.saveAll(vehicleMaintenanceHistories);
     }
 
     // TODO:
     @Override
     public Page<VehicleModel> findAllInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
-
         List<VehicleDeliveryPlan> vehicleDeliveryPlans
             = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
 
@@ -94,7 +89,6 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public List<VehicleModel> findAllInDeliveryPlan(String deliveryPlanId) {
-
         List<VehicleDeliveryPlan> vehicleDeliveryPlans = vehicleDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(
             deliveryPlanId));
         return vehicleRepo.findAllByVehicleIdIn(
@@ -108,13 +102,11 @@ public class VehicleServiceImpl implements VehicleService {
     // TODO:
     @Override
     public Page<VehicleModel> findAllNotInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
-
         return PageUtils.getPage(findAllNotInDeliveryPlan(deliveryPlanId), pageable);
     }
 
     @Override
     public List<VehicleModel> findAllNotInDeliveryPlan(String deliveryPlanId) {
-
         Set<String> vehicleInDeliveryPlans = vehicleDeliveryPlanRepo
             .findAllByDeliveryPlanId(
                 UUID.fromString(deliveryPlanId))
@@ -140,7 +132,6 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public List<VehicleModel> findAllNotInDeliveryTrips(String deliveryPlanId) {
-
         DeliveryPlan deliveryPlan = deliveryPlanRepo
             .findById(UUID.fromString(deliveryPlanId))
             .orElseThrow(NoSuchElementException::new);
@@ -167,7 +158,6 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public String saveVehicleDeliveryPlan(VehicleModel.CreateDeliveryPlan createDeliveryPlan) {
-
         List<VehicleDeliveryPlan> vehicleDeliveryPlans = new ArrayList<>();
         Set<String> vehicleIdSet = vehicleMaintenanceHistoryRepo
             .findAllByThruDateIsNullAndVehicleIn(
@@ -195,7 +185,6 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public boolean deleteVehicleDeliveryPlan(VehicleModel.DeleteDeliveryPlan deleteDeliveryPlan) {
-
         VehicleDeliveryPlan vehicleDeliveryPlan = vehicleDeliveryPlanRepo.findByDeliveryPlanIdAndVehicleId(
             UUID.fromString(deleteDeliveryPlan.getDeliveryPlanId()),
             deleteDeliveryPlan.getVehicleId()
@@ -212,8 +201,8 @@ public class VehicleServiceImpl implements VehicleService {
     public List<Vehicle> save(
         List<VehicleModel.Create> vehicleModels,
         List<VehicleModel.CreateLocationPriority> vehicleLocationPriorities,
-        List<LocationModel.Create> shipToModels) {
-
+        List<LocationModel.Create> shipToModels
+    ) {
         List<Vehicle> listVehicles = new ArrayList<>();
         for (int i = 0; i < vehicleModels.size(); i++) {
             VehicleModel.Create vm = vehicleModels.get(i);

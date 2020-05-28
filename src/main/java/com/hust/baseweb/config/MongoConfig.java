@@ -23,7 +23,6 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 //    @Autowired
 //    @ConditionalOnExpression("'${mongo.transactions}'=='enabled'")
     MongoTransactionManager transactionManager(MongoDbFactory dbFactory) {
-
         return new MongoTransactionManager(dbFactory);
     }
 
@@ -36,13 +35,11 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Override
     public MongoClient mongoClient() {
-
         return MongoClients.create(uri);
     }
 
     @Override
     protected String getDatabaseName() {
-
         return databaseName;
     }
 }

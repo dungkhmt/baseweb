@@ -37,77 +37,68 @@ public class AccountingController {
 
     @GetMapping("/get-all-payment")
     public ResponseEntity<List<Payment.Model>> getAllPayment() {
-
         return ResponseEntity.ok(paymentService.getAllPayment());
     }
 
     @GetMapping("/get-all-invoice")
     public ResponseEntity<List<Invoice.Model>> getAllInvoice() {
-
         return ResponseEntity.ok(invoiceService.getAllInvoice());
     }
 
     @GetMapping("/get-invoice-by-id/{invoiceId}")
     public ResponseEntity<Invoice.Model> getInvoiceById(@PathVariable String invoiceId) {
-
         return ResponseEntity.ok(invoiceService.getInvoice(invoiceId));
     }
 
     @GetMapping("/get-unpaid-invoices-group-by-distributor-id")
     public ResponseEntity<List<Invoice.DistributorUnpaidModel>> getUnpaidInvoicesGroupByDistributorId() {
-
         return ResponseEntity.ok(invoiceService.getAllUnpaidInvoiceGroupByDistributor());
     }
 
     @GetMapping("/get-unpaid-invoice-by-distributor-id/{distributorId}")
     public ResponseEntity<Invoice.DistributorUnpaidModel> getUnpaidInvoiceByDistributorId(
-        @PathVariable String distributorId) {
-
+        @PathVariable String distributorId
+    ) {
         return ResponseEntity.ok(invoiceService.getUnpaidInvoiceByDistributor(distributorId));
     }
 
     @GetMapping("/get-payment-by-id/{paymentId}")
     public ResponseEntity<Payment.Model> getPaymentById(@PathVariable String paymentId) {
-
         return ResponseEntity.ok(paymentService.getPayment(paymentId));
     }
 
     @PostMapping("/create-payment")
     public ResponseEntity<Payment.Model> createPayment(@RequestBody Payment.CreateModel paymentCreateModel) {
-
         return ResponseEntity.ok(paymentService.createPayment(paymentCreateModel));
     }
 
     @GetMapping("/get-all-invoice-item-by-invoice-id/{invoiceId}")
     public ResponseEntity<List<InvoiceItem.Model>> getAllInvoiceItemByInvoiceId(@PathVariable String invoiceId) {
-
         return ResponseEntity.ok(invoiceItemService.findByInvoiceId(invoiceId));
     }
 
     @GetMapping("/get-all-payment-application-by-invoice-id/{invoiceId}")
     public ResponseEntity<List<PaymentApplication.Model>> getAllPaymentApplicationByInvoiceId(
-        @PathVariable String invoiceId) {
-
+        @PathVariable String invoiceId
+    ) {
         return ResponseEntity.ok(paymentApplicationService.findAllByInvoiceId(invoiceId));
     }
 
     @GetMapping("/get-payment-application-by-payment-id/{paymentId}")
     public ResponseEntity<List<PaymentApplication.Model>> getPaymentDetailByPaymentId(@PathVariable String paymentId) {
-
         return ResponseEntity.ok(paymentApplicationService.findAllByPaymentId(paymentId));
     }
 
     @GetMapping("/get-all-unpaid-invoices")
     public ResponseEntity<List<Invoice.Model>> getAllUnpaidInvoices() {
-
         return ResponseEntity.ok(invoiceService.getAllUnpaidInvoices());
     }
 
     @GetMapping("/get-page-unpaid-invoices")
     public ResponseEntity<Page<Invoice.Model>> getPageUnpaidInvoices(
         @RequestParam(value = "filtering", required = false) String filtering,
-        Pageable pageable) {
-
+        Pageable pageable
+    ) {
         if (filtering == null) {
             return ResponseEntity.ok(invoiceService.getPageUnpaidInvoices(pageable));
         } else {
@@ -124,8 +115,8 @@ public class AccountingController {
 
     @PostMapping("/create-payment-application")
     public ResponseEntity<PaymentApplication.Model> createPaymentApplication(
-        @RequestBody PaymentApplication.CreateModel paymentApplicationCreateModel) {
-
+        @RequestBody PaymentApplication.CreateModel paymentApplicationCreateModel
+    ) {
         if (paymentApplicationCreateModel.getPaymentId() != null) {
             return ResponseEntity.ok(paymentApplicationService.createPaymentApplication(paymentApplicationCreateModel));
         } else {

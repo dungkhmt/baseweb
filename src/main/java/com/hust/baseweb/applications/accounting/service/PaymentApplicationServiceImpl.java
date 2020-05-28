@@ -32,7 +32,6 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
 
     @Override
     public List<PaymentApplication.Model> findAllByInvoiceId(String invoiceId) {
-
         return paymentApplicationRepo
             .findAllByInvoiceId(invoiceId)
             .stream()
@@ -42,7 +41,6 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
 
     @Override
     public List<PaymentApplication.Model> findAllByPaymentId(String paymentId) {
-
         return paymentApplicationRepo
             .findAllByPaymentId(paymentId)
             .stream()
@@ -52,7 +50,6 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
 
     @Override
     public PaymentApplication.Model createPaymentApplication(PaymentApplication.CreateModel paymentApplicationCreateModel) {
-
         Date now = new Date();
         PaymentApplication paymentApplication = new PaymentApplication(
             null,
@@ -82,7 +79,6 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
 
     @Override
     public PaymentApplication.Model quickCreatePaymentApplication(PaymentApplication.CreateModel paymentApplicationCreateModel) {
-
         Invoice invoice = invoiceRepo
             .findById(paymentApplicationCreateModel.getInvoiceId())
             .orElseThrow(NoSuchElementException::new);

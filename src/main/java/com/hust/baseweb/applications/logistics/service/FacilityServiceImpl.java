@@ -29,19 +29,16 @@ public class FacilityServiceImpl implements FacilityService {
 
     @Override
     public Facility findFacilityById(String facilityId) {
-
         return facilityRepo.findByFacilityId(facilityId);
     }
 
     @Override
     public List<Facility> getAllFacilities() {
-
         return facilityRepo.findAll();
     }
 
     @Override
     public Facility save(FacilityModel facilityModel) {
-
         GeocodingResult[] geocodingResults = GoogleMapUtils.queryLatLng(facilityModel.getAddress());
         PostalAddress postalAddress;
         if (geocodingResults != null && geocodingResults.length > 0) {
@@ -67,7 +64,6 @@ public class FacilityServiceImpl implements FacilityService {
 
     @Override
     public List<Facility> saveAll(List<FacilityModel> facilityModels) {
-
         return facilityModels.stream().map(this::save).collect(Collectors.toList());
     }
 

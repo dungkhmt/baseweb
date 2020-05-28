@@ -12,15 +12,14 @@ public class GetDetailUserLoginOutputModel {
     private SecurityGroupOutputModel[] allSecurityGroups;
 
     public GetDetailUserLoginOutputModel() {
-
         super();
 
     }
 
     public GetDetailUserLoginOutputModel(
         String userName, String partyId,
-        SecurityGroupOutputModel[] allSecurityGroups) {
-
+        SecurityGroupOutputModel[] allSecurityGroups
+    ) {
         super();
         this.userName = userName;
         this.partyId = partyId;

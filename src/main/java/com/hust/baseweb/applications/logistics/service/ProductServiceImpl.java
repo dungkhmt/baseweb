@@ -36,13 +36,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findByProductId(String productId) {
-
         return productRepo.findByProductId(productId);
     }
 
     @Override
     public List<Product> getAllProducts() {
-
         return productRepo.findAll();
     }
 
@@ -55,7 +53,8 @@ public class ProductServiceImpl implements ProductService {
         double productWeight, // kg
         String uomId,
         Integer hsThu,
-        Integer hsPal) {
+        Integer hsPal
+    ) {
         // TODO: check duplicate productId
         Uom uom = uomRepo.findByUomId(uomId);
         if (uom == null) {
@@ -84,7 +83,8 @@ public class ProductServiceImpl implements ProductService {
         String uomId,
         Integer hsThu,
         Integer hsPal,
-        List<String> contentIds) {
+        List<String> contentIds
+    ) {
         // TODO: check duplicate productId
         Uom uom = uomRepo.findByUomId(uomId);
         if (uom == null) {
@@ -131,7 +131,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void saveProduct(Product product) {
-
         productRepo.save(product);
     }
 

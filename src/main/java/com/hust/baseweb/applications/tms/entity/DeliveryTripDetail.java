@@ -40,7 +40,6 @@ public class DeliveryTripDetail {
     private StatusItem statusItem;
 
     public DeliveryTripDetailModel.OrderItem toDeliveryTripDetailModel() {
-
         DeliveryTripDetailModel.OrderItem orderItemModel = new DeliveryTripDetailModel.OrderItem();
         orderItemModel.setSequence(sequenceId);
         orderItemModel.setDeliveryTripDetailId(deliveryTripDetailId);

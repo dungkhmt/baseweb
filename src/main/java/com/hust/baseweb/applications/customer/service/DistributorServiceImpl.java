@@ -51,8 +51,6 @@ public class DistributorServiceImpl implements DistributorService {
     @Override
     @Transactional
     public PartyDistributor save(CreateDistributorInputModel input) {
-
-
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");
 
         //UUID partyId = UUID.randomUUID();
@@ -123,7 +121,6 @@ public class DistributorServiceImpl implements DistributorService {
 
     @Override
     public List<PartyDistributor> findDistributors() {
-
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_DISTRIBUTOR");
         List<PartyDistributor> distributors = partyDistributorRepo.findByPartyType(partyType);
         log.info("findDistributors, got distributors.sz = " + distributors.size());
@@ -133,25 +130,21 @@ public class DistributorServiceImpl implements DistributorService {
 
     @Override
     public PartyDistributor findByPartyId(UUID partyId) {
-
         return partyDistributorRepo.findByPartyId(partyId);
     }
 
     @Override
     public List<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds) {
-
         return partyDistributorRepo.findAllByPartyIdIn(partyIds);
     }
 
     @Override
     public Page<PartyDistributor> findAllByPartyIdIn(List<UUID> partyIds, Pageable page) {
-
         return partyDistributorRepo.findAllByPartyIdIn(partyIds, page);
     }
 
     @Override
     public DetailDistributorModel getDistributorDetail(UUID partyDistributorId) {
-
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);
         List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyDistributorAndThruDate(
             partyDistributor,

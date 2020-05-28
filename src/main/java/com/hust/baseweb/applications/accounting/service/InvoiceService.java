@@ -20,7 +20,8 @@ public interface InvoiceService {
     Page<Invoice.Model> getPageUnpaidInvoices(
         String invoiceId,
         String toPartyCustomerId,
-        Pageable pageable);
+        Pageable pageable
+    );
 
     List<Invoice.DistributorUnpaidModel> getAllUnpaidInvoiceGroupByDistributor();
 

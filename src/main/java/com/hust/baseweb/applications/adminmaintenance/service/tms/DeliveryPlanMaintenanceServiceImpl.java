@@ -17,7 +17,6 @@ public class DeliveryPlanMaintenanceServiceImpl implements DeliveryPlanMaintenan
 
     @Override
     public long deleteAllDeliveryPlan() {
-
         long cnt = deliveryPlanRepo.count();
         shipmentItemDeliveryPlanRepo.deleteAll();
         deliveryTripDetailRepo.deleteAll();

@@ -25,12 +25,10 @@ public class SetProductPriceAgent extends Thread {
     private int id;
 
     public String name() {
-
         return module + "[" + id + "[";
     }
 
     public SetProductPriceAgent(int id) {
-
         this.id = id;
     }
 
@@ -43,7 +41,6 @@ public class SetProductPriceAgent extends Thread {
     }
 
     public void run() {
-
         try {
 //			System.out.println(name() + "::run....");
 
@@ -78,7 +75,6 @@ public class SetProductPriceAgent extends Thread {
     }
 
     public static void main(String[] args) {
-
         SetProductPriceAgent a = new SetProductPriceAgent(0);
         a.start();
     }

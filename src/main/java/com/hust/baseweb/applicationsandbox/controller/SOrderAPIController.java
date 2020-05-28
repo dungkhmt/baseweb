@@ -16,7 +16,6 @@ public class SOrderAPIController {
 
     @PostMapping("/s-create-order")
     public ResponseEntity<?> createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
-
         SOrderHeader o = null;// TODO
         return ResponseEntity.ok().body(o);
     }
@@ -25,8 +24,8 @@ public class SOrderAPIController {
     public ResponseEntity<?> getOrders(
         Pageable page,
         @RequestParam(name = "search", required = false) String searchString,
-        @RequestParam(name = "filter", required = false) String filterString) {
-
+        @RequestParam(name = "filter", required = false) String filterString
+    ) {
         log.info("::getUsers, searchString = " + searchString);
         List<SOrderHeader> lst = null;// TODO
         return ResponseEntity.ok().body(lst);

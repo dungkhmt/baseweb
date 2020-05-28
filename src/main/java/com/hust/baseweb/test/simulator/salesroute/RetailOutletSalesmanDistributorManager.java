@@ -14,15 +14,14 @@ public class RetailOutletSalesmanDistributorManager {
     private String token;
 
     public RetailOutletSalesmanDistributorManager(String token) {
-
         this.token = token;
     }
 
     public RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(
         UUID retailOutletId,
         UUID salesmanId,
-        UUID distributorId) {
-
+        UUID distributorId
+    ) {
         try {
             RetailOutletSalesmanDistributorInputModel in = new RetailOutletSalesmanDistributorInputModel();
             in.setPartyDistributorId(distributorId);

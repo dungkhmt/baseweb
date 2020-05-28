@@ -46,7 +46,6 @@ public class VehicleModel {
         private Integer priority;
 
         public VehicleLocationPriority toVehicleLocationPriority(Vehicle vehicle, PostalAddress postalAddress) {
-
             if (vehicle == null || postalAddress == null) {
                 return null;
             }
@@ -85,7 +84,6 @@ public class VehicleModel {
         private String priority;
 
         public Vehicle toVehicle() {
-
             return new Vehicle(
                 vehicleId,
                 capacity,

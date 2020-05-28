@@ -20,7 +20,6 @@ public class PartyRelationshipServiceImpl implements PartyRelationshipService {
 
     @Override
     public PartyRelationship save(PartyRelationship partyRelationship) {
-
         return partyRelationshipRepo.save(partyRelationship);
     }
 
@@ -28,8 +27,8 @@ public class PartyRelationshipServiceImpl implements PartyRelationshipService {
     public List<PartyRelationship> findAllByFromPartyAndRoleTypeAndThruDate(
         Party fromParty,
         RoleType roleType,
-        Date thruDate) {
-
+        Date thruDate
+    ) {
         return partyRelationshipRepo.findAllByFromPartyAndRoleTypeAndThruDate(fromParty, roleType, thruDate);
     }
 
@@ -37,8 +36,8 @@ public class PartyRelationshipServiceImpl implements PartyRelationshipService {
     public List<PartyRelationship> findAllByToPartyAndRoleTypeAndThruDate(
         Party toParty,
         RoleType roleType,
-        Date thruDate) {
-
+        Date thruDate
+    ) {
         return partyRelationshipRepo.findAllByToPartyAndRoleTypeAndThruDate(toParty, roleType, thruDate);
     }
 
@@ -47,8 +46,8 @@ public class PartyRelationshipServiceImpl implements PartyRelationshipService {
         Party fromParty,
         Party toParty,
         RoleType roleType,
-        Date thruDate) {
-
+        Date thruDate
+    ) {
         return partyRelationshipRepo.findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(
             fromParty,
             toParty,

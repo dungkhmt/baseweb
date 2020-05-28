@@ -27,7 +27,6 @@ public class Application {
     private Date lastUpdatedStamp;
 
     public Application(String applicationId, ApplicationType type, Application module, SecurityPermission permission) {
-
         this.applicationId = applicationId;
         this.type = type;
         this.module = module;
@@ -36,6 +35,5 @@ public class Application {
     }
 
     public Application() {
-
     }
 }

@@ -54,7 +54,6 @@ public class AdminMaintenanceServiceImpl implements AdminMaintenanceService {
 
     @Override
     public boolean deleteAllOrders() {
-
         inventoryItemDetailRepo.deleteAll();
         inventoryItemRepo.deleteAll();
         shipmentItemStatusRepo.deleteAll();

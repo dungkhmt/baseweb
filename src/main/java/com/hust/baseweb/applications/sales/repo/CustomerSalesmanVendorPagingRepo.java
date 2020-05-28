@@ -16,6 +16,7 @@ public interface CustomerSalesmanVendorPagingRepo extends PagingAndSortingReposi
     Page<CustomerSalesmanVendor> findByPartySalesmanAndThruDate(
         PartySalesman partySalesman,
         Date thruDate,
-        Pageable pageable);
+        Pageable pageable
+    );
 
 }

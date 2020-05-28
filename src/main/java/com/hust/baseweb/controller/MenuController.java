@@ -31,7 +31,6 @@ public class MenuController {
 
     @GetMapping("/menu")
     public ResponseEntity<Set> getMenu(Principal principal) {
-
         UserLogin userLogin = userService.findById(principal.getName());
 //        System.out.println(module + "::getMenu, userName = " + principal.getName());
 

@@ -11,14 +11,12 @@ public class GetTotalRevenueInputModel {
     private String toDate;
 
     public GetTotalRevenueInputModel(String fromDate, String toDate) {
-
         super();
         this.fromDate = fromDate;
         this.toDate = toDate;
     }
 
     public GetTotalRevenueInputModel() {
-
         super();
 
     }

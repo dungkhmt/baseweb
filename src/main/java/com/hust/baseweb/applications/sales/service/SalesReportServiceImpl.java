@@ -33,7 +33,6 @@ public class SalesReportServiceImpl implements SalesReportService {
 
     @Override
     public SaleReportModel.Output getSaleReports(SaleReportModel.Input input) {
-
         if (input.getProductId() != null) {
             List<SaleReportModel.DatePrice> datePrices = productRevenueRepo
                 .findAllById_ProductIdAndId_DateBetween(
@@ -71,7 +70,8 @@ public class SalesReportServiceImpl implements SalesReportService {
 
     @Override
     public DateBasedRevenueReportOutputModel computeDateBasedRevenue(
-        String fromDateStr, String toDateStr) {
+        String fromDateStr, String toDateStr
+    ) {
         // TODO Auto-generated method stub
         try {
             Date fromDate = Constant.DATE_FORMAT.parse(fromDateStr + " 00:00:00");
@@ -112,7 +112,6 @@ public class SalesReportServiceImpl implements SalesReportService {
     }
 
     public SaleReportModel.Output getDateBasedSalesReport(SaleReportModel.DateBasedInput input) {
-
         String fromDateTime = input.getFromDate();// + " 00:00:00";
         String thruDateTime = input.getThruDate();// + " 00:00:00";
         List<SaleReportModel.DatePrice> datePrices = totalRevenueRepo.findAllByIdBetween(

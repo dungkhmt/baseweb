@@ -31,7 +31,6 @@ public class ProductPriceSupplierServiceImpl implements ProductPriceSupplierServ
 
     @Override
     public List<ProductPriceSupplier.Model> getAllProductPriceSuppliers(String supplierPartyId) {
-
         Supplier supplier = supplierRepo
             .findById(UUID.fromString(supplierPartyId))
             .orElseThrow(NoSuchElementException::new);
@@ -45,7 +44,6 @@ public class ProductPriceSupplierServiceImpl implements ProductPriceSupplierServ
 
     @Override
     public ProductPriceSupplier setProductPriceSupplier(ProductPriceSupplier.SetModel setModel) {
-
         Supplier supplier = supplierRepo
             .findById(UUID.fromString(setModel.getSupplierPartyId()))
             .orElseThrow(NoSuchElementException::new);

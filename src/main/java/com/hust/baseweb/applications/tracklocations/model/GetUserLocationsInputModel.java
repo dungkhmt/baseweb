@@ -13,7 +13,6 @@ public class GetUserLocationsInputModel {
     private double lng2;
 
     public GetUserLocationsInputModel() {
-
         super();
 
     }

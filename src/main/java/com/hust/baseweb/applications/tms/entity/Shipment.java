@@ -21,7 +21,6 @@ public class Shipment {
     private String shipmentTypeId;
 
     public ShipmentModel toShipmentModel() {
-
         return new ShipmentModel(
             shipmentId.toString(),
             shipmentTypeId

@@ -23,7 +23,8 @@ public interface ProductService {
         double productWeight,
         String uomId,
         Integer hsThu,
-        Integer hsPal);
+        Integer hsPal
+    );
 
     Product save(
         String productId,
@@ -34,6 +35,7 @@ public interface ProductService {
         String uomId,
         Integer hsThu,
         Integer hsPal,
-        List<String> contentIds);
+        List<String> contentIds
+    );
 
 }

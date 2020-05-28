@@ -38,17 +38,14 @@ public class Invoice {
 
     @NotNull
     public static String convertSequenceIdToInvoiceId(Long id) {
-
         return "INV" + String.format("%010d", id);
     }
 
     public Model toModel() {
-
         return toModel(null);
     }
 
     public Model toModel(String distributorName) {
-
         return new Model(
             invoiceId,
             invoiceType.toString(),
@@ -65,8 +62,8 @@ public class Invoice {
 
     public static List<DistributorUnpaidModel> toUnpaidDistributorModels(
         List<Invoice> invoices,
-        Map<UUID, PartyDistributor> partyDistributorMap) {
-
+        Map<UUID, PartyDistributor> partyDistributorMap
+    ) {
         Map<UUID, DistributorUnpaidModel> customerCodeToByDistributorModel = new HashMap<>();
         for (Invoice invoice : invoices) {
             customerCodeToByDistributorModel.computeIfAbsent(
@@ -120,7 +117,6 @@ public class Invoice {
         private List<Invoice.Model> unpaidInvoices;
 
         public void append(Invoice invoice) {
-
             totalUnpaid += invoice.getAmount() - invoice.getPaidAmount();
             if (unpaidInvoices != null) {
                 unpaidInvoices.add(invoice.toModel());

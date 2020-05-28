@@ -12,7 +12,6 @@ public class RPTDayRevenue {
     private int numberOrders;
 
     public RPTDayRevenue(String date, Double revenue, int numberOrders) {
-
         super();
         this.date = date;
         this.revenue = revenue;
@@ -20,7 +19,6 @@ public class RPTDayRevenue {
     }
 
     public RPTDayRevenue() {
-
         super();
 
     }

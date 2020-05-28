@@ -15,8 +15,8 @@ public class DeliveryCustomerModel {
 
     public DeliveryCustomerModel(
         PartyCustomer customer,
-        List<DeliveryItemModel> deliveryItems) {
-
+        List<DeliveryItemModel> deliveryItems
+    ) {
         super();
         this.customer = customer;
         this.deliveryItems = deliveryItems;

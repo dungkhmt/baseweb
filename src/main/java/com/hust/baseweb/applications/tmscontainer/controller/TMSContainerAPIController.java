@@ -61,7 +61,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-cont-request-export-full-page")
     ResponseEntity<?> getListContRequestExportFullPage(Pageable pageable) {
-
         Page<ContRequestExportFull> contRequestExportFullPage = contRequestExportFullPagingRepo.findAll(pageable);
         for (ContRequestExportFull contRequestExportFull : contRequestExportFullPage) {
             contRequestExportFull.setAddress(contRequestExportFull.getFacility().getPostalAddress().getAddress());
@@ -81,7 +80,6 @@ public class TMSContainerAPIController {
 
     @PostMapping("/create-request-export-full")
     void createRequestExportFull(@RequestBody InputContRequestExportFullModel input) {
-
         log.info("{}", input.toString());
 
         ContRequestExportFull contRequestExportFull = new ContRequestExportFull();
@@ -102,7 +100,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-cont-request-export-empty-page")
     ResponseEntity<?> getListContRequestIExportEmptyPage(Pageable pageable) {
-
         Page<ContRequestExportEmpty> contRequestExportEmptyPage = contRequestExportEmptyPagingRepo.findAll(pageable);
         for (ContRequestExportEmpty contRequestExportEmpty : contRequestExportEmptyPage) {
             contRequestExportEmpty.setAddress(contRequestExportEmpty.getFacility().getPostalAddress().getAddress());
@@ -124,7 +121,6 @@ public class TMSContainerAPIController {
 
     @PostMapping("/create-request-export-empty")
     void createRequestIExportEmpty(@RequestBody InputContRequestExportEmptyModel input) {
-
         ContRequestExportEmpty contRequestExportEmpty = new ContRequestExportEmpty();
         contRequestExportEmpty.setEarlyDateTimeExpected(input.getEarlyDate());
         contRequestExportEmpty.setLateDateTimeExpected(input.getLateDate());
@@ -142,7 +138,6 @@ public class TMSContainerAPIController {
 
     @PostMapping("/create-request-import-empty")
     void createRequestImportEmpty(@RequestBody InputContRequestImportEmptyModel input) {
-
         ContRequestImportEmpty contRequestImportEmpty = new ContRequestImportEmpty();
         contRequestImportEmpty.setEarlyDateTimeExpected(input.getEarlyDate());
         contRequestImportEmpty.setLateDateTimeExpected(input.getLateDate());
@@ -159,7 +154,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-cont-request-import-empty-page")
     ResponseEntity<?> getListContRequestImportEmptyPage(Pageable pageable) {
-
         Page<ContRequestImportEmpty> contRequestImportEmptyPage = contRequestImportEmptyPagingRepo.findAll(pageable);
         for (ContRequestImportEmpty contRequestImportEmpty : contRequestImportEmptyPage) {
             contRequestImportEmpty.setAddress(contRequestImportEmpty.getFacility().getPostalAddress().getAddress());
@@ -181,7 +175,6 @@ public class TMSContainerAPIController {
     /////////////////////////
     @GetMapping("/get-list-cont-request-import-full-page")
     ResponseEntity<?> getListContRequestImportFullPage(Pageable pageable) {
-
         Page<ContRequestImportFull> contRequestImportFullPage = contRequestImportFullPagingRepo.findAll(pageable);
         for (ContRequestImportFull contRequestImportFull : contRequestImportFullPage) {
             contRequestImportFull.setAddress(contRequestImportFull.getFacility().getPostalAddress().getAddress());
@@ -201,7 +194,6 @@ public class TMSContainerAPIController {
 
     @PostMapping("/create-request-import-full")
     void createRequestImportFull(@RequestBody InputContRequestInportFullModel input) {
-
         log.info("{}", input.toString());
 
         ContRequestImportFull contRequestImportFull = new ContRequestImportFull();
@@ -222,7 +214,6 @@ public class TMSContainerAPIController {
     ///////////////////////////////////////
     @PostMapping("/create-port")
     public void createPort(@RequestBody InputContPortModel input) {
-
         ContPort contPort = new ContPort();
         contPort.setPortId(input.getPortId());
         contPort.setPortName(input.getPortName());
@@ -248,7 +239,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-cont-port-page")
     public ResponseEntity<?> getListContPortPage(Pageable pageable) {
-
         Page<ContPort> contDepotContainerPage = contPortPagingRepo.findAll(pageable);
         for (ContPort contPort : contDepotContainerPage) {
             contPort.setAddress(contPort.getPostalAddress().getAddress());
@@ -258,7 +248,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-cont-port")
     public ResponseEntity<?> getListContPort() {
-
         List<ContPort> contPorts = contPortRepo.findAll();
         for (ContPort contDepotContainer : contPorts) {
             contDepotContainer.setLat(contDepotContainer.getPostalAddress().getGeoPoint().getLatitude());
@@ -269,7 +258,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-cont-container")
     public ResponseEntity<?> getListContContainer(Pageable pageable) {
-
         log.info("getListContContainerPage");
         Page<ContContainer> contContainerPage = contContainerPagingRepo.findAll(pageable);
         log.info("size {}", contContainerPage.getSize());
@@ -282,7 +270,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-container-type")
     public ResponseEntity getListContainerType() {
-
         log.info("getListContainerType");
         List<ContContainerType> contContainerTypes = contContainerTypeRepo.findAll();
         return ResponseEntity.ok().body(new OutputContContainerTypeModel(contContainerTypes));
@@ -290,7 +277,6 @@ public class TMSContainerAPIController {
 
     @PostMapping("/save-container-to-db")
     public void saveContainer(@RequestBody InputContainerModel input) {
-
         log.info("saveContainer");
         ContContainer contContainer = new ContContainer();
         contContainer.setContainerId(input.getContainerId());
@@ -302,7 +288,6 @@ public class TMSContainerAPIController {
 
     @PostMapping("/create-depot-container")
     public void createDepotContainer(@RequestBody InputDepotContainerModel input) {
-
         log.info("createDepotContainer");
         ContDepotContainer contDepotContainer = new ContDepotContainer();
         contDepotContainer.setDepotContainerId(input.getDepotContainerId());
@@ -329,7 +314,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-depot-container-page")
     public ResponseEntity<?> getListDepotContainerPage(Pageable pageable) {
-
         Page<ContDepotContainer> contDepotContainerPage = contDepotContainerPagingRepo.findAll(pageable);
         for (ContDepotContainer contDepotContainer : contDepotContainerPage) {
             contDepotContainer.setAddress(contDepotContainer.getPostalAddress().getAddress());
@@ -339,7 +323,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-depot-container")
     public ResponseEntity<?> getListDepotContainer() {
-
         List<ContDepotContainer> depotContainers = contDepotContainerRepo.findAll();
         for (ContDepotContainer contDepotContainer : depotContainers) {
             contDepotContainer.setLat(contDepotContainer.getPostalAddress().getGeoPoint().getLatitude());
@@ -351,7 +334,6 @@ public class TMSContainerAPIController {
 
     @PostMapping("/create-depot-trailer")
     public void createDepotTrailer(@RequestBody InputDepotTrailerModel input) {
-
         ContDepotTrailer contDepotTrailer = new ContDepotTrailer();
         contDepotTrailer.setDepotTrailerId(input.getDepotTrailerId());
         contDepotTrailer.setDepotTrailerName(input.getDepotTrailerName());
@@ -378,7 +360,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-depot-trailer-page")
     public ResponseEntity<?> getListDepotTrailerPage(Pageable pageable) {
-
         Page<ContDepotTrailer> contDepotTrailerPage = contDepotTrailerPagingRepo.findAll(pageable);
         for (ContDepotTrailer contDepotTrailer : contDepotTrailerPage) {
             contDepotTrailer.setAddress(contDepotTrailer.getPostalAddress().getAddress());
@@ -388,7 +369,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-depot-trailer")
     public ResponseEntity<?> getListDepotTrailer() {
-
         List<ContDepotTrailer> depotTrailers = contDepotTrailerRepo.findAll();
         for (ContDepotTrailer contDepotTrailer : depotTrailers) {
             contDepotTrailer.setLat(contDepotTrailer.getPostalAddress().getGeoPoint().getLatitude());
@@ -400,7 +380,6 @@ public class TMSContainerAPIController {
 
     @PostMapping("/create-depot-truck")
     public void createDepotTruck(@RequestBody InputDepotTruckModel input) {
-
         ContDepotTruck contDepotTruck = new ContDepotTruck();
         contDepotTruck.setDepotTruckId(input.getDepotTruckId());
         contDepotTruck.setDepotTruckName(input.getDepotTruckName());
@@ -426,7 +405,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-depot-truck-page")
     public ResponseEntity<?> getListDepotTruckPage(Pageable pageable) {
-
         log.info("page {}", pageable);
         Page<ContDepotTruck> contDepotTruckPage = contDepotTruckPagingRepo.findAll(pageable);
         for (ContDepotTruck contDepotTruck : contDepotTruckPage) {
@@ -437,7 +415,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-depot-truck")
     public ResponseEntity<?> getListDepotTruck() {
-
         List<ContDepotTruck> contDepotTrucks = contDepotTruckRepo.findAll();
         for (ContDepotTruck contDepotTruck : contDepotTrucks) {
             contDepotTruck.setLat(contDepotTruck.getPostalAddress().getGeoPoint().getLatitude());
@@ -449,7 +426,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-cont-trailer-page")
     public ResponseEntity<?> getListContTrailerPage(Pageable pageable) {
-
         Page<ContTrailer> contTrailers = contTrailerPagingRepo.findAll(pageable);
 
         return ResponseEntity.ok(contTrailers);
@@ -459,7 +435,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-cont-trailer")
     public ResponseEntity<?> getListContTrailer() {
-
         log.info("getListContTrailer");
         List<ContTrailer> contTrailers = contTrailerRepo.findAll();
         return ResponseEntity.ok(new OutputContTrailerModel(contTrailers));
@@ -467,7 +442,6 @@ public class TMSContainerAPIController {
 
     @PostMapping("/save-trailer-to-db")
     void saveTrailer(@RequestBody InputTrailerModel input) {
-
         ContTrailer contTrailer = new ContTrailer();
         contTrailer.setTrailerId(input.getTrailerId());
         contTrailer.setDescription(input.getDescription());
@@ -476,7 +450,6 @@ public class TMSContainerAPIController {
 
     @PostMapping("/get-list-address-suggestion")
     ResponseEntity<?> getListAddressSuggestion(@RequestBody AddressInputForSuggestion input) {
-
         log.info("getListPostalAddressSuggestion");
         if (input == null || input.getAddress() == null) {
             PostalAddress postalAddress = new PostalAddress();

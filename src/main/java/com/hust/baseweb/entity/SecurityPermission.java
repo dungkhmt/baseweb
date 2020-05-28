@@ -26,6 +26,5 @@ public class SecurityPermission {
     private Date lastUpdatedStamp;
 
     public SecurityPermission() {
-
     }
 }

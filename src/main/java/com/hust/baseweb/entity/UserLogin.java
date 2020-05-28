@@ -56,12 +56,10 @@ public class UserLogin {
     private Date disabledDateTime;
 
     public UserLogin() {
-
     }
 
 
     public UserLogin(String userLoginId, String password, Set<SecurityGroup> roles, boolean enabled) {
-
         this.userLoginId = userLoginId;
         this.password = PASSWORD_ENCODER.encode(password);
         this.roles = roles;
@@ -74,8 +72,8 @@ public class UserLogin {
         String password, String passwordHint, boolean isSystem,
         boolean enabled, boolean hasLoggedOut,
         boolean requirePasswordChange, int successiveFailedLogins,
-        Date disabledDateTime) {
-
+        Date disabledDateTime
+    ) {
         super();
         this.password = password;
         this.passwordHint = passwordHint;

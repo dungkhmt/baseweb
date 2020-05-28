@@ -14,7 +14,6 @@ public class GetListProductTypeOutputModel {
     private List<ProductType> productTypes;
 
     public GetListProductTypeOutputModel(List<ProductType> productTypes) {
-
         this.productTypes = productTypes;
     }
 }

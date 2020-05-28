@@ -27,12 +27,10 @@ public class RevenueOrderCache {
     }
 
     public Enumeration<String> keys() {
-
         return mDate2Revenue.keys();
     }
 
     public Double getRevenue(String date) {
-
         return mDate2Revenue.get(date).getRevenue();
     }
 }

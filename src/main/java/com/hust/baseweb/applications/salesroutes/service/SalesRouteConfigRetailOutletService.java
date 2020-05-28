@@ -15,8 +15,10 @@ public interface SalesRouteConfigRetailOutletService {
         String visitFrequencyId,
         UUID salesRouteConfigId,
         UUID salesRoutePlanningPeriodId,
-        String startExecuteDate);
+        String startExecuteDate
+    );
 
     List<SalesRouteConfigRetailOutletRepo.GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(
-        UUID salesRoutePlanningPeriodId);
+        UUID salesRoutePlanningPeriodId
+    );
 }

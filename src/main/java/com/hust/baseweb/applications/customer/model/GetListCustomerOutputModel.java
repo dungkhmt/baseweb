@@ -13,7 +13,6 @@ public class GetListCustomerOutputModel {
     List<PartyCustomer> lists;
 
     public GetListCustomerOutputModel(List<PartyCustomer> list) {
-
         super();
         this.lists = list;
     }

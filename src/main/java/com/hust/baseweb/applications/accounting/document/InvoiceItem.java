@@ -27,7 +27,6 @@ public class InvoiceItem {
     private Date createdStamp;        // TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     public Model toModel(Invoice invoice, OrderItem orderItem) {
-
         Product product = new Product();
         String orderId = null;
         String orderItemSeqId = null;

@@ -8,36 +8,31 @@ public class SortAndFiltersInput {
 
     public SortAndFiltersInput(
         SearchCriteria[] filters,
-        SortCriteria[] sort) {
-
+        SortCriteria[] sort
+    ) {
         super();
         this.filters = filters;
         this.sort = sort;
     }
 
     public SortAndFiltersInput() {
-
         super();
 
     }
 
     public SearchCriteria[] getFilters() {
-
         return filters;
     }
 
     public void setFilters(SearchCriteria[] filters) {
-
         this.filters = filters;
     }
 
     public SortCriteria[] getSort() {
-
         return sort;
     }
 
     public void setSort(SortCriteria[] sort) {
-
         this.sort = sort;
     }
 

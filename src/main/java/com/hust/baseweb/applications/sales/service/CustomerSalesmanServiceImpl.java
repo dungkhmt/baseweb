@@ -55,7 +55,6 @@ public class CustomerSalesmanServiceImpl implements CustomerSalesmanService {
 
     @Override
     public CustomerSalesman save(UUID partyCustomerId, UUID partySalesmanId) {
-
         CustomerSalesman cs = new CustomerSalesman();
         cs.setPartyCustomerId(partyCustomerId);
         cs.setPartySalesmanId(partySalesmanId);

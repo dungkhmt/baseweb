@@ -47,6 +47,5 @@ public class DUserCombineEntity {
     // private List<SecurityGroup> roles;
 
     public DUserCombineEntity() {
-
     }
 }

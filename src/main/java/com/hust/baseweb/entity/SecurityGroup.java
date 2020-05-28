@@ -33,6 +33,5 @@ public class SecurityGroup {
     private Date lastUpdatedStamp;
 
     public SecurityGroup() {
-
     }
 }

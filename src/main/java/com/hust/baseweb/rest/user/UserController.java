@@ -44,7 +44,8 @@ public class UserController {
     @PostMapping(path = "/user")
     public ResponseEntity<?> save(
         @RequestBody PersonModel personModel,
-        Principal principal) {
+        Principal principal
+    ) {
         // Resources<String> resources = new Resources<String>(producers);\\
         Party party;
         try {
@@ -64,8 +65,8 @@ public class UserController {
     @PutMapping(path = "/user/{partyId}")
     public ResponseEntity<?> update(
         @RequestBody PersonUpdateModel personUpdateModel,
-        Principal principal, @PathVariable String partyId) {
-
+        Principal principal, @PathVariable String partyId
+    ) {
         Party party;
         party = userService.update(personUpdateModel, UUID.fromString(partyId));
 
@@ -76,8 +77,8 @@ public class UserController {
     public ResponseEntity<?> getUsers(
         Pageable page,
         @RequestParam(name = "search", required = false) String searchString,
-        @RequestParam(name = "filter", required = false) String filterString) {
-
+        @RequestParam(name = "filter", required = false) String filterString
+    ) {
         log.info("::getUsers, searchString = " + searchString);
 
         return ResponseEntity.ok().body(
@@ -86,7 +87,6 @@ public class UserController {
 
     @GetMapping(path = "/get-security-groups")
     public ResponseEntity<?> getSecurityGroups(Principal principal) {
-
         List<SecurityGroup> securityGroups = securityGroupService.findAll();
         return ResponseEntity.ok().body(securityGroups);
     }
@@ -95,8 +95,8 @@ public class UserController {
     @GetMapping(path = "/users/{partyId}")
     public ResponseEntity<?> getUsersDetail(
         @PathVariable String partyId,
-        Principal principal) {
-
+        Principal principal
+    ) {
         DPerson p = userService.findByPartyId(partyId);
         DPersonDetailModel detailModel = new DPersonDetailModel(p);
         UserLogin userLogin = userService.findById(principal.getName());
@@ -119,8 +119,8 @@ public class UserController {
     @DeleteMapping(path = "/users/{partyId}")
     public ResponseEntity<?> delete(
         @PathVariable String partyId,
-        Principal principal) {
-
+        Principal principal
+    ) {
         partyService.disableParty(partyId);
         return ResponseEntity.ok("");
     }

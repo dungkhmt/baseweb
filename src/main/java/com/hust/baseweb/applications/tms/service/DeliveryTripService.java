@@ -22,7 +22,8 @@ public interface DeliveryTripService {
         double totalExecutionTime,
         int totalLocation,
         int completedDeliveryTripDetailCount,
-        int deliveryTripDetailCount);
+        int deliveryTripDetailCount
+    );
 
     Page<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
@@ -32,7 +33,8 @@ public interface DeliveryTripService {
 
     DeliveryTripModel.Tour getDeliveryTripInfo(
         String deliveryTripId,
-        List<DeliveryTripDetailModel.Create> shipmentItemModels);
+        List<DeliveryTripDetailModel.Create> shipmentItemModels
+    );
 
     GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(String driverUserLoginId);
 

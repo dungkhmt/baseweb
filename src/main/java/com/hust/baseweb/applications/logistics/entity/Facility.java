@@ -21,7 +21,6 @@ public class Facility {
     private String facilityId;
 
     public Facility(String facilityId) {
-
         this.facilityId = facilityId;
     }
 

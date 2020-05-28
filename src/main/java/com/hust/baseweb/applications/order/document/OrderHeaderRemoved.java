@@ -103,7 +103,6 @@ public class OrderHeaderRemoved {
     }
 
     public static void main(String[] args) {
-
 //        OrderRole orderRole = new OrderRole();
 //        orderRole.setOrderId("1");
 //        orderRole.setPartyId(UUID.randomUUID());

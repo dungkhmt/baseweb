@@ -24,7 +24,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<Application> getListByPermissionAndType(List<SecurityPermission> permissionList, String type) {
-
         String permissionStr = "";
         for (SecurityPermission sp : permissionList) {
             permissionStr += sp.getPermissionId() + ",";
@@ -56,7 +55,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
         for (Application a : applicationList1) {
-
         }
         //List<Application> applicationList2 = applicationList1.stream().map(Application::getModule).collect(Collectors.toList());
         List<Application> applicationList2 = new ArrayList<Application>();

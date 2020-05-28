@@ -15,7 +15,8 @@ public interface ProductPriceService {
         String productId,
         Double price,
         String currencyUomId,
-        String taxInPrice, String fromDate, String thruDate);
+        String taxInPrice, String fromDate, String thruDate
+    );
 
     ProductPrice getProductPrice(String productId);
 

@@ -17,7 +17,6 @@ public class CreateRetailOutletFromCustomer {
     private HttpPostExecutor executor = new HttpPostExecutor();
 
     public void run() {
-
         token = Login.login("admin", "123");
 
         CustomerManager customerManager = new CustomerManager(token);
@@ -55,7 +54,6 @@ public class CreateRetailOutletFromCustomer {
     }
 
     public static void main(String[] args) {
-
         CreateRetailOutletFromCustomer app = new CreateRetailOutletFromCustomer();
 
         app.run();

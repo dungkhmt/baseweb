@@ -44,7 +44,6 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public Page<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
-
         Page<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlanPage
             = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId), pageable);
 
@@ -62,7 +61,6 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public List<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId) {
-
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(
             UUID.fromString(deliveryPlanId));
         List<UUID> shipmentItemIds = shipmentItemDeliveryPlans
@@ -76,7 +74,6 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public List<ShipmentItemModel.DeliveryPlan> findAllInDeliveryPlanNearestDeliveryTrip(String deliveryTripId) {
-
         DeliveryTrip deliveryTrip = deliveryTripRepo
             .findById(UUID.fromString(deliveryTripId))
             .orElseThrow(NoSuchElementException::new);
@@ -161,7 +158,6 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public Page<ShipmentItemModel> findAllNotInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
-
         Set<String> shipmentItemInDeliveryPlans
             = shipmentItemDeliveryPlanRepo
             .findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
@@ -225,19 +221,16 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public Page<ShipmentItem> findAll(Pageable pageable) {
-
         return shipmentItemRepo.findAll(pageable);
     }
 
     @Override
     public Iterable<ShipmentItem> findAll() {
-
         return shipmentItemRepo.findAll();
     }
 
     @Override
     public Page<ShipmentItemModel> findAllByUserLogin(UserLogin userLogin, Pageable pageable) {
-
         Page<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDateNull(
             userLogin.getParty(),
             pageable);
@@ -246,7 +239,6 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public String saveShipmentItemDeliveryPlan(com.hust.baseweb.applications.tms.model.ShipmentItemModel.CreateDeliveryPlan createDeliveryPlan) {
-
         DeliveryPlan deliveryPlan = deliveryPlanRepo
             .findById(UUID.fromString(createDeliveryPlan.getDeliveryPlanId()))
             .orElseThrow(NoSuchElementException::new);
@@ -278,7 +270,6 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public boolean deleteShipmentItemDeliveryPlan(ShipmentItemModel.DeleteDeliveryPlan deleteDeliveryPlan) {
-
         ShipmentItemDeliveryPlan shipmentItemDeliveryPlan = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanIdAndShipmentItemId(
             UUID.fromString(deleteDeliveryPlan.getDeliveryPlanId()),
             UUID.fromString(deleteDeliveryPlan.getShipmentItemId())
@@ -304,7 +295,6 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public List<ShipmentItemModel> findAllNotScheduled(String deliveryPlanId) {
-
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(
             UUID.fromString(deliveryPlanId));
         List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemDeliveryPlans
@@ -320,7 +310,6 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
     @Override
     public ShipmentItemModel.Info getShipmentItemInfo(String shipmentItemId) {
-
         ShipmentItem shipmentItem = shipmentItemRepo
             .findById(UUID.fromString(shipmentItemId))
             .orElseThrow(NoSuchElementException::new);

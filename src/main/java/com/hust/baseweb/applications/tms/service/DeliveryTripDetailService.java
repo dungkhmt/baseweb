@@ -14,7 +14,8 @@ public interface DeliveryTripDetailService {
 
     int save(
         String deliveryTripId,
-        List<DeliveryTripDetailModel.Create> inputs);
+        List<DeliveryTripDetailModel.Create> inputs
+    );
 
     boolean delete(String deliveryTripDetailId);
 

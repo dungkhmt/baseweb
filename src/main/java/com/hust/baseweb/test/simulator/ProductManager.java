@@ -12,7 +12,6 @@ public class ProductManager {
     private String token;
 
     public ProductManager(String token) {
-
         this.token = token;
     }
 

@@ -13,8 +13,8 @@ public class ProductFacilityServiceImpl implements ProductFacilityService {
     @Override
     public ProductFacility save(
         String productId, String facilityId,
-        int lastInventoryCount, int atpInventoryCount) {
-
+        int lastInventoryCount, int atpInventoryCount
+    ) {
         ProductFacility productFacility = new ProductFacility();
         productFacility.setAtpInventoryCount(atpInventoryCount);
         productFacility.setFacilityId(facilityId);

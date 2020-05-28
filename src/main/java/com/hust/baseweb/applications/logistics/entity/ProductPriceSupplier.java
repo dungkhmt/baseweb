@@ -37,7 +37,6 @@ public class ProductPriceSupplier {
     private Date thruDate; // timestamp,
 
     public Model toModel() {
-
         return new Model(product.getProductId(), product.getProductName(), unitPrice);
     }
 

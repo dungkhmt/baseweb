@@ -23,7 +23,8 @@ public interface DeliveryTripDetailRepo extends
 
     List<DeliveryTripDetail> findAllByDeliveryTripInAndStatusItem(
         List<DeliveryTrip> deliveryTrips,
-        StatusItem statusItem);
+        StatusItem statusItem
+    );
 
     DeliveryTripDetail findByDeliveryTripDetailId(UUID deliveryTripDetailId);
 

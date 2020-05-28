@@ -52,8 +52,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     @Override
     public int save(
         String deliveryTripId,
-        List<DeliveryTripDetailModel.Create> inputs) {
-
+        List<DeliveryTripDetailModel.Create> inputs
+    ) {
         Date now = new Date();
 
         UUID deliveryTripIdUuid = UUID.fromString(deliveryTripId);
@@ -164,7 +164,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     @NotNull
     private DeliveryTrip updateDeliveryTripInfo(DeliveryTrip deliveryTrip, DeliveryTripModel.Tour deliveryTripInfo) {
-
         deliveryTrip.setTotalWeight(deliveryTripInfo.getTotalWeight());
         deliveryTrip.setTotalPallet(deliveryTripInfo.getTotalPallet());
         deliveryTrip.setDistance(deliveryTripInfo.getTotalDistance());
@@ -174,7 +173,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     @NotNull
     private Map<UUID, ShipmentItem> buildShipmentItemMap(List<DeliveryTripDetailModel.Create> inputs) {
-
         return shipmentItemRepo
             .findAllByShipmentItemIdIn(
                 inputs
@@ -187,7 +185,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     }
 
     private void updateDeliveryTripDetailSequence(DeliveryTrip deliveryTrip, DeliveryTripModel.Tour deliveryTripInfo) {
-
         List<GeoPoint> tour = deliveryTripInfo.getTour();
         Map<GeoPoint, Integer> geoPointIndexMap = new HashMap<>();
         for (int i = 0; i < tour.size(); i++) {
@@ -204,7 +201,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     @Override
     public boolean delete(String deliveryTripDetailId) {
-
         Date now = new Date();
 
         UUID deliveryTripDetailIdUuid = UUID.fromString(deliveryTripDetailId);
@@ -247,7 +243,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     private void updateShipmentItemStatusOnDeleteDeliveryTripDetail(
         Date updateDate,
-        DeliveryTripDetail deliveryTripDetail) {
+        DeliveryTripDetail deliveryTripDetail
+    ) {
         // set shipment item status
         ShipmentItem shipmentItem = deliveryTripDetail.getShipmentItem();
 
@@ -281,7 +278,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     @Override
     public Page<DeliveryTripDetail> findAll(String deliveryTripId, Pageable pageable) {
-
         DeliveryTrip deliveryTrip = deliveryTripRepo
             .findById(UUID.fromString(deliveryTripId))
             .orElseThrow(NoSuchElementException::new);
@@ -290,7 +286,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     @Override
     public DeliveryTripDetailModel.OrderItems findAll(String deliveryTripId) {
-
         DeliveryTrip deliveryTrip = deliveryTripRepo
             .findById(UUID.fromString(deliveryTripId))
             .orElseThrow(NoSuchElementException::new);
@@ -318,8 +313,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     @Override
     @Transactional
     public DeliveryTripDetail updateStatusDeliveryTripDetail(
-        UUID deliveryTripDetailId, String statusId) {
-
+        UUID deliveryTripDetailId, String statusId
+    ) {
         log.info("updateStatusDeliveryTripDetail, deliveryTripDetailId = " +
                  deliveryTripDetailId +
                  ", statusId = " +
@@ -343,7 +338,6 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     @Override
     @Transactional
     public boolean completeDeliveryTripDetail(UUID... deliveryTripDetailIds) {
-
         Date now = new Date();
 
         List<DeliveryTripDetail> deliveryTripDetails = updateDeliveryTripDetailStatusOnCompleted(
@@ -364,8 +358,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     private void updateDeliveryTripOnCompleted(
         Date updateDate,
-        DeliveryTripDetail... deliveryTripDetails) {
-
+        DeliveryTripDetail... deliveryTripDetails
+    ) {
         StatusItem deliveryTripCompletedStatus = statusItemRepo
             .findById("DELIVERY_TRIP_COMPLETED")
             .orElseThrow(NoSuchElementException::new);
@@ -415,8 +409,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     private void updateShipmentItemStatusOnCompleted(
         Date updateDate,
-        DeliveryTripDetail... deliveryTripDetails) {
-
+        DeliveryTripDetail... deliveryTripDetails
+    ) {
         StatusItem shipmentItemCompletedStatus = statusItemRepo
             .findById("SHIPMENT_ITEM_COMPLETED")
             .orElseThrow(NoSuchElementException::new);
@@ -458,8 +452,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     private List<DeliveryTripDetail> updateDeliveryTripDetailStatusOnCompleted(
         Date updateDate,
-        UUID... deliveryTripDetailIds) {
-
+        UUID... deliveryTripDetailIds
+    ) {
         String deliveryTripDetailCompleted = "DELIVERY_TRIP_DETAIL_COMPLETED";
         StatusItem deliveryTripDetailCompletedStatus = statusItemRepo
             .findById(deliveryTripDetailCompleted)

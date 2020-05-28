@@ -45,8 +45,7 @@ public class RevenueServiceImpl implements RevenueService {
     public void updateRevenue(List<OrderItem> orderItems,
                               Function<OrderItem, PartyCustomer> orderItemToCustomerFunction,
                               Function<OrderItem, LocalDate> orderItemToDateFunction) {
-
-        Map<LocalDate, TotalRevenue> totalRevenueMap = getTotalRevenueMap(orderItems, orderItemToDateFunction);
+Map<LocalDate, TotalRevenue> totalRevenueMap = getTotalRevenueMap(orderItems, orderItemToDateFunction);
 
         Map<ProductRevenue.Id, ProductRevenue> productRevenueMap = getProductRevenueMap(orderItems,
                 orderItemToDateFunction);
@@ -86,8 +85,8 @@ public class RevenueServiceImpl implements RevenueService {
     public void updateRevenue(
         List<OrderItem> orderItems,
         Function<OrderItem, Party> orderItemToCustomerFunction,
-        Function<OrderItem, LocalDate> orderItemToDateFunction) {
-
+        Function<OrderItem, LocalDate> orderItemToDateFunction
+    ) {
         executorService.execute(() -> {
             Map<LocalDate, TotalRevenue> totalRevenueMap = getTotalRevenueMap(orderItems, orderItemToDateFunction);
 
@@ -157,8 +156,8 @@ public class RevenueServiceImpl implements RevenueService {
     private Map<CustomerRevenue.Id, CustomerRevenue> getCustomerRevenueMap(
         List<OrderItem> orderItems,
         Function<OrderItem, Party> orderItemToCustomerFunction,
-        Function<OrderItem, LocalDate> orderItemToDateFunction) {
-
+        Function<OrderItem, LocalDate> orderItemToDateFunction
+    ) {
         return customerRevenueRepo
             .findAllByIdIn(
                 orderItems
@@ -174,8 +173,8 @@ public class RevenueServiceImpl implements RevenueService {
     @NotNull
     private Map<ProductRevenue.Id, ProductRevenue> getProductRevenueMap(
         List<OrderItem> orderItems,
-        Function<OrderItem, LocalDate> orderItemToDateFunction) {
-
+        Function<OrderItem, LocalDate> orderItemToDateFunction
+    ) {
         return productRevenueRepo
             .findAllByIdIn(
                 orderItems.stream().map(orderItem -> new ProductRevenue.Id(
@@ -188,8 +187,8 @@ public class RevenueServiceImpl implements RevenueService {
     @NotNull
     private Map<LocalDate, TotalRevenue> getTotalRevenueMap(
         List<OrderItem> orderItems,
-        Function<OrderItem, LocalDate> orderItemToDateFunction) {
-
+        Function<OrderItem, LocalDate> orderItemToDateFunction
+    ) {
         List<LocalDate> localDates = orderItems
             .stream()
             .map(orderItemToDateFunction)
@@ -208,7 +207,6 @@ public class RevenueServiceImpl implements RevenueService {
 
     @NotNull
     private Map<String, ProductPrice> getProductPriceMap(List<Product> products) {
-
         Date now = new Date();
         return productPriceRepo
             .findAllByProductInAndThruDateNullOrThruDateAfter(products, now)

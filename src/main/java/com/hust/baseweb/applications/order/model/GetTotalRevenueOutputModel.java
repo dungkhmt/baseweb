@@ -11,13 +11,11 @@ public class GetTotalRevenueOutputModel {
     private GetTotalRevenueItemOutputModel[] revenues;
 
     public GetTotalRevenueOutputModel() {
-
         super();
 
     }
 
     public GetTotalRevenueOutputModel(GetTotalRevenueItemOutputModel[] revenues) {
-
         super();
         this.revenues = revenues;
     }

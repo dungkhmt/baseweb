@@ -20,7 +20,6 @@ public class TrackLocationsOutputModel {
     private Date timePoint;
 
     public TrackLocationsOutputModel(TrackLocations tl) {
-
         this.trackLocationId = tl.getTrackLocationId();
         //this.partyId = tl.getParty().getPartyId().toString();
         this.partyId = tl.getPartyId().toString();

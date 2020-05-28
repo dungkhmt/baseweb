@@ -97,7 +97,6 @@ public class ShipmentServiceImpl implements ShipmentService {
     // @Override
     @Transactional
     public Shipment privateSave(ShipmentModel.CreateShipmentInputModel input) {
-
         if (input.getShipmentItems() == null || input.getShipmentItems().length == 0) {
             return null;
         }
@@ -169,7 +168,6 @@ public class ShipmentServiceImpl implements ShipmentService {
     @Override
     @Transactional
     public Shipment save(UserLogin userLogin, ShipmentModel.CreateShipmentInputModel input) {
-
         log.info("save, shipmentItem.length = " + input.getShipmentItems().length);
 //        if (true) {
 //            return privateSave(input);
@@ -291,7 +289,6 @@ public class ShipmentServiceImpl implements ShipmentService {
     }
 
     private void mergeDistinctShipmentItems(ShipmentModel.CreateShipmentInputModel input) {
-
         ShipmentItemModel.Create[] shipmentItems = input.getShipmentItems();
         Map<List<String>, ShipmentItemModel.Create> orderIdAndProductIdToShipmentItem = new HashMap<>();
         for (ShipmentItemModel.Create shipmentItem : shipmentItems) {
@@ -311,8 +308,8 @@ public class ShipmentServiceImpl implements ShipmentService {
     @NotNull
     private List<ShipmentItemStatus> createShipmentItemStatuses(
         List<ShipmentItem> shipmentItems,
-        StatusItem statusItem) {
-
+        StatusItem statusItem
+    ) {
         Date now = new Date();
         return shipmentItems
             .stream()
@@ -328,8 +325,8 @@ public class ShipmentServiceImpl implements ShipmentService {
         Map<String, Facility> facilityMap,
         ShipmentItemModel.Create shipmentItemModel,
         OrderItem orderItem,
-        OrderHeader orderHeader) {
-
+        OrderHeader orderHeader
+    ) {
         ShipmentItem shipmentItem = new ShipmentItem();
         shipmentItem.setShipment(shipment);
         shipmentItem.setQuantity(shipmentItemModel.getQuantity());
@@ -358,8 +355,8 @@ public class ShipmentServiceImpl implements ShipmentService {
         Map<String, Integer> orderSeqIdCounterMap,
         ShipmentItemModel.Create shipmentItemModel,
         Product product,
-        OrderHeader orderHeader) {
-
+        OrderHeader orderHeader
+    ) {
         OrderItem orderItem = new OrderItem();
         orderItem.setOrderId(orderHeader.getOrderId());
         orderItem.setProduct(product);
@@ -372,8 +369,8 @@ public class ShipmentServiceImpl implements ShipmentService {
     @NotNull
     private OrderHeader getOrCreateOrderHeader(
         Map<String, OrderHeader> orderHeaderMap,
-        ShipmentItemModel.Create shipmentItemModel) {
-
+        ShipmentItemModel.Create shipmentItemModel
+    ) {
         Date orderDate = null;
 //        log.info("getOrCreateOrderHeader, orderDate = " + shipmentItemModel.getOrderDate());
         if (shipmentItemModel.getOrderDate() == null) {
@@ -397,7 +394,8 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     private Product createProductIfAbsent(
         Map<String, Product> productMap,
-        ShipmentItemModel.Create shipmentItemModel) {
+        ShipmentItemModel.Create shipmentItemModel
+    ) {
         // Nếu product hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
         return productMap.computeIfAbsent(shipmentItemModel.getProductId(), productId ->
             productService.save(
@@ -415,7 +413,8 @@ public class ShipmentServiceImpl implements ShipmentService {
     private PartyCustomer getOrCreatePartyCustomer(
         Map<String, PartyCustomer> partyCustomerMap,
         ShipmentItemModel.Create shipmentItemModel,
-        PostalAddress postalAddress) {
+        PostalAddress postalAddress
+    ) {
         // Nếu party customer hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
         return partyCustomerMap.computeIfAbsent(
             shipmentItemModel.getCustomerCode(),
@@ -462,7 +461,8 @@ public class ShipmentServiceImpl implements ShipmentService {
     @NotNull
     private PostalAddress getOrCreatePostalAddress(
         Map<String, PostalAddress> postalAddressMap,
-        ShipmentItemModel.Create shipmentItemModel) {
+        ShipmentItemModel.Create shipmentItemModel
+    ) {
         // Nếu portal address hiện tại chưa có trong DB, và chưa từng được duyệt qua lần nào, thêm mới nó
         // đồng thời với Geopoint, query GGMap
         return postalAddressMap.computeIfAbsent(
@@ -489,7 +489,6 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     @NotNull
     private Shipment createAndSaveShipment() {
-
         Shipment shipment = new Shipment();
         shipment.setShipmentTypeId("SALES_SHIPMENT");
         shipment = shipmentRepo.save(shipment);
@@ -499,7 +498,6 @@ public class ShipmentServiceImpl implements ShipmentService {
     @Override
     @Transactional
     public Shipment save(UserLogin userLogin, ShipmentItemModel.Create shipmentItemModel) {
-
         Shipment shipment = new Shipment();
 
         ShipmentItem shipmentItem = new ShipmentItem();
@@ -571,7 +569,6 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     @Override
     public Page<ShipmentModel> findAll(Pageable pageable) {
-
         return shipmentRepo.findAll(pageable).map(Shipment::toShipmentModel);
     }
 
@@ -584,27 +581,22 @@ public class ShipmentServiceImpl implements ShipmentService {
         private List<String> orderIds;
 
         CodeListInInput(ShipmentModel.CreateShipmentInputModel input) {
-
             this.input = input;
         }
 
         List<String> getCustomerCodes() {
-
             return customerCodes;
         }
 
         List<String> getLocationCodes() {
-
             return locationCodes;
         }
 
         List<String> getProductIds() {
-
             return productIds;
         }
 
         List<String> getOrderIds() {
-
             return orderIds;
         }
 
@@ -666,8 +658,8 @@ public class ShipmentServiceImpl implements ShipmentService {
             List<String> customerCodes,
             List<String> locationCodes,
             List<String> productIds,
-            List<String> orderIds) {
-
+            List<String> orderIds
+        ) {
             this.customerCodes = customerCodes;
             this.locationCodes = locationCodes;
             this.productIds = productIds;
@@ -675,22 +667,18 @@ public class ShipmentServiceImpl implements ShipmentService {
         }
 
         Map<String, PartyCustomer> getPartyCustomerMap() {
-
             return partyCustomerMap;
         }
 
         Map<String, PostalAddress> getPostalAddressMap() {
-
             return postalAddressMap;
         }
 
         Map<String, Product> getProductMap() {
-
             return productMap;
         }
 
         Map<String, OrderHeader> getOrderHeaderMap() {
-
             return orderHeaderMap;
         }
 

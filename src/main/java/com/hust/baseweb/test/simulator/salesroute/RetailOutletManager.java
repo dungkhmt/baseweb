@@ -16,12 +16,10 @@ public class RetailOutletManager {
     private String token;
 
     public RetailOutletManager(String token) {
-
         this.token = token;
     }
 
     public List<PartyRetailOutlet> getRetailoutlets() {
-
         try {
             String json = "{\"statusId\":null}";
 
@@ -42,8 +40,8 @@ public class RetailOutletManager {
 
     public List<PartyRetailOutlet> getRetailoutletsOfSalesmanAndDistributor(
         UUID partySalesmanId,
-        UUID partyDistributorId) {
-
+        UUID partyDistributorId
+    ) {
         try {
             Gson gson = new Gson();
             GetListRetailOutletsOfSalesmanAndDistributorInputModel in = new GetListRetailOutletsOfSalesmanAndDistributorInputModel(

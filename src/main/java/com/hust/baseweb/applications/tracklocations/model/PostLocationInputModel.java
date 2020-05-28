@@ -15,7 +15,6 @@ public class PostLocationInputModel {
     private Date timePoint;
 
     public PostLocationInputModel() {
-
         super();
 
     }

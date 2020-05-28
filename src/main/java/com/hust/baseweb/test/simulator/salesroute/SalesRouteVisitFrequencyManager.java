@@ -14,12 +14,10 @@ public class SalesRouteVisitFrequencyManager {
     private String token;
 
     public SalesRouteVisitFrequencyManager(String token) {
-
         this.token = token;
     }
 
     public List<SalesRouteVisitFrequency> getListSalesRouteVisitFrequency() {
-
         try {
             String rs = executor.execGetUseToken(
                 Constants.URL_ROOT + "/api/get-list-sales-route-visit-frequency",

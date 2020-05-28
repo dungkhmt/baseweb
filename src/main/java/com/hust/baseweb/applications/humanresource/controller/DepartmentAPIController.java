@@ -33,7 +33,6 @@ public class DepartmentAPIController {
 
     @PostMapping("/create-department")
     public ResponseEntity<?> createDepartment(Principal principal, @RequestBody CreateDepartmentInputModel input) {
-
         log.info("createDepartment, departmentName = " + input.getDepartmentName());
         Department dept = departmentService.save(input.getDepartmentName());
 
@@ -42,7 +41,6 @@ public class DepartmentAPIController {
 
     @GetMapping("/get-all-departments")
     public ResponseEntity<?> getAllDepartments(Principal principal) {
-
         log.info("getAllDepartments...");
         List<Department> departments = departmentService.findAll();
         return ResponseEntity.ok().body(departments);
@@ -51,7 +49,6 @@ public class DepartmentAPIController {
 
     @PostMapping("/add-user-2-department")
     public ResponseEntity<?> addUser2Department(Principal principal, @RequestBody AddParty2DepartmentInputModel input) {
-
         UserLogin userLogin = userService.findById(principal.getName());
         log.info("addUser2Department, addUser2Department, user login = " + userLogin.getUserLoginId());
 

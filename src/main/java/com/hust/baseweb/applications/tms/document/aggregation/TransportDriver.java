@@ -24,15 +24,14 @@ public class TransportDriver extends TransportReport<TransportDriver.Id> {
         Long cost,
         Integer totalDistance,
         Integer numberTrips,
-        Integer totalWeight) {
-
+        Integer totalWeight
+    ) {
         super(cost, totalDistance, numberTrips, totalWeight);
         this.id = id;
     }
 
     @Override
     public TransportReportModel.DateReport toDateReport() {
-
         TransportReportModel.DateReport dateReport = super.toDateReport();
         dateReport.setDate(id.getDate().format(Constant.LOCAL_DATE_FORMAT));
         return dateReport;

@@ -35,8 +35,8 @@ public class SalesReportAPIController {
     @PostMapping("/report-date-based-revenue")
     public ResponseEntity<?> reportDateBasedRevenue(
         Principal principal,
-        @RequestBody DateBasedRevenueReportInputModel input) {
-
+        @RequestBody DateBasedRevenueReportInputModel input
+    ) {
         UserLogin u = userService.findById(principal.getName());
 
         DateBasedRevenueReportOutputModel revenueReport = salesReportService.computeDateBasedRevenue(
@@ -49,8 +49,8 @@ public class SalesReportAPIController {
     @PostMapping("/get-report-date-based-revenue")
     public ResponseEntity<?> getReportDateBasedRevenue(
         Principal principal,
-        @RequestBody SaleReportModel.DateBasedInput input) {
-
+        @RequestBody SaleReportModel.DateBasedInput input
+    ) {
         SaleReportModel.Output output = salesReportService.getDateBasedSalesReport(input);
         return ResponseEntity.ok().body(output);
     }
@@ -58,8 +58,8 @@ public class SalesReportAPIController {
     @PostMapping("/report-date-based-revenue-recent")
     public ResponseEntity<?> reportDateBasedRevenueRecent(
         Principal principal,
-        @RequestBody DateBasedRevenueReportRecentInputModel input) {
-
+        @RequestBody DateBasedRevenueReportRecentInputModel input
+    ) {
         UserLogin u = userService.findById(principal.getName());
         String fromDateStr = "";
         String toDateStr = "";
@@ -89,7 +89,6 @@ public class SalesReportAPIController {
 
     @PostMapping("/get-sale-reports")
     public ResponseEntity<?> getSaleReports(@RequestBody SaleReportModel.Input input) {
-
         return ResponseEntity.ok().body(salesReportService.getSaleReports(input));
     }
 }

@@ -13,7 +13,6 @@ public class GetListProductOutputModel {
     private List<Product> products;
 
     public GetListProductOutputModel(List<Product> products) {
-
         super();
         this.products = products;
     }

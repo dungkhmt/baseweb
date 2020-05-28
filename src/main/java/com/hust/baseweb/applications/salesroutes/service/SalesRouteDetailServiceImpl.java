@@ -39,7 +39,6 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
     @Override
     @Transactional
     public int generateSalesRouteDetailOfSalesman(UUID partySalesmanId, UUID salesRoutePlanningPeriodId) {
-
         log.info("generateSalesRouteDetailOfSalesman, salesmanId = " + partySalesmanId);
         PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
 
@@ -111,8 +110,8 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
 
     @Override
     public List<PartyRetailOutlet> getRetailOutletsVisitedSalesmanDay(
-        UUID partySalesmanId, String date) {
-
+        UUID partySalesmanId, String date
+    ) {
         String executeDate = date;//DateTimeUtils.date2YYYYMMDD(date);
 
         log.info("getCustomersVisitedSalesmanDay, partySalesmanId = " + partySalesmanId + ", date = " + executeDate);
@@ -131,7 +130,6 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
 
     @Override
     public List<SalesRouteDetailRepo.GetSalesRouteDetailOfPlanPeriodOutputModel> getSalesRouteDetailOfPlanPeriod(UUID salesRoutePlanningPeriodId) {
-
         return salesRouteDetailRepo.getSalesRouteDetailOfPlanPeriod(salesRoutePlanningPeriodId);
     }
 

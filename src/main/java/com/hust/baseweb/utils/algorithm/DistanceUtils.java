@@ -14,8 +14,8 @@ public class DistanceUtils {
     public static <T> DirectionSolution<T> calculateGreedyTotalDistance(
         List<T> clientPoint,
         T facilityPoint,
-        BiFunction<T, T, Integer> distanceFunction) {
-
+        BiFunction<T, T, Integer> distanceFunction
+    ) {
         if (clientPoint.isEmpty()) {
             return new DirectionSolution<>(0.0, new ArrayList<>());
         }

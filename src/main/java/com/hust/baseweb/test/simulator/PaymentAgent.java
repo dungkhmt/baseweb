@@ -27,13 +27,11 @@ public class PaymentAgent extends Thread {
     private int idleTime = 360;
 
     public PaymentAgent(String username, String password) {
-
         this.username = username;
         this.password = password;
     }
 
     public void run() {
-
         Simulator.threadRunningCounter.incrementAndGet();
 //        System.out.println(module + "::run....");
 
@@ -59,7 +57,6 @@ public class PaymentAgent extends Thread {
     }
 
     public void createPayments() {
-
         for (int i = 0; i < nbIters; i++) {
             try {
                 createAPayment();

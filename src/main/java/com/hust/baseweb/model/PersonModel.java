@@ -21,6 +21,5 @@ public class PersonModel {
     private Date birthDate;
 
     public PersonModel() {
-
     }
 }

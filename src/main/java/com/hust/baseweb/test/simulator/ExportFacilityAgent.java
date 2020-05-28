@@ -34,13 +34,11 @@ public class ExportFacilityAgent extends Thread {
     private int idleTime = 360;
 
     public ExportFacilityAgent(String username, String password) {
-
         this.username = username;
         this.password = password;
     }
 
     public void run() {
-
         Simulator.threadRunningCounter.incrementAndGet();
 //        System.out.println(module + "::run....");
 

@@ -11,13 +11,11 @@ public class SecurityGroupOutputModel {
     private String description;
 
     public SecurityGroupOutputModel() {
-
         super();
 
     }
 
     public SecurityGroupOutputModel(String groupId, String description) {
-
         super();
         this.groupId = groupId;
         this.description = description;

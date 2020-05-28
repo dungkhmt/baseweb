@@ -12,8 +12,8 @@ public class GetAssigned2ShipperDeliveryRouteOutputModel {
     private List<DeliveryCustomerModel> deliveryCustomers;
 
     public GetAssigned2ShipperDeliveryRouteOutputModel(
-        List<DeliveryCustomerModel> deliveryCustomers) {
-
+        List<DeliveryCustomerModel> deliveryCustomers
+    ) {
         super();
         this.deliveryCustomers = deliveryCustomers;
     }

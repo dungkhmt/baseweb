@@ -25,14 +25,12 @@ public class GoogleMapUtils {
 
     @Value("${google.api_key}")
     public void setGoogleMapApiKey(String googleMapApiKey) {
-
         GEO_API_CONTEXT = new GeoApiContext.Builder().apiKey(googleMapApiKey).build();
     }
 
     private static GeoApiContext GEO_API_CONTEXT;
 
     public static GeocodingResult[] queryLatLng(String address) {
-
         try {
             GeocodingApiRequest geocodingApiRequest = new GeocodingApiRequest(GEO_API_CONTEXT);
             geocodingApiRequest.region("vn");
@@ -45,7 +43,6 @@ public class GoogleMapUtils {
     }
 
     public static DirectionsResult queryDirection(LatLng latLng1, LatLng latLng2) {
-
         DirectionsApiRequest directionsApiRequest = new DirectionsApiRequest(GEO_API_CONTEXT);
         directionsApiRequest.region("vn");
         directionsApiRequest.language("vi");

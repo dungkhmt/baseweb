@@ -58,8 +58,8 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         String currencyUomId,
         String taxInPrice,
         String fromDate,
-        String thruDate) {
-
+        String thruDate
+    ) {
         Product product = productRepo.findById(productId).orElseThrow(NoSuchElementException::new);
 //        if (product != null) {
 //            log.info("setProductPrice, find product " + product.getProductId());
@@ -124,7 +124,6 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
     @Override
     public List<ProductPrice.Model> getProductPriceHistory(String productId) {
-
         Product product = productRepo.findById(productId).orElseThrow(NoSuchElementException::new);
         return productPriceJpaRepo
             .findByProduct(product)
@@ -168,8 +167,8 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     private SaleReportModel.Output calcSaleReportByPartyCustomer(
         SaleReportModel.Input input,
         Date fromDate,
-        Date thruDate) {
-
+        Date thruDate
+    ) {
         List<OrderRole> orderRoles = orderRoleRepo.findAllByPartyIdAndRoleTypeId(
             UUID.fromString(input.getPartyCustomerId()),
             "BILL_TO_CUSTOMER");
@@ -188,7 +187,6 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
     @NotNull
     private SaleReportModel.Output calcSaleReportByProduct(SaleReportModel.Input input, Date fromDate, Date thruDate) {
-
         Product product = productRepo.findById(input.getProductId()).orElseThrow(NoSuchElementException::new);
 
         List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderDateBetween(fromDate, thruDate);
@@ -207,8 +205,8 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     private SaleReportModel.Output calcSaleReport(
         List<OrderHeader> orderHeaders,
         List<OrderItem> orderItems,
-        List<ProductPrice> productPrices) {
-
+        List<ProductPrice> productPrices
+    ) {
         Map<LocalDate, List<OrderHeader>> dateToOrders = new HashMap<>();
         for (OrderHeader orderHeader : orderHeaders) {
             dateToOrders

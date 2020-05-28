@@ -21,11 +21,9 @@ public class Config {
     private String googleApiKey;
 
     private Config() {
-
     }
 
     public static Config getConfig() {
-
         if (config.googleApiKey == null || config.googleApiKey.equals("")) {
             try {
                 updateConfig();

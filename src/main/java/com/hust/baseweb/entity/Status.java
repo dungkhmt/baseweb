@@ -27,7 +27,6 @@ public class Status {
     private Date lastUpdatedStamp;
 
     public Status(String id, StatusType type, String statusCode, String sequenceId, String description) {
-
         this.id = id;
         this.type = type;
         this.statusCode = statusCode;
@@ -36,7 +35,6 @@ public class Status {
     }
 
     public Status() {
-
     }
 
     public enum StatusEnum {

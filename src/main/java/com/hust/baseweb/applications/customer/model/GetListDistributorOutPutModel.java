@@ -13,7 +13,6 @@ public class GetListDistributorOutPutModel {
     List<PartyDistributor> lists;
 
     public GetListDistributorOutPutModel(List<PartyDistributor> list) {
-
         this.lists = list;
     }
 }

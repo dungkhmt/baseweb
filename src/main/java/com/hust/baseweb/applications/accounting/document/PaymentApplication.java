@@ -32,7 +32,6 @@ public class PaymentApplication {
     private Date createdStamp;          // timestamp     default current_timestamp,
 
     public Model toModel() {
-
         return new Model(
             paymentApplicationId.toString(),
             paymentId,

@@ -18,5 +18,6 @@ public interface CustomerSalesmanVendorRepo extends CrudRepository<CustomerSales
         PartySalesman partySalesman,
         PartyCustomer partyCustomer,
         PartyDistributor partyDistributor,
-        Date thruDate);
+        Date thruDate
+    );
 }

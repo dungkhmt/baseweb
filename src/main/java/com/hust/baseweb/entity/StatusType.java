@@ -25,14 +25,12 @@ public class StatusType {
     private Date lastUpdatedStamp;
 
     public StatusType(String id, StatusType parentType, String description) {
-
         this.id = id;
         this.parentType = parentType;
         this.description = description;
     }
 
     public StatusType() {
-
     }
 }
 

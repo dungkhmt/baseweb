@@ -100,7 +100,6 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     //public OrderHeader save(ModelCreateOrderInput orderInput) {
     public OrderHeader save(CreateOrderDistributor2RetailOutletInputModel orderInput) {
-
         OrderType orderType = orderTypeRepo.findByOrderTypeId("SALES_ORDER");
         SalesChannel salesChannel = salesChannelRepo.findBySalesChannelId(orderInput.getSalesChannelId());
         String salesmanId = orderInput.getSalesmanId();
@@ -270,7 +269,6 @@ public class OrderServiceImpl implements OrderService {
 
     @NotNull
     private Map<String, ProductPrice> buildProductPriceMap(Map<String, Product> productMap) {
-
         Date now = new Date();
         return productPriceRepo
             .findAllByProductInAndThruDateNullOrThruDateAfter(productMap.values(), now)
@@ -283,7 +281,6 @@ public class OrderServiceImpl implements OrderService {
     @NotNull
     //private Map<String, Product> buildProductMap(ModelCreateOrderInput orderInput) {
     private Map<String, Product> buildProductMap(CreateOrderDistributor2RetailOutletInputModel orderInput) {
-
         return productRepo
             .findAllByProductIdIn(Arrays
                                       .stream(orderInput.getOrderItems())
@@ -296,19 +293,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderHeader> findAll() {
-
         return orderHeaderRepo.findAll();
     }
 
     @Override
     public OrderHeader findByOrderId(String orderId) {
-
         return orderHeaderRepo.findByOrderId(orderId);
     }
 
     @Override
     public OrderDetailView getOrderDetail(String orderId) {
-
         OrderHeader order = orderHeaderRepo.findByOrderId(orderId);
         if (order == null) {
             return null;
@@ -377,7 +371,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDetailView convertOrderDetail(OrderHeader order) {
-
         if (order == null) {
             return null;
         }
@@ -443,7 +436,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PartyCustomer findCustomerById(UUID partyId) {
-
         return partyCustomerRepo.findByPartyId(partyId);
     }
 
@@ -513,7 +505,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean createPurchaseOrder(OrderHeader.PurchaseCreateModel purchaseCreateModel) {
-
         OrderHeaderSequenceId id = orderHeaderSequenceIdRepo.save(new OrderHeaderSequenceId());
         String orderId = OrderHeader.convertSequenceIdToOrderId(id.getId());
 
@@ -578,7 +569,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean deleteOrder(OrderHeader.DeleteModel deleteModel) {
-
         try {
             List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderDateBetween(
                 Constant.DATE_FORMAT.parse(deleteModel.getFromDate()),

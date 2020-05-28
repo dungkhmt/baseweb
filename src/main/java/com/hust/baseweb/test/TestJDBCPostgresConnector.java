@@ -4,7 +4,6 @@ public class TestJDBCPostgresConnector {
 
 
     public static void main(String[] args) {
-
         TestJDBCPostgresConnector app = new TestJDBCPostgresConnector();
         app.test1();
     }

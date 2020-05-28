@@ -40,7 +40,6 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
     private EnumerationRepo enumerationRepo;
 
     private int computeMissingDistanceHarvsine() {
-
         List<PostalAddress> points = postalAddressRepo.findAll();
         List<DistanceTravelTimePostalAddress> distances = new ArrayList<DistanceTravelTimePostalAddress>();
         log.info("computeMissingDistance, points.sz = " + points.size());
@@ -296,7 +295,6 @@ public class DistanceTravelTimePostalAddressServiceImpl implements DistanceTrave
 
     @Override
     public int computeMissingDistance(String distanceSource, int speedTruck, int speedMotorbike, int maxElements) {
-
         if (distanceSource.equals("HAVERSINE")) {
             return computeMissingDistanceHarvsine();
         } else {// use open street map

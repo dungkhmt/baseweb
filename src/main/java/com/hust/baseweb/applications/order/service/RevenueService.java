@@ -18,6 +18,7 @@ public interface RevenueService {
     void updateRevenue(
         List<OrderItem> orderItems,
         Function<OrderItem, Party> orderItemToCustomerFunction,
-        Function<OrderItem, LocalDate> orderItemToDateFunction);
+        Function<OrderItem, LocalDate> orderItemToDateFunction
+    );
 
 }

@@ -20,14 +20,12 @@ public class Simulator {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-
                 log.info("Threads count: {}", threadRunningCounter.get());
             }
         }, 1000, 1000);
     }
 
     public Simulator(int nbCreateOrderAgents, int nbIterCreateOrder) {
-
         this.nbCreateOrderAgents = nbCreateOrderAgents;
         this.nbIterCreateOrder = nbIterCreateOrder;
     }

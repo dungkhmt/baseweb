@@ -59,11 +59,9 @@ public class DPerson {
     private Date lastUpdatedStamp;
 
     public DPerson() {
-
     }
 
     public String getStatus() {
-
         return this.status != null ? this.status.getId() : null;
     }
 }

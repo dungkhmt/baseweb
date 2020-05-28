@@ -12,7 +12,6 @@ public class CompositeShipmentItemId implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) {
             return true;
         }
@@ -28,7 +27,6 @@ public class CompositeShipmentItemId implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(shipmentId, shipmentItemSeqId);
     }
 }

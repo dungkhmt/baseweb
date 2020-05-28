@@ -38,7 +38,6 @@ public class OrderItem {
     private Integer exportedQuantity = 0;
 
     public InventoryModel.OrderItem toOrderItemModel(int exportedQuantity, int inventoryQuantity) {
-
         return new InventoryModel.OrderItem(
             product.getProductId(),
             product.getProductName(),

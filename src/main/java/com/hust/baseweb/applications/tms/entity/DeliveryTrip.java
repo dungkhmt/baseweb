@@ -63,7 +63,6 @@ public class DeliveryTrip {
     private Integer deliveryTripDetailCount = 0;
 
     public DeliveryTripModel toDeliveryTripModel() {
-
         return new DeliveryTripModel(
             deliveryPlan.getDeliveryPlanId().toString(),
             deliveryPlanSolutionSeqId,

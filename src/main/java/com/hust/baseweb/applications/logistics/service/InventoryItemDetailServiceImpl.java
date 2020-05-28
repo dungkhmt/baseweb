@@ -20,8 +20,8 @@ public class InventoryItemDetailServiceImpl implements InventoryItemDetailServic
     public InventoryItemDetail createInventoryItemDetail(
         InventoryItem inventoryItem,
         int qtyOnHandDiff,
-        OrderItem orderItem) {
-
+        OrderItem orderItem
+    ) {
         Date effectiveDate = new Date();
         InventoryItemDetail inventoryItemDetail = new InventoryItemDetail();
         inventoryItemDetail.setEffectiveDate(effectiveDate);

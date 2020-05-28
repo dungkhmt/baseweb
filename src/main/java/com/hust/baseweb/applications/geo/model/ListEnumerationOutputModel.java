@@ -13,7 +13,6 @@ public class ListEnumerationOutputModel {
     List<Enumeration> enumerationList;
 
     public ListEnumerationOutputModel(List<Enumeration> enumerationList) {
-
         this.enumerationList = enumerationList;
     }
 }

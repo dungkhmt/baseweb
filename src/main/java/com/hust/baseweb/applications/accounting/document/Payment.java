@@ -39,17 +39,14 @@ public class Payment {
 
     @NotNull
     public static String convertSequenceIdToPaymentId(Long id) {
-
         return "PAY" + String.format("%010d", id);
     }
 
     public Model toModel() {
-
         return toModel(null);
     }
 
     public Model toModel(String distributorName) {
-
         return new Model(
             paymentId,
             paymentType.toString(),

@@ -26,14 +26,12 @@ public class Content {
     private Date lastUpdatedAt;
 
     public Content(String contentTypeId, String url, Date createdAt) {
-
         this.contentTypeId = contentTypeId;
         this.url = url;
         this.createdAt = createdAt;
     }
 
     public Content() {
-
     }
 
 }

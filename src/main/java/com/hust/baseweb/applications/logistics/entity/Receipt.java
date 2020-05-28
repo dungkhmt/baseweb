@@ -31,7 +31,6 @@ public class Receipt {
 
     @NotNull
     public static String convertSequenceIdToReceiptId(Long id) {
-
         return "RCP" + String.format("%010d", id);
     }
 }

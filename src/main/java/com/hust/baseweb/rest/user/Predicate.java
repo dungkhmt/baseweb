@@ -13,17 +13,14 @@ public class Predicate {
     private SearchCriteria criteria;
 
     public Predicate(final SearchCriteria criteria) {
-
         this.criteria = criteria;
     }
 
     public static boolean isNumeric(final Object str) {
-
         return str instanceof Number;
     }
 
     public BooleanExpression getPredicate() {
-
         PathBuilder<DPerson> entityPath = new PathBuilder<>(
             DPerson.class,
             "dPerson");
@@ -66,17 +63,14 @@ public class Predicate {
     }
 
     public SearchCriteria getCriteria() {
-
         return criteria;
     }
 
     public void setCriteria(final SearchCriteria criteria) {
-
         this.criteria = criteria;
     }
 
     public StringExpression emptyIfNull(StringExpression stringExpression) {
-
         return stringExpression.coalesce("").asString();
     }
 }

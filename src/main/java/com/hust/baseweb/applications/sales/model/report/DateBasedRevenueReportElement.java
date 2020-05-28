@@ -12,7 +12,6 @@ public class DateBasedRevenueReportElement {
     private Double revenue;
 
     public DateBasedRevenueReportElement(String date, Double revenue) {
-
         super();
         this.date = date;
         this.revenue = revenue;

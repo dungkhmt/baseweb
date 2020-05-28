@@ -25,7 +25,6 @@ public class DeliveryTripMaintenanceServiceImpl implements DeliveryTripMaintenan
 
     @Override
     public long deleteAllDeliveryTrip() {
-
         long cnt = deliveryTripRepo.count();
         deliveryTripDetailRepo.deleteAll();
         deliveryTripStatusRepo.deleteAll();

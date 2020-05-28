@@ -14,7 +14,6 @@ public class GetListFacilityOutputModel {
     private List<Facility> facilities;
 
     public GetListFacilityOutputModel(List<Facility> facilities) {
-
         super();
         this.facilities = facilities;
     }

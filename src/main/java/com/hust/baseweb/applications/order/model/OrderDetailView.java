@@ -34,7 +34,8 @@ public class OrderDetailView {
         OrderHeader order,
         OrderService orderService,
         PartySalesmanService salesmanService,
-        UserService userService) {
+        UserService userService
+    ) {
         // TODO: to be improved
 
         orderId = order.getOrderId();

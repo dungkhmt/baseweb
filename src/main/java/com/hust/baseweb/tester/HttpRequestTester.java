@@ -21,7 +21,6 @@ public class HttpRequestTester {
     }
 
     public void getSourceHtml(String url) {
-
         try {
             String html = doGetRequest(url);
             PrintWriter out = new PrintWriter("crawl-output.html");

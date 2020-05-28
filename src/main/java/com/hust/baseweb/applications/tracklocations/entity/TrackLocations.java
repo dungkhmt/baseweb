@@ -37,7 +37,6 @@ public class TrackLocations {
     private Date lastUpdatedStamp;
 
     public TrackLocations() {
-
         super();
 
     }

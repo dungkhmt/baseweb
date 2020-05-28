@@ -10,7 +10,6 @@ public class GetLocationInputModel {
     private String userLoginId;
 
     public GetLocationInputModel() {
-
         super();
 
     }

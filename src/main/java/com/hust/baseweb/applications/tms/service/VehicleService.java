@@ -36,5 +36,6 @@ public interface VehicleService {
     List<Vehicle> save(
         List<VehicleModel.Create> vehicleModels,
         List<VehicleModel.CreateLocationPriority> vehicleLocationPriorities,
-        List<LocationModel.Create> shipToModels);
+        List<LocationModel.Create> shipToModels
+    );
 }

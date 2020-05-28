@@ -22,7 +22,6 @@ public class RequestAgent extends Thread {
     private String token;
 
     public static void main(String[] args) {
-
         RequestAgent agent = new RequestAgent();
         agent.start();
     }
@@ -47,7 +46,6 @@ public class RequestAgent extends Thread {
     }
 
     public void start() {
-
         System.out.println(name + ":: start running...");
         if (thread == null) {
             thread = new Thread(this, name);
@@ -56,7 +54,6 @@ public class RequestAgent extends Thread {
     }
 
     public String login(String username, String password) {
-
         try {
             // String url = "http://sscm.dailyopt.ai/api/";
             String url = urlRoot + "/api/";
@@ -74,7 +71,6 @@ public class RequestAgent extends Thread {
     }
 
     public String getUserLogins() {
-
         try {
             String res = execGetUseToken(
                 urlRoot + "/api/get-list-user-logins",
@@ -88,7 +84,6 @@ public class RequestAgent extends Thread {
     }
 
     public String postLocation(double lat, double lng, Date timePoint) {
-
         System.out.println("request-agent  postLocation");
         SimpleDateFormat formatter = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -115,7 +110,6 @@ public class RequestAgent extends Thread {
     }
 
     public void run() {
-
         System.out.println(name + "::run....");
 
         token = login("dungpq", "123");

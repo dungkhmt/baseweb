@@ -28,7 +28,6 @@ public class SalesmanCheckinHistoryServiceImpl implements
 
     @Override
     public SalesmanCheckinHistory save(UserLogin userLogin, UUID partyId, String checkinAction, String location) {
-
         Party party = partyRepo.findByPartyId(partyId);
 
         SalesmanCheckinHistory sch = new SalesmanCheckinHistory();
@@ -44,7 +43,6 @@ public class SalesmanCheckinHistoryServiceImpl implements
 
     @Override
     public Page<SalesmanCheckinHistory> findAll(Pageable page) {
-
         return salesmanCheckinHistoryRepo.findAll(page);
     }
 

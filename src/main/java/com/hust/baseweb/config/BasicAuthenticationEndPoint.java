@@ -21,7 +21,6 @@ public class BasicAuthenticationEndPoint extends BasicAuthenticationEntryPoint {
 
     @Override
     public void afterPropertiesSet() {
-
         setRealmName("Realm");
         super.afterPropertiesSet();
     }

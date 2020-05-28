@@ -18,6 +18,5 @@ public class PersonUpdateModel {
     private List<String> roles;
 
     public PersonUpdateModel() {
-
     }
 }

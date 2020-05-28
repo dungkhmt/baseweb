@@ -17,12 +17,10 @@ public class DistributorManager {
     private String token;
 
     public DistributorManager(String token) {
-
         this.token = token;
     }
 
     public List<PartyDistributor> getListDistributors() {
-
         try {
             String json = "{\"statusId\":null}";
 
@@ -40,7 +38,6 @@ public class DistributorManager {
     }
 
     public List<PartyDistributor> getListDistributorsOfSalesman(UUID partySalesmanId) {
-
         try {
             Gson gson = new Gson();
             GetListDistributorsOfSalesmanInputModel in = new GetListDistributorsOfSalesmanInputModel(partySalesmanId);

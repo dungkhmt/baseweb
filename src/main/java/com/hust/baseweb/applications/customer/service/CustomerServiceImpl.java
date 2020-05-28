@@ -41,8 +41,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public PartyCustomer save(CreateCustomerInputModel input) {
-
-
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAIL_OUTLET");
 
         //UUID partyId = UUID.randomUUID();
@@ -108,7 +106,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<PartyCustomer> findRetailOutlets() {
-
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAIL_OUTLET");
         List<PartyCustomer> retailOutlets = partyCustomerRepo.findByPartyType(partyType);
         return retailOutlets;
@@ -116,7 +113,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<PartyCustomer> findAll() {
-
         return partyCustomerRepo.findAll();
     }
 

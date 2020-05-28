@@ -20,5 +20,6 @@ public interface InventoryItemRepo extends JpaRepository<InventoryItem, UUID> {
     List<InventoryItem> findAllByProductInAndFacilityInAndQuantityOnHandTotalGreaterThan(
         List<Product> products,
         List<Facility> facilities,
-        int quantity);
+        int quantity
+    );
 }

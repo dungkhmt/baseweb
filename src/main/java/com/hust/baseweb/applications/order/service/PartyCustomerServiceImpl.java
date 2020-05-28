@@ -17,7 +17,6 @@ public class PartyCustomerServiceImpl implements PartyCustomerService {
 
     @Override
     public List<PartyCustomerModel> getListPartyCustomers() {
-
         return partyCustomerRepo.findAll().stream().map(partyCustomer -> new PartyCustomerModel(
             partyCustomer.getPartyId().toString(),
             partyCustomer.getPartyType().getPartyTypeId(),

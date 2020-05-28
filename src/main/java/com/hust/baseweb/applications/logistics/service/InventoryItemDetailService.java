@@ -11,6 +11,7 @@ public interface InventoryItemDetailService {
     InventoryItemDetail createInventoryItemDetail(
         InventoryItem inventoryItem,
         int qtyOnHandDiff,
-        OrderItem orderItem);
+        OrderItem orderItem
+    );
 
 }

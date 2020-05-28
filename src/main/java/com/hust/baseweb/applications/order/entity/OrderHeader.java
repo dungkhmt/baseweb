@@ -88,12 +88,10 @@ public class OrderHeader {
 
     @NotNull
     public static String convertSequenceIdToOrderId(Long id) {
-
         return "ORD" + String.format("%010d", id);
     }
 
     public InventoryModel.OrderHeader toOrderHeaderModel() {
-
         return new InventoryModel.OrderHeader(
             orderId,
             partyCustomer.getPartyId().toString(),
@@ -102,12 +100,10 @@ public class OrderHeader {
     }
 
     public PurchaseModel toPurchaseModel() {
-
         return toPurchaseModel(null, null);
     }
 
     public PurchaseModel toPurchaseModel(String supplierName, Double totalAmount) {
-
         return new PurchaseModel(
             orderId,
             Constant.DATE_FORMAT.format(createdStamp),

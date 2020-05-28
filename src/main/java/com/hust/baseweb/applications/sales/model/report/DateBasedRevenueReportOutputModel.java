@@ -12,7 +12,6 @@ public class DateBasedRevenueReportOutputModel {
     private List<DateBasedRevenueReportElement> revenueElements;
 
     public DateBasedRevenueReportOutputModel(List<DateBasedRevenueReportElement> lst) {
-
         this.revenueElements = lst;
     }
 }

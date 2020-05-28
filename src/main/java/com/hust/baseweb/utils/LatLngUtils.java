@@ -13,7 +13,6 @@ public class LatLngUtils {
     // Haversine formula
     // return meter
     public static int distance(double lat1, double lng1, double lat2, double lng2) {
-
         int r = 6_371_000;
         double dLat = deg2rad(lat2 - lat1);
         double dLng = deg2rad(lng2 - lng1);
@@ -25,12 +24,10 @@ public class LatLngUtils {
     }
 
     private static double deg2rad(double deg) {
-
         return deg * (Math.PI / 180);
     }
 
     public static LatLng parse(String s) {
-
         String[] split = s.split(",");
         return new LatLng(Double.parseDouble(split[0]), Double.parseDouble(split[1]));
     }

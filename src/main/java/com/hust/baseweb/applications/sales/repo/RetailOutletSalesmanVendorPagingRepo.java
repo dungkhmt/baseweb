@@ -17,6 +17,7 @@ public interface RetailOutletSalesmanVendorPagingRepo
     Page<RetailOutletSalesmanVendor> findByPartySalesmanAndThruDate(
         PartySalesman partySalesman,
         Date thruDate,
-        Pageable pageable);
+        Pageable pageable
+    );
 
 }

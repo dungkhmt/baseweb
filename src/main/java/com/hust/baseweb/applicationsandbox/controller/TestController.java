@@ -15,7 +15,6 @@ public class TestController {
 
     @PostMapping("/add")
     public ResponseEntity<?> add(Principal principal, @RequestBody AddInputModel input) {
-
         int c = input.getA() + input.getB();
         log.info("add, a = " + input.getA() + ", b = " + input.getB() + ", c = " + c);
         return ResponseEntity.ok().body(c);

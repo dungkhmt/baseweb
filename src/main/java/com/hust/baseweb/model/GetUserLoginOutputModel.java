@@ -13,11 +13,9 @@ public class GetUserLoginOutputModel {
     private UUID partyId;
 
     public GetUserLoginOutputModel() {
-
     }
 
     public GetUserLoginOutputModel(String userName, UUID partyId) {
-
         this.userName = userName;
         this.partyId = partyId;
     }

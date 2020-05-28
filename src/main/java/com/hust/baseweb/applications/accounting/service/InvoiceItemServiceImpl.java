@@ -35,7 +35,6 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
 
     @Override
     public List<InvoiceItem.Model> findByInvoiceId(String invoiceId) {
-
         Invoice invoice = invoiceRepo.findById(invoiceId).orElseThrow(NoSuchElementException::new);
 
         List<InvoiceItem> invoiceItems = invoiceItemRepo.findAllById_InvoiceId(invoiceId);

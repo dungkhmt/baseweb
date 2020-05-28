@@ -12,13 +12,11 @@ public class UserLocationModel {
     private double lng;
 
     public UserLocationModel() {
-
         super();
 
     }
 
     public UserLocationModel(String userLoginId, double lat, double lng) {
-
         super();
         this.userLoginId = userLoginId;
         this.lat = lat;

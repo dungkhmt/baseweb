@@ -30,7 +30,6 @@ public class ImportFacilityAgent extends Thread {
     private int idleTime = 360;
 
     public ImportFacilityAgent(String username, String password) {
-
         this.username = username;
         this.password = password;
     }
@@ -83,7 +82,6 @@ public class ImportFacilityAgent extends Thread {
     }
 
     public void createReceipts() {
-
         FacilityManager facilityManager = new FacilityManager(token);
         ProductManager productManager = new ProductManager(token);
         List<Facility> facilities = facilityManager.getListFacility();

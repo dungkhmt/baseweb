@@ -21,7 +21,6 @@ public abstract class TransportReport<ID> {
     private Integer totalWeight;    // gram
 
     public <E extends TransportReport<ID>> E appendTo(E other) {
-
         other.setCost(other.getCost() + cost);
         other.setTotalDistance(other.getTotalDistance() + totalDistance);
         other.setNumberTrips(other.getNumberTrips() + numberTrips);
@@ -30,7 +29,6 @@ public abstract class TransportReport<ID> {
     }
 
     public TransportReportModel.DateReport toDateReport() {
-
         return new TransportReportModel.DateReport(
             null,
             cost,

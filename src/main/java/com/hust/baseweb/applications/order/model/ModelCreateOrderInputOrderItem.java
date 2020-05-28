@@ -13,7 +13,6 @@ public class ModelCreateOrderInputOrderItem {
     //private BigDecimal totalItemPrice;
 
     public ModelCreateOrderInputOrderItem() {
-
         super();
 
     }

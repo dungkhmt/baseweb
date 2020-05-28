@@ -26,7 +26,6 @@ public class TrackLocationsServiceImpl implements TrackLocationsService {
 
     @Override
     public TrackLocations save(PostLocationInputModel input, Party party) {
-
         TrackLocations trackLocation = new TrackLocations();
         //o.setParty(party);
         trackLocation.setPartyId(party.getPartyId());
@@ -40,7 +39,6 @@ public class TrackLocationsServiceImpl implements TrackLocationsService {
     }
 
     public List<TrackLocations> getListLocations() {
-
         return trackLocationsRepo.findAll();
     }
 

@@ -15,10 +15,12 @@ public interface RetailOutletSalesmanVendorService {
 
     List<PartyRetailOutlet> getListRetailOutletOfSalesmanAndDistributor(
         UUID partySalesmanId,
-        UUID partyDistributorId);
+        UUID partyDistributorId
+    );
 
     RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(
         UUID partyRetailOutletId,
         UUID partySalesmanId,
-        UUID partyDistributorId);
+        UUID partyDistributorId
+    );
 }

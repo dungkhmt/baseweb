@@ -43,12 +43,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserLogin findById(String userLoginId) {
-
         return userLoginRepo.findByUserLoginId(userLoginId);
     }
 
     public List<UserLogin> getAllUserLogins() {
-
         return userLoginRepo.findAll();
     }
 
@@ -94,7 +92,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<DPerson> findAllPerson(Pageable page, SortAndFiltersInput query) {
-
         BooleanExpression expression = null;
         List<SearchCriteria> fNew = new ArrayList<>();
 
@@ -119,20 +116,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserRestBriefProjection> findPersonByFullName(Pageable page, String sString) {
-
         return userRestRepository.findByTypeAndStatusAndFullNameLike(page, PartyTypeEnum.PERSON.name(),
                                                                      StatusEnum.PARTY_ENABLED.name(), sString);
     }
 
     @Override
     public DPerson findByPartyId(String partyId) {
-
         return userRestRepository.findById(UUID.fromString(partyId)).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
     public Party update(PersonUpdateModel personUpdateModel, UUID partyId) {
-
         Person person = personRepo.getOne(partyId);
         person.setBirthDate(personUpdateModel.getBirthDate());
         person.setFirstName(personUpdateModel.getFirstName());
@@ -151,7 +145,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserLogin findUserLoginByPartyId(UUID partyId) {
-
         Party party = partyService.findByPartyId(partyId);
         return userLoginRepo.findByParty(party).get(0);
     }

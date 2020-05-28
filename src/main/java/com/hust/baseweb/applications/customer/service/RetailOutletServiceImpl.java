@@ -52,7 +52,6 @@ public class RetailOutletServiceImpl implements RetailOutletService {
     @Override
     @Transactional
     public PartyRetailOutlet save(CreateRetailOutletInputModel input) {
-
         PartyType partyType = partyTypeRepo.findByPartyTypeId("PARTY_RETAIL_OUTLET");
 
         //UUID partyId = UUID.randomUUID();
@@ -123,31 +122,26 @@ public class RetailOutletServiceImpl implements RetailOutletService {
 
     @Override
     public List<PartyRetailOutlet> findAll() {
-
         return partyRetailOutletRepo.findAll();
     }
 
     @Override
     public Page<PartyRetailOutlet> findAll(Pageable page) {
-
         return partyRetailOutletRepo.findAll(page);
     }
 
     @Override
     public List<PartyRetailOutlet> findByPartyIdIn(List<UUID> partyIds) {
-
         return partyRetailOutletRepo.findAllByPartyIdIn(partyIds);
     }
 
     @Override
     public Page<PartyRetailOutlet> findByPartyIdIn(List<UUID> partyIds, Pageable page) {
-
         return partyRetailOutletRepo.findAllByPartyIdIn(partyIds, page);
     }
 
     @Override
     public DetailRetailOutletModel getRetailOutletDetail(UUID partyRetailOutletId) {
-
         PartyRetailOutlet partyRetailOutlet = this.partyRetailOutlet.findByPartyId(partyRetailOutletId);
         List<RetailOutletSalesmanVendor> retailOutletSalesmanVendors = retailOutletSalesmanVendorRepo.findAllByPartyRetailOutletAndThruDate(
             partyRetailOutlet,

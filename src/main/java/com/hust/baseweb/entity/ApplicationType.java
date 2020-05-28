@@ -21,12 +21,10 @@ public class ApplicationType {
     private Date lastUpdatedStamp;
 
     public ApplicationType(String applicationTypeId, String description) {
-
         this.applicationTypeId = applicationTypeId;
         this.description = description;
     }
 
     public ApplicationType() {
-
     }
 }

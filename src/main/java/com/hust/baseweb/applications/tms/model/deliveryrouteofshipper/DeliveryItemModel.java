@@ -14,8 +14,8 @@ public class DeliveryItemModel {
 
     public DeliveryItemModel(
         String orderId, String orderItemSeqId,
-        String productId, int quantity) {
-
+        String productId, int quantity
+    ) {
         super();
         this.orderId = orderId;
         this.orderItemSeqId = orderItemSeqId;

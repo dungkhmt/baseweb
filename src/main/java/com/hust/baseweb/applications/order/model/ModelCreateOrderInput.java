@@ -21,7 +21,6 @@ public class ModelCreateOrderInput {
     private String shipToAddress;
 
     public ModelCreateOrderInput() {
-
         super();
 
     }

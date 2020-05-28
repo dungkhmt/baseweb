@@ -22,7 +22,6 @@ public class PartyServiceImpl implements PartyService {
 
     @Override
     public Party save(String partyTypeId) {
-
         PartyType partyType = partyTypeRepo.getOne(partyTypeId);
 //		UUID uuid = UUID.randomUUID();
         Party party = new Party();
@@ -33,7 +32,6 @@ public class PartyServiceImpl implements PartyService {
 
     @Override
     public Party disableParty(String partyId) {
-
         Party party = partyRepo.findById(UUID.fromString(partyId)).get();
         party.setPartyStatus(statusRepo.getOne(StatusEnum.PARTY_DISABLED.name()));
         return partyRepo.save(party);
@@ -41,7 +39,6 @@ public class PartyServiceImpl implements PartyService {
 
     @Override
     public Party findByPartyId(UUID partyId) {
-
         return partyRepo.findByPartyId(partyId);
     }
 

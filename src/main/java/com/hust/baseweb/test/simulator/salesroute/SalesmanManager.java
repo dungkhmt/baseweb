@@ -14,12 +14,10 @@ public class SalesmanManager {
     private String token;
 
     public SalesmanManager(String token) {
-
         this.token = token;
     }
 
     List<SalesmanOutputModel> getListSalesman() {
-
         try {
             String json = "{\"statusId\":null}";
 

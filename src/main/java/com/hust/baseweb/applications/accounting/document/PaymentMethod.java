@@ -13,7 +13,6 @@ public enum PaymentMethod {
     private String description;
 
     PaymentMethod(String description) {
-
         this.description = description;
     }
 }

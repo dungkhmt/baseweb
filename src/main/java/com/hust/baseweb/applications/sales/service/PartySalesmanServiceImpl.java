@@ -63,7 +63,6 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
 
     @Override
     public UserLogin findUserLoginOfSalesmanId(UUID partySalesmanId) {
-
         Party party = partyRepo.findByPartyId(partySalesmanId);
         List<UserLogin> userLogins = userLoginRepo.findByParty(party);
         if (userLogins != null && userLogins.size() > 0) {
@@ -74,13 +73,11 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
 
     @Override
     public PartySalesman findById(UUID partyId) {
-
         return partySalesmanRepo.findByPartyId(partyId);
     }
 
     @Override
     public Person findPersonByPartyId(UUID partyId) {
-
         return personRepo.findByPartyId(partyId);
     }
 
@@ -100,7 +97,6 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
 
     @Override
     public List<PartySalesman> findAll() {
-
         return partySalesmanRepo.findAll();
     }
 

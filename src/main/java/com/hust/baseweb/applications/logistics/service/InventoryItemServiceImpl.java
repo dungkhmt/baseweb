@@ -76,7 +76,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @Override
     @Transactional
     public List<InventoryItem> importInventoryItems(ImportInventoryItemsInputModel inventoryItemsInput) {
-
 //        System.out.println(module + "::save(" + input.getProductId() + "," + input.getQuantityOnHandTotal() + ")");
 
 //        Product product = productService.findByProductId(inventoryItems.getProductId());
@@ -182,7 +181,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @Transactional
     @org.springframework.transaction.annotation.Transactional
     public String exportInventoryItems(ExportInventoryItemsInputModel inventoryItemsInput) {
-
         Date now = new Date();
 
 //        List<InventoryItem> inventoryItems = inventoryItemRepo.findAll();// to be improved, find by (productId, facilityId)
@@ -329,7 +327,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     }
 
     private void updateInvoiceStatus(Date updateDate, Invoice invoice) {
-
         invoiceStatusRepo.save(new InvoiceStatus(null, invoice.getInvoiceId(),
                                                  com.hust.baseweb.applications.accounting.document.StatusItem.INVOICE_CREATED,
                                                  updateDate, null,
@@ -338,7 +335,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     }
 
     private Invoice createInvoice(Date createDate, Map<String, OrderHeader> orderHeaderMap) {
-
         OrderHeader orderHeader = new ArrayList<>(orderHeaderMap.values()).get(0);
         assert orderHeader != null;
         return invoiceService.save(new Invoice(
@@ -357,7 +353,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @NotNull
     private Map<String, ProductPrice> buildProductPriceMap(List<Product> products) {
-
         Date now = new Date();
         return productPriceRepo
             .findAllByProductInAndThruDateNullOrThruDateAfter(products, now)
@@ -371,8 +366,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         StatusItem statusItem,
         int quantity,
         OrderItem orderItem,
-        OrderHeader orderHeader, InventoryItem inventoryItem) {
-
+        OrderHeader orderHeader, InventoryItem inventoryItem
+    ) {
         ShipmentItem shipmentItem = new ShipmentItem();
         shipmentItem.setShipment(shipment);
         shipmentItem.setFacility(inventoryItem.getFacility());
@@ -389,7 +384,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @NotNull
     private Map<String, OrderHeader> buildOrderHeaderMap(ExportInventoryItemsInputModel inventoryItemsInput) {
-
         return orderHeaderRepo
             .findAllByOrderIdIn(Stream
                                     .of(inventoryItemsInput.getInventoryItems())
@@ -402,7 +396,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @NotNull
     private Shipment createAndSaveShipment() {
-
         Shipment shipment = new Shipment();
         shipment.setShipmentTypeId("SALES_SHIPMENT");
         shipment = shipmentRepo.save(shipment);
@@ -410,7 +403,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     }
 
     private void updateOrderHeaderAllExportedStatus(ExportInventoryItemsInputModel inventoryItemsInput) {
-
         if (inventoryItemsInput.getInventoryItems().length > 0) {
             OrderHeader orderHeader = orderHeaderRepo
                 .findById(inventoryItemsInput.getInventoryItems()[0].getOrderId())
@@ -430,7 +422,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @NotNull
     private List<Product> buildProducts(ExportInventoryItemsInputModel inventoryItemsInput) {
-
         List<String> productIds = Stream
             .of(inventoryItemsInput.getInventoryItems())
             .map(ExportInventoryItemInputModel::getProductId)
@@ -440,7 +431,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @NotNull
     private List<Facility> buildFacilities(ExportInventoryItemsInputModel inventoryItemsInput) {
-
         List<String> facilityIds = Stream
             .of(inventoryItemsInput.getInventoryItems())
             .map(ExportInventoryItemInputModel::getFacilityId)
@@ -450,7 +440,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @NotNull
     private Map<List<String>, OrderItem> buildOrderItemMap(ExportInventoryItemsInputModel inventoryItemsInput) {
-
         return orderItemRepo.findAllByOrderIdInAndOrderItemSeqIdIn(
             Stream
                 .of(inventoryItemsInput.getInventoryItems())
@@ -472,8 +461,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @NotNull
     private Map<List<String>, ProductFacility> getProductFacilityMap(
         List<Product> queryProducts,
-        List<Facility> queryFacilities) {
-
+        List<Facility> queryFacilities
+    ) {
         return productFacilityRepo.findByProductIdInAndFacilityIdIn(
             queryProducts.stream().map(Product::getProductId).collect(Collectors.toList()),
             queryFacilities.stream().map(Facility::getFacilityId).collect(Collectors.toList())
@@ -487,8 +476,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @NotNull
     private Map<List<String>, List<InventoryItem>> getInventoryItemsMap(
         List<Product> queryProducts,
-        List<Facility> queryFacilities) {
-
+        List<Facility> queryFacilities
+    ) {
         Map<List<String>, List<InventoryItem>> inventoryItemsMap = new HashMap<>();
         inventoryItemRepo.findAllByProductInAndFacilityInAndQuantityOnHandTotalGreaterThan(
             queryProducts, queryFacilities, 0).forEach(inventoryItem ->
@@ -502,13 +491,11 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @Override
     public Page<InventoryModel.OrderHeader> getInventoryOrderHeaderPage(Pageable page) {
-
         return orderHeaderPageRepo.findAllByExportedFalse(page).map(OrderHeader::toOrderHeaderModel);
     }
 
     @Override
     public List<InventoryModel.OrderItem> getInventoryOrderHeaderDetail(String facilityId, String orderId) {
-
         List<OrderItem> orderItems = orderItemRepo.findAllByOrderId(orderId);
         return convertOrderItemToModel(facilityId, orderItems);
     }
@@ -516,8 +503,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @NotNull
     private List<InventoryModel.OrderItem> convertOrderItemToModel(
         String facilityId,
-        List<OrderItem> orderItems) {
-
+        List<OrderItem> orderItems
+    ) {
         List<InventoryItemDetail> inventoryItemDetails = inventoryItemDetailRepo.findAllByOrderItemIn(orderItems);
         Map<String, Integer> exportedQuantityCounter = new HashMap<>();
         for (InventoryItemDetail inventoryItemDetail : inventoryItemDetails) {
@@ -567,7 +554,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @Override
     public List<InventoryModel.ExportDetail> getInventoryExportList(String facilityId) {
-
         List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByFacility(new Facility(facilityId));
         List<InventoryItemDetail> inventoryItemDetails = inventoryItemDetailRepo.findAllByOrderItemIn(shipmentItems
                                                                                                           .stream()
@@ -584,7 +570,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @Override
     public List<InventoryModel.ProductFacility> getInventoryList(String facilityId) {
-
         Facility facility = facilityRepo.findById(facilityId).orElseThrow(NoSuchElementException::new);
         List<ProductFacility> productFacilities = productFacilityRepo.findAllByFacilityId(facilityId);
         List<String> productIds = productFacilities

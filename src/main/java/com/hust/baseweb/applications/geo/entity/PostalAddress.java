@@ -47,8 +47,8 @@ public class PostalAddress {
         String locationCode,
         String address,
         GeoPoint geoPoint,
-        Double maxLoadWeight) {
-
+        Double maxLoadWeight
+    ) {
         this.contactMechId = contactMechId;
         this.locationCode = locationCode;
         this.address = address;

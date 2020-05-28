@@ -14,12 +14,10 @@ public class SalesRouteConfigManager {
     private String token;
 
     public SalesRouteConfigManager(String token) {
-
         this.token = token;
     }
 
     public List<SalesRouteConfig> getListSalesRouteConfigs() {
-
         try {
             String json = "{\"statusId\":null}";
 

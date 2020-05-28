@@ -73,7 +73,6 @@ public class Party {
     Person person;
 
     public Party(String partyCode, PartyType type, String description, Status partyStatus, boolean isUnread) {
-
         super();
         this.partyCode = partyCode;
         this.type = type;

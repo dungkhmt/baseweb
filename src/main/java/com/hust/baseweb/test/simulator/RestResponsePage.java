@@ -25,23 +25,20 @@ public class RestResponsePage<T> extends PageImpl<T> {
         @JsonProperty("totalPages") int totalPages,
         @JsonProperty("sort") JsonNode sort,
         @JsonProperty("first") boolean first,
-        @JsonProperty("numberOfElements") int numberOfElements) {
-
+        @JsonProperty("numberOfElements") int numberOfElements
+    ) {
         super(content, PageRequest.of(number, size), totalElements);
     }
 
     public RestResponsePage(List<T> content, Pageable pageable, long total) {
-
         super(content, pageable, total);
     }
 
     public RestResponsePage(List<T> content) {
-
         super(content);
     }
 
     public RestResponsePage() {
-
         super(new ArrayList<>());
     }
 }

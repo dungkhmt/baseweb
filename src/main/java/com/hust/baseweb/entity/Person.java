@@ -44,7 +44,6 @@ public class Person {
     //private String birthDate;
 
     public Person(UUID partyId, String firstName, String middleName, String lastName, String gender, Date birthDate) {
-
         this.partyId = partyId;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -54,7 +53,6 @@ public class Person {
     }
 
     public BasicInfoModel getBasicInfoModel() {
-
         return new BasicInfoModel(partyId, firstName + " " + middleName + " " + lastName, gender);
     }
 
@@ -78,7 +76,6 @@ public class Person {
 
     @Override
     public String toString() {
-
         return "Person{" +
                "partyId=" + partyId +
                ", firstName='" + firstName + '\'' +

@@ -21,7 +21,6 @@ public class RetailOutletSalesmanDistributorModel {
     private String distributorCode;
 
     public RetailOutletSalesmanDistributorModel(RetailOutletSalesmanVendor retailOutletSalesmanVendor) {
-
         this.retailOutletSalesmanVendorId = retailOutletSalesmanVendor.getRetailOutletSalesmanVendorId();
         this.partyRetailOutletId = retailOutletSalesmanVendor.getPartyRetailOutlet().getPartyId();
         this.retailOutletName = retailOutletSalesmanVendor.getPartyRetailOutlet().getRetailOutletName();
