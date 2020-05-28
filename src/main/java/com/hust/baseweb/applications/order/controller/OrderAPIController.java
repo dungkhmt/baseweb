@@ -129,7 +129,7 @@ public class OrderAPIController {
     }
 
     @PostMapping("/delete-all-orders")
-    public ResponseEntity<?> deleteAllOrders(@RequestBody OrderHeader.DeleteModel deleteModel) {
-        return ResponseEntity.ok(orderService.deleteOrder(deleteModel));
+    public ResponseEntity<?> deleteOrders(@RequestBody OrderHeader.DeleteModel deleteModel) {
+        return ResponseEntity.ok(orderService.deleteOrders(deleteModel));
     }
 }

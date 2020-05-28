@@ -30,5 +30,5 @@ public interface OrderService {
 
     boolean createPurchaseOrder(OrderHeader.PurchaseCreateModel purchaseCreateModel);
 
-    boolean deleteOrder(OrderHeader.DeleteModel deleteModel);
+    boolean deleteOrders(OrderHeader.DeleteModel deleteModel);
 }

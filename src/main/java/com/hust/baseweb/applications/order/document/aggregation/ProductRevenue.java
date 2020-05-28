@@ -19,8 +19,12 @@ public class ProductRevenue {
     private ProductRevenue.Id id;
     private double revenue;
 
-    public double increase(double value) {
-        revenue += value;
+    public double update(double value, RevenueUpdateType revenueUpdateType) {
+        if (revenueUpdateType == RevenueUpdateType.INCREASE) {
+            revenue += value;
+        } else {
+            revenue -= value;
+        }
         return revenue;
     }
 

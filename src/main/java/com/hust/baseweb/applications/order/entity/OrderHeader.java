@@ -74,7 +74,7 @@ public class OrderHeader {
 
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     //@OneToMany(fetch = FetchType.LAZY)
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
     //@JoinTable(name="OrderRole", inverseJoinColumns=@JoinColumn(name="party_id", referencedColumnName="party_id"),

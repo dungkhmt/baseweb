@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.logistics.entity.ProductPrice;
 import com.hust.baseweb.applications.logistics.repo.ProductPriceRepo;
 import com.hust.baseweb.applications.order.document.aggregation.CustomerRevenue;
 import com.hust.baseweb.applications.order.document.aggregation.ProductRevenue;
+import com.hust.baseweb.applications.order.document.aggregation.RevenueUpdateType;
 import com.hust.baseweb.applications.order.document.aggregation.TotalRevenue;
 import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.order.repo.mongodb.CustomerRevenueRepo;
@@ -85,7 +86,8 @@ Map<LocalDate, TotalRevenue> totalRevenueMap = getTotalRevenueMap(orderItems, or
     public void updateRevenue(
         List<OrderItem> orderItems,
         Function<OrderItem, Party> orderItemToCustomerFunction,
-        Function<OrderItem, LocalDate> orderItemToDateFunction
+        Function<OrderItem, LocalDate> orderItemToDateFunction,
+        RevenueUpdateType revenueUpdateType
     ) {
         executorService.execute(() -> {
             Map<LocalDate, TotalRevenue> totalRevenueMap = getTotalRevenueMap(orderItems, orderItemToDateFunction);
@@ -119,15 +121,15 @@ Map<LocalDate, TotalRevenue> totalRevenueMap = getTotalRevenueMap(orderItems, or
                 }
                 LocalDate date = orderItemToDateFunction.apply(orderItem);
 
-                totalRevenueMap.get(date).increase(revenue);
+                totalRevenueMap.get(date).update(revenue, revenueUpdateType);
 
                 customerRevenueMap.computeIfAbsent(
                     new CustomerRevenue.Id(customer.getPartyId(), date),
-                    id -> new CustomerRevenue(id, 0.0)).increase(revenue);
+                    id -> new CustomerRevenue(id, 0.0)).update(revenue, revenueUpdateType);
 
                 productRevenueMap.computeIfAbsent(
                     new ProductRevenue.Id(product.getProductId(), date),
-                    id -> new ProductRevenue(id, 0.0)).increase(revenue);
+                    id -> new ProductRevenue(id, 0.0)).update(revenue, revenueUpdateType);
             }
 
             totalRevenueRepo.saveAll(totalRevenueMap.values());

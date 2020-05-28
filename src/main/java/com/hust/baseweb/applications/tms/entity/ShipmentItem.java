@@ -41,7 +41,7 @@ public class ShipmentItem {
 
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     @JoinColumn(name = "order_item_seq_id", referencedColumnName = "order_item_seq_id")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private OrderItem orderItem;
 
     //@JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")

@@ -27,7 +27,7 @@ public class DeliveryTripDetailStatus {
     private UUID deliveryTripDetailStatusId;
 
     @JoinColumn(name = "delivery_trip_detail_id", referencedColumnName = "delivery_trip_detail_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private DeliveryTripDetail deliveryTripDetail;
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")

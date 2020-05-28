@@ -20,6 +20,7 @@ import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.repo.ShipmentItemRoleRepo;
 import com.hust.baseweb.applications.logistics.service.ProductService;
+import com.hust.baseweb.applications.order.document.aggregation.RevenueUpdateType;
 import com.hust.baseweb.applications.order.entity.CompositeOrderItemId;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.entity.OrderItem;
@@ -283,8 +284,8 @@ public class ShipmentServiceImpl implements ShipmentService {
             orderItemToCustomerMap::get,
             orderItem -> orderItemIdToDateMap.get(new CompositeOrderItemId(
                 orderItem.getOrderId(),
-                orderItem.getOrderItemSeqId())));
-
+                orderItem.getOrderItemSeqId())),
+            RevenueUpdateType.INCREASE);
         return shipment;
     }
 

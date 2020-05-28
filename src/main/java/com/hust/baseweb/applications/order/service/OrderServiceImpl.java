@@ -9,6 +9,7 @@ import com.hust.baseweb.applications.logistics.repo.*;
 import com.hust.baseweb.applications.logistics.service.ProductPriceService;
 import com.hust.baseweb.applications.order.controller.OrderAPIController;
 import com.hust.baseweb.applications.order.document.OrderHeaderRemoved;
+import com.hust.baseweb.applications.order.document.aggregation.RevenueUpdateType;
 import com.hust.baseweb.applications.order.entity.*;
 import com.hust.baseweb.applications.order.model.CreateOrderDistributor2RetailOutletInputModel;
 import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
@@ -261,7 +262,8 @@ public class OrderServiceImpl implements OrderService {
             orderItems,
             //orderItem -> partyCustomer,
             orderItem -> customer,
-            orderItem -> orderLocalDate
+            orderItem -> orderLocalDate,
+            RevenueUpdateType.INCREASE
         );
 
         return order;
@@ -568,13 +570,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean deleteOrder(OrderHeader.DeleteModel deleteModel) {
+    public boolean deleteOrders(OrderHeader.DeleteModel deleteModel) {
         try {
             List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderDateBetween(
                 Constant.DATE_FORMAT.parse(deleteModel.getFromDate()),
                 Constant.DATE_FORMAT.parse(deleteModel.getToDate()));
 
-            List<String> orderIds = orderHeaders.stream().map(OrderHeader::getOrderId).collect(Collectors.toList());
+            Map<String, OrderHeader> orderHeaderMap = orderHeaders
+                .stream()
+                .collect(Collectors.toMap(OrderHeader::getOrderId, o -> o));
+
+            List<String> orderIds = new ArrayList<>(orderHeaderMap.keySet());
 
             orderRoleRepo.deleteAllByOrderIdIn(orderIds);
 
@@ -586,34 +592,27 @@ public class OrderServiceImpl implements OrderService {
                 orderHeader.setOrderStatuses(orderIdToOrderStatuses.get(orderHeader.getOrderId()));
             }
 
-            orderStatusRepo.deleteAllByOrderIn(orderHeaders);
+//            orderStatusRepo.deleteAllByOrderIn(orderHeaders);
 
             List<OrderItem> orderItems = orderItemRepo.findAllByOrderIdIn(orderIds);
 
             List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByOrderItemIn(orderItems);
 
-            shipmentItemStatusRepo.deleteAllByShipmentItemIn(shipmentItems);
-
-            shipmentItemRoleRepo.deleteAllByShipmentItemIn(shipmentItems);
+//            shipmentItemStatusRepo.deleteAllByShipmentItemIn(shipmentItems);
+//
+//            shipmentItemRoleRepo.deleteAllByShipmentItemIn(shipmentItems);
 
             List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByShipmentItemIn(shipmentItems);
 
-            deliveryTripDetailStatusRepo.deleteAllByDeliveryTripDetailIn(deliveryTripDetails);
+//            deliveryTripDetailStatusRepo.deleteAllByDeliveryTripDetailIn(deliveryTripDetails);
 
-            // TODO: exception PSQLException: ERROR: update or delete on table "shipment_item" violates foreign key
-            //  constraint "fk_shipment_item_status_shipment_item_id" on table "shipment_item_status"
-            shipmentItemRepo.deleteInBatch(shipmentItems);
+            // exception PSQLException: ERROR: update or delete on table "shipment_item" violates foreign key
+            //  constraint "fk_shipment_item_status_shipment_item_id" on table "shipment_item_status" --> fixed
+//            shipmentItemRepo.deleteInBatch(shipmentItems);
 
-            shipmentRepo.deleteAllByShipmentIdIn(shipmentItems
-                                                     .stream()
-                                                     .map(shipmentItem -> shipmentItem
-                                                         .getShipment()
-                                                         .getShipmentId())
-                                                     .collect(Collectors.toList()));
+//            inventoryItemDetailRepo.deleteAllByOrderItemIn(orderItems);
 
-            inventoryItemDetailRepo.deleteAllByOrderItemIn(orderItems);
-
-            orderItemRepo.deleteAllByOrderIdIn(orderIds);
+//            orderItemRepo.deleteAllByOrderIdIn(orderIds);
 
             orderHeaderRepo.deleteAllByOrderIdIn(orderIds);
 

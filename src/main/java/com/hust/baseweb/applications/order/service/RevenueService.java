@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.order.service;
 
+import com.hust.baseweb.applications.order.document.aggregation.RevenueUpdateType;
 import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.entity.Party;
 
@@ -18,7 +19,8 @@ public interface RevenueService {
     void updateRevenue(
         List<OrderItem> orderItems,
         Function<OrderItem, Party> orderItemToCustomerFunction,
-        Function<OrderItem, LocalDate> orderItemToDateFunction
+        Function<OrderItem, LocalDate> orderItemToDateFunction,
+        RevenueUpdateType revenueUpdateType
     );
 
 }
