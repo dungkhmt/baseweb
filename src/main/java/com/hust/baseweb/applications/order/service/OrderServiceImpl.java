@@ -626,7 +626,18 @@ public class OrderServiceImpl implements OrderService {
 
             orderHeaderRemovedRepo.saveAll(orderHeadersRemoved);
 
-            // TODO: update revenue
+            // update revenue
+            revenueService.updateRevenue(
+                orderItems,
+                orderItem -> orderHeaderMap.get(orderItem.getOrderId()).getPartyCustomer(),
+                orderItem -> orderHeaderMap
+                    .get(orderItem.getOrderId())
+                    .getOrderDate()
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate(),
+                RevenueUpdateType.DECREASE
+            );
 
             return true;
         } catch (ParseException e) {
