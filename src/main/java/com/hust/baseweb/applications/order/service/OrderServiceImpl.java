@@ -590,7 +590,7 @@ public class OrderServiceImpl implements OrderService {
                 orderHeader.setOrderStatuses(orderIdToOrderStatuses.get(orderHeader.getOrderId()));
             }
 
-//            orderStatusRepo.deleteAllByOrderIn(orderHeaders);
+            orderStatusRepo.deleteAllByOrderIn(orderHeaders);
 
             List<OrderItem> orderItems = orderItemRepo.findAllByOrderIdIn(orderIds);
 
@@ -610,7 +610,7 @@ public class OrderServiceImpl implements OrderService {
 
 //            inventoryItemDetailRepo.deleteAllByOrderItemIn(orderItems);
 
-            orderItemRepo.deleteAllByOrderIdIn(orderIds);
+//            orderItemRepo.deleteAllByOrderIdIn(orderIds);
 
             orderHeaderRepo.deleteAllByOrderIdIn(orderIds);
 

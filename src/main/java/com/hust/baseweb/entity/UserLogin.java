@@ -47,7 +47,7 @@ public class UserLogin {
     private Party party;
 
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinTable(
         name = "user_login_security_group",
         joinColumns = @JoinColumn(name = "user_login_id", referencedColumnName = "user_login_id"),

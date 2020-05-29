@@ -32,7 +32,7 @@ public class InventoryItemDetail {
 
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     @JoinColumn(name = "order_item_seq_id", referencedColumnName = "order_item_seq_id")
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private OrderItem orderItem;
 
     public InventoryModel.ExportDetail toInventoryExportDetail() {
