@@ -30,9 +30,12 @@ public class InventoryItemDetail {
     @Column(name = "quantity_on_hand_diff")
     private int quantityOnHandDiff;
 
+    @Column(name = "order_id", insertable = false, updatable = false)
+    private String orderId;
+
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     @JoinColumn(name = "order_item_seq_id", referencedColumnName = "order_item_seq_id")
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.EAGER)
     private OrderItem orderItem;
 
     public InventoryModel.ExportDetail toInventoryExportDetail() {

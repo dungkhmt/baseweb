@@ -15,7 +15,7 @@ public class OrderStatus {
     private String orderStatusId;
 
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.EAGER)
     private OrderHeader order;
 
     //@JoinColumn(name="status_id", referencedColumnName="status_id")

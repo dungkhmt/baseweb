@@ -19,4 +19,6 @@ public interface ShipmentItemRepo extends JpaRepository<ShipmentItem, UUID> {
     List<ShipmentItem> findAllByFacility(Facility facility);
 
     List<ShipmentItem> findAllByOrderItemIn(Collection<OrderItem> orderItems);
+
+    List<ShipmentItem> findAllByOrderIdIn(Collection<String> orderIds);
 }

@@ -13,5 +13,5 @@ public interface InventoryItemDetailRepo extends
 
     List<InventoryItemDetail> findAllByOrderItemIn(List<OrderItem> orderItems);
 
-    void deleteAllByOrderItemIn(Collection<OrderItem> orderItems);
+    void deleteAllByOrderIdIn(Collection<String> orderIds);
 }

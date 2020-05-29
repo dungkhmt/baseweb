@@ -20,7 +20,7 @@ public class ShipmentItemRole {
     private UUID shipmentItemRoleId;
 
     @JoinColumn(name = "shipment_item_id", referencedColumnName = "shipment_item_id")
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne()
     private ShipmentItem shipmentItem;
 
     @JoinColumn(name = "party_id", referencedColumnName = "party_id")

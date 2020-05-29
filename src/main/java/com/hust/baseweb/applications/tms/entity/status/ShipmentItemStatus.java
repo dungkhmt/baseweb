@@ -26,7 +26,7 @@ public class ShipmentItemStatus {
     private UUID shipmentItemStatusId;
 
     @JoinColumn(name = "shipment_item_id", referencedColumnName = "shipment_item_id")
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.EAGER)
     private ShipmentItem shipmentItem;
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
