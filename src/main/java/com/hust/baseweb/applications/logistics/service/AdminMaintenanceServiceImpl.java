@@ -67,16 +67,16 @@ public class AdminMaintenanceServiceImpl implements AdminMaintenanceService {
         invoiceSequenceIdRepo.deleteAll();
         paymentSequenceIdRepo.deleteAll();
         shipmentItemDeliveryPlanRepo.deleteAll();
-        deliveryTripDetailStatusRepo.deleteAll();
-        deliveryTripDetailRepo.deleteAll();
+//        deliveryTripDetailStatusRepo.deleteAll();
+//        deliveryTripDetailRepo.deleteAll();
         shipmentItemRepo.deleteAll();
         orderHeaderRepo.deleteAll();
         shipmentRepo.deleteAll();
-        deliveryTripStatusRepo.deleteAll();
-        deliveryTripRepo.deleteAll();
+//        deliveryTripStatusRepo.deleteAll();
+//        deliveryTripRepo.deleteAll();
         deliveryPlanRepo.deleteAll();
         orderHeaderSequenceIdRepo.deleteAll();
-        receiptItemRepo.deleteAll();
+//        receiptItemRepo.deleteAll();
         receiptRepo.deleteAll();
         receiptSequenceIdRepo.deleteAll();
 

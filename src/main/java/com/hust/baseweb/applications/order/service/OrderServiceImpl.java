@@ -20,8 +20,6 @@ import com.hust.baseweb.applications.order.repo.mongodb.OrderHeaderRemovedRepo;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
 import com.hust.baseweb.applications.sales.service.PartySalesmanService;
-import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
-import com.hust.baseweb.applications.tms.entity.ShipmentItem;
 import com.hust.baseweb.applications.tms.repo.DeliveryTripDetailRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
@@ -596,13 +594,13 @@ public class OrderServiceImpl implements OrderService {
 
             List<OrderItem> orderItems = orderItemRepo.findAllByOrderIdIn(orderIds);
 
-            List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByOrderItemIn(orderItems);
+//            List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByOrderItemIn(orderItems);
 
 //            shipmentItemStatusRepo.deleteAllByShipmentItemIn(shipmentItems);
 //
 //            shipmentItemRoleRepo.deleteAllByShipmentItemIn(shipmentItems);
 
-            List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByShipmentItemIn(shipmentItems);
+//            List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByShipmentItemIn(shipmentItems);
 
 //            deliveryTripDetailStatusRepo.deleteAllByDeliveryTripDetailIn(deliveryTripDetails);
 
@@ -612,9 +610,11 @@ public class OrderServiceImpl implements OrderService {
 
 //            inventoryItemDetailRepo.deleteAllByOrderItemIn(orderItems);
 
-//            orderItemRepo.deleteAllByOrderIdIn(orderIds);
+            orderItemRepo.deleteAllByOrderIdIn(orderIds);
 
             orderHeaderRepo.deleteAllByOrderIdIn(orderIds);
+
+            log.info("Deleted {} order headers", orderIds.size());
 
             ModelMapper modelMapper = new ModelMapper();
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
