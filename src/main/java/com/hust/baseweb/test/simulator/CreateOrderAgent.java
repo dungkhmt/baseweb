@@ -91,11 +91,11 @@ public class CreateOrderAgent extends Thread {
     }
 
     public static void main(String[] args) {
-        NUMBER_THREADS = 1;
+        NUMBER_THREADS = 10;
 
         String token = Login.login("admin", "123");
         CreateOrderAgent createOrderAgent = new CreateOrderAgent(token);
-        createOrderAgent.setNbIters(5);
+        createOrderAgent.setNbIters(50);
         createOrderAgent.setFromDate("2020-01-01");
         createOrderAgent.setToDate("2020-05-05");
         createOrderAgent.start(NUMBER_THREADS);
