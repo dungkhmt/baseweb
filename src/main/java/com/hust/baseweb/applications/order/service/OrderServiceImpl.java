@@ -593,6 +593,14 @@ public class OrderServiceImpl implements OrderService {
                 orderHeader.setOrderStatuses(orderIdToOrderStatuses.get(orderHeader.getOrderId()));
             }
 
+            ModelMapper modelMapper = new ModelMapper();
+            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+
+            List<OrderHeaderRemoved> orderHeadersRemoved = orderHeaders
+                .stream()
+                .map(orderHeader -> modelMapper.map(orderHeader, OrderHeaderRemoved.class))
+                .collect(Collectors.toList());
+
             orderStatusRepo.deleteAllByOrderIn(orderHeaders);
             orderStatusRepo.flush();
 
@@ -627,14 +635,6 @@ public class OrderServiceImpl implements OrderService {
             orderHeaderRepo.flush();
 
             log.info("Deleted {} order headers", orderIds.size());
-
-            ModelMapper modelMapper = new ModelMapper();
-            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
-
-            List<OrderHeaderRemoved> orderHeadersRemoved = orderHeaders
-                .stream()
-                .map(orderHeader -> modelMapper.map(orderHeader, OrderHeaderRemoved.class))
-                .collect(Collectors.toList());
 
             orderHeaderRemovedRepo.saveAll(orderHeadersRemoved);
 
