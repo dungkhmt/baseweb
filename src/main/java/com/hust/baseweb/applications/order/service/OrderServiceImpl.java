@@ -583,6 +583,7 @@ public class OrderServiceImpl implements OrderService {
             List<String> orderIds = new ArrayList<>(orderHeaderMap.keySet());
 
             orderRoleRepo.deleteAllByOrderIdIn(orderIds);
+            orderRoleRepo.flush();
 
             Map<String, List<OrderStatus>> orderIdToOrderStatuses = orderStatusRepo
                 .findAllByOrderIn(orderHeaders)
@@ -593,28 +594,37 @@ public class OrderServiceImpl implements OrderService {
             }
 
             orderStatusRepo.deleteAllByOrderIn(orderHeaders);
+            orderStatusRepo.flush();
+
 
             List<OrderItem> orderItems = orderItemRepo.findAllByOrderIdIn(orderIds);
 
             List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByOrderIdIn(orderIds);
 
             shipmentItemStatusRepo.deleteAllByShipmentItemIn(shipmentItems);
+            shipmentItemStatusRepo.flush();
 //
             shipmentItemRoleRepo.deleteAllByShipmentItemIn(shipmentItems);
+            shipmentItemRoleRepo.flush();
 
             List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByShipmentItemIn(shipmentItems);
 
             deliveryTripDetailStatusRepo.deleteAllByDeliveryTripDetailIn(deliveryTripDetails);
+            deliveryTripDetailStatusRepo.flush();
 
             // exception PSQLException: ERROR: update or delete on table "shipment_item" violates foreign key
             //  constraint "fk_shipment_item_status_shipment_item_id" on table "shipment_item_status" --> fixed
             shipmentItemRepo.deleteInBatch(shipmentItems);
+            shipmentItemRepo.flush();
 
             inventoryItemDetailRepo.deleteAllByOrderIdIn(orderIds);
+            inventoryItemDetailRepo.flush();
 
             orderItemRepo.deleteAllByOrderIdIn(orderIds);
+            orderItemRepo.flush();
 
             orderHeaderRepo.deleteAllByOrderIdIn(orderIds);
+            orderHeaderRepo.flush();
 
             log.info("Deleted {} order headers", orderIds.size());
 
