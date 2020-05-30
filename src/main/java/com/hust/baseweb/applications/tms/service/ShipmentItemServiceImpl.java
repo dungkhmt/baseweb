@@ -195,26 +195,16 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     @Override
     public List<ShipmentItemModel> findAllByUserLoginNotInDeliveryPlan(UserLogin userLogin, String deliveryPlanId) {
         // to be improved by adding indicator (status) fields to shipment_items --> done
-        List<ShipmentItemRole> shipmentItemRoles = shipmentItemRoleRepo.findByPartyAndThruDateNull(userLogin.getParty());
-        List<ShipmentItem> shipmentItems = shipmentItemRoles
+
+        return shipmentItemRoleRepo
+            .findAllByPartyAndStatusItemAndDeliveryPlanIdNotEqual(
+                userLogin.getParty(),
+                "SHIPMENT_ITEM_CREATED",
+                UUID.fromString(deliveryPlanId)
+            )
             .stream()
             .map(ShipmentItemRole::getShipmentItem)
-            .collect(Collectors.toList());
-
-        Set<String> shipmentItemIdsInDeliveryPlans
-            = shipmentItemDeliveryPlanRepo
-            .findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
-            .stream()
-            .map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
-            .collect(Collectors.toSet());
-
-        return shipmentItems
-            .stream()
-            .filter(shipmentItem -> shipmentItem.getStatusItem().getStatusId().equals("SHIPMENT_ITEM_CREATED")
-                                    &&
-                                    !shipmentItemIdsInDeliveryPlans.contains(shipmentItem
-                                                                                 .getShipmentItemId()
-                                                                                 .toString()))
+            .distinct()
             .map(ShipmentItem::toShipmentItemModel)
             .collect(Collectors.toList());
     }
