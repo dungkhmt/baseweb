@@ -26,11 +26,11 @@ public class ShipmentItemStatus {
     private UUID shipmentItemStatusId;
 
     @JoinColumn(name = "shipment_item_id", referencedColumnName = "shipment_item_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private ShipmentItem shipmentItem;
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private StatusItem statusItem;
 
     private Date fromDate;

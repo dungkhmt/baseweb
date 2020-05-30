@@ -27,17 +27,17 @@ public class DeliveryTripDetailStatus {
     private UUID deliveryTripDetailStatusId;
 
     @JoinColumn(name = "delivery_trip_detail_id", referencedColumnName = "delivery_trip_detail_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private DeliveryTripDetail deliveryTripDetail;
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private StatusItem statusItem;
 
     private Date fromDate;
     private Date thruDate;
 
     @JoinColumn(name = "updated_by_user_login_id", referencedColumnName = "user_login_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private UserLogin userLogin;
 }

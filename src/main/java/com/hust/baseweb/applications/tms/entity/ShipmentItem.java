@@ -30,7 +30,7 @@ public class ShipmentItem {
     private Shipment shipment;
 
     @JoinColumn(name = "facility_id", referencedColumnName = "facility_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Facility facility;
 
     @Column(name = "quantity")
@@ -44,23 +44,23 @@ public class ShipmentItem {
 
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     @JoinColumn(name = "order_item_seq_id", referencedColumnName = "order_item_seq_id")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private OrderItem orderItem;
 
     //@JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
-    //@ManyToOne(fetch = FetchType.EAGER)
+    //@ManyToOne(fetch = FetchType.LAZY)
     //private PartyCustomer customer;
 
     @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Party partyCustomer;
 
     @JoinColumn(name = "ship_to_location_id", referencedColumnName = "contact_mech_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PostalAddress shipToLocation;
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private StatusItem statusItem;
 
     private Integer scheduledQuantity = 0;

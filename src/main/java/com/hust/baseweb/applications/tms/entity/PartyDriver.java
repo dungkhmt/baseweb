@@ -24,15 +24,15 @@ public class PartyDriver {
     private UUID partyId;
 
     @JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private Person person;
 
     @JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private Party party;
 
     //@JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    //@ManyToOne(fetch = FetchType.EAGER)
+    //@ManyToOne(fetch = FetchType.LAZY)
     //private UserLogin userLogin;
 
     public Model toModel() {

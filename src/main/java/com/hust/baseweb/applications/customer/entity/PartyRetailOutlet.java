@@ -23,7 +23,7 @@ public class PartyRetailOutlet {
     private UUID partyId;
 
     @JoinColumn(name = "party_type_id", referencedColumnName = "party_type_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PartyType partyType;
 
     @Column(name = "retail_outlet_code")

@@ -28,7 +28,7 @@ public class Facility {
     private String facilityName;
 
     @JoinColumn(name = "contact_mech_id", referencedColumnName = "contact_mech_id")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private PostalAddress postalAddress;
 
     private Date createdStamp;

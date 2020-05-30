@@ -20,11 +20,11 @@ public class InventoryItem {
     private UUID inventoryItemId;
 
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private Product product;
 
     @JoinColumn(name = "facility_id", referencedColumnName = "facility_id")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private Facility facility;
 
     @Column(name = "lot_id")

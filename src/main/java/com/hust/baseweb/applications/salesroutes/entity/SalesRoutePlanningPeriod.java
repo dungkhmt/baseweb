@@ -29,7 +29,7 @@ public class SalesRoutePlanningPeriod {
     private String description;
 
     @JoinColumn(name = "created_by", referencedColumnName = "user_login_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private UserLogin createdByUserLogin;
 
 }
