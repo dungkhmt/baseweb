@@ -13,6 +13,7 @@ import java.util.UUID;
 @Setter
 
 public class SalesRoutePlanningPeriod {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "sales_route_planning_period_id")
@@ -28,7 +29,7 @@ public class SalesRoutePlanningPeriod {
     private String description;
 
     @JoinColumn(name = "created_by", referencedColumnName = "user_login_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private UserLogin createdByUserLogin;
 
 }

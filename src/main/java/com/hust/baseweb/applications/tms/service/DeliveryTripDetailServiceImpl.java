@@ -50,15 +50,19 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     private TransportService transportService;
 
     @Override
-    public int save(String deliveryTripId,
-                    List<DeliveryTripDetailModel.Create> inputs) {
+    public int save(
+        String deliveryTripId,
+        List<DeliveryTripDetailModel.Create> inputs
+    ) {
         Date now = new Date();
 
         UUID deliveryTripIdUuid = UUID.fromString(deliveryTripId);
-        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(deliveryTripIdUuid)
+        DeliveryTrip deliveryTrip = deliveryTripRepo
+            .findById(deliveryTripIdUuid)
             .orElseThrow(NoSuchElementException::new);
 
-        StatusItem deliveryTripCreated = statusItemRepo.findById("DELIVERY_TRIP_CREATED")
+        StatusItem deliveryTripCreated = statusItemRepo
+            .findById("DELIVERY_TRIP_CREATED")
             .orElseThrow(NoSuchElementException::new);
         if (!deliveryTrip.getStatusItem().equals(deliveryTripCreated)) {
             return 0;
@@ -68,15 +72,19 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
         List<DeliveryTripDetail> deliveryTripDetails = new ArrayList<>();
 
-        StatusItem shipmentItemCreated = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
+        StatusItem shipmentItemCreated = statusItemRepo
+            .findById("SHIPMENT_ITEM_CREATED")
             .orElseThrow(NoSuchElementException::new);
-        StatusItem shipmentItemScheduledTripStatus = statusItemRepo.findById("SHIPMENT_ITEM_SCHEDULED_TRIP")
+        StatusItem shipmentItemScheduledTripStatus = statusItemRepo
+            .findById("SHIPMENT_ITEM_SCHEDULED_TRIP")
             .orElseThrow(NoSuchElementException::new);
-        StatusItem deliveryTripDetailScheduledTripStatus = statusItemRepo.findById("DELIVERY_TRIP_DETAIL_SCHEDULED_TRIP")
+        StatusItem deliveryTripDetailScheduledTripStatus = statusItemRepo
+            .findById("DELIVERY_TRIP_DETAIL_SCHEDULED_TRIP")
             .orElseThrow(NoSuchElementException::new);
 
-        Map<ShipmentItem, List<ShipmentItemStatus>> shipmentItemToStatusMap = shipmentItemStatusRepo.findAllByShipmentItemInAndThruDateNull(
-            shipmentItemMap.values())
+        Map<ShipmentItem, List<ShipmentItemStatus>> shipmentItemToStatusMap = shipmentItemStatusRepo
+            .findAllByShipmentItemInAndThruDateNull(
+                shipmentItemMap.values())
             .stream()
             .collect(Collectors.groupingBy(ShipmentItemStatus::getShipmentItem));
 
@@ -92,11 +100,11 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             }
 
             log.info("save, find ShipmentItem " +
-                shipmentItem.getShipment().getShipmentId() +
-                "," +
-                shipmentItem.getShipmentItemId() +
-                ", product = " +
-                shipmentItem.getOrderItem().getProduct().getProductId());
+                     shipmentItem.getShipment().getShipmentId() +
+                     "," +
+                     shipmentItem.getShipmentItemId() +
+                     ", product = " +
+                     shipmentItem.getOrderItem().getProduct().getProductId());
 
             deliveryTripDetail.setShipmentItem(shipmentItem);
             deliveryTripDetail.setDeliveryQuantity(input.getDeliveryQuantity());
@@ -112,7 +120,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
                 for (ShipmentItemStatus shipmentItemStatus : shipmentItemStatuses) {
                     shipmentItemStatus.setThruDate(now);
                 }
-                shipmentItemStatuses.add(new ShipmentItemStatus(null,
+                shipmentItemStatuses.add(new ShipmentItemStatus(
+                    null,
                     shipmentItem,
                     shipmentItemScheduledTripStatus,
                     now,
@@ -127,19 +136,23 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         deliveryTrip.setDeliveryTripDetailCount(deliveryTrip.getDeliveryTripDetailCount() + deliveryTripDetails.size());
         deliveryTripRepo.save(deliveryTrip);
 
-        deliveryTripDetailStatusRepo.saveAll(deliveryTripDetails.stream()
-            .map(deliveryTripDetail -> new DeliveryTripDetailStatus(null,
-                deliveryTripDetail,
-                deliveryTripDetailScheduledTripStatus,
-                now,
-                null,
-                null)).collect(Collectors.toList()));   // TODO: update user login id
+        deliveryTripDetailStatusRepo.saveAll(deliveryTripDetails
+                                                 .stream()
+                                                 .map(deliveryTripDetail -> new DeliveryTripDetailStatus(
+                                                     null,
+                                                     deliveryTripDetail,
+                                                     deliveryTripDetailScheduledTripStatus,
+                                                     now,
+                                                     null,
+                                                     null))
+                                                 .collect(Collectors.toList()));   // TODO: update user login id
 
         shipmentItemRepo.saveAll(shipmentItemMap.values()); // update scheduled quantity
         shipmentItemStatusRepo.saveAll(shipmentItemToStatusMap.values().stream().flatMap(Collection::stream).collect(
             Collectors.toList())); // convert List<List<T>> --> List<T>
 
-        DeliveryTripModel.Tour deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(deliveryTripId,
+        DeliveryTripModel.Tour deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(
+            deliveryTripId,
             new ArrayList<>());
 
         deliveryTrip = updateDeliveryTripInfo(deliveryTrip, deliveryTripInfo);
@@ -160,11 +173,13 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
     @NotNull
     private Map<UUID, ShipmentItem> buildShipmentItemMap(List<DeliveryTripDetailModel.Create> inputs) {
-        return shipmentItemRepo.findAllByShipmentItemIdIn(
-            inputs.stream()
-                .map(DeliveryTripDetailModel.Create::getShipmentItemId)
-                .distinct()
-                .collect(Collectors.toList()))
+        return shipmentItemRepo
+            .findAllByShipmentItemIdIn(
+                inputs
+                    .stream()
+                    .map(DeliveryTripDetailModel.Create::getShipmentItemId)
+                    .distinct()
+                    .collect(Collectors.toList()))
             .stream()
             .collect(Collectors.toMap(ShipmentItem::getShipmentItemId, shipmentItem -> shipmentItem));
     }
@@ -189,10 +204,12 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         Date now = new Date();
 
         UUID deliveryTripDetailIdUuid = UUID.fromString(deliveryTripDetailId);
-        DeliveryTripDetail deliveryTripDetail = deliveryTripDetailRepo.findById(deliveryTripDetailIdUuid)
+        DeliveryTripDetail deliveryTripDetail = deliveryTripDetailRepo
+            .findById(deliveryTripDetailIdUuid)
             .orElseThrow(NoSuchElementException::new);
 
-        StatusItem deliveryTripDetailScheduledTrip = statusItemRepo.findById("DELIVERY_TRIP_DETAIL_SCHEDULED_TRIP")
+        StatusItem deliveryTripDetailScheduledTrip = statusItemRepo
+            .findById("DELIVERY_TRIP_DETAIL_SCHEDULED_TRIP")
             .orElseThrow(NoSuchElementException::new);
 
         if (!deliveryTripDetail.getStatusItem().equals(deliveryTripDetailScheduledTrip)) {
@@ -207,8 +224,11 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
         DeliveryTrip deliveryTrip = deliveryTripDetail.getDeliveryTrip();
 
-        DeliveryTripModel.Tour deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(deliveryTrip.getDeliveryTripId()
-            .toString(), new ArrayList<>());
+        DeliveryTripModel.Tour deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(
+            deliveryTrip
+                .getDeliveryTripId()
+                .toString(),
+            new ArrayList<>());
 
         updateDeliveryTripInfo(deliveryTrip, deliveryTripInfo);
 
@@ -221,14 +241,18 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         return true;
     }
 
-    private void updateShipmentItemStatusOnDeleteDeliveryTripDetail(Date updateDate,
-                                                                    DeliveryTripDetail deliveryTripDetail) {
+    private void updateShipmentItemStatusOnDeleteDeliveryTripDetail(
+        Date updateDate,
+        DeliveryTripDetail deliveryTripDetail
+    ) {
         // set shipment item status
         ShipmentItem shipmentItem = deliveryTripDetail.getShipmentItem();
 
-        StatusItem shipmentItemCreated = statusItemRepo.findById("SHIPMENT_ITEM_CREATED")
+        StatusItem shipmentItemCreated = statusItemRepo
+            .findById("SHIPMENT_ITEM_CREATED")
             .orElseThrow(NoSuchElementException::new);
-        StatusItem shipmentItemScheduledTrip = statusItemRepo.findById("SHIPMENT_ITEM_SCHEDULED_TRIP")
+        StatusItem shipmentItemScheduledTrip = statusItemRepo
+            .findById("SHIPMENT_ITEM_SCHEDULED_TRIP")
             .orElseThrow(NoSuchElementException::new);
 
         if (shipmentItem.getStatusItem().equals(shipmentItemScheduledTrip)) {
@@ -238,7 +262,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             for (ShipmentItemStatus shipmentItemStatus : shipmentItemStatuses) {
                 shipmentItemStatus.setThruDate(updateDate);
             }
-            shipmentItemStatuses.add(new ShipmentItemStatus(null,
+            shipmentItemStatuses.add(new ShipmentItemStatus(
+                null,
                 shipmentItem,
                 shipmentItemCreated,
                 updateDate,
@@ -247,32 +272,36 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         }
 
         shipmentItem.setScheduledQuantity(shipmentItem.getScheduledQuantity() -
-            deliveryTripDetail.getDeliveryQuantity());
+                                          deliveryTripDetail.getDeliveryQuantity());
         shipmentItemRepo.save(shipmentItem);
     }
 
     @Override
     public Page<DeliveryTripDetail> findAll(String deliveryTripId, Pageable pageable) {
-        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId))
+        DeliveryTrip deliveryTrip = deliveryTripRepo
+            .findById(UUID.fromString(deliveryTripId))
             .orElseThrow(NoSuchElementException::new);
         return deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip, pageable);
     }
 
     @Override
     public DeliveryTripDetailModel.OrderItems findAll(String deliveryTripId) {
-        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId))
+        DeliveryTrip deliveryTrip = deliveryTripRepo
+            .findById(UUID.fromString(deliveryTripId))
             .orElseThrow(NoSuchElementException::new);
         List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip);
         if (deliveryTripDetails == null || deliveryTripDetails.isEmpty()) {
             return new DeliveryTripDetailModel.OrderItems(new ArrayList<>(), null, null);
         }
-        GeoPoint facilityGeoPoint = deliveryTripDetails.get(0)
+        GeoPoint facilityGeoPoint = deliveryTripDetails
+            .get(0)
             .getShipmentItem()
             .getFacility()
             .getPostalAddress()
             .getGeoPoint();
         return new DeliveryTripDetailModel.OrderItems(
-            deliveryTripDetails.stream()
+            deliveryTripDetails
+                .stream()
                 .map(DeliveryTripDetail::toDeliveryTripDetailModel)
                 .collect(Collectors.toList()),
             facilityGeoPoint.getLatitude(),
@@ -284,11 +313,12 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     @Override
     @Transactional
     public DeliveryTripDetail updateStatusDeliveryTripDetail(
-        UUID deliveryTripDetailId, String statusId) {
+        UUID deliveryTripDetailId, String statusId
+    ) {
         log.info("updateStatusDeliveryTripDetail, deliveryTripDetailId = " +
-            deliveryTripDetailId +
-            ", statusId = " +
-            statusId);
+                 deliveryTripDetailId +
+                 ", statusId = " +
+                 statusId);
         StatusItem statusItem = statusItemRepo.findByStatusId(statusId);
         DeliveryTripDetail dtd = deliveryTripDetailRepo.findByDeliveryTripDetailId(deliveryTripDetailId);
         if (dtd == null) {
@@ -297,10 +327,10 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         dtd.setStatusItem(statusItem);
         dtd = deliveryTripDetailRepo.save(dtd);
         log.info("updateStatusDeliveryTripDetail, deliveryTripDetailId = " +
-            deliveryTripDetailId +
-            ", statusId = " +
-            statusId +
-            " DONE");
+                 deliveryTripDetailId +
+                 ", statusId = " +
+                 statusId +
+                 " DONE");
 
         return dtd;
     }
@@ -310,7 +340,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     public boolean completeDeliveryTripDetail(UUID... deliveryTripDetailIds) {
         Date now = new Date();
 
-        List<DeliveryTripDetail> deliveryTripDetails = updateDeliveryTripDetailStatusOnCompleted(now,
+        List<DeliveryTripDetail> deliveryTripDetails = updateDeliveryTripDetailStatusOnCompleted(
+            now,
             deliveryTripDetailIds);
 
         if (!deliveryTripDetails.isEmpty()) {
@@ -325,12 +356,16 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         return false;
     }
 
-    private void updateDeliveryTripOnCompleted(Date updateDate,
-                                               DeliveryTripDetail... deliveryTripDetails) {
-        StatusItem deliveryTripCompletedStatus = statusItemRepo.findById("DELIVERY_TRIP_COMPLETED")
+    private void updateDeliveryTripOnCompleted(
+        Date updateDate,
+        DeliveryTripDetail... deliveryTripDetails
+    ) {
+        StatusItem deliveryTripCompletedStatus = statusItemRepo
+            .findById("DELIVERY_TRIP_COMPLETED")
             .orElseThrow(NoSuchElementException::new);
 
-        List<DeliveryTrip> deliveryTrips = Arrays.stream(deliveryTripDetails)
+        List<DeliveryTrip> deliveryTrips = Arrays
+            .stream(deliveryTripDetails)
             .map(DeliveryTripDetail::getDeliveryTrip)
             .distinct()
             .collect(Collectors.toList());
@@ -339,8 +374,10 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             deliveryTrip.setCompletedDeliveryTripDetailCount(deliveryTrip.getCompletedDeliveryTripDetailCount() + 1);
         }
 
-        List<DeliveryTrip> completedDeliveryTrips = deliveryTrips.stream()
-            .filter(deliveryTrip -> deliveryTrip.getCompletedDeliveryTripDetailCount()
+        List<DeliveryTrip> completedDeliveryTrips = deliveryTrips
+            .stream()
+            .filter(deliveryTrip -> deliveryTrip
+                .getCompletedDeliveryTripDetailCount()
                 .equals(deliveryTrip.getDeliveryTripDetailCount()))
             .collect(Collectors.toList());
 
@@ -353,13 +390,15 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             if (!completedDeliveryTripStatuses.isEmpty()) {
                 completedDeliveryTripStatuses.forEach(deliveryTripStatus -> deliveryTripStatus.setThruDate(updateDate));
 
-                completedDeliveryTripStatuses.addAll(completedDeliveryTrips.stream()
-                    .map(deliveryTrip -> new DeliveryTripStatus(null,
-                        deliveryTrip,
-                        deliveryTripCompletedStatus,
-                        updateDate,
-                        null))
-                    .collect(Collectors.toList()));
+                completedDeliveryTripStatuses.addAll(completedDeliveryTrips
+                                                         .stream()
+                                                         .map(deliveryTrip -> new DeliveryTripStatus(
+                                                             null,
+                                                             deliveryTrip,
+                                                             deliveryTripCompletedStatus,
+                                                             updateDate,
+                                                             null))
+                                                         .collect(Collectors.toList()));
 
                 deliveryTripStatusRepo.saveAll(completedDeliveryTripStatuses);
             }
@@ -368,22 +407,27 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
         }
     }
 
-    private void updateShipmentItemStatusOnCompleted(Date updateDate,
-                                                     DeliveryTripDetail... deliveryTripDetails) {
-        StatusItem shipmentItemCompletedStatus = statusItemRepo.findById("SHIPMENT_ITEM_COMPLETED")
+    private void updateShipmentItemStatusOnCompleted(
+        Date updateDate,
+        DeliveryTripDetail... deliveryTripDetails
+    ) {
+        StatusItem shipmentItemCompletedStatus = statusItemRepo
+            .findById("SHIPMENT_ITEM_COMPLETED")
             .orElseThrow(NoSuchElementException::new);
 
         for (DeliveryTripDetail deliveryTripDetail : deliveryTripDetails) {
             ShipmentItem shipmentItem = deliveryTripDetail.getShipmentItem();
             shipmentItem.setCompletedQuantity(shipmentItem.getCompletedQuantity() +
-                deliveryTripDetail.getDeliveryQuantity());
+                                              deliveryTripDetail.getDeliveryQuantity());
         }
-        List<ShipmentItem> shipmentItems = Arrays.stream(deliveryTripDetails)
+        List<ShipmentItem> shipmentItems = Arrays
+            .stream(deliveryTripDetails)
             .map(DeliveryTripDetail::getShipmentItem)
             .distinct()
             .collect(Collectors.toList());
 
-        List<ShipmentItem> completedShipmentItems = shipmentItems.stream()
+        List<ShipmentItem> completedShipmentItems = shipmentItems
+            .stream()
             .filter(shipmentItem -> shipmentItem.getCompletedQuantity() == shipmentItem.getQuantity())
             .collect(Collectors.toList());
 
@@ -396,29 +440,35 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             completedShipmentItems);
         statusItems.forEach(shipmentItemStatus -> shipmentItemStatus.setThruDate(updateDate));
 
-        statusItems.addAll(completedShipmentItems.stream()
-            .map(shipmentItem -> new ShipmentItemStatus(null,
-                shipmentItem,
-                shipmentItemCompletedStatus,
-                updateDate,
-                null
-            )).collect(Collectors.toList()));
+        statusItems.addAll(completedShipmentItems.stream().map(shipmentItem -> new ShipmentItemStatus(
+            null,
+            shipmentItem,
+            shipmentItemCompletedStatus,
+            updateDate,
+            null
+        )).collect(Collectors.toList()));
         shipmentItemStatusRepo.saveAll(statusItems);
     }
 
-    private List<DeliveryTripDetail> updateDeliveryTripDetailStatusOnCompleted(Date updateDate,
-                                                                               UUID... deliveryTripDetailIds) {
+    private List<DeliveryTripDetail> updateDeliveryTripDetailStatusOnCompleted(
+        Date updateDate,
+        UUID... deliveryTripDetailIds
+    ) {
         String deliveryTripDetailCompleted = "DELIVERY_TRIP_DETAIL_COMPLETED";
-        StatusItem deliveryTripDetailCompletedStatus = statusItemRepo.findById(deliveryTripDetailCompleted)
+        StatusItem deliveryTripDetailCompletedStatus = statusItemRepo
+            .findById(deliveryTripDetailCompleted)
             .orElseThrow(NoSuchElementException::new);
 
         List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTripDetailIdIn(
             Arrays.asList(deliveryTripDetailIds));
 
-        deliveryTripDetails = deliveryTripDetails.stream()
-            .filter(deliveryTripDetail -> !deliveryTripDetail.getStatusItem()
+        deliveryTripDetails = deliveryTripDetails
+            .stream()
+            .filter(deliveryTripDetail -> !deliveryTripDetail
+                .getStatusItem()
                 .getStatusId()
-                .equals(deliveryTripDetailCompleted)).collect(Collectors.toList());
+                .equals(deliveryTripDetailCompleted))
+            .collect(Collectors.toList());
 
         deliveryTripDetails.forEach(deliveryTripDetail -> deliveryTripDetail.setStatusItem(
             deliveryTripDetailCompletedStatus));
@@ -428,14 +478,16 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             deliveryTripDetails);
         deliveryTripDetailStatuses.forEach(deliveryTripDetailStatus -> deliveryTripDetailStatus.setThruDate(updateDate));
 
-        deliveryTripDetailStatuses.addAll(deliveryTripDetails.stream()
-            .map(deliveryTripDetail -> new DeliveryTripDetailStatus(null,
-                deliveryTripDetail,
-                deliveryTripDetailCompletedStatus,
-                updateDate,
-                null,
-                null))
-            .collect(Collectors.toList()));
+        deliveryTripDetailStatuses.addAll(deliveryTripDetails
+                                              .stream()
+                                              .map(deliveryTripDetail -> new DeliveryTripDetailStatus(
+                                                  null,
+                                                  deliveryTripDetail,
+                                                  deliveryTripDetailCompletedStatus,
+                                                  updateDate,
+                                                  null,
+                                                  null))
+                                              .collect(Collectors.toList()));
 
         deliveryTripDetailStatusRepo.saveAll(deliveryTripDetailStatuses);
         return deliveryTripDetails;

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PartySalesmanRepo extends PagingAndSortingRepository<PartySalesman, UUID> {
+
     PartySalesman findByPartyId(UUID partyId);
 
     List<PartySalesman> findAll();

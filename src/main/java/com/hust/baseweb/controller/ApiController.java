@@ -19,6 +19,7 @@ import java.util.Map;
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ApiController {
+
     public static final String module = ApiController.class.getName();
     private SecurityGroupService securityGroupService;
     //private TrackLocationsService trackLocationsService;
@@ -26,7 +27,6 @@ public class ApiController {
 
     @GetMapping("/")
     public ResponseEntity<Map> home(Principal principal) {
-
         System.out.println(module + "::home");
         Map<String, String> response = new HashMap<>();
         response.put("user", principal.getName());

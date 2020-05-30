@@ -29,6 +29,7 @@ import java.util.UUID;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class GeoAPIController {
+
     private PostalAddressPagingRepo postalAddressPagingRepo;
     private PostalAddressRepo postalAddressRepo;
     private GeoPointRepo geoPointRepo;
@@ -38,10 +39,15 @@ public class GeoAPIController {
     private DistanceTravelTimePostalAddressService distanceTravelTimePostalAddressService;
 
     @PostMapping("/compute-missing-address-distances")
-    public ResponseEntity<?> computeMissingAddressDistance(Principal principal,
-                                                           @RequestBody ComputeMissingDistanceInputModel input) {
-        int cnt = distanceTravelTimePostalAddressService.computeMissingDistance(input.getDistanceSource(),
-            input.getSpeedTruck(), input.getSpeedMotorbike(), input.getMaxElements());
+    public ResponseEntity<?> computeMissingAddressDistance(
+        Principal principal,
+        @RequestBody ComputeMissingDistanceInputModel input
+    ) {
+        int cnt = distanceTravelTimePostalAddressService.computeMissingDistance(
+            input.getDistanceSource(),
+            input.getSpeedTruck(),
+            input.getSpeedMotorbike(),
+            input.getMaxElements());
         return ResponseEntity.ok().body(cnt);
     }
 
@@ -60,8 +66,10 @@ public class GeoAPIController {
     }
 
     @PostMapping("/get-info-postal-to-display-in-map/{contactMechId}")
-    public ResponseEntity<?> getInfoPostalToDisplayInMap(@PathVariable String contactMechId,
-                                                         @RequestBody InputModel inputModel) {
+    public ResponseEntity<?> getInfoPostalToDisplayInMap(
+        @PathVariable String contactMechId,
+        @RequestBody InputModel inputModel
+    ) {
         log.info("getInfoPostalToDisplayInMap");
         PostalAddress postalAddress = postalAddressRepo.findByContactMechId(UUID.fromString(contactMechId));
         Double lat = postalAddress.getGeoPoint().getLatitude();
@@ -75,8 +83,10 @@ public class GeoAPIController {
 
     @PostMapping("/geo-change-location-info-with-googlemap/{contactMechId}")
     // TODO: fix typo --> google-map in frontend
-    public void geoChangeLocationInfoWithGoogleMap(@PathVariable String contactMechId,
-                                                   @RequestBody InputModelGetInfoPostalAddressChangeWithGoogleMap input) {
+    public void geoChangeLocationInfoWithGoogleMap(
+        @PathVariable String contactMechId,
+        @RequestBody InputModelGetInfoPostalAddressChangeWithGoogleMap input
+    ) {
         PostalAddress postalAddress = postalAddressRepo.findByContactMechId(UUID.fromString(contactMechId));
         postalAddress.setAddress(input.getAddress());
         GeoPoint geoPoint = postalAddress.getGeoPoint();
@@ -108,12 +118,15 @@ public class GeoAPIController {
     }
 
     @PostMapping("/get-distance-postal-address-info-with-key/{fromContactMechId}/{toContactMechId}")
-    ResponseEntity<?> getDistancePostalAddressInfoWithKey(@PathVariable String fromContactMechId,
-                                                          @PathVariable String toContactMechId,
-                                                          @RequestBody InputModel inputModel) {
+    ResponseEntity<?> getDistancePostalAddressInfoWithKey(
+        @PathVariable String fromContactMechId,
+        @PathVariable String toContactMechId,
+        @RequestBody InputModel inputModel
+    ) {
         log.info("getDistancePostalAddressInfoWithKey");
         DistanceTravelTimePostalAddressEmbeddableId distanceTravelTimePostalAddressEmbeddableId =
-            new DistanceTravelTimePostalAddressEmbeddableId(UUID.fromString(fromContactMechId),
+            new DistanceTravelTimePostalAddressEmbeddableId(
+                UUID.fromString(fromContactMechId),
                 UUID.fromString(toContactMechId));
         DistanceTravelTimePostalAddress distanceTravelTimePostalAddress =
             distanceTravelTimePostalAddressRepo.findByDistanceTravelTimePostalAddressEmbeddableId(

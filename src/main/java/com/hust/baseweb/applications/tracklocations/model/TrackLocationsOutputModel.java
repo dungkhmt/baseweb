@@ -10,6 +10,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class TrackLocationsOutputModel {
+
     private UUID trackLocationId;
 
     private String partyId;

@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class InputDepotTrailerModel {
+
     String lat;
     String lng;
     String address;

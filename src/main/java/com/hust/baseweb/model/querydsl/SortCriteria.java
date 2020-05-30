@@ -1,6 +1,7 @@
 package com.hust.baseweb.model.querydsl;
 
 public class SortCriteria {
+
     private String field;
     private boolean isAsc;
 

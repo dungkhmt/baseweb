@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateDistributorInputModel {
+
     private String distributorCode;
     private String distributorName;
     private String address;

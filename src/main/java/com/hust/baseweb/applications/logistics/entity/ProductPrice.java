@@ -15,6 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ProductPrice {
+
     @Id
     @Column(name = "product_price_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,7 +23,7 @@ public class ProductPrice {
 
 
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
     @JoinColumn(name = "currency_uom_id", referencedColumnName = "uom_id")
@@ -63,6 +64,7 @@ public class ProductPrice {
     @Getter
     @Setter
     public static class Model {
+
         private String productId;
         private Double price;
         private String currencyUomId;

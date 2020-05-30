@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PostalAddressJpaRepo extends JpaRepository<PostalAddress, UUID> {
+
     List<PostalAddress> findAll();
 
 

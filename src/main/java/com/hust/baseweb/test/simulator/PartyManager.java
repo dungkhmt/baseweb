@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.customer.model.PartyCustomerModel;
 import java.util.List;
 
 public class PartyManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 

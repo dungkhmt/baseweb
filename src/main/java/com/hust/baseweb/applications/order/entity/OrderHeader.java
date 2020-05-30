@@ -22,17 +22,18 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderHeader {
+
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
     private String orderId;
 
     @JoinColumn(name = "order_type_id", referencedColumnName = "order_type_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private OrderType orderType;
 
     @JoinColumn(name = "sales_channel_id", referencedColumnName = "sales_channel_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private SalesChannel salesChannel;
 
     @Column(name = "order_date")
@@ -42,7 +43,7 @@ public class OrderHeader {
     private Double grandTotal;
 
     @JoinColumn(name = "ship_to_address_id", referencedColumnName = "contact_mech_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PostalAddress shipToPostalAddress;
 
     private Boolean exported = false;
@@ -54,16 +55,16 @@ public class OrderHeader {
     private Date lastUpdatedStamp;
 
     @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     //private PartyCustomer partyCustomer;
     private Party partyCustomer;
 
     @JoinColumn(name = "vendor_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Party partyVendor;
 
     @JoinColumn(name = "party_salesman_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Party partySalesman;
 
 
@@ -73,14 +74,17 @@ public class OrderHeader {
 
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     //@OneToMany(fetch = FetchType.LAZY)
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
 
     //@JoinTable(name="OrderRole", inverseJoinColumns=@JoinColumn(name="party_id", referencedColumnName="party_id"),
     //			joinColumns=@JoinColumn(name="order_id", referencedColumnName="order_id"))
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     private Set<OrderRole> orderRoles;
+
+    @Transient
+    private List<OrderStatus> orderStatuses;
 
     @NotNull
     public static String convertSequenceIdToOrderId(Long id) {
@@ -113,6 +117,7 @@ public class OrderHeader {
     @Getter
     @Setter
     public static class PurchaseModel {
+
         private String orderId;
         private String createdStamp;
         private String supplierName;
@@ -124,6 +129,7 @@ public class OrderHeader {
     @Getter
     @Setter
     public static class PurchaseCreateModel {
+
         private String supplierPartyId;
         private List<ProductQuantity> productQuantities;
 
@@ -132,8 +138,19 @@ public class OrderHeader {
         @Getter
         @Setter
         public static class ProductQuantity {
+
             private String productId;
             private Integer quantity;
         }
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class DeleteModel {
+
+        private String fromDate;
+        private String toDate;
     }
 }

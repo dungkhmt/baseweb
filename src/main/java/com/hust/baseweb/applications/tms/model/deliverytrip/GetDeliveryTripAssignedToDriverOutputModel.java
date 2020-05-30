@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetDeliveryTripAssignedToDriverOutputModel {
+
     private DeliveryTripModel.HeaderView[] deliveryTripHeaders;
 
 }

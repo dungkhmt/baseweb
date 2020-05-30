@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetTotalRevenueInputModel {
+
     private String fromDate;
     private String toDate;
 

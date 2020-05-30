@@ -10,6 +10,7 @@ import java.io.InputStream;
 
 @Repository
 public class FileRepoImpl implements FileRepo {
+
     @Value("${content-repo.url}")
     private String contentRepoUrl;
     private static final MediaType MEDIA_TYPE_IMAGE = MediaType.parse("image/*");
@@ -17,15 +18,17 @@ public class FileRepoImpl implements FileRepo {
 
     @Override
     public String create(InputStream input, String name, String realName, String contentType) throws IOException {
-        RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("id", name)
-            .addFormDataPart("file",
+
+        RequestBody requestBody = new MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("id", name)
+            .addFormDataPart(
+                "file",
                 realName,
                 RequestBody.create(MediaType.parse(contentType), IOUtils.toByteArray(input)))
             .build();
 
-        Request request = new Request.Builder()
-
-            .url(contentRepoUrl).post(requestBody).build();
+        Request request = new Request.Builder().url(contentRepoUrl).post(requestBody).build();
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
@@ -38,6 +41,7 @@ public class FileRepoImpl implements FileRepo {
 
     @Override
     public Response get(String url) throws IOException {
+
         Request request = new Request.Builder().url(contentRepoUrl + url).build();
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) {

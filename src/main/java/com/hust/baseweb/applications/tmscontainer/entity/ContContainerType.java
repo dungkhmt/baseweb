@@ -16,6 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContContainerType {
+
     @Id
     @Column(name = "container_type_id")
     private String containerTypeId;

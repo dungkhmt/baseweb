@@ -10,6 +10,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DetailRetailOutletModel {
+
     private UUID partyRetailOutletId;
     private String retailOutletName;
     private String retailOutletCode;

@@ -13,5 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 public class OutputContDepotTrailerModel {
+
     List<ContDepotTrailer> list;
 }

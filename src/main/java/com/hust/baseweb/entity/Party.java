@@ -20,6 +20,7 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 public class Party {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "party_id")

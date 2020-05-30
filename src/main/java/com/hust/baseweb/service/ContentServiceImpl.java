@@ -16,6 +16,7 @@ import java.util.UUID;
 
 @Service
 public class ContentServiceImpl implements ContentService {
+
     @Autowired
     private ContentRepo contentRepo;
     @Autowired
@@ -24,6 +25,7 @@ public class ContentServiceImpl implements ContentService {
     @Override
     @Transactional
     public Content createContent(InputStream inputStream, String realName, String contentType) throws IOException {
+
         Content content = new Content(ContentTypeConstant.DOCUMENT.name(), null, new Date());
         content = contentRepo.save(content);
         String url = fileRepo.create(inputStream, content.getContentId().toString(), realName, contentType);
@@ -35,6 +37,7 @@ public class ContentServiceImpl implements ContentService {
 
     @Override
     public Response getContentData(String contentId) throws IOException {
+
         Content content = contentRepo.findById(UUID.fromString(contentId)).orElse(null);
         if (content != null) {
             return fileRepo.get(content.getUrl());

@@ -37,6 +37,7 @@ import java.util.UUID;
 @Log4j2
 
 public class CustomerAPIController {
+
     public static final String module = CustomerAPIController.class.getName();
 
     private PartyCustomerRepo partyCustomerRepo;
@@ -84,8 +85,10 @@ public class CustomerAPIController {
     }
 
     @PostMapping("/get-distributors-of-user-login")
-    public ResponseEntity<?> getDistributorsOfUserLogin(Principal principal,
-                                                        @RequestBody GetDistributorsOfUserLoginInputModel input) {
+    public ResponseEntity<?> getDistributorsOfUserLogin(
+        Principal principal,
+        @RequestBody GetDistributorsOfUserLoginInputModel input
+    ) {
         UserLogin userLogin = userService.findById(principal.getName());
 //        System.out.println(module + "::getDistributorsOfUserLogin");
         // TODO: to be upgrade and revise
@@ -119,7 +122,7 @@ public class CustomerAPIController {
     public ResponseEntity<?> createRetailOutlet(Principal principal, @RequestBody CreateRetailOutletInputModel input) {
         UserLogin u = userService.findById(principal.getName());
         log.info("createRetailOutlet, user-login = " + u.getUserLoginId() + ", retail-outlet name = " +
-            input.getRetailOutletName() + ", retail-outlet code = " + input.getRetailOutletCode());
+                 input.getRetailOutletName() + ", retail-outlet code = " + input.getRetailOutletCode());
 
         PartyRetailOutlet retailOutlet = retailOutletService.save(input);
 

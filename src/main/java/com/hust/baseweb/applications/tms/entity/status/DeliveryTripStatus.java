@@ -20,16 +20,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeliveryTripStatus {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID deliveryTripStatusId;
 
     @JoinColumn(name = "delivery_trip_id", referencedColumnName = "delivery_trip_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private DeliveryTrip deliveryTrip;
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private StatusItem statusItem;
 
     private Date fromDate;

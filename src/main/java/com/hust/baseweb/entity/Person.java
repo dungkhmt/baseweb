@@ -22,6 +22,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Person {
+
     @Id
     @Column(name = "party_id")
     private UUID partyId;
@@ -59,6 +60,7 @@ public class Person {
     @NoArgsConstructor
     @Getter
     public static class BasicInfoModel {
+
         private UUID partyId;
         private String fullName;
         private String gender;
@@ -75,15 +77,15 @@ public class Person {
     @Override
     public String toString() {
         return "Person{" +
-            "partyId=" + partyId +
-            ", firstName='" + firstName + '\'' +
-            ", middleName='" + middleName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", gender='" + gender + '\'' +
-            ", birthDate=" + birthDate +
-            ", name='" + name + '\'' +
-            ", userName='" + userName + '\'' +
-            '}';
+               "partyId=" + partyId +
+               ", firstName='" + firstName + '\'' +
+               ", middleName='" + middleName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", gender='" + gender + '\'' +
+               ", birthDate=" + birthDate +
+               ", name='" + name + '\'' +
+               ", userName='" + userName + '\'' +
+               '}';
     }
 }
 

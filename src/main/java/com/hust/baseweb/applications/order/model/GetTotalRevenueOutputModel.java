@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 
 public class GetTotalRevenueOutputModel {
+
     private GetTotalRevenueItemOutputModel[] revenues;
 
     public GetTotalRevenueOutputModel() {

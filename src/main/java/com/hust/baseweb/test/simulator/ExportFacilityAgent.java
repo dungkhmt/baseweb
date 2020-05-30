@@ -19,6 +19,7 @@ import java.util.Random;
 @Getter
 @Setter
 public class ExportFacilityAgent extends Thread {
+
     public static final String module = ExportFacilityAgent.class.getName();
 
     private Random rand = new Random();
@@ -50,8 +51,9 @@ public class ExportFacilityAgent extends Thread {
 
     public void createAShipment() throws Exception {
         // get first Page<InventoryModel.OrderHeader> (call API /get-inventory-order-header/page)
-        String response = executor.execGetUseToken(Constants.URL_ROOT +
-                "/api/get-inventory-order-header/page?size=5&page=0",
+        String response = executor.execGetUseToken(
+            Constants.URL_ROOT +
+            "/api/get-inventory-order-header/page?size=5&page=0",
             null,
             token);
 
@@ -60,7 +62,8 @@ public class ExportFacilityAgent extends Thread {
         ObjectMapper objectMapper = new ObjectMapper();
 
 //        new InstanceCreator<PageImpl<InventoryModel.OrderHeader>>()
-        PageImpl<InventoryModel.OrderHeader> pageInventoryOrder = objectMapper.readValue(response,
+        PageImpl<InventoryModel.OrderHeader> pageInventoryOrder = objectMapper.readValue(
+            response,
             new TypeReference<RestResponsePage<InventoryModel.OrderHeader>>() {
             });
 //        PageImpl<InventoryModel.OrderHeader> pageInventoryOrder = gson.fromJson(response,
@@ -71,11 +74,13 @@ public class ExportFacilityAgent extends Thread {
         int randomPageIndex = rand.nextInt(pageInventoryOrder.getTotalPages());
 
         // get the pid(th) Page<InventoryModel.OrderHeader> (call API /get-inventory-order-header/page)
-        response = executor.execGetUseToken(Constants.URL_ROOT +
-                "/api/get-inventory-order-header/page?size=5&page=" + randomPageIndex,
+        response = executor.execGetUseToken(
+            Constants.URL_ROOT +
+            "/api/get-inventory-order-header/page?size=5&page=" + randomPageIndex,
             null,
             token);
-        pageInventoryOrder = objectMapper.readValue(response,
+        pageInventoryOrder = objectMapper.readValue(
+            response,
             new TypeReference<RestResponsePage<InventoryModel.OrderHeader>>() {
             });
         List<InventoryModel.OrderHeader> content = pageInventoryOrder.getContent();
@@ -88,40 +93,50 @@ public class ExportFacilityAgent extends Thread {
         List<Facility> facilities = facilityManager.getListFacility();
         Facility randomFacility = facilities.get(rand.nextInt(facilities.size()));
 
-        response = executor.execPostUseToken(Constants.URL_ROOT +
-                "/api/get-inventory-order-detail",
+        response = executor.execPostUseToken(
+            Constants.URL_ROOT +
+            "/api/get-inventory-order-detail",
             "{\"orderId\":\"" +
-                orderHeader.getOrderId() +
-                "\",\"facilityId\":\"" +
-                randomFacility.getFacilityId() +
-                "\"}",
+            orderHeader.getOrderId() +
+            "\",\"facilityId\":\"" +
+            randomFacility.getFacilityId() +
+            "\"}",
             token);
-        List<InventoryModel.OrderItem> orderItems = gson.fromJson(response,
+        List<InventoryModel.OrderItem> orderItems = gson.fromJson(
+            response,
             new TypeToken<ArrayList<InventoryModel.OrderItem>>() {
             }.getType());
 
         // enter randomly the quantity to be exported for each order-item
         ExportInventoryItemsInputModel exportInventoryItemsInputModel = new ExportInventoryItemsInputModel();
-        ExportInventoryItemInputModel[] exportInventoryItemInputModels = orderItems.stream()
+        ExportInventoryItemInputModel[] exportInventoryItemInputModels = orderItems
+            .stream()
             .filter(orderItem ->
-                orderItem.getQuantity() > orderItem.getExportedQuantity() &&
-                    orderItem.getQuantity() - orderItem.getExportedQuantity() <
+                        orderItem.getQuantity() >
+                        orderItem.getExportedQuantity() &&
+                        orderItem.getQuantity() -
+                        orderItem.getExportedQuantity() <
                         orderItem.getInventoryQuantity())
             .map(orderItem -> {
                 ExportInventoryItemInputModel exportInventoryItemInputModel = new ExportInventoryItemInputModel();
                 exportInventoryItemInputModel.setProductId(orderItem.getProductId());
                 exportInventoryItemInputModel.setFacilityId(randomFacility.getFacilityId());
                 exportInventoryItemInputModel.setOrderId(orderItem.getOrderId());
-                exportInventoryItemInputModel.setQuantity(rand.nextInt((Math.min(orderItem.getQuantity() -
-                    orderItem.getExportedQuantity(), orderItem.getInventoryQuantity()))) + 1);
+                exportInventoryItemInputModel.setQuantity(rand.nextInt((Math.min(
+                    orderItem.getQuantity() -
+                    orderItem.getExportedQuantity(),
+                    orderItem.getInventoryQuantity()))) +
+                                                          1);
                 exportInventoryItemInputModel.setOrderItemSeqId(orderItem.getOrderItemSeqId());
                 return exportInventoryItemInputModel;
-            }).toArray(ExportInventoryItemInputModel[]::new);
+            })
+            .toArray(ExportInventoryItemInputModel[]::new);
         exportInventoryItemsInputModel.setInventoryItems(exportInventoryItemInputModels);
 
         // perform export (call API /export-inventory-items)
-        executor.execPostUseToken(Constants.URL_ROOT +
-                "/api/export-inventory-items",
+        executor.execPostUseToken(
+            Constants.URL_ROOT +
+            "/api/export-inventory-items",
             gson.toJson(exportInventoryItemsInputModel),
             token);
     }

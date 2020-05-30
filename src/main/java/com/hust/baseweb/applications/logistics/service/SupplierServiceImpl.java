@@ -42,10 +42,13 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public Supplier create(Supplier.CreateModel supplierModel) {
         Party party = new Party(null, partyTypeRepo.findByPartyTypeId("PARTY_SUPPLIER"), "",
-            statusRepo.findById(Status.StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
-            false);
+                                statusRepo
+                                    .findById(Status.StatusEnum.PARTY_ENABLED.name())
+                                    .orElseThrow(NoSuchElementException::new),
+                                false);
         party = partyRepo.save(party);
-        return supplierRepo.save(new Supplier(party.getPartyId(),
+        return supplierRepo.save(new Supplier(
+            party.getPartyId(),
             supplierModel.getSupplierName(),
             supplierModel.getSupplierCode()));
     }

@@ -11,6 +11,7 @@ import com.hust.baseweb.applications.customer.model.GetListRetailOutletOutputMod
 import java.util.List;
 
 public class CustomerManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 

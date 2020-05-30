@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AddInputModel {
+
     private int a;
     private int b;
 

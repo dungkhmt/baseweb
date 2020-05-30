@@ -18,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContRequestImportEmpty {
+
     @Id
     @Column(name = "request_import_empty_id")
     @GeneratedValue(strategy = GenerationType.AUTO)

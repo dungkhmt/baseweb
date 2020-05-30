@@ -24,8 +24,10 @@ public class SalesRoutePlanningPeriodServiceImpl implements
     private SalesRoutePlanningPeriodRepo salesRoutePlanningPeriodRepo;
 
     @Override
-    public SalesRoutePlanningPeriod save(String fromDateYYYYMMDD, String toDateYYYYMMDD,
-                                         String description) {
+    public SalesRoutePlanningPeriod save(
+        String fromDateYYYYMMDD, String toDateYYYYMMDD,
+        String description
+    ) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date fromDate = null;
         Date toDate = null;

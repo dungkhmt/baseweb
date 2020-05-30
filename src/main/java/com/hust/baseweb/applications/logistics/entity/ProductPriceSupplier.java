@@ -18,17 +18,18 @@ import java.util.UUID;
 @Setter
 @Entity
 public class ProductPriceSupplier {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "product_price_supplier_id")
     private UUID productPriceSupplierId; // uuid not null default uuid_generate_v1(),
 
     @JoinColumn(name = "party_supplier_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Supplier partySupplier; // uuid not null,
 
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Product product; // varchar(60),
 
     private Integer unitPrice; // int,
@@ -44,6 +45,7 @@ public class ProductPriceSupplier {
     @Getter
     @Setter
     public static class Model {
+
         private String productId;
         private String productName;
         private Integer unitPrice;
@@ -54,6 +56,7 @@ public class ProductPriceSupplier {
     @Getter
     @Setter
     public static class SetModel {
+
         private String supplierPartyId;
         private String productId;
         private Integer unitPrice;

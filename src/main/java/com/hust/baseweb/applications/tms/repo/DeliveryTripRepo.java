@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DeliveryTripRepo extends JpaRepository<DeliveryTrip, UUID> {
+
     Page<DeliveryTrip> findAllByDeliveryPlan(DeliveryPlan deliveryPlan, Pageable pageable);
 
     List<DeliveryTrip> findAllByDeliveryPlan(DeliveryPlan deliveryPlan);

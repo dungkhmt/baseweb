@@ -10,6 +10,7 @@ import java.util.Date;
 @Setter
 @Getter
 public class Enumeration {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "enum_id")

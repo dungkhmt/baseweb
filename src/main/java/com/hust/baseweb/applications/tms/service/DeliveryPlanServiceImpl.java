@@ -25,7 +25,6 @@ public class DeliveryPlanServiceImpl implements DeliveryPlanService {
 
     @Override
     public DeliveryPlan save(DeliveryPlanModel.Create input) {
-
         DeliveryPlan deliveryPlan = new DeliveryPlan();
         deliveryPlan.setCreatedByUserLoginId(input.getCreatedByUserLoginId());
         deliveryPlan.setDescription(input.getDescription());
@@ -53,7 +52,8 @@ public class DeliveryPlanServiceImpl implements DeliveryPlanService {
 
     @Override
     public Double getTotalWeightShipmentItems(UUID deliveryPlanId) {
-        return deliveryPlanRepo.findById(deliveryPlanId)
+        return deliveryPlanRepo
+            .findById(deliveryPlanId)
             .orElseThrow(NoSuchElementException::new)
             .getTotalWeightShipmentItems();
     }

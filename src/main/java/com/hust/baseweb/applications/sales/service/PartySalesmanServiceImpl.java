@@ -24,6 +24,7 @@ import java.util.UUID;
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PartySalesmanServiceImpl implements PartySalesmanService {
+
     private PartySalesmanRepo partySalesmanRepo;
     private UserLoginRepo userLoginRepo;
     private UserService userService;

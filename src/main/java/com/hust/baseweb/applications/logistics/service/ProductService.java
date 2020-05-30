@@ -7,6 +7,7 @@ import java.util.List;
 
 @Service
 public interface ProductService {
+
     Product findByProductId(String productId);
 
     List<Product> getAllProducts();
@@ -15,22 +16,26 @@ public interface ProductService {
 
     void saveProduct(Product product);
 
-    Product save(String productId,
-                 String productName,
-                 String productTransportCategory,
-                 double productWeight,
-                 String uomId,
-                 Integer hsThu,
-                 Integer hsPal);
+    Product save(
+        String productId,
+        String productName,
+        String productTransportCategory,
+        double productWeight,
+        String uomId,
+        Integer hsThu,
+        Integer hsPal
+    );
 
-    Product save(String productId,
-                 String productName,
-                 String type,
-                 String productTransportCategory,
-                 double productWeight,
-                 String uomId,
-                 Integer hsThu,
-                 Integer hsPal,
-                 List<String> contentIds);
+    Product save(
+        String productId,
+        String productName,
+        String type,
+        String productTransportCategory,
+        double productWeight,
+        String uomId,
+        Integer hsThu,
+        Integer hsPal,
+        List<String> contentIds
+    );
 
 }

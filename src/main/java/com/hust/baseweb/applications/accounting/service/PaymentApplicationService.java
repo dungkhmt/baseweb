@@ -8,6 +8,7 @@ import java.util.List;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface PaymentApplicationService {
+
     List<PaymentApplication.Model> findAllByInvoiceId(String invoiceId);
 
     List<PaymentApplication.Model> findAllByPaymentId(String paymentId);

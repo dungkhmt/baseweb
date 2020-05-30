@@ -13,6 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PartyCustomerModel {
+
     private String partyCustomerId;
     private String partyTypeId;
     private String customerCode;

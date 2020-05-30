@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface SalesReportService {
+
     DateBasedRevenueReportOutputModel computeDateBasedRevenue(String fromDate, String toDate);
 
     SaleReportModel.Output getSaleReports(SaleReportModel.Input input);

@@ -16,8 +16,9 @@ import java.util.UUID;
 @Table(name = "party")
 @Getter
 @Setter
-@SecondaryTables({@SecondaryTable(name = "person"),
-    @SecondaryTable(name = "user_login", pkJoinColumns = @PrimaryKeyJoinColumn(name = "party_id"))})
+@SecondaryTables({
+                     @SecondaryTable(name = "person"),
+                     @SecondaryTable(name = "user_login", pkJoinColumns = @PrimaryKeyJoinColumn(name = "party_id"))})
 public class DUserCombineEntity {
 
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
@@ -38,7 +39,7 @@ public class DUserCombineEntity {
     private String gender;
     @Column(table = "person")
     private Date birthDate;
-    // @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    // @OneToMany(fetch = FetchType.EAGER)
     // @JoinTable(name = "user_login_security_group", joinColumns = @JoinColumn(name
     // = "user_login_id", referencedColumnName = "user_login_id"),
     // inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName =

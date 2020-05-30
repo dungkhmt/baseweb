@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PartyDepartmentRepo extends JpaRepository<PartyDepartment, UUID> {
+
     PartyDepartment save(PartyDepartment partyDepartment);
 
     List<PartyDepartment> findByPartyAndThruDate(Party party, Date thruDate);

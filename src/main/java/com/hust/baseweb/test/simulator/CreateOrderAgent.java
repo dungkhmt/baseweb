@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter
 @Log4j2
 public class CreateOrderAgent extends Thread {
+
     public static final String module = CreateOrderAgent.class.getName();
     //OkHttpClient client = new OkHttpClient();
 
@@ -90,11 +91,11 @@ public class CreateOrderAgent extends Thread {
     }
 
     public static void main(String[] args) {
-        NUMBER_THREADS = 1;
+        NUMBER_THREADS = 10;
 
         String token = Login.login("admin", "123");
         CreateOrderAgent createOrderAgent = new CreateOrderAgent(token);
-        createOrderAgent.setNbIters(5);
+        createOrderAgent.setNbIters(50);
         createOrderAgent.setFromDate("2020-01-01");
         createOrderAgent.setToDate("2020-05-05");
         createOrderAgent.start(NUMBER_THREADS);
@@ -194,7 +195,8 @@ public class CreateOrderAgent extends Thread {
 
                 sumTime += time;
 //                log.info("finished " + i + "/" + nbIters + ", time = " + time + ", avgTime = " + sumTime / i);
-                log.info("Finished {}/{}, time = {}, maxTime = {}",
+                log.info(
+                    "Finished {}/{}, time = {}, maxTime = {}",
                     i,
                     nbIters,
                     time,
@@ -330,7 +332,8 @@ public class CreateOrderAgent extends Thread {
             String json = gson.toJson(input);
 
             double t0 = System.currentTimeMillis();
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-order-distributor-to-retail-outlet",
+            String rs = executor.execPostUseToken(
+                Constants.URL_ROOT + "/api/create-order-distributor-to-retail-outlet",
                 json,
                 token);
             //System.out.println(module + "::createOrder, rs = " + rs);
@@ -344,6 +347,7 @@ public class CreateOrderAgent extends Thread {
     }
 
     private class DataManager {
+
         private List<Product> products;
         private List<Facility> facilities;
         private List<PartyCustomerModel> customers;

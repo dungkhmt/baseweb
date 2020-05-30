@@ -12,6 +12,7 @@ import javax.persistence.Id;
 @Setter
 
 public class Department {
+
     @Id
     //@GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "department_id")

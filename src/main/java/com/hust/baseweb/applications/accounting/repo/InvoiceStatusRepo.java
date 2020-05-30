@@ -9,4 +9,5 @@ import java.util.UUID;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface InvoiceStatusRepo extends MongoRepository<InvoiceStatus, UUID> {
+
 }

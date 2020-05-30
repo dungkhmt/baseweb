@@ -13,6 +13,7 @@ import java.util.UUID;
 @Setter
 @ToString
 public class Content {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "content_id")

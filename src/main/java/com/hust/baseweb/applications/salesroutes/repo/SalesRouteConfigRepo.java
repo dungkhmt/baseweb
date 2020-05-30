@@ -7,5 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface SalesRouteConfigRepo extends JpaRepository<SalesRouteConfig, UUID> {
+
     List<SalesRouteConfig> findAll();
 }

@@ -75,12 +75,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<Payment> saveAll(List<Payment> payments) {
-        List<Payment> newPayments = payments.stream()
-            .filter(payment -> payment.getPaymentId() == null).collect(Collectors.toList());
+        List<Payment> newPayments = payments
+            .stream()
+            .filter(payment -> payment.getPaymentId() == null)
+            .collect(Collectors.toList());
         if (!newPayments.isEmpty()) {
-            List<PaymentSequenceId> ids = paymentSequenceIdRepo.saveAll(newPayments.stream()
-                .map(payment -> new PaymentSequenceId())
-                .collect(Collectors.toList()));
+            List<PaymentSequenceId> ids = paymentSequenceIdRepo.saveAll(newPayments
+                                                                            .stream()
+                                                                            .map(payment -> new PaymentSequenceId())
+                                                                            .collect(Collectors.toList()));
             for (int i = 0; i < newPayments.size(); i++) {
                 payments.get(i).setPaymentId(Payment.convertSequenceIdToPaymentId(ids.get(i).getId()));
             }

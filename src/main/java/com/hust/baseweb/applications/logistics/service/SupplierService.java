@@ -8,6 +8,7 @@ import java.util.List;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface SupplierService {
+
     Supplier getSupplierById(String supplierPartyId);
 
     List<Supplier> getAllSupplier();

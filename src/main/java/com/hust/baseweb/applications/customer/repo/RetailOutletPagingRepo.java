@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface RetailOutletPagingRepo extends PagingAndSortingRepository<PartyRetailOutlet, UUID> {
+
     List<PartyRetailOutlet> findAllByRetailOutletCodeIn(List<String> retailOutletCodes);
 
     PartyRetailOutlet findByPartyId(UUID partyId);

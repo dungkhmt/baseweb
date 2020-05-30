@@ -9,10 +9,10 @@ import java.util.UUID;
 
 @Service
 public interface SalesRouteDetailService {
+
     int generateSalesRouteDetailOfSalesman(UUID partySalesmanId, UUID salesRoutePlanningPeriodId);
 
     List<PartyRetailOutlet> getRetailOutletsVisitedSalesmanDay(UUID partySalesmanId, String date);
 
-    List<SalesRouteDetailRepo
-        .GetSalesRouteDetailOfPlanPeriodOutputModel> getSalesRouteDetailOfPlanPeriod(UUID salesRoutePlanningPeriodId);
+    List<SalesRouteDetailRepo.GetSalesRouteDetailOfPlanPeriodOutputModel> getSalesRouteDetailOfPlanPeriod(UUID salesRoutePlanningPeriodId);
 }

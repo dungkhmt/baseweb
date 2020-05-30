@@ -9,4 +9,5 @@ import java.util.UUID;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface ReceiptItemRepo extends JpaRepository<ReceiptItem, UUID> {
+
 }

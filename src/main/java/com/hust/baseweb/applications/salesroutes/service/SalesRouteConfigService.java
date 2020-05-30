@@ -7,6 +7,7 @@ import java.util.List;
 
 @Service
 public interface SalesRouteConfigService {
+
     SalesRouteConfig save(String days, int repeatWeek);
 
     List<SalesRouteConfig> findAll();

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 public class CreateRetailOutletFromCustomer {
+
     private Random rand = new Random();
     private Thread thread = null;
     private String token;
@@ -40,7 +41,8 @@ public class CreateRetailOutletFromCustomer {
                 Gson gson = new Gson();
                 String json = gson.toJson(input);
                 try {
-                    String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-retail-outlet",
+                    String rs = executor.execPostUseToken(
+                        Constants.URL_ROOT + "/api/create-retail-outlet",
                         json,
                         token);
 //                    System.out.println("Create retail outlet, rs = " + rs);

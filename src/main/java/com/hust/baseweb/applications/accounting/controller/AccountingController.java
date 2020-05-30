@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class AccountingController {
+
     private PaymentService paymentService;
     private InvoiceService invoiceService;
     private InvoiceItemService invoiceItemService;
@@ -55,7 +56,9 @@ public class AccountingController {
     }
 
     @GetMapping("/get-unpaid-invoice-by-distributor-id/{distributorId}")
-    public ResponseEntity<Invoice.DistributorUnpaidModel> getUnpaidInvoiceByDistributorId(@PathVariable String distributorId) {
+    public ResponseEntity<Invoice.DistributorUnpaidModel> getUnpaidInvoiceByDistributorId(
+        @PathVariable String distributorId
+    ) {
         return ResponseEntity.ok(invoiceService.getUnpaidInvoiceByDistributor(distributorId));
     }
 
@@ -75,7 +78,9 @@ public class AccountingController {
     }
 
     @GetMapping("/get-all-payment-application-by-invoice-id/{invoiceId}")
-    public ResponseEntity<List<PaymentApplication.Model>> getAllPaymentApplicationByInvoiceId(@PathVariable String invoiceId) {
+    public ResponseEntity<List<PaymentApplication.Model>> getAllPaymentApplicationByInvoiceId(
+        @PathVariable String invoiceId
+    ) {
         return ResponseEntity.ok(paymentApplicationService.findAllByInvoiceId(invoiceId));
     }
 
@@ -90,22 +95,28 @@ public class AccountingController {
     }
 
     @GetMapping("/get-page-unpaid-invoices")
-    public ResponseEntity<Page<Invoice.Model>> getPageUnpaidInvoices(@RequestParam(value = "filtering", required = false) String filtering,
-                                                                     Pageable pageable) {
+    public ResponseEntity<Page<Invoice.Model>> getPageUnpaidInvoices(
+        @RequestParam(value = "filtering", required = false) String filtering,
+        Pageable pageable
+    ) {
         if (filtering == null) {
             return ResponseEntity.ok(invoiceService.getPageUnpaidInvoices(pageable));
         } else {
-            Map<String, String> filterMap = Arrays.stream(filtering.split(","))
+            Map<String, String> filterMap = Arrays
+                .stream(filtering.split(","))
                 .map(s -> s.split(":"))
                 .collect(Collectors.toMap(ss -> ss[0], ss -> ss[1]));
-            return ResponseEntity.ok(invoiceService.getPageUnpaidInvoices(filterMap.get("invoiceId"),
+            return ResponseEntity.ok(invoiceService.getPageUnpaidInvoices(
+                filterMap.get("invoiceId"),
                 filterMap.get("toPartyCustomerId"),
                 pageable));
         }
     }
 
     @PostMapping("/create-payment-application")
-    public ResponseEntity<PaymentApplication.Model> createPaymentApplication(@RequestBody PaymentApplication.CreateModel paymentApplicationCreateModel) {
+    public ResponseEntity<PaymentApplication.Model> createPaymentApplication(
+        @RequestBody PaymentApplication.CreateModel paymentApplicationCreateModel
+    ) {
         if (paymentApplicationCreateModel.getPaymentId() != null) {
             return ResponseEntity.ok(paymentApplicationService.createPaymentApplication(paymentApplicationCreateModel));
         } else {

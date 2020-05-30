@@ -18,29 +18,27 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PartyDriver {
+
     @Id
     @Column(name = "party_id")
     private UUID partyId;
 
     @JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private Person person;
 
     @JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private Party party;
 
     //@JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    //@ManyToOne(fetch = FetchType.EAGER)
+    //@ManyToOne(fetch = FetchType.LAZY)
     //private UserLogin userLogin;
 
     public Model toModel() {
         return new Model(
             partyId.toString(),
-            Optional.ofNullable(party)
-                .map(Party::getUserLogin)
-                .map(UserLogin::getUserLoginId)
-                .orElse(null)
+            Optional.ofNullable(party).map(Party::getUserLogin).map(UserLogin::getUserLoginId).orElse(null)
         );
     }
 
@@ -49,6 +47,7 @@ public class PartyDriver {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Model {
+
         private String partyId;
         private String userLoginId;
     }

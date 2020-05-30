@@ -6,4 +6,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.UUID;
 
 public interface ContRequestExportFullPagingRepo extends PagingAndSortingRepository<ContRequestExportFull, UUID> {
+
 }

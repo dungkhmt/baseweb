@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 
 public class GetListFacilityOutputModel {
+
     private List<Facility> facilities;
 
     public GetListFacilityOutputModel(List<Facility> facilities) {

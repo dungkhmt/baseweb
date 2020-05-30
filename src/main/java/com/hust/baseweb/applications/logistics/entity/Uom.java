@@ -9,12 +9,13 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class Uom {
+
     @Id
     @Column(name = "uom_id")
     private String uomId;
 
     @JoinColumn(name = "uom_type_id", referencedColumnName = "uom_type_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private UomType uomType;
 
     @Column(name = "abbreviation")

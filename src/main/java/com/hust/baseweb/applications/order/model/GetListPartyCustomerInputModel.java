@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetListPartyCustomerInputModel {
+
     private String statusId;
 
     public GetListPartyCustomerInputModel() {

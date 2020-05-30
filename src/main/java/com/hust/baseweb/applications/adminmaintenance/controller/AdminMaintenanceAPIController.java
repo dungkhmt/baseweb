@@ -18,21 +18,26 @@ import java.security.Principal;
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class AdminMaintenanceAPIController {
+
     private DeliveryPlanMaintenanceService deliveryPlanMaintenanceService;
     private SalesRouteDetailMaintenanceService salesRouteDetailMaintenanceService;
 
     private AdminMaintenanceService adminMaintenanceService;
 
     @PostMapping("/delete-all-delivery-plan")
-    public ResponseEntity<?> deleteAllDeliveryPlan(Principal principal,
-                                                   @RequestBody DeleteAllDeliveryPlanInputModel input) {
+    public ResponseEntity<?> deleteAllDeliveryPlan(
+        Principal principal,
+        @RequestBody DeleteAllDeliveryPlanInputModel input
+    ) {
         long cnt = deliveryPlanMaintenanceService.deleteAllDeliveryPlan();
         return ResponseEntity.ok().body(cnt);
     }
 
     @PostMapping("/delete-sales-routes-detail-by-party-salesman")
-    public ResponseEntity<?> deleteSalesRoutesDetailByPartySalesman(Principal principal,
-                                                                    @RequestBody DeleteSalesRoutesDetailInputModel input) {
+    public ResponseEntity<?> deleteSalesRoutesDetailByPartySalesman(
+        Principal principal,
+        @RequestBody DeleteSalesRoutesDetailInputModel input
+    ) {
         long cnt = salesRouteDetailMaintenanceService.deleteByPartySalesmanId(input.getPartySalesmanId());
         return ResponseEntity.ok().body(cnt);
     }

@@ -14,6 +14,7 @@ import java.util.List;
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesRouteConfigServiceImpl implements SalesRouteConfigService {
+
     private PSalesRouteConfigRepo pSalesRouteConfigRepo;
     private SalesRouteConfigRepo salesRouteConfigRepo;
 

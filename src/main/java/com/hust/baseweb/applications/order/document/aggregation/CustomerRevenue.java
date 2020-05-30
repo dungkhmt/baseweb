@@ -20,8 +20,12 @@ public class CustomerRevenue {
     private CustomerRevenue.Id id;
     private double revenue;
 
-    public double increase(double value) {
-        revenue += value;
+    public double update(double value, RevenueUpdateType revenueUpdateType) {
+        if (revenueUpdateType == RevenueUpdateType.INCREASE) {
+            revenue += value;
+        } else {
+            revenue -= value;
+        }
         return revenue;
     }
 
@@ -31,6 +35,7 @@ public class CustomerRevenue {
     @NoArgsConstructor
     @EqualsAndHashCode
     public static class Id {
+
         private UUID customerId;
         private LocalDate date;
     }

@@ -40,27 +40,32 @@ public class VehicleAPIController {
     @GetMapping("/vehicle/all")
     public ResponseEntity<?> getAllVehicles(Principal principal) {
         log.info("::getAllVehicles, ");
-        return ResponseEntity.ok().body(vehicleService.findAll().stream()
-            .map(Vehicle::toVehicleModel).collect(Collectors.toList()));
+        return ResponseEntity
+            .ok()
+            .body(vehicleService.findAll().stream().map(Vehicle::toVehicleModel).collect(Collectors.toList()));
     }
 
     @PostMapping("/upload-vehicle")
-    public ResponseEntity<?> uploadVehicles(Principal principal,
-                                            @RequestParam("file") MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<?> uploadVehicles(
+        Principal principal,
+        @RequestParam("file") MultipartFile multipartFile
+    ) throws IOException {
+
         log.info("::uploadVehicle");
         List<VehicleModel.Create> vehicleModels
             = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, VehicleModel.Create.class,
-            PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải").build());
+                              PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải").build());
 
         List<VehicleModel.CreateLocationPriority> vehicleLocationPriorities
-            = Poiji.fromExcel(multipartFile.getInputStream(),
+            = Poiji.fromExcel(
+            multipartFile.getInputStream(),
             PoijiExcelType.XLSX,
             VehicleModel.CreateLocationPriority.class,
             PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Xe tải - Shipto").build());
 
         List<LocationModel.Create> shipToModels
             = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, LocationModel.Create.class,
-            PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Shipto").build());
+                              PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Shipto").build());
 
         /*
         List<Vehicle> vehicles = vehicleModels.stream().map(CreateVehicleModel::toVehicle).collect(Collectors.toList());
@@ -89,40 +94,50 @@ public class VehicleAPIController {
 
     // submit button
     @PostMapping("/create-vehicle-delivery-plan")
-    public ResponseEntity<?> createVehicleDeliveryPlan(Principal principal,
-                                                       @RequestBody VehicleModel.CreateDeliveryPlan createDeliveryPlan) {
+    public ResponseEntity<?> createVehicleDeliveryPlan(
+        Principal principal,
+        @RequestBody VehicleModel.CreateDeliveryPlan createDeliveryPlan
+    ) {
         log.info("::createVehicleDeliveryPlan: " + createDeliveryPlan.getDeliveryPlanId());
         return ResponseEntity.ok().body(vehicleService.saveVehicleDeliveryPlan(createDeliveryPlan));
     }
 
     // delete button
     @PostMapping("/delete-vehicle-delivery-plan")
-    public ResponseEntity<?> deleteVehicleDeliveryPlan(Principal principal,
-                                                       @RequestBody VehicleModel.DeleteDeliveryPlan deleteDeliveryPlan) {
+    public ResponseEntity<?> deleteVehicleDeliveryPlan(
+        Principal principal,
+        @RequestBody VehicleModel.DeleteDeliveryPlan deleteDeliveryPlan
+    ) {
         log.info("::deleteVehicleDeliveryPlan: " + deleteDeliveryPlan.getDeliveryPlanId());
         return ResponseEntity.ok().body(vehicleService.deleteVehicleDeliveryPlan(deleteDeliveryPlan));
     }
 
     // add view
     @GetMapping("/vehicle-not-in/{deliveryPlanId}/page")
-    public ResponseEntity<?> getVehiclePageNotIn(Principal principal,
-                                                 @PathVariable String deliveryPlanId,
-                                                 Pageable pageable) {
+    public ResponseEntity<?> getVehiclePageNotIn(
+        Principal principal,
+        @PathVariable String deliveryPlanId,
+        Pageable pageable
+    ) {
         log.info("::getVehicleNotIn deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlan(deliveryPlanId, pageable));
     }
 
     // add view
     @GetMapping("/vehicle-not-in-delivery-plan/{deliveryPlanId}/all")
-    public ResponseEntity<List<VehicleModel>> getAllVehicleNotIn(Principal principal,
-                                                                 @PathVariable String deliveryPlanId) {
+    public ResponseEntity<List<VehicleModel>> getAllVehicleNotIn(
+        Principal principal,
+        @PathVariable String deliveryPlanId
+    ) {
         log.info("::getVehicleNotIn deliveryPlanId=" + deliveryPlanId);
         return ResponseEntity.ok().body(vehicleService.findAllNotInDeliveryPlan(deliveryPlanId));
     }
 
     @GetMapping("/vehicle-not-in-delivery-trips/{deliveryPlanId}/all")
-    public ResponseEntity<List<VehicleModel>> vehicleNotInDeliveryTrips(Principal principal,
-                                                                        @PathVariable String deliveryPlanId) {
+    public ResponseEntity<List<VehicleModel>> vehicleNotInDeliveryTrips(
+        Principal principal,
+        @PathVariable String deliveryPlanId
+    ) {
         log.info("VehicleAPIController::vehicleNotInDeliveryTrips({})", deliveryPlanId);
         return ResponseEntity.ok(vehicleService.findAllNotInDeliveryTrips(deliveryPlanId));
     }

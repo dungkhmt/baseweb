@@ -12,20 +12,21 @@ import java.util.UUID;
 @Getter
 @Setter
 public class SalesmanCheckinHistory {
+
     @Id
     @Column(name = "salesman_checkin_history_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID salesmanCheckinHistoryId;
 
     //@JoinColumn(name="user_login_id", referencedColumnName="user_login_id")
-    //@ManyToOne(fetch = FetchType.EAGER)
+    //@ManyToOne(fetch = FetchType.LAZY)
     //private UserLogin userLogin;
 
     @Column(name = "user_login_id")
     private String userLoginId;
 
     @JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Party party;
 
     @Column(name = "check_in_action")

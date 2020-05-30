@@ -12,6 +12,7 @@ import java.util.UUID;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface VehicleDeliveryPlanRepo extends PagingAndSortingRepository<VehicleDeliveryPlan, String> {
+
     List<VehicleDeliveryPlan> findAllByDeliveryPlanId(UUID deliveryPlanId);
 
     Page<VehicleDeliveryPlan> findAllByDeliveryPlanId(UUID deliveryPlanId, Pageable pageable);

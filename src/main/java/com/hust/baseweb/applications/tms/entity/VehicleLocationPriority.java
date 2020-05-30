@@ -16,16 +16,17 @@ import java.util.UUID;
 @Setter
 @Entity
 public class VehicleLocationPriority {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID vehicleLocationPriorityId;
 
     @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Vehicle vehicle;
 
     @JoinColumn(name = "contact_mech_id", referencedColumnName = "contact_mech_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PostalAddress postalAddress;
 
     private Integer priority;

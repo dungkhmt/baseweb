@@ -9,11 +9,14 @@ import java.util.List;
 
 @Service
 public interface ProductPriceService {
-    ProductPrice setProductPrice(UserLogin createdByUserLogin,
-                                 String productId,
-                                 Double price,
-                                 String currencyUomId,
-                                 String taxInPrice, String fromDate, String thruDate);
+
+    ProductPrice setProductPrice(
+        UserLogin createdByUserLogin,
+        String productId,
+        Double price,
+        String currencyUomId,
+        String taxInPrice, String fromDate, String thruDate
+    );
 
     ProductPrice getProductPrice(String productId);
 

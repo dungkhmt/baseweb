@@ -55,7 +55,8 @@ public class Simulator {
             Constants.URL_ROOT = "http://" + commandLine.getOptionValue("hostIpAddress");
         }
 
-        log.info("Simulator start, numberThreads = {}, numberIterators = {}, hostIp = {}",
+        log.info(
+            "Simulator start, numberThreads = {}, numberIterators = {}, hostIp = {}",
             nbCreateOrderAgents,
             nbIterCreateOrder,
             Constants.URL_ROOT);
@@ -65,6 +66,7 @@ public class Simulator {
     }
 
     private static CommandLine buildCommandLine(String[] arg) throws ParseException {
+
         Options options = new Options();
         Option numberThreadsOption = new Option("nt", "nbCreateOrderAgents", true, "number threads");
         numberThreadsOption.setRequired(true);
@@ -83,6 +85,7 @@ public class Simulator {
 
     }
     private void run() throws InterruptedException {
+
         CreateOrderAgent[] agents = new CreateOrderAgent[nbCreateOrderAgents];
         ImportFacilityAgent importFacilityAgent = new ImportFacilityAgent("admin", "123");
         ExportFacilityAgent exportFacilityAgent = new ExportFacilityAgent("admin", "123");

@@ -13,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class PartyDepartment {
+
     @Id
     @Column(name = "party_department_id")
     @GeneratedValue(strategy = GenerationType.AUTO)

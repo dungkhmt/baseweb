@@ -14,6 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class InventoryItemDetail {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "inventory_item_detail_id")
@@ -29,9 +30,12 @@ public class InventoryItemDetail {
     @Column(name = "quantity_on_hand_diff")
     private int quantityOnHandDiff;
 
+    @Column(name = "order_id", insertable = false, updatable = false)
+    private String orderId;
+
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     @JoinColumn(name = "order_item_seq_id", referencedColumnName = "order_item_seq_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private OrderItem orderItem;
 
     public InventoryModel.ExportDetail toInventoryExportDetail() {

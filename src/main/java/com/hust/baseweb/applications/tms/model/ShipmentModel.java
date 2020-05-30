@@ -22,6 +22,7 @@ public class ShipmentModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CreateShipmentInputModel {
+
         private ShipmentItemModel.Create[] shipmentItems;
 
     }

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Random;
 
 public class SalesRoutePlanningCreator {
+
     private Random rand = new Random();
     private Thread thread = null;
     private String token;
@@ -123,7 +124,8 @@ public class SalesRoutePlanningCreator {
         String json = gson.toJson(in);
 
         try {
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/create-sales-route-config-retail-outlet",
+            String rs = executor.execPostUseToken(
+                Constants.URL_ROOT + "/api/create-sales-route-config-retail-outlet",
                 json,
                 token);
         } catch (Exception e) {

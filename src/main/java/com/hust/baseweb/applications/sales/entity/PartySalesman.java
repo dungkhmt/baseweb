@@ -13,16 +13,17 @@ import java.util.UUID;
 @Setter
 
 public class PartySalesman {
+
     @Id
     @Column(name = "party_id")
     private UUID partyId;
 
     @JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private Person person;
 
     //@JoinColumn(name="party_id", referencedColumnName="party_id")
-    //@ManyToOne(fetch=FetchType.EAGER)
+    //@ManyToOne(fetch=FetchType.LAZY)
     //private UserLogin userLogin;
 
     @Transient

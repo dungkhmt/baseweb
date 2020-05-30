@@ -26,6 +26,7 @@ import java.util.Random;
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class InventoryItemAPIController {
+
     public static final String module = InventoryItemAPIController.class.getName();
 
     private InventoryItemService inventoryItemService;
@@ -35,7 +36,9 @@ public class InventoryItemAPIController {
 
     @PostMapping("/import-inventory-items")
     @Transactional
-    public ResponseEntity<List<InventoryItem>> importInventoryItems(@RequestBody ImportInventoryItemsInputModel inventoryItemsInput) {
+    public ResponseEntity<List<InventoryItem>> importInventoryItems(
+        @RequestBody ImportInventoryItemsInputModel inventoryItemsInput
+    ) {
 //        System.out.println(module + "::importInventoryItems, input.sz = " + input.getInventoryItems().length);
 
 //        for (ImportInventoryItemInputModel inputModel : input.getInventoryItems()) {
@@ -74,8 +77,10 @@ public class InventoryItemAPIController {
     }
 
     @PostMapping("/export-inventory-items")
-    public ResponseEntity<?> exportInventoryItems(Principal principal,
-                                                  @RequestBody ExportInventoryItemsInputModel input) {
+    public ResponseEntity<?> exportInventoryItems(
+        Principal principal,
+        @RequestBody ExportInventoryItemsInputModel input
+    ) {
         String response = inventoryItemService.exportInventoryItems(input);
         return ResponseEntity.ok().body(response);
     }

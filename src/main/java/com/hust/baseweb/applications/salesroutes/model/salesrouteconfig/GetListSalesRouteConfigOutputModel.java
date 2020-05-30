@@ -13,5 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetListSalesRouteConfigOutputModel {
+
     private List<SalesRouteConfig> salesRouteConfigList;
 }

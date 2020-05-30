@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LPInputModel {
+
     private LPVariable[] variables;
     private LPObjective obj;
     private LPConstraint[] constraints;

@@ -11,17 +11,18 @@ import java.util.UUID;
 @Getter
 @Setter
 public class VehicleDriver {
+
     @Id
     @Column(name = "vehicle_driver_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID vehicleDriverId;
 
     @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Vehicle vehicle;
 
     @JoinColumn(name = "party_driver_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PartyDriver partyDriver;
 
     @Column(name = "from_date")

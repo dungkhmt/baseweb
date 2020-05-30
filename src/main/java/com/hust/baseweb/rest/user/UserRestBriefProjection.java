@@ -10,6 +10,7 @@ import java.util.Date;
  */
 @Projection(name = "brief", types = {DPerson.class})
 public interface UserRestBriefProjection {
+
     String getPartyCode();
 
     @Value("#{target.person.firstName} #{target.person.lastName}")

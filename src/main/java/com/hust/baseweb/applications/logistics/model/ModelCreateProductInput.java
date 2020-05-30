@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @ToString
 public class ModelCreateProductInput {
+
     private String productId;
     private String quantityUomId;
     private String type;

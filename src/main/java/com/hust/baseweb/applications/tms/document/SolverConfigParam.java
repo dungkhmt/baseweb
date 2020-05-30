@@ -70,6 +70,7 @@ public class SolverConfigParam {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class InputModel {
+
         private Integer maxTripDistance; // meter
         // do dai quang duong toi da cho phep giua 2 location lien tiep trong moi trip
         private Integer maxDistanceConsecutiveLocationTripAllowed;

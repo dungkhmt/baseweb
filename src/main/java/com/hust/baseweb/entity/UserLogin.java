@@ -13,6 +13,7 @@ import java.util.Set;
 @Setter
 @Getter
 public class UserLogin {
+
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     @Id
@@ -46,7 +47,7 @@ public class UserLogin {
     private Party party;
 
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_login_security_group",
         joinColumns = @JoinColumn(name = "user_login_id", referencedColumnName = "user_login_id"),
@@ -67,10 +68,12 @@ public class UserLogin {
     }
 
 
-    public UserLogin(String password, String passwordHint, boolean isSystem,
-                     boolean enabled, boolean hasLoggedOut,
-                     boolean requirePasswordChange, int successiveFailedLogins,
-                     Date disabledDateTime) {
+    public UserLogin(
+        String password, String passwordHint, boolean isSystem,
+        boolean enabled, boolean hasLoggedOut,
+        boolean requirePasswordChange, int successiveFailedLogins,
+        Date disabledDateTime
+    ) {
         super();
         this.password = password;
         this.passwordHint = passwordHint;

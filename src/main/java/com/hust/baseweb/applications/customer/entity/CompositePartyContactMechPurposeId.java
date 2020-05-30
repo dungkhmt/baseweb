@@ -7,6 +7,7 @@ import java.util.UUID;
 
 
 public class CompositePartyContactMechPurposeId implements Serializable {
+
     private UUID partyId;
     private UUID contactMechId;
     private String contactMechPurposeTypeId;

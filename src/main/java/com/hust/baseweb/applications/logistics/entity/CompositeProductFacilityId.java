@@ -5,6 +5,7 @@ import java.util.Objects;
 
 
 public class CompositeProductFacilityId implements Serializable {
+
     private String productId;
     private String facilityId;
 

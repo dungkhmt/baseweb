@@ -15,22 +15,23 @@ import java.util.UUID;
 @Setter
 @ToString
 public class RetailOutletSalesmanVendor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "retail_outlet_salesman_vendor_id")
     private UUID retailOutletSalesmanVendorId;
 
     @JoinColumn(name = "party_retail_outlet_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PartyRetailOutlet partyRetailOutlet;
 
     @JoinColumn(name = "party_salesman_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PartySalesman partySalesman;
 
 
     @JoinColumn(name = "party_vendor_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PartyDistributor partyDistributor;
 
     @Column(name = "from_date")

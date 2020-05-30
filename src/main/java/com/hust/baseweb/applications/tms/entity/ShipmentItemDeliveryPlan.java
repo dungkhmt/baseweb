@@ -18,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShipmentItemDeliveryPlan {
+
     @Id
     @Column(name = "shipment_item_id")
     private UUID shipmentItemId;

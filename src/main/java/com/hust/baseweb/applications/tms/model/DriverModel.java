@@ -16,6 +16,7 @@ public class DriverModel {
     @Getter
     @Setter
     public static class InputCreate {
+
         private String userName;
         private String password;
         private List<String> roles;
@@ -31,6 +32,7 @@ public class DriverModel {
     @Getter
     @Setter
     public static class FindAll {
+
         private String statusId;
     }
 
@@ -38,6 +40,7 @@ public class DriverModel {
     @Setter
     @AllArgsConstructor
     public static class Output {
+
         private String userLoginId;
         private String driverFullName;
         private UUID partyDriverId;

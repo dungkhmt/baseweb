@@ -17,12 +17,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PartyRetailOutlet {
+
     @Id
     @Column(name = "party_id")
     private UUID partyId;
 
     @JoinColumn(name = "party_type_id", referencedColumnName = "party_type_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PartyType partyType;
 
     @Column(name = "retail_outlet_code")
@@ -31,8 +32,9 @@ public class PartyRetailOutlet {
     @Column(name = "retail_outlet_name")
     private String retailOutletName;
 
-    @JoinTable(name = "PartyContactMechPurpose", inverseJoinColumns = @JoinColumn(name = "contact_mech_id", referencedColumnName = "contact_mech_id"),
-        joinColumns = @JoinColumn(name = "party_id", referencedColumnName = "party_id"))
+    @JoinTable(name = "PartyContactMechPurpose",
+               inverseJoinColumns = @JoinColumn(name = "contact_mech_id", referencedColumnName = "contact_mech_id"),
+               joinColumns = @JoinColumn(name = "party_id", referencedColumnName = "party_id"))
     @OneToMany(fetch = FetchType.LAZY)
     private List<PostalAddress> postalAddress;
 

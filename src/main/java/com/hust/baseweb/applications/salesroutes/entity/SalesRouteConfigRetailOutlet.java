@@ -11,25 +11,26 @@ import java.util.UUID;
 @Getter
 @Setter
 public class SalesRouteConfigRetailOutlet {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "sales_route_config_retail_outlet_id")
     private UUID salesRouteConfigRetailOutletId;
 
     @JoinColumn(name = "sales_route_planning_period_id", referencedColumnName = "sales_route_planning_period_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private SalesRoutePlanningPeriod salesRoutePlanningPeriod;
 
     @JoinColumn(name = "visit_frequency_id", referencedColumnName = "visit_frequency_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private SalesRouteVisitFrequency salesRouteVisitFrequency;
 
     @JoinColumn(name = "sales_route_config_id", referencedColumnName = "sales_route_config_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private SalesRouteConfig salesRouteConfig;
 
     @JoinColumn(name = "retail_outlet_salesman_vendor_id", referencedColumnName = "retail_outlet_salesman_vendor_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private RetailOutletSalesmanVendor retailOutletSalesmanVendor;
 
     @Column(name = "start_execute_date")

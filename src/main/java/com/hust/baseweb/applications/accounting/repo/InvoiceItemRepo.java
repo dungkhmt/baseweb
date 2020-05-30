@@ -9,5 +9,6 @@ import java.util.List;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface InvoiceItemRepo extends MongoRepository<InvoiceItem, InvoiceItem.Id> {
+
     List<InvoiceItem> findAllById_InvoiceId(String invoiceId);
 }

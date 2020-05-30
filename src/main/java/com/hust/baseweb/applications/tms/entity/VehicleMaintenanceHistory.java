@@ -16,10 +16,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VehicleMaintenanceHistory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID vehicleMaintenanceHistoryId;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
     private Vehicle vehicle;
     private Date maintenanceDate;

@@ -13,6 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class ProductType {
+
     @Id
     @Column(name = "product_type_id")
     private String productTypeId;

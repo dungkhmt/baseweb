@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class DistributorManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
@@ -43,7 +44,8 @@ public class DistributorManager {
             //in.setPartySalesmanId(partySalesmanId);
             String json = gson.toJson(in);
 //            System.out.println("::getListDistributorsOfSalesman, input json = " + json);
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-distributors-of-salesman",
+            String rs = executor.execPostUseToken(
+                Constants.URL_ROOT + "/api/get-distributors-of-salesman",
                 json,
                 token);
 

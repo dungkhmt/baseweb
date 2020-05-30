@@ -18,6 +18,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class OrderDetailView {
+
     private String orderId;
     private Date orderDate;
     private UUID customerId;
@@ -29,10 +30,12 @@ public class OrderDetailView {
     private Double total;
     private OrderItemDetailView[] orderItems;
 
-    public OrderDetailView(OrderHeader order,
-                           OrderService orderService,
-                           PartySalesmanService salesmanService,
-                           UserService userService) {
+    public OrderDetailView(
+        OrderHeader order,
+        OrderService orderService,
+        PartySalesmanService salesmanService,
+        UserService userService
+    ) {
         // TODO: to be improved
 
         orderId = order.getOrderId();

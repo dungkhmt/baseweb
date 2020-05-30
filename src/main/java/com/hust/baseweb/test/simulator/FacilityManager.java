@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.logistics.model.GetListFacilityOutputModel;
 import java.util.List;
 
 public class FacilityManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 

@@ -13,12 +13,15 @@ import java.util.List;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class UomServiceImpl implements UomService {
+
     private UomRepo uomRepo;
     private UomTypeRepo uomTypeRepo;
 
     @Override
-    public Uom save(String uomId, String uomTypeId, String abbreviation,
-                    String description) {
+    public Uom save(
+        String uomId, String uomTypeId, String abbreviation,
+        String description
+    ) {
         UomType uomType = uomTypeRepo.findByUomTypeId(uomTypeId);
         Uom uom = new Uom();
         uom.setUomId(uomId);

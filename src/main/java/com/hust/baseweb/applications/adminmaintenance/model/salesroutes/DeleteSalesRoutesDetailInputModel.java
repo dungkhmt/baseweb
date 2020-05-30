@@ -8,6 +8,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DeleteSalesRoutesDetailInputModel {
+
     private UUID partySalesmanId;
     private UUID partyRetailOutletId;
     private UUID partyDistributorId;

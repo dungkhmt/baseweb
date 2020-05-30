@@ -10,6 +10,7 @@ import java.util.List;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface TotalRevenueRepo extends MongoRepository<TotalRevenue, LocalDate> {
+
     List<TotalRevenue> findAllByIdIn(List<LocalDate> ids);
 
     List<TotalRevenue> findAllByIdBetween(LocalDate fromDate, LocalDate toDate);
