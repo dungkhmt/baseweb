@@ -88,6 +88,12 @@ public class SalesAPIController {
         return ResponseEntity.ok().body(salesman);
     }
 
+    /**
+     * Returns all salesmans in database
+     * @param input GetListSalesmanInputModel object
+     * @return list of SalesmanOutputModel objects
+     * @author
+     */
     @PostMapping("/get-list-all-salesmans")
     public ResponseEntity getListAllSalesmen(Principal principal, @RequestBody GetListSalesmanInputModel input) {
         // TODO
@@ -98,15 +104,13 @@ public class SalesAPIController {
             SalesmanOutputModel so = new SalesmanOutputModel();
             so.setPartyId(sm.getPartyId());
             so.setUserLoginId(u.getUserLoginId());
-            so.setFullName(sm.getPerson().getLastName() +
-                " " +
-                sm.getPerson().getMiddleName() +
-                " " +
-                sm.getPerson().getFirstName());
+            so.setFullName( sm.getPerson().getLastName() + " " +
+                            sm.getPerson().getMiddleName() + " " +
+                            sm.getPerson().getFirstName());
             salesmanModel.add(so);
         }
-        ListSalesmanOutputModel res = new ListSalesmanOutputModel(salesmanModel);
-        return ResponseEntity.ok().body(res);
+        //ListSalesmanOutputModel res = new ListSalesmanOutputModel(salesmanModel);
+        return ResponseEntity.ok().body(salesmanModel);
     }
 
 
@@ -167,13 +171,20 @@ public class SalesAPIController {
         return ResponseEntity.ok().body(partyRetailOutletList);
     }
 
+    /**
+     * Returns all retail outlets of specific salesman and specific distributor
+     * @param input GetListRetailOutletsOfSalesmanAndDistributorInputModel object
+     * @return list PartyRetailOutlet objects
+     */
     @PostMapping("/get-list-retail-outlets-of-salesman-and-distributor")
     public ResponseEntity<?> getListRetailOutletsOfSalesmanAndDistributor(Principal principal,
                                                                           @RequestBody GetListRetailOutletsOfSalesmanAndDistributorInputModel input) {
-        List<PartyRetailOutlet> partyRetailOutlets = retailOutletSalesmanVendorService.getListRetailOutletOfSalesmanAndDistributor(
+        /*List<PartyRetailOutlet> partyRetailOutlets =
+            retailOutletSalesmanVendorService.getListRetailOutletOfSalesmanAndDistributor(
             input.getPartySalesmanId(),
-            input.getPartyDistributorId());
-        return ResponseEntity.ok().body(new GetListRetailOutletOutputModel(partyRetailOutlets));
+            input.getPartyDistributorId());*/
+
+        return ResponseEntity.ok().body(retailOutletSalesmanVendorService.getRetailOutletsOfSalesmanAndDistributor(input.getPartySalesmanId(), input.getPartyDistributorId()));
     }
 
     @PostMapping("/get-retail-outlet-salesman-distributor")
@@ -230,6 +241,11 @@ public class SalesAPIController {
         return ResponseEntity.ok().body(partyDistributorList);
     }
 
+    /**
+     * Returns all distributors in database
+     * @param input GetListDistributorsOfSalesmanInputModel object
+     * @return list of PartyDistributor objects
+     */
     @PostMapping("/get-distributors-of-salesman")
     public ResponseEntity<?> getDistributorsOfSalesman(Principal principal,
                                                        @RequestBody GetListDistributorsOfSalesmanInputModel input) {
@@ -249,7 +265,7 @@ public class SalesAPIController {
         //List<PartyDistributor> partyDistributorList = distributorRepo.findAll();
         List<PartyDistributor> partyDistributorList = distributorService.findAllByPartyIdIn(partyIds);
 
-        return ResponseEntity.ok().body(new ListDistributorOutputModel(partyDistributorList));
+        return ResponseEntity.ok().body(partyDistributorList);
     }
 
     @GetMapping("/get-page-distributors-of-user-login-salesman")
