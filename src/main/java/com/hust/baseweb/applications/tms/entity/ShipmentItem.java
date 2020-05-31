@@ -34,10 +34,10 @@ public class ShipmentItem {
     private Facility facility;
 
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
 
     @Column(name = "pallet")
-    private double pallet;
+    private Double pallet;
 
     @Column(name = "order_id", insertable = false, updatable = false)
     private String orderId;

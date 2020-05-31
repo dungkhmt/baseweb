@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -29,6 +30,13 @@ public class OrderDetailView {
     private String salesmanName;
     private Double total;
     private OrderItemDetailView[] orderItems;
+
+    private List<PaymentApplicationDetailView> paymentApplicationDetailViews;
+    private List<PaymentDetailView> paymentDetailViews;
+    private List<InvoiceDetailView> invoiceDetailViews;
+    private List<InvoiceItemDetailView> invoiceItemDetailViews;
+    private List<ShipmentItemDetailView> shipmentItemDetailViews;
+    private List<ShipmentDetailView> shipmentDetailViews;
 
     public OrderDetailView(
         OrderHeader order,
