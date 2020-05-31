@@ -26,7 +26,7 @@ public class Receipt {
     private Date receiptDate;
 
     @JoinColumn(name = "facility_id", referencedColumnName = "facility_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Facility facility;
 
     @NotNull

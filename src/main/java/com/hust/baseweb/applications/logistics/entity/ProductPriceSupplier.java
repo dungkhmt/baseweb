@@ -25,11 +25,11 @@ public class ProductPriceSupplier {
     private UUID productPriceSupplierId; // uuid not null default uuid_generate_v1(),
 
     @JoinColumn(name = "party_supplier_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Supplier partySupplier; // uuid not null,
 
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Product product; // varchar(60),
 
     private Integer unitPrice; // int,

@@ -15,7 +15,7 @@ public class Uom {
     private String uomId;
 
     @JoinColumn(name = "uom_type_id", referencedColumnName = "uom_type_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private UomType uomType;
 
     @Column(name = "abbreviation")

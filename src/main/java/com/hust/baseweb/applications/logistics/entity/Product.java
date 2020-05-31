@@ -25,11 +25,11 @@ public class Product {
     private Double weight; // quantity=1, unit=kg
 
     @JoinColumn(name = "quantity_uom_id", referencedColumnName = "uom_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Uom uom;
 
     @JoinColumn(name = "product_type_id", referencedColumnName = "product_type_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private ProductType productType;
 
     @Column(name = "product_transport_category_id")
@@ -48,7 +48,7 @@ public class Product {
     private Integer hsPal;
 
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "product_content",
                joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "product_id"),
                inverseJoinColumns = @JoinColumn(name = "content_id", referencedColumnName = "content_id"))

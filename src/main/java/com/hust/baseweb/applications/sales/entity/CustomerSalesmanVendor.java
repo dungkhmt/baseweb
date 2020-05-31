@@ -22,16 +22,16 @@ public class CustomerSalesmanVendor {
     private UUID customerSalesmanVendorId;
 
     @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private PartyCustomer partyCustomer;
 
     @JoinColumn(name = "party_salesman_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private PartySalesman partySalesman;
 
 
     @JoinColumn(name = "party_vendor_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private PartyDistributor partyDistributor;
 
     @Column(name = "from_date")

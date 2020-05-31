@@ -23,11 +23,11 @@ public class ReceiptItem {
     private UUID receiptItemId; // uuid not null default uuid_generate_v1(),
 
     @JoinColumn(referencedColumnName = "receipt_id", name = "receipt_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Receipt receipt; // varchar(60),
 
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Product product; // varchar(60),
 
     private Integer quantity; // int,
