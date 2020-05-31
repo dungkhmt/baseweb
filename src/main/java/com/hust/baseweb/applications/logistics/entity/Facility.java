@@ -15,6 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Facility {
+
     @Id
     @Column(name = "facility_id")
     private String facilityId;

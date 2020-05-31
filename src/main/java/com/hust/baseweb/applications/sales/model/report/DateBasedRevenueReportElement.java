@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 
 public class DateBasedRevenueReportElement {
+
     private String date;
     private Double revenue;
 

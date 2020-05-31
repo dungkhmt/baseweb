@@ -15,15 +15,18 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class BaseWebUserDetailService implements UserDetailsService {
+
     private UserLoginRepo userLoginRepo;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+
         UserLogin user = userLoginRepo.findByUserLoginId(s);
         return new User(user.getUserLoginId(), user.getPassword(),
-            AuthorityUtils.createAuthorityList(user.getRoles()
-                .stream()
-                .map(SecurityGroup::getGroupId)
-                .toArray(String[]::new)));
+                        AuthorityUtils.createAuthorityList(user
+                                                               .getRoles()
+                                                               .stream()
+                                                               .map(SecurityGroup::getGroupId)
+                                                               .toArray(String[]::new)));
     }
 }

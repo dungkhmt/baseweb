@@ -13,6 +13,7 @@ import java.util.Scanner;
 @Getter
 @Setter
 public class Config {
+
     private static final org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(Config.class);
 
     private final static Config config = new Config();
@@ -34,6 +35,7 @@ public class Config {
     }
 
     static String updateConfig() throws FileNotFoundException {
+
         File googleApiKeyFile = new File(Constant.GOOGLE_MAP_API_KEY_FILE);
         if (googleApiKeyFile.exists()) {
             String currentApiKey = new Scanner(googleApiKeyFile).useDelimiter("\\Z").next();

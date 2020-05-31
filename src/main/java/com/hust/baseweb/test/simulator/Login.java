@@ -8,6 +8,7 @@ import okhttp3.Response;
 import java.util.Objects;
 
 public class Login {
+
     private static OkHttpClient client = new OkHttpClient();
 
     public static String login(String username, String password) {
@@ -15,8 +16,7 @@ public class Login {
             // String url = "http://sscm.dailyopt.ai/api/";
             String url = Constants.URL_ROOT + "/api/";
             String credential = Credentials.basic(username, password);
-            Request request = new Request.Builder().url(url)
-                .header("Authorization", credential).build();
+            Request request = new Request.Builder().url(url).header("Authorization", credential).build();
             Response response = client.newCall(request).execute();
             String res = Objects.requireNonNull(response.body()).string();
             String token = response.header("X-Auth-Token");

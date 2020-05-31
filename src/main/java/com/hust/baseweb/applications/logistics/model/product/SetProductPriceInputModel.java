@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 
 public class SetProductPriceInputModel {
+
     private String productId;
     private Double price;
     private String taxInPrice;

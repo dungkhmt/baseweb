@@ -10,6 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class Status {
+
     @Id
     @Column(name = "status_id")
     private String id;

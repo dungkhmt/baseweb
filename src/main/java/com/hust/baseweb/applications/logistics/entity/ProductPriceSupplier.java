@@ -18,6 +18,7 @@ import java.util.UUID;
 @Setter
 @Entity
 public class ProductPriceSupplier {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "product_price_supplier_id")
@@ -44,6 +45,7 @@ public class ProductPriceSupplier {
     @Getter
     @Setter
     public static class Model {
+
         private String productId;
         private String productName;
         private Integer unitPrice;
@@ -54,6 +56,7 @@ public class ProductPriceSupplier {
     @Getter
     @Setter
     public static class SetModel {
+
         private String supplierPartyId;
         private String productId;
         private Integer unitPrice;

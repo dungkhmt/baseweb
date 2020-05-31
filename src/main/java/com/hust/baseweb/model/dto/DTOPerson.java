@@ -52,8 +52,14 @@ public class DTOPerson {
     private String userLoginId;
     private String partyCode;
 
-    public DTOPerson(String fullName, String status, String partyType, Date createdDate, String userLoginId,
-                     String partyCode) {
+    public DTOPerson(
+        String fullName,
+        String status,
+        String partyType,
+        Date createdDate,
+        String userLoginId,
+        String partyCode
+    ) {
         super();
         this.fullName = fullName;
         this.status = status;
@@ -68,12 +74,12 @@ public class DTOPerson {
         this.fullName = dPerson.getPerson() != null
             ?
             dPerson.getPerson().getFirstName() +
-                " " +
-                dPerson.getPerson().getMiddleName() +
-                " " +
-                dPerson.getPerson().getLastName()
+            " " +
+            dPerson.getPerson().getMiddleName() +
+            " " +
+            dPerson.getPerson().getLastName()
             :
-            null;
+                null;
         this.status = dPerson.getStatus();
         this.partyType = dPerson.getType().getPartyTypeId();
         this.createdDate = dPerson.getCreatedDate();

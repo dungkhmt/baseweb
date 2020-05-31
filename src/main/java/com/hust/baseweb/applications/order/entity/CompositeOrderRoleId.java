@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class CompositeOrderRoleId implements Serializable {
+
     private String orderId;
     private UUID partyId;
     private String roleTypeId;
@@ -14,8 +15,10 @@ public class CompositeOrderRoleId implements Serializable {
 
     }
 
-    public CompositeOrderRoleId(String orderId, UUID partyId,
-                                String roleTypeId) {
+    public CompositeOrderRoleId(
+        String orderId, UUID partyId,
+        String roleTypeId
+    ) {
         super();
         this.orderId = orderId;
         this.partyId = partyId;

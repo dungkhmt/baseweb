@@ -8,6 +8,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class SalesmanOutputModel {
+
     private UUID partyId;
     private String userLoginId;
     private String fullName;

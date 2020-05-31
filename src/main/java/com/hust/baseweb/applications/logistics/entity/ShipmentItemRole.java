@@ -13,13 +13,14 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ShipmentItemRole {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "shipment_item_role_id")
     private UUID shipmentItemRoleId;
 
     @JoinColumn(name = "shipment_item_id", referencedColumnName = "shipment_item_id")
-    @ManyToOne
+    @ManyToOne()
     private ShipmentItem shipmentItem;
 
     @JoinColumn(name = "party_id", referencedColumnName = "party_id")

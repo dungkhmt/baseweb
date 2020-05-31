@@ -63,6 +63,7 @@ import java.util.stream.Collectors;
 @Log4j2
 
 public class SalesAPIController {
+
     private UserService userService;
     private PartyCustomerRepo partyCustomerRepo;
     private CustomerSalesmanService customerSalesmanService;
@@ -115,20 +116,24 @@ public class SalesAPIController {
 
 
     @PostMapping("/assign-customer-2-salesman")
-    public ResponseEntity<?> assignCustomer2Salesman(Principal principal,
-                                                     @RequestBody AssignCustomer2SalesmanInputModel input) {
+    public ResponseEntity<?> assignCustomer2Salesman(
+        Principal principal,
+        @RequestBody AssignCustomer2SalesmanInputModel input
+    ) {
         log.info("assignCustomer2Salesman, partyCustomerId = " +
-            input.getPartyCustomerId() +
-            ", partySalesmanId = " +
-            input.getPartySalesmanId());
+                 input.getPartyCustomerId() +
+                 ", partySalesmanId = " +
+                 input.getPartySalesmanId());
         CustomerSalesman cs = customerSalesmanService.save(input.getPartyCustomerId(), input.getPartySalesmanId());
 
         return ResponseEntity.ok().body(cs);
     }
 
     @PostMapping("/get-customers-of-salesman")
-    public ResponseEntity<?> getCustomersOfSalesman(Principal principal,
-                                                    @RequestBody GetCustomersOfSalesmanInputModel input) {
+    public ResponseEntity<?> getCustomersOfSalesman(
+        Principal principal,
+        @RequestBody GetCustomersOfSalesmanInputModel input
+    ) {
         UserLogin userLogin = userService.findById(principal.getName());
 
         log.info("getCustomersOfSalesman, user-login = " + userLogin.getUserLoginId());
@@ -188,8 +193,10 @@ public class SalesAPIController {
     }
 
     @PostMapping("/get-retail-outlet-salesman-distributor")
-    public ResponseEntity<?> getRetailOutletSalesmanDistributor(Principal principal,
-                                                                @RequestBody RetailOutletSalesmanDistributorInputModel input) {
+    public ResponseEntity<?> getRetailOutletSalesmanDistributor(
+        Principal principal,
+        @RequestBody RetailOutletSalesmanDistributorInputModel input
+    ) {
         RetailOutletSalesmanVendor retailOutletSalesmanVendor = retailOutletSalesmanVendorService.getRetailOutletSalesmanDistributor(
             input.getPartyRetailOutletId(), input.getPartySalesmanId(), input.getPartyDistributorId());
         return ResponseEntity.ok().body(retailOutletSalesmanVendor);
@@ -247,8 +254,10 @@ public class SalesAPIController {
      * @return list of PartyDistributor objects
      */
     @PostMapping("/get-distributors-of-salesman")
-    public ResponseEntity<?> getDistributorsOfSalesman(Principal principal,
-                                                       @RequestBody GetListDistributorsOfSalesmanInputModel input) {
+    public ResponseEntity<?> getDistributorsOfSalesman(
+        Principal principal,
+        @RequestBody GetListDistributorsOfSalesmanInputModel input
+    ) {
         UserLogin userLogin = userService.findById(principal.getName());
 
         log.info("getDistributorsOfSalesman, user-login = " + userLogin.getUserLoginId());
@@ -333,19 +342,25 @@ public class SalesAPIController {
     }
 
     @PostMapping("/add-salesman-sell-from-distributor")
-    public ResponseEntity<?> addSalesmanSellFromDistributor(Principal principal,
-                                                            @RequestBody AddSalesmanDistributorInputModel input) {
+    public ResponseEntity<?> addSalesmanSellFromDistributor(
+        Principal principal,
+        @RequestBody AddSalesmanDistributorInputModel input
+    ) {
         log.info("addSalesmanSellFromDistributor");
-        PartyRelationship partyRelationship = addSalesmanSellFromDistributorIfNot(input.getSalesmanId(),
+        PartyRelationship partyRelationship = addSalesmanSellFromDistributorIfNot(
+            input.getSalesmanId(),
             input.getDistributorId());
         return ResponseEntity.ok().body("OK");
     }
 
     @PostMapping("/add-salesman-sell-to-retail-outlet")
-    public ResponseEntity<?> addSalesmanSellToRetailOutlet(Principal principal,
-                                                           @RequestBody AddSalesmanRetailOutletInputModel input) {
+    public ResponseEntity<?> addSalesmanSellToRetailOutlet(
+        Principal principal,
+        @RequestBody AddSalesmanRetailOutletInputModel input
+    ) {
         log.info("addSalesmanSellFromDistributor");
-        PartyRelationship partyRelationship = addSalesmanSell2RetailOutletIfNot(input.getSalesmanId(),
+        PartyRelationship partyRelationship = addSalesmanSell2RetailOutletIfNot(
+            input.getSalesmanId(),
             input.getRetailOutletId());
         return ResponseEntity.ok().body("OK");
     }
@@ -392,9 +407,11 @@ public class SalesAPIController {
     }
 
     @GetMapping("/salesman-detail/{partyId}")
-    public ResponseEntity<?> getDetailSalesman(Pageable pageable,
-                                               @RequestParam(required = false) String param,
-                                               @PathVariable String partyId) {
+    public ResponseEntity<?> getDetailSalesman(
+        Pageable pageable,
+        @RequestParam(required = false) String param,
+        @PathVariable String partyId
+    ) {
         log.info("getDetailSalesman");
         PartySalesman partySalesman = partySalesmanService.findById(UUID.fromString(partyId));
 
@@ -417,12 +434,15 @@ public class SalesAPIController {
             null,
             pageable);
         for (RetailOutletSalesmanVendor retailOutletSalesmanVendor : retailOutletSalesmanVendorPage) {
-            retailOutletSalesmanVendor.setRetailOutletName(retailOutletSalesmanVendor.getPartyRetailOutlet()
-                .getRetailOutletName());
-            retailOutletSalesmanVendor.setRetailOutletCode(retailOutletSalesmanVendor.getPartyRetailOutlet()
-                .getRetailOutletCode());
-            retailOutletSalesmanVendor.setPartyDistributorName(retailOutletSalesmanVendor.getPartyDistributor()
-                .getDistributorName());
+            retailOutletSalesmanVendor.setRetailOutletName(retailOutletSalesmanVendor
+                                                               .getPartyRetailOutlet()
+                                                               .getRetailOutletName());
+            retailOutletSalesmanVendor.setRetailOutletCode(retailOutletSalesmanVendor
+                                                               .getPartyRetailOutlet()
+                                                               .getRetailOutletCode());
+            retailOutletSalesmanVendor.setPartyDistributorName(retailOutletSalesmanVendor
+                                                                   .getPartyDistributor()
+                                                                   .getDistributorName());
             String address = "";
             List<PostalAddress> postalAddresses = retailOutletSalesmanVendor.getPartyRetailOutlet().getPostalAddress();
             for (PostalAddress postalAddress : postalAddresses) {
@@ -436,8 +456,10 @@ public class SalesAPIController {
     }
 
     @PostMapping("/add-customer-distributor-salesman/{partyId}")
-    public ResponseEntity<?> addCustomerDistributorSalesman(@PathVariable String partyId,
-                                                            @RequestBody CustomerDistributorSalesmanInputModel input) {
+    public ResponseEntity<?> addCustomerDistributorSalesman(
+        @PathVariable String partyId,
+        @RequestBody CustomerDistributorSalesmanInputModel input
+    ) {
         log.info("addCustomerDistributorSalesman {}", partyId);
         PartyCustomer partyCustomer = partyCustomerRepo.findByPartyId(UUID.fromString(input.getPartyCustomerId()));
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(UUID.fromString(input.getPartyDistributorId()));
@@ -463,23 +485,25 @@ public class SalesAPIController {
     //public ResponseEntity<?> addRetailOutletDistributorSalesman(@PathVariable String partyId, @RequestBody RetailOutletSalesmanDistributorInputModel input){
     @PostMapping("/add-retail-outlet-distributor-salesman")
     @Transactional
-    public ResponseEntity<?> addRetailOutletDistributorSalesman(Principal principal,
-                                                                @RequestBody RetailOutletSalesmanDistributorInputModel input) {
+    public ResponseEntity<?> addRetailOutletDistributorSalesman(
+        Principal principal,
+        @RequestBody RetailOutletSalesmanDistributorInputModel input
+    ) {
         log.info("addRetailOutletDistributorSalesman salesmanId = ", input.getPartySalesmanId());
         PartyRetailOutlet partyRetailOutlet = retailOutletRepo.findByPartyId(input.getPartyRetailOutletId());
 
         if (partyRetailOutlet == null) {
             log.info("addRetailOutletDistributorSalesman, retail outlet " +
-                input.getPartyRetailOutletId() +
-                " cannot be FOUND");
+                     input.getPartyRetailOutletId() +
+                     " cannot be FOUND");
         }
 
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(input.getPartyDistributorId());
 
         if (partyDistributor == null) {
             log.info("addRetailOutletDistributorSalesman, distributor " +
-                input.getPartyDistributorId() +
-                " cannot be FOUND");
+                     input.getPartyDistributorId() +
+                     " cannot be FOUND");
         }
 
         PartySalesman partySalesman = partySalesmanService.findById(input.getPartySalesmanId());
@@ -505,11 +529,13 @@ public class SalesAPIController {
         retailOutletSalesmanVendorRepo.save(retailOutletSalesmanVendor);
 
         // add salesman-retailoutlet
-        PartyRelationship partyRelationship = addSalesmanSell2RetailOutletIfNot(input.getPartySalesmanId(),
+        PartyRelationship partyRelationship = addSalesmanSell2RetailOutletIfNot(
+            input.getPartySalesmanId(),
             input.getPartyRetailOutletId());
 
         // add salesman-distributor
-        partyRelationship = addSalesmanSellFromDistributorIfNot(input.getPartySalesmanId(),
+        partyRelationship = addSalesmanSellFromDistributorIfNot(
+            input.getPartySalesmanId(),
             input.getPartyDistributorId());
 
         return ResponseEntity.ok(input);

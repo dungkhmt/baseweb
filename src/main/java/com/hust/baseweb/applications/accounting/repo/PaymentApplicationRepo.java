@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.accounting.repo;
 import com.hust.baseweb.applications.accounting.document.PaymentApplication;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +13,8 @@ import java.util.UUID;
 public interface PaymentApplicationRepo extends MongoRepository<PaymentApplication, UUID> {
 
     List<PaymentApplication> findAllByInvoiceId(String invoiceId);
+
+    List<PaymentApplication> findAllByInvoiceIdIn(Collection<String> invoiceIds);
 
     List<PaymentApplication> findAllByPaymentId(String paymentId);
 

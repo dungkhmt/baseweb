@@ -12,6 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class SalesmanCheckinHistory {
+
     @Id
     @Column(name = "salesman_checkin_history_id")
     @GeneratedValue(strategy = GenerationType.AUTO)

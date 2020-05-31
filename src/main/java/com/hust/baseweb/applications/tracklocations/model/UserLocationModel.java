@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserLocationModel {
+
     private String userLoginId;
     private double lat;
     private double lng;

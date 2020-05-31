@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class GetListCustomerOutputModel {
+
     List<PartyCustomer> lists;
 
     public GetListCustomerOutputModel(List<PartyCustomer> list) {

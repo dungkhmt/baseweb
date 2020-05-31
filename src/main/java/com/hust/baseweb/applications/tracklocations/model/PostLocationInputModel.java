@@ -9,6 +9,7 @@ import java.util.Date;
 @Setter
 
 public class PostLocationInputModel {
+
     private double lat;
     private double lng;
     private Date timePoint;

@@ -8,6 +8,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class CreateSalesRouteConfigRetailOutletInputModel {
+
     private UUID salesRouteConfigId;
     private UUID retailOutletSalesmanVendorId;
     private UUID salesRoutePlanningPeriodId;

@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class InputTrailerModel {
+
     String trailerId;
     String description;
 }

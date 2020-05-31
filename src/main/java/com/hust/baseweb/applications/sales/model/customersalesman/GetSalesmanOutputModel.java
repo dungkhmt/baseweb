@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetSalesmanOutputModel {
+
     private PartySalesman partySalesman;
     private String userLoginId;
 

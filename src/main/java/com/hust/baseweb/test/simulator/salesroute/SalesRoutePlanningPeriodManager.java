@@ -9,6 +9,7 @@ import com.hust.baseweb.test.simulator.HttpPostExecutor;
 import java.util.List;
 
 public class SalesRoutePlanningPeriodManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
@@ -20,12 +21,14 @@ public class SalesRoutePlanningPeriodManager {
         try {
             String json = "{\"statusId\":null}";
 
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-sales-route-planning-period",
+            String rs = executor.execPostUseToken(
+                Constants.URL_ROOT + "/api/get-list-sales-route-planning-period",
                 json,
                 token);
 //            System.out.println("::getListSalesRoutePlanningPeriods, rs = " + rs);
             Gson gson = new Gson();
-            GetSalesRoutePlanningPeriodOutputModel out = gson.fromJson(rs,
+            GetSalesRoutePlanningPeriodOutputModel out = gson.fromJson(
+                rs,
                 GetSalesRoutePlanningPeriodOutputModel.class);
             return out.getSalesRoutePlanningPeriodList();
         } catch (Exception e) {

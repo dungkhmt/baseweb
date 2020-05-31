@@ -9,6 +9,7 @@ import com.hust.baseweb.test.simulator.HttpPostExecutor;
 import java.util.List;
 
 public class SalesmanManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 

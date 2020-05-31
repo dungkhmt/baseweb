@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PredicateBuilder {
+
     private final List<SearchCriteria> params;
 
     public PredicateBuilder() {

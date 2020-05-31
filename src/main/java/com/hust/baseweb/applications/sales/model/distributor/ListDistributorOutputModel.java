@@ -11,5 +11,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class ListDistributorOutputModel {
+
     private List<PartyDistributor> partyDistributorList;
 }

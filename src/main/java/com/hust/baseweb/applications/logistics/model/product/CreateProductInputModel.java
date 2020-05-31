@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateProductInputModel {
+
     private String productId;
     private String productName;
     private Double weight;

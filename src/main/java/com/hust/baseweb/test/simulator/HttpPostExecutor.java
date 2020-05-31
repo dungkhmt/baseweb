@@ -10,11 +10,14 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class HttpPostExecutor {
+
     public static final String module = HttpPostExecutor.class.getName();
-    private static OkHttpClient client = new OkHttpClient().newBuilder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+    private static OkHttpClient client = new OkHttpClient()
+        .newBuilder()
+        .connectTimeout(5 * 60, TimeUnit.SECONDS)
+        .writeTimeout(5 * 60, TimeUnit.SECONDS)
+        .readTimeout(5 * 60, TimeUnit.SECONDS)
+        .retryOnConnectionFailure(true)
         .build();
 
     public String execPostUseToken(String url, String json, String token)
@@ -22,8 +25,12 @@ public class HttpPostExecutor {
         //System.out.println(module + "::execPostUseToken, url = " + url + ", json = " + json + ", token = " + token);
 
         RequestBody body = RequestBody.create(json, Constants.JSON);
-        Request request = new Request.Builder().url(url)
-            .header("X-Auth-Token", token).post(body).build();
+        Request request = new Request.Builder()
+            .url(url)
+            .header("X-Auth-Token", token)
+            .addHeader("Connection", "close")
+            .post(body)
+            .build();
 
         try (Response response = client.newCall(request).execute()) {
             return Objects.requireNonNull(response.body()).string();
@@ -35,8 +42,7 @@ public class HttpPostExecutor {
         //System.out.println(module + "::execPostUseToken, url = " + url + ", json = " + json + ", token = " + token);
 
         //RequestBody body = RequestBody.create(json, Constants.JSON);
-        Request request = new Request.Builder().url(url)
-            .header("X-Auth-Token", token).get().build();
+        Request request = new Request.Builder().url(url).header("X-Auth-Token", token).get().build();
 
         try (Response response = client.newCall(request).execute()) {
             return Objects.requireNonNull(response.body()).string();

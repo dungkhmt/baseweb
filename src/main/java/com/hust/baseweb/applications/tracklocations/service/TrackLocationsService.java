@@ -8,6 +8,7 @@ import java.util.List;
 
 
 public interface TrackLocationsService {
+
     TrackLocations save(PostLocationInputModel input, Party party);
 
     List<TrackLocations> getListLocations();

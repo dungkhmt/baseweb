@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.geo.embeddable.DistanceTravelTimePostalAddr
 import com.hust.baseweb.applications.geo.entity.DistanceTravelTimePostalAddress;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface DistanceTravelTimePostalAddressPagingRepo extends PagingAndSortingRepository<DistanceTravelTimePostalAddress, DistanceTravelTimePostalAddressEmbeddableId> {
+public interface DistanceTravelTimePostalAddressPagingRepo
+    extends PagingAndSortingRepository<DistanceTravelTimePostalAddress, DistanceTravelTimePostalAddressEmbeddableId> {
 
 }

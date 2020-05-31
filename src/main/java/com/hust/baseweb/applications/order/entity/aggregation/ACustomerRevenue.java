@@ -8,6 +8,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ACustomerRevenue {
+
     private UUID customerId;
     private double revenue;
 }

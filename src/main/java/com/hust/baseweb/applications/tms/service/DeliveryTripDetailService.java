@@ -11,8 +11,11 @@ import java.util.UUID;
 
 @Service
 public interface DeliveryTripDetailService {
-    int save(String deliveryTripId,
-             List<DeliveryTripDetailModel.Create> inputs);
+
+    int save(
+        String deliveryTripId,
+        List<DeliveryTripDetailModel.Create> inputs
+    );
 
     boolean delete(String deliveryTripDetailId);
 

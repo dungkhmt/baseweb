@@ -8,10 +8,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class HttpRequestTester {
+
     static OkHttpClient client = new OkHttpClient();
 
     // code request code here
     String doGetRequest(String url) throws IOException {
+
         Request request = new Request.Builder().url(url).build();
 
         Response response = client.newCall(request).execute();

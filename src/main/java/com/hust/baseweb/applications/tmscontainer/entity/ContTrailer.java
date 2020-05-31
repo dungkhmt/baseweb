@@ -16,6 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContTrailer {
+
     @Id
     @Column(name = "trailer_id")
     private String trailerId;

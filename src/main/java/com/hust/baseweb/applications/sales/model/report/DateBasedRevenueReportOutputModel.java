@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 public class DateBasedRevenueReportOutputModel {
+
     private List<DateBasedRevenueReportElement> revenueElements;
 
     public DateBasedRevenueReportOutputModel(List<DateBasedRevenueReportElement> lst) {

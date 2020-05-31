@@ -14,7 +14,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 @Configuration
-@EnableMongoRepositories(basePackages = {"com.hust.baseweb.applications.accounting.repo",
+@EnableMongoRepositories(basePackages = {
+    "com.hust.baseweb.applications.accounting.repo",
     "com.hust.baseweb.applications.tms.repo", "com.hust.baseweb.applications.order.repo.mongodb"})
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
@@ -28,16 +29,13 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @Value("${spring.data.mongodb.database}")
     private String databaseName;
 
-    @Value("${spring.data.mongodb.host}")
-    private String host;
-
-    @Value("${spring.data.mongodb.port}")
-    private int port;
+    @Value("${spring.data.mongodb.uri}")
+    private String uri;
 
 
     @Override
     public MongoClient mongoClient() {
-        return MongoClients.create("mongodb://" + host + ":" + port);
+        return MongoClients.create(uri);
     }
 
     @Override

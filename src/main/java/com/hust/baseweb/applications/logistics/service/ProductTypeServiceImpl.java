@@ -11,6 +11,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductTypeServiceImpl implements ProductTypeService {
+
     private ProductTypeRepo productTypeRepo;
 
     @Override

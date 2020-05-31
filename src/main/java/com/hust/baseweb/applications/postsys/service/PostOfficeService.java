@@ -8,6 +8,7 @@ import java.util.List;
 
 @Service
 public interface PostOfficeService {
+
     PostOffice save(CreatePostOfficeInputModel input);
 
     List<PostOffice> findAll();

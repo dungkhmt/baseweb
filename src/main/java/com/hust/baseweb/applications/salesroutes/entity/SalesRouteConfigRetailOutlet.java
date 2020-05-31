@@ -11,6 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class SalesRouteConfigRetailOutlet {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "sales_route_config_retail_outlet_id")

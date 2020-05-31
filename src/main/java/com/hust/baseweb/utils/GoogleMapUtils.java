@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 @Component
 public class GoogleMapUtils {
+
     private static final org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(
         GoogleMapUtils.class);
 
@@ -58,6 +59,7 @@ public class GoogleMapUtils {
 
     @Scheduled(cron = "12,42 * * * * *", zone = "GMT+7")
     private void updateConfig() throws FileNotFoundException {
+
         String currentApiKey = Config.updateConfig();
         if (currentApiKey != null) {
             GEO_API_CONTEXT = new GeoApiContext.Builder().apiKey(currentApiKey).build();

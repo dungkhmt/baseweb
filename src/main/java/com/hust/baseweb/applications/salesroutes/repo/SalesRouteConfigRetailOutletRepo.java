@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface SalesRouteConfigRetailOutletRepo extends JpaRepository<SalesRouteConfigRetailOutlet, UUID> {
+
     List<SalesRouteConfigRetailOutlet> findBySalesRoutePlanningPeriod(SalesRoutePlanningPeriod salesRoutePlanningPeriod);
 
     @Query( value = "select pro.retail_outlet_code retailOutletCode,\n" +
@@ -31,6 +32,7 @@ public interface SalesRouteConfigRetailOutletRepo extends JpaRepository<SalesRou
     List<GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(UUID salesRoutePlanningPeriodId);
 
     interface GetSalesRouteConfigRetailOutletsOutputModel {
+
         String getRetailOutletCode();
 
         String getRetailOutletName();

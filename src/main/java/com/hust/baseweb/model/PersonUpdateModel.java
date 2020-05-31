@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class PersonUpdateModel {
+
     private String firstName;
     private String lastName;
     private String middleName;
@@ -17,6 +18,5 @@ public class PersonUpdateModel {
     private List<String> roles;
 
     public PersonUpdateModel() {
-
     }
 }

@@ -24,6 +24,7 @@ import java.util.UUID;
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PartySalesmanServiceImpl implements PartySalesmanService {
+
     private PartySalesmanRepo partySalesmanRepo;
     private UserLoginRepo userLoginRepo;
     private UserService userService;
@@ -87,8 +88,7 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
             Party party = userService.save(salesman);
             PartySalesman partySalesman = new PartySalesman();
             partySalesman.setPartyId(party.getPartyId());
-            partySalesmanRepo.save(partySalesman);
-            return partySalesman;
+            return partySalesmanRepo.save(partySalesman);
         } catch (Exception e) {
             e.printStackTrace();
         }

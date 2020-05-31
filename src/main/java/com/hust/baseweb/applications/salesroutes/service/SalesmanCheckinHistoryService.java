@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Service
 public interface SalesmanCheckinHistoryService {
+
     SalesmanCheckinHistory save(UserLogin userLogin, UUID partyCustomerId, String checkinAction, String location);
 
     Page<SalesmanCheckinHistory> findAll(Pageable page);

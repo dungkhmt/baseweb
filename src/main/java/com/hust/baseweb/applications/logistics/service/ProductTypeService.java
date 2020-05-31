@@ -7,6 +7,7 @@ import java.util.List;
 
 @Service
 public interface ProductTypeService {
+
     List<ProductType> getAllProductType();
 
     ProductType getProductTypeByProductTypeId(String productTypeId);

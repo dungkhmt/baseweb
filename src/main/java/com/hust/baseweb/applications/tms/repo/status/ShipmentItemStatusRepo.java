@@ -12,7 +12,10 @@ import java.util.UUID;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface ShipmentItemStatusRepo extends JpaRepository<ShipmentItemStatus, UUID> {
+
     List<ShipmentItemStatus> findAllByShipmentItemIn(Collection<ShipmentItem> shipmentItems);
+
+    void deleteAllByShipmentItemIn(Collection<ShipmentItem> shipmentItems);
 
     List<ShipmentItemStatus> findAllByShipmentItemInAndThruDateNull(Collection<ShipmentItem> shipmentItems);
 

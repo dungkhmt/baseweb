@@ -10,6 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class PartyType {
+
     @Id
     @Column(name = "party_type_id")
     //private String id;

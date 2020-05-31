@@ -17,6 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PartyDistributor {
+
     @Id
     @Column(name = "party_id")
     private UUID partyId;
@@ -35,8 +36,9 @@ public class PartyDistributor {
     @Column(name = "distributor_name")
     private String distributorName;
 
-    @JoinTable(name = "PartyContactMechPurpose", inverseJoinColumns = @JoinColumn(name = "contact_mech_id", referencedColumnName = "contact_mech_id"),
-        joinColumns = @JoinColumn(name = "party_id", referencedColumnName = "party_id"))
+    @JoinTable(name = "PartyContactMechPurpose",
+               inverseJoinColumns = @JoinColumn(name = "contact_mech_id", referencedColumnName = "contact_mech_id"),
+               joinColumns = @JoinColumn(name = "party_id", referencedColumnName = "party_id"))
     @OneToMany(fetch = FetchType.LAZY)
     private List<PostalAddress> postalAddress;
 

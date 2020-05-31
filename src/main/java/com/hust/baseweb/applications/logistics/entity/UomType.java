@@ -11,6 +11,7 @@ import javax.persistence.Id;
 @Getter
 @Setter
 public class UomType {
+
     @Id
     @Column(name = "uom_type_id")
     private String uomTypeId;

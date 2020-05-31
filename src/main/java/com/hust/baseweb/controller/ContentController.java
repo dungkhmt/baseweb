@@ -18,6 +18,7 @@ import java.io.IOException;
 @RequestMapping("/content")
 @Log4j2
 public class ContentController {
+
     @Autowired
     private ContentService contentService;
 
@@ -27,7 +28,7 @@ public class ContentController {
         Content content = null;
         try {
             content = contentService.createContent(file.getInputStream(), file.getOriginalFilename(),
-                file.getContentType());
+                                                   file.getContentType());
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

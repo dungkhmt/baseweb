@@ -8,7 +8,6 @@ import java.util.Scanner;
 public class Crawler {
 
     public static void main(String[] args) {
-
         Crawler app = new Crawler();
         app.run();
     }

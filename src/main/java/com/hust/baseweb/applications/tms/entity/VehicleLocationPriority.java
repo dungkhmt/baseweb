@@ -16,6 +16,7 @@ import java.util.UUID;
 @Setter
 @Entity
 public class VehicleLocationPriority {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID vehicleLocationPriorityId;

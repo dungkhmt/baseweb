@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
+
     UserLogin findById(String userLoginId);
 
     DPerson findByPartyId(String partyId);

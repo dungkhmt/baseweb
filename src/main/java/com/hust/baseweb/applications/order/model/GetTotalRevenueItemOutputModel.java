@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetTotalRevenueItemOutputModel {
+
     private String date;
     private Double revenue;
 

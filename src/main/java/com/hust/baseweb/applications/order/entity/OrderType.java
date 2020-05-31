@@ -13,6 +13,7 @@ import java.util.Date;
 @Setter
 
 public class OrderType {
+
     @Id
     @Column(name = "order_type_id")
     private String orderTypeId;

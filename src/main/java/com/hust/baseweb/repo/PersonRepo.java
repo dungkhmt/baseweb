@@ -9,5 +9,6 @@ import java.util.UUID;
  * PersonRepo
  */
 public interface PersonRepo extends JpaRepository<Person, UUID> {
+
     Person findByPartyId(UUID partyId);
 }

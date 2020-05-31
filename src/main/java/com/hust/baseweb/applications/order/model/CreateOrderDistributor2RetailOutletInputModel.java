@@ -8,6 +8,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class CreateOrderDistributor2RetailOutletInputModel {
+
     private UUID toCustomerId;// party_id
     private UUID fromVendorId;// party_id
     private ModelCreateOrderInputOrderItem[] orderItems;

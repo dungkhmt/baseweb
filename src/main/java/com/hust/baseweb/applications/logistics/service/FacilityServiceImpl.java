@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class FacilityServiceImpl implements FacilityService {
+
     private FacilityRepo facilityRepo;
 
     private PostalAddressRepo postalAddressRepo;
@@ -28,13 +29,11 @@ public class FacilityServiceImpl implements FacilityService {
 
     @Override
     public Facility findFacilityById(String facilityId) {
-
         return facilityRepo.findByFacilityId(facilityId);
     }
 
     @Override
     public List<Facility> getAllFacilities() {
-
         return facilityRepo.findAll();
     }
 
@@ -46,7 +45,8 @@ public class FacilityServiceImpl implements FacilityService {
             LatLng location = geocodingResults[0].geometry.location;
             GeoPoint geoPoint = new GeoPoint(null, location.lat, location.lng);
             geoPoint = geoPointRepo.save(geoPoint);
-            postalAddress = new PostalAddress(null,
+            postalAddress = new PostalAddress(
+                null,
                 UUID.randomUUID().toString(),
                 facilityModel.getAddress(),
                 geoPoint,

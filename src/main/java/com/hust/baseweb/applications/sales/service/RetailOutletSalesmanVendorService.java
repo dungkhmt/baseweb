@@ -11,12 +11,15 @@ import java.util.UUID;
 
 @Service
 public interface RetailOutletSalesmanVendorService {
+
     RetailOutletSalesmanVendor save(RetailOutletSalesmanDistributorInputModel input);
 
-    List<RetailOutletSalesmanVendorRepo.GetRetailOutletsOfSalesmanAndDistributor> getRetailOutletsOfSalesmanAndDistributor(UUID partySalesmanId,
-                                                                                                                           UUID partyDistributorId);
+    List<RetailOutletSalesmanVendorRepo.GetRetailOutletsOfSalesmanAndDistributor>
+        getRetailOutletsOfSalesmanAndDistributor(UUID partySalesmanId, UUID partyDistributorId);
 
-    RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(UUID partyRetailOutletId,
-                                                                  UUID partySalesmanId,
-                                                                  UUID partyDistributorId);
+    RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(
+        UUID partyRetailOutletId,
+        UUID partySalesmanId,
+        UUID partyDistributorId
+    );
 }

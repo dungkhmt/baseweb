@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LPCoefficient {
+
     private int varIndex;
     private double coefficient;
 }

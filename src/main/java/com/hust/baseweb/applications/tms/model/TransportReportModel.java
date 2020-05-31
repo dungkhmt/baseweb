@@ -11,11 +11,13 @@ import java.util.List;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public class TransportReportModel {
+
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
     @Setter
     public static class Input {
+
         private String fromDate;
         private String thruDate;
         private String facilityId;
@@ -28,6 +30,7 @@ public class TransportReportModel {
     @Getter
     @Setter
     public static class Output {
+
         private List<DateReport> dateReports;
     }
 
@@ -36,6 +39,7 @@ public class TransportReportModel {
     @Getter
     @Setter
     public static class DateReport {
+
         private String date;
         private Long cost;
         private Integer totalDistance;

@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface InventoryItemDetailService {
-    InventoryItemDetail createInventoryItemDetail(InventoryItem inventoryItem,
-                                                  int qtyOnHandDiff,
-                                                  OrderItem orderItem);
+
+    InventoryItemDetail createInventoryItemDetail(
+        InventoryItem inventoryItem,
+        int qtyOnHandDiff,
+        OrderItem orderItem
+    );
 
 }

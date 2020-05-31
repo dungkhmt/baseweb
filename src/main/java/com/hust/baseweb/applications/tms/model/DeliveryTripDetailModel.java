@@ -13,6 +13,7 @@ public class DeliveryTripDetailModel {
     @Getter
     @AllArgsConstructor
     public static class OrderItems {
+
         private List<OrderItem> orderItems;
         private Double depotLat;
         private Double depotLng;
@@ -23,6 +24,7 @@ public class DeliveryTripDetailModel {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class OrderItem {
+
         private Integer sequence;
         private UUID deliveryTripDetailId;
         private UUID deliveryTripId;
@@ -45,6 +47,7 @@ public class DeliveryTripDetailModel {
     @Setter
     @ToString
     public static class Create {
+
         //    private UUID deliveryTripId;
         private UUID shipmentItemId;
         //private String shipmentItemSeqId;

@@ -18,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 
 public class ContRequestExportFull {
+
     @Id
     @Column(name = "request_export_full_id")
     @GeneratedValue(strategy = GenerationType.AUTO)

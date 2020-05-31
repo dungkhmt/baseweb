@@ -7,5 +7,6 @@ import java.util.UUID;
 
 public interface PSalesRoutePlanningPeriodRepo extends
     PagingAndSortingRepository<SalesRoutePlanningPeriod, UUID> {
+
     SalesRoutePlanningPeriod findBySalesRoutePlanningPeriodId(UUID salesRoutePlanningPeriodId);
 }

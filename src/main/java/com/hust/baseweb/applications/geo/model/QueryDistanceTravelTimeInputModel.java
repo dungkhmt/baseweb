@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QueryDistanceTravelTimeInputModel {
+
     private String params;
     private List<DistanceTravelTimeElement> elements;
 }

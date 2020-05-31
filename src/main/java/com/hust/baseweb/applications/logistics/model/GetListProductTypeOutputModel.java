@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public class GetListProductTypeOutputModel {
+
     private List<ProductType> productTypes;
 
     public GetListProductTypeOutputModel(List<ProductType> productTypes) {

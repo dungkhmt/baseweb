@@ -4,9 +4,10 @@ import com.hust.baseweb.applications.accounting.repo.*;
 import com.hust.baseweb.applications.accounting.repo.sequenceid.InvoiceSequenceIdRepo;
 import com.hust.baseweb.applications.accounting.repo.sequenceid.PaymentSequenceIdRepo;
 import com.hust.baseweb.applications.logistics.repo.*;
-import com.hust.baseweb.applications.order.repo.OrderHeaderRepo;
-import com.hust.baseweb.applications.order.repo.OrderHeaderSequenceIdRepo;
-import com.hust.baseweb.applications.order.repo.OrderItemRepo;
+import com.hust.baseweb.applications.order.repo.*;
+import com.hust.baseweb.applications.order.repo.mongodb.CustomerRevenueRepo;
+import com.hust.baseweb.applications.order.repo.mongodb.ProductRevenueRepo;
+import com.hust.baseweb.applications.order.repo.mongodb.TotalRevenueRepo;
 import com.hust.baseweb.applications.tms.repo.*;
 import com.hust.baseweb.applications.tms.repo.status.DeliveryTripDetailStatusRepo;
 import com.hust.baseweb.applications.tms.repo.status.DeliveryTripStatusRepo;
@@ -40,7 +41,9 @@ public class AdminMaintenanceServiceImpl implements AdminMaintenanceService {
     private ShipmentItemDeliveryPlanRepo shipmentItemDeliveryPlanRepo;
     private DeliveryTripDetailStatusRepo deliveryTripDetailStatusRepo;
     private DeliveryTripDetailRepo deliveryTripDetailRepo;
+    private ShipmentItemRoleRepo shipmentItemRoleRepo;
     private ShipmentItemRepo shipmentItemRepo;
+    private OrderRoleRepo orderRoleRepo;
     private OrderHeaderRepo orderHeaderRepo;
     private ShipmentRepo shipmentRepo;
     private DeliveryTripStatusRepo deliveryTripStatusRepo;
@@ -50,35 +53,97 @@ public class AdminMaintenanceServiceImpl implements AdminMaintenanceService {
     private ReceiptItemRepo receiptItemRepo;
     private ReceiptRepo receiptRepo;
     private ReceiptSequenceIdRepo receiptSequenceIdRepo;
+    private OrderStatusRepo orderStatusRepo;
+    private ProductRevenueRepo productRevenueRepo;
+    private CustomerRevenueRepo customerRevenueRepo;
+    private TotalRevenueRepo totalRevenueRepo;
 
 
     @Override
     public boolean deleteAllOrders() {
-        inventoryItemDetailRepo.deleteAll();
-        inventoryItemRepo.deleteAll();
-        shipmentItemStatusRepo.deleteAll();
+        inventoryItemDetailRepo.deleteAllInBatch();
+        inventoryItemDetailRepo.flush();
+
+        inventoryItemRepo.deleteAllInBatch();
+        inventoryItemRepo.flush();
+
+        shipmentItemStatusRepo.deleteAllInBatch();
+        shipmentItemStatusRepo.flush();
+
         orderItemBillingRepo.deleteAll();
-        orderItemRepo.deleteAll();
+
+        orderItemRepo.deleteAllInBatch();
+        orderItemRepo.flush();
+
         invoiceItemRepo.deleteAll();
+
         invoiceStatusRepo.deleteAll();
+
         paymentApplicationRepo.deleteAll();
+
         invoiceRepo.deleteAll();
+
         paymentRepo.deleteAll();
-        invoiceSequenceIdRepo.deleteAll();
-        paymentSequenceIdRepo.deleteAll();
-        shipmentItemDeliveryPlanRepo.deleteAll();
-        deliveryTripDetailStatusRepo.deleteAll();
-        deliveryTripDetailRepo.deleteAll();
-        shipmentItemRepo.deleteAll();
-        orderHeaderRepo.deleteAll();
-        shipmentRepo.deleteAll();
-        deliveryTripStatusRepo.deleteAll();
-        deliveryTripRepo.deleteAll();
-        deliveryPlanRepo.deleteAll();
-        orderHeaderSequenceIdRepo.deleteAll();
-        receiptItemRepo.deleteAll();
-        receiptRepo.deleteAll();
-        receiptSequenceIdRepo.deleteAll();
+
+        customerRevenueRepo.deleteAll();
+
+        productRevenueRepo.deleteAll();
+
+        totalRevenueRepo.deleteAll();
+
+        invoiceSequenceIdRepo.deleteAllInBatch();
+        invoiceSequenceIdRepo.flush();
+
+        paymentSequenceIdRepo.deleteAllInBatch();
+        paymentSequenceIdRepo.flush();
+
+        shipmentItemDeliveryPlanRepo.deleteAllInBatch();
+        shipmentItemDeliveryPlanRepo.flush();
+
+        deliveryTripDetailStatusRepo.deleteAllInBatch();
+        deliveryTripDetailStatusRepo.flush();
+
+        deliveryTripDetailRepo.deleteAllInBatch();
+        deliveryTripDetailRepo.flush();
+
+        shipmentItemRoleRepo.deleteAllInBatch();
+        shipmentItemRoleRepo.flush();
+
+        shipmentItemRepo.deleteAllInBatch();
+        shipmentItemRepo.flush();
+
+        orderStatusRepo.deleteAllInBatch();
+        orderStatusRepo.flush();
+
+        orderRoleRepo.deleteAllInBatch();
+        orderRoleRepo.flush();
+
+        orderHeaderRepo.deleteAllInBatch();
+        orderHeaderRepo.flush();
+
+        shipmentRepo.deleteAllInBatch();
+        shipmentRepo.flush();
+
+        deliveryTripStatusRepo.deleteAllInBatch();
+        deliveryTripStatusRepo.flush();
+
+        deliveryTripRepo.deleteAllInBatch();
+        deliveryTripRepo.flush();
+
+        deliveryPlanRepo.deleteAllInBatch();
+        deliveryPlanRepo.flush();
+
+        orderHeaderSequenceIdRepo.deleteAllInBatch();
+        orderHeaderSequenceIdRepo.flush();
+
+        receiptItemRepo.deleteAllInBatch();
+        receiptItemRepo.flush();
+
+        receiptRepo.deleteAllInBatch();
+        receiptRepo.flush();
+
+        receiptSequenceIdRepo.deleteAllInBatch();
+        receiptSequenceIdRepo.flush();
 
         return true;
     }

@@ -16,7 +16,6 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
 
     @Override
     public List<SecurityGroup> findAll() {
-
         return securityGroupRepo.findAll();
     }
 

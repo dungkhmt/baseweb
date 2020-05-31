@@ -13,14 +13,17 @@ import java.util.UUID;
 
 @Service
 public interface DeliveryTripService {
-    DeliveryTrip save(DeliveryTripModel.Create input,
-                      double totalDistance,
-                      double totalWeight, // kg
-                      double totalPallet,
-                      double totalExecutionTime,
-                      int totalLocation,
-                      int completedDeliveryTripDetailCount,
-                      int deliveryTripDetailCount);
+
+    DeliveryTrip save(
+        DeliveryTripModel.Create input,
+        double totalDistance,
+        double totalWeight, // kg
+        double totalPallet,
+        double totalExecutionTime,
+        int totalLocation,
+        int completedDeliveryTripDetailCount,
+        int deliveryTripDetailCount
+    );
 
     Page<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
@@ -28,8 +31,10 @@ public interface DeliveryTripService {
 
     DeliveryTripModel findById(UUID deliveryTripId);
 
-    DeliveryTripModel.Tour getDeliveryTripInfo(String deliveryTripId,
-                                               List<DeliveryTripDetailModel.Create> shipmentItemModels);
+    DeliveryTripModel.Tour getDeliveryTripInfo(
+        String deliveryTripId,
+        List<DeliveryTripDetailModel.Create> shipmentItemModels
+    );
 
     GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(String driverUserLoginId);
 

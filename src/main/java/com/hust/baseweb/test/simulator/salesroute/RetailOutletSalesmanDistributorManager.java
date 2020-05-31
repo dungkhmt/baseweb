@@ -9,6 +9,7 @@ import com.hust.baseweb.test.simulator.HttpPostExecutor;
 import java.util.UUID;
 
 public class RetailOutletSalesmanDistributorManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
@@ -16,9 +17,11 @@ public class RetailOutletSalesmanDistributorManager {
         this.token = token;
     }
 
-    public RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(UUID retailOutletId,
-                                                                         UUID salesmanId,
-                                                                         UUID distributorId) {
+    public RetailOutletSalesmanVendor getRetailOutletSalesmanDistributor(
+        UUID retailOutletId,
+        UUID salesmanId,
+        UUID distributorId
+    ) {
         try {
             RetailOutletSalesmanDistributorInputModel in = new RetailOutletSalesmanDistributorInputModel();
             in.setPartyDistributorId(distributorId);
@@ -28,7 +31,8 @@ public class RetailOutletSalesmanDistributorManager {
             Gson gson = new Gson();
             String json = gson.toJson(in);
 
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-retail-outlet-salesman-distributor",
+            String rs = executor.execPostUseToken(
+                Constants.URL_ROOT + "/api/get-retail-outlet-salesman-distributor",
                 json,
                 token);
 

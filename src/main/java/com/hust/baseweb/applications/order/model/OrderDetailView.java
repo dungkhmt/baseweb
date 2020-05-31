@@ -13,11 +13,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
 public class OrderDetailView {
+
     private String orderId;
     private Date orderDate;
     private UUID customerId;
@@ -29,10 +31,19 @@ public class OrderDetailView {
     private Double total;
     private OrderItemDetailView[] orderItems;
 
-    public OrderDetailView(OrderHeader order,
-                           OrderService orderService,
-                           PartySalesmanService salesmanService,
-                           UserService userService) {
+    private List<PaymentApplicationDetailView> paymentApplicationDetailViews;
+    private List<PaymentDetailView> paymentDetailViews;
+    private List<InvoiceDetailView> invoiceDetailViews;
+    private List<InvoiceItemDetailView> invoiceItemDetailViews;
+    private List<ShipmentItemDetailView> shipmentItemDetailViews;
+    private List<ShipmentDetailView> shipmentDetailViews;
+
+    public OrderDetailView(
+        OrderHeader order,
+        OrderService orderService,
+        PartySalesmanService salesmanService,
+        UserService userService
+    ) {
         // TODO: to be improved
 
         orderId = order.getOrderId();

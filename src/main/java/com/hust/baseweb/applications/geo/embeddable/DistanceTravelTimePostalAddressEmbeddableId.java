@@ -15,6 +15,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 
 public class DistanceTravelTimePostalAddressEmbeddableId implements Serializable {
+
     @NotNull
     private UUID fromContactMechId;
 

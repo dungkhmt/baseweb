@@ -12,6 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class SalesChannel {
+
     @Id
     @Column(name = "sales_channel_id")
     private String salesChannelId;

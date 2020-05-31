@@ -17,24 +17,25 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DeliveryTrip {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "delivery_trip_id")
     private UUID deliveryTripId;
 
     @JoinColumn(name = "delivery_plan_id", referencedColumnName = "delivery_plan_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private DeliveryPlan deliveryPlan;
 
     @Column(name = "delivery_plan_solution_seq_id")
     private String deliveryPlanSolutionSeqId;
 
     @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Vehicle vehicle;
 
     @JoinColumn(name = "driver_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PartyDriver partyDriver;
 
     @Column(name = "execute_date")
@@ -51,11 +52,11 @@ public class DeliveryTrip {
     private Integer totalLocation;
 
     @JoinColumn(name = "execute_external_vehicle_type_id", referencedColumnName = "vehicle_type_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private VehicleType externalVehicleType;
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private StatusItem statusItem;
 
     private Integer completedDeliveryTripDetailCount = 0;
@@ -76,7 +77,8 @@ public class DeliveryTrip {
             Optional.ofNullable(externalVehicleType).map(VehicleType::getVehicleTypeId).orElse(null),
             Optional.ofNullable(vehicle).map(Vehicle::getProductTransportCategoryId).orElse(null),
             Optional.ofNullable(vehicle).map(Vehicle::getCapacity).orElse(null),
-            Optional.ofNullable(partyDriver)
+            Optional
+                .ofNullable(partyDriver)
                 .map(PartyDriver::getParty)
                 .map(Party::getUserLogin)
                 .map(UserLogin::getUserLoginId)

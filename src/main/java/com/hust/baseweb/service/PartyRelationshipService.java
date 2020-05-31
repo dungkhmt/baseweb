@@ -10,19 +10,26 @@ import java.util.List;
 
 @Service
 public interface PartyRelationshipService {
+
     PartyRelationship save(PartyRelationship partyRelationship);
 
-    List<PartyRelationship> findAllByFromPartyAndRoleTypeAndThruDate(Party fromParty,
-                                                                     RoleType roleType,
-                                                                     Date thruDate);
+    List<PartyRelationship> findAllByFromPartyAndRoleTypeAndThruDate(
+        Party fromParty,
+        RoleType roleType,
+        Date thruDate
+    );
 
-    List<PartyRelationship> findAllByToPartyAndRoleTypeAndThruDate(Party toParty,
-                                                                   RoleType roleType,
-                                                                   Date thruDate);
+    List<PartyRelationship> findAllByToPartyAndRoleTypeAndThruDate(
+        Party toParty,
+        RoleType roleType,
+        Date thruDate
+    );
 
-    List<PartyRelationship> findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(Party fromParty,
-                                                                               Party toParty,
-                                                                               RoleType roleType,
-                                                                               Date thruDate);
+    List<PartyRelationship> findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(
+        Party fromParty,
+        Party toParty,
+        RoleType roleType,
+        Date thruDate
+    );
 
 }

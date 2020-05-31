@@ -8,5 +8,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class CompleteDeliveryShipmentItemInputModel {
+
     private UUID deliveryTripDetailId;
 }

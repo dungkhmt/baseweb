@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class ListProductImageModel {
+
     List<ProductImageInfoModel> productImageInfoModels;
     String primaryImgId;
 
