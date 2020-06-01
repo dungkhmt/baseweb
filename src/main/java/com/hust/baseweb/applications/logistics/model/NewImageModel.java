@@ -10,5 +10,6 @@ import java.util.List;
 @Setter
 @ToString
 public class NewImageModel {
+
     private List<String> content;
 }

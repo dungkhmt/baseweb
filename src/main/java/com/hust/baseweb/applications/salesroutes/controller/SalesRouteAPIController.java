@@ -211,7 +211,7 @@ public class SalesRouteAPIController {
      */
     @GetMapping("/get-sales-route-config-retail-outlets/{id}")
     public ResponseEntity<?> getSalesroutesConfigRetailOutlets(Principal principal, @PathVariable UUID id) {
-        return ResponseEntity.ok().body(salesRouteConfigRetailOutletService.getSalesroutesConfigRetailOutlets(id));
+        return ResponseEntity.ok().body(salesRouteConfigRetailOutletService.getSalesRoutesConfigRetailOutlets(id));
     }
 
     /**
@@ -227,7 +227,8 @@ public class SalesRouteAPIController {
 
     /**
      * List all sales route details of a specific plan period
-     * @param id        salesRoutePlanningPeriodId
+     *
+     * @param id salesRoutePlanningPeriodId
      * @return list of GetSalesRouteDetailOfPlanPeriodOutputModel objects
      * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
