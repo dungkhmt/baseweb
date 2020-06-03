@@ -73,6 +73,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     private ReceiptService receiptService;
 
+    private UomRepo uomRepo;
+
     @Override
     @Transactional
     public List<InventoryItem> importInventoryItems(ImportInventoryItemsInputModel inventoryItemsInput) {
@@ -124,6 +126,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                                                   inventoryItem.getQuantityOnHandTotal());
         }
 
+        Uom currencyUomId = uomRepo.findById("CUR_vnd").orElseThrow(NoSuchElementException::new);
+
         List<InventoryItem> inventoryItems = Arrays
             .stream(inventoryItemsInput.getInventoryItems())
             .map(inventoryItemInput -> {
@@ -135,6 +139,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                 inventoryItem.setLotId(inventoryItemInput.getLotId());
                 inventoryItem.setUomId(product.getUom().getUomId());
                 inventoryItem.setQuantityOnHandTotal(inventoryItemInput.getQuantityOnHandTotal());
+                inventoryItem.setUnitCost(inventoryItemInput.getUnitCost());
+                inventoryItem.setCurrencyUomId(currencyUomId);
                 return inventoryItem;
             })
             .collect(Collectors.toList());
