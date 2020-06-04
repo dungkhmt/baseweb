@@ -23,11 +23,11 @@ public class PartyDistributor {
     private UUID partyId;
 
     //@JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    //@OneToOne(fetch = FetchType.LAZY)
+    //@OneToOne(fetch = FetchType.EAGER)
     //private Party party;
 
     @JoinColumn(name = "party_type_id", referencedColumnName = "party_type_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private PartyType partyType;
 
     @Column(name = "distributor_code")

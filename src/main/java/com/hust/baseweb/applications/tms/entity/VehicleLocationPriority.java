@@ -22,11 +22,11 @@ public class VehicleLocationPriority {
     private UUID vehicleLocationPriorityId;
 
     @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Vehicle vehicle;
 
     @JoinColumn(name = "contact_mech_id", referencedColumnName = "contact_mech_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private PostalAddress postalAddress;
 
     private Integer priority;

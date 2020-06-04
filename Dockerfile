@@ -4,7 +4,7 @@ WORKDIR /workspace/app
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
-RUN chmod 777 mvn
+RUN chmod 777 mvnw
 RUN ./mvnw dependency:go-offline
 COPY src src
 RUN ./mvnw install -DskipTests

@@ -1,6 +1,8 @@
 package com.hust.baseweb.applications.order.service;
 
 
+import com.hust.baseweb.applications.accounting.document.*;
+import com.hust.baseweb.applications.accounting.repo.*;
 import com.hust.baseweb.applications.customer.entity.PartyCustomer;
 import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
@@ -11,16 +13,14 @@ import com.hust.baseweb.applications.order.controller.OrderAPIController;
 import com.hust.baseweb.applications.order.document.OrderHeaderRemoved;
 import com.hust.baseweb.applications.order.document.aggregation.RevenueUpdateType;
 import com.hust.baseweb.applications.order.entity.*;
-import com.hust.baseweb.applications.order.model.CreateOrderDistributor2RetailOutletInputModel;
-import com.hust.baseweb.applications.order.model.ModelCreateOrderInputOrderItem;
-import com.hust.baseweb.applications.order.model.OrderDetailView;
-import com.hust.baseweb.applications.order.model.OrderItemDetailView;
+import com.hust.baseweb.applications.order.model.*;
 import com.hust.baseweb.applications.order.repo.*;
 import com.hust.baseweb.applications.order.repo.mongodb.OrderHeaderRemovedRepo;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
 import com.hust.baseweb.applications.sales.service.PartySalesmanService;
 import com.hust.baseweb.applications.tms.entity.DeliveryTripDetail;
+import com.hust.baseweb.applications.tms.entity.Shipment;
 import com.hust.baseweb.applications.tms.entity.ShipmentItem;
 import com.hust.baseweb.applications.tms.repo.DeliveryTripDetailRepo;
 import com.hust.baseweb.applications.tms.repo.ShipmentItemRepo;
@@ -97,6 +97,15 @@ public class OrderServiceImpl implements OrderService {
     private InventoryItemDetailRepo inventoryItemDetailRepo;
 
     private DeliveryTripDetailStatusRepo deliveryTripDetailStatusRepo;
+
+    private PaymentApplicationRepo paymentApplicationRepo;
+
+    private OrderItemBillingRepo orderItemBillingRepo;
+
+    private InvoiceItemRepo invoiceItemRepo;
+    private InvoiceRepo invoiceRepo;
+
+    private PaymentRepo paymentRepo;
 
     @Override
     @Transactional
@@ -369,7 +378,93 @@ public class OrderServiceImpl implements OrderService {
             orderItemDetailViews[i].setUom(orderItem.getProduct().getUom().getDescription());
         }
         orderDetailView.setOrderItems(orderItemDetailViews);
+
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD).setAmbiguityIgnored(true);
+        modelMapper
+            .typeMap(ShipmentItem.class, ShipmentItemDetailView.class)
+            .addMapping(
+                shipmentItem -> shipmentItem.getShipment().getShipmentId(),
+                ShipmentItemDetailView::setShipmentId);
+
+        setShipment(orderId, orderDetailView, modelMapper);
+
+        List<String> invoiceIds = setInvoice(orderId, orderDetailView, modelMapper);
+
+        setPayment(orderDetailView, modelMapper, invoiceIds);
+
+
         return orderDetailView;
+    }
+
+    private void setShipment(String orderId, OrderDetailView orderDetailView, ModelMapper modelMapper) {
+        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByOrderId(orderId);
+        List<Shipment> shipments = shipmentItems
+            .stream()
+            .map(ShipmentItem::getShipment)
+            .distinct()
+            .collect(Collectors.toList());
+
+        orderDetailView.setShipmentDetailViews(shipments
+                                                   .stream()
+                                                   .map(shipment -> modelMapper.map(shipment, ShipmentDetailView.class))
+                                                   .collect(Collectors.toList()));
+        orderDetailView.setShipmentItemDetailViews(shipmentItems
+                                                       .stream()
+                                                       .map(shipmentItem -> modelMapper.map(
+                                                           shipmentItem,
+                                                           ShipmentItemDetailView.class))
+                                                       .collect(Collectors.toList()));
+    }
+
+    @NotNull
+    private List<String> setInvoice(String orderId, OrderDetailView orderDetailView, ModelMapper modelMapper) {
+        List<OrderItemBilling> orderItemBillings = orderItemBillingRepo.findAllById_OrderId(orderId);
+        List<InvoiceItem.Id> invoiceItemIds = orderItemBillings
+            .stream()
+            .map(orderItemBilling -> orderItemBilling.getId().toInvoiceItemId())
+            .distinct()
+            .collect(Collectors.toList());
+        List<InvoiceItem> invoiceItems = invoiceItemRepo.findAllByIdIn(invoiceItemIds);
+        List<String> invoiceIds = invoiceItemIds
+            .stream()
+            .map(InvoiceItem.Id::getInvoiceId)
+            .distinct()
+            .collect(Collectors.toList());
+
+        List<Invoice> invoices = invoiceRepo.findAllByInvoiceIdIn(invoiceIds);
+
+        orderDetailView.setInvoiceDetailViews(invoices
+                                                  .stream()
+                                                  .map(invoice -> modelMapper.map(invoice, InvoiceDetailView.class))
+                                                  .collect(Collectors.toList()));
+        orderDetailView.setInvoiceItemDetailViews(invoiceItems
+                                                      .stream()
+                                                      .map(invoiceItem -> modelMapper.map(
+                                                          invoiceItem,
+                                                          InvoiceItemDetailView.class))
+                                                      .collect(Collectors.toList()));
+        return invoiceIds;
+    }
+
+    private void setPayment(OrderDetailView orderDetailView, ModelMapper modelMapper, List<String> invoiceIds) {
+        List<PaymentApplication> paymentApplications = paymentApplicationRepo.findAllByInvoiceIdIn(invoiceIds);
+        List<String> paymentIds = paymentApplications
+            .stream()
+            .map(PaymentApplication::getPaymentId)
+            .collect(Collectors.toList());
+        List<Payment> payments = paymentRepo.findAllByPaymentIdIn(paymentIds);
+
+        orderDetailView.setPaymentDetailViews(payments
+                                                  .stream()
+                                                  .map(payment -> modelMapper.map(payment, PaymentDetailView.class))
+                                                  .collect(Collectors.toList()));
+        orderDetailView.setPaymentApplicationDetailViews(paymentApplications
+                                                             .stream()
+                                                             .map(paymentApplication -> modelMapper.map(
+                                                                 paymentApplication,
+                                                                 PaymentApplicationDetailView.class))
+                                                             .collect(Collectors.toList()));
     }
 
     @Override

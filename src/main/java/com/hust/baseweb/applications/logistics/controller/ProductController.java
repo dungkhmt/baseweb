@@ -14,7 +14,6 @@ import com.hust.baseweb.applications.logistics.service.UomService;
 import com.hust.baseweb.entity.Content;
 import com.hust.baseweb.repo.ContentRepo;
 import com.hust.baseweb.service.ContentService;
-import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,18 +197,18 @@ public class ProductController {
     }
 
     @PostMapping("/add-new-image/{productId}")
-    public void addNewImage(@PathVariable String productId, @RequestBody NewImageModel input){
+    public void addNewImage(@PathVariable String productId, @RequestBody NewImageModel input) {
         log.info("addNewImage");
         Product product = productService.findByProductId(productId);
-        if(product == null){
+        if (product == null) {
             log.info("2222222");
         }
         Set<Content> contents = product.getContents();
         List<String> contentIds = input.getContent();
-        if(contentIds.size() > 0){
+        if (contentIds.size() > 0) {
             Iterator<Content> contentsIterator = contents.iterator();
-            if(contentsIterator != null){
-                while (contentsIterator.hasNext()){
+            if (contentsIterator != null) {
+                while (contentsIterator.hasNext()) {
                     contentIds.add(contentsIterator.next().getContentId().toString());
                 }
                 log.info("1");
@@ -223,13 +222,12 @@ public class ProductController {
 
 
         Content primaryImg = product.getPrimaryImg();
-        if(primaryImg == null && contents.size() >0){
+        if (primaryImg == null && contents.size() > 0) {
             primaryImg = contents.iterator().next();
             product.setPrimaryImg(primaryImg);
         }
 
         productRepo.save(product);
-
 
 
     }

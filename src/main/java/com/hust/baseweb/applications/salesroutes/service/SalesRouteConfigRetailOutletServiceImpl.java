@@ -59,9 +59,9 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
     }
 
     @Override
-    public List<SalesRouteConfigRetailOutletRepo.GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(
+    public List<SalesRouteConfigRetailOutletRepo.GetSalesRouteConfigRetailOutletsOutputModel> getSalesRoutesConfigRetailOutlets(
         UUID salesRoutePlanningPeriodId
     ) {
-        return salesRouteConfigRetailOutletRepo.getSalesroutesConfigRetailOutlets(salesRoutePlanningPeriodId);
+        return salesRouteConfigRetailOutletRepo.getSalesRoutesConfigRetailOutlets(salesRoutePlanningPeriodId);
     }
 }

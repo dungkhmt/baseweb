@@ -41,6 +41,9 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public Supplier create(Supplier.CreateModel supplierModel) {
+        if ((supplierRepo.existsBySupplierCode(supplierModel.getSupplierCode()))) {
+            return new Supplier();
+        }
         Party party = new Party(null, partyTypeRepo.findByPartyTypeId("PARTY_SUPPLIER"), "",
                                 statusRepo
                                     .findById(Status.StatusEnum.PARTY_ENABLED.name())

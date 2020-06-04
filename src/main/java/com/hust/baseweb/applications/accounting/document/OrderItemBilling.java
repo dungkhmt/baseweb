@@ -34,5 +34,9 @@ public class OrderItemBilling {
         private String orderItemSeqId;   // varchar(60),
         private String invoiceId;          // varchar(60),
         private String invoiceItemSeqId; // varchar(60),
+
+        public InvoiceItem.Id toInvoiceItemId() {
+            return new InvoiceItem.Id(invoiceId, invoiceItemSeqId);
+        }
     }
 }

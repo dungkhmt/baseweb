@@ -20,7 +20,7 @@ public class VehicleMaintenanceHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID vehicleMaintenanceHistoryId;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
     private Vehicle vehicle;
     private Date maintenanceDate;

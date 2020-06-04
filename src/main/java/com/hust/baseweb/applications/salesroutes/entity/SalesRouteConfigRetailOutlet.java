@@ -18,19 +18,19 @@ public class SalesRouteConfigRetailOutlet {
     private UUID salesRouteConfigRetailOutletId;
 
     @JoinColumn(name = "sales_route_planning_period_id", referencedColumnName = "sales_route_planning_period_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private SalesRoutePlanningPeriod salesRoutePlanningPeriod;
 
     @JoinColumn(name = "visit_frequency_id", referencedColumnName = "visit_frequency_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private SalesRouteVisitFrequency salesRouteVisitFrequency;
 
     @JoinColumn(name = "sales_route_config_id", referencedColumnName = "sales_route_config_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private SalesRouteConfig salesRouteConfig;
 
     @JoinColumn(name = "retail_outlet_salesman_vendor_id", referencedColumnName = "retail_outlet_salesman_vendor_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private RetailOutletSalesmanVendor retailOutletSalesmanVendor;
 
     @Column(name = "start_execute_date")

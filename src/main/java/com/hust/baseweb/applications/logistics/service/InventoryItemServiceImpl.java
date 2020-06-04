@@ -73,6 +73,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     private ReceiptService receiptService;
 
+    private UomRepo uomRepo;
+
     @Override
     @Transactional
     public List<InventoryItem> importInventoryItems(ImportInventoryItemsInputModel inventoryItemsInput) {
@@ -124,6 +126,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                                                   inventoryItem.getQuantityOnHandTotal());
         }
 
+        Uom currencyUomId = uomRepo.findById("CUR_vnd").orElseThrow(NoSuchElementException::new);
+
         List<InventoryItem> inventoryItems = Arrays
             .stream(inventoryItemsInput.getInventoryItems())
             .map(inventoryItemInput -> {
@@ -135,6 +139,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                 inventoryItem.setLotId(inventoryItemInput.getLotId());
                 inventoryItem.setUomId(product.getUom().getUomId());
                 inventoryItem.setQuantityOnHandTotal(inventoryItemInput.getQuantityOnHandTotal());
+                inventoryItem.setUnitCost(inventoryItemInput.getUnitCost());
+                inventoryItem.setCurrencyUomId(currencyUomId);
                 return inventoryItem;
             })
             .collect(Collectors.toList());
@@ -237,6 +243,9 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                 productFacility.getLastInventoryCount() - quantity; // remain total inventory count"
 
             List<InventoryItem> selectedInventoryItems = inventoryItemsMap.get(Arrays.asList(facilityId, productId));
+            if (selectedInventoryItems == null) {
+                continue;
+            }
             selectedInventoryItems.sort(Comparator.comparingInt(InventoryItem::getQuantityOnHandTotal));
 
             for (InventoryItem inventoryItem : selectedInventoryItems) {
@@ -479,13 +488,15 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         List<Facility> queryFacilities
     ) {
         Map<List<String>, List<InventoryItem>> inventoryItemsMap = new HashMap<>();
-        inventoryItemRepo.findAllByProductInAndFacilityInAndQuantityOnHandTotalGreaterThan(
-            queryProducts, queryFacilities, 0).forEach(inventoryItem ->
-                                                           inventoryItemsMap.computeIfAbsent(
-                                                               Arrays.asList(
-                                                                   inventoryItem.getFacility().getFacilityId(),
-                                                                   inventoryItem.getProduct().getProductId()),
-                                                               key -> new ArrayList<>()).add(inventoryItem));
+        inventoryItemRepo
+            .findAllByProductInAndFacilityInAndQuantityOnHandTotalGreaterThan(queryProducts, queryFacilities, 0)
+            .forEach(inventoryItem -> inventoryItemsMap
+                .computeIfAbsent(
+                    Arrays.asList(
+                        inventoryItem.getFacility().getFacilityId(),
+                        inventoryItem.getProduct().getProductId()),
+                    key -> new ArrayList<>())
+                .add(inventoryItem));
         return inventoryItemsMap;
     }
 
@@ -555,13 +566,11 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @Override
     public List<InventoryModel.ExportDetail> getInventoryExportList(String facilityId) {
         List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByFacility(new Facility(facilityId));
-        List<InventoryItemDetail> inventoryItemDetails = inventoryItemDetailRepo.findAllByOrderItemIn(shipmentItems
-                                                                                                          .stream()
-                                                                                                          .map(
-                                                                                                              ShipmentItem::getOrderItem)
-                                                                                                          .collect(
-                                                                                                              Collectors
-                                                                                                                  .toList()));
+        List<InventoryItemDetail> inventoryItemDetails =
+            inventoryItemDetailRepo.findAllByOrderItemIn(shipmentItems
+                                                             .stream()
+                                                             .map(ShipmentItem::getOrderItem)
+                                                             .collect(Collectors.toList()));
         return inventoryItemDetails
             .stream()
             .map(InventoryItemDetail::toInventoryExportDetail)

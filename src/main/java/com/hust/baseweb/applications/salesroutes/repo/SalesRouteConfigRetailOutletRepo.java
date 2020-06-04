@@ -15,6 +15,7 @@ public interface SalesRouteConfigRetailOutletRepo extends JpaRepository<SalesRou
     @Query(value = "select pro.retail_outlet_code retailOutletCode,\n" +
                    "pro.retail_outlet_name retailOutletName,\n" +
                    "ul.user_login_id salesmanName,\n" +
+                   "cast(ul.party_id as varchar) partySalesmanId,\n" +
                    "pd.distributor_name distributorName,\n" +
                    "srvf.description visitFrequency,\n" +
                    "src.days visitConfig,\n" +
@@ -28,7 +29,7 @@ public interface SalesRouteConfigRetailOutletRepo extends JpaRepository<SalesRou
                    "inner join party_distributor pd on rosv.party_vendor_id = pd.party_id \n" +
                    "where srcro.sales_route_planning_period_id = ?1",
            nativeQuery = true)
-    List<GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(UUID salesRoutePlanningPeriodId);
+    List<GetSalesRouteConfigRetailOutletsOutputModel> getSalesRoutesConfigRetailOutlets(UUID salesRoutePlanningPeriodId);
 
     interface GetSalesRouteConfigRetailOutletsOutputModel {
 
@@ -37,6 +38,8 @@ public interface SalesRouteConfigRetailOutletRepo extends JpaRepository<SalesRou
         String getRetailOutletName();
 
         String getSalesmanName();
+
+        String getPartySalesmanId();
 
         String getDistributorName();
 

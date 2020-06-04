@@ -94,7 +94,7 @@ public class OrderHeader {
     public InventoryModel.OrderHeader toOrderHeaderModel() {
         return new InventoryModel.OrderHeader(
             orderId,
-            partyCustomer.getPartyId().toString(),
+            Optional.ofNullable(partyCustomer).map(party -> party.getPartyId().toString()).orElse(null),
             Optional.ofNullable(orderDate).map(date -> Constant.DATE_FORMAT.format(orderDate)).orElse(null)
         );
     }

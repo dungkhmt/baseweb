@@ -23,7 +23,7 @@ public class ProductPrice {
 
 
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Product product;
 
     @JoinColumn(name = "currency_uom_id", referencedColumnName = "uom_id")

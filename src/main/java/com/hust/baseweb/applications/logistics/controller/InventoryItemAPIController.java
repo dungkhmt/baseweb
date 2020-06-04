@@ -67,7 +67,8 @@ public class InventoryItemAPIController {
                     product.getProductId(),
                     facility.getFacilityId(),
                     null,
-                    random.nextInt(1000) + 100
+                    random.nextInt(1000) + 100,
+                    (double) (random.nextInt(50000) + 1000)
                 ));
             }
         }

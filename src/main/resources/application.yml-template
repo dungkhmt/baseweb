@@ -8,6 +8,8 @@ SQL_DB_PASS: ${POSTGRES_PASSWORD} #baseweb@123
 server:
   servlet:
     context-path: '/api'
+  compression:
+    enabled: true
 google:
   api_key: ${GOOGLE_MAP_API_KEY} #push google map api key here
 spring:

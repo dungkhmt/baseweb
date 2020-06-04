@@ -18,11 +18,11 @@ public class VehicleDriver {
     private UUID vehicleDriverId;
 
     @JoinColumn(name = "vehicle_id", referencedColumnName = "vehicle_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Vehicle vehicle;
 
     @JoinColumn(name = "party_driver_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private PartyDriver partyDriver;
 
     @Column(name = "from_date")

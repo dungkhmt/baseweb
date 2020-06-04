@@ -11,7 +11,6 @@ import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetCusto
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetCustomersVisitedDayOfUserLogin;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteplanningperiod.CreateSalesRoutePlanningPeriodInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteplanningperiod.GetSalesRoutePlanningPeriodInputModel;
-import com.hust.baseweb.applications.salesroutes.model.salesroutevisitfrequency.ListSalesRouteVisitFrequencyOutputModel;
 import com.hust.baseweb.applications.salesroutes.repo.SalesRouteVisitFrequencyRepo;
 import com.hust.baseweb.applications.salesroutes.service.*;
 import com.hust.baseweb.entity.UserLogin;
@@ -153,10 +152,14 @@ public class SalesRouteAPIController {
 
     }
 
+    /**
+     * @return list of SalesRouteVisitFrequency objects
+     * @author
+     */
     @GetMapping("/get-list-sales-route-visit-frequency")
     public ResponseEntity<?> getListSalesRouteVisitFrequency(Principal principal) {
         List<SalesRouteVisitFrequency> salesRouteVisitFrequencies = salesRouteVisitFrequencyRepo.findAll();
-        return ResponseEntity.ok().body(new ListSalesRouteVisitFrequencyOutputModel(salesRouteVisitFrequencies));
+        return ResponseEntity.ok().body(salesRouteVisitFrequencies);
     }
 
     @PostMapping("/generate-sales-route-detail")
@@ -202,43 +205,35 @@ public class SalesRouteAPIController {
     }
 
     /**
-     * @param principal
-     * @param id        salesRoutePlanningPeriodId
-     * @return List of GetSalesRouteConfigRetailOutletsOutputModel objects
+     * @param id salesRoutePlanningPeriodId
+     * @return list of GetSalesRouteConfigRetailOutletsOutputModel objects
      * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
     @GetMapping("/get-sales-route-config-retail-outlets/{id}")
     public ResponseEntity<?> getSalesroutesConfigRetailOutlets(Principal principal, @PathVariable UUID id) {
-        return ResponseEntity.ok().body(salesRouteConfigRetailOutletService.getSalesroutesConfigRetailOutlets(id));
+        return ResponseEntity.ok().body(salesRouteConfigRetailOutletService.getSalesRoutesConfigRetailOutlets(id));
     }
 
     /**
      * Detail of a specific plan period
-     *
-     * @param principal
      * @param id        salesRoutePlanningPeriodId
-     * @return A SalesRoutePlanningPeriod object
+     * @return a SalesRoutePlanningPeriod object
      * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
-     */
+     *//*
     @GetMapping("/get-plan-period-detail/{id}")
     public ResponseEntity<?> getPlanPeriodDetail(Principal principal, @PathVariable UUID id) {
         return ResponseEntity.ok().body(salesRoutePlanningPeriodService.findById(id));
-    }
+    }*/
 
     /**
      * List all sales route details of a specific plan period
      *
-     * @param principal
-     * @param id        salesRoutePlanningPeriodId
-     * @return List of GetSalesRouteDetailOfPlanPeriodOutputModel objects
+     * @param id salesRoutePlanningPeriodId
+     * @return list of GetSalesRouteDetailOfPlanPeriodOutputModel objects
      * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
     @GetMapping("/get-sales-route-detail-of-plan-period/{id}")
     public ResponseEntity<?> getSalesRouteDetailOfPlanPeriod(Principal principal, @PathVariable UUID id) {
         return ResponseEntity.ok().body(salesRouteDetailService.getSalesRouteDetailOfPlanPeriod(id));
     }
-
-    /*@GetMapping("/get-salesman-detail/{id}")
-    public ResponseEntity<?> getSalesmanDetail(Principal principal, @PathVariable UUID id) {
-}*/
 }

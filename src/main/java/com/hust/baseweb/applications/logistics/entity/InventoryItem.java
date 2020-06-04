@@ -33,6 +33,13 @@ public class InventoryItem {
     @Column(name = "uom_id")
     private String uomId;
 
+    @Column(name = "unit_cost")
+    private Double unitCost;
+
+    @JoinColumn(name = "currency_uom_id", referencedColumnName = "uom_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Uom currencyUomId;
+
     @Column(name = "quantity_on_hand_total")
     private int quantityOnHandTotal;
 
