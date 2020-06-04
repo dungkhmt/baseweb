@@ -76,9 +76,6 @@ public class AdminMaintenanceServiceImpl implements AdminMaintenanceService {
 
         orderItemBillingRepo.deleteAll();
 
-        orderItemRepo.deleteAllInBatch();
-        orderItemRepo.flush();
-
         invoiceItemRepo.deleteAll();
 
         invoiceStatusRepo.deleteAll();
@@ -121,6 +118,9 @@ public class AdminMaintenanceServiceImpl implements AdminMaintenanceService {
 
         orderRoleRepo.deleteAllInBatch();
         orderRoleRepo.flush();
+
+        orderItemRepo.deleteAllInBatch();
+        orderItemRepo.flush();
 
         orderHeaderRepo.deleteAllInBatch();
         orderHeaderRepo.flush();
