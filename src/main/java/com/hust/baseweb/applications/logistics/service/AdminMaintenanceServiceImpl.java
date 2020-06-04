@@ -28,6 +28,7 @@ public class AdminMaintenanceServiceImpl implements AdminMaintenanceService {
 
     private InventoryItemDetailRepo inventoryItemDetailRepo;
     private InventoryItemRepo inventoryItemRepo;
+    private ProductFacilityRepo productFacilityRepo;
     private ShipmentItemStatusRepo shipmentItemStatusRepo;
     private OrderItemBillingRepo orderItemBillingRepo;
     private OrderItemRepo orderItemRepo;
@@ -66,6 +67,9 @@ public class AdminMaintenanceServiceImpl implements AdminMaintenanceService {
 
         inventoryItemRepo.deleteAllInBatch();
         inventoryItemRepo.flush();
+
+        productFacilityRepo.deleteAllInBatch();
+        productFacilityRepo.flush();
 
         shipmentItemStatusRepo.deleteAllInBatch();
         shipmentItemStatusRepo.flush();
