@@ -134,7 +134,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice.Model getInvoice(String invoiceId) {
         Invoice invoice = invoiceRepo.findById(invoiceId).orElseThrow(NoSuchElementException::new);
-        Party party = partyRepo.findById(invoice.getToPartyCustomerId()).orElse(new Party());
+        Party party = Optional
+            .ofNullable(invoice.getToPartyCustomerId())
+            .flatMap(uuid -> partyRepo.findById(uuid))
+            .orElse(new Party());
         return invoice.toModel(party.getName());
     }
 
