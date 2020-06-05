@@ -1,11 +1,8 @@
 package com.hust.baseweb.service;
 
-import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.entity.*;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
-import com.hust.baseweb.entity.Person;
-import com.hust.baseweb.entity.SecurityGroup;
 import com.hust.baseweb.entity.Status.StatusEnum;
-import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.model.PersonUpdateModel;
 import com.hust.baseweb.model.querydsl.SearchCriteria;
@@ -24,7 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -40,6 +39,8 @@ public class UserServiceImpl implements UserService {
     private StatusRepo statusRepo;
     private PersonRepo personRepo;
     private SecurityGroupRepo securityGroupRepo;
+    private UserRegisterRepo userRegisterRepo;
+    private StatusItemRepo statusItemRepo;
 
     @Override
     public UserLogin findById(String userLoginId) {
@@ -52,21 +53,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserLogin save(String userName, String password) throws Exception {
+    public UserLogin createAndSaveUserLogin(String userName, String password) {
 
         Party party = partyService.save("PERSON");
         UserLogin userLogin = new UserLogin(userName, password, null, true);
         userLogin.setParty(party);
         if (userLoginRepo.existsById(userName)) {
-            System.out.println(module + "::save, userName " + userName + " EXISTS!!!");
-            throw new RuntimeException();
+//            System.out.println(module + "::save, userName " + userName + " EXISTS!!!");
+            throw new EntityExistsException("userLoginId = " + userLogin.getUserLoginId() + ", already exist!");
         }
         return userLoginRepo.save(userLogin);
     }
 
     @Override
     @Transactional
-    public Party save(PersonModel personModel) throws Exception {
+    public Party createAndSaveUserLogin(PersonModel personModel) {
 
         Party party = new Party(personModel.getPartyCode(), partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
                                 statusRepo
@@ -147,5 +148,45 @@ public class UserServiceImpl implements UserService {
     public UserLogin findUserLoginByPartyId(UUID partyId) {
         Party party = partyService.findByPartyId(partyId);
         return userLoginRepo.findByParty(party).get(0);
+    }
+
+    @Override
+    public UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel) {
+        if (userRegisterRepo.existsById(inputModel.getUserLoginId())) {
+            return new UserRegister.OutputModel();
+        }
+        StatusItem userRegistered = statusItemRepo
+            .findById("USER_REGISTERED")
+            .orElseThrow(NoSuchElementException::new);
+        UserRegister userRegister = inputModel.createUserRegister(userRegistered);
+        userRegister = userRegisterRepo.save(userRegister);
+        return userRegister.toOutputModel();
+    }
+
+    @Override
+    public boolean approveRegisterUser(String userLoginId) {
+        UserRegister userRegister = userRegisterRepo.findById(userLoginId).orElse(null);
+        if (userRegister == null) {
+            return false;
+        }
+
+        try {
+            createAndSaveUserLogin(userRegister.getUserLoginId(), userRegister.getPassword());
+        } catch (Exception e) {
+            return false;
+        }
+        StatusItem userApproved = statusItemRepo.findById("USER_APPROVED").orElseThrow(NoSuchElementException::new);
+        userRegister.setStatusItem(userApproved);
+        userRegisterRepo.save(userRegister);
+        return true;
+    }
+
+    @Override
+    public List<UserRegister.OutputModel> findAllRegisterUser() {
+        StatusItem userRegistered = statusItemRepo
+            .findById("USER_REGISTERED")
+            .orElseThrow(NoSuchElementException::new);
+        List<UserRegister> userRegisters = userRegisterRepo.findAllByStatusItem(userRegistered);
+        return userRegisters.stream().map(UserRegister::toOutputModel).collect(Collectors.toList());
     }
 }

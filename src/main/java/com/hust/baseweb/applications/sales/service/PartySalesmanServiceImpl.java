@@ -85,7 +85,7 @@ public class PartySalesmanServiceImpl implements PartySalesmanService {
     public PartySalesman save(PersonModel salesman) {
         // TODO Auto-generated method stub
         try {
-            Party party = userService.save(salesman);
+            Party party = userService.createAndSaveUserLogin(salesman);
             PartySalesman partySalesman = new PartySalesman();
             partySalesman.setPartyId(party.getPartyId());
             return partySalesmanRepo.save(partySalesman);

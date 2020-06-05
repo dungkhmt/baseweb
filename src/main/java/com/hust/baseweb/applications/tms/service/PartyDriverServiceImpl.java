@@ -39,7 +39,7 @@ public class PartyDriverServiceImpl implements PartyDriverService {
         personModel.setPartyCode(input.getPartyCode());
         personModel.setRoles(input.getRoles());
         try {
-            Party party = userService.save(personModel);
+            Party party = userService.createAndSaveUserLogin(personModel);
             PartyDriver partyDriver = new PartyDriver();
             partyDriver.setPartyId(party.getPartyId());
             partyDriver = partyDriverRepo.save(partyDriver);

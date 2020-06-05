@@ -2,6 +2,7 @@ package com.hust.baseweb.service;
 
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.entity.UserRegister;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.model.PersonUpdateModel;
 import com.hust.baseweb.model.querydsl.SortAndFiltersInput;
@@ -25,14 +26,19 @@ public interface UserService {
 
     List<UserLogin> getAllUserLogins();
 
-    UserLogin save(String userName, String password) throws Exception;
+    UserLogin createAndSaveUserLogin(String userName, String password);
 
-    Party save(PersonModel personModel) throws Exception;
+    Party createAndSaveUserLogin(PersonModel personModel) throws Exception;
 
     Party update(PersonUpdateModel personUpdateModel, UUID partyId);
 
 
     UserLogin findUserLoginByPartyId(UUID partyId);
 
+    UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel);
+
+    boolean approveRegisterUser(String userLoginId);
+
+    List<UserRegister.OutputModel> findAllRegisterUser();
 
 }
