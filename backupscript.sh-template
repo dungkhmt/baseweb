@@ -1,0 +1,2 @@
+docker exec -e PGPASSWORD=postgres-password -i container-name pg_dump -U postgres-user database-name > backup-dms.sql
+aws s3 cp backup-dms.sql s3://s3-bucket
