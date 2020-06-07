@@ -152,7 +152,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel) {
-        if (userRegisterRepo.existsById(inputModel.getUserLoginId())) {
+        String userLoginId = inputModel.getUserLoginId();
+        if (userRegisterRepo.existsById(userLoginId) || userLoginRepo.existsById(userLoginId)) {
             return new UserRegister.OutputModel();
         }
         StatusItem userRegistered = statusItemRepo
