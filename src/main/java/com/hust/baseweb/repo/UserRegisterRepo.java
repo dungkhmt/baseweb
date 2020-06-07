@@ -12,4 +12,6 @@ import java.util.List;
 public interface UserRegisterRepo extends JpaRepository<UserRegister, String> {
 
     List<UserRegister> findAllByStatusItem(StatusItem statusItem);
+
+    boolean existsByUserLoginIdOrEmail(String userLoginId, String email);
 }

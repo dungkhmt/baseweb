@@ -18,16 +18,22 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
+@Transactional
+@javax.transaction.Transactional
 public class UserServiceImpl implements UserService {
 
     public static final String module = UserService.class.getName();
@@ -41,6 +47,9 @@ public class UserServiceImpl implements UserService {
     private SecurityGroupRepo securityGroupRepo;
     private UserRegisterRepo userRegisterRepo;
     private StatusItemRepo statusItemRepo;
+    private JavaMailSender javaMailSender;
+
+    private final static ExecutorService EMAIL_EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
     @Override
     public UserLogin findById(String userLoginId) {
@@ -153,7 +162,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel) {
         String userLoginId = inputModel.getUserLoginId();
-        if (userRegisterRepo.existsById(userLoginId) || userLoginRepo.existsById(userLoginId)) {
+        String email = inputModel.getEmail();
+
+        if (userRegisterRepo.existsByUserLoginIdOrEmail(userLoginId, email) || userLoginRepo.existsById(userLoginId)) {
             return new UserRegister.OutputModel();
         }
         StatusItem userRegistered = statusItemRepo
@@ -161,7 +172,22 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(NoSuchElementException::new);
         UserRegister userRegister = inputModel.createUserRegister(userRegistered);
         userRegister = userRegisterRepo.save(userRegister);
+
+        EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
+
         return userRegister.toOutputModel();
+    }
+
+    private void sendEmail(String email, String userLoginId) {
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setTo(email);
+
+        simpleMailMessage.setSubject("Đăng ký thành công - SSCM - Quản lý chuỗi cung ứng");
+        simpleMailMessage.setText(String.format(
+            "Bạn đã đăng ký thành công tài khoản tại hệ thống với tên đăng nhập %s, " +
+            "vui lòng chờ cho đến khi được quản trị viên phê duyệt. \nXin cảm ơn!",
+            userLoginId));
+        javaMailSender.send(simpleMailMessage);
     }
 
     @Override
