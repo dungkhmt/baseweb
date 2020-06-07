@@ -19,6 +19,7 @@ import com.hust.baseweb.applications.tms.repo.ShipmentRepo;
 import com.hust.baseweb.applications.tms.repo.status.ShipmentItemStatusRepo;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.StatusItem;
+import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.StatusItemRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -186,7 +187,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @Override
     @Transactional
     @org.springframework.transaction.annotation.Transactional
-    public String exportInventoryItems(ExportInventoryItemsInputModel inventoryItemsInput) {
+    public String exportInventoryItems(ExportInventoryItemsInputModel inventoryItemsInput, UserLogin userLogin) {
         Date now = new Date();
 
 //        List<InventoryItem> inventoryItems = inventoryItemRepo.findAll();// to be improved, find by (productId, facilityId)
@@ -264,7 +265,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                         quantity,
                         orderItem,
                         orderHeader,
-                        inventoryItem);
+                        inventoryItem,
+                        userLogin);
                     shipmentItems.add(shipmentItem);
 
                     break;
@@ -279,7 +281,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                         inventoryItem.getQuantityOnHandTotal(),
                         orderItem,
                         orderHeader,
-                        inventoryItem);
+                        inventoryItem,
+                        userLogin);
                     shipmentItems.add(shipmentItem);
 
                     orderItem.setExportedQuantity(orderItem.getExportedQuantity() +
@@ -375,7 +378,8 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         StatusItem statusItem,
         int quantity,
         OrderItem orderItem,
-        OrderHeader orderHeader, InventoryItem inventoryItem
+        OrderHeader orderHeader, InventoryItem inventoryItem,
+        UserLogin userLogin
     ) {
         ShipmentItem shipmentItem = new ShipmentItem();
         shipmentItem.setShipment(shipment);
@@ -383,6 +387,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         shipmentItem.setStatusItem(statusItem);
         shipmentItem.setQuantity(quantity);
         shipmentItem.setOrderItem(orderItem);
+        shipmentItem.setUserLogin(userLogin);
 
         //shipmentItem.setCustomer(orderHeader.getPartyCustomer());
         shipmentItem.setPartyCustomer(orderHeader.getPartyCustomer());
@@ -564,8 +569,9 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     }
 
     @Override
-    public List<InventoryModel.ExportDetail> getInventoryExportList(String facilityId) {
-        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByFacility(new Facility(facilityId));
+    public List<InventoryModel.ExportDetail> getInventoryExportList(String facilityId, UserLogin userLogin) {
+        Facility facility = facilityRepo.findById(facilityId).orElseThrow(NoSuchElementException::new);
+        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByFacilityAndUserLogin(facility, userLogin);
         List<InventoryItemDetail> inventoryItemDetails =
             inventoryItemDetailRepo.findAllByOrderItemIn(shipmentItems
                                                              .stream()

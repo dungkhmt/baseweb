@@ -42,7 +42,6 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.text.ParseException;
@@ -387,7 +386,7 @@ public class OrderServiceImpl implements OrderService {
                 shipmentItem -> shipmentItem.getShipment().getShipmentId(),
                 ShipmentItemDetailView::setShipmentId);
 
-        setShipment(orderId, orderDetailView, modelMapper);
+        setShipment(orderId, orderDetailView, modelMapper, userLogin);
 
         List<String> invoiceIds = setInvoice(orderId, orderDetailView, modelMapper);
 
@@ -397,8 +396,13 @@ public class OrderServiceImpl implements OrderService {
         return orderDetailView;
     }
 
-    private void setShipment(String orderId, OrderDetailView orderDetailView, ModelMapper modelMapper) {
-        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByOrderId(orderId);
+    private void setShipment(
+        String orderId,
+        OrderDetailView orderDetailView,
+        ModelMapper modelMapper,
+        UserLogin userLogin
+    ) {
+        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByOrderIdAndUserLogin(orderId, userLogin);
         List<Shipment> shipments = shipmentItems
             .stream()
             .map(ShipmentItem::getShipment)
@@ -704,6 +708,7 @@ public class OrderServiceImpl implements OrderService {
             List<OrderItem> orderItems = orderItemRepo.findAllByOrderIdIn(orderIds);
 
             List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByOrderIdIn(orderIds);
+            // nếu xóa đơn hàng, thì cho phép xóa mọi shipment item của đơn hàng đó, mà không cần có cùng thuộc tính user login
 
             shipmentItemStatusRepo.deleteAllByShipmentItemIn(shipmentItems);
             shipmentItemStatusRepo.flush();

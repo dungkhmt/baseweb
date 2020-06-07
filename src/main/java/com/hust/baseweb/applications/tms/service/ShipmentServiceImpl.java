@@ -96,75 +96,75 @@ public class ShipmentServiceImpl implements ShipmentService {
     private ShipmentItemRoleRepo shipmentItemRoleRepo;
 
     // @Override
-    @Transactional
-    public Shipment privateSave(ShipmentModel.CreateShipmentInputModel input) {
-        if (input.getShipmentItems() == null || input.getShipmentItems().length == 0) {
-            return null;
-        }
-
-        log.info("save1, shipmentItem.length = "
-                 + input.getShipmentItems().length);
-        Shipment shipment = createAndSaveShipment();
-
-        for (int i = 0; i < input.getShipmentItems().length; i++) {
-            ShipmentItemModel.Create shipmentItemInputModel = input.getShipmentItems()[i];
-
-            List<PartyCustomer> customers = partyCustomerRepo.findAllByCustomerCode(shipmentItemInputModel.getCustomerCode());
-            PartyCustomer customer;
-            if (customers == null || customers.size() == 0) {
-                // insert a customer
-                String[] s = shipmentItemInputModel.getLatLng().split(",");
-                double lat = Double.parseDouble(s[0].trim());
-                double lng = Double.parseDouble(s[1].trim());
-                customer = customerService.save(new CreateCustomerInputModel(
-                    shipmentItemInputModel.getCustomerCode(),
-                    shipmentItemInputModel.getCustomerName(),
-                    shipmentItemInputModel.getAddress(),
-                    lat,
-                    lng));
-            } else {
-                customer = customers.get(0);
-            }
-
-            Product product = productRepo.findByProductId(shipmentItemInputModel.getProductId());
-            if (product == null) {
-                product = productService.save(
-                    shipmentItemInputModel.getProductId(),
-                    shipmentItemInputModel.getProductTransportCategory(),
-                    shipmentItemInputModel.getProductName(),
-                    shipmentItemInputModel.getWeight() / shipmentItemInputModel.getQuantity(),
-                    shipmentItemInputModel.getUom(),
-                    shipmentItemInputModel.getHsThu(),
-                    shipmentItemInputModel.getHsPal());
-            }
-            List<PostalAddress> addresses = postalAddressRepo.findAllByLocationCode(shipmentItemInputModel.getLocationCode());
-            PostalAddress address;
-            if (addresses == null || addresses.size() == 0) {
-                String[] latlng = shipmentItemInputModel.getLatLng().split(",");
-                address = postalAddressService.save(
-                    shipmentItemInputModel.getLocationCode(),
-                    shipmentItemInputModel.getAddress(),
-                    Double.parseDouble(latlng[0]),
-                    Double.parseDouble(latlng[1]));
-            } else {
-                address = addresses.get(0);
-            }
-            Party partyCustomer = partyRepo.findByPartyId(customer.getPartyId());
-            ShipmentItem shipmentItem = new ShipmentItem();
-            //shipmentItem.setCustomer(customer);
-            shipmentItem.setPartyCustomer(partyCustomer);
-            shipmentItem.setShipToLocation(address);
-            shipmentItem.setPallet(shipmentItemInputModel.getPallet());
-//            shipmentItem.setProductId(product.getProductId());
-            shipmentItem.setQuantity(shipmentItemInputModel.getQuantity());
-            shipmentItem.setShipment(shipment);
-
-            shipmentItem = shipmentItemRepo.save(shipmentItem);
-            log.info("save1 shipmentItem[" + i + "/"
-                     + input.getShipmentItems().length + " --> DONE OK");
-        }
-        return shipment;
-    }
+//    @Transactional
+//    public Shipment privateSave(ShipmentModel.CreateShipmentInputModel input) {
+//        if (input.getShipmentItems() == null || input.getShipmentItems().length == 0) {
+//            return null;
+//        }
+//
+//        log.info("save1, shipmentItem.length = "
+//                 + input.getShipmentItems().length);
+//        Shipment shipment = createAndSaveShipment();
+//
+//        for (int i = 0; i < input.getShipmentItems().length; i++) {
+//            ShipmentItemModel.Create shipmentItemInputModel = input.getShipmentItems()[i];
+//
+//            List<PartyCustomer> customers = partyCustomerRepo.findAllByCustomerCode(shipmentItemInputModel.getCustomerCode());
+//            PartyCustomer customer;
+//            if (customers == null || customers.size() == 0) {
+//                // insert a customer
+//                String[] s = shipmentItemInputModel.getLatLng().split(",");
+//                double lat = Double.parseDouble(s[0].trim());
+//                double lng = Double.parseDouble(s[1].trim());
+//                customer = customerService.save(new CreateCustomerInputModel(
+//                    shipmentItemInputModel.getCustomerCode(),
+//                    shipmentItemInputModel.getCustomerName(),
+//                    shipmentItemInputModel.getAddress(),
+//                    lat,
+//                    lng));
+//            } else {
+//                customer = customers.get(0);
+//            }
+//
+//            Product product = productRepo.findByProductId(shipmentItemInputModel.getProductId());
+//            if (product == null) {
+//                product = productService.save(
+//                    shipmentItemInputModel.getProductId(),
+//                    shipmentItemInputModel.getProductTransportCategory(),
+//                    shipmentItemInputModel.getProductName(),
+//                    shipmentItemInputModel.getWeight() / shipmentItemInputModel.getQuantity(),
+//                    shipmentItemInputModel.getUom(),
+//                    shipmentItemInputModel.getHsThu(),
+//                    shipmentItemInputModel.getHsPal());
+//            }
+//            List<PostalAddress> addresses = postalAddressRepo.findAllByLocationCode(shipmentItemInputModel.getLocationCode());
+//            PostalAddress address;
+//            if (addresses == null || addresses.size() == 0) {
+//                String[] latlng = shipmentItemInputModel.getLatLng().split(",");
+//                address = postalAddressService.save(
+//                    shipmentItemInputModel.getLocationCode(),
+//                    shipmentItemInputModel.getAddress(),
+//                    Double.parseDouble(latlng[0]),
+//                    Double.parseDouble(latlng[1]));
+//            } else {
+//                address = addresses.get(0);
+//            }
+//            Party partyCustomer = partyRepo.findByPartyId(customer.getPartyId());
+//            ShipmentItem shipmentItem = new ShipmentItem();
+//            //shipmentItem.setCustomer(customer);
+//            shipmentItem.setPartyCustomer(partyCustomer);
+//            shipmentItem.setShipToLocation(address);
+//            shipmentItem.setPallet(shipmentItemInputModel.getPallet());
+////            shipmentItem.setProductId(product.getProductId());
+//            shipmentItem.setQuantity(shipmentItemInputModel.getQuantity());
+//            shipmentItem.setShipment(shipment);
+//
+//            shipmentItem = shipmentItemRepo.save(shipmentItem);
+//            log.info("save1 shipmentItem[" + i + "/"
+//                     + input.getShipmentItems().length + " --> DONE OK");
+//        }
+//        return shipment;
+//    }
 
     @Override
     @Transactional
@@ -240,7 +240,8 @@ public class ShipmentServiceImpl implements ShipmentService {
                                                            orderItemIdToShipmentItemModelMap.get(new CompositeOrderItemId(
                                                                orderItem.getOrderId(),
                                                                orderItem.getOrderItemSeqId())),
-                                                           orderItem, orderHeaderMap.get(orderItem.getOrderId()));
+                                                           orderItem, orderHeaderMap.get(orderItem.getOrderId()),
+                                                           userLogin);
 
             shipmentItems.add(shipmentItem);
         }
@@ -293,10 +294,11 @@ public class ShipmentServiceImpl implements ShipmentService {
         ShipmentItemModel.Create[] shipmentItems = input.getShipmentItems();
         Map<List<String>, ShipmentItemModel.Create> orderIdAndProductIdToShipmentItem = new HashMap<>();
         for (ShipmentItemModel.Create shipmentItem : shipmentItems) {
-            orderIdAndProductIdToShipmentItem.merge(Arrays.asList(
-                shipmentItem.getOrderId(),
-                shipmentItem.getProductId()),
-                                                    shipmentItem, (old, other) -> {
+            orderIdAndProductIdToShipmentItem.merge(
+                Arrays.asList(
+                    shipmentItem.getOrderId(),
+                    shipmentItem.getProductId()),
+                shipmentItem, (old, other) -> {
                     old.setQuantity(old.getQuantity() + other.getQuantity());
                     old.setWeight(old.getWeight() + other.getWeight());
                     old.setPallet(old.getPallet() + other.getPallet());
@@ -326,13 +328,15 @@ public class ShipmentServiceImpl implements ShipmentService {
         Map<String, Facility> facilityMap,
         ShipmentItemModel.Create shipmentItemModel,
         OrderItem orderItem,
-        OrderHeader orderHeader
+        OrderHeader orderHeader,
+        UserLogin userLogin
     ) {
         ShipmentItem shipmentItem = new ShipmentItem();
         shipmentItem.setShipment(shipment);
         shipmentItem.setQuantity(shipmentItemModel.getQuantity());
         shipmentItem.setPallet(shipmentItemModel.getPallet());
         shipmentItem.setOrderItem(orderItem);
+        shipmentItem.setUserLogin(userLogin);
 
         PostalAddress postalAddress = getOrCreatePostalAddress(postalAddressMap, shipmentItemModel);
         shipmentItem.setShipToLocation(postalAddress);

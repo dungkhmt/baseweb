@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.tms.model.ShipmentItemModel;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.StatusItem;
+import com.hust.baseweb.entity.UserLogin;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -62,6 +63,10 @@ public class ShipmentItem {
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private StatusItem statusItem;
+
+    @JoinColumn(name = "processed_by_user_login_id", referencedColumnName = "user_login_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private UserLogin userLogin;
 
     private Integer scheduledQuantity = 0;
     private Integer completedQuantity = 0;

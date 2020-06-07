@@ -16,6 +16,7 @@ import com.hust.baseweb.applications.tms.repo.status.DeliveryTripDetailStatusRep
 import com.hust.baseweb.applications.tms.repo.status.DeliveryTripStatusRepo;
 import com.hust.baseweb.applications.tms.repo.status.ShipmentItemStatusRepo;
 import com.hust.baseweb.entity.StatusItem;
+import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.StatusItemRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -52,7 +53,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     @Override
     public int save(
         String deliveryTripId,
-        List<DeliveryTripDetailModel.Create> inputs
+        List<DeliveryTripDetailModel.Create> inputs,
+        UserLogin userLogin
     ) {
         Date now = new Date();
 
@@ -68,7 +70,7 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             return 0;
         }
 
-        Map<UUID, ShipmentItem> shipmentItemMap = buildShipmentItemMap(inputs);
+        Map<UUID, ShipmentItem> shipmentItemMap = buildShipmentItemMap(inputs, userLogin);
 
         List<DeliveryTripDetail> deliveryTripDetails = new ArrayList<>();
 
@@ -153,7 +155,8 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
 
         DeliveryTripModel.Tour deliveryTripInfo = deliveryTripService.getDeliveryTripInfo(
             deliveryTripId,
-            new ArrayList<>());
+            new ArrayList<>(),
+            userLogin);
 
         deliveryTrip = updateDeliveryTripInfo(deliveryTrip, deliveryTripInfo);
 
@@ -172,14 +175,18 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     }
 
     @NotNull
-    private Map<UUID, ShipmentItem> buildShipmentItemMap(List<DeliveryTripDetailModel.Create> inputs) {
+    private Map<UUID, ShipmentItem> buildShipmentItemMap(
+        List<DeliveryTripDetailModel.Create> inputs,
+        UserLogin userLogin
+    ) {
         return shipmentItemRepo
-            .findAllByShipmentItemIdIn(
+            .findAllByShipmentItemIdInAndUserLogin(
                 inputs
                     .stream()
                     .map(DeliveryTripDetailModel.Create::getShipmentItemId)
                     .distinct()
-                    .collect(Collectors.toList()))
+                    .collect(Collectors.toList()),
+                userLogin)
             .stream()
             .collect(Collectors.toMap(ShipmentItem::getShipmentItemId, shipmentItem -> shipmentItem));
     }
@@ -200,7 +207,7 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
     }
 
     @Override
-    public boolean delete(String deliveryTripDetailId) {
+    public boolean delete(String deliveryTripDetailId, UserLogin userLogin) {
         Date now = new Date();
 
         UUID deliveryTripDetailIdUuid = UUID.fromString(deliveryTripDetailId);
@@ -228,7 +235,7 @@ public class DeliveryTripDetailServiceImpl implements DeliveryTripDetailService 
             deliveryTrip
                 .getDeliveryTripId()
                 .toString(),
-            new ArrayList<>());
+            new ArrayList<>(), userLogin);
 
         updateDeliveryTripInfo(deliveryTrip, deliveryTripInfo);
 
