@@ -14,4 +14,6 @@ public interface PartyRepo extends JpaRepository<Party, UUID> {
     Party findByPartyId(UUID partyId);
 
     List<Party> findAllByPartyIdIn(Collection<UUID> partyIds);
+
+    boolean existsByPartyCode(String partyCode);
 }
