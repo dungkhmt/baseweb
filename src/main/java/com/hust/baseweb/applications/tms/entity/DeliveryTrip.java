@@ -7,11 +7,11 @@ import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.utils.Constant;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -21,7 +21,7 @@ public class DeliveryTrip {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "delivery_trip_id")
-    private UUID deliveryTripId;
+    private String deliveryTripId;
 
     @JoinColumn(name = "delivery_plan_id", referencedColumnName = "delivery_plan_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -87,5 +87,10 @@ public class DeliveryTrip {
             distance,
             (statusItem != null ? statusItem.getStatusId() : null)
         );
+    }
+
+    @NotNull
+    public static String convertSequenceIdToDeliveryTripId(Long id) {
+        return "TRIP" + String.format("%010d", id);
     }
 }

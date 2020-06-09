@@ -63,7 +63,7 @@ public class DeliveryTripModel {
     @AllArgsConstructor
     public static class HeaderView {
 
-        private UUID deliveryTripId;
+        private String deliveryTripId;
         private String vehicleId;
         private UUID driverPartyId;
         private String driverUserLoginId;
@@ -92,7 +92,7 @@ public class DeliveryTripModel {
     @AllArgsConstructor
     public static class LocationItemView {
 
-        private UUID deliveryTripDetailId;
+        private String deliveryTripDetailId;
         private UUID shipmentItemId;
         private String productId;
         private String productName;

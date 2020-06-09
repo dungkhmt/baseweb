@@ -121,14 +121,14 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     @Override
     public Page<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable) {
         DeliveryPlan deliveryPlan = new DeliveryPlan();
-        deliveryPlan.setDeliveryPlanId(UUID.fromString(deliveryPlanId));
+        deliveryPlan.setDeliveryPlanId(deliveryPlanId);
         return deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan, pageable).map(DeliveryTrip::toDeliveryTripModel);
     }
 
     @Override
     public List<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId) {
         DeliveryPlan deliveryPlan = new DeliveryPlan();
-        deliveryPlan.setDeliveryPlanId(UUID.fromString(deliveryPlanId));
+        deliveryPlan.setDeliveryPlanId(deliveryPlanId);
         List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan);
         return deliveryTrips.stream().map(DeliveryTrip::toDeliveryTripModel).collect(Collectors.toList());
     }
@@ -261,7 +261,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                 continue;
             }
 
-            UUID deliveryTripId = deliveryTrip.getDeliveryTripId();
+            String deliveryTripId = deliveryTrip.getDeliveryTripId();
             String vehicleId = deliveryTrip.getVehicle().getVehicleId();
             UUID driverPartyId = deliveryTrip.getPartyDriver().getPartyId();
             //String driverUserLoginId;
@@ -310,7 +310,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                 //UUID partyCustomerId;
                 List<DeliveryTripModel.LocationItemView> items = new ArrayList<>();
 
-                UUID deliveryTripDetailId = deliveryTripDetail.getDeliveryTripDetailId();
+                String deliveryTripDetailId = deliveryTripDetail.getDeliveryTripDetailId();
                 UUID shipmentItemId = shipmentItem.getShipmentItemId();
                 Product product = shipmentItem.getOrderItem().getProduct();
 //                if (product == null) {

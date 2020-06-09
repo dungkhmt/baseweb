@@ -5,9 +5,9 @@ import com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel;
 import com.hust.baseweb.entity.StatusItem;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -18,7 +18,7 @@ public class DeliveryTripDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "delivery_trip_detail_id")
-    private UUID deliveryTripDetailId;
+    private String deliveryTripDetailId;
 
     @JoinColumn(name = "delivery_trip_id", referencedColumnName = "delivery_trip_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -72,6 +72,11 @@ public class DeliveryTripDetail {
         orderItemModel.setDeliveryQuantity(deliveryQuantity);
         orderItemModel.setStatusId(statusItem.getStatusId());
         return orderItemModel;
+    }
+
+    @NotNull
+    public static String convertSequenceIdToDeliveryPlanId(Long id) {
+        return "TRIP_DETAIL_" + String.format("%010d", id);
     }
 
 }

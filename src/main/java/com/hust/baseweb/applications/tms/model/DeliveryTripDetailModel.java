@@ -26,8 +26,8 @@ public class DeliveryTripDetailModel {
     public static class OrderItem {
 
         private Integer sequence;
-        private UUID deliveryTripDetailId;
-        private UUID deliveryTripId;
+        private String deliveryTripDetailId;
+        private String deliveryTripId;
         private String customerCode;
         private String address;
         private Double lat;
