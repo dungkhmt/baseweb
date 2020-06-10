@@ -10,6 +10,7 @@ import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfigRetailOutlet;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteDetail;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
+import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetSalesRouteDetailOfPlanPeriodOM;
 import com.hust.baseweb.applications.salesroutes.repo.*;
 import com.hust.baseweb.utils.DateTimeUtils;
 import lombok.AllArgsConstructor;
@@ -129,7 +130,7 @@ public class SalesRouteDetailServiceImpl implements SalesRouteDetailService {
     }
 
     @Override
-    public List<SalesRouteDetailRepo.GetSalesRouteDetailOfPlanPeriodOutputModel> getSalesRouteDetailOfPlanPeriod(UUID salesRoutePlanningPeriodId) {
+    public List<GetSalesRouteDetailOfPlanPeriodOM> getSalesRouteDetailOfPlanPeriod(UUID salesRoutePlanningPeriodId) {
         return salesRouteDetailRepo.getSalesRouteDetailOfPlanPeriod(salesRoutePlanningPeriodId);
     }
 
