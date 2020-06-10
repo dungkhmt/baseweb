@@ -46,10 +46,10 @@ values ('FW1', '1 tuần thăm 1 lần'),
        ('F4W', '4 tuần thăm 1 lần');
 
 insert into sales_route_config(days, repeat_week, visit_frequency_id)
-values ('2,4,6', '1', 'FW3'),
-       ('2,4', '1', 'FW2'),
-       ('3,5', '1', 'FW2'),
-       ('4,6', '1', 'FW2'),
+values ('2, 4, 6', '1', 'FW3'),
+       ('2, 4', '1', 'FW2'),
+       ('3, 5', '1', 'FW2'),
+       ('4, 6', '1', 'FW2'),
        ('4', '2', 'F2W'),
        ('5', '3', 'F3W'),
        ('6', '4', 'F4W');
