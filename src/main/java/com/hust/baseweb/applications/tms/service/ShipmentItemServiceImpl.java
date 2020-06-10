@@ -49,7 +49,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         UserLogin userLogin
     ) {
         Page<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlanPage
-            = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId), pageable);
+            = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(deliveryPlanId, pageable);
 
         return new PageImpl<>(
             shipmentItemRepo
@@ -67,7 +67,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     @Override
     public List<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId, UserLogin userLogin) {
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(
-            UUID.fromString(deliveryPlanId));
+            deliveryPlanId);
         List<UUID> shipmentItemIds = shipmentItemDeliveryPlans
             .stream()
             .map(ShipmentItemDeliveryPlan::getShipmentItemId)
@@ -85,7 +85,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         UserLogin userLogin
     ) {
         DeliveryTrip deliveryTrip = deliveryTripRepo
-            .findById(UUID.fromString(deliveryTripId))
+            .findById(deliveryTripId)
             .orElseThrow(NoSuchElementException::new);
         DeliveryPlan deliveryPlan = deliveryTrip.getDeliveryPlan();
         String deliveryPlanId = deliveryPlan.getDeliveryPlanId().toString();
@@ -93,7 +93,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
 
         List<ShipmentItem> shipmentItemsInDeliveryPlan = shipmentItemRepo.findAllByShipmentItemIdInAndUserLogin(
             shipmentItemDeliveryPlanRepo
-                .findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
+                .findAllByDeliveryPlanId(deliveryPlanId)
                 .stream()
                 .map(ShipmentItemDeliveryPlan::getShipmentItemId)
                 .collect(Collectors.toList()),
@@ -175,7 +175,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     ) {
         Set<String> shipmentItemInDeliveryPlans
             = shipmentItemDeliveryPlanRepo
-            .findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
+            .findAllByDeliveryPlanId(deliveryPlanId)
             .stream()
             .map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
             .collect(Collectors.toSet());
@@ -196,7 +196,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         // TODO: to be improved by adding indicator (status) fields to shipment_items
         Set<String> shipmentItemInDeliveryPlans
             = shipmentItemDeliveryPlanRepo
-            .findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
+            .findAllByDeliveryPlanId(deliveryPlanId)
             .stream()
             .map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
             .collect(Collectors.toSet());
@@ -218,7 +218,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
             .findAllByPartyAndStatusItemAndDeliveryPlanIdNotEqual(
                 userLogin.getParty(),
                 "SHIPMENT_ITEM_CREATED",
-                UUID.fromString(deliveryPlanId)
+                deliveryPlanId
             )
             .stream()
             .map(ShipmentItemRole::getShipmentItem)
@@ -246,7 +246,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         UserLogin userLogin
     ) {
         DeliveryPlan deliveryPlan = deliveryPlanRepo
-            .findById(UUID.fromString(createDeliveryPlan.getDeliveryPlanId()))
+            .findById(createDeliveryPlan.getDeliveryPlanId())
             .orElseThrow(NoSuchElementException::new);
         Map<UUID, ShipmentItem> shipmentItemMap = shipmentItemRepo
             .findAllByShipmentItemIdInAndUserLogin(
@@ -264,7 +264,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         for (String shipmentItemId : createDeliveryPlan.getShipmentItemIds()) {
             shipmentItemDeliveryPlans.add(new ShipmentItemDeliveryPlan(
                 UUID.fromString(shipmentItemId),
-                UUID.fromString(createDeliveryPlan.getDeliveryPlanId())
+                createDeliveryPlan.getDeliveryPlanId()
             ));
             ShipmentItem shipmentItem = shipmentItemMap.get(UUID.fromString(shipmentItemId));
             totalWeight += shipmentItem.getOrderItem().getProduct().getWeight() * shipmentItem.getQuantity();
@@ -279,12 +279,12 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     @Override
     public boolean deleteShipmentItemDeliveryPlan(ShipmentItemModel.DeleteDeliveryPlan deleteDeliveryPlan) {
         ShipmentItemDeliveryPlan shipmentItemDeliveryPlan = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanIdAndShipmentItemId(
-            UUID.fromString(deleteDeliveryPlan.getDeliveryPlanId()),
+            deleteDeliveryPlan.getDeliveryPlanId(),
             UUID.fromString(deleteDeliveryPlan.getShipmentItemId())
         );
         if (shipmentItemDeliveryPlan != null) {
             DeliveryPlan deliveryPlan = deliveryPlanRepo
-                .findById(UUID.fromString(deleteDeliveryPlan.getDeliveryPlanId()))
+                .findById(deleteDeliveryPlan.getDeliveryPlanId())
                 .orElseThrow(NoSuchElementException::new);
             ShipmentItem shipmentItem = shipmentItemRepo
                 .findById(UUID.fromString(deleteDeliveryPlan.getShipmentItemId()))
@@ -307,7 +307,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         UserLogin userLogin
     ) {
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(
-            UUID.fromString(deliveryPlanId));
+            deliveryPlanId);
         List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByShipmentItemIdInAndUserLogin(
             shipmentItemDeliveryPlans
                 .stream()
@@ -337,8 +337,8 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
             shipmentItem.getQuantity(),
             shipmentItem.getStatusItem().getStatusId(),
             deliveryTripDetails.stream().map(deliveryTripDetail -> new ShipmentItemModel.Info.DeliveryTripDetail(
-                deliveryTripDetail.getDeliveryTrip().getDeliveryPlan().getDeliveryPlanId().toString(),
-                deliveryTripDetail.getDeliveryTrip().getDeliveryTripId().toString(),
+                deliveryTripDetail.getDeliveryTrip().getDeliveryPlan().getDeliveryPlanId(),
+                deliveryTripDetail.getDeliveryTrip().getDeliveryTripId(),
                 Constant.DATE_FORMAT.format(deliveryTripDetail.getDeliveryTrip().getExecuteDate()),
                 deliveryTripDetail.getDeliveryQuantity(),
                 deliveryTripDetail.getDeliveryTrip().getVehicle().getVehicleId(),

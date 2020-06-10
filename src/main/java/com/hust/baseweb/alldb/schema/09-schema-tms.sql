@@ -111,7 +111,7 @@ create table vehicle_driver
 
 create table delivery_plan
 (
-    delivery_plan_id            UUID NOT NULL default uuid_generate_v1(),
+    delivery_plan_id            varchar(60) NOT NULL,
     delivery_date               TIMESTAMP,
     description                 TEXT,
     facility_id                 VARCHAR(60),
@@ -119,30 +119,34 @@ create table delivery_plan
     status_id                   VARCHAR(60),
     total_weight_shipment_items numeric,
     last_updated_stamp          TIMESTAMP,
-    created_stamp               TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    created_stamp               TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_delivery_plan primary key (delivery_plan_id),
     constraint fk_delivery_plan_facility_id foreign key (facility_id) references facility (facility_id),
     constraint fk_delivery_plan_created_by foreign key (created_by) references user_login (user_login_id),
     constraint fk_delivery_plan_status_id foreign key (status_id) references status_item (status_id)
 );
 
-
+create table delivery_plan_sequence_id
+(
+    id SERIAL PRIMARY KEY NOT NULL
+);
 
 create table vehicle_delivery_plan
 (
-    delivery_plan_id   UUID,
+    delivery_plan_id   varchar(60),
     vehicle_id         VARCHAR(60),
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_vehicle_delivery_plan primary key (delivery_plan_id, vehicle_id),
+    constraint fk_vehicle_delivery_plan_delivery_plan_id foreign key (delivery_plan_id) references delivery_plan (delivery_plan_id),
     constraint fk_vehicle_delivery_plan_vehicle_id foreign key (vehicle_id) references vehicle (vehicle_id)
 );
 
 create table shipment_item_delivery_plan
 (
 
-    delivery_plan_id   UUID,
-    shipment_item_id   UUID,
+    delivery_plan_id   varchar(60),
+    shipment_item_id   uuid,
 
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -153,7 +157,7 @@ create table shipment_item_delivery_plan
 
 create table delivery_plan_solution
 (
-    delivery_plan_id              UUID,
+    delivery_plan_id              varchar(60),
     delivery_plan_solution_seq_id VARCHAR(60),
     status_id                     VARCHAR(60),
     last_updated_stamp            TIMESTAMP,
@@ -165,8 +169,8 @@ create table delivery_plan_solution
 
 CREATE TABLE delivery_trip
 (
-    delivery_trip_id                     uuid        NOT NULL DEFAULT uuid_generate_v1(),
-    delivery_plan_id                     uuid        NULL,
+    delivery_trip_id                     varchar(60) NOT NULL,
+    delivery_plan_id                     varchar(60) NULL,
     delivery_plan_solution_seq_id        varchar(60) NULL,
     vehicle_id                           varchar(60) NULL,
     driver_id                            uuid        NULL,
@@ -178,10 +182,10 @@ CREATE TABLE delivery_trip
     total_location                       int,
     execute_external_vehicle_type_id     varchar(60) NULL,
     status_id                            varchar(60) NULL,
-    completed_delivery_trip_detail_count int                  default 0,
-    delivery_trip_detail_count           int                  default 0,
+    completed_delivery_trip_detail_count int              default 0,
+    delivery_trip_detail_count           int              default 0,
     last_updated_stamp                   timestamp   NULL,
-    created_stamp                        timestamp   NULL     DEFAULT now(),
+    created_stamp                        timestamp   NULL DEFAULT now(),
     CONSTRAINT pk_delivery_trip PRIMARY KEY (delivery_trip_id),
     CONSTRAINT fk_delivery_trip_driver_id FOREIGN KEY (driver_id) REFERENCES party_driver (party_id),
     CONSTRAINT fk_delivery_trip_delivery_plan_id FOREIGN KEY (delivery_plan_id) REFERENCES delivery_plan (delivery_plan_id),
@@ -191,32 +195,42 @@ CREATE TABLE delivery_trip
     CONSTRAINT fk_delivery_trip_vehicle_id FOREIGN KEY (vehicle_id) REFERENCES vehicle (vehicle_id)
 );
 
+create table delivery_trip_sequence_id
+(
+    id SERIAL PRIMARY KEY NOT NULL
+);
+
 CREATE TABLE delivery_trip_detail
 (
-    delivery_trip_detail_id uuid        NOT NULL DEFAULT uuid_generate_v1(),
-    delivery_trip_id        uuid        NULL,
+    delivery_trip_detail_id varchar(60) NOT NULL,
+    delivery_trip_id        varchar(60) NULL,
     sequence_id             int         NULL,
     shipment_item_id        uuid        NULL,
     delivery_quantity       int4        NULL,
     status_id               varchar(60) NULL,
     last_updated_stamp      timestamp   NULL,
-    created_stamp           timestamp   NULL     DEFAULT now(),
+    created_stamp           timestamp   NULL DEFAULT now(),
     CONSTRAINT pk_delivery_trip_detail PRIMARY KEY (delivery_trip_detail_id),
     CONSTRAINT fk_delivery_trip_detail_delivery_trip FOREIGN KEY (delivery_trip_id) REFERENCES delivery_trip (delivery_trip_id),
     CONSTRAINT fk_delivery_trip_detail_shipment FOREIGN KEY (shipment_item_id) REFERENCES shipment_item (shipment_item_id),
     CONSTRAINT fk_delivery_trip_detail_status FOREIGN KEY (status_id) REFERENCES status_item (status_id)
 );
 
+create table delivery_trip_detail_sequence_id
+(
+    id SERIAL PRIMARY KEY NOT NULL
+);
+
 create table delivery_trip_detail_status
 (
-    delivery_trip_detail_status_id UUID      not null default uuid_generate_v1(),
-    delivery_trip_detail_id        uuid      NOT NULL,
+    delivery_trip_detail_status_id UUID        not null default uuid_generate_v1(),
+    delivery_trip_detail_id        varchar(60) NOT NULL,
     status_id                      VARCHAR(60),
     from_date                      TIMESTAMP,
     thru_date                      TIMESTAMP,
     updated_by_user_login_id       VARCHAR(60),
-    last_updated_stamp             timestamp NULL,
-    created_stamp                  timestamp NULL     DEFAULT now(),
+    last_updated_stamp             timestamp   NULL,
+    created_stamp                  timestamp   NULL     DEFAULT now(),
 
     constraint pk_delivery_trip_detail_status primary key (delivery_trip_detail_status_id),
     constraint fk_delivery_trip_detail_status_delivery_trip_detail_id foreign key (delivery_trip_detail_id) references delivery_trip_detail (delivery_trip_detail_id),
@@ -226,13 +240,13 @@ create table delivery_trip_detail_status
 
 create table delivery_trip_status
 (
-    delivery_trip_status_id UUID      not null default uuid_generate_v1(),
-    delivery_trip_id        UUID      not null,
+    delivery_trip_status_id UUID        not null default uuid_generate_v1(),
+    delivery_trip_id        varchar(60) not null,
     status_id               VARCHAR(60),
     from_date               TIMESTAMP,
     thru_date               TIMESTAMP,
-    last_updated_stamp      timestamp NULL,
-    created_stamp           timestamp NULL     DEFAULT now(),
+    last_updated_stamp      timestamp   NULL,
+    created_stamp           timestamp   NULL     DEFAULT now(),
     constraint pk_delivery_trip_status_id primary key (delivery_trip_status_id),
     constraint fk_delivery_trip_status_delivery_trip_id foreign key (delivery_trip_id) references delivery_trip (delivery_trip_id),
     constraint fk_delivery_trip_status_status_id foreign key (status_id) references status_item (status_id)

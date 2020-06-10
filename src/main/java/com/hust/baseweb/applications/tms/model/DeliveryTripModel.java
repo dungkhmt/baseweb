@@ -39,7 +39,7 @@ public class DeliveryTripModel {
     @ToString
     public static class Create {
 
-        private UUID deliveryPlanId;
+        private String deliveryPlanId;
         private String executeDate;
         private String vehicleId;
         private String driverId;

@@ -35,6 +35,6 @@ public interface ShipmentItemRoleRepo extends JpaRepository<ShipmentItemRole, UU
     List<ShipmentItemRole> findAllByPartyAndStatusItemAndDeliveryPlanIdNotEqual(
         Party party,
         String statusItemId,
-        UUID deliveryPlanId
+        String deliveryPlanId
     );
 }

@@ -6,11 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.UUID;
-
-public interface DeliveryPlanRepo extends JpaRepository<DeliveryPlan, UUID> {
-
-    DeliveryPlan findByDeliveryPlanId(UUID deliveryPlanId);
+public interface DeliveryPlanRepo extends JpaRepository<DeliveryPlan, String> {
 
     @NotNull
     Page<DeliveryPlan> findAll(@NotNull Pageable pageable);

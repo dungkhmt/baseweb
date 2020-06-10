@@ -13,5 +13,5 @@ import java.util.UUID;
 public class CompositeShipmentItemDeliveryPlanId implements Serializable {
 
     private UUID shipmentItemId;
-    private UUID deliveryPlanId;
+    private String deliveryPlanId;
 }

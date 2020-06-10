@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,5 +12,5 @@ import java.util.UUID;
 public class CompositeVehicleDeliveryPlanId implements Serializable {
 
     private String vehicleId;
-    private UUID deliveryPlanId;
+    private String deliveryPlanId;
 }

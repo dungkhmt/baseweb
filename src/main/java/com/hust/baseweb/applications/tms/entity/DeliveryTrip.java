@@ -19,7 +19,6 @@ import java.util.Optional;
 public class DeliveryTrip {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "delivery_trip_id")
     private String deliveryTripId;
 
@@ -91,6 +90,6 @@ public class DeliveryTrip {
 
     @NotNull
     public static String convertSequenceIdToDeliveryTripId(Long id) {
-        return "TRIP" + String.format("%010d", id);
+        return "DT" + String.format("%010d", id);
     }
 }

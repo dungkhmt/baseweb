@@ -10,9 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.UUID;
 
-public interface DeliveryTripRepo extends JpaRepository<DeliveryTrip, UUID> {
+public interface DeliveryTripRepo extends JpaRepository<DeliveryTrip, String> {
 
     Page<DeliveryTrip> findAllByDeliveryPlan(DeliveryPlan deliveryPlan, Pageable pageable);
 

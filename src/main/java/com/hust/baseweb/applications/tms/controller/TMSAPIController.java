@@ -93,8 +93,10 @@ public class TMSAPIController {
 //            log.info("completeShipmentItems, deliveryTripDetailId = " + I.getDeliveryTripDetailId() + " FINISHED");
 //        }
 
-        deliveryTripDetailService.completeDeliveryTripDetail(Arrays.stream(input.getItems()).map(
-            CompleteDeliveryShipmentItemInputModel::getDeliveryTripDetailId).toArray(UUID[]::new));
+        deliveryTripDetailService.completeDeliveryTripDetail(Arrays
+                                                                 .stream(input.getItems())
+                                                                 .map(CompleteDeliveryShipmentItemInputModel::getDeliveryTripDetailId)
+                                                                 .toArray(String[]::new));
 
         return ResponseEntity.ok().body("OK");
     }

@@ -64,7 +64,7 @@ public class DriverAPIController {
     public ResponseEntity<?> findDriver(@PathVariable String deliveryTripId) {
         log.info("::findDriver(), deliveryTripId=" + deliveryTripId);
         DeliveryTrip deliveryTrip = deliveryTripRepo
-            .findById(UUID.fromString(deliveryTripId))
+            .findById(deliveryTripId)
             .orElseThrow(NoSuchElementException::new);
         PartyDriver partyDriver = deliveryTrip.getPartyDriver();
         if (partyDriver == null || partyDriver.getPerson() == null) {
@@ -80,7 +80,7 @@ public class DriverAPIController {
     ) {
         log.info("::setDriverToDeliveryTrip(), deliveryTripId=" + deliveryTripId + ", driverPartyId=" + driverPartyId);
         DeliveryTrip deliveryTrip = deliveryTripRepo
-            .findById(UUID.fromString(deliveryTripId))
+            .findById(deliveryTripId)
             .orElseThrow(NoSuchElementException::new);
         if (driverPartyId.equals("unSelected")) {
             deliveryTrip.setPartyDriver(null);

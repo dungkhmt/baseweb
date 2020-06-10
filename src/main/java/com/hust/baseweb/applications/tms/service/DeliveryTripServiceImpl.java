@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.tms.constants.TMSConstants;
 import com.hust.baseweb.applications.tms.entity.*;
+import com.hust.baseweb.applications.tms.entity.sequenceid.DeliveryTripSequenceId;
 import com.hust.baseweb.applications.tms.entity.status.DeliveryTripDetailStatus;
 import com.hust.baseweb.applications.tms.entity.status.DeliveryTripStatus;
 import com.hust.baseweb.applications.tms.entity.status.ShipmentItemStatus;
@@ -19,6 +20,7 @@ import com.hust.baseweb.applications.tms.repo.status.DeliveryTripStatusRepo;
 import com.hust.baseweb.applications.tms.repo.status.ShipmentItemStatusRepo;
 import com.hust.baseweb.entity.StatusItem;
 import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.repo.DeliveryTripSequenceIdRepo;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.StatusItemRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
@@ -39,6 +41,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
+@javax.transaction.Transactional
 public class DeliveryTripServiceImpl implements DeliveryTripService {
 
     private DeliveryTripRepo deliveryTripRepo;
@@ -58,6 +61,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     private DeliveryTripStatusRepo deliveryTripStatusRepo;
     private DeliveryTripDetailStatusRepo deliveryTripDetailStatusRepo;
     private ShipmentItemStatusRepo shipmentItemStatusRepo;
+    private DeliveryTripSequenceIdRepo deliveryTripSequenceIdRepo;
 
     @Override
     @Transactional
@@ -105,7 +109,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                                               .orElseThrow(NoSuchElementException::new);
 
         deliveryTrip.setStatusItem(statusItem);
-        deliveryTrip = deliveryTripRepo.save(deliveryTrip);
+        deliveryTrip = save(deliveryTrip);
 
         DeliveryTripStatus deliveryTripStatus = new DeliveryTripStatus(
             null,
@@ -116,6 +120,15 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         deliveryTripStatusRepo.save(deliveryTripStatus);
 
         return deliveryTrip;
+    }
+
+    @Override
+    public DeliveryTrip save(DeliveryTrip deliveryTrip) {
+        if (deliveryTrip.getDeliveryTripId() == null) {
+            DeliveryTripSequenceId id = deliveryTripSequenceIdRepo.save(new DeliveryTripSequenceId());
+            deliveryTrip.setDeliveryTripId(DeliveryTrip.convertSequenceIdToDeliveryTripId(id.getId()));
+        }
+        return deliveryTripRepo.save(deliveryTrip);
     }
 
     @Override
@@ -134,7 +147,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     }
 
     @Override
-    public DeliveryTripModel findById(UUID deliveryTripId) {
+    public DeliveryTripModel findById(String deliveryTripId) {
         return deliveryTripRepo.findById(deliveryTripId).orElseThrow(NoSuchElementException::new).toDeliveryTripModel();
     }
 
@@ -144,21 +157,24 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         List<DeliveryTripDetailModel.Create> shipmentItemModels,
         UserLogin userLogin
     ) {
-        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId))
+        DeliveryTrip deliveryTrip = deliveryTripRepo.findById(deliveryTripId)
                                                     .orElseThrow(NoSuchElementException::new);
         DeliveryPlan deliveryPlan = deliveryTrip.getDeliveryPlan();
-        String deliveryPlanId = deliveryPlan.getDeliveryPlanId().toString();
+        String deliveryPlanId = deliveryPlan.getDeliveryPlanId();
 
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans
-            = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
+            = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(deliveryPlanId);
 
         List<ShipmentItem> shipmentItemsInDeliveryPlan = shipmentItemRepo.findAllByShipmentItemIdInAndUserLogin(
-            shipmentItemDeliveryPlans.stream()
-                                     .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()),
+            shipmentItemDeliveryPlans
+                .stream()
+                .map(ShipmentItemDeliveryPlan::getShipmentItemId)
+                .collect(Collectors.toList()),
             userLogin);
         Map<String, ShipmentItem> shipmentItemMap = new HashMap<>();
-        shipmentItemsInDeliveryPlan.forEach(shipmentItem -> shipmentItemMap.put(shipmentItem.getShipmentItemId()
-                                                                                            .toString(), shipmentItem));
+        shipmentItemsInDeliveryPlan.forEach(shipmentItem -> shipmentItemMap.put(shipmentItem
+                                                                                    .getShipmentItemId()
+                                                                                    .toString(), shipmentItem));
 
         List<DeliveryTripDetail> deliveryTripDetails = deliveryTripDetailRepo.findAllByDeliveryTrip(deliveryTrip);
         List<ShipmentItem> shipmentItemsInDeliveryTrip = deliveryTripDetails
@@ -378,7 +394,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
 
     @Override
     @Transactional
-    public boolean approveDeliveryTrip(UUID deliveryTripId) {
+    public boolean approveDeliveryTrip(String deliveryTripId) {
         Date now = new Date();
 
         StatusItem deliveryTripCreated = statusItemRepo.findById("DELIVERY_TRIP_CREATED")
@@ -422,7 +438,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
             return null;
         }
         deliveryTrip.setStatusItem(statusItem);
-        deliveryTrip = deliveryTripRepo.save(deliveryTrip);
+        deliveryTrip = save(deliveryTrip);
 
         List<DeliveryTripStatus> deliveryTripStatuses = deliveryTripStatusRepo.findAllByDeliveryTripAndThruDateNull(
             deliveryTrip);
@@ -434,7 +450,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     }
 
     @Override
-    public boolean startExecuteDeliveryTrip(UUID deliveryTripId) {
+    public boolean startExecuteDeliveryTrip(String deliveryTripId) {
         Date now = new Date();
 
         StatusItem deliveryTripApprovedTrip = statusItemRepo.findById("DELIVERY_TRIP_APPROVED_TRIP")
@@ -502,7 +518,7 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     }
 
     private boolean updateDeliveryTripStatus(
-        UUID deliveryTripId,
+        String deliveryTripId,
         Date updateDate,
         StatusItem deliveryTripPreConditionStatus,
         StatusItem deliveryTripSetStatus,

@@ -25,5 +25,5 @@ public class ShipmentItemDeliveryPlan {
 
     @Id
     @Column(name = "delivery_plan_id")
-    private UUID deliveryPlanId;
+    private String deliveryPlanId;
 }

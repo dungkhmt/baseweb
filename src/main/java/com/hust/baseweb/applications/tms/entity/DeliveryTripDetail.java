@@ -16,7 +16,6 @@ import javax.persistence.*;
 public class DeliveryTripDetail {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "delivery_trip_detail_id")
     private String deliveryTripDetailId;
 
@@ -76,7 +75,7 @@ public class DeliveryTripDetail {
 
     @NotNull
     public static String convertSequenceIdToDeliveryPlanId(Long id) {
-        return "TRIP_DETAIL_" + String.format("%010d", id);
+        return "DTD" + String.format("%010d", id);
     }
 
 }

@@ -24,7 +24,6 @@ import java.security.Principal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -210,7 +209,7 @@ public class ShipmentOrderAPIController {
     @GetMapping("/delivery-plan/{deliveryPlanId}")
     public ResponseEntity<?> getDeliveryPlan(@PathVariable String deliveryPlanId) {
         log.info("getDeliveryPlan: " + deliveryPlanId);
-        return ResponseEntity.ok().body(deliveryPlanService.findById(UUID.fromString(deliveryPlanId)));
+        return ResponseEntity.ok().body(deliveryPlanService.findById(deliveryPlanId));
     }
 
     @GetMapping("/delivery-trip/{deliveryPlanId}/page")
@@ -228,7 +227,7 @@ public class ShipmentOrderAPIController {
     @GetMapping("/delivery-trip/{deliveryTripId}/basic-info")
     public ResponseEntity<?> getDeliveryTrip(@PathVariable String deliveryTripId) {
         log.info("getDeliveryTrip: " + deliveryTripId);
-        return ResponseEntity.ok().body(deliveryTripService.findById(UUID.fromString(deliveryTripId)));
+        return ResponseEntity.ok().body(deliveryTripService.findById(deliveryTripId));
     }
 
     @GetMapping("/delivery-trip-detail/{deliveryTripId}")
@@ -306,7 +305,7 @@ public class ShipmentOrderAPIController {
         List<DeliveryTripModel> deliveryTripModels = new ArrayList<>();
 
         for (String deliveryTripId : deliveryTripIds) {
-            DeliveryTripModel deliveryTripModel = deliveryTripService.findById(UUID.fromString(deliveryTripId));
+            DeliveryTripModel deliveryTripModel = deliveryTripService.findById(deliveryTripId);
             DeliveryTripModel.Tour tour = deliveryTripService.getDeliveryTripInfo(
                 deliveryTripId,
                 new ArrayList<>(), userLogin);
@@ -321,12 +320,12 @@ public class ShipmentOrderAPIController {
 
     @GetMapping("/approve-delivery-trip/{deliveryTripId}")
     public ResponseEntity<?> approveDeliveryTrip(@PathVariable String deliveryTripId) {
-        return ResponseEntity.ok().body(deliveryTripService.approveDeliveryTrip(UUID.fromString(deliveryTripId)));
+        return ResponseEntity.ok().body(deliveryTripService.approveDeliveryTrip(deliveryTripId));
     }
 
     @GetMapping("/start-execute-delivery-trip/{deliveryTripId}")
     public ResponseEntity<?> startExecuteDeliveryTrip(@PathVariable String deliveryTripId) {
-        return ResponseEntity.ok().body(deliveryTripService.startExecuteDeliveryTrip(UUID.fromString(deliveryTripId)));
+        return ResponseEntity.ok().body(deliveryTripService.startExecuteDeliveryTrip(deliveryTripId));
     }
 
     @GetMapping("/complete-delivery-trip-detail/{deliveryTripDetailId}")
@@ -334,7 +333,7 @@ public class ShipmentOrderAPIController {
         log.info("completeDeliveryTrip({})", deliveryTripDetailId);
         return ResponseEntity
             .ok()
-            .body(deliveryTripDetailService.completeDeliveryTripDetail(UUID.fromString(deliveryTripDetailId)));
+            .body(deliveryTripDetailService.completeDeliveryTripDetail(deliveryTripDetailId));
     }
 
     @PostMapping("/complete-delivery-trip-details")
@@ -342,10 +341,7 @@ public class ShipmentOrderAPIController {
         log.info("completeDeliveryTrip({})", deliveryTripDetailIds.size());
         return ResponseEntity
             .ok()
-            .body(deliveryTripDetailService.completeDeliveryTripDetail(deliveryTripDetailIds
-                                                                           .stream()
-                                                                           .map(UUID::fromString)
-                                                                           .toArray(UUID[]::new)));
+            .body(deliveryTripDetailService.completeDeliveryTripDetail(deliveryTripDetailIds.toArray(new String[0])));
     }
 
     @GetMapping("/shipment-item-not-scheduled/{deliveryPlanId}")
@@ -362,7 +358,7 @@ public class ShipmentOrderAPIController {
 
     @GetMapping("/get-total-weight-shipment-items-in-delivery-plan/{deliveryPlanId}")
     public ResponseEntity<?> getTotalWeightShipmentItemsInDeliveryPlan(@PathVariable String deliveryPlanId) {
-        return ResponseEntity.ok(deliveryPlanService.getTotalWeightShipmentItems(UUID.fromString(deliveryPlanId)));
+        return ResponseEntity.ok(deliveryPlanService.getTotalWeightShipmentItems(deliveryPlanId));
     }
 
     @GetMapping("/delete-all-delivery-trips")

@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public interface DeliveryTripDetailService {
@@ -19,13 +18,17 @@ public interface DeliveryTripDetailService {
         UserLogin userLogin
     );
 
+    DeliveryTripDetail save(DeliveryTripDetail deliveryTripDetail);
+
+    List<DeliveryTripDetail> saveAll(List<DeliveryTripDetail> deliveryTripDetails);
+
     boolean delete(String deliveryTripDetailId, UserLogin userLogin);
 
     Page<DeliveryTripDetail> findAll(String deliveryTripId, Pageable pageable);
 
     DeliveryTripDetailModel.OrderItems findAll(String deliveryTripId);
 
-    DeliveryTripDetail updateStatusDeliveryTripDetail(UUID deliveryTripDetailId, String statusId);
+    DeliveryTripDetail updateStatusDeliveryTripDetail(String deliveryTripDetailId, String statusId);
 
-    boolean completeDeliveryTripDetail(UUID... deliveryTripDetailIds);
+    boolean completeDeliveryTripDetail(String... deliveryTripDetailIds);
 }

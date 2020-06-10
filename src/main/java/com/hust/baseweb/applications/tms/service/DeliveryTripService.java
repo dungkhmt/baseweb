@@ -26,11 +26,13 @@ public interface DeliveryTripService {
         int deliveryTripDetailCount
     );
 
+    DeliveryTrip save(DeliveryTrip deliveryTrip);
+
     Page<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable);
 
     List<DeliveryTripModel> findAllByDeliveryPlanId(String deliveryPlanId);
 
-    DeliveryTripModel findById(UUID deliveryTripId);
+    DeliveryTripModel findById(String deliveryTripId);
 
     DeliveryTripModel.Tour getDeliveryTripInfo(
         String deliveryTripId,
@@ -40,9 +42,9 @@ public interface DeliveryTripService {
 
     GetDeliveryTripAssignedToDriverOutputModel getDeliveryTripAssignedToDriver(String driverUserLoginId);
 
-    boolean approveDeliveryTrip(UUID deliveryTripId);
+    boolean approveDeliveryTrip(String deliveryTripId);
 
-    boolean startExecuteDeliveryTrip(UUID deliveryTripId);
+    boolean startExecuteDeliveryTrip(String deliveryTripId);
 
     boolean deleteAll();
 

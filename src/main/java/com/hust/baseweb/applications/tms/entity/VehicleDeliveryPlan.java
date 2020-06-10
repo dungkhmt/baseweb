@@ -9,7 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -25,5 +24,5 @@ public class VehicleDeliveryPlan {
 
     @Id
     @Column(name = "delivery_plan_id")
-    private UUID deliveryPlanId;
+    private String deliveryPlanId;
 }
