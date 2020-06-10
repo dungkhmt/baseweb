@@ -60,33 +60,99 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Page<Invoice.Model> getPageUnpaidInvoices(Pageable pageable) {
-        return invoiceRepo.findAllByAmountNotEqualWithPaidAmount(pageable).map(Invoice::toModel);
+        Page<Invoice> invoicePage = invoiceRepo.findAllByAmountNotEqualWithPaidAmount(pageable);
+        List<UUID> partyIds = invoicePage.stream().map(Invoice::getToPartyCustomerId).collect(Collectors.toList());
+        Map<UUID, Party> partyMap = partyRepo
+            .findAllByPartyIdIn(partyIds)
+            .stream()
+            .collect(Collectors.toMap(Party::getPartyId, p -> p));
+        return invoicePage.map(invoice -> invoice.toModel(partyMap.get(invoice.getToPartyCustomerId()).getName()));
     }
 
     @Override
-    public Page<Invoice.Model> getPageUnpaidInvoices(
-        String invoiceId,
-        String toPartyCustomerId,
-        Pageable pageable
-    ) {
-        if (invoiceId != null) {
-            if (toPartyCustomerId != null) {
-                return invoiceRepo.findAllByInvoiceIdAndToPartyCustomerIdAndAmountNotEqualWithPaidAmount(
-                    invoiceId,
-                    UUID.fromString(toPartyCustomerId),
-                    pageable).map(Invoice::toModel);
-            } else {
-                return invoiceRepo.findAllByInvoiceIdAndAmountNotEqualWithPaidAmount(
-                    invoiceId,
-                    pageable).map(Invoice::toModel);
-            }
-        } else if (toPartyCustomerId != null) {
-            return invoiceRepo.findAllByToPartyCustomerIdAndAmountNotEqualWithPaidAmount(
-                UUID.fromString(toPartyCustomerId),
-                pageable).map(Invoice::toModel);
+    public Page<Invoice.Model> getPageUnpaidInvoices(String invoiceId, String toPartyCustomerName, Pageable pageable) {
+        if (toPartyCustomerName == null || toPartyCustomerName.equalsIgnoreCase("")) {
+            Page<Invoice> invoicePage = invoiceRepo.findAllByInvoiceIdAndAmountNotEqualWithPaidAmount(
+                invoiceId,
+                pageable);
+            List<UUID> partyIds = invoicePage
+                .stream()
+                .map(Invoice::getToPartyCustomerId)
+                .collect(Collectors.toList());
+            Map<UUID, Party> partyMap = partyRepo
+                .findAllByPartyIdIn(partyIds)
+                .stream()
+                .collect(Collectors.toMap(Party::getPartyId, p -> p));
+            return invoicePage.map(invoice -> invoice.toModel(partyMap.get(invoice.getToPartyCustomerId()).getName()));
         } else {
-            return invoiceRepo.findAllByAmountNotEqualWithPaidAmount(pageable).map(Invoice::toModel);
+            List<Party> parties = new ArrayList<>(partyRepo.findAllByNameIgnoreCaseContaining(toPartyCustomerName));
+            List<UUID> partyIds = parties.stream().map(Party::getPartyId).collect(Collectors.toList());
+            Map<UUID, Party> partyMap = parties
+                .stream()
+                .collect(Collectors.toMap(Party::getPartyId, p -> p));
+            if (invoiceId != null) {
+                Page<Invoice> invoicePage = invoiceRepo.findAllByInvoiceIdAndToPartyCustomerIdInAndAmountNotEqualWithPaidAmount(
+                    invoiceId,
+                    partyIds,
+                    pageable);
+                return invoicePage.map(invoice -> invoice.toModel(partyMap
+                                                                      .get(invoice.getToPartyCustomerId())
+                                                                      .getName()));
+
+            } else {
+                Page<Invoice> invoicePage = invoiceRepo.findAllByToPartyCustomerIdInAndAmountNotEqualWithPaidAmount(
+                    partyIds,
+                    pageable);
+
+                return invoicePage.map(invoice -> invoice.toModel(partyMap
+                                                                      .get(invoice.getToPartyCustomerId())
+                                                                      .getName()));
+            }
+
         }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+//        if (invoiceId != null) {
+//            if (toPartyCustomerName != null) {
+//                Page<Invoice> invoicePage = invoiceRepo
+//                    .findAllByInvoiceIdAndToPartyCustomerIdInAndAmountNotEqualWithPaidAmount(
+//                        invoiceId,
+//                        UUID.fromString(toPartyCustomerName),
+//                        pageable);
+//                List<UUID> partyIds = invoicePage
+//                    .stream()
+//                    .map(Invoice::getToPartyCustomerId)
+//                    .collect(Collectors.toList());
+//                Map<UUID, Party> partyMap = partyRepo
+//                    .findAllByPartyIdIn(partyIds)
+//                    .stream()
+//                    .collect(Collectors.toMap(Party::getPartyId, p -> p));
+//
+//                return invoicePage
+//                    .map(invoice -> invoice.toModel(partyMap.get(invoice.getToPartyCustomerId()).getName()));
+//            } else {
+//                return invoiceRepo
+//                    .findAllByInvoiceIdAndAmountNotEqualWithPaidAmount(invoiceId, pageable)
+//                    .map(Invoice::toModel);
+//            }
+//        } else if (toPartyCustomerName != null) {
+//            Page<Invoice> invoicePage = invoiceRepo
+//                .findAllByToPartyCustomerIdAndAmountNotEqualWithPaidAmount(
+//                    UUID.fromString(toPartyCustomerName),
+//                    pageable);
+//            List<UUID> partyIds = invoicePage
+//                .stream()
+//                .map(Invoice::getToPartyCustomerId)
+//                .collect(Collectors.toList());
+//            Map<UUID, Party> partyMap = partyRepo
+//                .findAllByPartyIdIn(partyIds)
+//                .stream()
+//                .collect(Collectors.toMap(Party::getPartyId, p -> p));
+//
+//            return invoicePage.map(invoice -> invoice.toModel(partyMap.get(invoice.getToPartyCustomerId()).getName()));
+//        } else {
+//            return invoiceRepo.findAllByAmountNotEqualWithPaidAmount(pageable).map(Invoice::toModel);
+//        }
     }
 
     @Override

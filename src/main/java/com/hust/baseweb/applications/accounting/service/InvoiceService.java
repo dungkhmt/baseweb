@@ -19,7 +19,7 @@ public interface InvoiceService {
 
     Page<Invoice.Model> getPageUnpaidInvoices(
         String invoiceId,
-        String toPartyCustomerId,
+        String toPartyCustomerName,
         Pageable pageable
     );
 

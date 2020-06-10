@@ -19,13 +19,13 @@ public interface InvoiceRepo extends MongoRepository<Invoice, String> {
 
     @Query("{\n" +
            "    $and: [\n" +
-           "        { _id: { $regex:?0 }, toPartyCustomerId:?1},\n" +
+           "        { _id: { $regex:?0 }, toPartyCustomerId:{$in:?1}},\n" +
            "        { $expr: { $ne: [\"$amount\", \"$paidAmount\"] } }\n" +
            "    ]\n" +
            "}")
-    Page<Invoice> findAllByInvoiceIdAndToPartyCustomerIdAndAmountNotEqualWithPaidAmount(
+    Page<Invoice> findAllByInvoiceIdAndToPartyCustomerIdInAndAmountNotEqualWithPaidAmount(
         String invoiceId,
-        UUID toPartyCustomerId,
+        Collection<UUID> toPartyCustomerIds,
         Pageable pageable
     );
 
@@ -42,12 +42,12 @@ public interface InvoiceRepo extends MongoRepository<Invoice, String> {
 
     @Query("{\n" +
            "    $and: [\n" +
-           "        { toPartyCustomerId:?0},\n" +
+           "        { toPartyCustomerId:{$in:?0}},\n" +
            "        { $expr: { $ne: [\"$amount\", \"$paidAmount\"] } }\n" +
            "    ]\n" +
            "}")
-    Page<Invoice> findAllByToPartyCustomerIdAndAmountNotEqualWithPaidAmount(
-        UUID toPartyCustomerId,
+    Page<Invoice> findAllByToPartyCustomerIdInAndAmountNotEqualWithPaidAmount(
+        Collection<UUID> toPartyCustomerIds,
         Pageable pageable
     );
 
