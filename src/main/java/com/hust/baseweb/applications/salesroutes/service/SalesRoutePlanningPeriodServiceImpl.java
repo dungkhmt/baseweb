@@ -65,4 +65,9 @@ public class SalesRoutePlanningPeriodServiceImpl implements
         }
     }
 
+    @Override
+    public SalesRoutePlanningPeriod getCurrentPlanPeriod(Date currentDate) {
+        return salesRoutePlanningPeriodRepo.getCurrentPlanPeriod(currentDate);
+    }
+
 }
