@@ -15,8 +15,12 @@ public interface SalesRouteConfigRepo extends JpaRepository<SalesRouteConfig, UU
 
     @Modifying
     @Transactional
-    @Query(value = "insert into sales_route_config(visit_frequency_id , days , repeat_week) " +
-                   "values (?1, ?2, ?3)",
+    @Query(value = "insert into sales_route_config (visit_frequency_id , days , repeat_week) " +
+                   "select ?1 , ?2 , ?3 where not exists (" +
+                   "select * " +
+                   "from sales_route_config src " +
+                   "where visit_frequency_id = ?1 " +
+                   "and days = ?2 )",
            nativeQuery = true)
     void createSalesRouteConfig(String visitFrequencyId, String days, int repeatWeek);
 }
