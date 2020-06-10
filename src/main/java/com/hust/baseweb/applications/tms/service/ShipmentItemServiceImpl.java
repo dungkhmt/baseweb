@@ -43,14 +43,19 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     private ShipmentItemRoleRepo shipmentItemRoleRepo;
 
     @Override
-    public Page<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
+    public Page<ShipmentItemModel> findAllInDeliveryPlan(
+        String deliveryPlanId,
+        Pageable pageable,
+        UserLogin userLogin
+    ) {
         Page<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlanPage
             = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId), pageable);
 
         return new PageImpl<>(
             shipmentItemRepo
-                .findAllByShipmentItemIdIn(
-                    shipmentItemDeliveryPlanPage.map(ShipmentItemDeliveryPlan::getShipmentItemId).getContent())
+                .findAllByShipmentItemIdInAndUserLogin(
+                    shipmentItemDeliveryPlanPage.map(ShipmentItemDeliveryPlan::getShipmentItemId).getContent(),
+                    userLogin)
                 .stream()
                 .map(ShipmentItem::toShipmentItemModel)
                 .collect(Collectors.toList()),
@@ -60,7 +65,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public List<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId) {
+    public List<ShipmentItemModel> findAllInDeliveryPlan(String deliveryPlanId, UserLogin userLogin) {
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(
             UUID.fromString(deliveryPlanId));
         List<UUID> shipmentItemIds = shipmentItemDeliveryPlans
@@ -68,12 +73,17 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
             .map(ShipmentItemDeliveryPlan::getShipmentItemId)
             .distinct()
             .collect(Collectors.toList());
-        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemIds);
+        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByShipmentItemIdInAndUserLogin(
+            shipmentItemIds,
+            userLogin);
         return shipmentItems.stream().map(ShipmentItem::toShipmentItemModel).collect(Collectors.toList());
     }
 
     @Override
-    public List<ShipmentItemModel.DeliveryPlan> findAllInDeliveryPlanNearestDeliveryTrip(String deliveryTripId) {
+    public List<ShipmentItemModel.DeliveryPlan> findAllInDeliveryPlanNearestDeliveryTrip(
+        String deliveryTripId,
+        UserLogin userLogin
+    ) {
         DeliveryTrip deliveryTrip = deliveryTripRepo
             .findById(UUID.fromString(deliveryTripId))
             .orElseThrow(NoSuchElementException::new);
@@ -81,12 +91,13 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
         String deliveryPlanId = deliveryPlan.getDeliveryPlanId().toString();
         List<DeliveryTrip> deliveryTripsInDeliveryPlan = deliveryTripRepo.findAllByDeliveryPlan(deliveryPlan);
 
-        List<ShipmentItem> shipmentItemsInDeliveryPlan = shipmentItemRepo.findAllByShipmentItemIdIn(
+        List<ShipmentItem> shipmentItemsInDeliveryPlan = shipmentItemRepo.findAllByShipmentItemIdInAndUserLogin(
             shipmentItemDeliveryPlanRepo
                 .findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
                 .stream()
                 .map(ShipmentItemDeliveryPlan::getShipmentItemId)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()),
+            userLogin);
 
         List<ShipmentItem> shipmentItemsInDeliveryTrip
             = deliveryTripDetailRepo
@@ -157,14 +168,18 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public Page<ShipmentItemModel> findAllNotInDeliveryPlan(String deliveryPlanId, Pageable pageable) {
+    public Page<ShipmentItemModel> findAllNotInDeliveryPlan(
+        String deliveryPlanId,
+        Pageable pageable,
+        UserLogin userLogin
+    ) {
         Set<String> shipmentItemInDeliveryPlans
             = shipmentItemDeliveryPlanRepo
             .findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId))
             .stream()
             .map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
             .collect(Collectors.toSet());
-        List<ShipmentItem> allShipmentItems = shipmentItemRepo.findAll();
+        List<ShipmentItem> allShipmentItems = shipmentItemRepo.findAllByUserLogin(userLogin);
         List<ShipmentItemModel> shipmentItemModels = allShipmentItems
             .stream()
             .filter(shipmentItem -> !shipmentItemInDeliveryPlans.contains(shipmentItem.getShipmentItemId().toString()))
@@ -174,7 +189,10 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public List<ShipmentItemModel> findAllNotInDeliveryPlan(String deliveryPlanId) {
+    public List<ShipmentItemModel> findAllNotInDeliveryPlan(
+        String deliveryPlanId,
+        UserLogin userLogin
+    ) {
         // TODO: to be improved by adding indicator (status) fields to shipment_items
         Set<String> shipmentItemInDeliveryPlans
             = shipmentItemDeliveryPlanRepo
@@ -182,7 +200,7 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
             .stream()
             .map(shipmentItemDeliveryPlan -> shipmentItemDeliveryPlan.getShipmentItemId().toString())
             .collect(Collectors.toSet());
-        List<ShipmentItem> allShipmentItems = shipmentItemRepo.findAll();
+        List<ShipmentItem> allShipmentItems = shipmentItemRepo.findAllByUserLogin(userLogin);
         return allShipmentItems
             .stream()
             .filter(shipmentItem -> shipmentItem.getStatusItem().getStatusId().equals("SHIPMENT_ITEM_CREATED")
@@ -210,13 +228,8 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public Page<ShipmentItem> findAll(Pageable pageable) {
-        return shipmentItemRepo.findAll(pageable);
-    }
-
-    @Override
-    public Iterable<ShipmentItem> findAll() {
-        return shipmentItemRepo.findAll();
+    public Page<ShipmentItem> findAll(Pageable pageable, UserLogin userLogin) {
+        return shipmentItemRepo.findAllByUserLogin(userLogin, pageable);
     }
 
     @Override
@@ -228,16 +241,21 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public String saveShipmentItemDeliveryPlan(com.hust.baseweb.applications.tms.model.ShipmentItemModel.CreateDeliveryPlan createDeliveryPlan) {
+    public String saveShipmentItemDeliveryPlan(
+        ShipmentItemModel.CreateDeliveryPlan createDeliveryPlan,
+        UserLogin userLogin
+    ) {
         DeliveryPlan deliveryPlan = deliveryPlanRepo
             .findById(UUID.fromString(createDeliveryPlan.getDeliveryPlanId()))
             .orElseThrow(NoSuchElementException::new);
         Map<UUID, ShipmentItem> shipmentItemMap = shipmentItemRepo
-            .findAllByShipmentItemIdIn(createDeliveryPlan
-                                           .getShipmentItemIds()
-                                           .stream()
-                                           .map(UUID::fromString)
-                                           .collect(Collectors.toList()))
+            .findAllByShipmentItemIdInAndUserLogin(
+                createDeliveryPlan
+                    .getShipmentItemIds()
+                    .stream()
+                    .map(UUID::fromString)
+                    .collect(Collectors.toList()),
+                userLogin)
             .stream()
             .collect(Collectors.toMap(ShipmentItem::getShipmentItemId, shipmentItem -> shipmentItem));
 
@@ -284,13 +302,18 @@ public class ShipmentItemServiceImpl implements ShipmentItemService {
     }
 
     @Override
-    public List<ShipmentItemModel> findAllNotScheduled(String deliveryPlanId) {
+    public List<ShipmentItemModel> findAllNotScheduled(
+        String deliveryPlanId,
+        UserLogin userLogin
+    ) {
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(
             UUID.fromString(deliveryPlanId));
-        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemDeliveryPlans
-                                                                                          .stream()
-                                                                                          .map(ShipmentItemDeliveryPlan::getShipmentItemId)
-                                                                                          .collect(Collectors.toList()));
+        List<ShipmentItem> shipmentItems = shipmentItemRepo.findAllByShipmentItemIdInAndUserLogin(
+            shipmentItemDeliveryPlans
+                .stream()
+                .map(ShipmentItemDeliveryPlan::getShipmentItemId)
+                .collect(Collectors.toList()),
+            userLogin);
         return shipmentItems
             .stream()
             .filter(shipmentItem -> shipmentItem.getScheduledQuantity() < shipmentItem.getQuantity())

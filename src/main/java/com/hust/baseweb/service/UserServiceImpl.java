@@ -1,11 +1,8 @@
 package com.hust.baseweb.service;
 
-import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.entity.*;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
-import com.hust.baseweb.entity.Person;
-import com.hust.baseweb.entity.SecurityGroup;
 import com.hust.baseweb.entity.Status.StatusEnum;
-import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.model.PersonUpdateModel;
 import com.hust.baseweb.model.querydsl.SearchCriteria;
@@ -21,14 +18,22 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
+@Transactional
+@javax.transaction.Transactional
 public class UserServiceImpl implements UserService {
 
     public static final String module = UserService.class.getName();
@@ -40,6 +45,11 @@ public class UserServiceImpl implements UserService {
     private StatusRepo statusRepo;
     private PersonRepo personRepo;
     private SecurityGroupRepo securityGroupRepo;
+    private UserRegisterRepo userRegisterRepo;
+    private StatusItemRepo statusItemRepo;
+    private JavaMailSender javaMailSender;
+
+    private final static ExecutorService EMAIL_EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
     @Override
     public UserLogin findById(String userLoginId) {
@@ -52,21 +62,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserLogin save(String userName, String password) throws Exception {
+    public UserLogin createAndSaveUserLogin(String userName, String password) {
 
         Party party = partyService.save("PERSON");
         UserLogin userLogin = new UserLogin(userName, password, null, true);
         userLogin.setParty(party);
         if (userLoginRepo.existsById(userName)) {
-            System.out.println(module + "::save, userName " + userName + " EXISTS!!!");
-            throw new RuntimeException();
+//            System.out.println(module + "::save, userName " + userName + " EXISTS!!!");
+            throw new EntityExistsException("userLoginId = " + userLogin.getUserLoginId() + ", already exist!");
         }
         return userLoginRepo.save(userLogin);
     }
 
     @Override
     @Transactional
-    public Party save(PersonModel personModel) throws Exception {
+    public Party createAndSaveUserLogin(PersonModel personModel) {
 
         Party party = new Party(personModel.getPartyCode(), partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
                                 statusRepo
@@ -147,5 +157,63 @@ public class UserServiceImpl implements UserService {
     public UserLogin findUserLoginByPartyId(UUID partyId) {
         Party party = partyService.findByPartyId(partyId);
         return userLoginRepo.findByParty(party).get(0);
+    }
+
+    @Override
+    public UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel) {
+        String userLoginId = inputModel.getUserLoginId();
+        String email = inputModel.getEmail();
+
+        if (userRegisterRepo.existsByUserLoginIdOrEmail(userLoginId, email) || userLoginRepo.existsById(userLoginId)) {
+            return new UserRegister.OutputModel();
+        }
+        StatusItem userRegistered = statusItemRepo
+            .findById("USER_REGISTERED")
+            .orElseThrow(NoSuchElementException::new);
+        UserRegister userRegister = inputModel.createUserRegister(userRegistered);
+        userRegister = userRegisterRepo.save(userRegister);
+
+        EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
+
+        return userRegister.toOutputModel();
+    }
+
+    private void sendEmail(String email, String userLoginId) {
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setTo(email);
+
+        simpleMailMessage.setSubject("Đăng ký thành công - SSCM - Quản lý chuỗi cung ứng");
+        simpleMailMessage.setText(String.format(
+            "Bạn đã đăng ký thành công tài khoản tại hệ thống với tên đăng nhập %s, " +
+            "vui lòng chờ cho đến khi được quản trị viên phê duyệt. \nXin cảm ơn!",
+            userLoginId));
+        javaMailSender.send(simpleMailMessage);
+    }
+
+    @Override
+    public boolean approveRegisterUser(String userLoginId) {
+        UserRegister userRegister = userRegisterRepo.findById(userLoginId).orElse(null);
+        if (userRegister == null) {
+            return false;
+        }
+
+        try {
+            createAndSaveUserLogin(userRegister.getUserLoginId(), userRegister.getPassword());
+        } catch (Exception e) {
+            return false;
+        }
+        StatusItem userApproved = statusItemRepo.findById("USER_APPROVED").orElseThrow(NoSuchElementException::new);
+        userRegister.setStatusItem(userApproved);
+        userRegisterRepo.save(userRegister);
+        return true;
+    }
+
+    @Override
+    public List<UserRegister.OutputModel> findAllRegisterUser() {
+        StatusItem userRegistered = statusItemRepo
+            .findById("USER_REGISTERED")
+            .orElseThrow(NoSuchElementException::new);
+        List<UserRegister> userRegisters = userRegisterRepo.findAllByStatusItem(userRegistered);
+        return userRegisters.stream().map(UserRegister::toOutputModel).collect(Collectors.toList());
     }
 }

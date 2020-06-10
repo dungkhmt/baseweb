@@ -19,4 +19,5 @@ public interface SalesRouteConfigRetailOutletService {
     );
 
     List<GetSalesRouteConfigRetailOutletsOM> getSalesRoutesConfigRetailOutlets(UUID salesRoutePlanningPeriodId);
+
 }

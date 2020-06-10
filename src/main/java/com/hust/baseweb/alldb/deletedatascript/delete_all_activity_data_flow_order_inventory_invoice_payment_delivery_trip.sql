@@ -11,6 +11,9 @@ delete
 from inventory_item;
 
 delete
+from product_facility;
+
+delete
 from shipment_item_status;
 
 delete

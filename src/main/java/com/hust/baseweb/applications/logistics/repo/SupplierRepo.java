@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface SupplierRepo extends JpaRepository<Supplier, UUID> {
 
     List<Supplier> findAllByPartyIdIn(Collection<UUID> partyIds);
+
+    boolean existsBySupplierCode(String supplierCode);
 }

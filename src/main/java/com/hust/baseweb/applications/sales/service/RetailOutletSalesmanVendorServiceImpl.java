@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -50,7 +49,7 @@ public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesm
 
     @Override
     public List<RetailOutletSalesmanVendorRepo.GetRetailOutletsOfSalesmanAndDistributor>
-        getRetailOutletsOfSalesmanAndDistributor(UUID partySalesmanId, UUID partyDistributorId) {
+    getRetailOutletsOfSalesmanAndDistributor(UUID partySalesmanId, UUID partyDistributorId) {
         /*PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);
         List<RetailOutletSalesmanVendor> list = retailOutletSalesmanVendorRepo.findAllByPartySalesmanAndPartyDistributorAndThruDate(
@@ -62,7 +61,9 @@ public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesm
             .map(i -> i.getPartyRetailOutlet())
             .collect(Collectors.toList());*/
 
-        return retailOutletSalesmanVendorRepo.getRetailOutletsOfSalesmanAndDistributor(partySalesmanId, partyDistributorId);
+        return retailOutletSalesmanVendorRepo.getRetailOutletsOfSalesmanAndDistributor(
+            partySalesmanId,
+            partyDistributorId);
     }
 
     @Override

@@ -3,6 +3,10 @@ package com.hust.baseweb.test.simulator;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.cli.*;
 
+
+
+
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
@@ -77,8 +81,9 @@ public class Simulator {
 
         CommandLineParser commandLineParser = new DefaultParser();
         return commandLineParser.parse(options, arg);
-    }
+       
 
+    }
     private void run() throws InterruptedException {
 
         CreateOrderAgent[] agents = new CreateOrderAgent[nbCreateOrderAgents];

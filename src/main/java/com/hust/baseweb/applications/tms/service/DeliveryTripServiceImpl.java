@@ -141,7 +141,8 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
     @Override
     public DeliveryTripModel.Tour getDeliveryTripInfo(
         String deliveryTripId,
-        List<DeliveryTripDetailModel.Create> shipmentItemModels
+        List<DeliveryTripDetailModel.Create> shipmentItemModels,
+        UserLogin userLogin
     ) {
         DeliveryTrip deliveryTrip = deliveryTripRepo.findById(UUID.fromString(deliveryTripId))
                                                     .orElseThrow(NoSuchElementException::new);
@@ -151,9 +152,10 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
         List<ShipmentItemDeliveryPlan> shipmentItemDeliveryPlans
             = shipmentItemDeliveryPlanRepo.findAllByDeliveryPlanId(UUID.fromString(deliveryPlanId));
 
-        List<ShipmentItem> shipmentItemsInDeliveryPlan = shipmentItemRepo.findAllByShipmentItemIdIn(
+        List<ShipmentItem> shipmentItemsInDeliveryPlan = shipmentItemRepo.findAllByShipmentItemIdInAndUserLogin(
             shipmentItemDeliveryPlans.stream()
-                                     .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()));
+                                     .map(ShipmentItemDeliveryPlan::getShipmentItemId).collect(Collectors.toList()),
+            userLogin);
         Map<String, ShipmentItem> shipmentItemMap = new HashMap<>();
         shipmentItemsInDeliveryPlan.forEach(shipmentItem -> shipmentItemMap.put(shipmentItem.getShipmentItemId()
                                                                                             .toString(), shipmentItem));
@@ -170,10 +172,12 @@ public class DeliveryTripServiceImpl implements DeliveryTripService {
                                                                             .collect(Collectors.toList());
 
         List<ShipmentItem> shipmentItemsSelected =
-            shipmentItemRepo.findAllByShipmentItemIdIn(shipmentItemModels.stream().map(
-                DeliveryTripDetailModel.Create::getShipmentItemId
-            ).collect(Collectors.toList()));
-
+            shipmentItemRepo.findAllByShipmentItemIdInAndUserLogin(
+                shipmentItemModels
+                    .stream()
+                    .map(DeliveryTripDetailModel.Create::getShipmentItemId)
+                    .collect(Collectors.toList()),
+                userLogin);
         List<GeoPoint> geoPointsSelected = shipmentItemsSelected.stream()
                                                                 .map(shipmentItem -> shipmentItem
                                                                     .getShipToLocation()

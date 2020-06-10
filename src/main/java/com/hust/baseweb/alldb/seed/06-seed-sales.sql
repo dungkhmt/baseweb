@@ -28,6 +28,9 @@ values ('INVOICE_CREATED', 'INVOICE_STATUS', 'Tạo mới hóa đơn'),
        ('INVOICE_CANCELED', 'INVOICE_STATUS', 'Hóa đơn đã bị hủy'),
        ('INVOICE_COMPLETED', 'INVOICE_STATUS', 'Hóa đơn hoàn thành');
 
+insert into status_item(status_id, status_type_id, status_code, description)
+values ('USER_REGISTERED', 'USER_STATUS', 'REGISTERED', 'Đã đăng ký'),
+       ('USER_APPROVED', 'USER_STATUS', 'APPROVED', 'Đã phê duyệt');
 
 
 insert into sales_route_visit_frequency(visit_frequency_id, description)

@@ -43,7 +43,7 @@ public class ShipmentOrderAPIController {
     public ResponseEntity<?> createOrderShipment(
         Principal principal,
         @RequestBody ShipmentModel.CreateShipmentInputModel input
-    ) throws ParseException {
+    ) {
 
         UserLogin userLogin = userService.findById(principal.getName());
         log.info("::createOrderShipment, shipment-items = " + input.getShipmentItems().length);
@@ -93,7 +93,10 @@ public class ShipmentOrderAPIController {
     @GetMapping("/shipment-item")
     public ResponseEntity<?> getOrderShipmentItem(Principal principal, Pageable pageable) {
         log.info("::getOrderShipmentItem, ");
-        return ResponseEntity.ok().body(shipmentItemService.findAll(pageable).map(ShipmentItem::toShipmentItemModel));
+        UserLogin userLogin = userService.findById(principal.getName());
+        return ResponseEntity
+            .ok()
+            .body(shipmentItemService.findAll(pageable, userLogin).map(ShipmentItem::toShipmentItemModel));
     }
 
     @GetMapping("/shipment-item-of-user-login")
@@ -113,7 +116,10 @@ public class ShipmentOrderAPIController {
         Pageable pageable
     ) {
         log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlan(deliveryPlanId, pageable));
+
+        UserLogin userLogin = userService.findById(principal.getName());
+
+        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlan(deliveryPlanId, pageable, userLogin));
     }
 
     @GetMapping("/shipment-item-delivery-plan/{deliveryPlanId}/all")
@@ -122,7 +128,8 @@ public class ShipmentOrderAPIController {
         @PathVariable String deliveryPlanId
     ) {
         log.info("::getOrderShipmentItem deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlan(deliveryPlanId));
+        UserLogin userLogin = userService.findById(principal.getName());
+        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlan(deliveryPlanId, userLogin));
     }
 
     @GetMapping("/shipment-item-delivery-trip/{deliveryTripId}/all")
@@ -131,7 +138,11 @@ public class ShipmentOrderAPIController {
         @PathVariable String deliveryTripId
     ) {
         log.info("::getOrderShipmentItem deliveryTripId=" + deliveryTripId);
-        return ResponseEntity.ok().body(shipmentItemService.findAllInDeliveryPlanNearestDeliveryTrip(deliveryTripId));
+        UserLogin userLogin = userService.findById(principal.getName());
+
+        return ResponseEntity
+            .ok()
+            .body(shipmentItemService.findAllInDeliveryPlanNearestDeliveryTrip(deliveryTripId, userLogin));
     }
 
     @GetMapping("/shipment-item-not-in-delivery-plan/{deliveryPlanId}/page")
@@ -141,7 +152,10 @@ public class ShipmentOrderAPIController {
         Pageable pageable
     ) {
         log.info("::getAllOrderShipmentItemNotIn deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlan(deliveryPlanId, pageable));
+        UserLogin userLogin = userService.findById(principal.getName());
+        return ResponseEntity
+            .ok()
+            .body(shipmentItemService.findAllNotInDeliveryPlan(deliveryPlanId, pageable, userLogin));
     }
 
     @GetMapping("/shipment-item-not-in-delivery-plan/{deliveryPlanId}/all")
@@ -150,7 +164,8 @@ public class ShipmentOrderAPIController {
         @PathVariable String deliveryPlanId
     ) {
         log.info("::getOrderShipmentItemPageNotIn deliveryPlanId=" + deliveryPlanId);
-        return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlan(deliveryPlanId));
+        UserLogin userLogin = userService.findById(principal.getName());
+        return ResponseEntity.ok().body(shipmentItemService.findAllNotInDeliveryPlan(deliveryPlanId, userLogin));
     }
 
     @GetMapping("/shipment-item-of-user-login-not-in-delivery-plan/{deliveryPlanId}/all")
@@ -239,7 +254,10 @@ public class ShipmentOrderAPIController {
         @PathVariable String deliveryTripId
     ) {
         log.info("::createDeliveryTripDetail: " + deliveryTripId);
-        return ResponseEntity.ok().body(deliveryTripDetailService.save(deliveryTripId, inputs));
+
+        UserLogin userLogin = userService.findById(principal.getName());
+
+        return ResponseEntity.ok().body(deliveryTripDetailService.save(deliveryTripId, inputs, userLogin));
     }
 
     @GetMapping("/delete-delivery-trip-detail/{deliveryTripDetailId}")
@@ -248,7 +266,8 @@ public class ShipmentOrderAPIController {
         @PathVariable String deliveryTripDetailId
     ) {
         log.info("::deleteDeliveryTripDetail: " + deliveryTripDetailId);
-        return ResponseEntity.ok().body(deliveryTripDetailService.delete(deliveryTripDetailId));
+        UserLogin userLogin = userService.findById(principal.getName());
+        return ResponseEntity.ok().body(deliveryTripDetailService.delete(deliveryTripDetailId, userLogin));
     }
 
     @PostMapping("/create-shipment-item-delivery-plan")
@@ -257,21 +276,32 @@ public class ShipmentOrderAPIController {
         @RequestBody ShipmentItemModel.CreateDeliveryPlan createDeliveryPlan
     ) {
         log.info("::createShipmentItemDeliveryPlan: " + createDeliveryPlan.getDeliveryPlanId());
-        return ResponseEntity.ok().body(shipmentItemService.saveShipmentItemDeliveryPlan(createDeliveryPlan));
+
+        UserLogin userLogin = userService.findById(principal.getName());
+
+        return ResponseEntity
+            .ok()
+            .body(shipmentItemService.saveShipmentItemDeliveryPlan(createDeliveryPlan, userLogin));
     }
 
     @PostMapping("/delivery-trip/{deliveryTripId}/capacity-info")
     public ResponseEntity<?> getDeliveryTripCapacityInfo(
         @PathVariable String deliveryTripId,
-        @RequestBody List<DeliveryTripDetailModel.Create> shipmentItemModels
+        @RequestBody List<DeliveryTripDetailModel.Create> shipmentItemModels,
+        Principal principal
     ) {
         log.info("::getDeliveryTripCapacityInfo(): deliveryTripId=" + deliveryTripId);
-        return ResponseEntity.ok().body(deliveryTripService.getDeliveryTripInfo(deliveryTripId, shipmentItemModels));
+        UserLogin userLogin = userService.findById(principal.getName());
+        return ResponseEntity
+            .ok()
+            .body(deliveryTripService.getDeliveryTripInfo(deliveryTripId, shipmentItemModels, userLogin));
     }
 
     @PostMapping("/delivery-trips/chart-info")
-    public ResponseEntity<?> getDeliveryTripsChartInfo(@RequestBody List<String> deliveryTripIds) {
+    public ResponseEntity<?> getDeliveryTripsChartInfo(@RequestBody List<String> deliveryTripIds, Principal principal) {
         log.info("::getDeliveryTripsChartInfo(), deliveryTripIdsSize=" + deliveryTripIds.size());
+
+        UserLogin userLogin = userService.findById(principal.getName());
 
         List<DeliveryTripModel> deliveryTripModels = new ArrayList<>();
 
@@ -279,7 +309,7 @@ public class ShipmentOrderAPIController {
             DeliveryTripModel deliveryTripModel = deliveryTripService.findById(UUID.fromString(deliveryTripId));
             DeliveryTripModel.Tour tour = deliveryTripService.getDeliveryTripInfo(
                 deliveryTripId,
-                new ArrayList<>());
+                new ArrayList<>(), userLogin);
             deliveryTripModel.setTotalDistance(tour.getTotalDistance());
             deliveryTripModel.setTotalWeight(tour.getTotalWeight());
             deliveryTripModels.add(deliveryTripModel);
@@ -319,8 +349,10 @@ public class ShipmentOrderAPIController {
     }
 
     @GetMapping("/shipment-item-not-scheduled/{deliveryPlanId}")
-    public ResponseEntity<?> getShipmentItemNotScheduled(@PathVariable String deliveryPlanId) {
-        return ResponseEntity.ok(shipmentItemService.findAllNotScheduled(deliveryPlanId));
+    public ResponseEntity<?> getShipmentItemNotScheduled(@PathVariable String deliveryPlanId, Principal principal) {
+        UserLogin userLogin = userService.findById(principal.getName());
+
+        return ResponseEntity.ok(shipmentItemService.findAllNotScheduled(deliveryPlanId, userLogin));
     }
 
     @GetMapping("/shipment-item-info/{shipmentItemId}")

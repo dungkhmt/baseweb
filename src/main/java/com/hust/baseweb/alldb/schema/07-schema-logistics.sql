@@ -119,6 +119,7 @@ create table shipment_item
     expected_delivery_date        TIMESTAMP,
     product_transport_category_id VARCHAR(60),
     status_id                     varchar(60),
+    processed_by_user_login_id    varchar(60),
     scheduled_quantity            int           default 0,
     completed_quantity            int           default 0,
     last_updated_stamp            TIMESTAMP,
@@ -130,6 +131,7 @@ create table shipment_item
     constraint fk_shipment_item_party_customer_id foreign key (party_customer_id) references party (party_id),
     constraint fk_shipment_item_order_id foreign key (order_id) references order_header (order_id),
     CONSTRAINT fk_facility_id FOREIGN KEY (facility_id) REFERENCES facility (facility_id),
+    constraint fk_shipment_item_processed_by_user_login_id foreign key (processed_by_user_login_id) references user_login (user_login_id),
     constraint fk_status_item foreign key (status_id) references status_item (status_id)
 );
 

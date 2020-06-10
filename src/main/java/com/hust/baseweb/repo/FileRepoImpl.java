@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 @Repository
 public class FileRepoImpl implements FileRepo {
@@ -34,7 +35,7 @@ public class FileRepoImpl implements FileRepo {
             if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response);
             }
-            return response.body().string();
+            return Objects.requireNonNull(response.body()).string();
         }
 
     }

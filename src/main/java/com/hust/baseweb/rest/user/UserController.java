@@ -49,7 +49,7 @@ public class UserController {
         // Resources<String> resources = new Resources<String>(producers);\\
         Party party;
         try {
-            party = userService.save(personModel);
+            party = userService.createAndSaveUserLogin(personModel);
         } catch (Exception e) {
             e.printStackTrace();
 

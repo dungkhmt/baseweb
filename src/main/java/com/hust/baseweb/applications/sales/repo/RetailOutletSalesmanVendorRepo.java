@@ -34,21 +34,26 @@ public interface RetailOutletSalesmanVendorRepo extends JpaRepository<RetailOutl
 
     List<RetailOutletSalesmanVendor> findAllByPartySalesmanAndThruDate(PartySalesman partySalesman, Date thruDate);
 
-    List<RetailOutletSalesmanVendor> findAllByPartySalesmanAndPartyDistributorAndThruDate(PartySalesman partySalesman,
-                                                                                          PartyDistributor partyDistributor,
-                                                                                          Date thruDate);
-    @Query( value = "select \tcast(retail_outlet_salesman_vendor_id as varchar) retailOutletSalesmanVendorId,\n" +
-                    "\t\tretail_outlet_name retailOutletName\n" +
-                    "from \tretail_outlet_salesman_vendor rosv \n" +
-                    "\t\tinner join party_retail_outlet pro on rosv.party_retail_outlet_id = pro.party_id \n" +
-                    "where \trosv.party_salesman_id = ?1\n" +
-                    "\t\tand rosv.party_vendor_id = ?2",
-        nativeQuery = true)
+    List<RetailOutletSalesmanVendor> findAllByPartySalesmanAndPartyDistributorAndThruDate(
+        PartySalesman partySalesman,
+        PartyDistributor partyDistributor,
+        Date thruDate
+    );
+
+    @Query(value = "select \tcast(retail_outlet_salesman_vendor_id as varchar) retailOutletSalesmanVendorId,\n" +
+                   "\t\tretail_outlet_name retailOutletName\n" +
+                   "from \tretail_outlet_salesman_vendor rosv \n" +
+                   "\t\tinner join party_retail_outlet pro on rosv.party_retail_outlet_id = pro.party_id \n" +
+                   "where \trosv.party_salesman_id = ?1\n" +
+                   "\t\tand rosv.party_vendor_id = ?2",
+           nativeQuery = true)
     List<GetRetailOutletsOfSalesmanAndDistributor>
-        getRetailOutletsOfSalesmanAndDistributor(UUID partySalesmanId, UUID partyDistributorId);
+    getRetailOutletsOfSalesmanAndDistributor(UUID partySalesmanId, UUID partyDistributorId);
 
     interface GetRetailOutletsOfSalesmanAndDistributor {
+
         String getRetailOutletSalesmanVendorId();
+
         String getRetailOutletName();
     }
 

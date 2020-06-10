@@ -33,10 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()
-            .regexMatchers("/v2/api-docs")
-            .permitAll()
-            .regexMatchers("/.*swagger.*")
-            .permitAll()
+            .regexMatchers("/v2/api-docs").permitAll()
+            .regexMatchers("/.*swagger.*").permitAll()
+            .regexMatchers(".*/user/register/*$").permitAll()
             .anyRequest()
             .authenticated()
             .and()
