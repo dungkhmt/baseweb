@@ -1,13 +1,12 @@
 package com.hust.baseweb.applications.salesroutes.service;
 
-import com.hust.baseweb.applications.customer.repo.RetailOutletPagingRepo;
 import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
-import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
 import com.hust.baseweb.applications.sales.repo.RetailOutletSalesmanVendorRepo;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfigRetailOutlet;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteVisitFrequency;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.GetSalesRouteConfigRetailOutletsOM;
 import com.hust.baseweb.applications.salesroutes.repo.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,6 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
     SalesRouteConfigRetailOutletService {
 
     private PSalesRouteConfigRetailOutletRepo pSalesRouteConfigRetailOutletRepo;
-    private RetailOutletPagingRepo partyRetailOutletRepo;
-    private PartySalesmanRepo partySalesmanRepo;
     private PSalesRouteConfigRepo pSalesRouteConfigRepo;
     private PSalesRoutePlanningPeriodRepo salesRoutePlanningPeriodRepo;
     private RetailOutletSalesmanVendorRepo retailOutletSalesmanVendorRepo;
@@ -59,9 +56,7 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
     }
 
     @Override
-    public List<SalesRouteConfigRetailOutletRepo.GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(
-        UUID salesRoutePlanningPeriodId
-    ) {
-        return salesRouteConfigRetailOutletRepo.getSalesroutesConfigRetailOutlets(salesRoutePlanningPeriodId);
+    public List<GetSalesRouteConfigRetailOutletsOM> getSalesRoutesConfigRetailOutlets(UUID salesRoutePlanningPeriodId) {
+        return salesRouteConfigRetailOutletRepo.getSalesRoutesConfigRetailOutlets(salesRoutePlanningPeriodId);
     }
 }
