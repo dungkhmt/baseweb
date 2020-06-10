@@ -1,7 +1,7 @@
 package com.hust.baseweb.applications.salesroutes.service;
 
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfigRetailOutlet;
-import com.hust.baseweb.applications.salesroutes.repo.SalesRouteConfigRetailOutletRepo;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.GetSalesRouteConfigRetailOutletsOM;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +18,5 @@ public interface SalesRouteConfigRetailOutletService {
         String startExecuteDate
     );
 
-    List<SalesRouteConfigRetailOutletRepo.GetSalesRouteConfigRetailOutletsOutputModel> getSalesroutesConfigRetailOutlets(
-        UUID salesRoutePlanningPeriodId
-    );
+    List<GetSalesRouteConfigRetailOutletsOM> getSalesRoutesConfigRetailOutlets(UUID salesRoutePlanningPeriodId);
 }
