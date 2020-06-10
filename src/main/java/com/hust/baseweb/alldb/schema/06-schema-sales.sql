@@ -129,7 +129,7 @@ create table sales_route_config_retail_outlet
 
 create table sales_route_detail
 (
-    sales_route_detail_id               UUID NOT NULL,
+    sales_route_detail_id               UUID NOT NULL default uuid_generate_v1(),
     party_salesman_id                   UUID NOT NULL,
     party_retail_outlet_id              UUID NOT NULL,
     party_distributor_id                UUID not null,
