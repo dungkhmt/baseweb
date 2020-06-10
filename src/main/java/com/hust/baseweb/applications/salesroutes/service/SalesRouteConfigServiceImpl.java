@@ -29,6 +29,17 @@ public class SalesRouteConfigServiceImpl implements SalesRouteConfigService {
         return salesRouteConfig;
     }
 
+    /**
+     * @param visitFrequencyId
+     * @param days
+     * @param repeatWeek
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     */
+    @Override
+    public void createSalesRouteConfig(String visitFrequencyId, String days, int repeatWeek) {
+        salesRouteConfigRepo.createSalesRouteConfig(visitFrequencyId, days, repeatWeek);
+    }
+
     @Override
     public List<SalesRouteConfig> findAll() {
         return salesRouteConfigRepo.findAll();

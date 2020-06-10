@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -83,17 +84,23 @@ public class SalesRouteAPIController {
         return ResponseEntity.ok().body(list);
     }
 
-
+    /**
+     * Create a new sales route config
+     * @param input CreateSalesRouteConfigInputModel object
+     * @return a SalesRouteConfig object
+     */
     @PostMapping("/create-sales-route-config")
-    public ResponseEntity<?> createSalesRouteConfig(
-        Principal principal,
-        @RequestBody CreateSalesRouteConfigInputModel input
-    ) {
+    public ResponseEntity<?> createSalesRouteConfig(@RequestBody CreateSalesRouteConfigInputModel input) {
         log.info("createSalesRouteConfig, days = " + input.getDays() + ", repeatWeek = " + input.getRepeatWeek());
 
-        SalesRouteConfig salesRouteConfig = salesRouteConfigService.save(input.getDays(), input.getRepeatWeek());
+        /*SalesRouteConfig salesRouteConfig = salesRouteConfigService.save(input.getDays(), input.getRepeatWeek());*/
 
-        return ResponseEntity.ok().body(salesRouteConfig);
+        salesRouteConfigService.createSalesRouteConfig(
+            input.getVisitFrequencyId(),
+            input.getDays(),
+            input.getRepeatWeek());
+
+        return ResponseEntity.ok().body(new SalesRouteConfig());
     }
 
     @PostMapping("/get-list-sales-route-config")
@@ -210,20 +217,24 @@ public class SalesRouteAPIController {
      * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
     @GetMapping("/get-sales-route-config-retail-outlets/{id}")
-    public ResponseEntity<?> getSalesroutesConfigRetailOutlets(Principal principal, @PathVariable UUID id) {
+    public ResponseEntity<?> getSalesRoutesConfigRetailOutlets(Principal principal, @PathVariable UUID id) {
         return ResponseEntity.ok().body(salesRouteConfigRetailOutletService.getSalesRoutesConfigRetailOutlets(id));
     }
 
     /**
-     * Detail of a specific plan period
+     * Detail of a specific or current plan period if id == "current"
      * @param id        salesRoutePlanningPeriodId
      * @return a SalesRoutePlanningPeriod object
      * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
-     *//*
+     */
     @GetMapping("/get-plan-period-detail/{id}")
-    public ResponseEntity<?> getPlanPeriodDetail(Principal principal, @PathVariable UUID id) {
-        return ResponseEntity.ok().body(salesRoutePlanningPeriodService.findById(id));
-    }*/
+    public ResponseEntity<?> getPlanPeriodDetail(Principal principal, @PathVariable String id) {
+        if (id.equals("current")) {
+            return ResponseEntity.ok().body(salesRoutePlanningPeriodService.getCurrentPlanPeriod(new Date()));
+        } else {
+            return ResponseEntity.ok().body(salesRoutePlanningPeriodService.findById(UUID.fromString(id)));
+        }
+    }
 
     /**
      * List all sales route details of a specific plan period

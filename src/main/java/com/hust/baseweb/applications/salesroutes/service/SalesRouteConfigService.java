@@ -10,5 +10,7 @@ public interface SalesRouteConfigService {
 
     SalesRouteConfig save(String days, int repeatWeek);
 
+    void createSalesRouteConfig(String visitFrequencyId, String days, int repeatWeek);
+
     List<SalesRouteConfig> findAll();
 }
