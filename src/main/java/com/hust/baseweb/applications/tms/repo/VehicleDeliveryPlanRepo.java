@@ -4,7 +4,7 @@ import com.hust.baseweb.applications.tms.entity.CompositeVehicleDeliveryPlanId;
 import com.hust.baseweb.applications.tms.entity.VehicleDeliveryPlan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface VehicleDeliveryPlanRepo
-    extends PagingAndSortingRepository<VehicleDeliveryPlan, CompositeVehicleDeliveryPlanId> {
+    extends JpaRepository<VehicleDeliveryPlan, CompositeVehicleDeliveryPlanId> {
 
     List<VehicleDeliveryPlan> findAllByDeliveryPlanId(String deliveryPlanId);
 

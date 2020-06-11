@@ -58,6 +58,7 @@ public class AdminMaintenanceServiceImpl implements AdminMaintenanceService {
     private ProductRevenueRepo productRevenueRepo;
     private CustomerRevenueRepo customerRevenueRepo;
     private TotalRevenueRepo totalRevenueRepo;
+    private VehicleDeliveryPlanRepo vehicleDeliveryPlanRepo;
 
 
     @Override
@@ -133,6 +134,9 @@ public class AdminMaintenanceServiceImpl implements AdminMaintenanceService {
 
         deliveryTripRepo.deleteAllInBatch();
         deliveryTripRepo.flush();
+
+        vehicleDeliveryPlanRepo.deleteAllInBatch();
+        vehicleDeliveryPlanRepo.flush();
 
         deliveryPlanRepo.deleteAllInBatch();
         deliveryPlanRepo.flush();
