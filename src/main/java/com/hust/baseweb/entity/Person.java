@@ -42,7 +42,9 @@ public class Person {
     //@Column(name="birth_date")
     private Date birthDate;
     //private String birthDate;
-
+    public String getFullName(){
+       return firstName + " " + middleName + " " + lastName; 
+    }
     public Person(UUID partyId, String firstName, String middleName, String lastName, String gender, Date birthDate) {
         this.partyId = partyId;
         this.firstName = firstName;
