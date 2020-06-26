@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.logistics.model.GetListFacilityOutputModel;
 import java.util.List;
 
 public class FacilityManager {
+
     private HttpPostExecutor executor = new HttpPostExecutor();
     private String token;
 
@@ -15,12 +16,14 @@ public class FacilityManager {
     }
 
     public List<Facility> getListFacility() {
+        String json = "{\"statusId\":null}";
+        String rs = null;
+        Gson gson = new Gson();
+        GetListFacilityOutputModel list;
         try {
-            String json = "{\"statusId\":null}";
-            String rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-facility", json, token);
+            rs = executor.execPostUseToken(Constants.URL_ROOT + "/api/get-list-facility", json, token);
 //            System.out.println("::getListFacility, rs = " + rs);
-            Gson gson = new Gson();
-            GetListFacilityOutputModel list = gson.fromJson(rs, GetListFacilityOutputModel.class);
+            list = gson.fromJson(rs, GetListFacilityOutputModel.class);
             return list.getFacilities();
         } catch (Exception e) {
             e.printStackTrace();

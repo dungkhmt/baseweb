@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 
 public class GetListProductInputModel {
+
     private String statusId;
 
 }

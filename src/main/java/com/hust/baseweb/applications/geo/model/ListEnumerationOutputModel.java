@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class ListEnumerationOutputModel {
+
     List<Enumeration> enumerationList;
 
     public ListEnumerationOutputModel(List<Enumeration> enumerationList) {

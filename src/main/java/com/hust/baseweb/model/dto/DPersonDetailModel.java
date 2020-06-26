@@ -28,8 +28,10 @@ public class DPersonDetailModel extends RepresentationModel<DPersonDetailModel> 
     private String partyCode;
     private List<String> roles;
 
-    public DPersonDetailModel(String fullName, String status, String partyType, Date createdDate, String userLoginId,
-                              String partyCode) {
+    public DPersonDetailModel(
+        String fullName, String status, String partyType, Date createdDate, String userLoginId,
+        String partyCode
+    ) {
         super();
         this.fullName = fullName;
         this.status = status;

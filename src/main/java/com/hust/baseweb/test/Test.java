@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Test {
+
     public static void Test1() {
         BigDecimal a = new BigDecimal(123);
         a.add(new BigDecimal(456));
@@ -69,10 +70,10 @@ public class Test {
         }).collect(Collectors.toList());
         list.forEach(sg -> System.out.println(sg));
 
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/baseweb",
+        try (Connection connection = DriverManager.getConnection(
+            "jdbc:postgresql://localhost:5432/baseweb",
             "postgres",
             "123456")) {
-
             System.out.println("Java JDBC PostgreSQL Example");
             // When this class first attempts to establish a connection, it automatically loads any JDBC 4.0 drivers found within
             // the class path. Note that your application must manually load any JDBC drivers prior to version 4.0.
@@ -83,7 +84,8 @@ public class Test {
 
             ResultSet resultSet = statement.executeQuery("SELECT * FROM track_locations");
             while (resultSet.next()) {
-                System.out.printf("%-30.30s  %-30.30s%n",
+                System.out.printf(
+                    "%-30.30s  %-30.30s%n",
                     resultSet.getString("party_id"),
                     resultSet.getString("location"));
             }

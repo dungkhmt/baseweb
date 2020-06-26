@@ -35,6 +35,7 @@ public class VehicleModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CreateLocationPriority {
+
         @ExcelCellName("Số xe")
         private String vehicleId;
 
@@ -62,6 +63,7 @@ public class VehicleModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Create {
+
         @ExcelCellName("Số xe")
         private String vehicleId;
 
@@ -102,6 +104,7 @@ public class VehicleModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CreateDeliveryPlan {
+
         private String deliveryPlanId;
         private List<String> vehicleIds;
     }
@@ -111,6 +114,7 @@ public class VehicleModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class DeleteDeliveryPlan {
+
         private String deliveryPlanId;
         private String vehicleId;
     }
@@ -118,6 +122,7 @@ public class VehicleModel {
     @Getter
     @Setter
     public static class InputDistanceStatistic {
+
         private String fromDate;
         private String thruDate;
     }
@@ -125,6 +130,7 @@ public class VehicleModel {
     @Getter
     @Setter
     public static class OutputDistanceStatistic {
+
         private String[] vehicleId;
         private double[] distance;
     }
@@ -133,6 +139,7 @@ public class VehicleModel {
     @Setter
     @AllArgsConstructor
     public static class Distance {
+
         private String vehicleId;
         private double distance;
     }

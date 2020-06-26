@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CommonUtils {
+
     public static Logger LOG = LoggerFactory.getLogger(CommonUtils.class);
     public static int SEQ_ID_LEN = 6;
 
@@ -77,7 +78,8 @@ public class CommonUtils {
 
     public static SortAndFiltersInput rebuildQueryDsl(
         @SuppressWarnings("rawtypes") Pair<Map<String, String>, Map<String, Pair>> pair,
-        SortAndFiltersInput query) {
+        SortAndFiltersInput query
+    ) {
         SortCriteria[] sort = query.getSort();
         SearchCriteria[] filter = query.getFilters();
         if (sort != null) {

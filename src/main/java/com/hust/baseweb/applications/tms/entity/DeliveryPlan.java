@@ -2,19 +2,21 @@ package com.hust.baseweb.applications.tms.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
 public class DeliveryPlan {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "delivery_plan_id")
-    private UUID deliveryPlanId;
+    private String deliveryPlanId;
 
     @Column(name = "description")
     private String description;
@@ -26,4 +28,9 @@ public class DeliveryPlan {
     private Date deliveryDate;
 
     private Double totalWeightShipmentItems = 0.0;
+
+    @NotNull
+    public static String convertSequenceIdToDeliveryPlanId(Long id) {
+        return "DP" + String.format("%010d", id);
+    }
 }

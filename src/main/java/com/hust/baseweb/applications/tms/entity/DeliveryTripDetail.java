@@ -5,22 +5,22 @@ import com.hust.baseweb.applications.tms.model.DeliveryTripDetailModel;
 import com.hust.baseweb.entity.StatusItem;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
 
 public class DeliveryTripDetail {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "delivery_trip_detail_id")
-    private UUID deliveryTripDetailId;
+    private String deliveryTripDetailId;
 
     @JoinColumn(name = "delivery_trip_id", referencedColumnName = "delivery_trip_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private DeliveryTrip deliveryTrip;
 
     private Integer sequenceId;
@@ -28,14 +28,14 @@ public class DeliveryTripDetail {
     //@JoinColumn(name = "shipment_id", referencedColumnName = "shipment_id")
     //@JoinColumn(name = "shipment_item_seq_id", referencedColumnName = "shipment_item_seq_id")
     @JoinColumn(name = "shipment_item_id", referencedColumnName = "shipment_item_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private ShipmentItem shipmentItem;
 
     @Column(name = "delivery_quantity")
     private int deliveryQuantity;
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private StatusItem statusItem;
 
     public DeliveryTripDetailModel.OrderItem toDeliveryTripDetailModel() {
@@ -71,6 +71,11 @@ public class DeliveryTripDetail {
         orderItemModel.setDeliveryQuantity(deliveryQuantity);
         orderItemModel.setStatusId(statusItem.getStatusId());
         return orderItemModel;
+    }
+
+    @NotNull
+    public static String convertSequenceIdToDeliveryPlanId(Long id) {
+        return "DTD" + String.format("%010d", id);
     }
 
 }

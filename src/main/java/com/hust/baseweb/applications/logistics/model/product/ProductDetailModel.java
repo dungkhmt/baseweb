@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Getter
 @ToString
 public class ProductDetailModel {
+
     private String productId;
     private String productName;
     private String type;

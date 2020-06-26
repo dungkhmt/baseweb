@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PartyCustomerServiceImpl implements PartyCustomerService {
+
     private PartyCustomerRepo partyCustomerRepo;
 
     @Override

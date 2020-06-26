@@ -10,10 +10,13 @@ import java.util.Date;
 import java.util.UUID;
 
 public interface CustomerSalesmanVendorPagingRepo extends PagingAndSortingRepository<CustomerSalesmanVendor, UUID> {
+
     Page<CustomerSalesmanVendor> findByPartySalesman(PartySalesman partySalesman, Pageable pageable);
 
-    Page<CustomerSalesmanVendor> findByPartySalesmanAndThruDate(PartySalesman partySalesman,
-                                                                Date thruDate,
-                                                                Pageable pageable);
+    Page<CustomerSalesmanVendor> findByPartySalesmanAndThruDate(
+        PartySalesman partySalesman,
+        Date thruDate,
+        Pageable pageable
+    );
 
 }

@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InputModelDistanceTravelTimePostalAddress {
+
     private double distance;
     private double travelTime;
     private double travelTimeTruck;

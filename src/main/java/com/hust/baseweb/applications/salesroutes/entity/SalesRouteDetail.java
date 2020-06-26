@@ -13,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class SalesRouteDetail {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID salesRouteDetailId;
@@ -35,7 +36,8 @@ public class SalesRouteDetail {
     @Column(name = "execute_date")
     private String executeDate;// format YYYY-MM-DD
 
-    @JoinColumn(name = "sales_route_config_retail_outlet_id", referencedColumnName = "sales_route_config_retail_outlet_id")
+    @JoinColumn(name = "sales_route_config_retail_outlet_id",
+                referencedColumnName = "sales_route_config_retail_outlet_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private SalesRouteConfigRetailOutlet salesRouteConfigRetailOutlet;
 

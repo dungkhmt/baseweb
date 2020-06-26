@@ -26,7 +26,7 @@ public class OrderItem {
     private String orderItemSeqId;
 
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
     @Column(name = "unit_price")

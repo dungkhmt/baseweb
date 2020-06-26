@@ -9,6 +9,7 @@ import java.util.List;
 
 
 public class SortBuilder {
+
     private final String fullNamePath = "wrappedPerson.fullName";
     private final String firstNamePath = "wrappedPerson.firstName";
     private final String middleNamePath = "wrappedPerson.middleName";

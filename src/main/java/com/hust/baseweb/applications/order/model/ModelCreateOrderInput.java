@@ -9,6 +9,7 @@ import java.util.UUID;
 @Setter
 
 public class ModelCreateOrderInput {
+
     private UUID toCustomerId;// party_id
     private UUID fromVendorId;// party_id
     private ModelCreateOrderInputOrderItem[] orderItems;

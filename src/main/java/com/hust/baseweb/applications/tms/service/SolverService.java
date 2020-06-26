@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface SolverService {
+
     boolean solve(SolverOption solverOption) throws IOException;
 
     TripSuggestion.Output suggestTrips(TripSuggestion.Input input);
@@ -20,16 +21,19 @@ public interface SolverService {
     @Setter
     @NoArgsConstructor
     class SolverOption {
+
         private String deliveryPlanId;
         private Integer timeLimit; // second
     }
 
     class TripSuggestion {
+
         @AllArgsConstructor
         @Getter
         @Setter
         @NoArgsConstructor
         public static class Input {
+
             private String deliveryPlanId;
             private List<DeliveryTripDetailModel.Create> shipmentItems;
         }
@@ -39,6 +43,7 @@ public interface SolverService {
         @Setter
         @NoArgsConstructor
         public static class Output {
+
             private List<Trip> trips;
 
             @AllArgsConstructor
@@ -46,6 +51,7 @@ public interface SolverService {
             @Setter
             @NoArgsConstructor
             public static class Trip {
+
                 private DeliveryTripModel deliveryTripModel;
                 private Double extraTotalWeight;
                 private Double extraTotalTime;

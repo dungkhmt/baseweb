@@ -15,6 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ProductPrice {
+
     @Id
     @Column(name = "product_price_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -63,6 +64,7 @@ public class ProductPrice {
     @Getter
     @Setter
     public static class Model {
+
         private String productId;
         private Double price;
         private String currencyUomId;

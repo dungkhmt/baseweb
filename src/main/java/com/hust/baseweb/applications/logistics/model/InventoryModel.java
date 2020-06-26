@@ -15,6 +15,7 @@ public class InventoryModel {
     @Getter
     @Setter
     public static class OrderHeader {
+
         private String orderId;
         private String customerName;
         private String orderDate;
@@ -25,6 +26,7 @@ public class InventoryModel {
     @Getter
     @Setter
     public static class OrderItem {
+
         private String productId;
         private String productName;
         private Integer quantity;
@@ -39,6 +41,7 @@ public class InventoryModel {
     @Getter
     @Setter
     public static class ExportDetail {
+
         private String inventoryItemDetailId;
         private String orderId;
         private String effectiveDate;
@@ -49,6 +52,7 @@ public class InventoryModel {
     @Getter
     @Setter
     public static class ProductFacility {
+
         private String productId;
         private String productName;
         private Integer quantity;
@@ -61,6 +65,7 @@ public class InventoryModel {
     @Getter
     @Setter
     public static class OrderFacility {
+
         private String orderId;
         private String facilityId;
     }

@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductServiceImpl implements ProductService {
+
     private ProductRepo productRepo;
     private UomRepo uomRepo;
     private UomService uomService;
@@ -35,25 +36,25 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findByProductId(String productId) {
-
         return productRepo.findByProductId(productId);
     }
 
     @Override
     public List<Product> getAllProducts() {
-
         return productRepo.findAll();
     }
 
     @Override
     @Transactional
-    public Product save(String productId,
-                        String productName,
-                        String productTransportCategory,
-                        double productWeight, // kg
-                        String uomId,
-                        Integer hsThu,
-                        Integer hsPal) {
+    public Product save(
+        String productId,
+        String productName,
+        String productTransportCategory,
+        double productWeight, // kg
+        String uomId,
+        Integer hsThu,
+        Integer hsPal
+    ) {
         // TODO: check duplicate productId
         Uom uom = uomRepo.findByUomId(uomId);
         if (uom == null) {
@@ -73,15 +74,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Product save(String productId,
-                        String productName,
-                        String type,
-                        String productTransportCategory,
-                        double productWeight, // kg
-                        String uomId,
-                        Integer hsThu,
-                        Integer hsPal,
-                        List<String> contentIds) {
+    public Product save(
+        String productId,
+        String productName,
+        String type,
+        String productTransportCategory,
+        double productWeight, // kg
+        String uomId,
+        Integer hsThu,
+        Integer hsPal,
+        List<String> contentIds
+    ) {
         // TODO: check duplicate productId
         Uom uom = uomRepo.findByUomId(uomId);
         if (uom == null) {
@@ -97,7 +100,8 @@ public class ProductServiceImpl implements ProductService {
         product.setProductTransportCategoryId(productTransportCategory);
         product.setHsThu(hsThu);
         product.setHsPal(hsPal);
-        Set<Content> lC = contentIds.stream()
+        Set<Content> lC = contentIds
+            .stream()
             .map(id -> contentRepo.getOne(UUID.fromString(id)))
             .collect(Collectors.toSet());
         product.setContents(lC);

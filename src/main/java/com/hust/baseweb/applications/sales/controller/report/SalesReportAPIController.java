@@ -28,30 +28,38 @@ import java.util.stream.Collectors;
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesReportAPIController {
+
     private UserService userService;
     private SalesReportService salesReportService;
 
     @PostMapping("/report-date-based-revenue")
-    public ResponseEntity<?> reportDateBasedRevenue(Principal principal,
-                                                    @RequestBody DateBasedRevenueReportInputModel input) {
+    public ResponseEntity<?> reportDateBasedRevenue(
+        Principal principal,
+        @RequestBody DateBasedRevenueReportInputModel input
+    ) {
         UserLogin u = userService.findById(principal.getName());
 
-        DateBasedRevenueReportOutputModel revenueReport = salesReportService.computeDateBasedRevenue(input.getFromDate(),
+        DateBasedRevenueReportOutputModel revenueReport = salesReportService.computeDateBasedRevenue(
+            input.getFromDate(),
             input.getToDate());
 
         return ResponseEntity.ok().body(revenueReport);
     }
 
     @PostMapping("/get-report-date-based-revenue")
-    public ResponseEntity<?> getReportDateBasedRevenue(Principal principal,
-                                                       @RequestBody SaleReportModel.DateBasedInput input) {
+    public ResponseEntity<?> getReportDateBasedRevenue(
+        Principal principal,
+        @RequestBody SaleReportModel.DateBasedInput input
+    ) {
         SaleReportModel.Output output = salesReportService.getDateBasedSalesReport(input);
         return ResponseEntity.ok().body(output);
     }
 
     @PostMapping("/report-date-based-revenue-recent")
-    public ResponseEntity<?> reportDateBasedRevenueRecent(Principal principal,
-                                                          @RequestBody DateBasedRevenueReportRecentInputModel input) {
+    public ResponseEntity<?> reportDateBasedRevenueRecent(
+        Principal principal,
+        @RequestBody DateBasedRevenueReportRecentInputModel input
+    ) {
         UserLogin u = userService.findById(principal.getName());
         String fromDateStr = "";
         String toDateStr = "";
@@ -66,10 +74,12 @@ public class SalesReportAPIController {
         log.info("reportDateBasedRevenueRecent, fromDate = " + fromDateStr + ", toDate = " + toDateStr);
         //DateBasedRevenueReportOutputModel revenueReport = salesReportService.computeDateBasedRevenue(fromDateStr, toDateStr);
 
-        SaleReportModel.DateBasedInput I = new SaleReportModel.DateBasedInput(fromDateStr + " 00:00:00",
+        SaleReportModel.DateBasedInput I = new SaleReportModel.DateBasedInput(
+            fromDateStr + " 00:00:00",
             toDateStr + " 23:59:59");
         SaleReportModel.Output output = salesReportService.getDateBasedSalesReport(I);
-        List<DateBasedRevenueReportElement> lst = output.getDatePrices()
+        List<DateBasedRevenueReportElement> lst = output
+            .getDatePrices()
             .stream()
             .map(e -> new DateBasedRevenueReportElement(e.getDate(), e.getPrice()))
             .collect(Collectors.toList());

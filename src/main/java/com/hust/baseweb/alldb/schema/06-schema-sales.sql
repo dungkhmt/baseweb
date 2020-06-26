@@ -54,6 +54,7 @@ create table sales_route_visit_frequency
 (
     visit_frequency_id VARCHAR(10),
     description        VARCHAR(100),
+    repeat_week           Integer,
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_sales_route_frequency primary key (visit_frequency_id)
@@ -64,7 +65,6 @@ create table sales_route_config
     sales_route_config_id UUID NOT NULL default uuid_generate_v1(),
     visit_frequency_id    VARCHAR(10),
     days                  VARCHAR(60),
-    repeat_week           Integer,
     status_id             VARCHAR(60),
     description           TEXT,
     last_updated_stamp    TIMESTAMP,
@@ -112,7 +112,7 @@ create table sales_route_config_retail_outlet
     sales_route_planning_period_id      UUID not null,
 
     visit_frequency_id                  VARCHAR(10),
-    sales_route_config_id               UUID NOT NULL,
+    sales_route_config_id               UUID,
     retail_outlet_salesman_vendor_id    UUID NOT NULL,
     status_id                           VARCHAR(60),
     start_execute_week                  int,
@@ -129,7 +129,7 @@ create table sales_route_config_retail_outlet
 
 create table sales_route_detail
 (
-    sales_route_detail_id               UUID NOT NULL,
+    sales_route_detail_id               UUID NOT NULL default uuid_generate_v1(),
     party_salesman_id                   UUID NOT NULL,
     party_retail_outlet_id              UUID NOT NULL,
     party_distributor_id                UUID not null,

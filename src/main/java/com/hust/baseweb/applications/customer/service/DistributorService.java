@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @Service
 public interface DistributorService {
+
     PartyDistributor save(CreateDistributorInputModel input);
 
     List<PartyDistributor> findDistributors();

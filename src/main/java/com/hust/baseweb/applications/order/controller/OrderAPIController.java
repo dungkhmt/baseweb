@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.order.controller;
 
 import com.google.gson.Gson;
+import com.hust.baseweb.applications.customer.model.PartyCustomerModel;
 import com.hust.baseweb.applications.order.cache.RevenueOrderCache;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.order.model.*;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class OrderAPIController {
+
     public static final String module = OrderAPIController.class.getName();
 
     public static RevenueOrderCache revenueOrderCache = new RevenueOrderCache();
@@ -41,8 +43,10 @@ public class OrderAPIController {
 
     @PostMapping("/create-order-distributor-to-retail-outlet")
     //public ResponseEntity createOrder(Principal principal, @RequestBody ModelCreateOrderInput input) {
-    public ResponseEntity createOrder(Principal principal,
-                                      @RequestBody CreateOrderDistributor2RetailOutletInputModel input) {
+    public ResponseEntity<String> createOrder(
+        Principal principal,
+        @RequestBody CreateOrderDistributor2RetailOutletInputModel input
+    ) {
         //TODO
         Gson gson = new Gson();
         String inputJson = gson.toJson(input);
@@ -54,23 +58,27 @@ public class OrderAPIController {
     }
 
     @PostMapping("/get-order-detail")
-    public ResponseEntity getOrderDetail(Principal principal, @RequestBody GetOrderDetailInputModel input) {
+    public ResponseEntity<?> getOrderDetail(Principal principal, @RequestBody GetOrderDetailInputModel input) {
         // TODO
         return null;
     }
 
     @GetMapping("/get-orders/all")
-    public ResponseEntity getAllOrders() {
+    public ResponseEntity<List<OrderHeader>> getAllOrders() {
         return ResponseEntity.ok().body(orderService.findAll());
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<?> getOrders(Pageable page, @RequestParam(required = false) String param) {
+    public ResponseEntity<Page<OrderDetailView>> getOrders(
+        Pageable page,
+        @RequestParam(required = false) String param
+    ) {
         log.info("getOrders, page = pageNumber = " + page.getPageNumber() + ", offSet = " +
-            page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
+                 page.getOffset() + ", pageSize = " + page.getPageSize() + ", param = " + param);
         Page<OrderHeader> orders = orderHeaderPageRepo.findAll(page);
 
-        List<OrderDetailView> odv = orders.stream()
+        List<OrderDetailView> odv = orders
+            .stream()
             .map(p -> new OrderDetailView(p, orderService, partySalesmanService, userService))
             .collect(Collectors.toList());
 
@@ -85,7 +93,7 @@ public class OrderAPIController {
     }
 
     @GetMapping(path = "/orders/{orderId}")
-    public ResponseEntity<?> getOrderDetail(@PathVariable String orderId, Principal principal) {
+    public ResponseEntity<OrderDetailView> getOrderDetail(@PathVariable String orderId, Principal principal) {
         log.info("getOrderDetail, orderId = " + orderId);
 
         //OrderHeader order = orderService.findByOrderId(orderId);
@@ -95,18 +103,21 @@ public class OrderAPIController {
     }
 
     @GetMapping("/get-list-party-customers")
-    public ResponseEntity getListPartyCustomers() {
+    public ResponseEntity<List<PartyCustomerModel>> getListPartyCustomers() {
         return ResponseEntity.ok().body(partyCustomerService.getListPartyCustomers());
     }
 
 
     @PostMapping("/get-total-revenue")
-    public ResponseEntity getTotalRevenue(Principal principal, @RequestBody GetTotalRevenueInputModel input) {
-
+    public ResponseEntity<GetTotalRevenueOutputModel> getTotalRevenue(
+        Principal principal,
+        @RequestBody GetTotalRevenueInputModel input
+    ) {
         List<String> keys = Collections.list(OrderAPIController.revenueOrderCache.keys());
         GetTotalRevenueItemOutputModel[] itemOutputModels = new GetTotalRevenueItemOutputModel[keys.size()];
         for (int i = 0; i < itemOutputModels.length; i++) {
-            itemOutputModels[i] = new GetTotalRevenueItemOutputModel(keys.get(i),
+            itemOutputModels[i] = new GetTotalRevenueItemOutputModel(
+                keys.get(i),
                 OrderAPIController.revenueOrderCache.getRevenue(keys.get(i)));
         }
         return ResponseEntity.ok().body(new GetTotalRevenueOutputModel(itemOutputModels));
@@ -118,7 +129,16 @@ public class OrderAPIController {
     }
 
     @PostMapping("/create-purchase-order")
-    public ResponseEntity<Boolean> createPurchaseOrder(@RequestBody OrderHeader.PurchaseCreateModel purchaseCreateModel) {
+    public ResponseEntity<Boolean> createPurchaseOrder(
+        @RequestBody OrderHeader.PurchaseCreateModel purchaseCreateModel
+    ) {
         return ResponseEntity.ok(orderService.createPurchaseOrder(purchaseCreateModel));
     }
+
+    @PostMapping("/delete-all-orders")
+    public ResponseEntity<?> deleteOrders(@RequestBody OrderHeader.DeleteModel deleteModel) {
+        return ResponseEntity.ok(orderService.deleteOrders(deleteModel));
+    }
+
+
 }

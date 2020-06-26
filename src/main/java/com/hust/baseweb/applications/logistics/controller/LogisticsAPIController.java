@@ -21,6 +21,7 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class LogisticsAPIController {
+
     public static final String module = LogisticsAPIController.class.getName();
 
     private ProductService productService;
@@ -44,16 +45,20 @@ public class LogisticsAPIController {
     }
 
     @PostMapping("/get-list-facility")
-    public ResponseEntity<GetListFacilityOutputModel> getListFacilities(Principal principal,
-                                                                        @RequestBody GetListFacilityInputModel input) {
+    public ResponseEntity<GetListFacilityOutputModel> getListFacilities(
+        Principal principal,
+        @RequestBody GetListFacilityInputModel input
+    ) {
         // TODO
         List<Facility> facilities = facilityService.getAllFacilities();
         return ResponseEntity.ok().body(new GetListFacilityOutputModel(facilities));
     }
 
     @PostMapping("/get-list-product")
-    public ResponseEntity<GetListProductOutputModel> getListProducts(Principal principal,
-                                                                     @RequestBody GetListProductInputModel input) {
+    public ResponseEntity<GetListProductOutputModel> getListProducts(
+        Principal principal,
+        @RequestBody GetListProductInputModel input
+    ) {
         log.info("getListProducts...");
         // TODO
         List<Product> products = productService.getAllProducts();
@@ -73,7 +78,8 @@ public class LogisticsAPIController {
     @PostMapping("/set-product-price")
     public ResponseEntity<?> setProductPrice(Principal principal, @RequestBody SetProductPriceInputModel input) {
         UserLogin userLogin = userService.findById(principal.getName());
-        ProductPrice productPrice = productPriceService.setProductPrice(userLogin,
+        ProductPrice productPrice = productPriceService.setProductPrice(
+            userLogin,
             input.getProductId(),
             input.getPrice(),
             input.getCurrencyUomId(),
@@ -115,12 +121,16 @@ public class LogisticsAPIController {
     }
 
     @GetMapping("/get-all-product-price-supplier-by-supplier/{supplierPartyId}")
-    public ResponseEntity<List<ProductPriceSupplier.Model>> getAllProductPriceSupplierBySupplier(@PathVariable String supplierPartyId) {
+    public ResponseEntity<List<ProductPriceSupplier.Model>> getAllProductPriceSupplierBySupplier(
+        @PathVariable String supplierPartyId
+    ) {
         return ResponseEntity.ok(productPriceSupplierService.getAllProductPriceSuppliers(supplierPartyId));
     }
 
     @PostMapping("/set-product-price-supplier")
-    public ResponseEntity<ProductPriceSupplier> setProductPriceSupplier(@RequestBody ProductPriceSupplier.SetModel setModel) {
+    public ResponseEntity<ProductPriceSupplier> setProductPriceSupplier(
+        @RequestBody ProductPriceSupplier.SetModel setModel
+    ) {
         return ResponseEntity.ok(productPriceSupplierService.setProductPriceSupplier(setModel));
     }
 }

@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class RetailOutletServiceImpl implements RetailOutletService {
+
     private RetailOutletPagingRepo partyRetailOutlet;
     private PartyRetailOutletRepo partyRetailOutletRepo;
     private GeoPointRepo geoPointRepo;
@@ -57,8 +58,10 @@ public class RetailOutletServiceImpl implements RetailOutletService {
         //Party party = new Party();
         //party.setPartyId(partyId);// KHONG WORK vi partyId khi insert vao DB se duoc sinh tu dong, no se khac voi partyId sinh ra boi SPRING
         Party party = new Party(null, partyTypeRepo.getOne(PartyType.PartyTypeEnum.PERSON.name()), "",
-            statusRepo.findById(Status.StatusEnum.PARTY_ENABLED.name()).orElseThrow(NoSuchElementException::new),
-            false);
+                                statusRepo
+                                    .findById(Status.StatusEnum.PARTY_ENABLED.name())
+                                    .orElseThrow(NoSuchElementException::new),
+                                false);
         party.setName(input.getRetailOutletName());
 
         party.setType(partyType);
@@ -151,7 +154,8 @@ public class RetailOutletServiceImpl implements RetailOutletService {
         detailRetailOutletModel.setRetailOutletName(partyRetailOutlet.getRetailOutletName());
 
         List<RetailOutletSalesmanDistributorModel> retailOutletSalesmanDistributorModels =
-            retailOutletSalesmanVendors.stream()
+            retailOutletSalesmanVendors
+                .stream()
                 .map(o -> new RetailOutletSalesmanDistributorModel(o))
                 .collect(Collectors.toList());
 

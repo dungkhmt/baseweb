@@ -60,21 +60,26 @@ public class Invoice {
         );
     }
 
-    public static List<DistributorUnpaidModel> toUnpaidDistributorModels(List<Invoice> invoices,
-                                                                         Map<UUID, PartyDistributor> partyDistributorMap) {
+    public static List<DistributorUnpaidModel> toUnpaidDistributorModels(
+        List<Invoice> invoices,
+        Map<UUID, PartyDistributor> partyDistributorMap
+    ) {
         Map<UUID, DistributorUnpaidModel> customerCodeToByDistributorModel = new HashMap<>();
         for (Invoice invoice : invoices) {
-            customerCodeToByDistributorModel.computeIfAbsent(invoice.getToPartyCustomerId(),
+            customerCodeToByDistributorModel.computeIfAbsent(
+                invoice.getToPartyCustomerId(),
                 partyCustomerId -> {
                     PartyDistributor partyDistributor = partyDistributorMap.get(partyCustomerId);
-                    return new DistributorUnpaidModel(partyDistributor.getPartyId().toString(),
+                    return new DistributorUnpaidModel(
+                        partyDistributor.getPartyId().toString(),
                         partyDistributor.getDistributorCode(),
                         partyDistributor.getDistributorName(),
                         0.0,
                         null);
                 }).append(invoice);
         }
-        return customerCodeToByDistributorModel.values()
+        return customerCodeToByDistributorModel
+            .values()
             .stream()
             .filter(distributorUnpaidModel -> distributorUnpaidModel.getTotalUnpaid() > 0)
             .collect(Collectors.toList());
@@ -85,6 +90,7 @@ public class Invoice {
     @Getter
     @Setter
     public static class Model {
+
         private String invoiceId;           // varchar(60),
         private String invoiceType;      // varchar(60),
         private String statusId;            // varchar(60),
@@ -102,6 +108,7 @@ public class Invoice {
     @Getter
     @Setter
     public static class DistributorUnpaidModel {
+
         private String partyId;
         private String distributorCode;
         private String distributorName;

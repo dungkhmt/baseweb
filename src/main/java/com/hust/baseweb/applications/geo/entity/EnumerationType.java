@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Setter
 @Getter
 public class EnumerationType {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "enumeration_type_id")

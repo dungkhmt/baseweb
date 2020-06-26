@@ -13,6 +13,7 @@ import javax.persistence.IdClass;
 @Setter
 @IdClass(CompositeProductFacilityId.class)
 public class ProductFacility {
+
     @Id
     @Column(name = "product_id")
     private String productId;

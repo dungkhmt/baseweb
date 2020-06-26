@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.order.entity.OrderItem;
 import com.hust.baseweb.applications.tms.model.ShipmentItemModel;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.StatusItem;
+import com.hust.baseweb.entity.UserLogin;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,7 @@ import java.util.UUID;
 @Setter
 //@IdClass(CompositeShipmentItemId.class)
 public class ShipmentItem {
+
     @Id
     @Column(name = "shipment_item_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,35 +31,42 @@ public class ShipmentItem {
     private Shipment shipment;
 
     @JoinColumn(name = "facility_id", referencedColumnName = "facility_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Facility facility;
 
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
 
     @Column(name = "pallet")
-    private double pallet;
+    private Double pallet;
+
+    @Column(name = "order_id", insertable = false, updatable = false)
+    private String orderId;
 
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     @JoinColumn(name = "order_item_seq_id", referencedColumnName = "order_item_seq_id")
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private OrderItem orderItem;
 
     //@JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
-    //@ManyToOne(fetch = FetchType.EAGER)
+    //@ManyToOne(fetch = FetchType.LAZY)
     //private PartyCustomer customer;
 
     @JoinColumn(name = "party_customer_id", referencedColumnName = "party_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Party partyCustomer;
 
     @JoinColumn(name = "ship_to_location_id", referencedColumnName = "contact_mech_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PostalAddress shipToLocation;
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private StatusItem statusItem;
+
+    @JoinColumn(name = "processed_by_user_login_id", referencedColumnName = "user_login_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private UserLogin userLogin;
 
     private Integer scheduledQuantity = 0;
     private Integer completedQuantity = 0;
@@ -111,7 +120,7 @@ public class ShipmentItem {
             pallet,
             shipToLocation.getAddress(),
             shipToLocation.getGeoPoint().getLatitude() + "," +
-                shipToLocation.getGeoPoint().getLongitude()
+            shipToLocation.getGeoPoint().getLongitude()
         );
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ProductFacilityRepo extends JpaRepository<ProductFacility, CompositeProductFacilityId> {
+
     ProductFacility findByProductIdAndFacilityId(String productId, String facilityId);
 
     List<ProductFacility> findByProductIdInAndFacilityIdIn(List<String> productIds, List<String> facilityIds);

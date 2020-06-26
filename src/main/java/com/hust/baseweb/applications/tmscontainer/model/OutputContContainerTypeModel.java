@@ -13,5 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 public class OutputContContainerTypeModel {
+
     List<ContContainerType> contContainerTypes;
 }

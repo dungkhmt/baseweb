@@ -18,11 +18,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShipmentItemDeliveryPlan {
+
     @Id
     @Column(name = "shipment_item_id")
     private UUID shipmentItemId;
 
     @Id
     @Column(name = "delivery_plan_id")
-    private UUID deliveryPlanId;
+    private String deliveryPlanId;
 }

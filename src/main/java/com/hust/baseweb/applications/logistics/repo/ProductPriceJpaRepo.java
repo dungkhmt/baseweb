@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProductPriceJpaRepo extends JpaRepository<ProductPrice, UUID> {
+
     List<ProductPrice> findByProductAndThruDateNullOrThruDateAfter(Product product, Date date);
 
     List<ProductPrice> findByProduct(Product product);

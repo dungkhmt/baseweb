@@ -8,6 +8,7 @@ import lombok.*;
 @Setter
 @ToString
 public class InputDepotContainerModel {
+
     String lat;
     String lng;
     String address;

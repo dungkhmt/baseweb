@@ -273,3 +273,15 @@ create table party_relationship
     constraint fk_party_relationship_to_party_id foreign key (to_party_id) references party (party_id),
     constraint fk_party_relationship_role_type_id foreign key (role_type_id) references role_type (role_type_id)
 );
+
+create table user_register(
+    user_login_id varchar(60),
+    password varchar(20),
+    email varchar(30),
+    full_name varchar(100),
+    status_id varchar(60),
+    last_updated_stamp    TIMESTAMP,
+    created_stamp         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_user_register_user_login_id primary key(user_login_id),
+    constraint fk_user_register_status_id foreign key(status_id) references status_item(status_id)
+);

@@ -10,6 +10,7 @@ import java.util.Date;
 @Setter
 @ToString
 public class InputContRequestImportEmptyModel {
+
     String customerId;
     String facilityId;
     String containerTypeId;

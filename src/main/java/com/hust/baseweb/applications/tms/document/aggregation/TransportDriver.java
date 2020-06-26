@@ -19,11 +19,13 @@ public class TransportDriver extends TransportReport<TransportDriver.Id> {
     @org.springframework.data.annotation.Id
     private Id id;
 
-    public TransportDriver(Id id,
-                           Long cost,
-                           Integer totalDistance,
-                           Integer numberTrips,
-                           Integer totalWeight) {
+    public TransportDriver(
+        Id id,
+        Long cost,
+        Integer totalDistance,
+        Integer numberTrips,
+        Integer totalWeight
+    ) {
         super(cost, totalDistance, numberTrips, totalWeight);
         this.id = id;
     }
@@ -41,6 +43,7 @@ public class TransportDriver extends TransportReport<TransportDriver.Id> {
     @NoArgsConstructor
     @EqualsAndHashCode
     public static class Id {
+
         private UUID driverId;
         private LocalDate date;
     }

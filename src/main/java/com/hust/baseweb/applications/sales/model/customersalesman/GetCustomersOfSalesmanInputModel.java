@@ -8,6 +8,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class GetCustomersOfSalesmanInputModel {
+
     private UUID partySalesman;
 
 }

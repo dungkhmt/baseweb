@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DistanceTravelTimeElement {
+
     private String fromId;
     private double fromLat;
     private double fromLng;

@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Service
 public interface CustomerSalesmanService {
+
     List<PartyCustomer> getCustomersOfSalesman(UUID partySalesmanId);
 
     CustomerSalesman save(UUID partyCustomerId, UUID partySalesmanId);

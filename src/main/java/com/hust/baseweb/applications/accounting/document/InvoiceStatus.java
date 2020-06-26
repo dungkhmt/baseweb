@@ -19,6 +19,7 @@ import java.util.Date;
 @Setter
 @Document
 public class InvoiceStatus {
+
     @MongoId
     private ObjectId invoiceStatusId;
     private String invoiceId;         // varchar(60),

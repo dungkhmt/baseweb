@@ -6,6 +6,7 @@ import java.util.UUID;
 
 
 public class CompositeShipmentItemId implements Serializable {
+
     private UUID shipmentId;
     private String shipmentItemSeqId;
 

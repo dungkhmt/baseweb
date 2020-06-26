@@ -28,6 +28,7 @@ import java.util.UUID;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class TMSContainerAPIController {
+
     private ContPortPagingRepo contPortPagingRepo;
     private ContPortRepo contPortRepo;
     private PostalAddressRepo postalAddressRepo;
@@ -68,9 +69,9 @@ public class TMSContainerAPIController {
             contRequestExportFull.setPortName(contRequestExportFull.getContPort().getPortName());
             contRequestExportFull.setCustomerName(contRequestExportFull.getPartyCustomer().getCustomerName());
             String time = "" +
-                contRequestExportFull.getEarlyDateTimeExpected() +
-                " - " +
-                contRequestExportFull.getLateDateTimeExpected();
+                          contRequestExportFull.getEarlyDateTimeExpected() +
+                          " - " +
+                          contRequestExportFull.getLateDateTimeExpected();
             contRequestExportFull.setTime(time);
         }
         return ResponseEntity.ok(contRequestExportFullPage);
@@ -99,7 +100,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-cont-request-export-empty-page")
     ResponseEntity<?> getListContRequestIExportEmptyPage(Pageable pageable) {
-
         Page<ContRequestExportEmpty> contRequestExportEmptyPage = contRequestExportEmptyPagingRepo.findAll(pageable);
         for (ContRequestExportEmpty contRequestExportEmpty : contRequestExportEmptyPage) {
             contRequestExportEmpty.setAddress(contRequestExportEmpty.getFacility().getPostalAddress().getAddress());
@@ -107,9 +107,9 @@ public class TMSContainerAPIController {
             contRequestExportEmpty.setContainerType(contRequestExportEmpty.getContContainerType().getDescription());
             contRequestExportEmpty.setCustomerName(contRequestExportEmpty.getPartyCustomer().getCustomerName());
             String time = "" +
-                contRequestExportEmpty.getEarlyDateTimeExpected() +
-                " - " +
-                contRequestExportEmpty.getLateDateTimeExpected();
+                          contRequestExportEmpty.getEarlyDateTimeExpected() +
+                          " - " +
+                          contRequestExportEmpty.getLateDateTimeExpected();
             contRequestExportEmpty.setTime(time);
 
         }
@@ -154,7 +154,6 @@ public class TMSContainerAPIController {
 
     @GetMapping("/get-list-cont-request-import-empty-page")
     ResponseEntity<?> getListContRequestImportEmptyPage(Pageable pageable) {
-
         Page<ContRequestImportEmpty> contRequestImportEmptyPage = contRequestImportEmptyPagingRepo.findAll(pageable);
         for (ContRequestImportEmpty contRequestImportEmpty : contRequestImportEmptyPage) {
             contRequestImportEmpty.setAddress(contRequestImportEmpty.getFacility().getPostalAddress().getAddress());
@@ -162,9 +161,9 @@ public class TMSContainerAPIController {
             contRequestImportEmpty.setContainerType(contRequestImportEmpty.getContContainerType().getDescription());
             contRequestImportEmpty.setCustomerName(contRequestImportEmpty.getPartyCustomer().getCustomerName());
             String time = "" +
-                contRequestImportEmpty.getEarlyDateTimeExpected() +
-                " - " +
-                contRequestImportEmpty.getLateDateTimeExpected();
+                          contRequestImportEmpty.getEarlyDateTimeExpected() +
+                          " - " +
+                          contRequestImportEmpty.getLateDateTimeExpected();
             contRequestImportEmpty.setTime(time);
 
         }
@@ -184,9 +183,9 @@ public class TMSContainerAPIController {
             contRequestImportFull.setPortName(contRequestImportFull.getContPort().getPortName());
             contRequestImportFull.setCustomerName(contRequestImportFull.getPartyCustomer().getCustomerName());
             String time = "" +
-                contRequestImportFull.getEarlyDateTimeExpected() +
-                " - " +
-                contRequestImportFull.getLateDateTimeExpected();
+                          contRequestImportFull.getEarlyDateTimeExpected() +
+                          " - " +
+                          contRequestImportFull.getLateDateTimeExpected();
             contRequestImportFull.setTime(time);
         }
         return ResponseEntity.ok(contRequestImportFullPage);

@@ -9,16 +9,17 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class OrderStatus {
+
     @Id
     @Column(name = "order_status_id")
     private String orderStatusId;
 
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private OrderHeader order;
 
     //@JoinColumn(name="status_id", referencedColumnName="status_id")
-    //@ManyToOne(fetch = FetchType.EAGER)
+    //@ManyToOne(fetch = FetchType.LAZY)
     //private StatusItem status;
 
     @Column(name = "status_id")

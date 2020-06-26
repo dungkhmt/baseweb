@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 public class DateTimeUtils {
+
     public static final String START_DATE_TIME = "2000-01-01 00:00:00";
 
     public static List<String> getListDateHavingDay(int d, Date fromDate, Date toDate, String effectiveStartDate) {
@@ -297,7 +298,7 @@ public class DateTimeUtils {
         System.out.println("next 30 days of " + DT1 + " = " + next(DT1, 30));
 
         System.out.println("new date time of " + DT1 + " = " + getRelativeDateTime(DT1) +
-            ", recover = " + recoverDateTimeFromRelative(getRelativeDateTime(DT1)));
+                           ", recover = " + recoverDateTimeFromRelative(getRelativeDateTime(DT1)));
         long t1 = DateTimeUtils.dateTime2Int(DT1);
         long t2 = DateTimeUtils.dateTime2Int(DT2);
         long t = t1 - t2;

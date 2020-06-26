@@ -6,5 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DeleteAllDeliveryPlanInputModel {
+
     private String param;
 }

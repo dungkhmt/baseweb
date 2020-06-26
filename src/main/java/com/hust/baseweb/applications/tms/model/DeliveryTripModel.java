@@ -15,6 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DeliveryTripModel {
+
     private String deliveryPlanId;
     private String deliveryPlanSolutionSeqId;
     private String deliveryTripId;
@@ -37,7 +38,8 @@ public class DeliveryTripModel {
     @Setter
     @ToString
     public static class Create {
-        private UUID deliveryPlanId;
+
+        private String deliveryPlanId;
         private String executeDate;
         private String vehicleId;
         private String driverId;
@@ -47,6 +49,7 @@ public class DeliveryTripModel {
     @Setter
     @AllArgsConstructor
     public static class LocationView {
+
         private String customerName;
         private String address;
         private double latitude;
@@ -59,7 +62,8 @@ public class DeliveryTripModel {
     @Setter
     @AllArgsConstructor
     public static class HeaderView {
-        private UUID deliveryTripId;
+
+        private String deliveryTripId;
         private String vehicleId;
         private UUID driverPartyId;
         private String driverUserLoginId;
@@ -74,6 +78,7 @@ public class DeliveryTripModel {
     @Getter
     @Setter
     public static class Tour {
+
         private String deliveryTripId;
         private Double totalDistance;
         private Double totalWeight;
@@ -86,7 +91,8 @@ public class DeliveryTripModel {
     @Setter
     @AllArgsConstructor
     public static class LocationItemView {
-        private UUID deliveryTripDetailId;
+
+        private String deliveryTripDetailId;
         private UUID shipmentItemId;
         private String productId;
         private String productName;

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 @Setter
 @Entity
 public class SalesRouteVisitFrequency {
+
     @Id
     @Column(name = "visit_frequency_id")
     private String visitFrequencyId;
@@ -19,4 +20,6 @@ public class SalesRouteVisitFrequency {
     private String description;
 
 
+    @Column(name = "repeat_week")
+    private int repeatWeek;
 }

@@ -15,13 +15,13 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PartyServiceImpl implements PartyService {
+
     PartyRepo partyRepo;
     PartyTypeRepo partyTypeRepo;
     StatusRepo statusRepo;
 
     @Override
     public Party save(String partyTypeId) {
-
         PartyType partyType = partyTypeRepo.getOne(partyTypeId);
 //		UUID uuid = UUID.randomUUID();
         Party party = new Party();

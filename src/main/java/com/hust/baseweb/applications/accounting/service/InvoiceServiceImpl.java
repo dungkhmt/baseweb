@@ -34,22 +34,25 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<Invoice.Model> getAllInvoice() {
         List<Invoice> invoices = invoiceRepo.findAll();
-        Map<UUID, Party> partyMap = partyRepo.findAllByPartyIdIn(invoices.stream()
-            .map(Invoice::getToPartyCustomerId)
-            .distinct()
-            .collect(Collectors.toList()))
-            .stream().collect(Collectors.toMap(Party::getPartyId, p -> p));
-        return invoices.stream()
-            .map(invoice ->
-                invoice.toModel(Optional.ofNullable(partyMap.get(invoice.getToPartyCustomerId()))
-                    .map(Party::getName)
-                    .orElse(null)))
-            .collect(Collectors.toList());
+        Map<UUID, Party> partyMap = partyRepo
+            .findAllByPartyIdIn(invoices
+                                    .stream()
+                                    .map(Invoice::getToPartyCustomerId)
+                                    .distinct()
+                                    .collect(Collectors.toList()))
+            .stream()
+            .collect(Collectors.toMap(Party::getPartyId, p -> p));
+        return invoices.stream().map(invoice ->
+                                         invoice.toModel(Optional
+                                                             .ofNullable(partyMap.get(invoice.getToPartyCustomerId()))
+                                                             .map(Party::getName)
+                                                             .orElse(null))).collect(Collectors.toList());
     }
 
     @Override
     public List<Invoice.Model> getAllUnpaidInvoices() {
-        return invoiceRepo.findAllByAmountNotEqualWithPaidAmount()
+        return invoiceRepo
+            .findAllByAmountNotEqualWithPaidAmount()
             .stream()
             .map(Invoice::toModel)
             .collect(Collectors.toList());
@@ -57,46 +60,116 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Page<Invoice.Model> getPageUnpaidInvoices(Pageable pageable) {
-        return invoiceRepo.findAllByAmountNotEqualWithPaidAmount(pageable).map(Invoice::toModel);
+        Page<Invoice> invoicePage = invoiceRepo.findAllByAmountNotEqualWithPaidAmount(pageable);
+        List<UUID> partyIds = invoicePage.stream().map(Invoice::getToPartyCustomerId).collect(Collectors.toList());
+        Map<UUID, Party> partyMap = partyRepo
+            .findAllByPartyIdIn(partyIds)
+            .stream()
+            .collect(Collectors.toMap(Party::getPartyId, p -> p));
+        return invoicePage.map(invoice -> invoice.toModel(partyMap.get(invoice.getToPartyCustomerId()).getName()));
     }
 
     @Override
-    public Page<Invoice.Model> getPageUnpaidInvoices(String invoiceId,
-                                                     String toPartyCustomerId,
-                                                     Pageable pageable) {
-        if (invoiceId != null) {
-            if (toPartyCustomerId != null) {
-                return invoiceRepo.findAllByInvoiceIdAndToPartyCustomerIdAndAmountNotEqualWithPaidAmount(invoiceId,
-                    UUID.fromString(toPartyCustomerId),
-                    pageable)
-                    .map(Invoice::toModel);
-            } else {
-                return invoiceRepo.findAllByInvoiceIdAndAmountNotEqualWithPaidAmount(invoiceId,
-                    pageable)
-                    .map(Invoice::toModel);
-            }
-        } else if (toPartyCustomerId != null) {
-            return invoiceRepo.findAllByToPartyCustomerIdAndAmountNotEqualWithPaidAmount(
-                UUID.fromString(toPartyCustomerId),
-                pageable)
-                .map(Invoice::toModel);
+    public Page<Invoice.Model> getPageUnpaidInvoices(String invoiceId, String toPartyCustomerName, Pageable pageable) {
+        if (toPartyCustomerName == null || toPartyCustomerName.equalsIgnoreCase("")) {
+            Page<Invoice> invoicePage = invoiceRepo.findAllByInvoiceIdAndAmountNotEqualWithPaidAmount(
+                invoiceId,
+                pageable);
+            List<UUID> partyIds = invoicePage
+                .stream()
+                .map(Invoice::getToPartyCustomerId)
+                .collect(Collectors.toList());
+            Map<UUID, Party> partyMap = partyRepo
+                .findAllByPartyIdIn(partyIds)
+                .stream()
+                .collect(Collectors.toMap(Party::getPartyId, p -> p));
+            return invoicePage.map(invoice -> invoice.toModel(partyMap.get(invoice.getToPartyCustomerId()).getName()));
         } else {
-            return invoiceRepo.findAllByAmountNotEqualWithPaidAmount(pageable).map(Invoice::toModel);
+            List<Party> parties = new ArrayList<>(partyRepo.findAllByNameIgnoreCaseContaining(toPartyCustomerName));
+            List<UUID> partyIds = parties.stream().map(Party::getPartyId).collect(Collectors.toList());
+            Map<UUID, Party> partyMap = parties
+                .stream()
+                .collect(Collectors.toMap(Party::getPartyId, p -> p));
+            if (invoiceId != null) {
+                Page<Invoice> invoicePage = invoiceRepo.findAllByInvoiceIdAndToPartyCustomerIdInAndAmountNotEqualWithPaidAmount(
+                    invoiceId,
+                    partyIds,
+                    pageable);
+                return invoicePage.map(invoice -> invoice.toModel(partyMap
+                                                                      .get(invoice.getToPartyCustomerId())
+                                                                      .getName()));
+
+            } else {
+                Page<Invoice> invoicePage = invoiceRepo.findAllByToPartyCustomerIdInAndAmountNotEqualWithPaidAmount(
+                    partyIds,
+                    pageable);
+
+                return invoicePage.map(invoice -> invoice.toModel(partyMap
+                                                                      .get(invoice.getToPartyCustomerId())
+                                                                      .getName()));
+            }
+
         }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+//        if (invoiceId != null) {
+//            if (toPartyCustomerName != null) {
+//                Page<Invoice> invoicePage = invoiceRepo
+//                    .findAllByInvoiceIdAndToPartyCustomerIdInAndAmountNotEqualWithPaidAmount(
+//                        invoiceId,
+//                        UUID.fromString(toPartyCustomerName),
+//                        pageable);
+//                List<UUID> partyIds = invoicePage
+//                    .stream()
+//                    .map(Invoice::getToPartyCustomerId)
+//                    .collect(Collectors.toList());
+//                Map<UUID, Party> partyMap = partyRepo
+//                    .findAllByPartyIdIn(partyIds)
+//                    .stream()
+//                    .collect(Collectors.toMap(Party::getPartyId, p -> p));
+//
+//                return invoicePage
+//                    .map(invoice -> invoice.toModel(partyMap.get(invoice.getToPartyCustomerId()).getName()));
+//            } else {
+//                return invoiceRepo
+//                    .findAllByInvoiceIdAndAmountNotEqualWithPaidAmount(invoiceId, pageable)
+//                    .map(Invoice::toModel);
+//            }
+//        } else if (toPartyCustomerName != null) {
+//            Page<Invoice> invoicePage = invoiceRepo
+//                .findAllByToPartyCustomerIdAndAmountNotEqualWithPaidAmount(
+//                    UUID.fromString(toPartyCustomerName),
+//                    pageable);
+//            List<UUID> partyIds = invoicePage
+//                .stream()
+//                .map(Invoice::getToPartyCustomerId)
+//                .collect(Collectors.toList());
+//            Map<UUID, Party> partyMap = partyRepo
+//                .findAllByPartyIdIn(partyIds)
+//                .stream()
+//                .collect(Collectors.toMap(Party::getPartyId, p -> p));
+//
+//            return invoicePage.map(invoice -> invoice.toModel(partyMap.get(invoice.getToPartyCustomerId()).getName()));
+//        } else {
+//            return invoiceRepo.findAllByAmountNotEqualWithPaidAmount(pageable).map(Invoice::toModel);
+//        }
     }
 
     @Override
     public List<Invoice.DistributorUnpaidModel> getAllUnpaidInvoiceGroupByDistributor() {
         List<Invoice> unpaidInvoices = invoiceRepo.findAllByAmountNotEqualWithPaidAmount();
-        List<UUID> partyDistributorIds = unpaidInvoices.stream()
+        List<UUID> partyDistributorIds = unpaidInvoices
+            .stream()
             .map(Invoice::getToPartyCustomerId)
             .distinct()
             .collect(Collectors.toList());
-        Map<UUID, PartyDistributor> partyDistributorMap = partyDistributorRepo.findAllByPartyIdIn(partyDistributorIds)
+        Map<UUID, PartyDistributor> partyDistributorMap = partyDistributorRepo
+            .findAllByPartyIdIn(partyDistributorIds)
             .stream()
             .collect(Collectors.toMap(PartyDistributor::getPartyId, p -> p));
 
-        unpaidInvoices = unpaidInvoices.stream()
+        unpaidInvoices = unpaidInvoices
+            .stream()
             .filter(invoice -> partyDistributorMap.containsKey(invoice.getToPartyCustomerId()))
             .collect(Collectors.toList()); // lọc các invoice thuộc về khách hàng là distributor
         return Invoice.toUnpaidDistributorModels(unpaidInvoices, partyDistributorMap);
@@ -104,9 +177,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Invoice.DistributorUnpaidModel getUnpaidInvoiceByDistributor(String distributorId) {
-        PartyDistributor partyDistributor = partyDistributorRepo.findById(UUID.fromString(distributorId))
+        PartyDistributor partyDistributor = partyDistributorRepo
+            .findById(UUID.fromString(distributorId))
             .orElseThrow(NoSuchElementException::new);
-        List<Invoice> unpaidInvoices = invoiceRepo.findAllByToPartyCustomerId(UUID.fromString(distributorId))
+        List<Invoice> unpaidInvoices = invoiceRepo
+            .findAllByToPartyCustomerId(UUID.fromString(distributorId))
             .stream()
             .filter(invoice -> invoice.getAmount() > invoice.getPaidAmount())
             .collect(Collectors.toList());
@@ -125,7 +200,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice.Model getInvoice(String invoiceId) {
         Invoice invoice = invoiceRepo.findById(invoiceId).orElseThrow(NoSuchElementException::new);
-        Party party = partyRepo.findById(invoice.getToPartyCustomerId()).orElse(new Party());
+        Party party = Optional
+            .ofNullable(invoice.getToPartyCustomerId())
+            .flatMap(uuid -> partyRepo.findById(uuid))
+            .orElse(new Party());
         return invoice.toModel(party.getName());
     }
 
@@ -140,12 +218,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public List<Invoice> saveAll(List<Invoice> invoices) {
-        List<Invoice> newInvoices = invoices.stream()
-            .filter(invoice -> invoice.getInvoiceId() == null).collect(Collectors.toList());
+        List<Invoice> newInvoices = invoices
+            .stream()
+            .filter(invoice -> invoice.getInvoiceId() == null)
+            .collect(Collectors.toList());
         if (!newInvoices.isEmpty()) {
-            List<InvoiceSequenceId> ids = invoiceSequenceIdRepo.saveAll(newInvoices.stream()
-                .map(invoice -> new InvoiceSequenceId())
-                .collect(Collectors.toList()));
+            List<InvoiceSequenceId> ids = invoiceSequenceIdRepo.saveAll(newInvoices
+                                                                            .stream()
+                                                                            .map(invoice -> new InvoiceSequenceId())
+                                                                            .collect(Collectors.toList()));
             for (int i = 0; i < newInvoices.size(); i++) {
                 invoices.get(i).setInvoiceId(Invoice.convertSequenceIdToInvoiceId(ids.get(i).getId()));
             }

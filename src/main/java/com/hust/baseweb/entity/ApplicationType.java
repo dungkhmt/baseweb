@@ -12,6 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class ApplicationType {
+
     @Id
     @Column(name = "application_type_id")
     private String applicationTypeId;

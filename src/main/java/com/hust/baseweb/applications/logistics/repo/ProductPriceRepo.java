@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProductPriceRepo extends PagingAndSortingRepository<ProductPrice, UUID> {
+
     ProductPrice findByProductAndThruDateNullOrThruDateAfter(Product product, Date date);
 
     List<ProductPrice> findAllByProductInAndThruDateNullOrThruDateAfter(Collection<Product> products, Date date);

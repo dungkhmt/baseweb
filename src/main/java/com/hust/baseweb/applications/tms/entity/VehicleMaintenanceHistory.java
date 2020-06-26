@@ -16,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VehicleMaintenanceHistory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID vehicleMaintenanceHistoryId;

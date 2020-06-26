@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetListSalesmanInputModel {
+
     private String statusId;
 
     public GetListSalesmanInputModel() {

@@ -17,11 +17,14 @@ import java.util.List;
 @Log4j2
 public class StatisticDeliveryTripServiceImpl implements
     StatisticDeliveryTripService {
+
     private DeliveryTripRepo deliveryTripRepo;
 
     @Override
-    public List<VehicleModel.Distance> collectVehicleDistance(String fromDate,
-                                                              String thruDate) {
+    public List<VehicleModel.Distance> collectVehicleDistance(
+        String fromDate,
+        String thruDate
+    ) {
         // TODO Auto-generated method stub
         List<DeliveryTrip> deliveryTrips = deliveryTripRepo.findAll();
         HashMap<String, Double> mVehicle2Distance = new HashMap<String, Double>();

@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SecurityGroupOutputModel {
+
     private String groupId;
     private String description;
 

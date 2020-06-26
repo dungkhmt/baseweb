@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @Service
 public interface OrderService {
+
     //OrderHeader save(ModelCreateOrderInput order);
     OrderHeader save(CreateOrderDistributor2RetailOutletInputModel order);
 
@@ -28,4 +29,6 @@ public interface OrderService {
     List<OrderHeader.PurchaseModel> getAllPurchaseOrder();
 
     boolean createPurchaseOrder(OrderHeader.PurchaseCreateModel purchaseCreateModel);
+
+    boolean deleteOrders(OrderHeader.DeleteModel deleteModel);
 }

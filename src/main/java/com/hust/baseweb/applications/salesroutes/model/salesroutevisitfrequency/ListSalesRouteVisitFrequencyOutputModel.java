@@ -11,5 +11,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class ListSalesRouteVisitFrequencyOutputModel {
+
     private List<SalesRouteVisitFrequency> list;
 }

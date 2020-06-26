@@ -10,9 +10,12 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 public class DistanceUtils {
-    public static <T> DirectionSolution<T> calculateGreedyTotalDistance(List<T> clientPoint,
-                                                                        T facilityPoint,
-                                                                        BiFunction<T, T, Integer> distanceFunction) {
+
+    public static <T> DirectionSolution<T> calculateGreedyTotalDistance(
+        List<T> clientPoint,
+        T facilityPoint,
+        BiFunction<T, T, Integer> distanceFunction
+    ) {
         if (clientPoint.isEmpty()) {
             return new DirectionSolution<>(0.0, new ArrayList<>());
         }
@@ -47,6 +50,7 @@ public class DistanceUtils {
     @AllArgsConstructor
     @Getter
     public static class DirectionSolution<T> {
+
         private Double distance;
         private List<T> tour;
     }

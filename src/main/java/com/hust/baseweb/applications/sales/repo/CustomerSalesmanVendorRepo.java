@@ -11,10 +11,13 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CustomerSalesmanVendorRepo extends CrudRepository<CustomerSalesmanVendor, UUID> {
+
     CustomerSalesmanVendor findByCustomerSalesmanVendorId(UUID customerSalesmanVendorId);
 
-    List<CustomerSalesmanVendor> findAllByPartySalesmanAndPartyCustomerAndPartyDistributorAndThruDate(PartySalesman partySalesman,
-                                                                                                      PartyCustomer partyCustomer,
-                                                                                                      PartyDistributor partyDistributor,
-                                                                                                      Date thruDate);
+    List<CustomerSalesmanVendor> findAllByPartySalesmanAndPartyCustomerAndPartyDistributorAndThruDate(
+        PartySalesman partySalesman,
+        PartyCustomer partyCustomer,
+        PartyDistributor partyDistributor,
+        Date thruDate
+    );
 }

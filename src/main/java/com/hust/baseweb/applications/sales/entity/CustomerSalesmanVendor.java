@@ -15,6 +15,7 @@ import java.util.UUID;
 @Setter
 @ToString
 public class CustomerSalesmanVendor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "customer_salesman_vendor_id")

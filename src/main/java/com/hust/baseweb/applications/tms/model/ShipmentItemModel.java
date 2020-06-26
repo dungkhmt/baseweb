@@ -17,6 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ShipmentItemModel {
+
     private String shipmentItemId;
     private Integer quantity;
     private Double pallet;
@@ -40,6 +41,7 @@ public class ShipmentItemModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CreateDeliveryPlan {
+
         private String deliveryPlanId;
         private List<String> shipmentItemIds;
     }
@@ -48,6 +50,7 @@ public class ShipmentItemModel {
     @Getter
     @Setter
     public static class Create {
+
         @ExcelCellName("QTY")
         private int quantity;
 
@@ -105,6 +108,7 @@ public class ShipmentItemModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class DeleteDeliveryPlan {
+
         private String deliveryPlanId;
         private String shipmentItemId;
     }
@@ -114,6 +118,7 @@ public class ShipmentItemModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class DeliveryPlan {
+
         private UUID shipmentItemId;
         private String productName;
         private Double weight;
@@ -128,6 +133,7 @@ public class ShipmentItemModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Info {
+
         private String shipmentItemId;
         private String orderId;
         private String facilityId;
@@ -143,6 +149,7 @@ public class ShipmentItemModel {
         @AllArgsConstructor
         @NoArgsConstructor
         public static class DeliveryTripDetail {
+
             private String deliveryPlanId;
             private String deliveryTripId;
             private String executeDate;

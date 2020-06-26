@@ -11,6 +11,7 @@ import java.util.UUID;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface CustomerRevenueRepo extends MongoRepository<CustomerRevenue, CustomerRevenue.Id> {
+
     List<CustomerRevenue> findAllByIdIn(List<CustomerRevenue.Id> ids);
 
     List<CustomerRevenue> findAllById_CustomerIdAndId_DateBetween(UUID customerId, LocalDate from, LocalDate to);

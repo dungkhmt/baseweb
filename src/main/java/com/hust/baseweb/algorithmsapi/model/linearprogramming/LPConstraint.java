@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LPConstraint {
+
     private double upper;
     private double lower;
     private LPCoefficient[] coefficients;

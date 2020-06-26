@@ -8,6 +8,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class AddSalesmanRetailOutletInputModel {
+
     private UUID salesmanId;
     private UUID retailOutletId;
 }

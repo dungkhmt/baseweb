@@ -11,5 +11,8 @@ import java.util.UUID;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface SupplierRepo extends JpaRepository<Supplier, UUID> {
+
     List<Supplier> findAllByPartyIdIn(Collection<UUID> partyIds);
+
+    boolean existsBySupplierCode(String supplierCode);
 }

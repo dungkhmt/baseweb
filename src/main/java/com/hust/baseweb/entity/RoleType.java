@@ -11,6 +11,7 @@ import javax.persistence.Id;
 @Setter
 @Entity
 public class RoleType {
+
     @Id
     @Column(name = "role_type_id")
     private String roleTypeId;

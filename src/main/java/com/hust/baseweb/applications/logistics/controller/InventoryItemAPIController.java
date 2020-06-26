@@ -10,6 +10,8 @@ import com.hust.baseweb.applications.logistics.model.InventoryModel;
 import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.service.InventoryItemService;
+import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -26,16 +28,20 @@ import java.util.Random;
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class InventoryItemAPIController {
+
     public static final String module = InventoryItemAPIController.class.getName();
 
     private InventoryItemService inventoryItemService;
     private FacilityRepo facilityRepo;
 
     private ProductRepo productRepo;
+    private UserService userService;
 
     @PostMapping("/import-inventory-items")
     @Transactional
-    public ResponseEntity<List<InventoryItem>> importInventoryItems(@RequestBody ImportInventoryItemsInputModel inventoryItemsInput) {
+    public ResponseEntity<List<InventoryItem>> importInventoryItems(
+        @RequestBody ImportInventoryItemsInputModel inventoryItemsInput
+    ) {
 //        System.out.println(module + "::importInventoryItems, input.sz = " + input.getInventoryItems().length);
 
 //        for (ImportInventoryItemInputModel inputModel : input.getInventoryItems()) {
@@ -64,7 +70,8 @@ public class InventoryItemAPIController {
                     product.getProductId(),
                     facility.getFacilityId(),
                     null,
-                    random.nextInt(1000) + 100
+                    random.nextInt(1000) + 100,
+                    (double) (random.nextInt(50000) + 1000)
                 ));
             }
         }
@@ -74,9 +81,12 @@ public class InventoryItemAPIController {
     }
 
     @PostMapping("/export-inventory-items")
-    public ResponseEntity<?> exportInventoryItems(Principal principal,
-                                                  @RequestBody ExportInventoryItemsInputModel input) {
-        String response = inventoryItemService.exportInventoryItems(input);
+    public ResponseEntity<?> exportInventoryItems(
+        Principal principal,
+        @RequestBody ExportInventoryItemsInputModel input
+    ) {
+        UserLogin userLogin = userService.findById(principal.getName());
+        String response = inventoryItemService.exportInventoryItems(input, userLogin);
         return ResponseEntity.ok().body(response);
     }
 
@@ -98,8 +108,9 @@ public class InventoryItemAPIController {
     }
 
     @GetMapping("/get-inventory-order-export-list/{facilityId}")
-    public ResponseEntity<?> getInventoryOrderExportList(@PathVariable String facilityId) {
-        return ResponseEntity.ok().body(inventoryItemService.getInventoryExportList(facilityId));
+    public ResponseEntity<?> getInventoryOrderExportList(@PathVariable String facilityId, Principal principal) {
+        UserLogin userLogin = userService.findById(principal.getName());
+        return ResponseEntity.ok().body(inventoryItemService.getInventoryExportList(facilityId, userLogin));
     }
 
     @GetMapping("/get-inventory-list/{facilityId}")

@@ -24,23 +24,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-            .userDetailsService(this.userDetailsService)
-            .passwordEncoder(UserLogin.PASSWORD_ENCODER);
+
+        auth.userDetailsService(this.userDetailsService).passwordEncoder(UserLogin.PASSWORD_ENCODER);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http
             .authorizeRequests()
             .regexMatchers("/v2/api-docs").permitAll()
             .regexMatchers("/.*swagger.*").permitAll()
-            .anyRequest().authenticated()
-
+            .regexMatchers(".*/user/register/*$").permitAll()
+            .anyRequest()
+            .authenticated()
             .and()
-            .httpBasic().authenticationEntryPoint(basicAuthenticationEndPoint)
+            .httpBasic()
+            .authenticationEntryPoint(basicAuthenticationEndPoint)
             .and()
-            .csrf().disable()
+            .csrf()
+            .disable()
             .logout()
             .logoutSuccessUrl("/");
 

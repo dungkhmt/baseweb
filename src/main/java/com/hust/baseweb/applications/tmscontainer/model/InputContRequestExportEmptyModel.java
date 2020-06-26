@@ -11,6 +11,7 @@ import java.util.Date;
 @Setter
 @ToString
 public class InputContRequestExportEmptyModel {
+
     String customerId;
     String facilityId;
     String containerTypeId;

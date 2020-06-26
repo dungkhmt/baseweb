@@ -10,6 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class Application {
+
     @Id
     @Column(name = "application_id")
     private String applicationId;

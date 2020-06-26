@@ -8,6 +8,7 @@ import java.util.List;
 
 @Service
 public interface FacilityService {
+
     Facility findFacilityById(String facilityId);
 
     List<Facility> getAllFacilities();

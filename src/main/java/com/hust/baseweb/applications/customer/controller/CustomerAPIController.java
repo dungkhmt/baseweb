@@ -37,6 +37,7 @@ import java.util.UUID;
 @Log4j2
 
 public class CustomerAPIController {
+
     public static final String module = CustomerAPIController.class.getName();
 
     private PartyCustomerRepo partyCustomerRepo;
@@ -50,11 +51,10 @@ public class CustomerAPIController {
     private PartyRepo partyRepo;
 
     @GetMapping("/customers")
-    public ResponseEntity<?> getCustomers(Pageable page) {
+    public ResponseEntity<?> getCustomers() {
 //        System.out.println(module + "::getCustomers");
-        Page<PartyCustomer> customers = partyCustomerRepo.findAll(page);
-        for (PartyCustomer c : customers
-        ) {
+        List<PartyCustomer> customers = partyCustomerRepo.findAll();
+        for (PartyCustomer c : customers) {
             if (c.getPartyType() != null) {
                 c.setType(c.getPartyType().getDescription());
             }
@@ -84,8 +84,10 @@ public class CustomerAPIController {
     }
 
     @PostMapping("/get-distributors-of-user-login")
-    public ResponseEntity<?> getDistributorsOfUserLogin(Principal principal,
-                                                        @RequestBody GetDistributorsOfUserLoginInputModel input) {
+    public ResponseEntity<?> getDistributorsOfUserLogin(
+        Principal principal,
+        @RequestBody GetDistributorsOfUserLoginInputModel input
+    ) {
         UserLogin userLogin = userService.findById(principal.getName());
 //        System.out.println(module + "::getDistributorsOfUserLogin");
         // TODO: to be upgrade and revise
@@ -119,7 +121,7 @@ public class CustomerAPIController {
     public ResponseEntity<?> createRetailOutlet(Principal principal, @RequestBody CreateRetailOutletInputModel input) {
         UserLogin u = userService.findById(principal.getName());
         log.info("createRetailOutlet, user-login = " + u.getUserLoginId() + ", retail-outlet name = " +
-            input.getRetailOutletName() + ", retail-outlet code = " + input.getRetailOutletCode());
+                 input.getRetailOutletName() + ", retail-outlet code = " + input.getRetailOutletCode());
 
         PartyRetailOutlet retailOutlet = retailOutletService.save(input);
 
@@ -132,7 +134,6 @@ public class CustomerAPIController {
         partyRelationship = partyRelationshipService.save(partyRelationship);
 
         return ResponseEntity.ok().body(retailOutlet);
-
     }
 
     @PostMapping("/get-list-customer")

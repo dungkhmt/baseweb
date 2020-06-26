@@ -13,6 +13,7 @@ import java.util.UUID;
 @Setter
 
 public class PartySalesman {
+
     @Id
     @Column(name = "party_id")
     private UUID partyId;

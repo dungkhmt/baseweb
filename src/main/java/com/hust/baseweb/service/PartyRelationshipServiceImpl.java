@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 
 public class PartyRelationshipServiceImpl implements PartyRelationshipService {
+
     private PartyRelationshipRepo partyRelationshipRepo;
 
     @Override
@@ -23,25 +24,32 @@ public class PartyRelationshipServiceImpl implements PartyRelationshipService {
     }
 
     @Override
-    public List<PartyRelationship> findAllByFromPartyAndRoleTypeAndThruDate(Party fromParty,
-                                                                            RoleType roleType,
-                                                                            Date thruDate) {
+    public List<PartyRelationship> findAllByFromPartyAndRoleTypeAndThruDate(
+        Party fromParty,
+        RoleType roleType,
+        Date thruDate
+    ) {
         return partyRelationshipRepo.findAllByFromPartyAndRoleTypeAndThruDate(fromParty, roleType, thruDate);
     }
 
     @Override
-    public List<PartyRelationship> findAllByToPartyAndRoleTypeAndThruDate(Party toParty,
-                                                                          RoleType roleType,
-                                                                          Date thruDate) {
+    public List<PartyRelationship> findAllByToPartyAndRoleTypeAndThruDate(
+        Party toParty,
+        RoleType roleType,
+        Date thruDate
+    ) {
         return partyRelationshipRepo.findAllByToPartyAndRoleTypeAndThruDate(toParty, roleType, thruDate);
     }
 
     @Override
-    public List<PartyRelationship> findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(Party fromParty,
-                                                                                      Party toParty,
-                                                                                      RoleType roleType,
-                                                                                      Date thruDate) {
-        return partyRelationshipRepo.findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(fromParty,
+    public List<PartyRelationship> findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(
+        Party fromParty,
+        Party toParty,
+        RoleType roleType,
+        Date thruDate
+    ) {
+        return partyRelationshipRepo.findAllByFromPartyAndToPartyAndRoleTypeAndThruDate(
+            fromParty,
             toParty,
             roleType,
             thruDate);

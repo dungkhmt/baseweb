@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface ContentRepo extends JpaRepository<Content, UUID> {
+
     Content findByContentId(UUID id);
 }

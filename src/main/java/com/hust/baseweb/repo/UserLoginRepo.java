@@ -9,6 +9,7 @@ import java.util.List;
 
 @RepositoryRestResource(exported = false)
 public interface UserLoginRepo extends JpaRepository<UserLogin, String> {
+
     UserLogin findByUserLoginId(String userLoginId);
 
     List<UserLogin> findByParty(Party party);

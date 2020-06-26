@@ -11,6 +11,7 @@ import java.util.UUID;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface DeliveryTripStatusRepo extends JpaRepository<DeliveryTripStatus, UUID> {
+
     List<DeliveryTripStatus> findAllByDeliveryTrip(DeliveryTrip deliveryTrip);
 
     List<DeliveryTripStatus> findAllByDeliveryTripAndThruDateNull(DeliveryTrip deliveryTrip);

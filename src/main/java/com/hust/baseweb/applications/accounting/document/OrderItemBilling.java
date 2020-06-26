@@ -29,9 +29,14 @@ public class OrderItemBilling {
     @Setter
     @EqualsAndHashCode
     public static class Id {
+
         private String orderId;            // varchar(60),
         private String orderItemSeqId;   // varchar(60),
         private String invoiceId;          // varchar(60),
         private String invoiceItemSeqId; // varchar(60),
+
+        public InvoiceItem.Id toInvoiceItemId() {
+            return new InvoiceItem.Id(invoiceId, invoiceItemSeqId);
+        }
     }
 }

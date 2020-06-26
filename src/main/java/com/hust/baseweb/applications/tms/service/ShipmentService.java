@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface ShipmentService {
+
     Shipment save(UserLogin userLogin, ShipmentModel.CreateShipmentInputModel input);
 
     Shipment save(UserLogin userLogin, ShipmentItemModel.Create input);

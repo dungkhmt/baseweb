@@ -5,6 +5,7 @@ import org.springframework.data.geo.Point;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GeoPointCache {
+
     public static final String module = GeoPointCache.class.getName();
     private ConcurrentHashMap<String, Point> mapPartyId2GeoPoint = new ConcurrentHashMap<String, Point>();
 

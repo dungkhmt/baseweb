@@ -51,13 +51,15 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
     @Override
     @Transactional
-    public ProductPrice setProductPrice(UserLogin createdByUserLogin,
-                                        String productId,
-                                        Double price,
-                                        String currencyUomId,
-                                        String taxInPrice,
-                                        String fromDate,
-                                        String thruDate) {
+    public ProductPrice setProductPrice(
+        UserLogin createdByUserLogin,
+        String productId,
+        Double price,
+        String currencyUomId,
+        String taxInPrice,
+        String fromDate,
+        String thruDate
+    ) {
         Product product = productRepo.findById(productId).orElseThrow(NoSuchElementException::new);
 //        if (product != null) {
 //            log.info("setProductPrice, find product " + product.getProductId());
@@ -123,7 +125,8 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     @Override
     public List<ProductPrice.Model> getProductPriceHistory(String productId) {
         Product product = productRepo.findById(productId).orElseThrow(NoSuchElementException::new);
-        return productPriceJpaRepo.findByProduct(product)
+        return productPriceJpaRepo
+            .findByProduct(product)
             .stream()
             .map(ProductPrice::toModel)
             .collect(Collectors.toList());
@@ -161,25 +164,21 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     */
 
     @NotNull
-    private SaleReportModel.Output calcSaleReportByPartyCustomer(SaleReportModel.Input input,
-                                                                 Date fromDate,
-                                                                 Date thruDate) {
+    private SaleReportModel.Output calcSaleReportByPartyCustomer(
+        SaleReportModel.Input input,
+        Date fromDate,
+        Date thruDate
+    ) {
         List<OrderRole> orderRoles = orderRoleRepo.findAllByPartyIdAndRoleTypeId(
             UUID.fromString(input.getPartyCustomerId()),
             "BILL_TO_CUSTOMER");
-        List<String> orderIds = orderRoles.stream()
-            .map(OrderRole::getOrderId) // TODO: use party customer in order header
-            .distinct()
-            .collect(Collectors.toList());
+        List<String> orderIds = orderRoles.stream().map(OrderRole::getOrderId).distinct().collect(Collectors.toList());
         List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderIdInAndOrderDateBetween(
             orderIds,
             fromDate,
             thruDate);
         List<OrderItem> orderItems = orderItemRepo.findAllByOrderIdIn(orderIds);
-        List<Product> products = orderItems.stream()
-            .map(OrderItem::getProduct)
-            .distinct()
-            .collect(Collectors.toList());
+        List<Product> products = orderItems.stream().map(OrderItem::getProduct).distinct().collect(Collectors.toList());
         Date now = new Date();
         List<ProductPrice> productPrices = productPriceJpaRepo.findAllByProductInAndThruDateNullOrThruDateAfter(
             products, now);
@@ -191,25 +190,30 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         Product product = productRepo.findById(input.getProductId()).orElseThrow(NoSuchElementException::new);
 
         List<OrderHeader> orderHeaders = orderHeaderRepo.findAllByOrderDateBetween(fromDate, thruDate);
-        List<OrderItem> orderItems = orderItemRepo.findAllByProductAndOrderIdIn(product,
+        List<OrderItem> orderItems = orderItemRepo.findAllByProductAndOrderIdIn(
+            product,
             orderHeaders.stream().map(OrderHeader::getOrderId).collect(Collectors.toList()));
         Date now = new Date();
-        List<ProductPrice> productPrices = productPriceJpaRepo.findByProductAndThruDateNullOrThruDateAfter(product,
+        List<ProductPrice> productPrices = productPriceJpaRepo.findByProductAndThruDateNullOrThruDateAfter(
+            product,
             now);
 
         return calcSaleReport(orderHeaders, orderItems, productPrices);
     }
 
     @NotNull
-    private SaleReportModel.Output calcSaleReport(List<OrderHeader> orderHeaders,
-                                                  List<OrderItem> orderItems,
-                                                  List<ProductPrice> productPrices) {
+    private SaleReportModel.Output calcSaleReport(
+        List<OrderHeader> orderHeaders,
+        List<OrderItem> orderItems,
+        List<ProductPrice> productPrices
+    ) {
         Map<LocalDate, List<OrderHeader>> dateToOrders = new HashMap<>();
         for (OrderHeader orderHeader : orderHeaders) {
-            dateToOrders.computeIfAbsent(orderHeader.getOrderDate()
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate(), k -> new ArrayList<>()).add(orderHeader);
+            dateToOrders
+                .computeIfAbsent(
+                    orderHeader.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                    k -> new ArrayList<>())
+                .add(orderHeader);
         }
 
         Map<String, List<OrderItem>> orderIdToOrderItems = new HashMap<>();
@@ -231,7 +235,8 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                     totalPrice += productPrice.getPrice() * orderItem.getQuantity();
                 }
             }
-            saleReportOutput.getDatePrices()
+            saleReportOutput
+                .getDatePrices()
                 .add(new SaleReportModel.DatePrice(dateOrderEntry.getKey().toString(), totalPrice));
         }
         return saleReportOutput;

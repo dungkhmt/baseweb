@@ -11,6 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class VehicleDriver {
+
     @Id
     @Column(name = "vehicle_driver_id")
     @GeneratedValue(strategy = GenerationType.AUTO)

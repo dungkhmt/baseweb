@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.humanresource.model;
 
 public class CreateDepartmentInputModel {
+
     private String departmentName;
 
     public String getDepartmentName() {

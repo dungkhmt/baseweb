@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @Service
 public interface RetailOutletService {
+
     PartyRetailOutlet save(CreateRetailOutletInputModel input);
 
     List<PartyRetailOutlet> findAll();

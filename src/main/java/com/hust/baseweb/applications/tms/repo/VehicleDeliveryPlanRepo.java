@@ -1,21 +1,23 @@
 package com.hust.baseweb.applications.tms.repo;
 
+import com.hust.baseweb.applications.tms.entity.CompositeVehicleDeliveryPlanId;
 import com.hust.baseweb.applications.tms.entity.VehicleDeliveryPlan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
-public interface VehicleDeliveryPlanRepo extends PagingAndSortingRepository<VehicleDeliveryPlan, String> {
-    List<VehicleDeliveryPlan> findAllByDeliveryPlanId(UUID deliveryPlanId);
+public interface VehicleDeliveryPlanRepo
+    extends JpaRepository<VehicleDeliveryPlan, CompositeVehicleDeliveryPlanId> {
 
-    Page<VehicleDeliveryPlan> findAllByDeliveryPlanId(UUID deliveryPlanId, Pageable pageable);
+    List<VehicleDeliveryPlan> findAllByDeliveryPlanId(String deliveryPlanId);
 
-    VehicleDeliveryPlan findByDeliveryPlanIdAndVehicleId(UUID deliveryPlanId, String vehicleId);
+    Page<VehicleDeliveryPlan> findAllByDeliveryPlanId(String deliveryPlanId, Pageable pageable);
+
+    VehicleDeliveryPlan findByDeliveryPlanIdAndVehicleId(String deliveryPlanId, String vehicleId);
 
 }

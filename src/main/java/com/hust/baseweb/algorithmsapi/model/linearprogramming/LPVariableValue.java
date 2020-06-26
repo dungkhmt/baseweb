@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LPVariableValue {
+
     private int varIndex;
     private double value;
 }

@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RPTDayRevenue {
+
     private String date;
     private Double revenue;
     private int numberOrders;

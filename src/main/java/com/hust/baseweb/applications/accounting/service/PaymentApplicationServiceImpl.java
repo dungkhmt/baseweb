@@ -32,7 +32,8 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
 
     @Override
     public List<PaymentApplication.Model> findAllByInvoiceId(String invoiceId) {
-        return paymentApplicationRepo.findAllByInvoiceId(invoiceId)
+        return paymentApplicationRepo
+            .findAllByInvoiceId(invoiceId)
             .stream()
             .map(PaymentApplication::toModel)
             .collect(Collectors.toList());
@@ -40,7 +41,8 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
 
     @Override
     public List<PaymentApplication.Model> findAllByPaymentId(String paymentId) {
-        return paymentApplicationRepo.findAllByPaymentId(paymentId)
+        return paymentApplicationRepo
+            .findAllByPaymentId(paymentId)
             .stream()
             .map(PaymentApplication::toModel)
             .collect(Collectors.toList());
@@ -60,9 +62,11 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
             now
         );
         paymentApplication = paymentApplicationRepo.save(paymentApplication);
-        Invoice invoice = invoiceRepo.findById(paymentApplication.getInvoiceId())
+        Invoice invoice = invoiceRepo
+            .findById(paymentApplication.getInvoiceId())
             .orElseThrow(NoSuchElementException::new);
-        Payment payment = paymentRepo.findById(paymentApplication.getPaymentId())
+        Payment payment = paymentRepo
+            .findById(paymentApplication.getPaymentId())
             .orElseThrow(NoSuchElementException::new);
         invoice.setPaidAmount(invoice.getPaidAmount() + paymentApplication.getAppliedAmount());
         payment.setAppliedAmount(payment.getAppliedAmount() + paymentApplication.getAppliedAmount());
@@ -75,12 +79,14 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
 
     @Override
     public PaymentApplication.Model quickCreatePaymentApplication(PaymentApplication.CreateModel paymentApplicationCreateModel) {
-        Invoice invoice = invoiceRepo.findById(paymentApplicationCreateModel.getInvoiceId())
+        Invoice invoice = invoiceRepo
+            .findById(paymentApplicationCreateModel.getInvoiceId())
             .orElseThrow(NoSuchElementException::new);
-        Payment.Model paymentModel = paymentService.createPayment(new Payment.CreateModel(invoice.getToPartyCustomerId()
-            .toString(),
+        Payment.Model paymentModel = paymentService.createPayment(new Payment.CreateModel(
+            invoice.getToPartyCustomerId().toString(),
             paymentApplicationCreateModel.getAmount()));
-        return createPaymentApplication(new PaymentApplication.CreateModel(paymentModel.getPaymentId(),
+        return createPaymentApplication(new PaymentApplication.CreateModel(
+            paymentModel.getPaymentId(),
             invoice.getInvoiceId(),
             Math.min(invoice.getAmount() - invoice.getPaidAmount(), paymentApplicationCreateModel.getAmount())));
     }

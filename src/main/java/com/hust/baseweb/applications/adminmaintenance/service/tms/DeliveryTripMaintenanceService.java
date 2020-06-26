@@ -6,6 +6,7 @@ import java.util.UUID;
 
 @Service
 public interface DeliveryTripMaintenanceService {
+
     int deleteDeliveryTrip(UUID deliveryTripId);
 
     long deleteAllDeliveryTrip();

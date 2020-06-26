@@ -13,5 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetListRetailOutletOutputModel {
+
     private List<PartyRetailOutlet> list;
 }

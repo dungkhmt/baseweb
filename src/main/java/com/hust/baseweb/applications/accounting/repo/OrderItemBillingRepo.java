@@ -11,4 +11,6 @@ import java.util.List;
 public interface OrderItemBillingRepo extends MongoRepository<OrderItemBilling, OrderItemBilling.Id> {
 
     List<OrderItemBilling> findAllById_InvoiceId(String invoiceId);
+
+    List<OrderItemBilling> findAllById_OrderId(String orderId);
 }

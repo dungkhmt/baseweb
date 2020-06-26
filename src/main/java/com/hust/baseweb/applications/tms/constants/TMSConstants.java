@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.tms.constants;
 
 public class TMSConstants {
+
     public static final String SHIPMENT_TRIP_CREATED = "SHIPMENT_TRIP_CREATED";
     public static final String SHIPMENT_TRIP_CANCELLED = "SHIPMENT_TRIP_CANCELLED";
     public static final String SHIPMENT_TRIP_COMPLETED = "SHIPMENT_TRIP_COMPLETED";

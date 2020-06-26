@@ -8,5 +8,6 @@ import java.util.List;
 
 @Service
 public interface PartyCustomerService {
+
     List<PartyCustomerModel> getListPartyCustomers();
 }

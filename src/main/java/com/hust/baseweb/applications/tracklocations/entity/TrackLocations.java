@@ -11,6 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class TrackLocations {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "track_location_id")

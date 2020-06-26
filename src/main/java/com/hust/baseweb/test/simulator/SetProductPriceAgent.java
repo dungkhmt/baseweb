@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 public class SetProductPriceAgent extends Thread {
+
     public static final String module = SetProductPriceAgent.class.getName();
     // OkHttpClient client = new OkHttpClient();
 
@@ -56,7 +57,7 @@ public class SetProductPriceAgent extends Thread {
                 SetProductPriceInputModel input = new SetProductPriceInputModel();
                 input.setCurrencyUomId("CUR_vnd");
                 input.setProductId(p.getProductId());
-                input.setPrice(new Double(1));
+                input.setPrice(1.0);
                 input.setTaxInPrice("N");
 
                 String json = gson.toJson(input);
@@ -64,7 +65,7 @@ public class SetProductPriceAgent extends Thread {
 //						+ p.getProductId() + ", json = " + json);
 
                 String rs = executor.execPostUseToken(Constants.URL_ROOT
-                    + "/api/set-product-price", json, token);
+                                                      + "/api/set-product-price", json, token);
 //				System.out.println(name() + "::run, set price of product "
 //						+ p.getProductId() + ", rs = " + rs);
             }

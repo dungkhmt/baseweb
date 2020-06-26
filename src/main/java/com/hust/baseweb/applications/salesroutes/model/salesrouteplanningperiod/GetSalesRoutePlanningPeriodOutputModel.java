@@ -13,5 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetSalesRoutePlanningPeriodOutputModel {
+
     private List<SalesRoutePlanningPeriod> salesRoutePlanningPeriodList;
 }

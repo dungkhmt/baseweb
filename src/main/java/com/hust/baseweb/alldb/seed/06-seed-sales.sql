@@ -28,6 +28,9 @@ values ('INVOICE_CREATED', 'INVOICE_STATUS', 'Tạo mới hóa đơn'),
        ('INVOICE_CANCELED', 'INVOICE_STATUS', 'Hóa đơn đã bị hủy'),
        ('INVOICE_COMPLETED', 'INVOICE_STATUS', 'Hóa đơn hoàn thành');
 
+insert into status_item(status_id, status_type_id, status_code, description)
+values ('USER_REGISTERED', 'USER_STATUS', 'REGISTERED', 'Đã đăng ký'),
+       ('USER_APPROVED', 'USER_STATUS', 'APPROVED', 'Đã phê duyệt');
 
 
 insert into sales_route_visit_frequency(visit_frequency_id, description)
@@ -43,10 +46,10 @@ values ('FW1', '1 tuần thăm 1 lần'),
        ('F4W', '4 tuần thăm 1 lần');
 
 insert into sales_route_config(days, repeat_week, visit_frequency_id)
-values ('2,4,6', '1', 'FW3'),
-       ('2,4', '1', 'FW2'),
-       ('3,5', '1', 'FW2'),
-       ('4,6', '1', 'FW2'),
+values ('2, 4, 6', '1', 'FW3'),
+       ('2, 4', '1', 'FW2'),
+       ('3, 5', '1', 'FW2'),
+       ('4, 6', '1', 'FW2'),
        ('4', '2', 'F2W'),
        ('5', '3', 'F3W'),
        ('6', '4', 'F4W');

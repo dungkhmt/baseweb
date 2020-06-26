@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetUserLocationsInputModel {
+
     private double lat1;
     private double lng1;
     private double lat2;

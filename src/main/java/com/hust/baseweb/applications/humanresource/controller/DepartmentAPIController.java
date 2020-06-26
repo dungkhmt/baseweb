@@ -53,7 +53,7 @@ public class DepartmentAPIController {
         log.info("addUser2Department, addUser2Department, user login = " + userLogin.getUserLoginId());
 
         PartyDepartment partyDepartment = partyDepartmentService.save(input.getPartyId(),
-            input.getDepartmentId(), input.getRoleTypeId());
+                                                                      input.getDepartmentId(), input.getRoleTypeId());
 
         return ResponseEntity.ok().body("add OK");
     }

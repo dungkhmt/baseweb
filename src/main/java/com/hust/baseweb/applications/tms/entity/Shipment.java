@@ -11,6 +11,7 @@ import java.util.UUID;
 @Setter
 @Getter
 public class Shipment {
+
     @Id
     @Column(name = "shipment_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
