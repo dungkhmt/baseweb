@@ -27,6 +27,7 @@ public interface UserService {
     List<UserLogin> getAllUserLogins();
 
     UserLogin createAndSaveUserLogin(String userName, String password);
+    UserLogin updatePassword(UserLogin user,String password);
 
     Party createAndSaveUserLogin(PersonModel personModel) throws Exception;
 

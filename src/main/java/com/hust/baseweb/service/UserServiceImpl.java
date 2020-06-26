@@ -75,6 +75,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserLogin updatePassword(UserLogin user, String password) {
+        user.setPassword(password);
+        return userLoginRepo.save(user);
+    }
+
+    @Override
     @Transactional
     public Party createAndSaveUserLogin(PersonModel personModel) {
 

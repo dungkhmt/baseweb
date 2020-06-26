@@ -85,6 +85,9 @@ public class UserLogin {
         this.disabledDateTime = disabledDateTime;
     }
 
+    public void setPassword(String password) {
+        this.password = PASSWORD_ENCODER.encode(password);
+    }
 
 }
 
