@@ -20,4 +20,6 @@ public class SalesRouteVisitFrequency {
     private String description;
 
 
+    @Column(name = "repeat_week")
+    private int repeatWeek;
 }
