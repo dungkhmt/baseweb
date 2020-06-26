@@ -7,14 +7,17 @@ import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfigRetailOu
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteVisitFrequency;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.GetSalesRouteConfigRetailOutletsOM;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigretailoutlets.UpdateSalesRouteConfigRetailOutletsIM;
 import com.hust.baseweb.applications.salesroutes.repo.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
+@Log4j2
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesRouteConfigRetailOutletServiceImpl implements
@@ -55,8 +58,25 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
         return salesRouteConfigRetailOutlet;
     }
 
+    /**
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     */
     @Override
     public List<GetSalesRouteConfigRetailOutletsOM> getSalesRoutesConfigRetailOutlets(UUID salesRoutePlanningPeriodId) {
         return salesRouteConfigRetailOutletRepo.getSalesRoutesConfigRetailOutlets(salesRoutePlanningPeriodId);
+    }
+
+    /**
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     */
+    @Override
+    public void updateSalesRoutesConfigRetailOutlet(UpdateSalesRouteConfigRetailOutletsIM input) {
+
+        salesRouteConfigRetailOutletRepo.updateSalesRoutesConfigRetailOutlet(
+            input.getSalesRouteConfigRetailOutletId(),
+            input.getVisitFrequencyId(),
+            input.getSalesRouteConfigId(),
+            input.getStartExecuteWeek()
+        );
     }
 }
