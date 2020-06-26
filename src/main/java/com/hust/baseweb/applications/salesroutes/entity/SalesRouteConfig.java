@@ -23,9 +23,6 @@ public class SalesRouteConfig {
     @Column(name = "days")
     private String days;
 
-    @Column(name = "repeat_week")
-    private int repeatWeek;
-
     @Column(name = "status_id")
     private String statusId;
 
