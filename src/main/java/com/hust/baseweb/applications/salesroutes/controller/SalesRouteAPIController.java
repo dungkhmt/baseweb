@@ -4,8 +4,10 @@ import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.salesroutes.entity.*;
 import com.hust.baseweb.applications.salesroutes.model.salesmancheckinout.SalesmanCheckInOutInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.CreateSalesRouteConfigInputModel;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.GetListSalesRouteConfigOM;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.GetSalesRouteConfigInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.CreateSalesRouteConfigRetailOutletInputModel;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigretailoutlets.UpdateSalesRouteConfigRetailOutletsIM;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GenerateSalesRouteDetailInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetCustomersVisitedBySalesmanDayInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetCustomersVisitedDayOfUserLogin;
@@ -86,19 +88,19 @@ public class SalesRouteAPIController {
 
     /**
      * Create a new sales route config
+     *
      * @param input CreateSalesRouteConfigInputModel object
      * @return a SalesRouteConfig object
      */
     @PostMapping("/create-sales-route-config")
     public ResponseEntity<?> createSalesRouteConfig(@RequestBody CreateSalesRouteConfigInputModel input) {
-        log.info("createSalesRouteConfig, days = " + input.getDays() + ", repeatWeek = " + input.getRepeatWeek());
+        log.info("createSalesRouteConfig, days = " + input.getDays());
 
         /*SalesRouteConfig salesRouteConfig = salesRouteConfigService.save(input.getDays(), input.getRepeatWeek());*/
 
         salesRouteConfigService.createSalesRouteConfig(
             input.getVisitFrequencyId(),
-            input.getDays(),
-            input.getRepeatWeek());
+            input.getDays());
 
         return ResponseEntity.ok().body(new SalesRouteConfig());
     }
@@ -108,7 +110,7 @@ public class SalesRouteAPIController {
         Principal prinicpal,
         @RequestBody GetSalesRouteConfigInputModel input
     ) {
-        List<SalesRouteConfig> salesRouteConfigs = salesRouteConfigService.findAll();
+        List<GetListSalesRouteConfigOM> salesRouteConfigs = salesRouteConfigService.getListSalesRouteConfig();
         return ResponseEntity.ok().body(salesRouteConfigs);
     }
 
@@ -222,22 +224,24 @@ public class SalesRouteAPIController {
     }
 
     /**
-     * Detail of a specific or current plan period if id == "current"
-     * @param id        salesRoutePlanningPeriodId
+     * Return detail of a specific or current plan period if id equals "current".
+     *
+     * @param id salesRoutePlanningPeriodId
      * @return a SalesRoutePlanningPeriod object
      * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
     @GetMapping("/get-plan-period-detail/{id}")
     public ResponseEntity<?> getPlanPeriodDetail(Principal principal, @PathVariable String id) {
         if (id.equals("current")) {
-            return ResponseEntity.ok().body(salesRoutePlanningPeriodService.getCurrentPlanPeriod(new Date()));
+            SalesRoutePlanningPeriod res = salesRoutePlanningPeriodService.getCurrentPlanPeriod(new Date());
+            return ResponseEntity.ok().body((res == null) ? new SalesRoutePlanningPeriod() : res);
         } else {
             return ResponseEntity.ok().body(salesRoutePlanningPeriodService.findById(UUID.fromString(id)));
         }
     }
 
     /**
-     * List all sales route details of a specific plan period
+     * Return all sales route details of a specific plan period.
      *
      * @param id salesRoutePlanningPeriodId
      * @return list of GetSalesRouteDetailOfPlanPeriodOutputModel objects
@@ -246,5 +250,20 @@ public class SalesRouteAPIController {
     @GetMapping("/get-sales-route-detail-of-plan-period/{id}")
     public ResponseEntity<?> getSalesRouteDetailOfPlanPeriod(Principal principal, @PathVariable UUID id) {
         return ResponseEntity.ok().body(salesRouteDetailService.getSalesRouteDetailOfPlanPeriod(id));
+    }
+
+    /**
+     * Update visit frequency, sales route config, start execute week of a sales route config retail outlet.
+     *
+     * @return "updated" if success
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     */
+    @PutMapping("/update-sales-route-config-retail-outlet")
+    public ResponseEntity<?> updateSalesRoutesConfigRetailOutlet(
+        Principal principal,
+        @RequestBody UpdateSalesRouteConfigRetailOutletsIM input
+    ) {
+        salesRouteConfigRetailOutletService.updateSalesRoutesConfigRetailOutlet(input);
+        return ResponseEntity.ok().body("updated");
     }
 }
