@@ -7,6 +7,7 @@ public interface GetSalesRouteConfigRetailOutletsOM {
     String getSalesmanName();
     String getPartySalesmanId();
     String getDistributorName();
+    String getVisitFrequencyId();
     String getVisitFrequency();
     String getVisitConfig();
     int getRepeatWeek();
