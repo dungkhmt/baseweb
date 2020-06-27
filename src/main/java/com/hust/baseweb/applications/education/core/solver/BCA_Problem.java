@@ -10,6 +10,7 @@ import com.hust.baseweb.applications.education.core.model.Session;
 import com.hust.baseweb.applications.education.entity.ClassTeacherCompositeId;
 import com.hust.baseweb.applications.education.entity.EduClassTeacherAssignment;
 
+import localsearch.model.LocalSearchManager;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -38,8 +39,15 @@ public class BCA_Problem {
 	}
 
 	public void solve(List<EduClassTeacherAssignment> result, List<String> exception) {
+        CBLSSolver cblsSolver = new CBLSSolver();
+        cblsSolver.solve();
+	    // TODO by CuongLV
+
+
+        /*
 		CPLEXSolver solver = new CPLEXSolver(this);
-//		OrToolsSolver solver = new OrToolsSolver(this);
+
+		//		OrToolsSolver solver = new OrToolsSolver(this);
 		assignmentResult = new int[numClass];
 		solver.solve(assignmentResult);
 
@@ -57,6 +65,8 @@ public class BCA_Problem {
 			eduAssignment.setClassTeacherCompositeId(assignment);
 			result.add(eduAssignment);
 		}
+
+	    */
 		log.info("BCA_Problem, executing done.");
 	}
 
