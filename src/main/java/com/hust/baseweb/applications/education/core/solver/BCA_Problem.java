@@ -38,6 +38,7 @@ public class BCA_Problem {
 	}
 
 	public void solve(List<EduClassTeacherAssignment> result, List<String> exception) {
+	    /*
 		CPLEXSolver solver = new CPLEXSolver(this);
 //		OrToolsSolver solver = new OrToolsSolver(this);
 		assignmentResult = new int[numClass];
@@ -57,6 +58,8 @@ public class BCA_Problem {
 			eduAssignment.setClassTeacherCompositeId(assignment);
 			result.add(eduAssignment);
 		}
+
+	    */
 		log.info("BCA_Problem, executing done.");
 	}
 

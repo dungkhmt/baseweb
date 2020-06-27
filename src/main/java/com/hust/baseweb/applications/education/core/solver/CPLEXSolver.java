@@ -3,18 +3,21 @@ package com.hust.baseweb.applications.education.core.solver;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
+/*
 import ilog.concert.IloException;
 import ilog.concert.IloIntVar;
 import ilog.concert.IloLinearIntExpr;
 import ilog.concert.IloLinearNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
+*/
+
 import lombok.extern.log4j.Log4j2;
+
 
 @Log4j2
 public class CPLEXSolver {
-
+/*
 	IloCplex solver;
 	IloIntVar[][] x;
 	IloNumVar f;
@@ -423,4 +426,6 @@ public class CPLEXSolver {
 			e.printStackTrace();
 		}
 	}
+
+ */
 }
