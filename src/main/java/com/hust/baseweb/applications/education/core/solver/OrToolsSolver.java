@@ -43,7 +43,6 @@ public class OrToolsSolver {
 		for (int i = 0; i < N; i++) {
 			maxCredit += problem.creditOfClass[i];
 		}
-		f = solver.makeIntVar(0, maxCredit, "Objective function");
 
 		x = new MPVariable[M][N];
 		for (int i = 0; i < M; i++) {
@@ -77,10 +76,7 @@ public class OrToolsSolver {
 
 		MPObjective objective = solver.objective();
 		for (int i = 0; i < M; i++) {
-			MPConstraint tmp = solver.makeConstraint(0, bigM);
-			tmp.setCoefficient(f, 1);
 			for (int j = 0; j < N; j++) {
-				tmp.setCoefficient(x[i][j], -problem.creditOfClass[j]);
 				objective.setCoefficient(x[i][j], 1);
 			}
 		}
