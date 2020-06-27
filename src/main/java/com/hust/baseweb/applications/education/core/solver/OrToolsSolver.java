@@ -12,6 +12,7 @@ import com.google.ortools.linearsolver.MPVariable;
 public class OrToolsSolver {
 	
 	static {
+		// must be absolute path
 		System.load("C:\\Program Files\\or-tools\\or-tools_VisualStudio2019-64bit_v7.7.7810\\lib\\jniortools.dll");
 	}
 
