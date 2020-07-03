@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetListRetailOutletsOfSalesmanAndDistributorInputModel {
+public class GetListRetailOutletsOfSalesmanAndDistributorIM {
 
     private UUID partySalesmanId;
     private UUID partyDistributorId;
