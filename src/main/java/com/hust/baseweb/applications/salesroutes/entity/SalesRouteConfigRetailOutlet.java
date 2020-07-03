@@ -33,6 +33,9 @@ public class SalesRouteConfigRetailOutlet {
     @ManyToOne(fetch = FetchType.EAGER)
     private RetailOutletSalesmanVendor retailOutletSalesmanVendor;
 
+    @Column(name = "start_execute_week")
+    private Integer startExecuteWeek;
+
     @Column(name = "start_execute_date")
     private String startExecuteDate;
 
