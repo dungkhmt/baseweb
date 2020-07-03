@@ -1,25 +1,16 @@
 package com.hust.baseweb.applications.education.core.solver.cblssolver;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.Set;
-
 import com.hust.baseweb.applications.education.core.solver.BCA_Problem;
-
 import localsearch.constraints.basic.NotEqual;
 import localsearch.constraints.multiknapsack.MultiKnapsack;
 import localsearch.functions.conditionalsum.ConditionalSum;
 import localsearch.functions.standarddeviation.StandardDeviation;
-import localsearch.model.ConstraintSystem;
-import localsearch.model.IFloatFunction;
-import localsearch.model.IFunction;
-import localsearch.model.LocalSearchManager;
-import localsearch.model.VarIntLS;
+import localsearch.model.*;
 import localsearch.search.TabuSearch;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 public class CBLSSolver {
 

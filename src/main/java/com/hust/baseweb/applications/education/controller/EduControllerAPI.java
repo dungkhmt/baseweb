@@ -1,36 +1,23 @@
 package com.hust.baseweb.applications.education.controller;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.hust.baseweb.applications.education.model.BCAJsonInputModel;
 import com.hust.baseweb.applications.education.model.ClassesInputModel;
 import com.hust.baseweb.applications.education.model.Course4teacherInputModel;
 import com.hust.baseweb.applications.education.repo.EduAssignmentRepo.EduClassTeacherAssignmentOutputModel;
-import com.hust.baseweb.applications.education.service.EduAssignmentService;
-import com.hust.baseweb.applications.education.service.EduAssignmentServiceImpl;
-import com.hust.baseweb.applications.education.service.EduClassService;
-import com.hust.baseweb.applications.education.service.EduCourseService;
-import com.hust.baseweb.applications.education.service.EduSemesterService;
-import com.hust.baseweb.applications.education.service.EduTeacherService;
-import com.hust.baseweb.applications.education.service.UploadExcelService;
+import com.hust.baseweb.applications.education.service.*;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
 import com.poiji.option.PoijiOptions;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.security.Principal;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))

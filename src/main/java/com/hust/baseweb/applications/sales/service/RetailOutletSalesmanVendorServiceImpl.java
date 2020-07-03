@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.customer.repo.RetailOutletPagingRepo;
 import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
+import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.GetRetailOutletsOfSalesmanAndDistributorOM;
 import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.RetailOutletSalesmanDistributorInputModel;
 import com.hust.baseweb.applications.sales.repo.PartySalesmanRepo;
 import com.hust.baseweb.applications.sales.repo.RetailOutletSalesmanVendorRepo;
@@ -48,7 +49,7 @@ public class RetailOutletSalesmanVendorServiceImpl implements RetailOutletSalesm
     }
 
     @Override
-    public List<RetailOutletSalesmanVendorRepo.GetRetailOutletsOfSalesmanAndDistributor>
+    public List<GetRetailOutletsOfSalesmanAndDistributorOM>
     getRetailOutletsOfSalesmanAndDistributor(UUID partySalesmanId, UUID partyDistributorId) {
         /*PartySalesman partySalesman = partySalesmanRepo.findByPartyId(partySalesmanId);
         PartyDistributor partyDistributor = partyDistributorRepo.findByPartyId(partyDistributorId);

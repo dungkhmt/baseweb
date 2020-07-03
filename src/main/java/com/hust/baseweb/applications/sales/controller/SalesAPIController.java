@@ -18,7 +18,7 @@ import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
 import com.hust.baseweb.applications.sales.model.customersalesman.AssignCustomer2SalesmanInputModel;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetCustomersOfSalesmanInputModel;
 import com.hust.baseweb.applications.sales.model.customersalesman.GetSalesmanOutputModel;
-import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.GetListRetailOutletsOfSalesmanAndDistributorInputModel;
+import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.GetListRetailOutletsOfSalesmanAndDistributorIM;
 import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.RetailOutletSalesmanDistributorInputModel;
 import com.hust.baseweb.applications.sales.model.salesman.SalesmanOutputModel;
 import com.hust.baseweb.applications.sales.model.salesmandistributor.AddSalesmanDistributorInputModel;
@@ -177,13 +177,13 @@ public class SalesAPIController {
     /**
      * Returns all retail outlets of specific salesman and specific distributor
      *
-     * @param input GetListRetailOutletsOfSalesmanAndDistributorInputModel object
-     * @return list PartyRetailOutlet objects
+     * @param input {@link GetListRetailOutletsOfSalesmanAndDistributorIM}
+     * @return list {@link GetRetailOutletsOfSalesmanAndDistributorOM}
      */
     @PostMapping("/get-list-retail-outlets-of-salesman-and-distributor")
-    public ResponseEntity<?> getListRetailOutletsOfSalesmanAndDistributor(
+    public ResponseEntity<?> getRetailOutletsOfSalesmanAndDistributor(
         Principal principal,
-        @RequestBody GetListRetailOutletsOfSalesmanAndDistributorInputModel input
+        @RequestBody GetListRetailOutletsOfSalesmanAndDistributorIM input
     ) {
         /*List<PartyRetailOutlet> partyRetailOutlets =
             retailOutletSalesmanVendorService.getListRetailOutletOfSalesmanAndDistributor(
@@ -256,8 +256,8 @@ public class SalesAPIController {
     /**
      * Returns all distributors in database
      *
-     * @param input GetListDistributorsOfSalesmanInputModel object
-     * @return list of PartyDistributor objects
+     * @param input {@link GetListDistributorsOfSalesmanInputModel} object
+     * @return list of {@link PartyDistributor} objects
      */
     @PostMapping("/get-distributors-of-salesman")
     public ResponseEntity<?> getDistributorsOfSalesman(
@@ -387,11 +387,13 @@ public class SalesAPIController {
         }
     }
 
+    /**
+     * Return all salesman in DB.
+     *
+     * @return list of {@link GetSalesmanOutputModel}
+     */
     @GetMapping("/get-all-salesman")
     public ResponseEntity<?> getAllSalesman(Principal principal) {
-        /**
-         * Return all salesman in DB
-         */
 
         log.info("getAllSalesman");
         List<GetSalesmanOutputModel> partySalesmanList = partySalesmanService.findAllSalesman();

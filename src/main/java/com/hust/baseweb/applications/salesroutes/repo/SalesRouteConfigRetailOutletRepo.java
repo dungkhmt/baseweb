@@ -56,4 +56,34 @@ public interface SalesRouteConfigRetailOutletRepo extends JpaRepository<SalesRou
         UUID salesRouteConfigId,
         Integer startExecuteWeek
     );
+
+    /**
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     */
+    @Modifying
+    @Transactional
+    @Query(value = "insert into sales_route_config_retail_outlet( " +
+                   "sales_route_planning_period_id, " +
+                   "visit_frequency_id, " +
+                   "sales_route_config_id, " +
+                   "retail_outlet_salesman_vendor_id, " +
+                   "start_execute_week, " +
+                   "start_execute_date) " +
+                   "select ?1, ?2, " +
+                   "cast(cast(?3 as text) as uuid), " +
+                   "?4, " +
+                   "cast(cast(?5 as text) as integer), " +
+                   "cast(?6 as text) " +
+                   "where not exists (select * from sales_route_config_retail_outlet " +
+                   "where sales_route_planning_period_id = ?1 " +
+                   "and retail_outlet_salesman_vendor_id = ?4)",
+           nativeQuery = true)
+    int createSalesRouteConfigRetailOutlet(
+        UUID salesRoutePlanningPeriodId,
+        String visitFrequencyId,
+        UUID salesRouteConfigId,
+        UUID retailOutletSalesmanVendorId,
+        Integer startExecuteWeek,
+        String startExecuteDate
+    );
 }

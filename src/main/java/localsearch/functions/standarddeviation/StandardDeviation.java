@@ -1,13 +1,9 @@
 package localsearch.functions.standarddeviation;
 
-import java.util.HashSet;
-
 import localsearch.functions.basic.FuncVarConst;
-import localsearch.model.AbstractInvariant;
-import localsearch.model.IFloatFunction;
-import localsearch.model.IFunction;
-import localsearch.model.LocalSearchManager;
-import localsearch.model.VarIntLS;
+import localsearch.model.*;
+
+import java.util.HashSet;
 
 public class StandardDeviation extends AbstractInvariant implements IFloatFunction {
 

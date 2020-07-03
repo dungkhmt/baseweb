@@ -1,9 +1,12 @@
 package localsearch.search;
 
-import java.util.*;
-
 import localsearch.common.Utility;
-import localsearch.model.*;
+import localsearch.model.IConstraint;
+import localsearch.model.IFloatFunction;
+import localsearch.model.IFunction;
+import localsearch.model.VarIntLS;
+
+import java.util.*;
 
 public class TabuSearch {
 

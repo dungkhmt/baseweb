@@ -3,7 +3,7 @@ package com.hust.baseweb.test.simulator.salesroute;
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.customer.model.GetListRetailOutletOutputModel;
-import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.GetListRetailOutletsOfSalesmanAndDistributorInputModel;
+import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.GetListRetailOutletsOfSalesmanAndDistributorIM;
 import com.hust.baseweb.test.simulator.Constants;
 import com.hust.baseweb.test.simulator.HttpPostExecutor;
 
@@ -44,7 +44,7 @@ public class RetailOutletManager {
     ) {
         try {
             Gson gson = new Gson();
-            GetListRetailOutletsOfSalesmanAndDistributorInputModel in = new GetListRetailOutletsOfSalesmanAndDistributorInputModel(
+            GetListRetailOutletsOfSalesmanAndDistributorIM in = new GetListRetailOutletsOfSalesmanAndDistributorIM(
                 partySalesmanId,
                 partyDistributorId);
 

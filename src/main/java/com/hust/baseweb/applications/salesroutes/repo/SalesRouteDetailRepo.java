@@ -5,12 +5,14 @@ import com.hust.baseweb.applications.salesroutes.entity.SalesRouteDetail;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetSalesRouteDetailOfPlanPeriodOM;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 import java.util.UUID;
 
 
-public interface SalesRouteDetailRepo extends JpaRepository<SalesRouteDetail, UUID> {
+public interface SalesRouteDetailRepo
+    extends JpaRepository<SalesRouteDetail, UUID>, CrudRepository<SalesRouteDetail, UUID> {
 
     List<SalesRouteDetail> findByPartySalesmanAndExecuteDate(PartySalesman partySalesman, String executeDate);
 

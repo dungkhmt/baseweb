@@ -1,11 +1,10 @@
 package com.hust.baseweb.applications.education.entity;
 
-import java.util.List;
-
 import com.hust.baseweb.applications.education.repo.EduAssignmentRepo.EduClassTeacherAssignmentOutputModel;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter

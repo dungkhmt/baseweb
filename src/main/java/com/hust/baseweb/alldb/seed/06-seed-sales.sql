@@ -33,17 +33,17 @@ values ('USER_REGISTERED', 'USER_STATUS', 'REGISTERED', 'Đã đăng ký'),
        ('USER_APPROVED', 'USER_STATUS', 'APPROVED', 'Đã phê duyệt');
 
 
-insert into sales_route_visit_frequency(visit_frequency_id, description)
-values ('FW1', '1 tuần thăm 1 lần'),
-       ('FW2', '1 tuần thăm 2 lần'),
-       ('FW3', '1 tuần thăm 3 lần'),
-       ('FW4', '1 tuần thăm 4 lần'),
-       ('FW5', '1 tuần thăm 5 lần'),
-       ('FW6', '1 tuần thăm 6 lần'),
-       ('FW7', '1 tuần thăm 7 lần'),
-       ('F2W', '2 tuần thăm 1 lần'),
-       ('F3W', '3 tuần thăm 1 lần'),
-       ('F4W', '4 tuần thăm 1 lần');
+insert into sales_route_visit_frequency(visit_frequency_id, description, repeat_week)
+values ('FW1', '1 tuần thăm 1 lần', 1),
+       ('FW2', '1 tuần thăm 2 lần', 1),
+       ('FW3', '1 tuần thăm 3 lần', 1),
+       ('FW4', '1 tuần thăm 4 lần', 1),
+       ('FW5', '1 tuần thăm 5 lần', 1),
+       ('FW6', '1 tuần thăm 6 lần', 1),
+       ('FW7', '1 tuần thăm 7 lần', 1),
+       ('F2W', '2 tuần thăm 1 lần', 2),
+       ('F3W', '3 tuần thăm 1 lần', 3),
+       ('F4W', '4 tuần thăm 1 lần', 4);
 
 insert into sales_route_config(days, repeat_week, visit_frequency_id)
 values ('2, 4, 6', '1', 'FW3'),

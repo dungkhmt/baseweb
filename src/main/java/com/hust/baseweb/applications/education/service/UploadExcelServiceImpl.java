@@ -1,22 +1,15 @@
 package com.hust.baseweb.applications.education.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.hust.baseweb.applications.education.entity.EduClass;
-import com.hust.baseweb.applications.education.entity.EduCourse;
-import com.hust.baseweb.applications.education.entity.EduCourseTeacherPreference;
-import com.hust.baseweb.applications.education.entity.EduDepartment;
-import com.hust.baseweb.applications.education.entity.EduSemester;
-import com.hust.baseweb.applications.education.entity.EduTeacher;
+import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.model.ClassesInputModel;
 import com.hust.baseweb.applications.education.model.Course4teacherInputModel;
 import com.hust.baseweb.applications.education.repo.EduCourseRepo;
-
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))

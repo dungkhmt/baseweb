@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfigRetailOutlet;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteVisitFrequency;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.CreateSalesRouteConfigRetailOutletIM;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.GetSalesRouteConfigRetailOutletsOM;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigretailoutlets.UpdateSalesRouteConfigRetailOutletsIM;
 import com.hust.baseweb.applications.salesroutes.repo.*;
@@ -36,6 +37,7 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
         String visitFrequencyId,
         UUID salesRouteConfigId,
         UUID salesRoutePlanningPeriodId,
+        Integer startExecuteWeek,
         String startExecuteDate
     ) {
         SalesRouteConfigRetailOutlet salesRouteConfigRetailOutlet = new SalesRouteConfigRetailOutlet();
@@ -51,6 +53,7 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
         salesRouteConfigRetailOutlet.setSalesRoutePlanningPeriod(salesRoutePlanningPeriod);
         salesRouteConfigRetailOutlet.setRetailOutletSalesmanVendor(retailOutletSalesmanVendor);
         salesRouteConfigRetailOutlet.setSalesRouteConfig(salesRouteConfig);
+        salesRouteConfigRetailOutlet.setStartExecuteWeek(startExecuteWeek);
         salesRouteConfigRetailOutlet.setStartExecuteDate(startExecuteDate);
 
         salesRouteConfigRetailOutlet = pSalesRouteConfigRetailOutletRepo.save(salesRouteConfigRetailOutlet);
@@ -78,5 +81,20 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
             input.getSalesRouteConfigId(),
             input.getStartExecuteWeek()
         );
+    }
+
+    /**
+     * @param input - {@link CreateSalesRouteConfigRetailOutletIM}
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     */
+    @Override
+    public int createSalesRouteConfigRetailOutlet(CreateSalesRouteConfigRetailOutletIM input) {
+        return salesRouteConfigRetailOutletRepo.createSalesRouteConfigRetailOutlet(
+            input.getSalesRoutePlanningPeriodId(),
+            input.getVisitFrequencyId(),
+            input.getSalesRouteConfigId(),
+            input.getRetailOutletSalesmanVendorId(),
+            input.getStartExecuteWeek(),
+            input.getStartExecuteDate());
     }
 }
