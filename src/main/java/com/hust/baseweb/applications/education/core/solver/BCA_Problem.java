@@ -4,6 +4,8 @@ import com.hust.baseweb.applications.education.core.model.AssignmentInput;
 import com.hust.baseweb.applications.education.core.model.Class;
 import com.hust.baseweb.applications.education.core.model.Course;
 import com.hust.baseweb.applications.education.core.model.Session;
+import com.hust.baseweb.applications.education.core.solver.cblssolver.CBLSSolver;
+import com.hust.baseweb.applications.education.entity.ClassTeacherCompositeId;
 import com.hust.baseweb.applications.education.entity.EduClassTeacherAssignment;
 import lombok.extern.log4j.Log4j2;
 
@@ -25,6 +27,9 @@ public class BCA_Problem {
 
 	public int[] assignmentResult;
 
+	public BCA_Problem() {
+	}
+
 	public BCA_Problem(AssignmentInput input) {
 		this.input = input;
 		this.numClass = input.getClasses().length;
@@ -33,18 +38,32 @@ public class BCA_Problem {
 		this.convertCreditOfClass(input);
 		this.convertMaxCredit(input);
 		this.convertPossibleTeacherForClass(input);
+
+//		System.out.println(this.numClass + " " + this.numTeacher);
+//		for (int i = 0; i < this.numClass; i++) {
+//			System.out.print(i + " " + this.creditOfClass[i] + " " + this.possibleTeacherForClass[i].size() + " ");
+//			for (int j : this.possibleTeacherForClass[i]) {
+//				System.out.print(j + " ");
+//			}
+//			System.out.println();
+//		}
+//
+//		for (int i = 0; i < this.numTeacher; i++) {
+//			System.out.println(i + " " + this.maxCredit[i]);
+//		}
+//
+//		System.out.println(this.conflictPairs.length);
+//		for (int i = 0; i < this.conflictPairs.length; i++) {
+//			System.out.println(this.conflictPairs[i][0] + " " + this.conflictPairs[i][1]);
+//		}
 	}
 
 	public void solve(List<EduClassTeacherAssignment> result, List<String> exception) {
-        CBLSSolver cblsSolver = new CBLSSolver();
-        cblsSolver.solve();
+//		CPLEXSolver solver = new CPLEXSolver(this);
+//		OrToolsSolver solver = new OrToolsSolver(this);
 
-        /*
-		CPLEXSolver solver = new CPLEXSolver(this);
-
-		//		OrToolsSolver solver = new OrToolsSolver(this);
-		assignmentResult = new int[numClass];
-		solver.solve(assignmentResult);
+		CBLSSolver solver = new CBLSSolver(this);
+		assignmentResult = solver.solve();
 
 		for (int i = 0; i < numClass; i++) {
 			EduClassTeacherAssignment eduAssignment = new EduClassTeacherAssignment();
@@ -55,13 +74,12 @@ public class BCA_Problem {
 			} else {
 				assignment.setTeacherId("NULL");
 				exception.add(input.getClasses()[i].getCode());
-
+				
 			}
 			eduAssignment.setClassTeacherCompositeId(assignment);
 			result.add(eduAssignment);
 		}
 
-	    */
 		log.info("BCA_Problem, executing done.");
 	}
 
