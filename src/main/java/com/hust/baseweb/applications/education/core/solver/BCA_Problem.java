@@ -1,17 +1,14 @@
 package com.hust.baseweb.applications.education.core.solver;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.hust.baseweb.applications.education.core.model.AssignmentInput;
 import com.hust.baseweb.applications.education.core.model.Class;
 import com.hust.baseweb.applications.education.core.model.Course;
 import com.hust.baseweb.applications.education.core.model.Session;
-import com.hust.baseweb.applications.education.entity.ClassTeacherCompositeId;
 import com.hust.baseweb.applications.education.entity.EduClassTeacherAssignment;
-
-import localsearch.model.LocalSearchManager;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 public class BCA_Problem {
@@ -41,8 +38,6 @@ public class BCA_Problem {
 	public void solve(List<EduClassTeacherAssignment> result, List<String> exception) {
         CBLSSolver cblsSolver = new CBLSSolver();
         cblsSolver.solve();
-	    // TODO by CuongLV
-
 
         /*
 		CPLEXSolver solver = new CPLEXSolver(this);
@@ -60,7 +55,7 @@ public class BCA_Problem {
 			} else {
 				assignment.setTeacherId("NULL");
 				exception.add(input.getClasses()[i].getCode());
-				
+
 			}
 			eduAssignment.setClassTeacherCompositeId(assignment);
 			result.add(eduAssignment);
