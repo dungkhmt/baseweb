@@ -47,7 +47,7 @@ create table edu_teacher
     teacher_id         varchar(60),
     teacher_name       varchar(200),
     email              varchar(60),
-    max_credit		   int;
+    max_credit		   int,
     last_updated_stamp timestamp,
     created_stamp      timestamp,
     constraint pk_edu_teacher primary key (teacher_id)

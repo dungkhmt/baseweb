@@ -1,0 +1,11 @@
+ALTER TABLE public.sales_route_detail ALTER COLUMN sales_route_detail_id SET DEFAULT uuid_generate_v1();
+ALTER TABLE public.sales_route_config DROP COLUMN repeat_week;
+ALTER TABLE public.sales_route_visit_frequency ADD repeat_week int4;
+
+UPDATE public.sales_route_visit_frequency SET repeat_week=1 WHERE visit_frequency_id like 'FW%';
+UPDATE public.sales_route_visit_frequency SET repeat_week=2 WHERE visit_frequency_id = 'F2W';
+UPDATE public.sales_route_visit_frequency SET repeat_week=3 WHERE visit_frequency_id = 'F3W';
+UPDATE public.sales_route_visit_frequency SET repeat_week=4 WHERE visit_frequency_id = 'F4W';
+
+ALTER TABLE public.sales_route_visit_frequency ALTER COLUMN repeat_week SET NOT NULL;
+ALTER TABLE public.sales_route_config_retail_outlet ALTER COLUMN sales_route_config_id DROP NOT NULL;

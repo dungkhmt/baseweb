@@ -264,9 +264,10 @@ public class SalesAPIController {
         Principal principal,
         @RequestBody GetListDistributorsOfSalesmanInputModel input
     ) {
+        log.info("getDistributorsOfSalesman, user-login = ");//d + userLogin.getUserLoginId());
+
         UserLogin userLogin = userService.findById(principal.getName());
 
-        log.info("getDistributorsOfSalesman, user-login = " + userLogin.getUserLoginId());
         RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_FROM_DISTRIBUTOR");
         //List<PartyRetailOutlet> partyRetailOutletList = retailOutletService.findAll();
         Party partySalesman = partyService.findByPartyId(input.getPartySalesmanId());
