@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.customer.entity.PartyDistributor;
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
 import com.hust.baseweb.applications.sales.entity.PartySalesman;
 import com.hust.baseweb.applications.sales.entity.RetailOutletSalesmanVendor;
+import com.hust.baseweb.applications.sales.model.retailoutletsalesmandistributor.GetRetailOutletsOfSalesmanAndDistributorOM;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -47,14 +48,7 @@ public interface RetailOutletSalesmanVendorRepo extends JpaRepository<RetailOutl
                    "where \trosv.party_salesman_id = ?1\n" +
                    "\t\tand rosv.party_vendor_id = ?2",
            nativeQuery = true)
-    List<GetRetailOutletsOfSalesmanAndDistributor>
+    List<GetRetailOutletsOfSalesmanAndDistributorOM>
     getRetailOutletsOfSalesmanAndDistributor(UUID partySalesmanId, UUID partyDistributorId);
-
-    interface GetRetailOutletsOfSalesmanAndDistributor {
-
-        String getRetailOutletSalesmanVendorId();
-
-        String getRetailOutletName();
-    }
 
 }
