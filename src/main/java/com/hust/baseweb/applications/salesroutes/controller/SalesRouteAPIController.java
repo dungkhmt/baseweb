@@ -1,12 +1,15 @@
 package com.hust.baseweb.applications.salesroutes.controller;
 
 import com.hust.baseweb.applications.customer.entity.PartyRetailOutlet;
-import com.hust.baseweb.applications.salesroutes.entity.*;
+import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
+import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
+import com.hust.baseweb.applications.salesroutes.entity.SalesRouteVisitFrequency;
+import com.hust.baseweb.applications.salesroutes.entity.SalesmanCheckinHistory;
 import com.hust.baseweb.applications.salesroutes.model.salesmancheckinout.SalesmanCheckInOutInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.CreateSalesRouteConfigInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.GetListSalesRouteConfigOM;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfig.GetSalesRouteConfigInputModel;
-import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.CreateSalesRouteConfigRetailOutletInputModel;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.CreateSalesRouteConfigRetailOutletIM;
 import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigretailoutlets.UpdateSalesRouteConfigRetailOutletsIM;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GenerateSalesRouteDetailInputModel;
 import com.hust.baseweb.applications.salesroutes.model.salesroutedetail.GetCustomersVisitedBySalesmanDayInputModel;
@@ -89,8 +92,8 @@ public class SalesRouteAPIController {
     /**
      * Create a new sales route config
      *
-     * @param input CreateSalesRouteConfigInputModel object
-     * @return a SalesRouteConfig object
+     * @param input {@link CreateSalesRouteConfigInputModel}
+     * @return a {@link SalesRouteConfig}
      */
     @PostMapping("/create-sales-route-config")
     public ResponseEntity<?> createSalesRouteConfig(@RequestBody CreateSalesRouteConfigInputModel input) {
@@ -118,18 +121,19 @@ public class SalesRouteAPIController {
     @PostMapping("/create-sales-route-config-retail-outlet")
     public ResponseEntity<?> createSalesRouteConfigRetailOutlet(
         Principal principal,
-        @RequestBody CreateSalesRouteConfigRetailOutletInputModel input
+        @RequestBody CreateSalesRouteConfigRetailOutletIM input
     ) {
         log.info("createSalesRouteConfigRetailOutlet, salesRouteConfigId = " + input.getSalesRouteConfigId());
 
-        SalesRouteConfigRetailOutlet salesRouteConfigRetailOutlet = salesRouteConfigRetailOutletService.save(
+        /*SalesRouteConfigRetailOutlet salesRouteConfigRetailOutlet = salesRouteConfigRetailOutletService.save(
             input.getRetailOutletSalesmanVendorId(),
             input.getVisitFrequencyId(),
             input.getSalesRouteConfigId(),
             input.getSalesRoutePlanningPeriodId(),
-            input.getStartExecuteDate());
+            input.getStartExecuteWeek(),
+            input.getStartExecuteDate());*/
 
-        return ResponseEntity.ok().body(salesRouteConfigRetailOutlet);
+        return ResponseEntity.ok().body(salesRouteConfigRetailOutletService.createSalesRouteConfigRetailOutlet(input));
     }
 
     @PostMapping("/create-sales-route-planning-period")
@@ -137,12 +141,10 @@ public class SalesRouteAPIController {
         Principal principal,
         @RequestBody CreateSalesRoutePlanningPeriodInputModel input
     ) {
-        log.info("createSalesRoutePlanningPeriod, fromDate = " +
-                 input.getFromDate() +
-                 ", toDate = " +
-                 input.getToDate() +
-                 ", description = " +
-                 input.getDescription());
+        log.info("createSalesRoutePlanningPeriod, fromDate = " + input.getFromDate() +
+                 ", toDate = " + input.getToDate() +
+                 ", description = " + input.getDescription());
+
         SalesRoutePlanningPeriod salesRoutePlanningPeriod = salesRoutePlanningPeriodService.save(
             input.getFromDate(),
             input.getToDate(),
@@ -162,7 +164,7 @@ public class SalesRouteAPIController {
     }
 
     /**
-     * @return list of SalesRouteVisitFrequency objects
+     * @return list of {@link SalesRouteVisitFrequency}
      * @author
      */
     @GetMapping("/get-list-sales-route-visit-frequency")
@@ -215,7 +217,7 @@ public class SalesRouteAPIController {
 
     /**
      * @param id salesRoutePlanningPeriodId
-     * @return list of GetSalesRouteConfigRetailOutletsOutputModel objects
+     * @return list of {@link GetSalesRouteConfigRetailOutletsOutputModel}
      * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
     @GetMapping("/get-sales-route-config-retail-outlets/{id}")
@@ -227,7 +229,7 @@ public class SalesRouteAPIController {
      * Return detail of a specific or current plan period if id equals "current".
      *
      * @param id salesRoutePlanningPeriodId
-     * @return a SalesRoutePlanningPeriod object
+     * @return a {@link SalesRoutePlanningPeriod}
      * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
     @GetMapping("/get-plan-period-detail/{id}")
@@ -244,7 +246,7 @@ public class SalesRouteAPIController {
      * Return all sales route details of a specific plan period.
      *
      * @param id salesRoutePlanningPeriodId
-     * @return list of GetSalesRouteDetailOfPlanPeriodOutputModel objects
+     * @return list of {@link GetSalesRouteDetailOfPlanPeriodOutputModel}
      * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
     @GetMapping("/get-sales-route-detail-of-plan-period/{id}")
