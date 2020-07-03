@@ -7,12 +7,13 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class CreateSalesRouteConfigRetailOutletInputModel {
+public class CreateSalesRouteConfigRetailOutletIM {
 
     private UUID salesRouteConfigId;
     private UUID retailOutletSalesmanVendorId;
     private UUID salesRoutePlanningPeriodId;
     private String visitFrequencyId;
+    private Integer startExecuteWeek;
     private String startExecuteDate;// format YYYY-MM-DD
 
 }
