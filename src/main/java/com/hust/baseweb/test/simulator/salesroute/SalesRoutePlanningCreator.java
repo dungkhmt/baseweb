@@ -8,7 +8,7 @@ import com.hust.baseweb.applications.sales.model.salesman.SalesmanOutputModel;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteConfig;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRoutePlanningPeriod;
 import com.hust.baseweb.applications.salesroutes.entity.SalesRouteVisitFrequency;
-import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.CreateSalesRouteConfigRetailOutletInputModel;
+import com.hust.baseweb.applications.salesroutes.model.salesrouteconfigcustomer.CreateSalesRouteConfigRetailOutletIM;
 import com.hust.baseweb.test.simulator.Constants;
 import com.hust.baseweb.test.simulator.HttpPostExecutor;
 import com.hust.baseweb.test.simulator.Login;
@@ -114,7 +114,7 @@ public class SalesRoutePlanningCreator {
             selectedPartyDistributor.getPartyId());
 
 
-        CreateSalesRouteConfigRetailOutletInputModel in = new CreateSalesRouteConfigRetailOutletInputModel();
+        CreateSalesRouteConfigRetailOutletIM in = new CreateSalesRouteConfigRetailOutletIM();
         in.setRetailOutletSalesmanVendorId(retailOutletSalesmanVendor.getRetailOutletSalesmanVendorId());
         in.setSalesRouteConfigId(selectedSalesRouteConfig.getSalesRouteConfigId());
         in.setSalesRoutePlanningPeriodId(selectedSalesRoutePlanningPeriod.getSalesRoutePlanningPeriodId());

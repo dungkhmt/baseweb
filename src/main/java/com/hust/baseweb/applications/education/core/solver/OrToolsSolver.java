@@ -1,9 +1,5 @@
 package com.hust.baseweb.applications.education.core.solver;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
 /*
 import com.google.ortools.linearsolver.MPConstraint;
 import com.google.ortools.linearsolver.MPObjective;
