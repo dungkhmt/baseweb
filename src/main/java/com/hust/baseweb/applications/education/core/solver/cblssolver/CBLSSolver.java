@@ -13,6 +13,7 @@ import com.hust.baseweb.applications.education.core.solver.BCA_Problem;
 import localsearch.constraints.basic.NotEqual;
 import localsearch.constraints.multiknapsack.MultiKnapsack;
 import localsearch.functions.conditionalsum.ConditionalSum;
+import localsearch.functions.multiknapsack.MultiKnapsackStatistic;
 import localsearch.functions.standarddeviation.StandardDeviation;
 import localsearch.model.ConstraintSystem;
 import localsearch.model.IFloatFunction;
@@ -305,7 +306,7 @@ public class CBLSSolver {
 	public int[] solve() {
 		int[] result = new int[problem.numClass];
 		this.buildPreProcessModel();
-		this.executePreProcess(100, 10, 1000000, 50);
+		this.executePreProcess(100, 5, 1000000, 50);
 
 		this.buildOptimizationModel();
 		TabuSearch tb = new TabuSearch();
@@ -319,14 +320,14 @@ public class CBLSSolver {
 			}
 		}
 
-//		check(result);
+		check(result);
 
 		return result;
 	}
 
 	public static void main(String[] args) throws FileNotFoundException {
 		BCA_Problem testcase = new BCA_Problem();
-		Scanner in = new Scanner(new File("D:\\Desktop\\2018.txt"));
+		Scanner in = new Scanner(new File("D:\\Desktop\\20182.reduced.txt"));
 		testcase.numClass = in.nextInt();
 		testcase.numTeacher = in.nextInt();
 		testcase.possibleTeacherForClass = new ArrayList[testcase.numClass];
@@ -355,6 +356,17 @@ public class CBLSSolver {
 
 		CBLSSolver solver = new CBLSSolver(testcase);
 		int result[] = solver.solve();
+		
+//		int credit[] = new int[testcase.numTeacher];
+//		for (int i=0; i<testcase.numClass; i++) {
+//			if (result[i] >= 0) {
+//				credit[result[i]] += testcase.creditOfClass[i];
+//			}
+//		}
+//		
+//		for (int i=0; i<testcase.numTeacher; i++) {
+//			System.out.println(credit[i]);
+//		}
 	}
 
 }

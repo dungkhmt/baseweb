@@ -1,7 +1,10 @@
 package com.hust.baseweb.applications.education.core.solver;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 /*
 import ilog.concert.IloException;
@@ -12,12 +15,17 @@ import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 */
 
+import ilog.concert.IloException;
+import ilog.concert.IloIntVar;
+import ilog.concert.IloLinearIntExpr;
+import ilog.concert.IloLinearNumExpr;
+import ilog.concert.IloNumVar;
+import ilog.cplex.IloCplex;
 import lombok.extern.log4j.Log4j2;
-
 
 @Log4j2
 public class CPLEXSolver {
-/*
+
 	IloCplex solver;
 	IloIntVar[][] x;
 	IloNumVar f;
@@ -366,7 +374,7 @@ public class CPLEXSolver {
 							solver.prod(1, x[j][problem.conflictPairs[i][1]])), 1);
 				}
 			}
-			
+
 			IloLinearNumExpr[] credit_per_teacher = new IloLinearNumExpr[M];
 			for (int i = 0; i < M; i++) {
 				credit_per_teacher[i] = solver.linearNumExpr();
@@ -376,7 +384,7 @@ public class CPLEXSolver {
 				solver.addLe(credit_per_teacher[i], problem.maxCredit[i]);
 
 			}
-			
+
 			solver.addMaximize(obj);
 
 			solver.setOut(null);
@@ -403,13 +411,14 @@ public class CPLEXSolver {
 		}
 	}
 
-	public void solve(int[] result) {
+	public int[] solve() {
 		this.preProcess();
 		this.executePhase1();
 		this.executePhase2();
 		this.executePhase3(this.maxCredit);
 
 		try {
+			int result[] = new int[problem.numClass];
 			for (int i = 0; i < problem.numClass; i++) {
 				if (this.exception.contains(i)) {
 					result[i] = -1;
@@ -422,10 +431,32 @@ public class CPLEXSolver {
 					}
 				}
 			}
+			
+			int credit[] = new int[problem.numTeacher];
+			double mean = 0;
+			for (int i = 0; i < problem.numClass; i++) {
+				if (result[i] >= 0) {
+					credit[result[i]] += problem.creditOfClass[i];
+					mean += problem.creditOfClass[i];
+				}
+			}
+			
+			mean /= problem.numTeacher;
+			
+			double std = 0;
+			for (int i=0; i<problem.numTeacher; i++) {
+				std += Math.pow(credit[i] - mean, 2);
+			}
+			
+			std = Math.sqrt(std/problem.numTeacher);
+			System.out.println("standard deviation = " + std);
+			
+			return result;
 		} catch (IloException e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 
- */
+
 }
