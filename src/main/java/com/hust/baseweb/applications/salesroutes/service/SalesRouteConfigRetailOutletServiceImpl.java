@@ -79,7 +79,8 @@ public class SalesRouteConfigRetailOutletServiceImpl implements
             input.getSalesRouteConfigRetailOutletId(),
             input.getVisitFrequencyId(),
             input.getSalesRouteConfigId(),
-            input.getStartExecuteWeek()
+            input.getStartExecuteWeek(),
+            input.getStartExecuteDate()
         );
     }
 
