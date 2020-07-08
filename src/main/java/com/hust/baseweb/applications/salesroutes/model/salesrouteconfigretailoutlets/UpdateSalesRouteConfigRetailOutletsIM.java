@@ -15,4 +15,5 @@ public class UpdateSalesRouteConfigRetailOutletsIM {
     UUID salesRouteConfigRetailOutletId;
     Integer startExecuteWeek;
     String visitFrequencyId;
+    String startExecuteDate;
 }
