@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
     private SecurityGroupRepo securityGroupRepo;
     private UserRegisterRepo userRegisterRepo;
     private StatusItemRepo statusItemRepo;
-    // private JavaMailSender javaMailSender;
+    private JavaMailSender javaMailSender;
 
     private final static ExecutorService EMAIL_EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
@@ -192,7 +193,7 @@ public class UserServiceImpl implements UserService {
             "Bạn đã đăng ký thành công tài khoản tại hệ thống với tên đăng nhập %s, " +
             "vui lòng chờ cho đến khi được quản trị viên phê duyệt. \nXin cảm ơn!",
             userLoginId));
-        // javaMailSender.send(simpleMailMessage);
+        javaMailSender.send(simpleMailMessage);
     }
 
     @Override
