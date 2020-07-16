@@ -1,5 +1,7 @@
 package com.hust.baseweb.applications.education.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,12 @@ public class EduDepartmentServiceImpl implements EduDepartmentService {
 			departmentRepo.save(dept);
 		}
 		return dept;
+	}
+
+	@Override
+	public List<EduDepartment> findAll() {
+		// TODO Auto-generated method stub
+		return departmentRepo.findAll();
 	}
 
 }

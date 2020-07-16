@@ -14,17 +14,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.hust.baseweb.applications.education.entity.EduClass;
+import com.hust.baseweb.applications.education.entity.EduCourse;
 import com.hust.baseweb.applications.education.entity.EduSemester;
+import com.hust.baseweb.applications.education.entity.EduTeacher;
 import com.hust.baseweb.applications.education.model.BCAJsonInputModel;
 import com.hust.baseweb.applications.education.model.ClassesInputModel;
 import com.hust.baseweb.applications.education.model.Course4teacherInputModel;
+import com.hust.baseweb.applications.education.model.CreateClassInputModel;
+import com.hust.baseweb.applications.education.model.CreateCourseInputModel;
 import com.hust.baseweb.applications.education.model.CreateSemesterInputModel;
+import com.hust.baseweb.applications.education.model.CreateTeacherInputModel;
 import com.hust.baseweb.applications.education.repo.EduAssignmentRepo.EduClassTeacherAssignmentOutputModel;
 import com.hust.baseweb.applications.education.service.EduAssignmentService;
 import com.hust.baseweb.applications.education.service.EduAssignmentServiceImpl;
 import com.hust.baseweb.applications.education.service.EduClassService;
 import com.hust.baseweb.applications.education.service.EduCourseService;
 import com.hust.baseweb.applications.education.service.EduCourseTeacherPreferenceService;
+import com.hust.baseweb.applications.education.service.EduDepartmentService;
 import com.hust.baseweb.applications.education.service.EduSemesterService;
 import com.hust.baseweb.applications.education.service.EduTeacherService;
 import com.hust.baseweb.applications.education.service.UploadExcelService;
@@ -47,6 +54,12 @@ public class EduControllerAPI {
 	EduAssignmentService assignmentService;
 	EduSemesterService semesterService;
 	EduCourseTeacherPreferenceService preferenceService;
+	EduDepartmentService departmentService;
+	
+	@GetMapping("edu/get-all-department")
+	public ResponseEntity<?> getAllDepartment(Principal principal) {
+		return ResponseEntity.ok().body(departmentService.findAll());
+	}
 
 	@GetMapping("edu/get-teacher-info/{teacherId}")
 	public ResponseEntity<?> getTeacherInfo(Principal principal, @PathVariable String teacherId) {
@@ -56,6 +69,14 @@ public class EduControllerAPI {
 	@GetMapping("edu/get-all-teachers")
 	public ResponseEntity<?> getAllTeacher(Principal principal) {
 		return ResponseEntity.ok(teacherService.findAll());
+	}
+
+	@PostMapping("edu/create-teacher")
+	public ResponseEntity<?> createTeacher(Principal principal, @RequestBody CreateTeacherInputModel input) {
+		EduTeacher result = teacherService.save(input.getEmail(), input.getTeacherName(), input.getEmail(),
+				input.getMaxCredit());
+		log.info("createTeacher, teacher " + result.getEmail() + " saved.");
+		return ResponseEntity.ok().body(result);
 	}
 
 	@GetMapping("edu/get-all-courses")
@@ -68,9 +89,24 @@ public class EduControllerAPI {
 		return ResponseEntity.ok(preferenceService.findByCompositeIdTeacherId(teacherId));
 	}
 
+	@PostMapping("edu/create-course")
+	public ResponseEntity<?> createCourse(Principal principal, @RequestBody CreateCourseInputModel input) {
+		EduCourse result = courseService.save(input.getCourseId(), input.getCourseName(), input.getCredit());
+		log.info("createCourse, courseId " + result.getCourseId() + " saved.");
+		return ResponseEntity.ok().body(result);
+	}
+
 	@GetMapping("edu/get-all-classes")
 	public ResponseEntity<?> getAllClass(Principal principal) {
 		return ResponseEntity.ok(classService.findAll());
+	}
+
+	@PostMapping("edu/create-class")
+	public ResponseEntity<?> createClass(Principal principal, @RequestBody CreateClassInputModel input) {
+		EduClass result = classService.save(input.getClassId(), input.getClassName(), input.getClassType(),
+				input.getCourseId(), input.getSessionId(), input.getDepartmentId(), input.getSemesterId());
+		log.info("createClass, class " + result.getClassId() + " saved.");
+		return ResponseEntity.ok().body(result);
 	}
 
 	@GetMapping("edu/get-all-semester")
@@ -81,6 +117,7 @@ public class EduControllerAPI {
 	@PostMapping("edu/create-semester")
 	public ResponseEntity<?> createSemester(Principal principal, @RequestBody CreateSemesterInputModel input) {
 		EduSemester result = semesterService.save(input.getSemesterId(), input.getSemesterName());
+		log.info("createSemester, semester " + result.getSemesterId() + " saved.");
 		return ResponseEntity.ok().body(result);
 	}
 
