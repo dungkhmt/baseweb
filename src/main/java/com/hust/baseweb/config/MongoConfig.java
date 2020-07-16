@@ -16,7 +16,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @Configuration
 @EnableMongoRepositories(basePackages = {
     "com.hust.baseweb.applications.accounting.repo",
-    "com.hust.baseweb.applications.tms.repo", "com.hust.baseweb.applications.order.repo.mongodb"})
+    "com.hust.baseweb.applications.tms.repo",
+    "com.hust.baseweb.applications.order.repo.mongodb",
+    "com.hust.baseweb.applications.webcam.repository"})
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Bean

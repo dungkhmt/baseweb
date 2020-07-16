@@ -10,5 +10,6 @@ public interface GetSalesRouteConfigRetailOutletsOM {
     String getVisitFrequencyId();
     String getVisitFrequency();
     String getVisitConfig();
+    String getStartExecuteWeek();
     int getRepeatWeek();
 }

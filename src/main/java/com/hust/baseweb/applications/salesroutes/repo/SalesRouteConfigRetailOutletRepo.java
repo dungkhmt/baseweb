@@ -18,15 +18,17 @@ public interface SalesRouteConfigRetailOutletRepo extends JpaRepository<SalesRou
     /**
      * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
      */
-    @Query(value = "select cast(srcro.sales_route_config_retail_outlet_id as varchar) salesRouteConfigRetailOutletId, " +
+    @Query(value = "select " +
+                   "cast(srcro.sales_route_config_retail_outlet_id as text) salesRouteConfigRetailOutletId, " +
                    "pro.retail_outlet_code retailOutletCode, " +
                    "pro.retail_outlet_name retailOutletName, " +
                    "ul.user_login_id salesmanName, " +
-                   "cast(ul.party_id as varchar) partySalesmanId, " +
+                   "cast(ul.party_id as text) partySalesmanId, " +
                    "pd.distributor_name distributorName, " +
-                   "cast(srcro.visit_frequency_id as varchar) visitFrequencyId, " +
+                   "cast(srcro.visit_frequency_id as text) visitFrequencyId, " +
                    "srvf.description visitFrequency, " +
                    "coalesce(src.days,'Chưa thiết lập') visitConfig, " +
+                   "coalesce(cast(srcro.start_execute_week as text), 'Chưa thiết lập') startExecuteWeek, " +
                    "srvf.repeat_week repeatWeek " +
                    "from sales_route_config_retail_outlet srcro " +
                    "inner join sales_route_visit_frequency srvf on srcro.visit_frequency_id = srvf.visit_frequency_id " +
@@ -47,14 +49,16 @@ public interface SalesRouteConfigRetailOutletRepo extends JpaRepository<SalesRou
     @Query(value = "update sales_route_config_retail_outlet set " +
                    "visit_frequency_id = ?2, " +
                    "sales_route_config_id = cast(cast(?3 as text) as uuid), " +
-                   "start_execute_week = cast(cast(?4 as text) as integer) " +
+                   "start_execute_week = cast(cast(?4 as text) as integer), " +
+                   "start_execute_date = cast(?5 as text) " +
                    "where sales_route_config_retail_outlet_id = ?1",
            nativeQuery = true)
     void updateSalesRoutesConfigRetailOutlet(
         UUID salesRouteConfigRetailOutletId,
         String visitFrequencyId,
         UUID salesRouteConfigId,
-        Integer startExecuteWeek
+        Integer startExecuteWeek,
+        String startExecuteDate
     );
 
     /**
