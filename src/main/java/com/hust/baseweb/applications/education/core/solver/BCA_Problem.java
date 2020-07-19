@@ -59,7 +59,6 @@ public class BCA_Problem {
 	}
 
 	public void solve(List<EduClassTeacherAssignment> result, List<String> exception) {
-//		CPLEXSolver solver = new CPLEXSolver(this);
 //		OrToolsSolver solver = new OrToolsSolver(this);
 		CBLSSolver solver = new CBLSSolver(this);
 
