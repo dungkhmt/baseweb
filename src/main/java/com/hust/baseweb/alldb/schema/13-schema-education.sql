@@ -47,7 +47,7 @@ create table edu_teacher
     teacher_id         varchar(60),
     teacher_name       varchar(200),
     email              varchar(60),
-    max_credit		   int,
+    max_credit         int,
     last_updated_stamp timestamp,
     created_stamp      timestamp,
     constraint pk_edu_teacher primary key (teacher_id)
@@ -57,12 +57,12 @@ create table edu_course_teacher_preference
 (
     course_id          varchar(60),
     teacher_id         varchar(60),
-    class_type		   varchar(60),
+    class_type         varchar(60),
     last_updated_stamp timestamp,
     created_stamp      timestamp,
     constraint pk_edu_course_teacher_preference primary key (course_id, teacher_id, class_type),
     constraint fk_edu_course_teacher_preference_course_id foreign key (course_id) references edu_course (course_id),
-    constraint fk_edu_course_teacher_preference_teacher_id foreign key(teacher_id) references edu_teacher(teacher_id)
+    constraint fk_edu_course_teacher_preference_teacher_id foreign key (teacher_id) references edu_teacher (teacher_id)
 );
 create table edu_class_teacher_asignment
 (

@@ -54,7 +54,7 @@ create table sales_route_visit_frequency
 (
     visit_frequency_id VARCHAR(10),
     description        VARCHAR(100),
-    repeat_week           Integer,
+    repeat_week        Integer,
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_sales_route_frequency primary key (visit_frequency_id)

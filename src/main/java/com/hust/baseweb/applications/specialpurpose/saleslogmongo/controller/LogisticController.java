@@ -24,7 +24,7 @@ public class LogisticController {
     @GetMapping("/mongo/get-inventory-item/{facilityId}")
     public ResponseEntity<?> getInventoryItems(Principal principal){
         // TODO: return an object of type GetInventoryItemOutputModel
-        
+
         return null;
     }
 }

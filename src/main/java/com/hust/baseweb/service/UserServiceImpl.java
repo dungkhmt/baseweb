@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     private SecurityGroupRepo securityGroupRepo;
     private UserRegisterRepo userRegisterRepo;
     private StatusItemRepo statusItemRepo;
-    private JavaMailSender javaMailSender;
+//    private JavaMailSender javaMailSender;
 
     private final static ExecutorService EMAIL_EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
@@ -179,22 +179,22 @@ public class UserServiceImpl implements UserService {
         UserRegister userRegister = inputModel.createUserRegister(userRegistered);
         userRegister = userRegisterRepo.save(userRegister);
 
-        EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
+//        EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
 
         return userRegister.toOutputModel();
     }
 
-    private void sendEmail(String email, String userLoginId) {
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(email);
-
-        simpleMailMessage.setSubject("Đăng ký thành công - SSCM - Quản lý chuỗi cung ứng");
-        simpleMailMessage.setText(String.format(
-            "Bạn đã đăng ký thành công tài khoản tại hệ thống với tên đăng nhập %s, " +
-            "vui lòng chờ cho đến khi được quản trị viên phê duyệt. \nXin cảm ơn!",
-            userLoginId));
-        javaMailSender.send(simpleMailMessage);
-    }
+//    private void sendEmail(String email, String userLoginId) {
+//        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+//        simpleMailMessage.setTo(email);
+//
+//        simpleMailMessage.setSubject("Đăng ký thành công - SSCM - Quản lý chuỗi cung ứng");
+//        simpleMailMessage.setText(String.format(
+//            "Bạn đã đăng ký thành công tài khoản tại hệ thống với tên đăng nhập %s, " +
+//            "vui lòng chờ cho đến khi được quản trị viên phê duyệt. \nXin cảm ơn!",
+//            userLoginId));
+//        javaMailSender.send(simpleMailMessage);
+//    }
 
     @Override
     public boolean approveRegisterUser(String userLoginId) {

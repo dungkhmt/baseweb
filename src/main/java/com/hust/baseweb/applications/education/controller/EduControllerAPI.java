@@ -1,23 +1,46 @@
 package com.hust.baseweb.applications.education.controller;
 
-import com.hust.baseweb.applications.education.model.BCAJsonInputModel;
-import com.hust.baseweb.applications.education.model.ClassesInputModel;
-import com.hust.baseweb.applications.education.model.Course4teacherInputModel;
-import com.hust.baseweb.applications.education.repo.EduAssignmentRepo.EduClassTeacherAssignmentOutputModel;
-import com.hust.baseweb.applications.education.service.*;
-import com.poiji.bind.Poiji;
-import com.poiji.exception.PoijiExcelType;
-import com.poiji.option.PoijiOptions;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.hust.baseweb.applications.education.entity.EduClass;
+import com.hust.baseweb.applications.education.entity.EduCourse;
+import com.hust.baseweb.applications.education.entity.EduSemester;
+import com.hust.baseweb.applications.education.entity.EduTeacher;
+import com.hust.baseweb.applications.education.model.BCAJsonInputModel;
+import com.hust.baseweb.applications.education.model.ClassesInputModel;
+import com.hust.baseweb.applications.education.model.Course4teacherInputModel;
+import com.hust.baseweb.applications.education.model.CreateClassInputModel;
+import com.hust.baseweb.applications.education.model.CreateCourseInputModel;
+import com.hust.baseweb.applications.education.model.CreateSemesterInputModel;
+import com.hust.baseweb.applications.education.model.CreateTeacherInputModel;
+import com.hust.baseweb.applications.education.repo.EduAssignmentRepo.EduClassTeacherAssignmentOutputModel;
+import com.hust.baseweb.applications.education.service.EduAssignmentService;
+import com.hust.baseweb.applications.education.service.EduAssignmentServiceImpl;
+import com.hust.baseweb.applications.education.service.EduClassService;
+import com.hust.baseweb.applications.education.service.EduCourseService;
+import com.hust.baseweb.applications.education.service.EduCourseTeacherPreferenceService;
+import com.hust.baseweb.applications.education.service.EduDepartmentService;
+import com.hust.baseweb.applications.education.service.EduSemesterService;
+import com.hust.baseweb.applications.education.service.EduTeacherService;
+import com.hust.baseweb.applications.education.service.UploadExcelService;
+import com.poiji.bind.Poiji;
+import com.poiji.exception.PoijiExcelType;
+import com.poiji.option.PoijiOptions;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -30,10 +53,30 @@ public class EduControllerAPI {
 	EduClassService classService;
 	EduAssignmentService assignmentService;
 	EduSemesterService semesterService;
+	EduCourseTeacherPreferenceService preferenceService;
+	EduDepartmentService departmentService;
+	
+	@GetMapping("edu/get-all-department")
+	public ResponseEntity<?> getAllDepartment(Principal principal) {
+		return ResponseEntity.ok().body(departmentService.findAll());
+	}
+
+	@GetMapping("edu/get-teacher-info/{teacherId}")
+	public ResponseEntity<?> getTeacherInfo(Principal principal, @PathVariable String teacherId) {
+		return ResponseEntity.ok(teacherService.findByTeacherId(teacherId));
+	}
 
 	@GetMapping("edu/get-all-teachers")
 	public ResponseEntity<?> getAllTeacher(Principal principal) {
 		return ResponseEntity.ok(teacherService.findAll());
+	}
+
+	@PostMapping("edu/create-teacher")
+	public ResponseEntity<?> createTeacher(Principal principal, @RequestBody CreateTeacherInputModel input) {
+		EduTeacher result = teacherService.save(input.getEmail(), input.getTeacherName(), input.getEmail(),
+				input.getMaxCredit());
+		log.info("createTeacher, teacher " + result.getEmail() + " saved.");
+		return ResponseEntity.ok().body(result);
 	}
 
 	@GetMapping("edu/get-all-courses")
@@ -41,14 +84,41 @@ public class EduControllerAPI {
 		return ResponseEntity.ok(courseService.findAll());
 	}
 
+	@GetMapping("edu/get-all-courses/{teacherId}")
+	public ResponseEntity<?> getAllCoursesByTeacherId(Principal principal, @PathVariable String teacherId) {
+		return ResponseEntity.ok(preferenceService.findByCompositeIdTeacherId(teacherId));
+	}
+
+	@PostMapping("edu/create-course")
+	public ResponseEntity<?> createCourse(Principal principal, @RequestBody CreateCourseInputModel input) {
+		EduCourse result = courseService.save(input.getCourseId(), input.getCourseName(), input.getCredit());
+		log.info("createCourse, courseId " + result.getCourseId() + " saved.");
+		return ResponseEntity.ok().body(result);
+	}
+
 	@GetMapping("edu/get-all-classes")
 	public ResponseEntity<?> getAllClass(Principal principal) {
 		return ResponseEntity.ok(classService.findAll());
 	}
-	
+
+	@PostMapping("edu/create-class")
+	public ResponseEntity<?> createClass(Principal principal, @RequestBody CreateClassInputModel input) {
+		EduClass result = classService.save(input.getClassId(), input.getClassName(), input.getClassType(),
+				input.getCourseId(), input.getSessionId(), input.getDepartmentId(), input.getSemesterId());
+		log.info("createClass, class " + result.getClassId() + " saved.");
+		return ResponseEntity.ok().body(result);
+	}
+
 	@GetMapping("edu/get-all-semester")
-	public ResponseEntity<?> getAllSemester(Principal principal){
+	public ResponseEntity<?> getAllSemester(Principal principal) {
 		return ResponseEntity.ok(semesterService.findAll());
+	}
+
+	@PostMapping("edu/create-semester")
+	public ResponseEntity<?> createSemester(Principal principal, @RequestBody CreateSemesterInputModel input) {
+		EduSemester result = semesterService.save(input.getSemesterId(), input.getSemesterName());
+		log.info("createSemester, semester " + result.getSemesterId() + " saved.");
+		return ResponseEntity.ok().body(result);
 	}
 
 	@GetMapping("edu/execute-class-teacher-assignment/{semesterId}")
@@ -56,9 +126,9 @@ public class EduControllerAPI {
 		log.info("executeAssignment");
 		return ResponseEntity.ok().body(assignmentService.executeAssignment(semesterId));
 	}
-	
+
 	@PostMapping("edu/execute-class-teacher-assignment-service")
-	public ResponseEntity<?> executeAssignmentForJsonInput(Principal principal, @RequestBody BCAJsonInputModel input){
+	public ResponseEntity<?> executeAssignmentForJsonInput(Principal principal, @RequestBody BCAJsonInputModel input) {
 		// get json input from request body
 		// execute assignment and return result
 		// not save to db
