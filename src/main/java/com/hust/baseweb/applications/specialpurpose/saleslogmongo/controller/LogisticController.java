@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.specialpurpose.saleslogmongo.controller;
 
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreatePurchaseOrderInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.GetInventoryItemOutputModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.LogisticService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,8 @@ import java.security.Principal;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class LogisticController {
+
+    private final LogisticService logisticService;
 
     @PostMapping("/mongo/create-purchase-order")
     @ApiOperation(value = "Tạo đơn mua")
@@ -35,8 +38,6 @@ public class LogisticController {
         Principal principal,
         @ApiParam(value = "Kho cần xem thông tin") @PathVariable String facilityId
     ) {
-        // TODO: return an object of type GetInventoryItemOutputModel
-
-        return null;
+        return ResponseEntity.ok(logisticService.getInventoryItems(facilityId));
     }
 }
