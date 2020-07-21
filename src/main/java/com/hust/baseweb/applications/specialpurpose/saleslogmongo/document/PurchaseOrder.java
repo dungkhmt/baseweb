@@ -7,22 +7,26 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ApiModel("Thông tin đơn hàng mua")
+@Document("purchase_orders")
 public class PurchaseOrder {
 
     @Id
-    private String orderId;
+    private ObjectId purchaseOrderId;
 
-    private String fromProviderId; // map to Organization
-    private ObjectId poStaffId;
+    private String fromProviderOrganizationId; // map to Organization
     private Date orderDate;
+    private ObjectId poStaffId;
     private String toFacilityId;
-    private ObjectId[] orderItemIds;
+
+    private List<ObjectId> orderItemIds;
 }

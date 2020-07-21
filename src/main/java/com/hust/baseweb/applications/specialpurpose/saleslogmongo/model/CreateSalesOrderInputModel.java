@@ -1,12 +1,13 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.model;
 
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.OrderItem;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.SalesOrder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 
 import java.util.Date;
 import java.util.List;
@@ -18,11 +19,21 @@ import java.util.List;
 @ApiModel(description = "Model tạo đơn bán")
 public class CreateSalesOrderInputModel {
 
+    private String customerId;
+    private Date orderDate;
     @ApiModelProperty(value = "user login of salesman")
     private String userLoginId;
-    private Date orderDate;
-    private String customerId;
     private String fromFacilityId;
-    private List<OrderItem> orderItems;
 
+    private List<OrderItemModel> orderItems;
+
+    public SalesOrder toSalesOrder() {
+        SalesOrder salesOrder = new SalesOrder();
+        salesOrder.setCustomerOrganizationId(customerId);
+        salesOrder.setOrderDate(orderDate);
+        salesOrder.setSalesmanId(new ObjectId(userLoginId));
+        salesOrder.setFromFacilityId(fromFacilityId);
+
+        return salesOrder;
+    }
 }

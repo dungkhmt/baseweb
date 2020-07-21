@@ -1,17 +1,17 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.document;
 
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ApiModel("Tổ chức giao dịch hàng hóa: nhà cung cấp/khách hàng")
+@Document("organizations")
 public class Organization {
 
     @Id

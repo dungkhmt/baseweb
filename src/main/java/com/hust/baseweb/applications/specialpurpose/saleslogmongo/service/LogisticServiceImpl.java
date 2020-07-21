@@ -1,16 +1,12 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.service;
 
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Facility;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.InventoryItem;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.InventoryItemDetail;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Product;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.*;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreatePurchaseOrderInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.GetInventoryItemOutputModel;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.FacilityRepository;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.InventoryItemDetailRepository;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.InventoryItemRepository;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.ProductRepository;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.*;
 import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +27,50 @@ public class LogisticServiceImpl implements LogisticService {
     private final InventoryItemRepository inventoryItemRepository;
     private final InventoryItemDetailRepository inventoryItemDetailRepository;
     private final ProductRepository productRepository;
+
+    private final OrderItemRepository orderItemRepository;
+    private final PurchaseOrderRepository purchaseOrderRepository;
+
+    @Override
+    public PurchaseOrder createPurchaseOrder(CreatePurchaseOrderInputModel input) {
+        ModelMapper modelMapper = new ModelMapper();
+
+        List<OrderItem> orderItems = input
+            .getOrderItems()
+            .stream()
+            .map(orderItemModel -> modelMapper.map(orderItemModel, OrderItem.class))
+            .collect(Collectors.toList());
+
+        orderItems = orderItemRepository.saveAll(orderItems);
+
+        PurchaseOrder purchaseOrder = input.toPurchaseOrder();
+        purchaseOrder.setOrderItemIds(orderItems.stream().map(OrderItem::getOrderItemId).collect(Collectors.toList()));
+
+        purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+
+        /*
+         * Nhập kho
+         */
+        Map<String, Integer> productQuantityMap = new HashMap<>();
+
+        for (OrderItem orderItem : orderItems) {
+            productQuantityMap.merge(orderItem.getProductId(), orderItem.getQuantity(), Integer::sum);
+        }
+
+        List<InventoryItem> inventoryItems = new ArrayList<>();
+
+        for (Map.Entry<String, Integer> entry : productQuantityMap.entrySet()) {
+            inventoryItems.add(new InventoryItem(
+                null,
+                entry.getKey(),
+                purchaseOrder.getToFacilityId(),
+                entry.getValue()));
+        }
+
+        inventoryItems = inventoryItemRepository.saveAll(inventoryItems);
+
+        return purchaseOrder;
+    }
 
     @Override
     public GetInventoryItemOutputModel getInventoryItems(String facilityId) {

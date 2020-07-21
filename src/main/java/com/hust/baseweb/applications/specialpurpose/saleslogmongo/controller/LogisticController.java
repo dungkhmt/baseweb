@@ -28,8 +28,7 @@ public class LogisticController {
         @ApiParam(value = "Dữ liệu mô tả thông tin đơn tạo")
         @RequestBody CreatePurchaseOrderInputModel input
     ) {
-        // TODO
-        return null;
+        return ResponseEntity.ok(logisticService.createPurchaseOrder(input));
     }
 
     @GetMapping("/mongo/get-inventory-item/{facilityId}")

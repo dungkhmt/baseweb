@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
@@ -16,6 +17,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
+@Document("inventory_item_details")
 @ApiModel(description = "Ghi chép xuất kho")
 public class InventoryItemDetail {
 
@@ -29,8 +31,4 @@ public class InventoryItemDetail {
     private Date effectiveDate;
 
     private Integer quantityOnHandDiff;
-
-    private String orderId;
-
-    private ObjectId orderItemId;
 }
