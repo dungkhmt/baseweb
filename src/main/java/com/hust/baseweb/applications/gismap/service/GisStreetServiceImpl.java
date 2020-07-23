@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -24,5 +25,12 @@ public class GisStreetServiceImpl implements  GisMapService{
     @Override
     public List<Street> findAll() {
         return streetRepo.findAll();
+    }
+
+    @Override
+    public Street removeStreet(String streetId) {
+        Street street = streetRepo.findByStreetId(streetId);
+        streetRepo.deleteByStreetId(streetId);
+        return street;
     }
 }

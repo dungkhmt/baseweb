@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.gismap.controller;
 import com.hust.baseweb.applications.gismap.document.Street;
 import com.hust.baseweb.applications.gismap.model.AddPointStreetInputModel;
 import com.hust.baseweb.applications.gismap.model.InitBuildStreetInputModel;
+import com.hust.baseweb.applications.gismap.model.StreetInputModel;
 import com.hust.baseweb.applications.gismap.model.TerminateBuildStreetInputModel;
 import com.hust.baseweb.applications.gismap.service.GisMapService;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -69,5 +72,34 @@ public class GisMapController {
     @GetMapping("/gismap/get-all-streets")
     public ResponseEntity<?> getAllStreets(Principal principal){
         return ResponseEntity.ok().body(gisMapService.findAll());
+    }
+
+    @GetMapping("/gismap/get-unterminated-streets")
+    public ResponseEntity<?> getUnTerminatedStreets(Principal principal){
+        List<Street> streetList = new ArrayList<>();
+        for(String id: mId2Street.keySet()){
+          streetList.add(mId2Street.get(id));
+        }
+        return ResponseEntity.ok().body(streetList);
+    }
+    @PostMapping("/gismap/ignore-unterminated-street")
+    public synchronized ResponseEntity<?> ignoreUnTerminatedStreet(
+        Principal principal, @RequestBody
+        StreetInputModel input
+    ) {
+        Street street = mId2Street.get(input.getStreetId());
+        if (street == null) {
+            return ResponseEntity.ok().body("STREET NULL");
+        }
+        mId2Street.remove(street.getStreetId());
+        return ResponseEntity.ok().body(street);
+    }
+    @PostMapping("/gismap/remove-built-street")
+    public synchronized ResponseEntity<?> removeBuiltStreet(
+        Principal principal, @RequestBody
+        StreetInputModel input
+    ) {
+        Street street = gisMapService.removeStreet(input.getStreetId());
+        return ResponseEntity.ok().body(street);
     }
 }
