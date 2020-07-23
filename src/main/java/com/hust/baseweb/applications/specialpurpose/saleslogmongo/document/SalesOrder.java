@@ -1,14 +1,33 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.document;
 
+import io.swagger.annotations.ApiModel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ApiModel("Thông tin đơn hàng bán")
+@Document("sales_orders")
 public class SalesOrder {
-    private String orderId;
-    private Organization customer;
+
+    @Id
+    private ObjectId salesOrderId;
+
+    private String customerOrganizationId;
     private Date orderDate;
-    private Person salesman;
-    private Facility fromFacility;
-    private List<OrderItem> orderItems;
+    private ObjectId salesmanId; // map to Person
+    private String fromFacilityId;
+
+    private List<ObjectId> orderItemIds;
 
 }

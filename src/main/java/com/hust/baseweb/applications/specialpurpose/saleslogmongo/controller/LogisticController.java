@@ -1,6 +1,10 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.controller;
 
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreatePurchaseOrderInputModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.GetInventoryItemOutputModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.LogisticService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +19,24 @@ import java.security.Principal;
 @Log4j2
 public class LogisticController {
 
+    private final LogisticService logisticService;
+
     @PostMapping("/mongo/create-purchase-order")
-    public ResponseEntity<?> createPurchaseOrder(Principal principal, @RequestBody CreatePurchaseOrderInputModel input){
-        // TODO
-        return null;
+    @ApiOperation(value = "Tạo đơn mua")
+    public ResponseEntity<?> createPurchaseOrder(
+        Principal principal,
+        @ApiParam(value = "Dữ liệu mô tả thông tin đơn tạo")
+        @RequestBody CreatePurchaseOrderInputModel input
+    ) {
+        return ResponseEntity.ok(logisticService.createPurchaseOrder(input));
     }
 
     @GetMapping("/mongo/get-inventory-item/{facilityId}")
-    public ResponseEntity<?> getInventoryItems(Principal principal){
-        // TODO: return an object of type GetInventoryItemOutputModel
-
-        return null;
+    @ApiOperation(value = "Danh sách tồn kho")
+    public ResponseEntity<GetInventoryItemOutputModel> getInventoryItems(
+        Principal principal,
+        @ApiParam(value = "Kho cần xem thông tin") @PathVariable String facilityId
+    ) {
+        return ResponseEntity.ok(logisticService.getInventoryItems(facilityId));
     }
 }

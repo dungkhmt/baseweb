@@ -1,6 +1,8 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.controller;
 
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.SalesService;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +19,12 @@ import java.security.Principal;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class SalesController {
+
+    private final SalesService salesService;
+
     @PostMapping("/mongo/create-sales-order")
-    public ResponseEntity<?> createSalesOrder(Principal principal, @RequestBody CreateSalesOrderInputModel input){
-        //TODO
-        return null;
+    @ApiOperation(value = "Tạo đơn bán")
+    public ResponseEntity<?> createSalesOrder(Principal principal, @RequestBody CreateSalesOrderInputModel input) {
+        return ResponseEntity.ok(salesService.createSalesOrder(input));
     }
 }
