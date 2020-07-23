@@ -18,7 +18,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
     "com.hust.baseweb.applications.accounting.repo",
     "com.hust.baseweb.applications.tms.repo",
     "com.hust.baseweb.applications.order.repo.mongodb",
-    "com.hust.baseweb.applications.webcam.repository"})
+    "com.hust.baseweb.applications.webcam.repository",
+    "com.hust.baseweb.applications.gismap.repo"
+})
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Bean
