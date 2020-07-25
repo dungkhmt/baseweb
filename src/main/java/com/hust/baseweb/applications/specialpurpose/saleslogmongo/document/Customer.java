@@ -15,8 +15,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Customer {
 
     @Id
-    private String customerId;
-
-    private String customerName;
+    private String customerId;// refers to organizationId of document Organization
 
 }

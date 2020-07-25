@@ -20,13 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author Hien Hoang (hienhoang2702@gmail.com)
- */
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class SalesServiceImpl implements SalesService {
-
+public class SalesServiceImple implements SalesService {
     private final OrderItemRepository orderItemRepository;
     private final SalesOrderRepository salesOrderRepository;
 
@@ -76,4 +72,5 @@ public class SalesServiceImpl implements SalesService {
         return salesOrder;
     }
 }
+
 

@@ -25,7 +25,7 @@ public class SalesOrder {
 
     private String customerOrganizationId;
     private Date orderDate;
-    private ObjectId salesmanId; // map to Person
+    private ObjectId salesmanId; // userlogin of salesman
     private String fromFacilityId;
 
     private List<ObjectId> orderItemIds;

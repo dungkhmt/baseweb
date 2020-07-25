@@ -7,5 +7,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface FacilityRepository extends MongoRepository<Facility, String> {
-
+    Facility findByFacilityId(String facilityId);
 }

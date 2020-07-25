@@ -1,19 +1,19 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.service;
 
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.common.UserLoginFacilityRelationType;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.*;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreatePurchaseOrderInputModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.GetInventoryItemOutputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Log4j2
 public class LogisticServiceImpl implements LogisticService {
 
     private final FacilityRepository facilityRepository;
@@ -30,6 +31,9 @@ public class LogisticServiceImpl implements LogisticService {
 
     private final OrderItemRepository orderItemRepository;
     private final PurchaseOrderRepository purchaseOrderRepository;
+
+    private final UserLoginFacilityRepository userLoginFacilityRepository;
+    private final OrganizationRepository organizationRepository;
 
     @Override
     public PurchaseOrder createPurchaseOrder(CreatePurchaseOrderInputModel input) {
@@ -120,4 +124,41 @@ public class LogisticServiceImpl implements LogisticService {
 
         return getInventoryItemOutputModel;
     }
+
+    @Override
+    public List<Facility> getFacilityOfSalesman(String salesmanId) {
+        List<UserLoginFacility> userLoginFacilities = userLoginFacilityRepository.findByUserLoginIdAndUserLoginFacilityRelationTypeAndThruDate(salesmanId,
+                                                                                                        UserLoginFacilityRelationType.SALESMAN_SELL_FROM_FACILITY,
+                                                                                                        null);
+        List<Facility> facilities = new ArrayList<Facility>();
+        log.info("getFacilityOfSalesman, salesmanId = " + salesmanId + ", ret userLoginFacilities.sz = " + userLoginFacilities.size());
+
+        for(UserLoginFacility uf: userLoginFacilities){
+            Facility facility = facilityRepository.findByFacilityId(uf.getFacilityId());
+            log.info("getFacilityOfSalesman, facility in userLoginFacility " + uf.getFacilityId());
+        }
+        return facilities;
+    }
+
+    @Override
+    public Facility createFacilityOfSalesman(String salesmanId, String facilityName, String address) {
+        log.info("createFacilityOfSalesman, salesmanId = " + salesmanId + " facilityName = " + facilityName + ", address = " + address);
+        String facilityId = UUID.randomUUID().toString();
+        Organization organization = new Organization(facilityId,facilityName,address);
+        organizationRepository.save(organization);
+        Facility facility = new Facility(facilityId);
+        facilityRepository.save(facility);
+        UserLoginFacility userLoginFacility = new UserLoginFacility();
+        userLoginFacility.setUserLoginId(salesmanId);
+        userLoginFacility.setFacilityId(facilityId);
+        userLoginFacility.setUserLoginFacilityRelationType(UserLoginFacilityRelationType.SALESMAN_SELL_FROM_FACILITY);
+        userLoginFacility.setFromDate(new Date());
+        userLoginFacility.setThruDate(null);
+
+        userLoginFacilityRepository.save(userLoginFacility);
+
+        return facility;
+    }
+
+
 }
