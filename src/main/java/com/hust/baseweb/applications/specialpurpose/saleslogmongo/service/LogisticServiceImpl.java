@@ -136,6 +136,7 @@ public class LogisticServiceImpl implements LogisticService {
         for(UserLoginFacility uf: userLoginFacilities){
             Facility facility = facilityRepository.findByFacilityId(uf.getFacilityId());
             log.info("getFacilityOfSalesman, facility in userLoginFacility " + uf.getFacilityId());
+            facilities.add(facility);
         }
         return facilities;
     }
