@@ -3,7 +3,6 @@ package com.hust.baseweb.applications.specialpurpose.saleslogmongo.service;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.common.UserLoginFacilityRelationType;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.*;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreatePurchaseOrderInputModel;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.GetInventoryItemOutputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.*;
 import lombok.AllArgsConstructor;
@@ -127,24 +126,42 @@ public class LogisticServiceImpl implements LogisticService {
 
     @Override
     public List<Facility> getFacilityOfSalesman(String salesmanId) {
-        List<UserLoginFacility> userLoginFacilities = userLoginFacilityRepository.findByUserLoginIdAndUserLoginFacilityRelationTypeAndThruDate(salesmanId,
-                                                                                                        UserLoginFacilityRelationType.SALESMAN_SELL_FROM_FACILITY,
-                                                                                                        null);
-        List<Facility> facilities = new ArrayList<Facility>();
-        log.info("getFacilityOfSalesman, salesmanId = " + salesmanId + ", ret userLoginFacilities.sz = " + userLoginFacilities.size());
+        List<UserLoginFacility> userLoginFacilities = userLoginFacilityRepository.findByUserLoginIdAndUserLoginFacilityRelationTypeAndThruDate(
+            salesmanId,
+            UserLoginFacilityRelationType.SALESMAN_SELL_FROM_FACILITY,
+            null);
 
-        for(UserLoginFacility uf: userLoginFacilities){
-            Facility facility = facilityRepository.findByFacilityId(uf.getFacilityId());
-            log.info("getFacilityOfSalesman, facility in userLoginFacility " + uf.getFacilityId());
-        }
-        return facilities;
+        List<String> facilityIds = userLoginFacilities
+            .stream()
+            .map(UserLoginFacility::getFacilityId)
+            .distinct()
+            .collect(Collectors.toList());
+
+        return facilityRepository.findAllByFacilityIdIn(facilityIds);
+
+//        List<Facility> facilities = new ArrayList<Facility>();
+//        log.info("getFacilityOfSalesman, salesmanId = " +
+//                 salesmanId +
+//                 ", ret userLoginFacilities.sz = " +
+//                 userLoginFacilities.size());
+
+//        for (UserLoginFacility uf : userLoginFacilities) {
+//            Facility facility = facilityRepository.findByFacilityId(uf.getFacilityId());
+//            log.info("getFacilityOfSalesman, facility in userLoginFacility " + uf.getFacilityId());
+//        }
+//        return facilities;
     }
 
     @Override
     public Facility createFacilityOfSalesman(String salesmanId, String facilityName, String address) {
-        log.info("createFacilityOfSalesman, salesmanId = " + salesmanId + " facilityName = " + facilityName + ", address = " + address);
+        log.info("createFacilityOfSalesman, salesmanId = " +
+                 salesmanId +
+                 " facilityName = " +
+                 facilityName +
+                 ", address = " +
+                 address);
         String facilityId = UUID.randomUUID().toString();
-        Organization organization = new Organization(facilityId,facilityName,address);
+        Organization organization = new Organization(facilityId, facilityName, address);
         organizationRepository.save(organization);
         Facility facility = new Facility(facilityId);
         facilityRepository.save(facility);
