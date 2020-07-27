@@ -7,9 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.bson.types.ObjectId;
 
-import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -31,7 +29,7 @@ public class CreateSalesOrderInputModel {
         SalesOrder salesOrder = new SalesOrder();
         salesOrder.setCustomerOrganizationId(customerId);
         salesOrder.setOrderDate(orderDate);
-        salesOrder.setSalesmanId(new ObjectId(userLoginId));
+        salesOrder.setSalesmanId(userLoginId);
         salesOrder.setFromFacilityId(fromFacilityId);
 
         return salesOrder;
