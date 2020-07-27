@@ -1,23 +1,15 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.service;
 
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.InventoryItem;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.InventoryItemDetail;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.OrderItem;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.SalesOrder;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.common.UserLoginOrganizationRelationType;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.*;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.InventoryItemDetailRepository;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.InventoryItemRepository;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.OrderItemRepository;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.SalesOrderRepository;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +20,9 @@ public class SalesServiceImple implements SalesService {
 
     private final InventoryItemRepository inventoryItemRepository;
     private final InventoryItemDetailRepository inventoryItemDetailRepository;
+    private final OrganizationRepository organizationRepository;
+    private final CustomerRepository customerRepository;
+    private final UserLoginCustomerRepository userLoginCustomerRepository;
 
     @Override
     public SalesOrder createSalesOrder(CreateSalesOrderInputModel input) {
@@ -70,6 +65,35 @@ public class SalesServiceImple implements SalesService {
         inventoryItemDetailRepository.saveAll(inventoryItemDetails);
 
         return salesOrder;
+    }
+
+    @Override
+    public Customer createCusstomerOfSalesman(String salesmanId, String customerName, String address) {
+        String customerId = UUID.randomUUID().toString();
+        Organization organization = new Organization(customerId,customerName,address);
+        organizationRepository.save(organization);
+        Customer customer = new Customer(customerId);
+        customerRepository.save(customer);
+        UserLoginCustomer userLoginCustomer = new UserLoginCustomer();
+        userLoginCustomer.setOrganizationId(customerId);
+        userLoginCustomer.setUserLoginId(salesmanId);
+        userLoginCustomer.setUserLoginOrganizationRelationType(UserLoginOrganizationRelationType.SALESMAN_SELL_TO_CUSTOMER);
+        userLoginCustomer.setFromDate(new Date());
+        userLoginCustomer.setThruDate(null);
+        userLoginCustomerRepository.save(userLoginCustomer);
+        return customer;
+    }
+
+    @Override
+    public List<Customer> getCustomersOfSalesman(String salesmanId) {
+        List<UserLoginCustomer> userLoginCustomers =
+            userLoginCustomerRepository.findAllByUserLoginIdAndUserLoginOrganizationRelationTypeAndThruDate(salesmanId,
+                                                                                                            UserLoginOrganizationRelationType.SALESMAN_SELL_TO_CUSTOMER, null);
+        List<String> customerIds = userLoginCustomers.stream().map(UserLoginCustomer::getOrganizationId).
+            distinct().collect(
+            Collectors.toList());
+
+        return customerRepository.findAllByCustomerIdIn(customerIds);
     }
 }
 

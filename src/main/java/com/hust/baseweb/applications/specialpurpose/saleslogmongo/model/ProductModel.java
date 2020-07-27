@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateCustomerInputModel {
-    private String customerName;
-    private String address;
+public class ProductModel {
+    private String productId;
+    private String productName;
+    private int unitPrice;
 }

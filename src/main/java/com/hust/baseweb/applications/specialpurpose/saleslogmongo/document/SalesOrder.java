@@ -24,7 +24,7 @@ public class SalesOrder {
     private ObjectId salesOrderId;
 
     private String customerOrganizationId;
-    private Date orderDate;
+    private String orderDate;
     private ObjectId salesmanId; // userlogin of salesman
     private String fromFacilityId;
 

@@ -20,7 +20,7 @@ import java.util.List;
 public class CreateSalesOrderInputModel {
 
     private String customerId;
-    private Date orderDate;
+    private String orderDate;
     @ApiModelProperty(value = "user login of salesman")
     private String userLoginId;
     private String fromFacilityId;
