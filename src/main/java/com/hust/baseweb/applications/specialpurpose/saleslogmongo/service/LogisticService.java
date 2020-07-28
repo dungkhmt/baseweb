@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.service;
 
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Facility;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.InventoryItem;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.PurchaseOrder;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreatePurchaseOrderInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.GetInventoryItemOutputModel;
@@ -19,4 +20,6 @@ public interface LogisticService {
     List<Facility> getFacilityOfSalesman(String salesmanId);
 
     Facility createFacilityOfSalesman(String salesmanId, String facilityName, String address);
+
+    List<InventoryItem> findAllInventoryItemOfProductFromFacilityAndPositiveQuantityOnHand(String facilityId, String productId);
 }

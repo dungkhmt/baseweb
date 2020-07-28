@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,9 +24,13 @@ public class SalesServiceImple implements SalesService {
     private final OrganizationRepository organizationRepository;
     private final CustomerRepository customerRepository;
     private final UserLoginCustomerRepository userLoginCustomerRepository;
+    private final ProductFacilityRepository productFacilityRepository;
 
     @Override
+    @Transactional
     public SalesOrder createSalesOrder(CreateSalesOrderInputModel input) {
+        // TODO check product_facility to ensure that quantity on hand of each product is OK
+
         ModelMapper modelMapper = new ModelMapper();
 
         List<OrderItem> orderItems = input
@@ -44,13 +49,57 @@ public class SalesServiceImple implements SalesService {
          * Xuất kho
          */
 
-        List<InventoryItem> inventoryItems = inventoryItemRepository.findAllByFacilityId(salesOrder.getFromFacilityId());
-        Map<String, InventoryItem> inventoryItemMap = inventoryItems
-            .stream()
-            .collect(Collectors.toMap(InventoryItem::getProductId, i -> i));
+        //List<InventoryItem> inventoryItems = inventoryItemRepository.findAllByFacilityId(salesOrder.getFromFacilityId());
+        //Map<String, InventoryItem> inventoryItemMap = inventoryItems
+        //    .stream()
+        //    .collect(Collectors.toMap(InventoryItem::getProductId, i -> i));
 
         List<InventoryItemDetail> inventoryItemDetails = new ArrayList<>();
+        for (OrderItem orderItem : orderItems) {
+            List<InventoryItem> inventoryItems = inventoryItemRepository.findAllByFacilityIdAndProductIdAndQuantityOnHandTotalGreaterThan(
+                input.getFromFacilityId(), orderItem.getProductId(),0
+            );
+            // sort inventory items in an increasing order of quantityOnHand
+            InventoryItem[] a = new InventoryItem[inventoryItems.size()];
+            for(int i = 0; i < inventoryItems.size(); i++) a[i] = inventoryItems.get(i);
+            for(int i = 0; i < a.length; i++){
+                for(int j = i+1; j < a.length; j++){
+                    if(a[i].getQuantityOnHandTotal() > a[j].getQuantityOnHandTotal()){
+                        InventoryItem tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+                    }
+                }
+            }
+            int remainQty = orderItem.getQuantity();
+            for(int i = 0; i < a.length; i++) {
+                int qtyDiff = 0;
+                if (remainQty <= a[i].getQuantityOnHandTotal()) {
+                    a[i].setQuantityOnHandTotal(a[i].getQuantityOnHandTotal() - remainQty);
+                    inventoryItemRepository.save(a[i]);
+                    qtyDiff = remainQty;
+                    break;
+                }else{
+                    a[i].setQuantityOnHandTotal(0);
+                    remainQty -= a[i].getQuantityOnHandTotal();
+                    inventoryItemRepository.save(a[i]);
+                    qtyDiff = a[i].getQuantityOnHandTotal();
+                }
+                InventoryItemDetail inventoryItemDetail = new InventoryItemDetail();
+                inventoryItemDetail.setInventoryItemId(a[i].getInventoryItemId());
+                inventoryItemDetail.setEffectiveDate(new Date());
+                inventoryItemDetail.setQuantityOnHandDiff(qtyDiff);
+                inventoryItemDetails.add(inventoryItemDetail);
+            }
 
+            // update to product_facility
+            List<ProductFacility> productFacilities = productFacilityRepository.findAllByProductIdAndFacilityId(orderItem.getProductId(),input.getFromFacilityId());
+            // TODO to be improved
+            ProductFacility productFacility = productFacilities.get(0);
+            productFacility.setQuantityOnHand(productFacility.getQuantityOnHand() - orderItem.getQuantity());
+            productFacilityRepository.save(productFacility);
+
+        }
+
+        /*
         for (OrderItem orderItem : orderItems) {
             InventoryItem inventoryItem = inventoryItemMap.get(orderItem.getProductId());
 
@@ -61,6 +110,7 @@ public class SalesServiceImple implements SalesService {
 
             inventoryItemDetails.add(inventoryItemDetail);
         }
+        */
 
         inventoryItemDetailRepository.saveAll(inventoryItemDetails);
 

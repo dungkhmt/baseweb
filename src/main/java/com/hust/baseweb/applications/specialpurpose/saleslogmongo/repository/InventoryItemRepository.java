@@ -12,4 +12,6 @@ import java.util.List;
 public interface InventoryItemRepository extends MongoRepository<InventoryItem, ObjectId> {
 
     List<InventoryItem> findAllByFacilityId(String facilityId);
+
+    List<InventoryItem> findAllByFacilityIdAndProductIdAndQuantityOnHandTotalGreaterThan(String facilityId, String productId, int quantityOnHand);
 }

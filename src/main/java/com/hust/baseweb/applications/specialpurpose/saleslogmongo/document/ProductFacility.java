@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.Id;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -14,6 +16,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @ApiModel("Thông tin cho biet moi product con ton 1 luong bang bao nhieu tai moi kho")
 @Document("product_facility")
 public class ProductFacility {
+    @Id
+    private String productFacilityId;
     private String productId;
     private String facilityId;
     private int quantityOnHand;// luong ton thuc su

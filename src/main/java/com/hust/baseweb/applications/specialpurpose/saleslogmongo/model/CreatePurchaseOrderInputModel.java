@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.types.ObjectId;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -17,18 +18,22 @@ import java.util.List;
 @Setter
 @ApiModel(description = "Model tạo đơn mua")
 public class CreatePurchaseOrderInputModel {
-
+    public static final SimpleDateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String fromProviderId;
     private String userLoginId;
-    private Date orderDate;
+    private String orderDate;
     private String toFacilityId;
     private List<OrderItemModel> orderItems; // product-quantity
 
     public PurchaseOrder toPurchaseOrder() {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setFromProviderOrganizationId(fromProviderId);
-        purchaseOrder.setPoStaffId(new ObjectId(userLoginId));
-        purchaseOrder.setOrderDate(orderDate);
+        purchaseOrder.setPoStaffId(userLoginId);
+        try {
+            purchaseOrder.setOrderDate(datetimeFormat.parse(orderDate));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         purchaseOrder.setToFacilityId(toFacilityId);
 
         return purchaseOrder;

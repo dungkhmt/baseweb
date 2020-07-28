@@ -11,6 +11,7 @@ import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,8 +34,10 @@ public class LogisticServiceImpl implements LogisticService {
 
     private final UserLoginFacilityRepository userLoginFacilityRepository;
     private final OrganizationRepository organizationRepository;
+    private final ProductFacilityRepository productFacilityRepository;
 
     @Override
+    @Transactional
     public PurchaseOrder createPurchaseOrder(CreatePurchaseOrderInputModel input) {
         ModelMapper modelMapper = new ModelMapper();
 
@@ -68,6 +71,22 @@ public class LogisticServiceImpl implements LogisticService {
                 entry.getKey(),
                 purchaseOrder.getToFacilityId(),
                 entry.getValue()));
+
+            // UPDATE product-facility
+            // TODO to be improved
+            ProductFacility productFacility = null;
+            List<ProductFacility> productFacilities = productFacilityRepository.findAllByProductIdAndFacilityId(entry.getKey(), input.getToFacilityId());
+            if(productFacilities != null && productFacilities.size() > 0) {
+                productFacility = productFacilities.get(0);
+                productFacility.setQuantityOnHand(productFacility.getQuantityOnHand() + entry.getValue());
+            }else{
+                productFacility = new ProductFacility();
+                productFacility.setProductId(entry.getKey());
+                productFacility.setFacilityId(input.getToFacilityId());
+                productFacility.setQuantityOnHand(entry.getValue());
+            }
+            productFacilityRepository.save(productFacility);
+
         }
 
         inventoryItems = inventoryItemRepository.saveAll(inventoryItems);
@@ -175,6 +194,11 @@ public class LogisticServiceImpl implements LogisticService {
         userLoginFacilityRepository.save(userLoginFacility);
 
         return facility;
+    }
+
+    @Override
+    public List<InventoryItem> findAllInventoryItemOfProductFromFacilityAndPositiveQuantityOnHand(String facilityId, String productId) {
+        return inventoryItemRepository.findAllByFacilityIdAndProductIdAndQuantityOnHandTotalGreaterThan(facilityId,productId,0);
     }
 
 

@@ -25,7 +25,7 @@ public class PurchaseOrder {
 
     private String fromProviderOrganizationId; // map to Organization
     private Date orderDate;
-    private ObjectId poStaffId;
+    private String poStaffId;
     private String toFacilityId;
 
     private List<ObjectId> orderItemIds;
