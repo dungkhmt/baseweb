@@ -64,6 +64,7 @@ public class LogisticServiceImpl implements LogisticService {
         }
 
         List<InventoryItem> inventoryItems = new ArrayList<>();
+        List<ProductFacility> productFacilities = new ArrayList<>();
 
         for (Map.Entry<String, Integer> entry : productQuantityMap.entrySet()) {
             inventoryItems.add(new InventoryItem(
@@ -73,23 +74,36 @@ public class LogisticServiceImpl implements LogisticService {
                 entry.getValue()));
 
             // UPDATE product-facility
-            // TODO to be improved
-            ProductFacility productFacility = null;
-            List<ProductFacility> productFacilities = productFacilityRepository.findAllByProductIdAndFacilityId(entry.getKey(), input.getToFacilityId());
-            if(productFacilities != null && productFacilities.size() > 0) {
-                productFacility = productFacilities.get(0);
-                productFacility.setQuantityOnHand(productFacility.getQuantityOnHand() + entry.getValue());
-            }else{
-                productFacility = new ProductFacility();
-                productFacility.setProductId(entry.getKey());
-                productFacility.setFacilityId(input.getToFacilityId());
-                productFacility.setQuantityOnHand(entry.getValue());
-            }
-            productFacilityRepository.save(productFacility);
+            // DONE to be improved
+            ProductFacility productFacility = productFacilityRepository
+                .findById(new ProductFacility.ProductFacilityId(entry.getKey(), input.getToFacilityId()))
+                .orElseGet(() -> {
+                    ProductFacility newProductFacility = new ProductFacility();
+                    newProductFacility.setId(new ProductFacility.ProductFacilityId(
+                        entry.getKey(),
+                        input.getToFacilityId()));
+                    newProductFacility.setQuantityOnHand(0);
+                    return newProductFacility;
+                });
+            productFacility.setQuantityOnHand(productFacility.getQuantityOnHand() + entry.getValue());
 
+//            List<ProductFacility> productFacilities = productFacilityRepository.findAllByProductIdAndFacilityId(
+//                entry.getKey(),
+//                input.getToFacilityId());
+//            if (productFacilities != null && productFacilities.size() > 0) {
+//                productFacility = productFacilities.get(0);
+//                productFacility.setQuantityOnHand(productFacility.getQuantityOnHand() + entry.getValue());
+//            } else {
+//                productFacility = new ProductFacility();
+//                productFacility.setId(new ProductFacility.ProductFacilityId(entry.getKey(), input.getToFacilityId()));
+//                productFacility.setQuantityOnHand(entry.getValue());
+//            }
+            productFacilities.add(productFacility);
         }
 
         inventoryItems = inventoryItemRepository.saveAll(inventoryItems);
+
+        productFacilityRepository.saveAll(productFacilities);
 
         return purchaseOrder;
     }
@@ -197,8 +211,14 @@ public class LogisticServiceImpl implements LogisticService {
     }
 
     @Override
-    public List<InventoryItem> findAllInventoryItemOfProductFromFacilityAndPositiveQuantityOnHand(String facilityId, String productId) {
-        return inventoryItemRepository.findAllByFacilityIdAndProductIdAndQuantityOnHandTotalGreaterThan(facilityId,productId,0);
+    public List<InventoryItem> findAllInventoryItemOfProductFromFacilityAndPositiveQuantityOnHand(
+        String facilityId,
+        String productId
+    ) {
+        return inventoryItemRepository.findAllByFacilityIdAndProductIdAndQuantityOnHandTotalGreaterThan(
+            facilityId,
+            productId,
+            0);
     }
 
 

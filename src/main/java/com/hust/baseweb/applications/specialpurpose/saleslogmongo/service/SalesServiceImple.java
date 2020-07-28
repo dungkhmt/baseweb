@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SalesServiceImple implements SalesService {
+
     private final OrderItemRepository orderItemRepository;
     private final SalesOrderRepository salesOrderRepository;
 
@@ -57,27 +58,31 @@ public class SalesServiceImple implements SalesService {
         List<InventoryItemDetail> inventoryItemDetails = new ArrayList<>();
         for (OrderItem orderItem : orderItems) {
             List<InventoryItem> inventoryItems = inventoryItemRepository.findAllByFacilityIdAndProductIdAndQuantityOnHandTotalGreaterThan(
-                input.getFromFacilityId(), orderItem.getProductId(),0
+                input.getFromFacilityId(), orderItem.getProductId(), 0
             );
             // sort inventory items in an increasing order of quantityOnHand
             InventoryItem[] a = new InventoryItem[inventoryItems.size()];
-            for(int i = 0; i < inventoryItems.size(); i++) a[i] = inventoryItems.get(i);
-            for(int i = 0; i < a.length; i++){
-                for(int j = i+1; j < a.length; j++){
-                    if(a[i].getQuantityOnHandTotal() > a[j].getQuantityOnHandTotal()){
-                        InventoryItem tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+            for (int i = 0; i < inventoryItems.size(); i++) {
+                a[i] = inventoryItems.get(i);
+            }
+            for (int i = 0; i < a.length; i++) {
+                for (int j = i + 1; j < a.length; j++) {
+                    if (a[i].getQuantityOnHandTotal() > a[j].getQuantityOnHandTotal()) {
+                        InventoryItem tmp = a[i];
+                        a[i] = a[j];
+                        a[j] = tmp;
                     }
                 }
             }
             int remainQty = orderItem.getQuantity();
-            for(int i = 0; i < a.length; i++) {
+            for (int i = 0; i < a.length; i++) {
                 int qtyDiff = 0;
                 if (remainQty <= a[i].getQuantityOnHandTotal()) {
                     a[i].setQuantityOnHandTotal(a[i].getQuantityOnHandTotal() - remainQty);
                     inventoryItemRepository.save(a[i]);
                     qtyDiff = remainQty;
                     break;
-                }else{
+                } else {
                     a[i].setQuantityOnHandTotal(0);
                     remainQty -= a[i].getQuantityOnHandTotal();
                     inventoryItemRepository.save(a[i]);
@@ -91,12 +96,12 @@ public class SalesServiceImple implements SalesService {
             }
 
             // update to product_facility
-            List<ProductFacility> productFacilities = productFacilityRepository.findAllByProductIdAndFacilityId(orderItem.getProductId(),input.getFromFacilityId());
-            // TODO to be improved
-            ProductFacility productFacility = productFacilities.get(0);
+            ProductFacility productFacility = productFacilityRepository.findById(new ProductFacility.ProductFacilityId(
+                orderItem.getProductId(),
+                input.getFromFacilityId())).orElseThrow(NoSuchElementException::new);
+            // DONE to be improved
             productFacility.setQuantityOnHand(productFacility.getQuantityOnHand() - orderItem.getQuantity());
             productFacilityRepository.save(productFacility);
-
         }
 
         /*
@@ -120,7 +125,7 @@ public class SalesServiceImple implements SalesService {
     @Override
     public Customer createCusstomerOfSalesman(String salesmanId, String customerName, String address) {
         String customerId = UUID.randomUUID().toString();
-        Organization organization = new Organization(customerId,customerName,address);
+        Organization organization = new Organization(customerId, customerName, address);
         organizationRepository.save(organization);
         Customer customer = new Customer(customerId);
         customerRepository.save(customer);
@@ -137,8 +142,10 @@ public class SalesServiceImple implements SalesService {
     @Override
     public List<Customer> getCustomersOfSalesman(String salesmanId) {
         List<UserLoginCustomer> userLoginCustomers =
-            userLoginCustomerRepository.findAllByUserLoginIdAndUserLoginOrganizationRelationTypeAndThruDate(salesmanId,
-                                                                                                            UserLoginOrganizationRelationType.SALESMAN_SELL_TO_CUSTOMER, null);
+            userLoginCustomerRepository.findAllByUserLoginIdAndUserLoginOrganizationRelationTypeAndThruDate(
+                salesmanId,
+                UserLoginOrganizationRelationType.SALESMAN_SELL_TO_CUSTOMER,
+                null);
         List<String> customerIds = userLoginCustomers.stream().map(UserLoginCustomer::getOrganizationId).
             distinct().collect(
             Collectors.toList());
