@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.common.UserLoginFacilityRelationType;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.*;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreatePurchaseOrderInputModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.FacilityModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.GetInventoryItemOutputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.*;
 import lombok.AllArgsConstructor;
@@ -178,7 +179,7 @@ public class LogisticServiceImpl implements LogisticService {
 
 
     @Override
-    public List<Facility> getFacilityOfSalesman(String salesmanId) {
+    public List<FacilityModel> getFacilityOfSalesman(String salesmanId) {
         List<UserLoginFacility> userLoginFacilities = userLoginFacilityRepository.findByUserLoginIdAndUserLoginFacilityRelationTypeAndThruDate(
             salesmanId,
             UserLoginFacilityRelationType.SALESMAN_SELL_FROM_FACILITY,
@@ -190,7 +191,14 @@ public class LogisticServiceImpl implements LogisticService {
             .distinct()
             .collect(Collectors.toList());
 
-        return facilityRepository.findAllByFacilityIdIn(facilityIds);
+        List<Facility> facility = facilityRepository.findAllByFacilityIdIn(facilityIds);
+        List<FacilityModel> facilityModels = new ArrayList<FacilityModel>();
+        List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(facilityIds);
+        for(Organization organization: organizations){
+            FacilityModel facilityModel = new FacilityModel(organization.getOrganizationId(),organization.getOrganizationName(), organization.getAddress());
+            facilityModels.add(facilityModel);
+        }
+        return facilityModels;
 
 //        List<Facility> facilities = new ArrayList<Facility>();
 //        log.info("getFacilityOfSalesman, salesmanId = " +
@@ -239,6 +247,20 @@ public class LogisticServiceImpl implements LogisticService {
             facilityId,
             productId,
             0);
+    }
+
+    @Override
+    public Product createProduct(String productId, String productName) {
+        Product product = productRepository.findByProductId(productId);
+        if(product != null){
+            log.info("createProduct -> ProductId " + productId + " EXISTS!!!!");
+            return null;
+        }
+        product = new Product();
+        product.setProductId(productId);
+        product.setProductName(productName);
+        productRepository.save(product);
+        return product;
     }
 
     @Override

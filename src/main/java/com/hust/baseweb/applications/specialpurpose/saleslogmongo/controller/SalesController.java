@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.logistics.service.LogisticsService;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Customer;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateCustomerInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CustomerModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.ProductModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.LogisticService;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.MongoProductService;
@@ -60,7 +61,7 @@ public class SalesController {
     public ResponseEntity<?> getCustomerOfUserLogin(Principal principal){
         // TODO: get list of customers managed by current user login, use SalesmanCustomer, Organization  collections
         UserLogin userLogin = userService.findById(principal.getName());
-        List<Customer> customerList = salesService.getCustomersOfSalesman(userLogin.getUserLoginId());
+        List<CustomerModel> customerList = salesService.getCustomersOfSalesman(userLogin.getUserLoginId());
         return ResponseEntity.ok().body(customerList);
         
     }

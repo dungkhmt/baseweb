@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.common.UserLoginOrganizationRelationType;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.*;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CustomerModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.OrderItemModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.*;
 import lombok.AllArgsConstructor;
@@ -143,7 +144,7 @@ public class SalesServiceImple implements SalesService {
     }
 
     @Override
-    public List<Customer> getCustomersOfSalesman(String salesmanId) {
+    public List<CustomerModel> getCustomersOfSalesman(String salesmanId) {
         List<UserLoginCustomer> userLoginCustomers =
             userLoginCustomerRepository.findAllByUserLoginIdAndUserLoginOrganizationRelationTypeAndThruDate(
                 salesmanId,
@@ -153,7 +154,15 @@ public class SalesServiceImple implements SalesService {
             distinct().collect(
             Collectors.toList());
 
-        return customerRepository.findAllByCustomerIdIn(customerIds);
+        List<Customer> customers = customerRepository.findAllByCustomerIdIn(customerIds);
+
+        List<CustomerModel> customerModels = new ArrayList<CustomerModel>();
+        List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(customerIds);
+        for(Organization organization: organizations){
+            CustomerModel customerModel = new CustomerModel(organization.getOrganizationId(),organization.getOrganizationName(),organization.getAddress());
+            customerModels.add(customerModel);
+        }
+        return customerModels;
     }
 
     @Override
