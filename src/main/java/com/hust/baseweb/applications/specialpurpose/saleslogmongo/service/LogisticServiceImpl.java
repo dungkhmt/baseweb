@@ -264,6 +264,12 @@ public class LogisticServiceImpl implements LogisticService {
     }
 
     @Override
+    public List<Product> findAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return products;
+    }
+
+    @Override
     public void removeAllRunningData() {
         purchaseOrderRepository.deleteAll();
         inventoryItemRepository.deleteAll();

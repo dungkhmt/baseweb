@@ -26,12 +26,17 @@ import java.util.List;
 public class LogisticController {
     private UserService userService;
     private final LogisticService logisticService;
-    private final ProductService productService;
+
 
     @PostMapping("mongo/create-product")
     public ResponseEntity<?> createProduct(Principal principal, @RequestBody CreateProductInputModel input){
         Product product = logisticService.createProduct(input.getProductId(), input.getProductName());
         return ResponseEntity.ok().body(product);
+    }
+
+    @GetMapping("/mongo/get-list-products")
+    public ResponseEntity<?> getListProducts(Principal principal){
+        return ResponseEntity.ok().body(logisticService.findAllProducts());
     }
 
     @PostMapping("/mongo/create-purchase-order")

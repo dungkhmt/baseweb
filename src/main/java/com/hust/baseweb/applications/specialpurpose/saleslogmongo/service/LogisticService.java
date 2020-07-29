@@ -26,6 +26,7 @@ public interface LogisticService {
     List<InventoryItem> findAllInventoryItemOfProductFromFacilityAndPositiveQuantityOnHand(String facilityId, String productId);
 
     Product createProduct(String productId, String productName);
+    List<Product> findAllProducts();
 
     void removeAllRunningData();
 }
