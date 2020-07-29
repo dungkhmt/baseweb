@@ -28,5 +28,6 @@ public class PurchaseOrder {
     private String poStaffId;
     private String toFacilityId;
 
-    private List<ObjectId> orderItemIds;
+    //private List<ObjectId> orderItemIds;
+    private List<OrderItem> orderItems;
 }

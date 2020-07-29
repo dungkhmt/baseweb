@@ -43,6 +43,7 @@ public class LogisticController {
         @ApiParam(value = "Kho cần xem thông tin") @PathVariable String facilityId
     ) {
         return ResponseEntity.ok(logisticService.getInventoryItems(facilityId));
+
     }
 
     @PostMapping("/mongo/create-facility-of-user-login-salesman")

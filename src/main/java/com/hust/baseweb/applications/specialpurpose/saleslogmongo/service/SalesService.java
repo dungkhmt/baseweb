@@ -15,4 +15,6 @@ public interface SalesService {
 
     Customer createCusstomerOfSalesman(String salesmanId, String customerName, String address);
     List<Customer> getCustomersOfSalesman(String salesmanId);
+
+    void deleteAllRunningData();
 }

@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.service;
 
+import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.common.UserLoginFacilityRelationType;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.*;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreatePurchaseOrderInputModel;
@@ -47,10 +48,11 @@ public class LogisticServiceImpl implements LogisticService {
             .map(orderItemModel -> modelMapper.map(orderItemModel, OrderItem.class))
             .collect(Collectors.toList());
 
-        orderItems = orderItemRepository.saveAll(orderItems);
+        //orderItems = orderItemRepository.saveAll(orderItems);
 
         PurchaseOrder purchaseOrder = input.toPurchaseOrder();
-        purchaseOrder.setOrderItemIds(orderItems.stream().map(OrderItem::getOrderItemId).collect(Collectors.toList()));
+        //purchaseOrder.setOrderItemIds(orderItems.stream().map(OrderItem::getOrderItemId).collect(Collectors.toList()));
+        purchaseOrder.setOrderItems(orderItems);
 
         purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
 
@@ -110,6 +112,22 @@ public class LogisticServiceImpl implements LogisticService {
 
     @Override
     public GetInventoryItemOutputModel getInventoryItems(String facilityId) {
+        List<ProductFacility> productFacilities = productFacilityRepository.findAllById_FacilityId(facilityId);
+        GetInventoryItemOutputModel getInventoryItemOutputModel = new GetInventoryItemOutputModel();
+        Facility facility = facilityRepository.findByFacilityId(facilityId);
+        getInventoryItemOutputModel.setFacility(facility);
+        List<GetInventoryItemOutputModel.ProductQuantity> productQuantities = new ArrayList<>();
+        for(ProductFacility productFacility: productFacilities){
+            Product product = productRepository.findByProductId(productFacility.getId().getProductId());
+            int qty = productFacility.getQuantityOnHand();
+            productQuantities.add(new GetInventoryItemOutputModel.ProductQuantity(product,qty));
+        }
+        getInventoryItemOutputModel.setProductQuantities(productQuantities);
+
+        return getInventoryItemOutputModel;
+
+        /*
+
         Facility facility = facilityRepository.findById(facilityId).orElse(null);
         if (facility == null) {
             return new GetInventoryItemOutputModel();
@@ -155,7 +173,9 @@ public class LogisticServiceImpl implements LogisticService {
         }
 
         return getInventoryItemOutputModel;
+        */
     }
+
 
     @Override
     public List<Facility> getFacilityOfSalesman(String salesmanId) {
@@ -219,6 +239,14 @@ public class LogisticServiceImpl implements LogisticService {
             facilityId,
             productId,
             0);
+    }
+
+    @Override
+    public void removeAllRunningData() {
+        purchaseOrderRepository.deleteAll();
+        inventoryItemRepository.deleteAll();
+        productFacilityRepository.deleteAll();
+
     }
 
 

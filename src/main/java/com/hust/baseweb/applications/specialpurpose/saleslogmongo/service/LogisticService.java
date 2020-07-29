@@ -22,4 +22,7 @@ public interface LogisticService {
     Facility createFacilityOfSalesman(String salesmanId, String facilityName, String address);
 
     List<InventoryItem> findAllInventoryItemOfProductFromFacilityAndPositiveQuantityOnHand(String facilityId, String productId);
+
+
+    void removeAllRunningData();
 }

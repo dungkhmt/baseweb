@@ -1,8 +1,10 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.service;
 
+import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.common.UserLoginOrganizationRelationType;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.*;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.OrderItemModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -42,7 +44,8 @@ public class SalesServiceImple implements SalesService {
         orderItems = orderItemRepository.saveAll(orderItems);
 
         SalesOrder salesOrder = input.toSalesOrder();
-        salesOrder.setOrderItemIds(orderItems.stream().map(OrderItem::getOrderItemId).collect(Collectors.toList()));
+        //salesOrder.setOrderItemIds(orderItems.stream().map(OrderItem::getOrderItemId).collect(Collectors.toList()));
+        salesOrder.setOrderItems(orderItems);
 
         salesOrder = salesOrderRepository.save(salesOrder);
 
@@ -151,6 +154,14 @@ public class SalesServiceImple implements SalesService {
             Collectors.toList());
 
         return customerRepository.findAllByCustomerIdIn(customerIds);
+    }
+
+    @Override
+    public void deleteAllRunningData() {
+        salesOrderRepository.deleteAll();
+        inventoryItemDetailRepository.deleteAll();
+        productFacilityRepository.deleteAll();
+        inventoryItemRepository.deleteAll();
     }
 }
 

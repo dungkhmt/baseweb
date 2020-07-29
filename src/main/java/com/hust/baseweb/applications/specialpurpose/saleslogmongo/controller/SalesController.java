@@ -1,9 +1,11 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.controller;
 
+import com.hust.baseweb.applications.logistics.service.LogisticsService;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Customer;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateCustomerInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.ProductModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.LogisticService;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.MongoProductService;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.SalesService;
 import com.hust.baseweb.entity.UserLogin;
@@ -27,6 +29,7 @@ public class SalesController {
 
     private final SalesService salesService;
     private final MongoProductService mongoProductService;
+    private final LogisticService logisticsService;
 
     @PostMapping("/mongo/create-sales-order")
     @ApiOperation(value = "Tạo đơn bán")
@@ -34,6 +37,13 @@ public class SalesController {
         //UserLogin u = userService.findById(principal.getName());
 
         return ResponseEntity.ok(salesService.createSalesOrder(input));
+    }
+
+    @GetMapping("/mongo/delete-all-sales-logistics")
+    public ResponseEntity<?> deleteAllSalesLogisticsData(Principal principal){
+        salesService.deleteAllRunningData();
+        logisticsService.removeAllRunningData();
+        return ResponseEntity.ok().body("remove all running data OK");
     }
 
     @PostMapping("/mongo/create-customer-of-salesman")

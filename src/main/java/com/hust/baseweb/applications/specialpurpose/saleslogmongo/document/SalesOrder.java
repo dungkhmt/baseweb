@@ -27,6 +27,6 @@ public class SalesOrder {
     private String salesmanId; // userlogin of salesman
     private String fromFacilityId;
 
-    private List<ObjectId> orderItemIds;
-
+    //private List<ObjectId> orderItemIds;
+    private List<OrderItem> orderItems;
 }
