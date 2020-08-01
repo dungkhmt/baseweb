@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 @ApiModel("Sản phẩm")
-@Document("products")
+@Document("product")
 public class Product {
 
     @Id

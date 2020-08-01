@@ -9,7 +9,6 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -24,10 +23,10 @@ public class SalesOrder {
     private ObjectId salesOrderId;
 
     private String customerOrganizationId;
-    private Date orderDate;
-    private ObjectId salesmanId; // userlogin of salesman
+    private String orderDate;
+    private String salesmanId; // userlogin of salesman
     private String fromFacilityId;
 
-    private List<ObjectId> orderItemIds;
-
+    //private List<ObjectId> orderItemIds;
+    private List<OrderItem> orderItems;
 }

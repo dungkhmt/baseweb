@@ -1,9 +1,10 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.controller;
 
+import com.hust.baseweb.applications.logistics.service.ProductService;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Facility;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateFacilityInputModel;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreatePurchaseOrderInputModel;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.GetInventoryItemOutputModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Product;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.*;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.ProductRepository;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.LogisticService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
@@ -26,6 +27,18 @@ public class LogisticController {
     private UserService userService;
     private final LogisticService logisticService;
 
+
+    @PostMapping("mongo/create-product")
+    public ResponseEntity<?> createProduct(Principal principal, @RequestBody CreateProductInputModel input){
+        Product product = logisticService.createProduct(input.getProductId(), input.getProductName());
+        return ResponseEntity.ok().body(product);
+    }
+
+    @GetMapping("/mongo/get-list-products")
+    public ResponseEntity<?> getListProducts(Principal principal){
+        return ResponseEntity.ok().body(logisticService.findAllProducts());
+    }
+
     @PostMapping("/mongo/create-purchase-order")
     @ApiOperation(value = "Tạo đơn mua")
     public ResponseEntity<?> createPurchaseOrder(
@@ -43,6 +56,7 @@ public class LogisticController {
         @ApiParam(value = "Kho cần xem thông tin") @PathVariable String facilityId
     ) {
         return ResponseEntity.ok(logisticService.getInventoryItems(facilityId));
+
     }
 
     @PostMapping("/mongo/create-facility-of-user-login-salesman")
@@ -58,7 +72,7 @@ public class LogisticController {
     @ApiOperation(value = "tra ve DS cac facility ma userlogin salesman hien tai cos quyen ban hang tu kho do")
     public ResponseEntity<?> getListFacilityOfUserLogin(Principal principal){
         UserLogin u = userService.findById(principal.getName());
-        List<Facility> facilityList = logisticService.getFacilityOfSalesman(u.getUserLoginId());
+        List<FacilityModel> facilityList = logisticService.getFacilityOfSalesman(u.getUserLoginId());
         return ResponseEntity.ok().body(facilityList);
     }
 }
