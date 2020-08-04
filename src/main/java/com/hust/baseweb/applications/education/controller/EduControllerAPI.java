@@ -5,11 +5,13 @@ import com.hust.baseweb.applications.education.entity.EduCourse;
 import com.hust.baseweb.applications.education.entity.EduSemester;
 import com.hust.baseweb.applications.education.entity.EduTeacher;
 import com.hust.baseweb.applications.education.entity.mongodb.Course;
+import com.hust.baseweb.applications.education.entity.mongodb.Teacher;
 import com.hust.baseweb.applications.education.model.*;
-import com.hust.baseweb.applications.education.mongoservice.CourseService;
 import com.hust.baseweb.applications.education.repo.EduAssignmentRepo.EduClassTeacherAssignmentOutputModel;
 import com.hust.baseweb.applications.education.repo.EduCourseRepo;
 import com.hust.baseweb.applications.education.service.*;
+import com.hust.baseweb.applications.education.service.mongodb.CourseService;
+import com.hust.baseweb.applications.education.service.mongodb.TeacherService;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
 import com.poiji.option.PoijiOptions;
@@ -31,7 +33,7 @@ public class EduControllerAPI {
 
     EduCourseRepo eduCourseRepo;
     UploadExcelService uploadService;
-    EduTeacherService teacherService;
+    EduTeacherService eduTeacherService;
     EduCourseService eduCourseService;
     EduClassService classService;
     EduAssignmentService assignmentService;
@@ -39,6 +41,7 @@ public class EduControllerAPI {
     EduCourseTeacherPreferenceService preferenceService;
     EduDepartmentService departmentService;
     CourseService courseService;
+    TeacherService teacherService;
 
     @GetMapping("edu/get-all-department")
     public ResponseEntity<?> getAllDepartment(Principal principal) {
@@ -47,18 +50,18 @@ public class EduControllerAPI {
 
     @GetMapping("edu/get-teacher-info/{teacherId}")
     public ResponseEntity<?> getTeacherInfo(Principal principal, @PathVariable String teacherId) {
-        return ResponseEntity.ok(teacherService.findByTeacherId(teacherId));
+        return ResponseEntity.ok(eduTeacherService.findByTeacherId(teacherId));
     }
 
     @GetMapping("edu/get-all-teachers")
     public ResponseEntity<?> getAllTeacher(Principal principal) {
-        return ResponseEntity.ok(teacherService.findAll());
+        return ResponseEntity.ok(eduTeacherService.findAll());
     }
 
     @PostMapping("edu/create-teacher")
     public ResponseEntity<?> createTeacher(Principal principal, @RequestBody CreateTeacherInputModel input) {
-        EduTeacher result = teacherService.save(input.getEmail(), input.getTeacherName(), input.getEmail(),
-                                                input.getMaxCredit());
+        EduTeacher result = eduTeacherService.save(input.getEmail(), input.getTeacherName(), input.getEmail(),
+                                                   input.getMaxCredit());
         log.info("createTeacher, teacher " + result.getEmail() + " saved.");
         return ResponseEntity.ok().body(result);
     }
@@ -247,4 +250,44 @@ public class EduControllerAPI {
     public ResponseEntity<?> getAllCourses() {
         return ResponseEntity.ok().body(courseService.getAllCourses());
     }
+
+    /**
+     * Upload list of teachers. Before inserting, a {@link Teacher} in pairs of teachers with the same <b>email</b>
+     * wil be removed.
+     *
+     * @param principal
+     * @param teachers
+     * @return message
+     */
+    @PostMapping("edu/teacher/add-list-of-teachers")
+    public ResponseEntity<?> uploadListOfTeachers(Principal principal, @RequestBody List<Teacher> teachers) {
+        Teacher teacher;
+        int len = teachers.size() - 1;
+
+        for (int i = 0; i < len; i++) {
+            teacher = teachers.get(i);
+
+            for (int j = i + 1; j < teachers.size(); j++) {
+                if (teacher.getEmail().equalsIgnoreCase(teachers.get(j).getEmail())) {
+                    teachers.remove(j);
+                    len--;
+                }
+            }
+        }
+
+        teacherService.uploadListOfTeachers(teachers);
+        return ResponseEntity.ok().body("Đã lưu");
+    }
+
+    /**
+     * Return list all teachers.
+     *
+     * @return list of {@link Teacher}
+     * @author AnhTuan-AiT (anhtuan0126104@gmail.com)
+     */
+    @GetMapping("edu/teacher/all")
+    public ResponseEntity<?> getAllTeachers() {
+        return ResponseEntity.ok().body(teacherService.getAllTeachers());
+    }
+
 }
