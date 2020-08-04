@@ -1,4 +1,4 @@
-package com.hust.baseweb.applications.education.mongoservice;
+package com.hust.baseweb.applications.education.service.mongodb;
 
 import com.hust.baseweb.applications.education.entity.mongodb.Course;
 import com.hust.baseweb.applications.education.repo.mongodb.CourseRepo;
@@ -13,9 +13,9 @@ public class CourseServiceImpl implements CourseService {
     CourseRepo courseRepo;
 
     @Override
-    public void uploadListOfCourses(List<Course> courseList) {
+    public void uploadListOfCourses(List<Course> courses) {
         courseRepo.deleteAll();
-        courseRepo.insert(courseList);
+        courseRepo.insert(courses);
     }
 
     @Override

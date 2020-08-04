@@ -1,4 +1,4 @@
-package com.hust.baseweb.applications.education.mongoservice;
+package com.hust.baseweb.applications.education.service.mongodb;
 
 import com.hust.baseweb.applications.education.entity.mongodb.Course;
 import org.springframework.stereotype.Service;
