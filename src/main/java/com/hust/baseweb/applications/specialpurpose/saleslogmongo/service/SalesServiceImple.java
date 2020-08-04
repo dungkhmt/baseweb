@@ -1,11 +1,9 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.service;
 
-import com.hust.baseweb.applications.order.entity.OrderRole;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.common.UserLoginOrganizationRelationType;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.*;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CustomerModel;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.OrderItemModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -13,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -100,9 +101,12 @@ public class SalesServiceImple implements SalesService {
             }
 
             // update to product_facility
-            ProductFacility productFacility = productFacilityRepository.findById(new ProductFacility.ProductFacilityId(
+            ProductFacility.ProductFacilityId productFacilityId = new ProductFacility.ProductFacilityId(
                 orderItem.getProductId(),
-                input.getFromFacilityId())).orElseThrow(NoSuchElementException::new);
+                input.getFromFacilityId());
+            ProductFacility productFacility = productFacilityRepository
+                .findById(productFacilityId)
+                .orElse(new ProductFacility(productFacilityId, 0));
             // DONE to be improved
             productFacility.setQuantityOnHand(productFacility.getQuantityOnHand() - orderItem.getQuantity());
             productFacilityRepository.save(productFacility);
@@ -158,8 +162,11 @@ public class SalesServiceImple implements SalesService {
 
         List<CustomerModel> customerModels = new ArrayList<CustomerModel>();
         List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(customerIds);
-        for(Organization organization: organizations){
-            CustomerModel customerModel = new CustomerModel(organization.getOrganizationId(),organization.getOrganizationName(),organization.getAddress());
+        for (Organization organization : organizations) {
+            CustomerModel customerModel = new CustomerModel(
+                organization.getOrganizationId(),
+                organization.getOrganizationName(),
+                organization.getAddress());
             customerModels.add(customerModel);
         }
         return customerModels;
