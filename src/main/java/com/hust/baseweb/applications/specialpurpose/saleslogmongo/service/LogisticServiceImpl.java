@@ -1,5 +1,7 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.service;
 
+import com.hust.baseweb.applications.logistics.entity.Uom;
+import com.hust.baseweb.applications.logistics.repo.UomRepo;
 import com.hust.baseweb.applications.order.entity.OrderHeader;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.common.UserLoginFacilityRelationType;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.*;
@@ -37,6 +39,8 @@ public class LogisticServiceImpl implements LogisticService {
     private final UserLoginFacilityRepository userLoginFacilityRepository;
     private final OrganizationRepository organizationRepository;
     private final ProductFacilityRepository productFacilityRepository;
+
+    private final UomRepo uomRepo;
 
     @Override
     @Transactional
@@ -191,7 +195,7 @@ public class LogisticServiceImpl implements LogisticService {
             .distinct()
             .collect(Collectors.toList());
 
-        List<Facility> facility = facilityRepository.findAllByFacilityIdIn(facilityIds);
+        //List<Facility> facility = facilityRepository.findAllByFacilityIdIn(facilityIds);
         List<FacilityModel> facilityModels = new ArrayList<FacilityModel>();
         List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(facilityIds);
         for(Organization organization: organizations){
@@ -211,6 +215,20 @@ public class LogisticServiceImpl implements LogisticService {
 //            log.info("getFacilityOfSalesman, facility in userLoginFacility " + uf.getFacilityId());
 //        }
 //        return facilities;
+    }
+
+    @Override
+    public List<FacilityModel> getAllFacilities() {
+        List<Facility> facilities = facilityRepository.findAll();
+        List<String> facilityIds = facilities.stream().map(Facility::getFacilityId).collect(Collectors.toList());
+        List<FacilityModel> facilityModels = new ArrayList<FacilityModel>();
+        List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(facilityIds);
+        for(Organization organization: organizations){
+            FacilityModel facilityModel = new FacilityModel(organization.getOrganizationId(),organization.getOrganizationName(), organization.getAddress());
+            facilityModels.add(facilityModel);
+        }
+        return facilityModels;
+
     }
 
     @Override
@@ -250,15 +268,21 @@ public class LogisticServiceImpl implements LogisticService {
     }
 
     @Override
-    public Product createProduct(String productId, String productName) {
+    public Product createProduct(String productId, String productName, String uomId) {
         Product product = productRepository.findByProductId(productId);
         if(product != null){
             log.info("createProduct -> ProductId " + productId + " EXISTS!!!!");
             return null;
         }
+        Uom uom = uomRepo.findByUomId(uomId);
+
         product = new Product();
         product.setProductId(productId);
         product.setProductName(productName);
+        if(uom != null) {
+            product.setUomId(uom.getUomId());
+            product.setUomDescription(uom.getDescription());
+        }
         productRepository.save(product);
         return product;
     }

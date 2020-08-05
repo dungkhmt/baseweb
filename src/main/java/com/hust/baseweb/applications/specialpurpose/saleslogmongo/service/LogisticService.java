@@ -20,12 +20,13 @@ public interface LogisticService {
     GetInventoryItemOutputModel getInventoryItems(String facilityId);
 
     List<FacilityModel> getFacilityOfSalesman(String salesmanId);
+    List<FacilityModel> getAllFacilities();
 
     Facility createFacilityOfSalesman(String salesmanId, String facilityName, String address);
 
     List<InventoryItem> findAllInventoryItemOfProductFromFacilityAndPositiveQuantityOnHand(String facilityId, String productId);
 
-    Product createProduct(String productId, String productName);
+    Product createProduct(String productId, String productName, String uomId);
     List<Product> findAllProducts();
 
     void removeAllRunningData();

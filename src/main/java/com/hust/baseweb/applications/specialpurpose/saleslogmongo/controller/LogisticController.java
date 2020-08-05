@@ -30,7 +30,7 @@ public class LogisticController {
 
     @PostMapping("mongo/create-product")
     public ResponseEntity<?> createProduct(Principal principal, @RequestBody CreateProductInputModel input){
-        Product product = logisticService.createProduct(input.getProductId(), input.getProductName());
+        Product product = logisticService.createProduct(input.getProductId(), input.getProductName(),input.getUomId());
         return ResponseEntity.ok().body(product);
     }
 
@@ -74,5 +74,10 @@ public class LogisticController {
         UserLogin u = userService.findById(principal.getName());
         List<FacilityModel> facilityList = logisticService.getFacilityOfSalesman(u.getUserLoginId());
         return ResponseEntity.ok().body(facilityList);
+    }
+
+    @GetMapping("mongo/get-all-facility")
+    public ResponseEntity<?> getAllFacilities(Principal principal){
+        return ResponseEntity.ok().body(logisticService.getAllFacilities());
     }
 }

@@ -12,4 +12,5 @@ import lombok.Setter;
 public class CreateProductInputModel {
     private String productId;
     private String productName;
+    private String uomId;
 }
