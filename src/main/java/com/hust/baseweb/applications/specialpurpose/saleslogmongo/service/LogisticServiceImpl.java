@@ -9,6 +9,7 @@ import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreatePu
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.FacilityModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.GetInventoryItemOutputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.*;
+import com.hust.baseweb.entity.UserLogin;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
@@ -182,6 +183,7 @@ public class LogisticServiceImpl implements LogisticService {
     }
 
 
+
     @Override
     public List<FacilityModel> getFacilityOfSalesman(String salesmanId) {
         List<UserLoginFacility> userLoginFacilities = userLoginFacilityRepository.findByUserLoginIdAndUserLoginFacilityRelationTypeAndThruDate(
@@ -199,7 +201,8 @@ public class LogisticServiceImpl implements LogisticService {
         List<FacilityModel> facilityModels = new ArrayList<FacilityModel>();
         List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(facilityIds);
         for(Organization organization: organizations){
-            FacilityModel facilityModel = new FacilityModel(organization.getOrganizationId(),organization.getOrganizationName(), organization.getAddress());
+
+            FacilityModel facilityModel = new FacilityModel(organization.getOrganizationId(),organization.getOrganizationName(), organization.getAddress(), salesmanId);
             facilityModels.add(facilityModel);
         }
         return facilityModels;
@@ -217,6 +220,16 @@ public class LogisticServiceImpl implements LogisticService {
 //        return facilities;
     }
 
+    private String getUserLoginIdCreateFacility(String facilityId){
+        List<UserLoginFacility> userLoginFacilities = userLoginFacilityRepository.findByFacilityIdAndUserLoginFacilityRelationTypeAndThruDate(facilityId,
+                                                                                                                                              UserLoginFacilityRelationType.SALESMAN_SELL_FROM_FACILITY,
+                                                                                                                                              null
+                                                                                                                                              );
+        if(userLoginFacilities != null && userLoginFacilities.size() > 0){
+            return userLoginFacilities.get(0).getUserLoginId();
+        }
+        return null;
+    }
     @Override
     public List<FacilityModel> getAllFacilities() {
         List<Facility> facilities = facilityRepository.findAll();
@@ -224,7 +237,8 @@ public class LogisticServiceImpl implements LogisticService {
         List<FacilityModel> facilityModels = new ArrayList<FacilityModel>();
         List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(facilityIds);
         for(Organization organization: organizations){
-            FacilityModel facilityModel = new FacilityModel(organization.getOrganizationId(),organization.getOrganizationName(), organization.getAddress());
+            String userLoginId = getUserLoginIdCreateFacility(organization.getOrganizationId());
+            FacilityModel facilityModel = new FacilityModel(organization.getOrganizationId(),organization.getOrganizationName(), organization.getAddress(),userLoginId);
             facilityModels.add(facilityModel);
         }
         return facilityModels;
