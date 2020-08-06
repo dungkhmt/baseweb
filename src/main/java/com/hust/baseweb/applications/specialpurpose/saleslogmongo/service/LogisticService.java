@@ -30,4 +30,6 @@ public interface LogisticService {
     List<Product> findAllProducts();
 
     void removeAllRunningData();
+    void removeAllProductData();
+    void removeAllFacilityData();
 }

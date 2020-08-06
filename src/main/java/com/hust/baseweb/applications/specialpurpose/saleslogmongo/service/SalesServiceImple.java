@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.specialpurpose.saleslogmongo.common.UserLog
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.*;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CustomerModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.SalesOrderViewModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -173,11 +174,32 @@ public class SalesServiceImple implements SalesService {
     }
 
     @Override
+    public List<SalesOrderViewModel> getAllSalesOrders() {
+        List<SalesOrder> salesOrders = salesOrderRepository.findAll();
+        List<SalesOrderViewModel> orderViewModels = new ArrayList<>();
+        
+        return orderViewModels;
+    }
+
+    @Override
     public void deleteAllRunningData() {
         salesOrderRepository.deleteAll();
         inventoryItemDetailRepository.deleteAll();
         productFacilityRepository.deleteAll();
         inventoryItemRepository.deleteAll();
+    }
+
+    @Override
+    public void removeAllCustomerData() {
+        List<Customer> customers = customerRepository.findAll();
+        List<String> customerIds = customers.stream().map(Customer::getCustomerId).collect(Collectors.toList());
+
+        List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(customerIds);
+
+        for(Organization organization: organizations){
+            organizationRepository.delete(organization);
+        }
+        customerRepository.deleteAll();
     }
 }
 

@@ -301,5 +301,21 @@ public class LogisticServiceImpl implements LogisticService {
 
     }
 
+    @Override
+    public void removeAllProductData() {
+        productRepository.deleteAll();
+    }
+
+    @Override
+    public void removeAllFacilityData() {
+        List<Facility> facilities = facilityRepository.findAll();
+        List<String> facilityIds = facilities.stream().map(Facility::getFacilityId).collect(Collectors.toList());
+        List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(facilityIds);
+        for(Organization organization: organizations){
+            organizationRepository.delete(organization);
+        }
+        facilityRepository.deleteAll();
+    }
+
 
 }

@@ -10,6 +10,8 @@ import com.hust.baseweb.applications.customer.service.RetailOutletService;
 import com.hust.baseweb.applications.logistics.model.InputModel;
 import com.hust.baseweb.applications.order.repo.PartyCustomerRepo;
 import com.hust.baseweb.applications.order.repo.PartyDistributorRepo;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Customer;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.SalesService;
 import com.hust.baseweb.entity.PartyRelationship;
 import com.hust.baseweb.entity.RoleType;
 import com.hust.baseweb.entity.UserLogin;
@@ -49,6 +51,7 @@ public class CustomerAPIController {
     private PartyRelationshipService partyRelationshipService;
     private RoleTypeRepo roleTypeRepo;
     private PartyRepo partyRepo;
+    private final SalesService salesService;
 
     @GetMapping("/customers")
     public ResponseEntity<?> getCustomers() {
@@ -97,8 +100,13 @@ public class CustomerAPIController {
 
     @PostMapping("/create-customer")
     public ResponseEntity<?> createCustomer(Principal principal, @RequestBody CreateCustomerInputModel input) {
-        PartyCustomer customer = customerService.save(input);
-        return ResponseEntity.ok().body(customer);
+        PartyCustomer partyCustomer = customerService.save(input);
+
+        // create customer stored in mongoDB
+        UserLogin u = userService.findById(principal.getName());
+        Customer customer = salesService.createCusstomerOfSalesman(u.getUserLoginId(), input.getCustomerName(), input.getAddress());
+
+        return ResponseEntity.ok().body(partyCustomer);
     }
 
     @PostMapping("/create-distributor")

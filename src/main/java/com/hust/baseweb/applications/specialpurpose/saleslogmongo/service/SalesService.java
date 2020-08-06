@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Custo
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.SalesOrder;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CustomerModel;
+import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.SalesOrderViewModel;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface SalesService {
 
     Customer createCusstomerOfSalesman(String salesmanId, String customerName, String address);
     List<CustomerModel> getCustomersOfSalesman(String salesmanId);
+    List<SalesOrderViewModel> getAllSalesOrders();
 
     void deleteAllRunningData();
+    void removeAllCustomerData();
 }

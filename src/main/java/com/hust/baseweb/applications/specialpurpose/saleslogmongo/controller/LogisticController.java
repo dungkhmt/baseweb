@@ -80,4 +80,6 @@ public class LogisticController {
     public ResponseEntity<?> getAllFacilities(Principal principal){
         return ResponseEntity.ok().body(logisticService.getAllFacilities());
     }
+
+
 }

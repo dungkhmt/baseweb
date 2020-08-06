@@ -40,12 +40,7 @@ public class SalesController {
         return ResponseEntity.ok(salesService.createSalesOrder(input));
     }
 
-    @GetMapping("/mongo/delete-all-sales-logistics")
-    public ResponseEntity<?> deleteAllSalesLogisticsData(Principal principal){
-        salesService.deleteAllRunningData();
-        logisticsService.removeAllRunningData();
-        return ResponseEntity.ok().body("remove all running data OK");
-    }
+
 
     @PostMapping("/mongo/create-customer-of-salesman")
     @ApiOperation(value = "tao moi khach hang")

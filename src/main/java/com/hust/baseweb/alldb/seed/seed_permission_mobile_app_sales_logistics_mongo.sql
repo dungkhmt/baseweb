@@ -63,9 +63,6 @@ INSERT INTO public.security_permission
 VALUES ('MOBILE_APP_VIEW_ALL_PRODUCT_FACILITY_ON_HAND', 'View product on hand ALL facility with mobile App');
 
 --application
-INSERT INTO public.application
-(application_id, application_type_id, module_id, permission_id, description)
-VALUES ('MENU_MOBILE', 'MENU', NULL, NULL, 'Menu for mobile app');
 
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description)
