@@ -20,7 +20,13 @@ public class Street {
     @Id
     private String streetId;
     private String streetName;
+    private boolean forCar;
+    private boolean forTruck;
+    private boolean forMotobike;
+    private boolean directional;// one-way
     private List<Point> points;
+
+    private String createdByUserLoginId;
 
     public void addPoint(double lat, double lng, String timestamp){
         Point p = new Point();

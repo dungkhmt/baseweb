@@ -56,7 +56,6 @@ INSERT INTO public.security_permission
     (permission_id, description)
 VALUES ('MOBILE_APP_CREATE_SALES_ORDER_FOR_DISTRIBUTOR',
 'salesman creates sales order of retail outlet for distributor');
-
 --application
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description)

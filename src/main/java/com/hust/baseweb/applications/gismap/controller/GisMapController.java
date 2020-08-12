@@ -33,10 +33,15 @@ public class GisMapController {
         Principal principal,
         @RequestBody InitBuildStreetInputModel input
     ) {
+
         String streetId = UUID.randomUUID().toString();
         Street street = new Street();
         street.setStreetId(streetId);
         street.setStreetName(input.getStreetName());
+        street.setForCar(input.isForCar());
+        street.setForMotobike(input.isForMotobike());
+        street.setForTruck(input.isForTruck());
+        street.setCreatedByUserLoginId(principal.getName());
         mId2Street.put(streetId, street);
         return ResponseEntity.ok().body(street);
     }

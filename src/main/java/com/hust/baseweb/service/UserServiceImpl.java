@@ -216,10 +216,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserRegister.OutputModel> findAllRegisterUser() {
+
+        StatusItem userRegistered = null;
+        try{
+            userRegistered = statusItemRepo
+                .findById("USER_REGISTERED")
+                .orElseThrow(NoSuchElementException::new);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(userRegistered != null){
+            List<UserRegister> userRegisters = userRegisterRepo.findAllByStatusItem(userRegistered);
+            return userRegisters.stream().map(UserRegister::toOutputModel).collect(Collectors.toList());
+        }else{
+            return new ArrayList<>();
+        }
+
+
+        /*
         StatusItem userRegistered = statusItemRepo
             .findById("USER_REGISTERED")
             .orElseThrow(NoSuchElementException::new);
         List<UserRegister> userRegisters = userRegisterRepo.findAllByStatusItem(userRegistered);
         return userRegisters.stream().map(UserRegister::toOutputModel).collect(Collectors.toList());
+        */
+
     }
+
 }
