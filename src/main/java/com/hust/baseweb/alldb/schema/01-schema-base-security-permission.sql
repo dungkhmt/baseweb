@@ -276,9 +276,11 @@ create table party_relationship
 
 create table user_register(
     user_login_id varchar(60),
-    password varchar(20),
-    email varchar(30),
-    full_name varchar(100),
+    password varchar(100),
+    email varchar(100),
+    first_name varchar(100),
+    middle_name varchar(100),
+    last_name  varchar(100),
     status_id varchar(60),
     last_updated_stamp    TIMESTAMP,
     created_stamp         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,

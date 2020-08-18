@@ -22,7 +22,9 @@ public class UserRegister {
     private String userLoginId;      // varchar(60),
     private String password;         // varchar(20),
     private String email;            // varchar(30),
-    private String fullName;         // varchar(100),
+    private String firstName;         // varchar(100),
+    private String middleName;         // varchar(100),
+    private String lastName;         // varchar(100),
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
     @ManyToOne(fetch = FetchType.EAGER)
@@ -37,10 +39,12 @@ public class UserRegister {
         private String userLoginId;      // varchar(60),
         private String password;         // varchar(20),
         private String email;            // varchar(30),
-        private String fullName;         // varchar(100),
+        private String firstName;         // varchar(100),
+        private String middleName;         // varchar(100),
+        private String lastName;         // varchar(100),
 
         public UserRegister createUserRegister(StatusItem statusItem) {
-            return new UserRegister(userLoginId, password, email, fullName, statusItem);
+            return new UserRegister(userLoginId, password, email, firstName, middleName, lastName, statusItem);
         }
     }
 
@@ -52,10 +56,12 @@ public class UserRegister {
 
         private String userLoginId;      // varchar(60),
         private String email;            // varchar(30),
-        private String fullName;         // varchar(100),
+        private String firstName;         // varchar(100),
+        private String middleName;        // varchar(100),
+        private String lastName;          // varchar(100),
     }
 
     public OutputModel toOutputModel() {
-        return new OutputModel(userLoginId, email, fullName);
+        return new OutputModel(userLoginId, email, firstName, middleName, lastName);
     }
 }

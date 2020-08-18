@@ -37,17 +37,17 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     public static final String module = UserService.class.getName();
-    private UserLoginRepo userLoginRepo;
-    private UserRestRepository userRestRepository;
-    private PartyService partyService;
-    private PartyTypeRepo partyTypeRepo;
-    private PartyRepo partyRepo;
-    private StatusRepo statusRepo;
-    private PersonRepo personRepo;
-    private SecurityGroupRepo securityGroupRepo;
-    private UserRegisterRepo userRegisterRepo;
-    private StatusItemRepo statusItemRepo;
-//    private JavaMailSender javaMailSender;
+    private final UserLoginRepo userLoginRepo;
+    private final UserRestRepository userRestRepository;
+    private final PartyService partyService;
+    private final PartyTypeRepo partyTypeRepo;
+    private final PartyRepo partyRepo;
+    private final StatusRepo statusRepo;
+    private final PersonRepo personRepo;
+    private final SecurityGroupRepo securityGroupRepo;
+    private final UserRegisterRepo userRegisterRepo;
+    private final StatusItemRepo statusItemRepo;
+    private final JavaMailSender javaMailSender;
 
     private final static ExecutorService EMAIL_EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
@@ -179,22 +179,22 @@ public class UserServiceImpl implements UserService {
         UserRegister userRegister = inputModel.createUserRegister(userRegistered);
         userRegister = userRegisterRepo.save(userRegister);
 
-//        EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
+        EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
 
         return userRegister.toOutputModel();
     }
 
-//    private void sendEmail(String email, String userLoginId) {
-//        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-//        simpleMailMessage.setTo(email);
-//
-//        simpleMailMessage.setSubject("Đăng ký thành công - SSCM - Quản lý chuỗi cung ứng");
-//        simpleMailMessage.setText(String.format(
-//            "Bạn đã đăng ký thành công tài khoản tại hệ thống với tên đăng nhập %s, " +
-//            "vui lòng chờ cho đến khi được quản trị viên phê duyệt. \nXin cảm ơn!",
-//            userLoginId));
-//        javaMailSender.send(simpleMailMessage);
-//    }
+    private void sendEmail(String email, String userLoginId) {
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setTo(email);
+
+        simpleMailMessage.setSubject("Đăng ký thành công - SSCM - Quản lý chuỗi cung ứng");
+        simpleMailMessage.setText(String.format(
+            "Bạn đã đăng ký thành công tài khoản tại hệ thống với tên đăng nhập %s, " +
+            "vui lòng chờ cho đến khi được quản trị viên phê duyệt. \nXin cảm ơn!",
+            userLoginId));
+        javaMailSender.send(simpleMailMessage);
+    }
 
     @Override
     public boolean approveRegisterUser(String userLoginId) {
@@ -204,7 +204,23 @@ public class UserServiceImpl implements UserService {
         }
 
         try {
-            createAndSaveUserLogin(userRegister.getUserLoginId(), userRegister.getPassword());
+//            createAndSaveUserLogin(userRegister.getUserLoginId(), userRegister.getPassword());
+
+            try {
+                createAndSaveUserLogin(new PersonModel(
+                        userRegister.getUserLoginId(),
+                        userRegister.getPassword(),
+                        new ArrayList<>(),
+                        userRegister.getUserLoginId(),
+                        userRegister.getFirstName(),
+                        userRegister.getLastName(),
+                        userRegister.getMiddleName(),
+                        null,
+                        null));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         } catch (Exception e) {
             return false;
         }
@@ -218,17 +234,17 @@ public class UserServiceImpl implements UserService {
     public List<UserRegister.OutputModel> findAllRegisterUser() {
 
         StatusItem userRegistered = null;
-        try{
+        try {
             userRegistered = statusItemRepo
-                .findById("USER_REGISTERED")
-                .orElseThrow(NoSuchElementException::new);
-        }catch(Exception e){
+                    .findById("USER_REGISTERED")
+                    .orElseThrow(NoSuchElementException::new);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        if(userRegistered != null){
+        if (userRegistered != null) {
             List<UserRegister> userRegisters = userRegisterRepo.findAllByStatusItem(userRegistered);
             return userRegisters.stream().map(UserRegister::toOutputModel).collect(Collectors.toList());
-        }else{
+        } else {
             return new ArrayList<>();
         }
 
