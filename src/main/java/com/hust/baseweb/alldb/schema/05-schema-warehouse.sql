@@ -28,15 +28,16 @@ CREATE TABLE facility
     CONSTRAINT fk_parent_facility_id FOREIGN KEY (parent_facility_id) REFERENCES facility (facility_id)
 );
 
-create table facility_role(
+create table facility_role
+(
     facility_role_id uuid default uuid_generate_v1(),
-    user_login_id varchar(60),
-    facility_id varchar(60),
-    role_type_id varchar(60),
-    from_date timestamp,
-    thru_date timestamp,
-    constraint pk_facility_role primary key(facility_role_id),
-    constraint fk_facility_role_user_login_id foreign key(user_login_id) references user_login(user_login_id),
-    constraint fk_facility_role_facility_id foreign key(facility_id) references facility(facility_id),
-    constraint fk_facility_role_role_type_id foreign key(role_type_id) references role_type(role_type_id)
+    user_login_id    varchar(60),
+    facility_id      varchar(60),
+    role_type_id     varchar(60),
+    from_date        timestamp,
+    thru_date        timestamp,
+    constraint pk_facility_role primary key (facility_role_id),
+    constraint fk_facility_role_user_login_id foreign key (user_login_id) references user_login (user_login_id),
+    constraint fk_facility_role_facility_id foreign key (facility_id) references facility (facility_id),
+    constraint fk_facility_role_role_type_id foreign key (role_type_id) references role_type (role_type_id)
 );

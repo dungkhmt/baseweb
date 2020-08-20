@@ -39,6 +39,11 @@ public class FacilityServiceImpl implements FacilityService {
 
     @Override
     public Facility save(FacilityModel facilityModel) {
+        Facility facility = facilityRepo.findByFacilityId(facilityModel.getFacilityId());
+        if (facility == null) {
+            facility = new Facility();
+        }
+
         GeocodingResult[] geocodingResults = GoogleMapUtils.queryLatLng(facilityModel.getAddress());
         PostalAddress postalAddress;
         if (geocodingResults != null && geocodingResults.length > 0) {
@@ -55,7 +60,6 @@ public class FacilityServiceImpl implements FacilityService {
         } else {
             throw new RuntimeException("Address lat lng not found");
         }
-        Facility facility = new Facility();
         facility.setFacilityId(facilityModel.getFacilityId());
         facility.setFacilityName(facilityModel.getFacilityName());
         facility.setPostalAddress(postalAddress);
