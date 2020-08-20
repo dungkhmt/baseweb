@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.logistics.service;
 
+import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.FacilityRole;
 import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.logistics.repo.FacilityRoleRepo;
@@ -95,22 +96,31 @@ public class FacilityRoleServiceImpl implements FacilityRoleService {
 
     @Override
     public FacilityRole.ApiOutputModel create(FacilityRole.ApiInputModel inputModel) {
-        FacilityRole facilityRole = new FacilityRole();
         Date now = new Date();
 
-        facilityRole.setFacility(facilityRepo
-                                     .findById(inputModel.getFacilityId())
-                                     .orElseThrow(NoSuchElementException::new));
-        facilityRole.setFromDate(now);
-        facilityRole.setUserLogin(userLoginRepo
-                                      .findById(inputModel.getUserLoginId())
-                                      .orElseThrow(NoSuchElementException::new));
-        facilityRole.setRoleType(roleTypeRepo
-                                     .findById("SALESMAN_SELL_FROM_FACILITY")
-                                     .orElseThrow(NoSuchElementException::new));
+        Facility facility = facilityRepo
+            .findById(inputModel.getFacilityId())
+            .orElseThrow(NoSuchElementException::new);
+        UserLogin userLogin = userLoginRepo
+            .findById(inputModel.getUserLoginId())
+            .orElseThrow(NoSuchElementException::new);
 
-        facilityRole = facilityRoleRepo.save(facilityRole);
-        return buildToApiOutputModelFunction(Collections.singletonList(facilityRole)).apply(facilityRole);
+        FacilityRole facilityRole = facilityRoleRepo.findAllByFacilityAndUserLogin(facility, userLogin);
+        if (facilityRole != null) {
+            return buildToApiOutputModelFunction(Collections.singletonList(facilityRole)).apply(facilityRole);
+        }
+
+        FacilityRole newFacilityRole = new FacilityRole();
+        newFacilityRole.setUserLogin(userLogin);
+        newFacilityRole.setFacility(facility);
+
+        newFacilityRole.setFromDate(now);
+        newFacilityRole.setRoleType(roleTypeRepo
+                                        .findById("SALESMAN_SELL_FROM_FACILITY")
+                                        .orElseThrow(NoSuchElementException::new));
+
+        newFacilityRole = facilityRoleRepo.save(newFacilityRole);
+        return buildToApiOutputModelFunction(Collections.singletonList(newFacilityRole)).apply(newFacilityRole);
     }
 
     @Override

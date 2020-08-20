@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.logistics.repo;
 
 import com.hust.baseweb.applications.logistics.entity.Facility;
 import com.hust.baseweb.applications.logistics.entity.FacilityRole;
+import com.hust.baseweb.entity.UserLogin;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +20,6 @@ public interface FacilityRoleRepo extends JpaRepository<FacilityRole, UUID> {
     Page<FacilityRole> findAll(@NotNull Pageable pageable);
 
     List<FacilityRole> findAllByFacility(Facility facility);
+
+    FacilityRole findAllByFacilityAndUserLogin(Facility facility, UserLogin userLogin);
 }
