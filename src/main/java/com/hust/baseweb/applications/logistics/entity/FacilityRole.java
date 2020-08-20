@@ -21,22 +21,23 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity
+@Entity(name = "facility_role")
 public class FacilityRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "facility_role_id")
     private UUID facilityRoleId;
 
-    @JoinColumn(referencedColumnName = "user_login_id")
+    @JoinColumn(referencedColumnName = "user_login_id", name = "user_login_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private UserLogin userLogin;
 
-    @JoinColumn(referencedColumnName = "facility_id")
+    @JoinColumn(referencedColumnName = "facility_id", name = "facility_id")
     @OneToOne(fetch = FetchType.EAGER)
     private Facility facility;
 
-    @JoinColumn(referencedColumnName = "role_type_id")
+    @JoinColumn(referencedColumnName = "role_type_id", name = "role_type_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private RoleType roleType;
 
@@ -50,8 +51,8 @@ public class FacilityRole {
             userLoginName,
             Optional.ofNullable(facility).map(Facility::getFacilityId).orElse(null),
             Optional.ofNullable(roleType).map(RoleType::getRoleTypeId).orElse(null),
-            Constant.DATE_FORMAT.format(fromDate),
-            Constant.DATE_FORMAT.format(thruDate)
+            Optional.ofNullable(fromDate).map(Constant.DATE_FORMAT::format).orElse(null),
+            Optional.ofNullable(thruDate).map(Constant.DATE_FORMAT::format).orElse(null)
         );
     }
 
