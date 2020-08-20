@@ -24,14 +24,16 @@ public class LogisticsAPIController {
 
     public static final String module = LogisticsAPIController.class.getName();
 
-    private ProductService productService;
-    private FacilityService facilityService;
-    private ProductPriceService productPriceService;
-    private SupplierService supplierService;
+    private final ProductService productService;
+    private final FacilityService facilityService;
+    private final ProductPriceService productPriceService;
+    private final SupplierService supplierService;
 
-    private ProductPriceSupplierService productPriceSupplierService;
+    private final ProductPriceSupplierService productPriceSupplierService;
 
-    private UserService userService;
+    private final UserService userService;
+
+    private final FacilityRoleService facilityRoleService;
 
     @PostMapping("/create-facility")
     public ResponseEntity<?> createFacility(@RequestBody FacilityModel facilityModel) {
@@ -42,6 +44,11 @@ public class LogisticsAPIController {
     @PostMapping("/create-facilities")
     public ResponseEntity<?> createFacility(@RequestBody List<FacilityModel> facilityModels) {
         return ResponseEntity.ok(facilityService.saveAll(facilityModels));
+    }
+
+    @GetMapping("/get-facility")
+    public ResponseEntity<Facility> getFacility(@RequestParam String facilityId) {
+        return ResponseEntity.ok(facilityService.findFacilityById(facilityId));
     }
 
     @PostMapping("/get-list-facility")
@@ -132,5 +139,20 @@ public class LogisticsAPIController {
         @RequestBody ProductPriceSupplier.SetModel setModel
     ) {
         return ResponseEntity.ok(productPriceSupplierService.setProductPriceSupplier(setModel));
+    }
+
+    @GetMapping("/get-all-facility-role")
+    public ResponseEntity<List<FacilityRole.ApiOutputModel>> getAllFacilityRole(@RequestParam String facilityId) {
+        return ResponseEntity.ok(facilityRoleService.getAllByFacilityId(facilityId));
+    }
+
+    @PostMapping("/create-facility-role")
+    public ResponseEntity<FacilityRole.ApiOutputModel> createFacilityRole(FacilityRole.ApiInputModel inputModel) {
+        return ResponseEntity.ok(facilityRoleService.create(inputModel));
+    }
+
+    @GetMapping("/delete-facility-role")
+    public ResponseEntity<Boolean> deleteFacilityRole(@RequestParam String facilityRoleId) {
+        return ResponseEntity.ok(facilityRoleService.delete(facilityRoleId));
     }
 }
