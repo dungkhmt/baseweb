@@ -148,4 +148,13 @@ public class UserController {
        pg.getTotalElements()); return ResponseEntity.ok().body(dtoPerson); 
        }
     */
+
+    @GetMapping("/get-all-user-login-ids")
+    public ResponseEntity<List<String>> getAllUserLoginIds() {
+        return ResponseEntity.ok(userService
+                                     .getAllUserLogins()
+                                     .stream()
+                                     .map(UserLogin::getUserLoginId)
+                                     .collect(Collectors.toList()));
+    }
 }
