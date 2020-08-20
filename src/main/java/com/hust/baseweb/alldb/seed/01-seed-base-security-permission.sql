@@ -397,6 +397,8 @@ insert into role_type(role_type_id, description)
 values ('HEAD_DEPARTMENT', 'Trưởng phòng');
 insert into role_type(role_type_id, description)
 values ('EMPLOYEE_DEPARTMENT', 'Nhân viên của phòng');
+insert into role_type(role_type_id, description)
+values ('SALESMAN_SELL_FROM_FACILITY', 'Nhân viên bán hàng của kho');
 
 
 
