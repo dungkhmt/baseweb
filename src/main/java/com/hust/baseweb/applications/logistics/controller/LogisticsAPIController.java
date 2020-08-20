@@ -147,7 +147,9 @@ public class LogisticsAPIController {
     }
 
     @PostMapping("/create-facility-role")
-    public ResponseEntity<FacilityRole.ApiOutputModel> createFacilityRole(FacilityRole.ApiInputModel inputModel) {
+    public ResponseEntity<FacilityRole.ApiOutputModel> createFacilityRole(
+        @RequestBody FacilityRole.ApiInputModel inputModel
+    ) {
         return ResponseEntity.ok(facilityRoleService.create(inputModel));
     }
 
