@@ -17,6 +17,8 @@ public interface FacilityRoleService {
 
     List<FacilityRole.ApiOutputModel> getAllByFacilityId(String facilityId);
 
+    List<FacilityRole.ApiOutputModel> getAllFacilitySalesman(String facilityId);
+
     FacilityRole.ApiOutputModel create(FacilityRole.ApiInputModel inputModel);
 
     boolean delete(String facilityRoleId);

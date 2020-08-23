@@ -5,10 +5,12 @@ import com.hust.baseweb.applications.logistics.entity.FacilityRole;
 import com.hust.baseweb.applications.logistics.repo.FacilityRepo;
 import com.hust.baseweb.applications.logistics.repo.FacilityRoleRepo;
 import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.entity.RoleType;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.RoleTypeRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 @Service
+@Log4j2
 public class FacilityRoleServiceImpl implements FacilityRoleService {
 
     private final FacilityRoleRepo facilityRoleRepo;
@@ -68,6 +71,20 @@ public class FacilityRoleServiceImpl implements FacilityRoleService {
             .collect(Collectors.toList());
     }
 
+    @Override
+    public List<FacilityRole.ApiOutputModel> getAllFacilitySalesman(String facilityId) {
+        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_FROM_FACILITY");
+        Facility facility = facilityRepo.findByFacilityId(facilityId);
+        List<FacilityRole> facilityRoles = facilityRoleRepo
+            .findAllByFacilityAndRoleTypeAndThruDate(facility,roleType,null);
+        if(facilityRoles == null) return null;
+
+        return facilityRoles
+            .stream()
+            .map(buildToApiOutputModelFunction(facilityRoles))
+            .collect(Collectors.toList());
+    }
+
     /**
      * Xây dựng hàm chuyển đổi từ facility roles thành api output model
      *
@@ -105,10 +122,22 @@ public class FacilityRoleServiceImpl implements FacilityRoleService {
             .findById(inputModel.getUserLoginId())
             .orElseThrow(NoSuchElementException::new);
 
-        FacilityRole facilityRole = facilityRoleRepo.findAllByFacilityAndUserLogin(facility, userLogin);
-        if (facilityRole != null) {
+        RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_FROM_FACILITY");
+
+        List<FacilityRole> facilityRoles = facilityRoleRepo.findAllByFacilityAndUserLoginAndRoleTypeAndThruDate(facility,
+                                                                                                                userLogin,
+                                                                                                                roleType,
+                                                                                                                null);
+        if(facilityRoles != null && facilityRoles.size() > 0){
+
+            FacilityRole facilityRole = facilityRoles.get(0);
+            log.info("create, facilityRole exists!!! with " + facilityRole.getFacilityRoleId() + ", thruDate = " + facilityRole.getThruDate());
             return buildToApiOutputModelFunction(Collections.singletonList(facilityRole)).apply(facilityRole);
         }
+        //FacilityRole facilityRole = facilityRoleRepo.findAllByFacilityAndUserLogin(facility, userLogin);
+        //if (facilityRole != null) {
+        //    return buildToApiOutputModelFunction(Collections.singletonList(facilityRole)).apply(facilityRole);
+        //}
 
         FacilityRole newFacilityRole = new FacilityRole();
         newFacilityRole.setUserLogin(userLogin);
@@ -127,7 +156,10 @@ public class FacilityRoleServiceImpl implements FacilityRoleService {
     public boolean delete(String facilityRoleId) {
         Optional<FacilityRole> facilityRoleOptional = facilityRoleRepo.findById(UUID.fromString(facilityRoleId));
         if (facilityRoleOptional.isPresent()) {
-            facilityRoleRepo.delete(facilityRoleOptional.get());
+            //facilityRoleRepo.delete(facilityRoleOptional.get());
+            FacilityRole facilityRole = facilityRoleOptional.get();
+            facilityRole.setThruDate(new Date());
+            facilityRoleRepo.save(facilityRole);
             return true;
         }
         return false;

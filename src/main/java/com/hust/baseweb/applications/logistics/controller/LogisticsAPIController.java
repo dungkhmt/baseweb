@@ -143,7 +143,8 @@ public class LogisticsAPIController {
 
     @GetMapping("/get-all-facility-role")
     public ResponseEntity<List<FacilityRole.ApiOutputModel>> getAllFacilityRole(@RequestParam String facilityId) {
-        return ResponseEntity.ok(facilityRoleService.getAllByFacilityId(facilityId));
+        //return ResponseEntity.ok(facilityRoleService.getAllByFacilityId(facilityId));
+        return ResponseEntity.ok(facilityRoleService.getAllFacilitySalesman(facilityId));
     }
 
     @PostMapping("/create-facility-role")
