@@ -138,7 +138,7 @@ create table sales_route_detail
     sales_route_config_retail_outlet_id UUID NOT NULL,
     sales_route_planning_period_id      UUID,
     last_updated_stamp                  TIMESTAMP,
-    created_stamp                       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_stamp                       TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
     constraint pk_sales_route_detail primary key (sales_route_detail_id),
     constraint fk_sales_route_detail_sales_route_config_retail_outlet foreign key (sales_route_config_retail_outlet_id)
         references sales_route_config_retail_outlet (sales_route_config_retail_outlet_id),
@@ -416,3 +416,48 @@ CREATE TABLE product_price
     CONSTRAINT fk_product_price_currency_uom_id FOREIGN KEY (currency_uom_id) REFERENCES uom (uom_id),
     CONSTRAINT fk_product_price_created_by_user_login_id FOREIGN KEY (created_by_user_login_id) REFERENCES user_login (user_login_id)
 );
+
+-- voucher
+create table voucher
+(
+    voucher_id              uuid      default uuid_generate_v1()
+        constraint voucher_pk
+            primary key,
+    code                    varchar(20)         not null,
+    description             varchar(300),
+    from_date               timestamp,
+    thru_date               timestamp,
+    created_date            timestamp default current_timestamp,
+    min_discount_amount     numeric             not null,
+    max_discount_amount     numeric             not null,
+    min_discount_rate       numeric             not null,
+    max_discount_rate       numeric             not null,
+    usage_limit             integer,
+    usage_limit_per_account integer,
+    usage_count             integer   default 0 not null
+);
+
+create unique index voucher_code_uindex
+    on voucher (code);
+
+create table voucher_rule
+(
+    voucher_constraint_id         uuid      default uuid_generate_v1()
+        constraint voucher_constraint_pk
+            primary key,
+    voucher_id                    uuid        not null,
+    type                          varchar(20) not null,
+    product_id                    varchar(60),
+    product_category_id           varchar(60),
+    product_transport_category_id varchar(60),
+    min_order_value               numeric     not null,
+    vendor_code                   varchar(60),
+    vendor_category_id            varchar(60),
+    customer_code                 varchar(60),
+    customer_category_id          varchar(60),
+    payment_method                varchar(60),
+    created_date                  timestamp default current_timestamp
+);
+
+
+
