@@ -38,6 +38,9 @@ public class Voucher {
     @Column(name = "created_date")
     private Date createdDate;
 
+    @Column(name = "min_order_value")
+    private Double minOrderValue;
+
     @Column(name = "min_discount_amount")
     private Double minDiscountAmount;
 
@@ -53,8 +56,8 @@ public class Voucher {
     @Column(name = "usage_limit")
     private Integer usageLimit;
 
-    @Column(name = "usage_limit_per_account")
-    private Integer usageLimitPerAccount;
+    @Column(name = "usage_limit_per_customer")
+    private Integer usageLimitPerCustomer;
 
     @Column(name = "usage_count")
     private Integer usageCount;
@@ -69,12 +72,13 @@ public class Voucher {
         private String description;
         private Date fromDate;
         private Date thruDate;
+        private Double minOrderValue;
         private Double minDiscountAmount;
         private Double maxDiscountAmount;
         private Double minDiscountRate;
         private Double maxDiscountRate;
         private Integer usageLimit;
-        private Integer usageLimitPerAccount;
+        private Integer usageLimitPerCustomer;
 
         public Voucher toVoucher() {
             return Voucher.builder()
@@ -82,12 +86,15 @@ public class Voucher {
                           .description(description)
                           .fromDate(fromDate)
                           .thruDate(thruDate)
+                          .createdDate(new Date())
+                          .minOrderValue(minOrderValue)
                           .minDiscountAmount(minDiscountAmount)
                           .maxDiscountAmount(maxDiscountAmount)
                           .minDiscountRate(minDiscountRate)
                           .maxDiscountRate(maxDiscountRate)
                           .usageLimit(usageLimit)
-                          .usageLimitPerAccount(usageLimitPerAccount)
+                          .usageLimitPerCustomer(usageLimitPerCustomer)
+                          .usageCount(0)
                           .build();
         }
 
@@ -100,6 +107,9 @@ public class Voucher {
             }
             if (this.getThruDate() != null) {
                 voucher.setThruDate(this.getThruDate());
+            }
+            if (this.getMinOrderValue() != null) {
+                voucher.setMinOrderValue(this.minOrderValue);
             }
             if (this.getMinDiscountAmount() != null) {
                 voucher.setMinDiscountAmount(this.getMinDiscountAmount());
@@ -116,8 +126,8 @@ public class Voucher {
             if (this.getUsageLimit() != null) {
                 voucher.setUsageLimit(this.getUsageLimit());
             }
-            if (this.getUsageLimitPerAccount() != null) {
-                voucher.setUsageLimitPerAccount(this.getUsageLimitPerAccount());
+            if (this.getUsageLimitPerCustomer() != null) {
+                voucher.setUsageLimitPerCustomer(this.getUsageLimitPerCustomer());
             }
         }
     }

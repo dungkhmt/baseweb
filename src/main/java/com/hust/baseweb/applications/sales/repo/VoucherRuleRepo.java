@@ -23,5 +23,5 @@ public interface VoucherRuleRepo extends JpaRepository<VoucherRule, UUID> {
     @NotNull
     Page<VoucherRule> findAllByVoucher(Voucher voucher, Pageable pageable);
 
-
+    void deleteAllByVoucher(Voucher voucher);
 }

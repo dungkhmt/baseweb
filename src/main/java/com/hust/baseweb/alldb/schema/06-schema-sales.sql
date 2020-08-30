@@ -420,21 +420,22 @@ CREATE TABLE product_price
 -- voucher
 create table voucher
 (
-    voucher_id              uuid      default uuid_generate_v1()
+    voucher_id               uuid      default uuid_generate_v1()
         constraint voucher_pk
             primary key,
-    code                    varchar(20)         not null,
-    description             varchar(300),
-    from_date               timestamp,
-    thru_date               timestamp,
-    created_date            timestamp default current_timestamp,
-    min_discount_amount     numeric             not null,
-    max_discount_amount     numeric             not null,
-    min_discount_rate       numeric             not null,
-    max_discount_rate       numeric             not null,
-    usage_limit             integer,
-    usage_limit_per_account integer,
-    usage_count             integer   default 0 not null
+    code                     varchar(20)         not null,
+    description              varchar(300),
+    from_date                timestamp,
+    thru_date                timestamp,
+    created_date             timestamp default current_timestamp,
+    min_order_value          numeric             not null,
+    min_discount_amount      numeric             not null,
+    max_discount_amount      numeric             not null,
+    min_discount_rate        numeric             not null,
+    max_discount_rate        numeric             not null,
+    usage_limit              integer,
+    usage_limit_per_customer integer,
+    usage_count              integer   default 0 not null
 );
 
 create unique index voucher_code_uindex
@@ -442,15 +443,14 @@ create unique index voucher_code_uindex
 
 create table voucher_rule
 (
-    voucher_constraint_id         uuid      default uuid_generate_v1()
-        constraint voucher_constraint_pk
+    voucher_rule_id               uuid      default uuid_generate_v1()
+        constraint voucher_rule_pk
             primary key,
     voucher_id                    uuid        not null,
     type                          varchar(20) not null,
     product_id                    varchar(60),
     product_category_id           varchar(60),
     product_transport_category_id varchar(60),
-    min_order_value               numeric     not null,
     vendor_code                   varchar(60),
     vendor_category_id            varchar(60),
     customer_code                 varchar(60),

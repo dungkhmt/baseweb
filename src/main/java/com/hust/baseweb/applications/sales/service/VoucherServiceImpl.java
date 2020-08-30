@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +33,7 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public Voucher create(Voucher.InputModel inputModel) {
+    public Voucher createVoucher(Voucher.InputModel inputModel) {
         Voucher voucher = voucherRepo.findFirstByCode(inputModel.getCode());
         if (voucher != null) {
             return null;
@@ -41,10 +42,10 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public VoucherRule.OutputModel create(VoucherRule.InputModel inputModel) {
-        Optional<Voucher> voucherOptional = voucherRepo.findById(inputModel.getVoucherId());
+    public VoucherRule.OutputModel createVoucherRule(UUID voucherId, VoucherRule.InputModel inputModel) {
+        Optional<Voucher> voucherOptional = voucherRepo.findById(voucherId);
         return voucherOptional
-            .map(voucher -> voucherRuleRepo.save(inputModel.toVoucherRule(uuid -> voucher)).toOutputModel())
+            .map(voucher -> voucherRuleRepo.save(inputModel.toVoucherRule(voucher)).toOutputModel())
             .orElse(null);
     }
 
@@ -99,6 +100,7 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
+    @Transactional
     public Voucher updateVoucher(UUID voucherId, Voucher.InputModel inputModel) {
         Voucher voucher = voucherRepo.findById(voucherId).orElse(null);
         if (voucher == null) {
@@ -110,6 +112,7 @@ public class VoucherServiceImpl implements VoucherService {
 
 
     @Override
+    @Transactional
     public VoucherRule.OutputModel updateVoucherRule(
         UUID voucherRuleId,
         VoucherRule.InputModel inputModel
@@ -123,16 +126,19 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
+    @Transactional
     public Voucher deleteVoucher(UUID voucherId) {
         Voucher voucher = voucherRepo.findById(voucherId).orElse(null);
         if (voucher == null) {
             return null;
         }
+        voucherRuleRepo.deleteAllByVoucher(voucher);
         voucherRepo.delete(voucher);
         return voucher;
     }
 
     @Override
+    @Transactional
     public VoucherRule.OutputModel deleteVoucherRule(UUID voucherRuleId) {
         VoucherRule voucherRule = voucherRuleRepo.findById(voucherRuleId).orElse(null);
         if (voucherRule == null) {

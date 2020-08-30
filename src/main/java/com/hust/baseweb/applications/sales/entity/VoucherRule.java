@@ -6,7 +6,6 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
-import java.util.function.Function;
 
 /**
  * @author Hien Hoang (hienhoang2702@gmail.com)
@@ -21,9 +20,9 @@ import java.util.function.Function;
 public class VoucherRule {
 
     @Id
-    @Column(name = "voucher_constraint_id")
+    @Column(name = "voucher_rule_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID voucherConstraintId;
+    private UUID voucherRuleId;
 
     @JoinColumn(name = "voucher_id", referencedColumnName = "voucher_id")
     @ManyToOne()
@@ -40,9 +39,6 @@ public class VoucherRule {
 
     @Column(name = "product_transport_category_id")
     private String productTransportCategoryId;
-
-    @Column(name = "min_order_value")
-    private Double minOrderValue;
 
     @Column(name = "vendor_code")
     private String vendorCode;
@@ -73,26 +69,25 @@ public class VoucherRule {
         private String productId;
         private String productCategoryId;
         private String productTransportCategoryId;
-        private Double minOrderValue;
         private String vendorCode;
         private String vendorCategoryId;
         private String customerCode;
         private String customerCategoryId;
         private String paymentMethod;
 
-        public VoucherRule toVoucherRule(Function<UUID, Voucher> voucherFunction) {
+        public VoucherRule toVoucherRule(Voucher voucher) {
             return VoucherRule.builder()
-                              .voucher(voucherFunction.apply(voucherId))
+                              .voucher(voucher)
                               .type(type)
                               .productId(productId)
                               .productCategoryId(productCategoryId)
                               .productTransportCategoryId(productTransportCategoryId)
-                              .minOrderValue(minOrderValue)
                               .vendorCode(vendorCode)
                               .vendorCategoryId(vendorCategoryId)
                               .customerCode(customerCode)
                               .customerCategoryId(customerCategoryId)
                               .paymentMethod(paymentMethod)
+                              .createdDate(new Date())
                               .build();
         }
 
@@ -108,9 +103,6 @@ public class VoucherRule {
             }
             if (this.getProductTransportCategoryId() != null) {
                 voucherRule.setProductTransportCategoryId(this.getProductTransportCategoryId());
-            }
-            if (this.getMinOrderValue() != null) {
-                voucherRule.setMinOrderValue(this.getMinOrderValue());
             }
             if (this.getVendorCode() != null) {
                 voucherRule.setVendorCode(this.getVendorCode());
@@ -135,13 +127,12 @@ public class VoucherRule {
     @Builder
     public static class OutputModel {
 
-        private UUID voucherConstraintId;
+        private UUID voucherRuleId;
         private UUID voucherId;
         private String type;
         private String productId;
         private String productCategoryId;
         private String productTransportCategoryId;
-        private Double minOrderValue;
         private String vendorCode;
         private String vendorCategoryId;
         private String customerCode;
@@ -152,13 +143,12 @@ public class VoucherRule {
 
     public OutputModel toOutputModel() {
         return OutputModel.builder()
-                          .voucherConstraintId(voucherConstraintId)
+                          .voucherRuleId(voucherRuleId)
                           .voucherId(voucher.getVoucherId())
                           .type(type)
                           .productId(productId)
                           .productCategoryId(productCategoryId)
                           .productTransportCategoryId(productTransportCategoryId)
-                          .minOrderValue(minOrderValue)
                           .vendorCode(vendorCode)
                           .vendorCategoryId(vendorCategoryId)
                           .customerCode(customerCode)

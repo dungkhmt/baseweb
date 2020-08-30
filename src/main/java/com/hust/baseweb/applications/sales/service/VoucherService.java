@@ -14,9 +14,9 @@ import java.util.UUID;
 public interface VoucherService {
 
     // create
-    Voucher create(Voucher.InputModel inputModel);
+    Voucher createVoucher(Voucher.InputModel inputModel);
 
-    VoucherRule.OutputModel create(VoucherRule.InputModel inputModel);
+    VoucherRule.OutputModel createVoucherRule(UUID voucherId, VoucherRule.InputModel inputModel);
 
     // read
     List<Voucher> getAllVouchers();
