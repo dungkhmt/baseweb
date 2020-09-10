@@ -79,10 +79,36 @@ create table edu_class_student(
     class_id varchar(60),
     student_id varchar(60),
     status_id varchar(60),
+    last_updated_stamp timestamp,
+    created_stamp      timestamp,
     constraint pk_class_student primary key(class_id,student_id),
     constraint fk_class_student_class_id foreign key(class_id) references edu_class(class_id),
     constraint fk_class_student_student_id foreign key(student_id) references user_login(user_login_id)
     constraint fk_class_student_status_id foreign key(status_id) references status_item(status_id)
+);
+
+create table edu_class_assignment(
+    assignment_id uuid not null default uuid_generate_v1(),
+    assignment_name varchar(200),
+    class_id varchar(60),
+    description text,
+    last_updated_stamp timestamp,
+    created_stamp      timestamp,
+    constraint pk_class_assignment_assignment_id primary key(assignment_id),
+    constraint fk_class_assignment_class_id foreign key(class_id) references edu_class(class_id)
+);
+
+create table edu_student_assignment_submission(
+    student_assignment_submission_id uuid not null default uuid_generate_v1(),
+    assignment_id uuid,
+    student_id varchar(60),
+    submission_date_time timestamp,
+    link_source text,
+    last_updated_stamp timestamp,
+    created_stamp      timestamp,
+    constraint pk_student_assignment_submission_id primary key(student_assignment_submission_id),
+    constraint fk_student_assignment_submission_student_id foreign key(student_id) references user_login(user_login_id),
+    constraint fk_student_assignment_submission_assignment_id foreign key(assignment_id) references edu_class_assignment(assignment_id)
 );
 
 
