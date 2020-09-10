@@ -75,3 +75,14 @@ create table edu_class_teacher_asignment
     constraint fk_class_teacher_assignment_class_id foreign key (class_id) references edu_class (class_id)
 );
 
+create table edu_class_student(
+    class_id varchar(60),
+    student_id varchar(60),
+    status_id varchar(60),
+    constraint pk_class_student primary key(class_id,student_id),
+    constraint fk_class_student_class_id foreign key(class_id) references edu_class(class_id),
+    constraint fk_class_student_student_id foreign key(student_id) references user_login(user_login_id)
+    constraint fk_class_student_status_id foreign key(status_id) references status_item(status_id)
+);
+
+

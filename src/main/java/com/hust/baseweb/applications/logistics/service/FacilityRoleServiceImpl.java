@@ -129,11 +129,11 @@ public class FacilityRoleServiceImpl implements FacilityRoleService {
                                                                                                                 roleType,
                                                                                                                 null);
         if(facilityRoles != null && facilityRoles.size() > 0){
-
             FacilityRole facilityRole = facilityRoles.get(0);
             log.info("create, facilityRole exists!!! with " + facilityRole.getFacilityRoleId() + ", thruDate = " + facilityRole.getThruDate());
             return buildToApiOutputModelFunction(Collections.singletonList(facilityRole)).apply(facilityRole);
         }
+
         //FacilityRole facilityRole = facilityRoleRepo.findAllByFacilityAndUserLogin(facility, userLogin);
         //if (facilityRole != null) {
         //    return buildToApiOutputModelFunction(Collections.singletonList(facilityRole)).apply(facilityRole);
