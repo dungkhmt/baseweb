@@ -1,15 +1,14 @@
 package com.hust.baseweb.repo;
 
+import java.util.List;
+
 import com.hust.baseweb.entity.Application;
 import com.hust.baseweb.entity.ApplicationType;
 import com.hust.baseweb.entity.SecurityPermission;
-import org.springframework.data.repository.Repository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@RepositoryRestResource(exported = false)
-public interface ApplicationRepo extends Repository<Application, String> {
+public interface ApplicationRepo extends JpaRepository<Application, String> {
 
     List<Application> findByTypeAndPermissionIn(ApplicationType type, List<SecurityPermission> permissions);
 }

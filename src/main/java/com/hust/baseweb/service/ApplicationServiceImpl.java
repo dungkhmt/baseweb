@@ -1,18 +1,21 @@
 package com.hust.baseweb.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import com.hust.baseweb.entity.Application;
 import com.hust.baseweb.entity.SecurityPermission;
 import com.hust.baseweb.repo.ApplicationRepo;
 import com.hust.baseweb.repo.ApplicationTypeRepo;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -79,5 +82,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationList.addAll(applicationList2);
         applicationList.removeIf(Objects::isNull);
         return applicationList;
+    }
+
+    @Override
+    public Application getById(String applicationId) {
+        Optional<Application> app = applicationRepo.findById(applicationId);
+        if (app.isPresent())
+            return app.get();
+        return null;
     }
 }

@@ -2,13 +2,21 @@ package com.hust.baseweb.controller;
 
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.hust.baseweb.entity.Application;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.Person;
+import com.hust.baseweb.entity.SecurityGroup;
+import com.hust.baseweb.entity.SecurityPermission;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PasswordChangeModel;
+import com.hust.baseweb.service.ApplicationService;
 import com.hust.baseweb.service.PersonService;
 import com.hust.baseweb.service.UserService;
 
@@ -20,6 +28,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
@@ -31,6 +40,7 @@ public class ApiController {
 
     private UserService userService;
     private PersonService personService;
+    private ApplicationService applicationService;
 
     @GetMapping("/")
     public ResponseEntity<Map> home(Principal principal) {
@@ -41,6 +51,40 @@ public class ApiController {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Access-Control-Expose-Headers", "X-Auth-Token");
         return ResponseEntity.ok().headers(responseHeaders).body(response);
+    }
+
+    @GetMapping("/check-authority")
+    public ResponseEntity<?> checkAuthorities(Principal principal, @RequestParam String applicationId) {
+
+        Map<String, String> response = null;
+        UserLogin userLogin = userService.findById(principal.getName());
+        Application application = applicationService.getById(applicationId);
+        if (application == null) {
+
+            response = new HashMap<>();
+            response.put("status", "SUCESSS");
+            response.put("result", "NOT_FOUND");
+
+            return ResponseEntity.ok().body(response);
+        }
+        List<SecurityPermission> permissionList = new ArrayList<>();
+        for (SecurityGroup securityGroup : userLogin.getRoles()) {
+            permissionList.addAll(securityGroup.getPermissions());
+        }
+        Set<String> permissionSet = permissionList.stream().map(permission -> permission.getPermissionId())
+                .collect(Collectors.toSet());
+        if (permissionSet.contains(application.getPermission().getPermissionId())) {
+
+            response = new HashMap<>();
+            response.put("status", "SUCESSS");
+            response.put("result", "INCLUDED");
+        } else {
+            response = new HashMap<>();
+            response.put("status", "SUCESSS");
+            response.put("result", "NOT_INCLUDED");
+        }
+        return ResponseEntity.ok().body(response);
+
     }
     @GetMapping("/my-account")
     public ResponseEntity<?> getAccount(Principal principal) {
