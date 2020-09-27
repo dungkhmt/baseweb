@@ -1,0 +1,51 @@
+package com.hust.baseweb.applications.education.entity;
+
+import javax.persistence.*;
+
+import com.hust.baseweb.entity.UserLogin;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.Date;
+import java.util.UUID;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "edu_class")
+@EntityListeners(AuditingEntityListener.class)
+public class Class {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+
+    private Integer code;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "semester_id")
+    private Semester semester;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+	private Course course;
+
+	private String classType;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+	private EduDepartment eduDepartment;
+
+	@ManyToOne
+    @JoinColumn(name = "teacher_id")
+	private UserLogin teacher;
+
+    @LastModifiedDate
+    private Date lastUpdatedStamp;
+
+    @CreatedDate
+    private Date createdStamp;
+}
