@@ -11,12 +11,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="edu_department")
 public class EduDepartment {
-	@Id
-	@Column(name="department_id")
-	private String departmentId;
+
+    @Id
+	private String id;
 	
 	@Column(name="department_name")
-	private String departmentName;
+	private String name;
 }
