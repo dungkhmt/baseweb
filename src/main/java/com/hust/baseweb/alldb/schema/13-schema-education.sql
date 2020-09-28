@@ -103,6 +103,7 @@ create table edu_student_assignment_submission(
     assignment_id uuid,
     student_id varchar(60),
     submission_date_time timestamp,
+    description text,
     link_source text,
     last_updated_stamp timestamp,
     created_stamp      timestamp,

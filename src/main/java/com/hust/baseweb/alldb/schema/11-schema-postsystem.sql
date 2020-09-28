@@ -56,7 +56,8 @@ create table post_office
     post_office_level  int,
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_post_office_id primary key (post_office_id)
+    constraint pk_post_office_id primary key (post_office_id),
+    constraint fk_post_office_contact_mech_id foreign key (contact_mech_id) references postal_address(contact_mech_id)
 );
 
 create table post_office_relationship
