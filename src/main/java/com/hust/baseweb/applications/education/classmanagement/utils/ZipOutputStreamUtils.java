@@ -6,11 +6,7 @@ import net.lingala.zip4j.model.enums.AesKeyStrength;
 import net.lingala.zip4j.model.enums.CompressionMethod;
 import net.lingala.zip4j.model.enums.EncryptionMethod;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 
 public class ZipOutputStreamUtils {
@@ -43,6 +39,7 @@ public class ZipOutputStreamUtils {
                         zos.write(buff, 0, readLen);
                     }
                 }
+
                 zos.closeEntry();
             }
         }
