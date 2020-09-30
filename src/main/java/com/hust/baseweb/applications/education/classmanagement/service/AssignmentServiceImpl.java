@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.education.classmanagement.service;
 
-import com.google.common.io.Files;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.StorageProperties;
 import com.hust.baseweb.applications.education.model.GetSubmissionsOM;
@@ -17,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -76,12 +75,14 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public InputStream getFiles(String assignmentId, List<String> studentIds) {
+    public String getSubmissionsOf(String assignmentId, List<String> studentIds) {
         List<GetSubmissionsOM> submissions = assignmentRepo.getSubmissionsOf(
             UUID.fromString(assignmentId),
             new HashSet<>(studentIds));
 
         try {
+            storageService.deleteIfExists(Paths.get(rootPath + assignmentId + "\\" + assignmentId + ".zip"));
+
             File outputZipFile = new File(rootPath + assignmentId + "\\" + assignmentId + ".zip");
             List<File> fileToAdd = new ArrayList<>();
 
@@ -94,8 +95,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             }
 
             storageService.zipFiles(outputZipFile, fileToAdd);
-
-            return Files.asByteSource(outputZipFile).openStream();
+            return assignmentId + ".zip";
         } catch (IOException e) {
             return null;
         }
