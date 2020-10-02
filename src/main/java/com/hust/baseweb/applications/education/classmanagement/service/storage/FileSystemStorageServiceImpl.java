@@ -7,6 +7,8 @@ import com.hust.baseweb.applications.education.entity.Assignment;
 import com.hust.baseweb.applications.education.entity.AssignmentSubmission;
 import com.hust.baseweb.applications.education.repo.AssignmentSubmissionRepo;
 import com.hust.baseweb.entity.UserLogin;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import net.lingala.zip4j.model.enums.AesKeyStrength;
 import net.lingala.zip4j.model.enums.CompressionMethod;
 import net.lingala.zip4j.model.enums.EncryptionMethod;
@@ -28,6 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@Log4j2
+
 @Service
 public class FileSystemStorageServiceImpl implements StorageService {
 
@@ -45,6 +49,8 @@ public class FileSystemStorageServiceImpl implements StorageService {
     @Override
     @Transactional
     public void store(MultipartFile file, UUID assignmentId, String studentId) {
+        log.info("store, StudentId = " + studentId);
+
         Path path = Paths.get(rootPath + assignmentId.toString() + "\\");
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
