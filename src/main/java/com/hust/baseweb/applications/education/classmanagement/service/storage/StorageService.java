@@ -1,10 +1,10 @@
 package com.hust.baseweb.applications.education.classmanagement.service.storage;
 
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.UUID;
 
@@ -19,7 +19,7 @@ public interface StorageService {
 
     Path load(String fileName, String folder);
 
-    Resource loadFileAsResource(String fileName, String folder);
+    InputStream loadFileAsResource(String fileName, String folder) throws IOException;
 
     /**
      * Delete file or directory.
@@ -30,4 +30,5 @@ public interface StorageService {
      */
     boolean deleteAll(Path path) throws IOException;
 
+    void deleteIfExists(Path path) throws IOException;
 }

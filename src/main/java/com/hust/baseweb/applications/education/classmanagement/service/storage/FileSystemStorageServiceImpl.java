@@ -7,7 +7,6 @@ import com.hust.baseweb.applications.education.entity.Assignment;
 import com.hust.baseweb.applications.education.entity.AssignmentSubmission;
 import com.hust.baseweb.applications.education.repo.AssignmentSubmissionRepo;
 import com.hust.baseweb.entity.UserLogin;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import net.lingala.zip4j.model.enums.AesKeyStrength;
 import net.lingala.zip4j.model.enums.CompressionMethod;
@@ -24,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.*;
 import java.util.Date;
@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Log4j2
-
 @Service
 public class FileSystemStorageServiceImpl implements StorageService {
 
@@ -76,14 +75,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
             if (submission == null) {
                 submission = new AssignmentSubmission();
             } else {
-                try {
-                    Files.deleteIfExists(path.resolve(studentId + getFileExtension(submission.getOriginalFileName())));
-                } catch (DirectoryNotEmptyException e) {
-                    FileUtils.deleteDirectory(path
-                                                  .resolve(studentId +
-                                                           getFileExtension(submission.getOriginalFileName()))
-                                                  .toFile());
-                }
+                deleteIfExists(path.resolve(studentId + getFileExtension(submission.getOriginalFileName())));
             }
 
             student.setUserLoginId(studentId);
@@ -121,13 +113,13 @@ public class FileSystemStorageServiceImpl implements StorageService {
     }
 
     @Override
-    public Resource loadFileAsResource(String fileName, String folder) {
+    public InputStream loadFileAsResource(String fileName, String folder) throws IOException {
         try {
             Path filePath = load(fileName, folder);
             Resource resource = new UrlResource(filePath.toUri());
 
             if (resource.exists() || resource.isReadable()) {
-                return resource;
+                return resource.getInputStream();
             } else {
                 throw new StorageFileNotFoundException(
                     "Could not read file: " + fileName);
@@ -147,6 +139,16 @@ public class FileSystemStorageServiceImpl implements StorageService {
     @Override
     public boolean deleteAll(Path path) throws IOException {
         return FileSystemUtils.deleteRecursively(path);
+    }
+
+    @Override
+    public void deleteIfExists(Path path) throws IOException {
+        try {
+            Files.deleteIfExists(path);
+        } catch (DirectoryNotEmptyException e) {
+            FileUtils.deleteDirectory(path.toFile());
+            log.info("Diẻctory");
+        }
     }
 
     @Override

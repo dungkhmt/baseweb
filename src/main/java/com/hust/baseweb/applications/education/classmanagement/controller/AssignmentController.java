@@ -9,7 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -43,35 +43,34 @@ public class AssignmentController {
         return ResponseEntity.ok().body("Tải lên thành công tệp '" + file.getOriginalFilename() + "'");
     }
 
-    /**
-     * Return a password-protected zip file contains the submitted files of students with ids in {@link GetFilesIM}.
-     * If the submissions for all students with ids in {@link GetFilesIM} not found, the zip file will be empty
-     *
-     * @param principal
-     * @param id         assignmentId
-     * @param getFilesIM contains list of student ids
-     * @param response   a zip file.
-     */
-    @PostMapping("/{id}/submission/files")
-    public void getFiles(
-        Principal principal,
-        @PathVariable UUID id,
-        @Valid @RequestBody GetFilesIM getFilesIM,
-        HttpServletResponse response
-    ) {
-        InputStream is = assignmentService.getFiles(id.toString(), getFilesIM.getStudentIds());
-
+    @GetMapping("/{id}/download-file/{filename:.+}")
+    @ResponseBody
+    public void downloadFile(@PathVariable UUID id, @PathVariable String filename, HttpServletResponse response) {
+        response.setHeader("Content-Transfer-Encoding", "binary");
         response.setHeader(
             HttpHeaders.CONTENT_DISPOSITION,
-            "attachment; filename=" + id.toString() + ".zip");
-        response.setContentType(MediaType.parseMediaType("application/zip").toString());
+            "attachment; filename=\"" + filename + "\"");
+        response.setContentType("application/octet-stream");
 
-        try {
+        try (InputStream is = storageService.loadFileAsResource(filename, id.toString())) {
             IOUtils.copyLarge(is, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @PostMapping("/{id}/submissions")
+    public ResponseEntity<String> getSubmissionsOf(
+        Principal principal,
+        @PathVariable UUID id,
+        @Valid @RequestBody GetFilesIM getFilesIM
+    ) {
+        String response = assignmentService.getSubmissionsOf(id.toString(), getFilesIM.getStudentIds());
+
+        return null == response ? ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body("File đang trong quá trình nén") : ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{id}/student")
@@ -87,5 +86,10 @@ public class AssignmentController {
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok().body("OK");
     }
 }

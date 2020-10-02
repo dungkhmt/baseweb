@@ -33,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()
+            .antMatchers("/edu/assignment/*/download-file/*").permitAll()
             .regexMatchers("/v2/api-docs").permitAll()
             .regexMatchers("/.*swagger.*").permitAll()
             .regexMatchers(".*/user/register/*$").permitAll()
