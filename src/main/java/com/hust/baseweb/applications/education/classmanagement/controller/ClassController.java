@@ -1,16 +1,20 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
 import com.hust.baseweb.applications.education.classmanagement.service.ClassServiceImpl;
+import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.model.GetListStudentsOfClassOM;
+import com.hust.baseweb.applications.education.model.RegistIM;
+import com.hust.baseweb.applications.education.model.UpdateRegistStatusIM;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/edu/class")
@@ -35,5 +39,29 @@ public class ClassController {
         }
 
         return classService.getClassListOfCurrentSemester(page, size);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@Valid @RequestBody RegistIM im) {
+        ResponseSecondType res = classService.register(im.getClassId(), im.getStudentId());
+        return ResponseEntity.status(res.getStatus()).body(res.getMessage());
+    }
+
+    @GetMapping("/{id}/students")
+    public ResponseEntity<GetListStudentsOfClassOM> getListStuOfClass(@PathVariable UUID id) {
+        return null;
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @GetMapping("/{id}/registered-students")
+    public ResponseEntity<GetListStudentsOfClassOM> getListRegistStuOfClass(@PathVariable UUID id) {
+        return null;
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @PutMapping("/registration-status")
+    public ResponseEntity<String> updateRegisStatus(@Valid @RequestBody UpdateRegistStatusIM im) {
+        ResponseSecondType res = classService.updateRegistStatus(im.getClassId(), im.getStudentId(), im.getStatus());
+        return ResponseEntity.status(res.getStatus()).body(res.getMessage());
     }
 }
