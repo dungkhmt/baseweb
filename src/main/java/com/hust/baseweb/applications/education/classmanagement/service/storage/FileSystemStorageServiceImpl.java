@@ -48,6 +48,8 @@ public class FileSystemStorageServiceImpl implements StorageService {
     @Override
     @Transactional
     public void store(MultipartFile file, UUID assignmentId, String studentId) {
+        log.info("store, StudentId = " + studentId);
+
         Path path = Paths.get(rootPath + assignmentId.toString() + "\\");
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
