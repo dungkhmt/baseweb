@@ -69,7 +69,7 @@ public class ClassServiceImpl implements ClassService {
     @Override
     @Transactional
     public ResponseSecondType updateRegistStatus(UUID classId, String studentId, RegistStatus status) {
-        ResponseSecondType res;
+        ResponseSecondType res = null;
         String check = registRepo.checkRegiastration(classId, studentId);
 
         if (null == check) {
@@ -83,22 +83,38 @@ public class ClassServiceImpl implements ClassService {
                     // -> APPROVED || REFUSED
                     if (status.equals(RegistStatus.REMOVED)) {
                         res = invalidUpdateRes();
+                    } else if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
+                        res = new ResponseSecondType(200, null, null);
                     } else {
-                        return createOrUpdateRegist(classId, studentId, status);
+                        res = createOrUpdateRegist(classId, studentId, status);
                     }
                     break;
                 case "APPROVED":
                     // -> REMOVED.
                     if (status.equals(RegistStatus.REMOVED)) {
-                        return createOrUpdateRegist(classId, studentId, status);
+                        res = createOrUpdateRegist(classId, studentId, status);
+                    } else if (status.equals(RegistStatus.APPROVED)) {
+                        res = new ResponseSecondType(200, null, null);
                     } else {
                         res = invalidUpdateRes();
                     }
                     break;
-                default:
+                case "REFUSED":
                     // -> WAITING_FOR_APPROVAL.
                     if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
-                        return createOrUpdateRegist(classId, studentId, status);
+                        res = createOrUpdateRegist(classId, studentId, status);
+                    } else if (status.equals(RegistStatus.REFUSED)) {
+                        res = new ResponseSecondType(200, null, null);
+                    } else {
+                        res = invalidUpdateRes();
+                    }
+                    break;
+                case "REMOVED":
+                    // -> WAITING_FOR_APPROVAL.
+                    if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
+                        res = createOrUpdateRegist(classId, studentId, status);
+                    } else if (status.equals(RegistStatus.REMOVED)) {
+                        res = new ResponseSecondType(200, null, null);
                     } else {
                         res = invalidUpdateRes();
                     }
