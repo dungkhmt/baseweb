@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.education.classmanagement.service;
 
+import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.getassignmentdetail.GetAssignmentDetailOM;
 import com.hust.baseweb.applications.education.model.getassignmentdetail4teacher.GetAssignmentDetail4TeacherOM;
 
@@ -13,4 +14,6 @@ public interface AssignmentService {
     GetAssignmentDetail4TeacherOM getAssignmentDetail4Teacher(UUID assignmentId);
 
     String getSubmissionsOf(String assignmentId, List<String> studentIds);
+
+    ResponseSecondType deleteAssignment(UUID id);
 }

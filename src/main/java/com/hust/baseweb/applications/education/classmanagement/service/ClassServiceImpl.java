@@ -6,7 +6,7 @@ import com.hust.baseweb.applications.education.entity.ClassRegistration;
 import com.hust.baseweb.applications.education.entity.ClassRegistrationId;
 import com.hust.baseweb.applications.education.entity.Semester;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
-import com.hust.baseweb.applications.education.model.GetListStudentsOfClassOM;
+import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.ClassOM;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
 import com.hust.baseweb.applications.education.repo.ClassRegistrationRepo;
@@ -22,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Log4j2
@@ -55,15 +57,10 @@ public class ClassServiceImpl implements ClassService {
                 400,
                 "invalid register",
                 "Bạn đã đăng ký lớp này rồi");
-            return res;
         } else {
-            return createOrUpdateRegist(classId, studentId, RegistStatus.WAITING_FOR_APPROVAL);
+            res = createOrUpdateRegist(classId, studentId, RegistStatus.WAITING_FOR_APPROVAL);
         }
-    }
-
-    @Override
-    public GetListStudentsOfClassOM getListStudentsOfClass(UUID id) {
-        return null;
+        return res;
     }
 
     @Override
@@ -122,6 +119,44 @@ public class ClassServiceImpl implements ClassService {
             }
         }
         return res;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetClassesOfTeacherOM> getClassesOfTeacher(String teacherId) {
+        return classRepo.getClassesOfTeacher(teacherId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetClassesOfStudentOM> getClassesOfStudent(String studentId) {
+        return classRepo.getClassesDetailOf(studentId,
+                                            Arrays.asList(
+                                                RegistStatus.APPROVED.toString(),
+                                                RegistStatus.WAITING_FOR_APPROVAL.toString()));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public GetClassDetailOM getClassDetail(UUID id) {
+        return classRepo.getDetailOf(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetAssignmentsOM> getAssignments(UUID classId) {
+        return classRepo.getAssignments(classId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetStudentsOfClassOM> getStudentsOfClass(UUID id) {
+        return classRepo.getStudentsOfClass(id, RegistStatus.APPROVED.toString());
+    }
+
+    @Override
+    public List<GetStudentsOfClassOM> getRegistStudentsOfClass(UUID id) {
+        return classRepo.getStudentsOfClass(id, RegistStatus.WAITING_FOR_APPROVAL.toString());
     }
 
     @Transactional

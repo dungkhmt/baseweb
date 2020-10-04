@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.education.repo;
 
 import com.hust.baseweb.applications.education.entity.Class;
+import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.ClassOM;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,4 +48,105 @@ public interface ClassRepo extends JpaRepository<Class, String> {
                    "where class_id = ?1 and status = 'APPROVED'",
            nativeQuery = true)
     int getNoStudentsOf(UUID classId);
+
+    @Query(value = "select cast(ecl.id as varchar) id,\n" +
+                   "\tecl.code code,\n" +
+                   "\tec.id courseId,\n" +
+                   "\tec.course_name \"name\",\n" +
+                   "\tecl.class_type classType,\n" +
+                   "\tecl.department_id department,\n" +
+                   "\tecl.semester_id semester\n" +
+                   "from edu_class ecl \n" +
+                   "\tinner join edu_course ec on ecl.course_id = ec.id \n" +
+                   "where ecl.teacher_id = ?1 \n" +
+                   "order by ecl.semester_id ",
+           nativeQuery = true)
+    List<GetClassesOfTeacherOM> getClassesOfTeacher(String teacherId);
+
+    /*@Query(value = "select\n" +
+                   "\tcast(class_id as varchar)\n" +
+                   "from\n" +
+                   "\tedu_class_registration ecr\n" +
+                   "where\n" +
+                   "\tstudent_id = ? 1\n" +
+                   "\tand status in ('APPROVED', 'WAITING_FOR_APPROVAL')",
+           nativeQuery = true)
+    List<String> getClassIdsOfStudent(String studentId);*/
+
+    @Query(value = "select\n" +
+                   "\tcast(ecl.id as varchar) id,\n" +
+                   "\tecl.code code,\n" +
+                   "\tec.id courseId,\n" +
+                   "\tec.course_name \"name\",\n" +
+                   "\tecl.class_type classType,\n" +
+                   "\tecl.semester_id semester,\n" +
+                   "\tecr.status status\n" +
+                   "from\n" +
+                   "\tedu_class_registration ecr\n" +
+                   "inner join edu_class ecl on\n" +
+                   "\tecr.class_id = ecl.id\n" +
+                   "inner join edu_course ec on\n" +
+                   "\tecl.course_id = ec.id\n" +
+                   "where\n" +
+                   "\tecr.student_id = ?1 and ecr.status in ?2\n" +
+                   "order by\n" +
+                   "\tecl.semester_id",
+           nativeQuery = true)
+    List<GetClassesOfStudentOM> getClassesDetailOf(String studentId, List<String> status);
+
+    @Query(value = "select\n" +
+                   "\tcast(ecl.id as varchar) id,\n" +
+                   "\tecl.code code,\n" +
+                   "\tec.id courseId,\n" +
+                   "\tec.course_name \"name\",\n" +
+                   "\tecl.class_type classType,\n" +
+                   "\tecl.semester_id semester,\n" +
+                   "\tconcat(p.last_name , ' ', p.middle_name , ' ', p.first_name ) teacherName,\n" +
+                   "\tur.email email\n" +
+                   "from\n" +
+                   "\tedu_class ecl\n" +
+                   "inner join edu_course ec on\n" +
+                   "\tecl.course_id = ec.id\n" +
+                   "inner join user_login ul on\n" +
+                   "\tecl.teacher_id = ul.user_login_id\n" +
+                   "inner join person p on\n" +
+                   "\tul.party_id = p.party_id\n" +
+                   "left outer join user_register ur on\n" +
+                   "\tul.user_login_id = ur.user_login_id\n" +
+                   "where\n" +
+                   "\tecl.id = ?1",
+           nativeQuery = true)
+    GetClassDetailOM getDetailOf(UUID classId);
+
+    @Query(value = "select\n" +
+                   "\tcast(id as varchar) id,\n" +
+                   "\tassignment_name \"name\",\n" +
+                   "\tdead_line deadLine\n" +
+                   "from\n" +
+                   "\tedu_assignment ea\n" +
+                   "where\n" +
+                   "\tea.class_id = ?1\n" +
+                   "order by\n" +
+                   "\tcreated_stamp",
+           nativeQuery = true)
+    List<GetAssignmentsOM> getAssignments(UUID classId);
+
+    @Query(value = "select\n" +
+                   "\tconcat(p.last_name , ' ', p.middle_name , ' ', p.first_name ) \"name\",\n" +
+                   "\tur.email email\n" +
+                   "from\n" +
+                   "\tedu_class_registration ecr\n" +
+                   "inner join user_login ul on\n" +
+                   "\tecr.student_id = ul.user_login_id\n" +
+                   "inner join person p on\n" +
+                   "\tul.party_id = p.party_id\n" +
+                   "left outer join user_register ur on\n" +
+                   "\tul.user_login_id = ur.user_login_id\n" +
+                   "where\n" +
+                   "\tecr.class_id = ?1\n" +
+                   "\tand ecr.status = ?2\n" +
+                   "order by\n" +
+                   "\tp.first_name",
+           nativeQuery = true)
+    List<GetStudentsOfClassOM> getStudentsOfClass(UUID id, String status);
 }

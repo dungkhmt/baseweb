@@ -10,9 +10,23 @@ public interface AssignmentSubmissionRepo extends JpaRepository<AssignmentSubmis
 
     AssignmentSubmission findByAssignmentIdAndStudentUserLoginId(UUID assignmentId, String studentId);
 
-    @Query(value = "select eas.original_file_name \n" +
-                   "from edu_assignment_submission eas \n" +
-                   "where eas.assignment_id = ?1 and eas.student_id = ?2",
+    @Query(value = "select\n" +
+                   "\teas.original_file_name\n" +
+                   "from\n" +
+                   "\tedu_assignment_submission eas\n" +
+                   "where\n" +
+                   "\teas.assignment_id = ?1\n" +
+                   "\tand eas.student_id = ?2",
            nativeQuery = true)
     String getSubmitedFilenameOf(UUID assignmentId, String studentId);
+
+    @Query(value = "select\n" +
+                   "\tcount(1)\n" +
+                   "from\n" +
+                   "\tedu_assignment_submission eas\n" +
+                   "where\n" +
+                   "\teas.assignment_id = ?1\n" +
+                   "limit 1",
+           nativeQuery = true)
+    Integer checkSubmission(UUID assignmentId);
 }
