@@ -13,5 +13,5 @@ public interface ClassRegistrationRepo extends JpaRepository<ClassRegistration, 
                    "from edu_class_registration \n" +
                    "where class_id = ?1 and student_id = ?2",
            nativeQuery = true)
-    String checkRegiastration(UUID classId, String studentId);
+    String checkRegistration(UUID classId, String studentId);
 }
