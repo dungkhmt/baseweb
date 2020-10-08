@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.education.classmanagement.service;
 
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.StorageProperties;
+import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.GetSubmissionsOM;
 import com.hust.baseweb.applications.education.model.getassignmentdetail.GetAssignmentDetailOM;
 import com.hust.baseweb.applications.education.model.getassignmentdetail4teacher.GetAssignmentDetail4TeacherOM;
@@ -27,7 +28,7 @@ import java.util.UUID;
 public class AssignmentServiceImpl implements AssignmentService {
 
     @Autowired
-    private AssignmentRepo assignmentRepo;
+    private AssignmentRepo assignRepo;
 
     @Autowired
     private AssignmentSubmissionRepo submissionRepo;
@@ -49,15 +50,15 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Transactional(readOnly = true)
     public GetAssignmentDetailOM getAssignmentDetail(UUID id, String studentId) {
         return new GetAssignmentDetailOM(
-            assignmentRepo.getAssignmentDetail(id),
+            assignRepo.getAssignmentDetail(id),
             submissionRepo.getSubmitedFilenameOf(id, studentId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public GetAssignmentDetail4TeacherOM getAssignmentDetail4Teacher(UUID assignmentId) {
-        UUID classId = UUID.fromString(assignmentRepo.getClassIdOf(assignmentId));
-        List<Submission> submissions = assignmentRepo.getStudentSubmissionsOf(assignmentId);
+        UUID classId = UUID.fromString(assignRepo.getClassIdOf(assignmentId));
+        List<Submission> submissions = assignRepo.getStudentSubmissionsOf(assignmentId);
         int noOfStudents = classRepo.getNoStudentsOf(classId);
 
         String noSubmissions = noOfStudents == 0 ? "0/0" : submissions.size() +
@@ -68,7 +69,7 @@ public class AssignmentServiceImpl implements AssignmentService {
                                                            "%)";
 
         return new GetAssignmentDetail4TeacherOM(
-            assignmentRepo.getAssignmentDetail(assignmentId),
+            assignRepo.getAssignmentDetail(assignmentId),
             submissions,
             noSubmissions);
     }
@@ -76,7 +77,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional(readOnly = true)
     public String getSubmissionsOf(String assignmentId, List<String> studentIds) {
-        List<GetSubmissionsOM> submissions = assignmentRepo.getSubmissionsOf(
+        List<GetSubmissionsOM> submissions = assignRepo.getSubmissionsOf(
             UUID.fromString(assignmentId),
             new HashSet<>(studentIds));
 
@@ -99,5 +100,32 @@ public class AssignmentServiceImpl implements AssignmentService {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    @Override
+    @Transactional
+    public ResponseSecondType deleteAssignment(UUID id) {
+        ResponseSecondType res;
+        int isAssignExist = assignRepo.isAssignExist(id);
+
+        if (0 == isAssignExist) {
+            res = new ResponseSecondType(
+                404,
+                "not existed",
+                "Bài tập không tồn tại");
+        } else {
+            Integer check = submissionRepo.checkSubmission(id);
+
+            if (0 == check) {
+                assignRepo.deleteAssignment(id);
+                res = new ResponseSecondType(200, null, null);
+            } else {
+                res = new ResponseSecondType(
+                    400,
+                    "not allowed",
+                    "Không thể xoá bài tập vì đã có sinh viên nộp bài");
+            }
+        }
+        return res;
     }
 }

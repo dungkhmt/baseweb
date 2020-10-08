@@ -5,22 +5,21 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum RegistrationStatus {
+public enum RegistStatus {
 
     WAITING_FOR_APPROVAL("Chờ phê duyệt"),
     APPROVED("Đã phê duyệt"),
     REFUSED("Đã từ chối"),
-    REMOVED("Đã bị xoá"),
-    NONE(null);
+    REMOVED("Đã bị xoá");
 
     private String value;
 
-    public static RegistrationStatus of(String value) {
-        for (RegistrationStatus status : values()) {
+    public static RegistStatus of(String value) {
+        for (RegistStatus status : values()) {
             if (status.getValue().equalsIgnoreCase(value)) {
                 return status;
             }
         }
-        return NONE;
+        return null;
     }
 }

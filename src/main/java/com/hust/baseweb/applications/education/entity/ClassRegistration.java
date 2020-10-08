@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.education.entity;
 
-import com.hust.baseweb.applications.education.classmanagement.enumeration.RegistrationStatus;
+import com.hust.baseweb.applications.education.classmanagement.enumeration.RegistStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,11 +20,13 @@ public class ClassRegistration {
     @EmbeddedId
     private ClassRegistrationId id;
 
-    private RegistrationStatus status;
+    @Enumerated(EnumType.STRING)
+    private RegistStatus status;
 
     @LastModifiedDate
     private Date lastUpdatedStamp;
 
     @CreatedDate
+    @Column(updatable = false)
     private Date createdStamp;
 }

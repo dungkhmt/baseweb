@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.education.classmanagement.controller;
 import com.hust.baseweb.applications.education.classmanagement.service.AssignmentServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageFileNotFoundException;
+import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.GetFilesIM;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +32,7 @@ public class AssignmentController {
 
     private FileSystemStorageServiceImpl storageService;
 
-    private AssignmentServiceImpl assignmentService;
+    private AssignmentServiceImpl assignService;
 
     @PostMapping("/{id}/submission")
     public ResponseEntity<?> submitAssignment(
@@ -66,7 +68,7 @@ public class AssignmentController {
         @PathVariable UUID id,
         @Valid @RequestBody GetFilesIM getFilesIM
     ) {
-        String response = assignmentService.getSubmissionsOf(id.toString(), getFilesIM.getStudentIds());
+        String response = assignService.getSubmissionsOf(id.toString(), getFilesIM.getStudentIds());
 
         return null == response ? ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
@@ -75,21 +77,23 @@ public class AssignmentController {
 
     @GetMapping("/{id}/student")
     public ResponseEntity<?> getAssignmentDetail(Principal principal, @PathVariable UUID id) {
-        return ResponseEntity.ok().body(assignmentService.getAssignmentDetail(id, principal.getName()));
+        return ResponseEntity.ok().body(assignService.getAssignmentDetail(id, principal.getName()));
     }
 
     @GetMapping("/{id}/teacher")
     public ResponseEntity<?> getAssignmentDetail4Teacher(@PathVariable UUID id) {
-        return ResponseEntity.ok().body(assignmentService.getAssignmentDetail4Teacher(id));
+        return ResponseEntity.ok().body(assignService.getAssignmentDetail4Teacher(id));
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAssignment(@PathVariable UUID id) {
+        ResponseSecondType res = assignService.deleteAssignment(id);
+        return ResponseEntity.status(res.getStatus()).body(res.getMessage());
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
         return ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<?> test() {
-        return ResponseEntity.ok().body("OK");
     }
 }
