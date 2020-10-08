@@ -29,6 +29,7 @@ public class ClassController {
 
     @GetMapping
     public ResponseEntity<?> getClassListOfCurrentSemester(
+        Principal principal,
         @RequestParam
         @Min(value = 0, message = "Số trang có giá trị không âm") Integer page,
         @RequestParam
@@ -42,7 +43,7 @@ public class ClassController {
             size = 20;
         }
 
-        return classService.getClassListOfCurrentSemester(page, size);
+        return ResponseEntity.ok().body(classService.getClassListOfCurrentSemester(principal.getName(), page, size));
     }
 
     @PostMapping("/register")

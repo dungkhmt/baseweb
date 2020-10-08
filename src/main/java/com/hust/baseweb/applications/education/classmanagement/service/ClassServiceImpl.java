@@ -18,13 +18,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -39,18 +40,28 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getClassListOfCurrentSemester(int page, int size) {
+    public GetClassListOM getClassListOfCurrentSemester(String studentId, int page, int size) {
         Semester semester = semesterRepo.findByActiveTrue();
         Page<ClassOM> classes = classRepo.findBySemesterId(semester.getId(), PageRequest.of(page, size));
+        Set<String> registeredClasses = null;
 
-        return ResponseEntity.ok().body(new GetClassListOM(semester.getId(), classes));
+        if (0 < classes.getContent().size()) {
+            registeredClasses = classRepo.getRegisteredClassesIn(
+                studentId,
+                classes
+                    .get()
+                    .map(aClass -> UUID.fromString(aClass.getId()))
+                    .collect(Collectors.toList()));
+        }
+
+        return new GetClassListOM(semester.getId(), classes, registeredClasses);
     }
 
     @Override
     @Transactional
     public ResponseSecondType register(UUID classId, String studentId) {
         ResponseSecondType res;
-        String check = registRepo.checkRegiastration(classId, studentId);
+        String check = registRepo.checkRegistration(classId, studentId);
 
         if ("WAITING_FOR_APPROVAL".equals(check) || "APPROVED".equals(check)) {
             res = new ResponseSecondType(
@@ -67,7 +78,7 @@ public class ClassServiceImpl implements ClassService {
     @Transactional
     public ResponseSecondType updateRegistStatus(UUID classId, String studentId, RegistStatus status) {
         ResponseSecondType res = null;
-        String check = registRepo.checkRegiastration(classId, studentId);
+        String check = registRepo.checkRegistration(classId, studentId);
 
         if (null == check) {
             res = new ResponseSecondType(
@@ -130,10 +141,11 @@ public class ClassServiceImpl implements ClassService {
     @Override
     @Transactional(readOnly = true)
     public List<GetClassesOfStudentOM> getClassesOfStudent(String studentId) {
-        return classRepo.getClassesDetailOf(studentId,
-                                            Arrays.asList(
-                                                RegistStatus.APPROVED.toString(),
-                                                RegistStatus.WAITING_FOR_APPROVAL.toString()));
+        return classRepo.getClassesDetailOf(
+            studentId,
+            Arrays.asList(
+                RegistStatus.APPROVED.toString(),
+                RegistStatus.WAITING_FOR_APPROVAL.toString()));
     }
 
     @Override
