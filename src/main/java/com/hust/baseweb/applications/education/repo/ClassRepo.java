@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface ClassRepo extends JpaRepository<Class, String> {
@@ -149,4 +150,14 @@ public interface ClassRepo extends JpaRepository<Class, String> {
                    "\tp.first_name",
            nativeQuery = true)
     List<GetStudentsOfClassOM> getStudentsOfClass(UUID id, String status);
+
+    @Query(value = "select\n" +
+                   "\tcast(class_id as varchar)\n" +
+                   "from\n" +
+                   "\tedu_class_registration ecr\n" +
+                   "where\n" +
+                   "\tstudent_id = ?1\n" +
+                   "\tand status in ('WAITING_FOR_APPROVAL', 'APPROVED')\n" +
+                   "\tand class_id in ?2", nativeQuery = true)
+    Set<String> getRegisteredClassesIn(String studentId, List<UUID> classIds);
 }
