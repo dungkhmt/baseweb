@@ -1,3 +1,46 @@
+create table edu_timetable_raw(
+    id uuid not null default uuid_generate_v1(),
+    semester varchar(20),
+    session_id varchar(20),
+    class_code varchar(20),
+    class_code_follow varchar(20),
+    class_type varchar(60),
+    course_code varchar(20),
+    course_name varchar(256),
+    week varchar(40),
+    day int,
+    time_slot_duration varchar(60),
+    start_slot int,
+    end_slot int,
+    session_day varchar(20),
+    room_id varchar(60),
+    max_number_students int,
+    faculty_id varchar(60),
+    constraint pk_edu_timetable_raw primary key(id)
+);
+
+create table edu_exam_timetable_raw(
+    id uuid not null default uuid_generate_v1(),
+    semester varchar(20),
+    class_code varchar(20),
+    course_code varchar(20),
+    course_name varchar(256),
+    group varchar(100),
+    week varchar(20),
+    day varchar(20),
+    date varchar(40),
+    slot varchar(20),
+    number_students int,
+    room_id varchar(20),
+    constraint pk_edu_timetable_raw primary key(id)
+);
+create table edu_room(
+    room_id varchar(60),
+    room_name varchar(200),
+
+    constraint pk_edu_room primary key(room_id)
+);
+
 -- Drop table
 
 -- DROP TABLE public.edu_department;
