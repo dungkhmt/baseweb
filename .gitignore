@@ -28,6 +28,7 @@ logs/
 /.nb-gradle/
 build/
 /lib/
+/src/main/java/com/hust/baseweb/applications/education/classmanagement/data/
 ### VS Code ###
 .vscode/
 .history
