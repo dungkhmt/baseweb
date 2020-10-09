@@ -133,6 +133,7 @@ public interface ClassRepo extends JpaRepository<Class, String> {
     List<GetAssignmentsOM> getAssignments(UUID classId);
 
     @Query(value = "select\n" +
+                   "\tul.user_login_id id,\n" +
                    "\tconcat(p.last_name , ' ', p.middle_name , ' ', p.first_name ) \"name\",\n" +
                    "\tur.email email\n" +
                    "from\n" +
