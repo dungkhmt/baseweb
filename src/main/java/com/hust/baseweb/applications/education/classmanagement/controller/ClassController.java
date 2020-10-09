@@ -65,9 +65,10 @@ public class ClassController {
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PutMapping("/registration-status")
-    public ResponseEntity<String> updateRegisStatus(@Valid @RequestBody UpdateRegistStatusIM im, Principal principal) {
-        ResponseSecondType res = classService.updateRegistStatus(im.getClassId(), principal.getName(), im.getStatus());
-        return ResponseEntity.status(res.getStatus()).body(res.getMessage());
+    public ResponseEntity<?> updateRegistStatus(@Valid @RequestBody UpdateRegistStatusIM im) {
+        return ResponseEntity
+            .ok()
+            .body(classService.updateRegistStatus(im.getClassId(), im.getStudentIds(), im.getStatus()));
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})

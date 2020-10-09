@@ -6,6 +6,8 @@ import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public interface ClassService {
@@ -14,7 +16,7 @@ public interface ClassService {
 
     ResponseSecondType register(UUID classId, String studentId);
 
-    ResponseSecondType updateRegistStatus(UUID classId, String studentId, RegistStatus status);
+    Map<String, ResponseSecondType> updateRegistStatus(UUID classId, Set<String> studentIds, RegistStatus status);
 
     List<GetClassesOfTeacherOM> getClassesOfTeacher(String teacherId);
 

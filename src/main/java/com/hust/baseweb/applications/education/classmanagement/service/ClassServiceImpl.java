@@ -21,10 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -76,57 +73,64 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @Transactional
-    public ResponseSecondType updateRegistStatus(UUID classId, String studentId, RegistStatus status) {
-        ResponseSecondType res = null;
-        String check = registRepo.checkRegistration(classId, studentId);
+    public Map<String, ResponseSecondType> updateRegistStatus(
+        UUID classId,
+        Set<String> studentIds,
+        RegistStatus status
+    ) {
+        Map<String, ResponseSecondType> res = new HashMap<>();
 
-        if (null == check) {
-            res = new ResponseSecondType(
-                404,
-                "invalid update",
-                "Không tìm thấy sinh viên, lớp hoặc yêu cầu đăng ký");
-        } else {
-            switch (check) {
-                case "WAITING_FOR_APPROVAL":
-                    // -> APPROVED || REFUSED
-                    if (status.equals(RegistStatus.REMOVED)) {
-                        res = invalidUpdateRes();
-                    } else if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
-                        res = new ResponseSecondType(200, null, null);
-                    } else {
-                        res = createOrUpdateRegist(classId, studentId, status);
-                    }
-                    break;
-                case "APPROVED":
-                    // -> REMOVED.
-                    if (status.equals(RegistStatus.REMOVED)) {
-                        res = createOrUpdateRegist(classId, studentId, status);
-                    } else if (status.equals(RegistStatus.APPROVED)) {
-                        res = new ResponseSecondType(200, null, null);
-                    } else {
-                        res = invalidUpdateRes();
-                    }
-                    break;
-                case "REFUSED":
-                    // -> WAITING_FOR_APPROVAL.
-                    if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
-                        res = createOrUpdateRegist(classId, studentId, status);
-                    } else if (status.equals(RegistStatus.REFUSED)) {
-                        res = new ResponseSecondType(200, null, null);
-                    } else {
-                        res = invalidUpdateRes();
-                    }
-                    break;
-                case "REMOVED":
-                    // -> WAITING_FOR_APPROVAL.
-                    if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
-                        res = createOrUpdateRegist(classId, studentId, status);
-                    } else if (status.equals(RegistStatus.REMOVED)) {
-                        res = new ResponseSecondType(200, null, null);
-                    } else {
-                        res = invalidUpdateRes();
-                    }
-                    break;
+        for (String studentId : studentIds) {
+            String check = registRepo.checkRegistration(classId, studentId);
+
+            if (null == check) {
+                res.put(studentId, new ResponseSecondType(
+                    404,
+                    "invalid update",
+                    "Không tìm thấy sinh viên, lớp hoặc yêu cầu đăng ký"));
+            } else {
+                switch (check) {
+                    case "WAITING_FOR_APPROVAL":
+                        // -> APPROVED || REFUSED
+                        if (status.equals(RegistStatus.REMOVED)) {
+                            res.put(studentId, invalidUpdateRes());
+                        } else if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
+                            res.put(studentId, new ResponseSecondType(200, null, null));
+                        } else {
+                            res.put(studentId, createOrUpdateRegist(classId, studentId, status));
+                        }
+                        break;
+                    case "APPROVED":
+                        // -> REMOVED.
+                        if (status.equals(RegistStatus.REMOVED)) {
+                            res.put(studentId, createOrUpdateRegist(classId, studentId, status));
+                        } else if (status.equals(RegistStatus.APPROVED)) {
+                            res.put(studentId, new ResponseSecondType(200, null, null));
+                        } else {
+                            res.put(studentId, invalidUpdateRes());
+                        }
+                        break;
+                    case "REFUSED":
+                        // -> WAITING_FOR_APPROVAL.
+                        if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
+                            res.put(studentId, createOrUpdateRegist(classId, studentId, status));
+                        } else if (status.equals(RegistStatus.REFUSED)) {
+                            res.put(studentId, new ResponseSecondType(200, null, null));
+                        } else {
+                            res.put(studentId, invalidUpdateRes());
+                        }
+                        break;
+                    case "REMOVED":
+                        // -> WAITING_FOR_APPROVAL.
+                        if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
+                            res.put(studentId, createOrUpdateRegist(classId, studentId, status));
+                        } else if (status.equals(RegistStatus.REMOVED)) {
+                            res.put(studentId, new ResponseSecondType(200, null, null));
+                        } else {
+                            res.put(studentId, invalidUpdateRes());
+                        }
+                        break;
+                }
             }
         }
         return res;
