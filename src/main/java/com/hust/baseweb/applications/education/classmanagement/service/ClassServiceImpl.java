@@ -15,14 +15,16 @@ import com.hust.baseweb.applications.education.repo.SemesterRepo;
 import com.hust.baseweb.entity.UserLogin;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Log4j2
 @Service
@@ -37,10 +39,30 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @Transactional(readOnly = true)
-    public GetClassListOM getClassListOfCurrentSemester(String studentId, int page, int size) {
+    public GetClassListOM getClassesOfCurrentSemester(String studentId, GetClassesIM filterParams, Pageable pageable) {
         Semester semester = semesterRepo.findByActiveTrue();
-        Page<ClassOM> classes = classRepo.findBySemesterId(semester.getId(), PageRequest.of(page, size));
+        Page<ClassOM> classes;
         Set<String> registeredClasses = null;
+
+        if (Stream.of(
+            filterParams.getCourseId(),
+            filterParams.getCourseName(),
+            filterParams.getClassType(),
+            filterParams.getDepartmentId())
+                  .allMatch(attr -> StringUtils.isBlank(attr)) && null == filterParams.getCode()) {
+            classes = classRepo.findBySemester(semester.getId(), pageable);
+        } else {
+            classes = classRepo.findBySemesterWithFilters(
+                semester.getId(),
+                null == filterParams.getCode() ? "" : filterParams.getCode().toString(),
+                null == filterParams.getCourseId() ? "" : StringUtils.deleteWhitespace(filterParams.getCourseId()),
+                null == filterParams.getCourseName() ? "" : StringUtils.normalizeSpace(filterParams.getCourseName()),
+                null == filterParams.getClassType() ? "" : StringUtils.deleteWhitespace(filterParams.getClassType()),
+                null == filterParams.getDepartmentId()
+                    ? ""
+                    : StringUtils.deleteWhitespace(filterParams.getDepartmentId()),
+                pageable);
+        }
 
         if (0 < classes.getContent().size()) {
             registeredClasses = classRepo.getRegisteredClassesIn(

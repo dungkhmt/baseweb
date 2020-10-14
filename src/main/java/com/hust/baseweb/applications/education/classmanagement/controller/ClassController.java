@@ -2,11 +2,14 @@ package com.hust.baseweb.applications.education.classmanagement.controller;
 
 import com.hust.baseweb.applications.education.classmanagement.service.ClassServiceImpl;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.model.GetClassesIM;
 import com.hust.baseweb.applications.education.model.GetStudentsOfClassOM;
 import com.hust.baseweb.applications.education.model.RegistIM;
 import com.hust.baseweb.applications.education.model.UpdateRegistStatusIM;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -19,6 +22,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
+@Log4j2
 @Controller
 @Validated
 @RequestMapping("/edu/class")
@@ -27,13 +31,14 @@ public class ClassController {
 
     private ClassServiceImpl classService;
 
-    @GetMapping
-    public ResponseEntity<?> getClassListOfCurrentSemester(
+    @PostMapping
+    public ResponseEntity<?> getClassesOfCurrSemester(
         Principal principal,
         @RequestParam
         @Min(value = 0, message = "Số trang có giá trị không âm") Integer page,
         @RequestParam
-        @Min(value = 0, message = "Kích thước trang có giá trị không âm") Integer size
+        @Min(value = 0, message = "Kích thước trang có giá trị không âm") Integer size,
+        @RequestBody GetClassesIM filterParams
     ) {
         if (null == page) {
             page = 0;
@@ -43,7 +48,12 @@ public class ClassController {
             size = 20;
         }
 
-        return ResponseEntity.ok().body(classService.getClassListOfCurrentSemester(principal.getName(), page, size));
+        return ResponseEntity
+            .ok()
+            .body(classService.getClassesOfCurrentSemester(
+                principal.getName(),
+                filterParams,
+                PageRequest.of(page, size)));
     }
 
     @PostMapping("/register")

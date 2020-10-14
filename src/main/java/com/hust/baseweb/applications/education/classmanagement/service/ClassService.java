@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.education.classmanagement.enumeration.Regis
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 public interface ClassService {
 
-    GetClassListOM getClassListOfCurrentSemester(String studentId, int page, int size);
+    GetClassListOM getClassesOfCurrentSemester(String studentId, GetClassesIM filterParams, Pageable pageable);
 
     ResponseSecondType register(UUID classId, String studentId);
 
