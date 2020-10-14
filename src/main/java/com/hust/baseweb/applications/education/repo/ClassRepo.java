@@ -41,8 +41,60 @@ public interface ClassRepo extends JpaRepository<Class, String> {
                    "\tinner join edu_course as co on cl.course_id = co.id \n" +
                    "\tinner join edu_department as d ON cl.department_id = d.id \n" +
                    "where cl.semester_id = ?1",
+           countQuery = "select count(cl.id)\n" +
+                        "from edu_class as cl \n" +
+                        "\tinner join edu_course as co on cl.course_id = co.id \n" +
+                        "\tinner join edu_department as d ON cl.department_id = d.id \n" +
+                        "where cl.semester_id = ?1",
            nativeQuery = true)
-    Page<ClassOM> findBySemesterId(short semesterId, Pageable pageable);
+    Page<ClassOM> findBySemester(short semesterId, Pageable pageable);
+
+    @Query(value = "select\n" +
+                   "\tcast(cl.id as varchar) id,\n" +
+                   "\tcode,\n" +
+                   "\tco.id courseId,\n" +
+                   "\tco.course_name courseName,\n" +
+                   "\tcl.class_type classType,\n" +
+                   "\td.id departmentId\n" +
+                   "from\n" +
+                   "\tedu_class as cl\n" +
+                   "inner join edu_course as co on\n" +
+                   "\tcl.course_id = co.id\n" +
+                   "inner join edu_department as d on\n" +
+                   "\tcl.department_id = d.id\n" +
+                   "where\n" +
+                   "\tcl.semester_id = ?1\n" +
+                   "\tand cast(code as varchar) like concat('%', lower(unaccent(?2)), '%')\n" +
+                   "\tand lower(unaccent(co.id)) like concat('%', lower(unaccent(?3)), '%')\n" +
+                   "\tand lower(unaccent(co.course_name)) like concat('%', lower(unaccent(?4)), '%')\n" +
+                   "\tand lower(unaccent(cl.class_type)) like concat('%', lower(unaccent(?5)), '%')\n" +
+                   "\tand lower(unaccent(d.id)) like concat('%', lower(unaccent(?6)), '%')",
+           countQuery = "select\n" +
+                        "\tcount(cl.id)\n" +
+                        "from\n" +
+                        "\tedu_class as cl\n" +
+                        "inner join edu_course as co on\n" +
+                        "\tcl.course_id = co.id\n" +
+                        "inner join edu_department as d on\n" +
+                        "\tcl.department_id = d.id\n" +
+                        "where\n" +
+                        "\tcl.semester_id = ?1\n" +
+                        "\tand cast(code as varchar) like concat('%', lower(unaccent(?2)), '%')\n" +
+                        "\tand lower(unaccent(co.id)) like concat('%', lower(unaccent(?3)), '%')\n" +
+                        "\tand lower(unaccent(co.course_name)) like concat('%', lower(unaccent(?4)), '%')\n" +
+                        "\tand lower(unaccent(cl.class_type)) like concat('%', lower(unaccent(?5)), '%')\n" +
+                        "\tand lower(unaccent(d.id)) like concat('%', lower(unaccent(?6)), '%')",
+           nativeQuery = true)
+    Page<ClassOM> findBySemesterWithFilters(
+        short semesterId,
+        String code,
+        String courseId,
+        String name,
+        String type,
+        String dept,
+        Pageable pageable
+    );
+
 
     @Query(value = "select count(student_id)\n" +
                    "from edu_class_registration ecr \n" +
