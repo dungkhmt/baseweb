@@ -39,10 +39,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     private Set<String> errorFields;
 
     @Override
-    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(final HttpRequestMethodNotSupportedException ex,
-                                                                         final HttpHeaders headers,
-                                                                         final HttpStatus status,
-                                                                         final WebRequest request) {
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
+        final HttpRequestMethodNotSupportedException ex,
+        final HttpHeaders headers,
+        final HttpStatus status,
+        final WebRequest request
+    ) {
         final StringBuilder builder = new StringBuilder();
 
         builder.append(ex.getMethod());
@@ -55,60 +57,82 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(final HttpMediaTypeNotSupportedException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(
+        final HttpMediaTypeNotSupportedException ex,
+        final HttpHeaders headers,
+        final HttpStatus status,
+        final WebRequest request
+    ) {
         final StringBuilder builder = new StringBuilder();
 
         builder.append(ex.getContentType());
         builder.append("Media type is not supported. Supported media types are: ");
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t + " "));
 
-        ResponseSecondType response = new ResponseSecondType(415, ex.getLocalizedMessage(), builder.substring(0, builder.length() - 2));
+        ResponseSecondType response = new ResponseSecondType(
+            415,
+            ex.getLocalizedMessage(),
+            builder.substring(0, builder.length() - 2));
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     // Request param missing.
     @Override
-    protected ResponseEntity<Object> handleMissingServletRequestParameter(final MissingServletRequestParameterException ex,
-                                                                          final HttpHeaders headers,
-                                                                          final HttpStatus status,
-                                                                          final WebRequest request) {
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(
+        final MissingServletRequestParameterException ex,
+        final HttpHeaders headers,
+        final HttpStatus status,
+        final WebRequest request
+    ) {
 
         ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(),
-                ex.getParameterName() + " parameter is missing");
+                                                             ex.getParameterName() + " parameter is missing");
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     // Cannot convert to target type.
     @Override
-    protected ResponseEntity<Object> handleTypeMismatch(final TypeMismatchException ex,
-                                                        final HttpHeaders headers,
-                                                        final HttpStatus status,
-                                                        final WebRequest request) {
+    protected ResponseEntity<Object> handleTypeMismatch(
+        final TypeMismatchException ex,
+        final HttpHeaders headers,
+        final HttpStatus status,
+        final WebRequest request
+    ) {
 
         ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(),
-                ex.getValue() + " value for " + ex.getPropertyName() + " should be of type " + ex.getRequiredType());
+                                                             ex.getValue() +
+                                                             " value for " +
+                                                             ex.getPropertyName() +
+                                                             " should be of type " +
+                                                             ex.getRequiredType());
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @Override
-    public ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
-                                                               HttpHeaders headers,
-                                                               HttpStatus status,
-                                                               WebRequest request) {
+    public ResponseEntity<Object> handleHttpMessageNotReadable(
+        final HttpMessageNotReadableException ex,
+        HttpHeaders headers,
+        HttpStatus status,
+        WebRequest request
+    ) {
 
         ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(), ex.getMessage());
 
-        return ResponseEntity.status(response.getStatus()).body(response);/*this.handleExceptionInternal(ex, response, headers, HttpStatus.valueOf(response.getStatus()), request);*/
+        return ResponseEntity
+            .status(response.getStatus())
+            .body(response);/*this.handleExceptionInternal(ex, response, headers, HttpStatus.valueOf(response.getStatus()), request);*/
     }
 
     // Bean validator.
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
-                                                                  final HttpHeaders headers,
-                                                                  final HttpStatus status,
-                                                                  final WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+        final MethodArgumentNotValidException ex,
+        final HttpHeaders headers,
+        final HttpStatus status,
+        final WebRequest request
+    ) {
         BindingResult result = ex.getBindingResult();
         List<FieldError> fieldErrors = result.getFieldErrors();
 
@@ -116,7 +140,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         errorFields = new HashSet<>();
 
         for (FieldError fieldError : fieldErrors) {
-            if (errorFields.contains(fieldError.getField())) continue;
+            if (errorFields.contains(fieldError.getField())) {
+                continue;
+            }
             errorFields.add(fieldError.getField());
             response.addError(fieldError.getField(), "Đối số không hợp lệ", fieldError.getDefaultMessage());
         }
@@ -125,22 +151,26 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMissingServletRequestPart(final MissingServletRequestPartException ex,
-                                                                     final HttpHeaders headers,
-                                                                     final HttpStatus status,
-                                                                     final WebRequest request) {
+    protected ResponseEntity<Object> handleMissingServletRequestPart(
+        final MissingServletRequestPartException ex,
+        final HttpHeaders headers,
+        final HttpStatus status,
+        final WebRequest request
+    ) {
 
         ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(),
-                ex.getRequestPartName() + " part is missing");
+                                                             ex.getRequestPartName() + " part is missing");
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @Override
-    protected ResponseEntity<Object> handleBindException(final BindException ex,
-                                                         final HttpHeaders headers,
-                                                         final HttpStatus status,
-                                                         final WebRequest request) {
+    protected ResponseEntity<Object> handleBindException(
+        final BindException ex,
+        final HttpHeaders headers,
+        final HttpStatus status,
+        final WebRequest request
+    ) {
 
         BindingResult result = ex.getBindingResult();
         List<FieldError> fieldErrors = result.getFieldErrors();
@@ -149,7 +179,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         errorFields = new HashSet<>();
 
         for (FieldError fieldError : fieldErrors) {
-            if (errorFields.contains(fieldError.getField())) continue;
+            if (errorFields.contains(fieldError.getField())) {
+                continue;
+            }
             errorFields.add(fieldError.getField());
             response.addError(fieldError.getField(), "bind exception", fieldError.getDefaultMessage());
         }
@@ -162,13 +194,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleNoHandlerFoundException(final NoHandlerFoundException ex,
-                                                                   final HttpHeaders headers,
-                                                                   final HttpStatus status,
-                                                                   final WebRequest request) {
+    protected ResponseEntity<Object> handleNoHandlerFoundException(
+        final NoHandlerFoundException ex,
+        final HttpHeaders headers,
+        final HttpStatus status,
+        final WebRequest request
+    ) {
 
         ResponseSecondType response = new ResponseSecondType(415, ex.getLocalizedMessage(),
-                "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL());
+                                                             "No handler found for " +
+                                                             ex.getHttpMethod() +
+                                                             " " +
+                                                             ex.getRequestURL());
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
@@ -176,21 +213,27 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException ex) {
         ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(),
-                ex.getName() + " should be of type " + ex.getRequiredType().getName());
+                                                             ex.getName() +
+                                                             " should be of type " +
+                                                             ex.getRequiredType().getName());
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolation(final ConstraintViolationException ex,
-                                                            final WebRequest request) {
+    public ResponseEntity<Object> handleConstraintViolation(
+        final ConstraintViolationException ex,
+        final WebRequest request
+    ) {
 
         ResponseFirstType response = new ResponseFirstType(400);
         errorFields = new HashSet<>();
         String field = null;
 
         for (final ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-            if (errorFields.contains(violation.getPropertyPath().toString())) continue;
+            if (errorFields.contains(violation.getPropertyPath().toString())) {
+                continue;
+            }
 
             errorFields.add(violation.getPropertyPath().toString());
 
@@ -212,8 +255,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleAll(final Exception ex, final WebRequest request) {
-        ResponseSecondType response = new ResponseSecondType(500, "Internal server error", ex.getLocalizedMessage());
-
+        ResponseSecondType response = new ResponseSecondType(500, "Internal server error", ex.getMessage());
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 }
