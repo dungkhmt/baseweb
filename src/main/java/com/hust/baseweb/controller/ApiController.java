@@ -1,37 +1,22 @@
 package com.hust.baseweb.controller;
 
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.hust.baseweb.entity.Application;
-import com.hust.baseweb.entity.Party;
-import com.hust.baseweb.entity.Person;
-import com.hust.baseweb.entity.SecurityGroup;
-import com.hust.baseweb.entity.SecurityPermission;
-import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.entity.*;
 import com.hust.baseweb.model.PasswordChangeModel;
 import com.hust.baseweb.service.ApplicationService;
 import com.hust.baseweb.service.PersonService;
+import com.hust.baseweb.service.SecurityGroupService;
 import com.hust.baseweb.service.UserService;
-
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.AllArgsConstructor;
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -39,12 +24,16 @@ import lombok.AllArgsConstructor;
 public class ApiController {
 
     private UserService userService;
+
     private PersonService personService;
+
     private ApplicationService applicationService;
+
+    private SecurityGroupService securityGroupService;
 
     @GetMapping("/")
     public ResponseEntity<Map> home(Principal principal) {
-        UserLogin userLogin=userService.findById(principal.getName());
+        UserLogin userLogin = userService.findById(principal.getName());
         Map<String, String> response = new HashMap<>();
 
         response.put("user", principal.getName());
@@ -72,7 +61,7 @@ public class ApiController {
             permissionList.addAll(securityGroup.getPermissions());
         }
         Set<String> permissionSet = permissionList.stream().map(permission -> permission.getPermissionId())
-                .collect(Collectors.toSet());
+                                                  .collect(Collectors.toSet());
         if (permissionSet.contains(application.getPermission().getPermissionId())) {
 
             response = new HashMap<>();
@@ -86,22 +75,24 @@ public class ApiController {
         return ResponseEntity.ok().body(response);
 
     }
+
     @GetMapping("/my-account")
     public ResponseEntity<?> getAccount(Principal principal) {
-        UserLogin userLogin=userService.findById(principal.getName());
-        Party party=userLogin.getParty();
-        Person person= personService.findByPartyId(party.getPartyId());
+        UserLogin userLogin = userService.findById(principal.getName());
+        Party party = userLogin.getParty();
+        Person person = personService.findByPartyId(party.getPartyId());
         Map<String, String> response = new HashMap<>();
         response.put("name", person.getFullName());
         response.put("partyId", person.getPartyId().toString());
         response.put("user", principal.getName());
         return ResponseEntity.ok().body(response);
     }
+
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(Principal principal, @RequestBody PasswordChangeModel passwordChangeModel) {
-        UserLogin userLogin=userService.findById(principal.getName());
-        if(UserLogin.PASSWORD_ENCODER.matches(passwordChangeModel.getCurrentPassword(),userLogin.getPassword())){
-            UserLogin user =userService.updatePassword(userLogin,passwordChangeModel.getNewPassword());
+        UserLogin userLogin = userService.findById(principal.getName());
+        if (UserLogin.PASSWORD_ENCODER.matches(passwordChangeModel.getCurrentPassword(), userLogin.getPassword())) {
+            UserLogin user = userService.updatePassword(userLogin, passwordChangeModel.getNewPassword());
             return ResponseEntity.ok().body("");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password isn't correct");
@@ -138,6 +129,9 @@ public class ApiController {
     }
     */
 
-
+    @GetMapping("/roles")
+    public ResponseEntity<?> getRoles() {
+        return ResponseEntity.ok().body(securityGroupService.getRoles());
+    }
 }
 
