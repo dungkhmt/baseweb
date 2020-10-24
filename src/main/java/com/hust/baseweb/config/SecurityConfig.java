@@ -33,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()
+            .antMatchers("/roles").permitAll()
             .antMatchers("/edu/assignment/*/download-file/*")
             .permitAll()
             .antMatchers("/edu/class/**")
