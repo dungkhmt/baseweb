@@ -1,4 +1,4 @@
-CREATE TABLE status_type
+create TABLE status_type
 (
     status_type_id     VARCHAR(60) NOT NULL,
     parent_type_id     VARCHAR(60),
@@ -8,7 +8,7 @@ CREATE TABLE status_type
     CONSTRAINT pk_status_type PRIMARY KEY (status_type_id),
     CONSTRAINT status_type_parent FOREIGN KEY (parent_type_id) REFERENCES status_type (status_type_id)
 );
-CREATE TABLE status
+create TABLE status
 (
     status_id          VARCHAR(60) NOT NULL,
     status_type_id     VARCHAR(60),
@@ -20,7 +20,7 @@ CREATE TABLE status
     CONSTRAINT pk_status PRIMARY KEY (status_id),
     CONSTRAINT status_to_type FOREIGN KEY (status_type_id) REFERENCES status_type (status_type_id)
 );
-CREATE TABLE party_type
+create TABLE party_type
 (
     party_type_id      VARCHAR(60) NOT NULL,
     parent_type_id     VARCHAR(60),
@@ -31,7 +31,7 @@ CREATE TABLE party_type
     CONSTRAINT pk_party_type PRIMARY KEY (party_type_id),
     CONSTRAINT party_type_par FOREIGN KEY (parent_type_id) REFERENCES party_type (party_type_id)
 );
-CREATE TABLE party
+create TABLE party
 (
     party_id                    UUID      NOT NULL default uuid_generate_v1(),
     party_type_id               VARCHAR(60),
@@ -51,7 +51,7 @@ CREATE TABLE party
     CONSTRAINT party_status_item FOREIGN KEY (status_id) REFERENCES status (status_id),
     CONSTRAINT party_pty_typ FOREIGN KEY (party_type_id) REFERENCES party_type (party_type_id)
 );
-CREATE TABLE person
+create TABLE person
 (
     party_id           UUID      NOT NULL,
     first_name         VARCHAR(100),
@@ -65,7 +65,7 @@ CREATE TABLE person
     CONSTRAINT person_party FOREIGN KEY (party_id) REFERENCES party (party_id)
 );
 
-CREATE TABLE user_login
+create TABLE user_login
 (
     user_login_id            VARCHAR(255)        NOT NULL,
     current_password         VARCHAR(60),
@@ -86,20 +86,29 @@ CREATE TABLE user_login
     CONSTRAINT user_party FOREIGN KEY (party_id) REFERENCES party (party_id)
 );
 
-ALTER TABLE party
-    ADD CONSTRAINT party_m_user_login FOREIGN KEY (last_modified_by_user_login) REFERENCES user_login (user_login_id);
-ALTER TABLE party
-    ADD CONSTRAINT party_c_user_login FOREIGN KEY (created_by_user_login) REFERENCES user_login (user_login_id);
+alter table party
+    add CONSTRAINT party_m_user_login FOREIGN KEY (last_modified_by_user_login) REFERENCES user_login (user_login_id);
+alter table party
+    add CONSTRAINT party_c_user_login FOREIGN KEY (created_by_user_login) REFERENCES user_login (user_login_id);
 
-CREATE TABLE security_group
-(
-    group_id           VARCHAR(60) NOT NULL,
-    description        TEXT,
-    last_updated_stamp TIMESTAMP,
-    created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_security_group PRIMARY KEY (group_id)
+
+
+-- Drop table
+
+-- DROP TABLE public.security_group;
+
+CREATE TABLE public.security_group (
+	group_id varchar(60) NOT NULL,
+	description text NULL,
+	last_updated_stamp timestamp NULL,
+	created_stamp timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+	group_name varchar(100) NULL,
+	CONSTRAINT pk_security_group PRIMARY KEY (group_id)
 );
-CREATE TABLE security_permission
+
+
+
+create TABLE security_permission
 (
     permission_id      VARCHAR(100) NOT NULL,
     description        TEXT,
@@ -107,7 +116,7 @@ CREATE TABLE security_permission
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_security_permission PRIMARY KEY (permission_id)
 );
-CREATE TABLE security_group_permission
+create TABLE security_group_permission
 (
     group_id           VARCHAR(60)  NOT NULL,
     permission_id      VARCHAR(100) NOT NULL,
@@ -117,7 +126,7 @@ CREATE TABLE security_group_permission
     CONSTRAINT sec_grp_perm_grp FOREIGN KEY (group_id) REFERENCES security_group (group_id),
     CONSTRAINT sec_grp_perm_perm FOREIGN KEY (permission_id) REFERENCES security_permission (permission_id)
 );
-CREATE TABLE user_login_security_group
+create TABLE user_login_security_group
 (
     user_login_id      VARCHAR(255) NOT NULL,
     group_id           VARCHAR(60)  NOT NULL,
@@ -128,7 +137,7 @@ CREATE TABLE user_login_security_group
     CONSTRAINT user_secgrp_user FOREIGN KEY (user_login_id) REFERENCES user_login (user_login_id)
 );
 
-CREATE TABLE application_type
+create TABLE application_type
 (
     application_type_id VARCHAR(60) NOT NULL,
     description         TEXT,
@@ -137,7 +146,7 @@ CREATE TABLE application_type
     CONSTRAINT pk_application_type PRIMARY KEY (application_type_id)
 );
 
-CREATE TABLE application
+create TABLE application
 (
     application_id      VARCHAR(255) NOT NULL,
     application_type_id VARCHAR(255) NOT NULL,
@@ -152,7 +161,7 @@ CREATE TABLE application
     CONSTRAINT application_permission FOREIGN KEY (permission_id) REFERENCES security_permission (permission_id)
 );
 
-CREATE TABLE role_type
+create TABLE role_type
 (
     role_type_id       VARCHAR(60) NOT NULL,
     parent_type_id     VARCHAR(60),
@@ -163,7 +172,7 @@ CREATE TABLE role_type
     CONSTRAINT fk_parent_type_id FOREIGN KEY (parent_type_id) REFERENCES role_type (role_type_id)
 );
 
-CREATE TABLE status_item
+create TABLE status_item
 (
     status_id          VARCHAR(60) NOT NULL,
     status_type_id     VARCHAR(60),
@@ -175,7 +184,7 @@ CREATE TABLE status_item
     CONSTRAINT fk_status_type_id FOREIGN KEY (status_type_id) REFERENCES status_type (status_type_id)
 );
 
-CREATE TABLE enumeration_type
+create TABLE enumeration_type
 (
     enumeration_type_id VARCHAR(60) NOT NULL,
     parent_type_id      VARCHAR(60),
@@ -185,7 +194,7 @@ CREATE TABLE enumeration_type
     CONSTRAINT pk_enumeration_type_id PRIMARY KEY (enumeration_type_id),
     CONSTRAINT fk_parent_type_id FOREIGN KEY (parent_type_id) REFERENCES enumeration_type (enumeration_type_id)
 );
-CREATE TABLE enumeration
+create TABLE enumeration
 (
     enum_id            VARCHAR(60) NOT NULL,
     enum_type_id       VARCHAR(60),
@@ -199,7 +208,7 @@ CREATE TABLE enumeration
 );
 
 
-CREATE TABLE uom_type
+create TABLE uom_type
 (
     uom_type_id        VARCHAR(60) NOT NULL,
     parent_type_id     VARCHAR(60),
@@ -209,7 +218,7 @@ CREATE TABLE uom_type
     CONSTRAINT pk_oum_type_id PRIMARY KEY (uom_type_id),
     CONSTRAINT fk_parent_type_id FOREIGN KEY (parent_type_id) REFERENCES uom_type (uom_type_id)
 );
-CREATE TABLE uom
+create TABLE uom
 (
     uom_id             VARCHAR(60) NOT NULL,
     uom_type_id        VARCHAR(60),
@@ -220,7 +229,7 @@ CREATE TABLE uom
     CONSTRAINT pk_oum PRIMARY KEY (uom_id),
     CONSTRAINT fk_uom_type_id FOREIGN KEY (uom_type_id) REFERENCES uom_type (uom_type_id)
 );
-CREATE TABLE content_type
+create TABLE content_type
 (
     content_type_id    VARCHAR(60) NOT NULL,
     parent_type_id     VARCHAR(60),
@@ -231,7 +240,7 @@ CREATE TABLE content_type
     CONSTRAINT cntnt_type_parent FOREIGN KEY (parent_type_id) REFERENCES content_type (content_type_id)
 );
 
-CREATE TABLE content
+create TABLE content
 (
     content_id         UUID NOT NULL,
     content_type_id    VARCHAR(60),
@@ -245,7 +254,7 @@ CREATE TABLE content
     CONSTRAINT pk_content PRIMARY KEY (content_id),
     CONSTRAINT content_to_type FOREIGN KEY (content_type_id) REFERENCES content_type (content_type_id)
 );
-CREATE TABLE product_content
+create TABLE product_content
 (
     product_id         VARCHAR(60) NOT NULL,
     content_id         UUID        NOT NULL,
@@ -274,16 +283,23 @@ create table party_relationship
     constraint fk_party_relationship_role_type_id foreign key (role_type_id) references role_type (role_type_id)
 );
 
-create table user_register(
-    user_login_id varchar(60),
-    password varchar(100),
-    email varchar(100),
-    first_name varchar(100),
-    middle_name varchar(100),
-    last_name  varchar(100),
-    status_id varchar(60),
-    last_updated_stamp    TIMESTAMP,
-    created_stamp         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
-    constraint pk_user_register_user_login_id primary key(user_login_id),
-    constraint fk_user_register_status_id foreign key(status_id) references status_item(status_id)
+
+
+-- Drop table
+
+-- DROP TABLE public.user_register;
+
+create TABLE public.user_register (
+	user_login_id varchar(60) NOT NULL,
+	"password" varchar(100) NOT NULL,
+	email varchar(100) NOT NULL,
+	first_name varchar(100) NOT NULL,
+	middle_name varchar(100) NOT NULL,
+	last_name varchar(100) NOT NULL,
+	status_id varchar(60) NULL,
+	registered_roles text NOT NULL,
+	last_updated_stamp timestamp NULL,
+	created_stamp timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT pk_register__login PRIMARY KEY (user_login_id),
+	CONSTRAINT fk_register_status FOREIGN KEY (status_id) REFERENCES status_item(status_id)
 );
