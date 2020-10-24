@@ -26,6 +26,8 @@ public class UserRegister {
     private String middleName;         // varchar(100),
     private String lastName;         // varchar(100),
 
+    private String registeredRoles;
+
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private StatusItem statusItem;         // varchar(60),
@@ -43,8 +45,18 @@ public class UserRegister {
         private String middleName;         // varchar(100),
         private String lastName;         // varchar(100),
 
+        private String registeredRoles;
+
         public UserRegister createUserRegister(StatusItem statusItem) {
-            return new UserRegister(userLoginId, password, email, firstName, middleName, lastName, statusItem);
+            return new UserRegister(
+                userLoginId,
+                password,
+                email,
+                firstName,
+                middleName,
+                lastName,
+                registeredRoles,
+                statusItem);
         }
     }
 
