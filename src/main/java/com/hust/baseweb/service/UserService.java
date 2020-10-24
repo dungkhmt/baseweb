@@ -1,10 +1,12 @@
 package com.hust.baseweb.service;
 
+import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.entity.UserRegister;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.model.PersonUpdateModel;
+import com.hust.baseweb.model.RegisterIM;
 import com.hust.baseweb.model.querydsl.SortAndFiltersInput;
 import com.hust.baseweb.rest.user.DPerson;
 import com.hust.baseweb.rest.user.UserRestBriefProjection;
@@ -27,7 +29,8 @@ public interface UserService {
     List<UserLogin> getAllUserLogins();
 
     UserLogin createAndSaveUserLogin(String userName, String password);
-    UserLogin updatePassword(UserLogin user,String password);
+
+    UserLogin updatePassword(UserLogin user, String password);
 
     Party createAndSaveUserLogin(PersonModel personModel) throws Exception;
 
@@ -42,4 +45,5 @@ public interface UserService {
 
     List<UserRegister.OutputModel> findAllRegisterUser();
 
+    ResponseSecondType register(RegisterIM im);
 }
