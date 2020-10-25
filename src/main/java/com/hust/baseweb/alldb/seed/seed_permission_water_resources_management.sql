@@ -1,7 +1,7 @@
 --group
 INSERT INTO public.security_group
     (group_id, description)
-VALUES ('', 'Owner of lakes');
+VALUES ('ROLE_LAKE_OWNER', 'Owner of lakes');
 
 INSERT INTO public.security_group
     (group_id, description)
