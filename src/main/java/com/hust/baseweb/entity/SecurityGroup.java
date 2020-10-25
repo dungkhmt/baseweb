@@ -26,6 +26,8 @@ public class SecurityGroup {
     @OneToMany(fetch = FetchType.LAZY)
     private List<SecurityPermission> permissions;
 
+    @Column(name = "group_name")
+    private String name;
 
     private Date createdStamp;
 

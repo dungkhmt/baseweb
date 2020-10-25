@@ -1,10 +1,12 @@
 package com.hust.baseweb.service;
 
+import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.entity.*;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
 import com.hust.baseweb.entity.Status.StatusEnum;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.model.PersonUpdateModel;
+import com.hust.baseweb.model.RegisterIM;
 import com.hust.baseweb.model.querydsl.SearchCriteria;
 import com.hust.baseweb.model.querydsl.SortAndFiltersInput;
 import com.hust.baseweb.repo.*;
@@ -208,15 +210,15 @@ public class UserServiceImpl implements UserService {
 
             try {
                 createAndSaveUserLogin(new PersonModel(
-                        userRegister.getUserLoginId(),
-                        userRegister.getPassword(),
-                        new ArrayList<>(),
-                        userRegister.getUserLoginId(),
-                        userRegister.getFirstName(),
-                        userRegister.getLastName(),
-                        userRegister.getMiddleName(),
-                        null,
-                        null));
+                    userRegister.getUserLoginId(),
+                    userRegister.getPassword(),
+                    new ArrayList<>(),
+                    userRegister.getUserLoginId(),
+                    userRegister.getFirstName(),
+                    userRegister.getLastName(),
+                    userRegister.getMiddleName(),
+                    null,
+                    null));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -236,8 +238,8 @@ public class UserServiceImpl implements UserService {
         StatusItem userRegistered = null;
         try {
             userRegistered = statusItemRepo
-                    .findById("USER_REGISTERED")
-                    .orElseThrow(NoSuchElementException::new);
+                .findById("USER_REGISTERED")
+                .orElseThrow(NoSuchElementException::new);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -259,4 +261,38 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    @Transactional
+    public ResponseSecondType register(RegisterIM im) {
+        ResponseSecondType res;
+        String userLoginId = im.getUserLoginId();
+        String email = im.getEmail();
+
+        if (userRegisterRepo.existsByUserLoginIdOrEmail(userLoginId, email) || userLoginRepo.existsById(userLoginId)) {
+            res = new ResponseSecondType(
+                400,
+                "existed",
+                "Tên người dùng hoặc email đã được sử dụng");
+        } else {
+            StatusItem userRegistered = statusItemRepo
+                .findById("USER_REGISTERED")
+                .orElseThrow(NoSuchElementException::new);
+
+            UserRegister userRegister = new UserRegister(
+                im.getUserLoginId(),
+                im.getPassword(),
+                im.getEmail(),
+                im.getFirstName(),
+                im.getMiddleName(),
+                im.getLastName(),
+                String.join(",", im.getRoles()),
+                userRegistered);
+
+            userRegisterRepo.save(userRegister);
+            EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
+            res = new ResponseSecondType(200, null, null);
+        }
+
+        return res;
+    }
 }
