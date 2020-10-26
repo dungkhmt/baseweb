@@ -1,6 +1,6 @@
 package com.hust.baseweb.model;
 
-public interface GetAllRolesIM {
+public interface GetAllRolesOM {
 
     String getId();
 

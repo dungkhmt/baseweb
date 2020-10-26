@@ -1,7 +1,7 @@
 package com.hust.baseweb.service;
 
 import com.hust.baseweb.entity.SecurityGroup;
-import com.hust.baseweb.model.GetAllRolesIM;
+import com.hust.baseweb.model.GetAllRolesOM;
 import com.hust.baseweb.repo.SecurityGroupRepo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -25,8 +25,8 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<GetAllRolesIM> getRoles() {
-        Set<GetAllRolesIM> roles = securityGroupRepo.getRoles();
+    public Set<GetAllRolesOM> getRoles() {
+        Set<GetAllRolesOM> roles = securityGroupRepo.getRoles();
 
         roles.removeIf(role -> StringUtils.isBlank(role.getName()));
         return roles;

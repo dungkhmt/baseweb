@@ -4,9 +4,11 @@ import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.entity.UserRegister;
+import com.hust.baseweb.model.ApproveRegistrationIM;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.model.PersonUpdateModel;
 import com.hust.baseweb.model.RegisterIM;
+import com.hust.baseweb.model.getregists.GetAllRegistsOM;
 import com.hust.baseweb.model.querydsl.SortAndFiltersInput;
 import com.hust.baseweb.rest.user.DPerson;
 import com.hust.baseweb.rest.user.UserRestBriefProjection;
@@ -41,9 +43,13 @@ public interface UserService {
 
     UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel);
 
-    boolean approveRegisterUser(String userLoginId);
+    /*boolean approveRegisterUser(String userLoginId);*/
 
-    List<UserRegister.OutputModel> findAllRegisterUser();
+    /*List<UserRegister.OutputModel> findAllRegisterUser();*/
 
     ResponseSecondType register(RegisterIM im);
+
+    GetAllRegistsOM getAllRegists();
+
+    ResponseSecondType approve(ApproveRegistrationIM im);
 }

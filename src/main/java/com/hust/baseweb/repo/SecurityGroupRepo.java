@@ -1,7 +1,7 @@
 package com.hust.baseweb.repo;
 
 import com.hust.baseweb.entity.SecurityGroup;
-import com.hust.baseweb.model.GetAllRolesIM;
+import com.hust.baseweb.model.GetAllRolesOM;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -22,5 +22,5 @@ public interface SecurityGroupRepo extends JpaRepository<SecurityGroup, String> 
                    "from\n" +
                    "\tsecurity_group sg",
            nativeQuery = true)
-    Set<GetAllRolesIM> getRoles();
+    Set<GetAllRolesOM> getRoles();
 }

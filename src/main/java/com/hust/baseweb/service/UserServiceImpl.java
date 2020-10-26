@@ -4,9 +4,12 @@ import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.entity.*;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
 import com.hust.baseweb.entity.Status.StatusEnum;
+import com.hust.baseweb.model.ApproveRegistrationIM;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.model.PersonUpdateModel;
 import com.hust.baseweb.model.RegisterIM;
+import com.hust.baseweb.model.getregists.GetAllRegistsOM;
+import com.hust.baseweb.model.getregists.RegistsOM;
 import com.hust.baseweb.model.querydsl.SearchCriteria;
 import com.hust.baseweb.model.querydsl.SortAndFiltersInput;
 import com.hust.baseweb.repo.*;
@@ -29,7 +32,6 @@ import javax.persistence.EntityExistsException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -50,6 +52,8 @@ public class UserServiceImpl implements UserService {
     private final UserRegisterRepo userRegisterRepo;
     private final StatusItemRepo statusItemRepo;
     private final JavaMailSender javaMailSender;
+
+    private final SecurityGroupService groupService;
 
     private final static ExecutorService EMAIL_EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
@@ -85,26 +89,34 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Party createAndSaveUserLogin(PersonModel personModel) {
+        Party party = partyRepo.save(new Party(
+            personModel.getPartyCode(),
+            partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()),
+            "",
+            statusRepo
+                .findById(StatusEnum.PARTY_ENABLED.name())
+                .orElseThrow(NoSuchElementException::new),
+            false));
 
-        Party party = new Party(personModel.getPartyCode(), partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()), "",
-                                statusRepo
-                                    .findById(StatusEnum.PARTY_ENABLED.name())
-                                    .orElseThrow(NoSuchElementException::new),
-                                false);
-        party = partyRepo.save(party);
-        personRepo.save(new Person(party.getPartyId(), personModel.getFirstName(), personModel.getMiddleName(),
-                                   personModel.getLastName(), personModel.getGender(), personModel.getBirthDate()));
+        personRepo.save(new Person(
+            party.getPartyId(),
+            personModel.getFirstName(),
+            personModel.getMiddleName(),
+            personModel.getLastName(),
+            personModel.getGender(),
+            personModel.getBirthDate()));
 
         Set<SecurityGroup> roles = securityGroupRepo.findAllByGroupIdIn(personModel.getRoles());
+        UserLogin userLogin = new UserLogin(personModel.getUserName(), personModel.getPassword(), roles, true);
 
         log.info("save, roles = " + personModel.getRoles().size());
-
-        UserLogin userLogin = new UserLogin(personModel.getUserName(), personModel.getPassword(), roles, true);
-        userLogin.setParty(party);
         if (userLoginRepo.existsById(personModel.getUserName())) {
             throw new RuntimeException();
         }
+
+        userLogin.setParty(party);
         userLoginRepo.save(userLogin);
+
         return party;
     }
 
@@ -198,7 +210,7 @@ public class UserServiceImpl implements UserService {
         javaMailSender.send(simpleMailMessage);
     }
 
-    @Override
+    /*@Override
     public boolean approveRegisterUser(String userLoginId) {
         UserRegister userRegister = userRegisterRepo.findById(userLoginId).orElse(null);
         if (userRegister == null) {
@@ -251,15 +263,15 @@ public class UserServiceImpl implements UserService {
         }
 
 
-        /*
+        *//*
         StatusItem userRegistered = statusItemRepo
             .findById("USER_REGISTERED")
             .orElseThrow(NoSuchElementException::new);
         List<UserRegister> userRegisters = userRegisterRepo.findAllByStatusItem(userRegistered);
         return userRegisters.stream().map(UserRegister::toOutputModel).collect(Collectors.toList());
-        */
+        *//*
 
-    }
+    }*/
 
     @Override
     @Transactional
@@ -294,5 +306,45 @@ public class UserServiceImpl implements UserService {
         }
 
         return res;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public GetAllRegistsOM getAllRegists() {
+        List<RegistsOM> userRegisters = userRegisterRepo.getAllRegists("USER_REGISTERED");
+
+        if (null == userRegisters) {
+            return new GetAllRegistsOM();
+        }
+
+        return new GetAllRegistsOM(userRegisters, groupService.getRoles());
+    }
+
+    @Override
+    @Transactional
+    public ResponseSecondType approve(ApproveRegistrationIM im) {
+        UserRegister userRegister = userRegisterRepo.findById(im.getUserLoginId()).orElse(null);
+
+        if (null == userRegister) {
+            return new ResponseSecondType(400, "not existed", "Đăng ký không tồn tại hoặc đã bị xoá");
+        }
+
+        createAndSaveUserLogin(new PersonModel(
+            userRegister.getUserLoginId(),
+            userRegister.getPassword(),
+            im.getRoles(),
+            userRegister.getUserLoginId(),
+            userRegister.getFirstName(),
+            userRegister.getLastName(),
+            userRegister.getMiddleName(),
+            null,
+            null));
+
+        StatusItem userApproved = statusItemRepo.findById("USER_APPROVED").orElseThrow(NoSuchElementException::new);
+        userRegister.setStatusItem(userApproved);
+
+        userRegisterRepo.save(userRegister);
+
+        return new ResponseSecondType(200, null, null);
     }
 }
