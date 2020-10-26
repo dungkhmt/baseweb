@@ -34,6 +34,11 @@ create table edu_exam_timetable_raw(
     room_id varchar(20),
     constraint pk_edu_timetable_raw primary key(id)
 );
+
+create table edu_student_registration_raw(
+    
+);
+
 create table edu_room(
     room_id varchar(60),
     room_name varchar(200),

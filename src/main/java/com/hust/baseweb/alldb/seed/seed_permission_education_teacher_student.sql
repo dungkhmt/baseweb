@@ -57,11 +57,12 @@ insert into public.security_group_permission
     (group_id, permission_id)
 VALUES ('ROLE_EDUCATION_LEARNING_MANAGEMENT_STUDENT', 'EDUCATION_LEARNING_MANAGEMENT_STUDENT');
 
-insert into user_login_security_group
-(user_login_id, group_id, last_updated_stamp, created_stamp)
-values('admin', 'ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER', now(), now());
+--user_login group
 
-insert into user_login_security_group
-(user_login_id, group_id, last_updated_stamp, created_stamp)
-values('admin', 'ROLE_EDUCATION_LEARNING_MANAGEMENT_STUDENT', now(), now());
+INSERT INTO user_login_security_group (user_login_id, group_id, last_updated_stamp, created_stamp)
+VALUES ('admin', 'ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER', NOW(), NOW());
+
+INSERT INTO user_login_security_group (user_login_id, group_id, last_updated_stamp, created_stamp)
+VALUES ('admin', 'ROLE_EDUCATION_LEARNING_MANAGEMENT_STUDENT', NOW(), NOW());
+
 
