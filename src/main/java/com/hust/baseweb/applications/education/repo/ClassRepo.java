@@ -31,21 +31,33 @@ public interface ClassRepo extends JpaRepository<Class, String> {
     List<Class> findNotAssignedBySemesterId(String semesterId);*/
 
     // Class Management
-    @Query(value = "select cast(cl.id as varchar) id,\n" +
-                   "\tcode, \n" +
+    @Query(value = "select\n" +
+                   "\tcast(cl.id as varchar) id,\n" +
+                   "\tcode,\n" +
                    "\tco.id courseId,\n" +
                    "\tco.course_name courseName,\n" +
                    "\tcl.class_type classType,\n" +
                    "\td.id departmentId\n" +
-                   "from edu_class as cl \n" +
-                   "\tinner join edu_course as co on cl.course_id = co.id \n" +
-                   "\tinner join edu_department as d ON cl.department_id = d.id \n" +
-                   "where cl.semester_id = ?1",
-           countQuery = "select count(cl.id)\n" +
-                        "from edu_class as cl \n" +
-                        "\tinner join edu_course as co on cl.course_id = co.id \n" +
-                        "\tinner join edu_department as d ON cl.department_id = d.id \n" +
-                        "where cl.semester_id = ?1",
+                   "from\n" +
+                   "\tedu_class as cl\n" +
+                   "inner join edu_course as co on\n" +
+                   "\tcl.course_id = co.id\n" +
+                   "inner join edu_department as d on\n" +
+                   "\tcl.department_id = d.id\n" +
+                   "where\n" +
+                   "\tcl.semester_id = ?1\n" +
+                   "order by\n" +
+                   "\tco.id",
+           countQuery = "select\n" +
+                        "\tcount(cl.id)\n" +
+                        "from\n" +
+                        "\tedu_class as cl\n" +
+                        "inner join edu_course as co on\n" +
+                        "\tcl.course_id = co.id\n" +
+                        "inner join edu_department as d on\n" +
+                        "\tcl.department_id = d.id\n" +
+                        "where\n" +
+                        "\tcl.semester_id = ?1",
            nativeQuery = true)
     Page<ClassOM> findBySemester(short semesterId, Pageable pageable);
 
