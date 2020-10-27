@@ -20,6 +20,7 @@ import com.hust.baseweb.rest.user.UserRestRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -294,9 +295,9 @@ public class UserServiceImpl implements UserService {
                 im.getUserLoginId(),
                 im.getPassword(),
                 im.getEmail(),
-                im.getFirstName(),
-                im.getMiddleName(),
-                im.getLastName(),
+                StringUtils.normalizeSpace(im.getFirstName()),
+                StringUtils.normalizeSpace(im.getMiddleName()),
+                StringUtils.normalizeSpace(im.getLastName()),
                 String.join(",", im.getRoles()),
                 userRegistered);
 

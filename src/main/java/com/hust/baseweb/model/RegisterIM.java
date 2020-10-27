@@ -18,7 +18,7 @@ public class RegisterIM {
     private String userLoginId;
 
     @NotBlank(message = "Được yêu cầu")
-    @Size(max = 100, message = "Độ dài vượt quá kích thước cho phép")
+    @Size(min = 11, max = 100, message = "Vui lòng chọn mật khẩu chứa ít nhất 11 kí tự, nhiều nhất 100 kí tự")
     private String password;
 
     @NotBlank(message = "Được yêu cầu")
