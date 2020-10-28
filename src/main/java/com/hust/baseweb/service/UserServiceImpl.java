@@ -327,7 +327,11 @@ public class UserServiceImpl implements UserService {
         UserRegister userRegister = userRegisterRepo.findById(im.getUserLoginId()).orElse(null);
 
         if (null == userRegister) {
-            return new ResponseSecondType(400, "not existed", "Đăng ký không tồn tại hoặc đã bị xoá");
+            return new ResponseSecondType(404, "not existed", "Đăng ký không tồn tại hoặc đã bị xoá");
+        }
+
+        if ("USER_APPROVED".equals(userRegister.getStatusItem().getStatusId())) {
+            return new ResponseSecondType(400, "approved", "Tài khoản đã được phê duyệt trước đó");
         }
 
         createAndSaveUserLogin(new PersonModel(
