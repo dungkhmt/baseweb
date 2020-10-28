@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.education.repo;
 
-import com.hust.baseweb.applications.education.entity.Class;
+import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.ClassOM;
 import org.springframework.data.domain.Page;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public interface ClassRepo extends JpaRepository<Class, String> {
+public interface ClassRepo extends JpaRepository<EduClass, String> {
 
     /*Class save(Class aClass);
 

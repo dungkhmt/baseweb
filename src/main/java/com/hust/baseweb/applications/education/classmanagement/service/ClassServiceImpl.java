@@ -1,9 +1,9 @@
 package com.hust.baseweb.applications.education.classmanagement.service;
 
 import com.hust.baseweb.applications.education.classmanagement.enumeration.RegistStatus;
-import com.hust.baseweb.applications.education.entity.Class;
 import com.hust.baseweb.applications.education.entity.ClassRegistration;
 import com.hust.baseweb.applications.education.entity.ClassRegistrationId;
+import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.entity.Semester;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.*;
@@ -199,13 +199,13 @@ public class ClassServiceImpl implements ClassService {
 
     @Transactional
     private ResponseSecondType createOrUpdateRegist(UUID classId, String studentId, RegistStatus status) {
-        Class aClass = new Class();
+        EduClass eduClass = new EduClass();
         UserLogin student = new UserLogin();
-        ClassRegistrationId id = new ClassRegistrationId(aClass, student);
+        ClassRegistrationId id = new ClassRegistrationId(eduClass, student);
         ClassRegistration registration = new ClassRegistration();
 
         student.setUserLoginId(studentId);
-        aClass.setId(classId);
+        eduClass.setId(classId);
         registration.setId(id);
         registration.setStatus(status);
 

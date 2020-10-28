@@ -1,7 +1,5 @@
 package com.hust.baseweb.applications.education.entity;
 
-import javax.persistence.*;
-
 import com.hust.baseweb.entity.UserLogin;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
@@ -17,7 +16,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "edu_class")
 @EntityListeners(AuditingEntityListener.class)
-public class Class {
+public class EduClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
