@@ -1,7 +1,7 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
 import com.hust.baseweb.applications.education.classmanagement.service.ClassServiceImpl;
-import com.hust.baseweb.applications.education.entity.Class;
+import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.entity.Course;
 import com.hust.baseweb.applications.education.entity.Semester;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
@@ -108,7 +108,7 @@ public class ClassController {
 
     @PostMapping("/education/class/add")
     public ResponseEntity<?> addEduClass(Principal principal, @RequestBody AddClassModel addClassModel){
-        Class aClass = classService.save(addClassModel);
+        EduClass aClass = classService.save(addClassModel);
         return ResponseEntity.ok().body(aClass);
     }
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
