@@ -86,6 +86,15 @@ public class LakeServiceImpl implements LakeService {
         lake.setMucDamBaoTuoi(lakeModel.getMucDamBaoTuoi());
         lake.setDienTichTuoi(lakeModel.getDienTichTuoi());
         lake.setMucNuocChet(lakeModel.getMucNuocChet());
+        lake.setMucNuocDangBinhThuong(lakeModel.getMucNuocDangBinhThuong());
+        lake.setMucNuocLuThietKe(lakeModel.getMucNuocLuThietKe());
+        lake.setMucNuocLuKiemTra(lakeModel.getMucNuocLuKiemTra());
+        lake.setDungTichToanBo(lakeModel.getDungTichToanBo());
+        lake.setDungTichHuuIch(lakeModel.getDungTichHuuIch());
+        lake.setDungTichChet(lakeModel.getDungTichChet());
+        lake.setLuuLuongXaLuThietKe(lakeModel.getLuuLuongXaLuThietKe());
+        lake.setLuuLuongXaLuKiemTra(lakeModel.getLuuLuongXaLuKiemTra());
+
         log.info("save lake, dienTichTuoi = " + lakeModel.getDienTichTuoi() + ", mucNuocChet = " + lakeModel.getMucNuocChet());
 
         lake = lakeRepo.save(lake);
@@ -116,8 +125,15 @@ public class LakeServiceImpl implements LakeService {
         Random R = new Random();
         double mucDamBaoTuoi = (1000+ R.nextInt(1000))*1.0/100;
         double dienTichTuoi = (10000+ R.nextInt(10000))*1.0/100;
+        double mucNuocLuKiemTra = (10000+ R.nextInt(10000))*1.0/100;;
+        double luuLuongXaLuKiemTra = (10000+ R.nextInt(10000))*1.0/100;;
+        double mucNuocDangBinhThuong = (10000+ R.nextInt(10000))*1.0/100;;
+
         lake.setMucDamBaoTuoi(mucDamBaoTuoi+"");
         lake.setDienTichTuoi(dienTichTuoi + "");
+        lake.setMucNuocLuKiemTra(mucNuocLuKiemTra + "");
+        lake.setLuuLuongXaLuKiemTra(luuLuongXaLuKiemTra + "");
+        lake.setMucNuocDangBinhThuong(mucNuocDangBinhThuong + "");
 
         return lake;
     }

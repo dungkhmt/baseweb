@@ -31,17 +31,19 @@ public class ApplicationServiceImpl implements ApplicationService {
         for (SecurityPermission sp : permissionList) {
             permissionStr += sp.getPermissionId() + ",";
         }
-        log.info("getListByPermissionAndType, permissionList = " + permissionStr + ", type = " + type);
+        //log.info("getListByPermissionAndType, permissionList = " + permissionStr + ", type = " + type);
 
         List<Application> applicationList = applicationRepo.findByTypeAndPermissionIn(
             applicationTypeRepo.getOne(type),
             permissionList);
+        /*
         log.info("getListByPermissionAndType, permissionList = " +
                  permissionStr +
                  ", type = " +
                  type +
                  ", applicationList.sz = " +
                  applicationList.size());
+        */
 
         List<Application> applicationList1 = applicationList
             .stream()

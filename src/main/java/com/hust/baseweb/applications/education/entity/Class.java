@@ -26,21 +26,21 @@ public class Class {
     private Integer code;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "semester_id")
+    @JoinColumn(name = "semester_id", referencedColumnName = "id")
     private Semester semester;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
+    @JoinColumn(name = "course_id", referencedColumnName = "id")
 	private Course course;
 
 	private String classType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id")
+    @JoinColumn(name = "department_id", referencedColumnName = "id")
 	private EduDepartment eduDepartment;
 
 	@ManyToOne
-    @JoinColumn(name = "teacher_id")
+    @JoinColumn(name = "teacher_id", referencedColumnName = "user_login_id")
 	private UserLogin teacher;
 
     @LastModifiedDate

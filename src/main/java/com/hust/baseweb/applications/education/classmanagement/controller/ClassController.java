@@ -1,11 +1,13 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
 import com.hust.baseweb.applications.education.classmanagement.service.ClassServiceImpl;
+import com.hust.baseweb.applications.education.entity.Class;
+import com.hust.baseweb.applications.education.entity.Course;
+import com.hust.baseweb.applications.education.entity.Semester;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
-import com.hust.baseweb.applications.education.model.GetClassesIM;
-import com.hust.baseweb.applications.education.model.GetStudentsOfClassOM;
-import com.hust.baseweb.applications.education.model.RegistIM;
-import com.hust.baseweb.applications.education.model.UpdateRegistStatusIM;
+import com.hust.baseweb.applications.education.model.*;
+import com.hust.baseweb.applications.education.service.CourseService;
+import com.hust.baseweb.applications.education.service.SemesterService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ import java.util.UUID;
 public class ClassController {
 
     private ClassServiceImpl classService;
+    private CourseService courseService;
+    private SemesterService semesterService;
 
     @PostMapping
     public ResponseEntity<?> getClassesOfCurrSemester(
@@ -101,4 +105,25 @@ public class ClassController {
     public ResponseEntity<?> getAssignmentsOfClass(@PathVariable UUID id) {
         return ResponseEntity.ok().body(classService.getAssignments(id));
     }
+
+    @PostMapping("/education/class/add")
+    public ResponseEntity<?> addEduClass(Principal principal, @RequestBody AddClassModel addClassModel){
+        Class aClass = classService.save(addClassModel);
+        return ResponseEntity.ok().body(aClass);
+    }
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/edu/get-all-courses")
+    public ResponseEntity<?> getAllCourses(Principal principal){
+        List<Course> courses= courseService.findAll();
+        log.info("getAllCourses, GOT " + courses.size());
+        return ResponseEntity.ok().body(courses);
+    }
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/edu/get-all-semester")
+    public ResponseEntity<?> getAllSemesters(Principal principal){
+        List<Semester> semesters = semesterService.findAll();
+        log.info("getAllSemester GOT " + semesters.size());
+        return ResponseEntity.ok().body(semesters);
+    }
+
 }

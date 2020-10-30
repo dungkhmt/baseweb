@@ -46,7 +46,7 @@ public class Lake {
     private String mucNuocChet;
 
 
-     /*
+
     @Column(name="muc_nuoc_dang_binh_thuong")
     private String mucNuocDangBinhThuong;
 
@@ -55,6 +55,7 @@ public class Lake {
 
     @Column(name="muc_nuoc_lu_kiem_tra")
     private String mucNuocLuKiemTra;
+
 
     @Column(name="dung_tich_toan_bo numeric")
     private String dungTichToanBo;

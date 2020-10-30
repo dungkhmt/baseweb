@@ -24,12 +24,13 @@ public class LakeModel {
 
     private String mucNuocChet;
 
-/*
+
     private String mucNuocDangBinhThuong;
 
     private String mucNuocLuThietKe;
 
     private String mucNuocLuKiemTra;
+
 
     private String dungTichToanBo;
 
@@ -41,6 +42,6 @@ public class LakeModel {
 
 
     private String luuLuongXaLuKiemTra;
-    */
+
 
 }

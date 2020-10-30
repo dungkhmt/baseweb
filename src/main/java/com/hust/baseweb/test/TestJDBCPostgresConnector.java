@@ -1,5 +1,10 @@
 package com.hust.baseweb.test;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 public class TestJDBCPostgresConnector {
 
 
@@ -9,7 +14,7 @@ public class TestJDBCPostgresConnector {
     }
 
     public void test1() {
-		/*
+
 		try {
 
 			Class.forName("org.postgresql.Driver");
@@ -29,14 +34,17 @@ public class TestJDBCPostgresConnector {
 			System.out.println("Reading car records...");
 			System.out.printf("%-30.30s  %-30.30s%n", "Model", "Price");
 			ResultSet rs = statement
-					.executeQuery("SELECT * FROM public.party");
+					.executeQuery("SELECT * FROM security_group");
 			while (rs.next()) {
-				System.out.println(rs.getString("party_id") + "\t" + rs.getString("party_type_id"));
+				System.out.println(
+				    "update security_group set group_name = '" +
+                                   rs.getString("group_name") + "' where group_id = '" +
+                                   rs.getString("group_id") + "'");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		*/
+
     }
 
 }
