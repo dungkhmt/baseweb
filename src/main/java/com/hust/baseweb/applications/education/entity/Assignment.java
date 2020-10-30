@@ -28,7 +28,7 @@ public class Assignment {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "class_id")
-    private Class aClass;
+    private EduClass eduClass;
 
     private Date deadLine;
 

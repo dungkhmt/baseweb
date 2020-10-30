@@ -21,7 +21,7 @@ public class ClassRegistrationId implements Serializable {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "class_id")
-    private Class aClass;
+    private EduClass eduClass;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "student_id")
@@ -34,12 +34,12 @@ public class ClassRegistrationId implements Serializable {
 
         ClassRegistrationId id = (ClassRegistrationId) o;
 
-        return Objects.equals(getAClass().getId(), id.getAClass().getId()) &&
+        return Objects.equals(getEduClass().getId(), id.getEduClass().getId()) &&
                Objects.equals(getStudent().getUserLoginId(), id.getStudent().getUserLoginId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAClass().getId(), getStudent().getUserLoginId());
+        return Objects.hash(getEduClass().getId(), getStudent().getUserLoginId());
     }
 }

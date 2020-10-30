@@ -2,7 +2,11 @@ package com.hust.baseweb.applications.education.classmanagement.service;
 
 import com.hust.baseweb.applications.education.classmanagement.enumeration.RegistStatus;
 import com.hust.baseweb.applications.education.entity.*;
-import com.hust.baseweb.applications.education.entity.Class;
+import com.hust.baseweb.applications.education.entity.EduClass;
+import com.hust.baseweb.applications.education.entity.ClassRegistration;
+import com.hust.baseweb.applications.education.entity.ClassRegistrationId;
+import com.hust.baseweb.applications.education.entity.EduClass;
+import com.hust.baseweb.applications.education.entity.Semester;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.ClassOM;
@@ -43,8 +47,8 @@ public class ClassServiceImpl implements ClassService {
     private UserService userService;
 
     @Override
-    public Class save(AddClassModel addClassModel) {
-        Class aClass = new Class();
+    public EduClass save(AddClassModel addClassModel) {
+        EduClass aClass = new EduClass();
         Optional<Semester> optionalSemester = semesterRepo.findById(addClassModel.getSemesterId());
         Semester semester = optionalSemester.get();
         //Department department = eduDepartmentRepo.findByDepartmentId(addClassModel.getDepartmentId());
@@ -223,13 +227,13 @@ public class ClassServiceImpl implements ClassService {
 
     @Transactional
     private ResponseSecondType createOrUpdateRegist(UUID classId, String studentId, RegistStatus status) {
-        Class aClass = new Class();
+        EduClass eduClass = new EduClass();
         UserLogin student = new UserLogin();
-        ClassRegistrationId id = new ClassRegistrationId(aClass, student);
+        ClassRegistrationId id = new ClassRegistrationId(eduClass, student);
         ClassRegistration registration = new ClassRegistration();
 
         student.setUserLoginId(studentId);
-        aClass.setId(classId);
+        eduClass.setId(classId);
         registration.setId(id);
         registration.setStatus(status);
 

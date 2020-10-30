@@ -1,7 +1,8 @@
 package com.hust.baseweb.applications.education.classmanagement.service;
 
 import com.hust.baseweb.applications.education.classmanagement.enumeration.RegistStatus;
-import com.hust.baseweb.applications.education.entity.Class;
+import com.hust.baseweb.applications.education.entity.EduClass;
+import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 public interface ClassService {
 
-    Class save(AddClassModel addClassModel);
+    EduClass save(AddClassModel addClassModel);
 
     GetClassListOM getClassesOfCurrentSemester(String studentId, GetClassesIM filterParams, Pageable pageable);
 
