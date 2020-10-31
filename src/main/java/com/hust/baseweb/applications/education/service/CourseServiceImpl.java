@@ -1,7 +1,7 @@
 package com.hust.baseweb.applications.education.service;
 
-import com.hust.baseweb.applications.education.entity.Course;
-
+import com.hust.baseweb.applications.education.entity.EduCourse;
+import com.hust.baseweb.applications.education.repo.EduCourseRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +13,10 @@ import java.util.List;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class CourseServiceImpl implements  CourseService{
-    //private CourseRepo courseRepo;
+    private EduCourseRepo courseRepo;
     @Override
-    public List<Course> findAll() {
-        return null;// TODO
-        //return courseRepo.findAll();
+    public List<EduCourse> findAll() {
+        //return null;// TODO
+        return courseRepo.findAll();
     }
 }

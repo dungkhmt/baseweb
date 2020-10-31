@@ -30,7 +30,7 @@ public class EduClass {
 
     @ManyToOne
     @JoinColumn(name = "course_id", referencedColumnName = "id")
-	private Course course;
+	private EduCourse eduCourse;
 
 	private String classType;
 

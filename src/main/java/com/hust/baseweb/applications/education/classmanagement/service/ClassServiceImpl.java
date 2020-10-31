@@ -11,11 +11,9 @@ import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.ClassOM;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
-import com.hust.baseweb.applications.education.repo.ClassRegistrationRepo;
-import com.hust.baseweb.applications.education.repo.ClassRepo;
-import com.hust.baseweb.applications.education.repo.EduDepartmentRepo;
-import com.hust.baseweb.applications.education.repo.SemesterRepo;
+import com.hust.baseweb.applications.education.repo.*;
 
+import com.hust.baseweb.applications.education.repo.mongodb.CourseRepo;
 import com.hust.baseweb.applications.humanresource.entity.Department;
 import com.hust.baseweb.applications.humanresource.repo.DepartmentRepo;
 import com.hust.baseweb.entity.UserLogin;
@@ -39,7 +37,7 @@ import java.util.stream.Stream;
 public class ClassServiceImpl implements ClassService {
 
     private ClassRepo classRepo;
-    //private CourseRepo courseRepo;
+    private EduCourseRepo courseRepo;
     private SemesterRepo semesterRepo;
 
     private ClassRegistrationRepo registRepo;
@@ -48,20 +46,34 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public EduClass save(AddClassModel addClassModel) {
+        log.info("save start courseCode = " + addClassModel.getCourseId() + ", classCode = " + addClassModel.getClassCode());
+
         EduClass aClass = new EduClass();
-        Optional<Semester> optionalSemester = semesterRepo.findById(addClassModel.getSemesterId());
+        Optional<Semester> optionalSemester = semesterRepo.findById(Integer.valueOf(
+            addClassModel.getSemesterId()));
         Semester semester = optionalSemester.get();
-        //Department department = eduDepartmentRepo.findByDepartmentId(addClassModel.getDepartmentId());
+        log.info("save, got semester " + semester.getName());
+        Optional<EduDepartment> optionalDepartment = eduDepartmentRepo.findById(addClassModel.getDepartmentId());
+        EduDepartment department = optionalDepartment.get();
+        log.info("save got department " + department.getName());
         UserLogin userLogin = userService.findById(addClassModel.getUserLoginId());
+        log.info("save got user " + userLogin.getUserLoginId());
+
+        Optional<EduCourse> optionalCourse = courseRepo.findById(addClassModel.getCourseId());
+        EduCourse course = optionalCourse.get();
+        log.info("save got course " + course.getName());
+        
         aClass.setCode(Integer.valueOf(addClassModel.getClassCode()));
-        //aClass.setEduDepartment(department);
+        aClass.setEduDepartment(department);
         aClass.setTeacher(userLogin);
-        //Optional<Course> optionalCourse = courseRepo.findById(addClassModel.getCourseId());
-        //Course course = optionalCourse.get();
-        //aClass.setCourse(course);
+        aClass.setEduCourse(course);
+
+        log.info("save before classRepo.save(), aClass.classCode = " + aClass.getCode() + ", courseCode = "
+        + aClass.getEduCourse().getName() + ", semester = " + aClass.getSemester().getName() + ", department = "
+        + aClass.getEduDepartment().getName());
 
         aClass = classRepo.save(aClass);
-
+        log.info("save OK, aClass.id = " + aClass.getId());
         return aClass;
     }
 

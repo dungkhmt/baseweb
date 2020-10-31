@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.education.classmanagement.controller;
 import com.hust.baseweb.applications.education.classmanagement.service.ClassServiceImpl;
 import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.entity.Course;
+import com.hust.baseweb.applications.education.entity.EduCourse;
 import com.hust.baseweb.applications.education.entity.Semester;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.*;
@@ -106,21 +107,24 @@ public class ClassController {
         return ResponseEntity.ok().body(classService.getAssignments(id));
     }
 
-    @PostMapping("/education/class/add")
+    @PostMapping("/add")
     public ResponseEntity<?> addEduClass(Principal principal, @RequestBody AddClassModel addClassModel){
+        log.info("addEduClass, start....");
         EduClass aClass = classService.save(addClassModel);
         return ResponseEntity.ok().body(aClass);
     }
-    //@Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
-    @GetMapping("/edu/get-all-courses")
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-all-courses")
     public ResponseEntity<?> getAllCourses(Principal principal){
-        List<Course> courses= courseService.findAll();
+        log.info("getAllCourses start...");
+        List<EduCourse> courses= courseService.findAll();
         log.info("getAllCourses, GOT " + courses.size());
         return ResponseEntity.ok().body(courses);
     }
-    //@Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
-    @GetMapping("/edu/get-all-semester")
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-all-semesters")
     public ResponseEntity<?> getAllSemesters(Principal principal){
+        log.info("getAllSemester start...");
         List<Semester> semesters = semesterService.findAll();
         log.info("getAllSemester GOT " + semesters.size());
         return ResponseEntity.ok().body(semesters);
