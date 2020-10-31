@@ -1,5 +1,6 @@
 package com.hust.baseweb.config;
 
+import com.hust.baseweb.applications.education.exception.CustomAccessDeniedHandler;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.BaseWebUserDetailService;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private BaseWebUserDetailService userDetailsService;
@@ -52,6 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .httpBasic()
             .authenticationEntryPoint(basicAuthenticationEndPoint)
             .and()
+            .exceptionHandling()
+            .accessDeniedHandler(accessDeniedHandler())
+            .and()
             .csrf()
             .disable()
             .logout()
@@ -59,6 +63,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
+    @Bean
+    public CustomAccessDeniedHandler accessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
+    }
 
     @Bean
     @SuppressWarnings("unchecked")

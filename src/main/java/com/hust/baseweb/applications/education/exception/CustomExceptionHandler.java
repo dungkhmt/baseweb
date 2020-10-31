@@ -4,10 +4,10 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -38,6 +38,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     private Set<String> errorFields;
 
+    // Worked.
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
         final HttpRequestMethodNotSupportedException ex,
@@ -46,14 +47,17 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         final WebRequest request
     ) {
         final StringBuilder builder = new StringBuilder();
+        final Set<HttpMethod> supportedMethods = ex.getSupportedHttpMethods();
+        ResponseSecondType res;
 
-        builder.append(ex.getMethod());
-        builder.append(" Method is not supported for this request. Supported methods are:");
-        ex.getSupportedHttpMethods().forEach(t -> builder.append(" " + t));
+        /*builder.append(ex.getMethod());
+        " Method is not supported for this request. " +*/
+        builder.append((1 == supportedMethods.size() ? "Supported method is:" : "Supported methods are:"));
+        supportedMethods.forEach(method -> builder.append(" " + method));
 
-        ResponseSecondType response = new ResponseSecondType(415, ex.getLocalizedMessage(), builder.toString());
+        res = new ResponseSecondType(405, ex.getLocalizedMessage(), builder.toString());
 
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @Override
@@ -84,7 +88,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         final HttpStatus status,
         final WebRequest request
     ) {
-
         ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(),
                                                              ex.getParameterName() + " parameter is missing");
 
@@ -99,7 +102,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         final HttpStatus status,
         final WebRequest request
     ) {
-
         ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(),
                                                              ex.getValue() +
                                                              " value for " +
@@ -117,12 +119,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status,
         WebRequest request
     ) {
-
         ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(), ex.getMessage());
 
         return ResponseEntity
             .status(response.getStatus())
-            .body(response);/*this.handleExceptionInternal(ex, response, headers, HttpStatus.valueOf(response.getStatus()), request);*/
+            .body(response);
     }
 
     // Bean validator.
@@ -247,15 +248,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @ExceptionHandler(value = {AccessDeniedException.class})
-    public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex) {
-        ResponseSecondType response = new ResponseSecondType(403, "Forbidden", ex.getMessage());
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
-
-    @ExceptionHandler(Exception.class)
+    /*@ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleAll(final Exception ex, final WebRequest request) {
         ResponseSecondType response = new ResponseSecondType(500, "Internal server error", ex.getMessage());
         return ResponseEntity.status(response.getStatus()).body(response);
-    }
+    }*/
 }
