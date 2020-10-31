@@ -42,9 +42,9 @@ public class Lake {
     @Column(name="dien_tich_tuoi")
     private String dienTichTuoi;
 
+
     @Column(name="muc_nuoc_chet")
     private String mucNuocChet;
-
 
 
     @Column(name="muc_nuoc_dang_binh_thuong")
@@ -57,7 +57,7 @@ public class Lake {
     private String mucNuocLuKiemTra;
 
 
-    @Column(name="dung_tich_toan_bo numeric")
+    @Column(name="dung_tich_toan_bo")
     private String dungTichToanBo;
 
     @Column(name="dung_tich_huu_ich")

@@ -111,14 +111,14 @@ public class ClassController {
         EduClass aClass = classService.save(addClassModel);
         return ResponseEntity.ok().body(aClass);
     }
-    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    //@Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/edu/get-all-courses")
     public ResponseEntity<?> getAllCourses(Principal principal){
         List<Course> courses= courseService.findAll();
         log.info("getAllCourses, GOT " + courses.size());
         return ResponseEntity.ok().body(courses);
     }
-    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    //@Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/edu/get-all-semester")
     public ResponseEntity<?> getAllSemesters(Principal principal){
         List<Semester> semesters = semesterService.findAll();

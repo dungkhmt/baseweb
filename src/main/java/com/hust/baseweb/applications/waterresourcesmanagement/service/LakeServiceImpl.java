@@ -83,6 +83,7 @@ public class LakeServiceImpl implements LakeService {
         }
         lake.setCapCongTrinh(lakeModel.getCapCongTrinh());
         lake.setDienTichLuuVuc(lakeModel.getDienTichLuuVuc());
+        /*
         lake.setMucDamBaoTuoi(lakeModel.getMucDamBaoTuoi());
         lake.setDienTichTuoi(lakeModel.getDienTichTuoi());
         lake.setMucNuocChet(lakeModel.getMucNuocChet());
@@ -94,6 +95,7 @@ public class LakeServiceImpl implements LakeService {
         lake.setDungTichChet(lakeModel.getDungTichChet());
         lake.setLuuLuongXaLuThietKe(lakeModel.getLuuLuongXaLuThietKe());
         lake.setLuuLuongXaLuKiemTra(lakeModel.getLuuLuongXaLuKiemTra());
+        */
 
         log.info("save lake, dienTichTuoi = " + lakeModel.getDienTichTuoi() + ", mucNuocChet = " + lakeModel.getMucNuocChet());
 
