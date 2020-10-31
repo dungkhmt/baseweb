@@ -9,6 +9,8 @@ import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.service.CourseService;
 import com.hust.baseweb.applications.education.service.SemesterService;
+import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ public class ClassController {
     private ClassServiceImpl classService;
     private CourseService courseService;
     private SemesterService semesterService;
+    private UserService userService;
 
     @PostMapping
     public ResponseEntity<?> getClassesOfCurrSemester(
@@ -110,7 +113,8 @@ public class ClassController {
     @PostMapping("/add")
     public ResponseEntity<?> addEduClass(Principal principal, @RequestBody AddClassModel addClassModel){
         log.info("addEduClass, start....");
-        EduClass aClass = classService.save(addClassModel);
+        UserLogin userLogin = userService.findById(principal.getName());
+        EduClass aClass = classService.save(userLogin,addClassModel);
         return ResponseEntity.ok().body(aClass);
     }
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})

@@ -28,7 +28,7 @@ public class EduClass {
     @JoinColumn(name = "semester_id", referencedColumnName = "id")
     private Semester semester;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", referencedColumnName = "id")
 	private EduCourse eduCourse;
 

@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
+import com.hust.baseweb.entity.UserLogin;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.UUID;
 
 public interface ClassService {
 
-    EduClass save(AddClassModel addClassModel);
+    EduClass save(UserLogin userLogin, AddClassModel addClassModel);
 
     GetClassListOM getClassesOfCurrentSemester(String studentId, GetClassesIM filterParams, Pageable pageable);
 

@@ -31,4 +31,6 @@ public class Semester {
 
     @CreatedDate
     private Date createdStamp;
+
+
 }

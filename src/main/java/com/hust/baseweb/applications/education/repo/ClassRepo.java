@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public interface ClassRepo extends JpaRepository<EduClass, String> {
+public interface ClassRepo extends JpaRepository<EduClass, UUID> {
 
     /*Class save(Class aClass);
 

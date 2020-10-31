@@ -45,32 +45,38 @@ public class ClassServiceImpl implements ClassService {
     private UserService userService;
 
     @Override
-    public EduClass save(AddClassModel addClassModel) {
+    public EduClass save(UserLogin userLogin, AddClassModel addClassModel) {
         log.info("save start courseCode = " + addClassModel.getCourseId() + ", classCode = " + addClassModel.getClassCode());
 
         EduClass aClass = new EduClass();
-        Optional<Semester> optionalSemester = semesterRepo.findById(Integer.valueOf(
-            addClassModel.getSemesterId()));
+        Optional<Semester> optionalSemester = Optional.ofNullable(semesterRepo.findById(Short.valueOf(addClassModel.getSemesterId())));
         Semester semester = optionalSemester.get();
-        log.info("save, got semester " + semester.getName());
+        //Semester semester = semesterRepo.findById(Short.valueOf(addClassModel.getSemesterId())).orElse(null);
+
+        log.info("save, got semester " + semester.getName() + ", id = " + semester.getId());
         Optional<EduDepartment> optionalDepartment = eduDepartmentRepo.findById(addClassModel.getDepartmentId());
         EduDepartment department = optionalDepartment.get();
         log.info("save got department " + department.getName());
-        UserLogin userLogin = userService.findById(addClassModel.getUserLoginId());
+        //UserLogin userLogin = userService.findById(addClassModel.getUserLoginId());
         log.info("save got user " + userLogin.getUserLoginId());
 
         Optional<EduCourse> optionalCourse = courseRepo.findById(addClassModel.getCourseId());
         EduCourse course = optionalCourse.get();
         log.info("save got course " + course.getName());
-        
-        aClass.setCode(Integer.valueOf(addClassModel.getClassCode()));
-        aClass.setEduDepartment(department);
-        aClass.setTeacher(userLogin);
-        aClass.setEduCourse(course);
 
-        log.info("save before classRepo.save(), aClass.classCode = " + aClass.getCode() + ", courseCode = "
-        + aClass.getEduCourse().getName() + ", semester = " + aClass.getSemester().getName() + ", department = "
-        + aClass.getEduDepartment().getName());
+        aClass.setCode(Integer.valueOf(addClassModel.getClassCode()));
+        log.info("save, finished setCode");
+
+        aClass.setEduDepartment(department);
+        log.info("save finished setDepartment");
+        aClass.setTeacher(userLogin);
+        log.info("save finished setTeacher");
+        aClass.setEduCourse(course);
+        log.info("save finished setCourse");
+
+        //log.info("save before classRepo.save(), aClass.classCode = " + aClass.getCode() + ", courseCode = "
+        //+ aClass.getEduCourse().getName() + ", semester = " + aClass.getSemester().getName() + ", department = "
+        //+ aClass.getEduDepartment().getName());
 
         aClass = classRepo.save(aClass);
         log.info("save OK, aClass.id = " + aClass.getId());
