@@ -2,20 +2,11 @@ package com.hust.baseweb.applications.education.classmanagement.service;
 
 import com.hust.baseweb.applications.education.classmanagement.enumeration.RegistStatus;
 import com.hust.baseweb.applications.education.entity.*;
-import com.hust.baseweb.applications.education.entity.EduClass;
-import com.hust.baseweb.applications.education.entity.ClassRegistration;
-import com.hust.baseweb.applications.education.entity.ClassRegistrationId;
-import com.hust.baseweb.applications.education.entity.EduClass;
-import com.hust.baseweb.applications.education.entity.Semester;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.ClassOM;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
 import com.hust.baseweb.applications.education.repo.*;
-
-import com.hust.baseweb.applications.education.repo.mongodb.CourseRepo;
-import com.hust.baseweb.applications.humanresource.entity.Department;
-import com.hust.baseweb.applications.humanresource.repo.DepartmentRepo;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
@@ -33,7 +24,7 @@ import java.util.stream.Stream;
 
 @Log4j2
 @Service
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class ClassServiceImpl implements ClassService {
 
     private ClassRepo classRepo;
@@ -45,23 +36,23 @@ public class ClassServiceImpl implements ClassService {
     private UserService userService;
 
     @Override
+    @Transactional
     public EduClass save(UserLogin userLogin, AddClassModel addClassModel) {
-        log.info("save start courseCode = " + addClassModel.getCourseId() + ", classCode = " + addClassModel.getClassCode());
+        log.info("save start courseCode = " +
+                 addClassModel.getCourseId() +
+                 ", classCode = " +
+                 addClassModel.getClassCode());
 
         EduClass aClass = new EduClass();
-        Optional<Semester> optionalSemester = Optional.ofNullable(semesterRepo.findById(Short.valueOf(addClassModel.getSemesterId())));
-        Semester semester = optionalSemester.get();
-        //Semester semester = semesterRepo.findById(Short.valueOf(addClassModel.getSemesterId())).orElse(null);
+        Semester semester = semesterRepo.findById(Short.valueOf(addClassModel.getSemesterId()));
 
         log.info("save, got semester " + semester.getName() + ", id = " + semester.getId());
-        Optional<EduDepartment> optionalDepartment = eduDepartmentRepo.findById(addClassModel.getDepartmentId());
-        EduDepartment department = optionalDepartment.get();
+        EduDepartment department = eduDepartmentRepo.findById(addClassModel.getDepartmentId()).orElse(null);
         log.info("save got department " + department.getName());
         //UserLogin userLogin = userService.findById(addClassModel.getUserLoginId());
         log.info("save got user " + userLogin.getUserLoginId());
 
-        Optional<EduCourse> optionalCourse = courseRepo.findById(addClassModel.getCourseId());
-        EduCourse course = optionalCourse.get();
+        EduCourse course = courseRepo.findById(addClassModel.getCourseId()).orElse(null);
         log.info("save got course " + course.getName());
 
         aClass.setCode(Integer.valueOf(addClassModel.getClassCode()));
@@ -73,6 +64,8 @@ public class ClassServiceImpl implements ClassService {
         log.info("save finished setTeacher");
         aClass.setEduCourse(course);
         log.info("save finished setCourse");
+        aClass.setSemester(semester);
+        aClass.setClassType(addClassModel.getClassType());
 
         //log.info("save before classRepo.save(), aClass.classCode = " + aClass.getCode() + ", courseCode = "
         //+ aClass.getEduCourse().getName() + ", semester = " + aClass.getSemester().getName() + ", department = "

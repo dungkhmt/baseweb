@@ -10,9 +10,17 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddClassModel {
+
     private String classCode;
+
     private String userLoginId;
+
     private String departmentId;
+
     private String semesterId;
+
     private String courseId;
+
+    private String classType;
+
 }
