@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.education.classmanagement.service.Assignmen
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageFileNotFoundException;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.model.CreateAssignmentIM;
 import com.hust.baseweb.applications.education.model.GetFilesIM;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,7 +28,7 @@ import java.util.UUID;
 @Log4j2
 @Controller
 @RequestMapping("/edu/assignment")
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class AssignmentController {
 
     private FileSystemStorageServiceImpl storageService;
@@ -90,6 +91,13 @@ public class AssignmentController {
     public ResponseEntity<?> deleteAssignment(@PathVariable UUID id) {
         ResponseSecondType res = assignService.deleteAssignment(id);
         return ResponseEntity.status(res.getStatus()).body(res.getMessage());
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping
+    public ResponseEntity<?> createAssignment(@RequestBody CreateAssignmentIM im) {
+        ResponseSecondType res = assignService.createAssignment(im);
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
