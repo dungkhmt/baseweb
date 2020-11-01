@@ -8,6 +8,7 @@ import com.hust.baseweb.applications.education.entity.Semester;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.service.CourseService;
+import com.hust.baseweb.applications.education.service.EduDepartmentService;
 import com.hust.baseweb.applications.education.service.SemesterService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
@@ -38,6 +39,7 @@ public class ClassController {
     private CourseService courseService;
     private SemesterService semesterService;
     private UserService userService;
+    private EduDepartmentService eduDepartmentService;
 
     @PostMapping
     public ResponseEntity<?> getClassesOfCurrSemester(
@@ -132,6 +134,10 @@ public class ClassController {
         List<Semester> semesters = semesterService.findAll();
         log.info("getAllSemester GOT " + semesters.size());
         return ResponseEntity.ok().body(semesters);
+    }
+    @GetMapping("/get-all-departments")
+    public ResponseEntity<?> getAllEduDepartments(Principal principal){
+        return ResponseEntity.ok().body(eduDepartmentService.findAll());
     }
 
 }
