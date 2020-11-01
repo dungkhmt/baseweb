@@ -225,4 +225,13 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
                    "\tand status in ('WAITING_FOR_APPROVAL', 'APPROVED')\n" +
                    "\tand class_id in ?2", nativeQuery = true)
     Set<String> getRegisteredClassesIn(String studentId, List<UUID> classIds);
+
+    @Query(value = "select\n" +
+                   "\tcount(1)\n" +
+                   "from\n" +
+                   "\tedu_class ec\n" +
+                   "where\n" +
+                   "\tid = ?1",
+           nativeQuery = true)
+    int isClassExist(UUID id);
 }
