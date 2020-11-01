@@ -100,6 +100,12 @@ public class AssignmentController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateAssignment(@PathVariable UUID id, @RequestBody CreateAssignmentIM im) {
+        ResponseSecondType res = assignService.updateAssignment(id, im);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
         return ResponseEntity.notFound().build();
