@@ -16,4 +16,6 @@ public interface PostOfficeService {
     PostOffice findByPostOfficeId(String postOfficeId);
 
     void deleteByPostOfficeId(String postOfficeId);
+
+    List<PostOffice> save(List<CreatePostOfficeInputModel> input);
 }

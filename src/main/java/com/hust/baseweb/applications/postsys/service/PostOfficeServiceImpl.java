@@ -14,6 +14,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,7 +37,7 @@ public class PostOfficeServiceImpl implements PostOfficeService {
         // create and save a new geo point
         GeoPoint geoPoint = new GeoPoint();
         geoPoint.setLatitude(input.getLatitude());
-        geoPoint.setLongitude(input.getLongitude());
+        geoPoint.setLongitude(input.getLongtitude());
         geoPointRepo.save(geoPoint);
         log.info("save geo point, id=" + geoPoint.getGeoPointId());
 
@@ -59,6 +60,8 @@ public class PostOfficeServiceImpl implements PostOfficeService {
         return postOffice;
     }
 
+
+
     @Override
     public List<PostOffice> findAll() {
         // TODO Auto-generated method stub
@@ -79,5 +82,35 @@ public class PostOfficeServiceImpl implements PostOfficeService {
             postOfficeRepo.delete(postOffice);
         }
 
+    }
+
+    @Override
+    public List<PostOffice> save(List<CreatePostOfficeInputModel> inputs) {
+        List<PostalAddress> postalAddresses = new ArrayList<>();
+        List<GeoPoint> geoPoints = new ArrayList<>();
+        List<PostOffice> postOffices = new ArrayList<>();
+        inputs.forEach(input -> {
+            GeoPoint geoPoint = new GeoPoint();
+            geoPoint.setLatitude(input.getLatitude());
+            geoPoint.setLongitude(input.getLongtitude());
+            geoPoints.add(geoPoint);
+
+            // create and save a new postal address
+            PostalAddress postalAddress = new PostalAddress();
+            postalAddress.setAddress(input.getAddress());
+            postalAddress.setGeoPoint(geoPoint);
+            postalAddresses.add(postalAddress);
+
+            PostOffice postOffice = new PostOffice();
+            postOffice.setPostOfficeId(input.getPostOfficeId());
+            postOffice.setPostOfficeName(input.getPostOfficeName());
+            postOffice.setPostOfficeLevel(input.getPostOfficeLevel());
+            postOffice.setPostalAddress(postalAddress);
+            postOffices.add(postOffice);
+        });
+        geoPointRepo.saveAll(geoPoints);
+        postalAddressRepo.saveAll(postalAddresses);
+        postOfficeRepo.saveAll(postOffices);
+        return postOffices;
     }
 }
