@@ -1,10 +1,7 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
 import com.hust.baseweb.applications.education.classmanagement.service.ClassServiceImpl;
-import com.hust.baseweb.applications.education.entity.EduClass;
-import com.hust.baseweb.applications.education.entity.Course;
-import com.hust.baseweb.applications.education.entity.EduCourse;
-import com.hust.baseweb.applications.education.entity.Semester;
+import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.service.CourseService;
@@ -137,7 +134,10 @@ public class ClassController {
     }
     @GetMapping("/get-all-departments")
     public ResponseEntity<?> getAllEduDepartments(Principal principal){
-        return ResponseEntity.ok().body(eduDepartmentService.findAll());
-    }
 
+        List<EduDepartment> eduDepartments = eduDepartmentService.findAll();
+        log.info("getAllEduDepartments, GOT sz = " + eduDepartments.size());
+        return ResponseEntity.ok().body(eduDepartments);
+    }
+    
 }
