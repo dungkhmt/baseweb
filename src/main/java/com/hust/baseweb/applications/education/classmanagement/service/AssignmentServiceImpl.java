@@ -106,34 +106,35 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional
     public ResponseSecondType deleteAssignment(UUID id) {
-        ResponseSecondType res;
         int isAssignExist = assignRepo.isAssignExist(id);
 
         if (0 == isAssignExist) {
-            res = new ResponseSecondType(
+            /*return new ResponseSecondType(
                 404,
-                "not existed",
-                "Bài tập không tồn tại");
+                "not exist",
+                "Bài tập chưa được tạo hoặc đã bị xoá trước đó");*/
+            return new ResponseSecondType(
+                200,
+                null,
+                null);
         } else {
             Integer check = submissionRepo.checkSubmission(id);
 
             if (0 == check) {
                 assignRepo.deleteAssignment(id);
-                res = new ResponseSecondType(200, null, null);
+                return new ResponseSecondType(200, null, null);
             } else {
-                res = new ResponseSecondType(
+                return new ResponseSecondType(
                     400,
                     "not allowed",
                     "Không thể xoá bài tập vì đã có sinh viên nộp bài");
             }
         }
-        return res;
     }
 
     @Override
     @Transactional
     public ResponseSecondType createAssignment(CreateAssignmentIM im) {
-        ResponseSecondType res;
         // create folder for storing file
 
         // Save metadata.
@@ -168,5 +169,34 @@ public class AssignmentServiceImpl implements AssignmentService {
         assignRepo.save(assignment);
 
         return new ResponseSecondType(200, null, null);
+    }
+
+    @Override
+    public ResponseSecondType updateAssignment(UUID id, CreateAssignmentIM im) {
+        Date deadline = im.getDeadline();
+
+        if (deadline.compareTo(new Date()) < 1) {
+            return new ResponseSecondType(
+                400,
+                "require future date",
+                "Vui lòng chọn thời điểm trong tương lai");
+        }
+
+        Assignment assignment = assignRepo.findById(id).orElse(null);
+
+        if (null == assignment) {
+            return new ResponseSecondType(
+                400,
+                "not exist",
+                "Bài tập chưa được tạo hoặc đã bị xoá trước đó");
+        } else {
+            assignment.setName(StringUtils.normalizeSpace(im.getName()));
+            assignment.setSubject(im.getSubject());
+            assignment.setDeadLine(deadline);
+
+            assignRepo.save(assignment);
+
+            return new ResponseSecondType(200, null, null);
+        }
     }
 }

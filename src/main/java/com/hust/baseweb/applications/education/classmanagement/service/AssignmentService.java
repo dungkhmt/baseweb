@@ -19,4 +19,6 @@ public interface AssignmentService {
     ResponseSecondType deleteAssignment(UUID id);
 
     ResponseSecondType createAssignment(CreateAssignmentIM im);
+
+    ResponseSecondType updateAssignment(UUID id,CreateAssignmentIM im);
 }
