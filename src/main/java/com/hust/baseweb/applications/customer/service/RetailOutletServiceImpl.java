@@ -194,7 +194,7 @@ public class RetailOutletServiceImpl implements RetailOutletService {
     void test()
     {
         int x;
-        
+
     }
 
 }

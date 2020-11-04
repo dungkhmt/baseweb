@@ -12,6 +12,8 @@ public interface RetailOutletPagingRepo extends PagingAndSortingRepository<Party
 
     PartyRetailOutlet findByPartyId(UUID partyId);
 
+
+
     //List<PartyCustomer> findAllByRetailOutletCode(String retailOutletCode);
 
     //List<PartyCustomer> findAllByPartyIdIn(List<UUID> partyIds);
