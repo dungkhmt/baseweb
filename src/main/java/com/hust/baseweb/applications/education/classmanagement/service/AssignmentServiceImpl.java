@@ -118,17 +118,8 @@ public class AssignmentServiceImpl implements AssignmentService {
                 null,
                 null);
         } else {
-            Integer check = submissionRepo.checkSubmission(id);
-
-            if (0 == check) {
-                assignRepo.deleteAssignment(id);
-                return new ResponseSecondType(200, null, null);
-            } else {
-                return new ResponseSecondType(
-                    400,
-                    "not allowed",
-                    "Không thể xoá bài tập vì đã có sinh viên nộp bài");
-            }
+            assignRepo.deleteAssignment(id);
+            return new ResponseSecondType(200, null, null);
         }
     }
 
