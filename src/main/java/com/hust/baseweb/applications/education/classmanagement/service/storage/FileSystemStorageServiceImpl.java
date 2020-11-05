@@ -65,14 +65,14 @@ public class FileSystemStorageServiceImpl implements StorageService {
                     + originalFileName);
             }
 
-            // Save meta-data to db.
+            // Save meta-data.
             UserLogin student = new UserLogin();
             Assignment assignment = new Assignment();
             AssignmentSubmission submission = submissionRepo.findByAssignmentIdAndStudentUserLoginId(
                 assignmentId,
                 studentId);
 
-            if (submission == null) {
+            if (null == submission) {
                 submission = new AssignmentSubmission();
             } else {
                 deleteIfExists(path.resolve(studentId + getFileExtension(submission.getOriginalFileName())));
