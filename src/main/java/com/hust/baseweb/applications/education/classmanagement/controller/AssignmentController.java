@@ -10,9 +10,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -36,14 +38,34 @@ public class AssignmentController {
     private AssignmentServiceImpl assignService;
 
     @PostMapping("/{id}/submission")
-    public ResponseEntity<?> submitAssignment(
+    public ResponseEntity<?> submitAssign(
         Principal principal,
         @PathVariable UUID id,
         @RequestParam("file") MultipartFile file
     ) {
-        storageService.store(file, id, principal.getName());
+        ResponseSecondType res = new ResponseSecondType(
+            200,
+            null,
+            "Tải lên thành công tệp '" + file.getOriginalFilename() + "'");
 
-        return ResponseEntity.ok().body("Tải lên thành công tệp '" + file.getOriginalFilename() + "'");
+        try {
+            storageService.store(file, id, principal.getName());
+        } catch (JpaSystemException e) {
+            if ("fk_assignment_submission_assignment"
+                .equals(e.getRootCause().getMessage().substring(94, 129))) {
+                res = new ResponseSecondType(
+                    400,
+                    "not exist",
+                    "Bài tập không tồn tại");
+            } else {
+                res = new ResponseSecondType(
+                    500,
+                    "unknown",
+                    null);
+            }
+        }
+
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @GetMapping("/{id}/download-file/{filename:.+}")
@@ -77,37 +99,49 @@ public class AssignmentController {
     }
 
     @GetMapping("/{id}/student")
-    public ResponseEntity<?> getAssignmentDetail(Principal principal, @PathVariable UUID id) {
+    public ResponseEntity<?> getAssignDetail(Principal principal, @PathVariable UUID id) {
         return ResponseEntity.ok().body(assignService.getAssignmentDetail(id, principal.getName()));
     }
 
     @GetMapping("/{id}/teacher")
-    public ResponseEntity<?> getAssignmentDetail4Teacher(@PathVariable UUID id) {
+    public ResponseEntity<?> getAssignDetail4Teacher(@PathVariable UUID id) {
         return ResponseEntity.ok().body(assignService.getAssignmentDetail4Teacher(id));
     }
 
-    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAssignment(@PathVariable UUID id) {
-        ResponseSecondType res = assignService.deleteAssignment(id);
-        return ResponseEntity.status(res.getStatus()).body(res.getMessage());
-    }
-
+    // CRUD.
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping
-    public ResponseEntity<?> createAssignment(@RequestBody CreateAssignmentIM im) {
+    public ResponseEntity<?> createAssign(@RequestBody CreateAssignmentIM im) {
         ResponseSecondType res = assignService.createAssignment(im);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAssignment(@PathVariable UUID id, @RequestBody CreateAssignmentIM im) {
+    public ResponseEntity<?> updateAssign(@PathVariable UUID id, @RequestBody CreateAssignmentIM im) {
         ResponseSecondType res = assignService.updateAssignment(id, im);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAssign(@PathVariable UUID id) {
+        ResponseSecondType res;
+
+        try {
+            res = assignService.deleteAssignment(id);
+        } catch (DataIntegrityViolationException e) {
+            res = new ResponseSecondType(
+                400,
+                "not allowed",
+                "Không thể xoá bài tập vì đã có sinh viên nộp bài");
+        }
+
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    // Handle exception.
     @ExceptionHandler(StorageFileNotFoundException.class)
-    public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
+    public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException e) {
         return ResponseEntity.notFound().build();
     }
 }
