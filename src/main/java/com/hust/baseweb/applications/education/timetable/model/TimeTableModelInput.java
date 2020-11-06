@@ -1,10 +1,10 @@
-package com.hust.baseweb.applications.schedule.model;
+package com.hust.baseweb.applications.education.timetable.model;
 
 import lombok.Getter;
 import lombok.Setter;
 @Getter
 @Setter
-public class ScheduleInputModel /// A Row
+public class TimeTableModelInput /// A Row
 {
     private int cid;
     private int acid;
