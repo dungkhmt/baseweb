@@ -112,16 +112,24 @@ public class AssignmentServiceImpl implements AssignmentService {
         int isAssignExist = assignRepo.isAssignExist(id);
 
         if (0 == isAssignExist) {
-            /*return new ResponseSecondType(
+            return new ResponseSecondType(
                 404,
                 "not exist",
-                "Bài tập không tồn tại");*/
-            return new ResponseSecondType(
-                200,
-                null,
-                null);
+                "Bài tập không tồn tại");
         } else {
+            // Delete meta-data.
             assignRepo.deleteAssignment(id);
+
+            // Delete folder.
+            try {
+                storageService.deleteIfExists("", id.toString());
+            } catch (IOException e) {
+            /*return new ResponseSecondType(
+                500,
+                HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                null);*/
+            }
+
             return new ResponseSecondType(200, null, null);
         }
     }
@@ -129,9 +137,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional
     public ResponseSecondType createAssignment(CreateAssignmentIM im) {
-        // create folder for storing file
-
-        // Save metadata.
+        // Save meta-data.
         Date deadline = im.getDeadline();
 
         if (deadline.compareTo(new Date()) < 1) {
@@ -150,7 +156,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             return new ResponseSecondType(
                 400,
                 "class not exist",
-                "Lớp chưa được tạo hoặc đã bị xoá trước đó");
+                "Lớp không tồn tại");
         }
 
         Assignment assignment = new Assignment();
@@ -160,12 +166,20 @@ public class AssignmentServiceImpl implements AssignmentService {
         assignment.setDeadLine(deadline);
         assignment.setEduClass(eduClass);
 
-        assignRepo.save(assignment);
+        assignment = assignRepo.save(assignment);
+
+        // Create a folder for storing file.
+        try {
+            storageService.createFolder(assignment.getId().toString());
+        } catch (IOException e) {
+            throw new StorageException("Could not initialize storage", e);
+        }
 
         return new ResponseSecondType(200, null, null);
     }
 
     @Override
+    @Transactional
     public ResponseSecondType updateAssignment(UUID id, CreateAssignmentIM im) {
         Date deadline = im.getDeadline();
 
