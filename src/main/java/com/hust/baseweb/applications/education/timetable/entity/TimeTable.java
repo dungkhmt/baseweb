@@ -1,4 +1,4 @@
-package com.hust.baseweb.applications.schedule.entity;
+package com.hust.baseweb.applications.education.timetable.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
-public class Schedule
+public class TimeTable
 {
     @Id
     @Column(name = "cid")
