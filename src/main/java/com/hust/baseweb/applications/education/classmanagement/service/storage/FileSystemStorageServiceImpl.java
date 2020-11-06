@@ -152,7 +152,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
             filesToAdd,
             "admin:123".toCharArray(),
             CompressionMethod.DEFLATE,
-            true,
+            false,
             EncryptionMethod.AES,
             AesKeyStrength.KEY_STRENGTH_256);
     }
