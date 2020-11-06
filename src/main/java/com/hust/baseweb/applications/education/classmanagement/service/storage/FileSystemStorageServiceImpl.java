@@ -119,6 +119,11 @@ public class FileSystemStorageServiceImpl implements StorageService {
     }
 
     @Override
+    public void createFolder(String relPath2folder) throws IOException {
+        Files.createDirectories(Paths.get(rootPath + relPath2folder));
+    }
+
+    @Override
     public void init(Path path) {
         try {
             Files.createDirectories(path);

@@ -30,4 +30,6 @@ public interface StorageService {
     boolean deleteAll(Path path) throws IOException;
 
     void deleteIfExists(String folder, String fileName) throws IOException;
+
+    void createFolder(String relPath2folder) throws IOException;
 }
