@@ -6,14 +6,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.UUID;
 
 @Service
 public interface StorageService {
 
     void init(Path path);
 
-    void store(MultipartFile file, UUID assignmentId, String studentId);
+    void store(MultipartFile file, String folder, String savedName) throws IOException;
 
     /*Stream<Path> loadAll();*/
 
@@ -30,5 +29,5 @@ public interface StorageService {
      */
     boolean deleteAll(Path path) throws IOException;
 
-    void deleteIfExists(Path path) throws IOException;
+    void deleteIfExists(String folder, String fileName) throws IOException;
 }

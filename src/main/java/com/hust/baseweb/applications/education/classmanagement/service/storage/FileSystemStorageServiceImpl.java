@@ -3,10 +3,7 @@ package com.hust.baseweb.applications.education.classmanagement.service.storage;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageFileNotFoundException;
 import com.hust.baseweb.applications.education.classmanagement.utils.ZipOutputStreamUtils;
-import com.hust.baseweb.applications.education.entity.Assignment;
-import com.hust.baseweb.applications.education.entity.AssignmentSubmission;
 import com.hust.baseweb.applications.education.repo.AssignmentSubmissionRepo;
-import com.hust.baseweb.entity.UserLogin;
 import lombok.extern.log4j.Log4j2;
 import net.lingala.zip4j.model.enums.AesKeyStrength;
 import net.lingala.zip4j.model.enums.CompressionMethod;
@@ -26,9 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.*;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Log4j2
 @Service
@@ -47,53 +42,24 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     @Override
     @Transactional
-    public void store(MultipartFile file, UUID assignmentId, String studentId) {
-        log.info("store, StudentId = " + studentId);
-
-        Path path = Paths.get(rootPath + assignmentId.toString() + "\\");
+    public void store(MultipartFile file, String folder, String savedName) throws IOException {
+        Path path = Paths.get(rootPath + folder + "\\");
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
-        try {
-            if (file.isEmpty()) {
-                throw new StorageException("Failed to store empty file " + originalFileName);
-            }
-
-            if (originalFileName.contains("..")) {
-                // This is a security check
-                throw new StorageException(
-                    "Cannot store file with relative path outside current directory "
-                    + originalFileName);
-            }
-
-            // Save meta-data.
-            UserLogin student = new UserLogin();
-            Assignment assignment = new Assignment();
-            AssignmentSubmission submission = submissionRepo.findByAssignmentIdAndStudentUserLoginId(
-                assignmentId,
-                studentId);
-
-            if (null == submission) {
-                submission = new AssignmentSubmission();
-            } else {
-                deleteIfExists(path.resolve(studentId + getFileExtension(submission.getOriginalFileName())));
-            }
-
-            student.setUserLoginId(studentId);
-            assignment.setId(assignmentId);
-
-            submission.setAssignment(assignment);
-            submission.setOriginalFileName(originalFileName);
-            submission.setStudent(student);
-            submission.setLastUpdatedStamp(new Date());
-
-            submissionRepo.save(submission);
-
-            // Save uploaded file.
-            Files.copy(file.getInputStream(), path.resolve(studentId + getFileExtension(originalFileName)),
-                       StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new StorageException("Failed to store file " + originalFileName, e);
+        if (file.isEmpty()) {
+            throw new StorageException("Failed to store empty file " + originalFileName);
         }
+
+        if (originalFileName.contains("..")) {
+            // This is a security check
+            throw new StorageException(
+                "Cannot store file with relative path outside current directory "
+                + originalFileName);
+        }
+
+        // Can throw IOExeption, e.g NoSuchFileException.
+        Files.copy(file.getInputStream(), path.resolve(savedName + getFileExtension(originalFileName)),
+                   StandardCopyOption.REPLACE_EXISTING);
     }
 
     /*@Override
@@ -142,12 +108,13 @@ public class FileSystemStorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void deleteIfExists(Path path) throws IOException {
+    public void deleteIfExists(String folder, String fileName) throws IOException {
+        Path path = Paths.get(rootPath + folder + "\\").resolve(fileName);
+
         try {
             Files.deleteIfExists(path);
         } catch (DirectoryNotEmptyException e) {
             FileUtils.deleteDirectory(path.toFile());
-            log.info("Diẻctory");
         }
     }
 
