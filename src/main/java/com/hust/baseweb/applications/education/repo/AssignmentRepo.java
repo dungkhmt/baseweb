@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -81,4 +82,13 @@ public interface AssignmentRepo extends JpaRepository<Assignment, UUID> {
                    "\tid = ?1",
            nativeQuery = true)
     int isAssignExist(UUID id);
+
+    @Query(value = "select\n" +
+                   "\tdead_line\n" +
+                   "from\n" +
+                   "\tedu_assignment\n" +
+                   "where\n" +
+                   "\tid = ?1\n",
+           nativeQuery = true)
+    Date getDeadline(UUID assignmentId);
 }
