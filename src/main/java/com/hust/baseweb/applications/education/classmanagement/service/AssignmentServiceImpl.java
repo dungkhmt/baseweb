@@ -2,7 +2,9 @@ package com.hust.baseweb.applications.education.classmanagement.service;
 
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.StorageProperties;
+import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
 import com.hust.baseweb.applications.education.entity.Assignment;
+import com.hust.baseweb.applications.education.entity.AssignmentSubmission;
 import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.CreateAssignmentIM;
@@ -13,15 +15,16 @@ import com.hust.baseweb.applications.education.model.getassignmentdetail4teacher
 import com.hust.baseweb.applications.education.repo.AssignmentRepo;
 import com.hust.baseweb.applications.education.repo.AssignmentSubmissionRepo;
 import com.hust.baseweb.applications.education.repo.ClassRepo;
+import com.hust.baseweb.entity.UserLogin;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Log4j2
@@ -83,7 +86,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             new HashSet<>(studentIds));
 
         try {
-            storageService.deleteIfExists(Paths.get(rootPath + assignmentId + "\\" + assignmentId + ".zip"));
+            storageService.deleteIfExists(assignmentId, assignmentId + ".zip");
 
             File outputZipFile = new File(rootPath + assignmentId + "\\" + assignmentId + ".zip");
             List<File> fileToAdd = new ArrayList<>();
@@ -112,7 +115,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             /*return new ResponseSecondType(
                 404,
                 "not exist",
-                "Bài tập chưa được tạo hoặc đã bị xoá trước đó");*/
+                "Bài tập không tồn tại");*/
             return new ResponseSecondType(
                 200,
                 null,
@@ -189,5 +192,78 @@ public class AssignmentServiceImpl implements AssignmentService {
 
             return new ResponseSecondType(200, null, null);
         }
+    }
+
+    @Override
+    @Transactional
+    public ResponseSecondType saveSubmission(String studentId, UUID assignmentId, MultipartFile file) {
+        ResponseSecondType res;
+
+        // Save meta-data.
+        String originalFileName = org.springframework.util.StringUtils.cleanPath(file.getOriginalFilename());
+        res = saveSubmissionMetaData(originalFileName, assignmentId, studentId);
+
+        if (200 != res.getStatus()) {
+            return res;
+        }
+
+        // Save file.
+        try {
+            if (res.getMessage() != null) {
+                storageService.deleteIfExists(
+                    assignmentId.toString(),
+                    studentId + storageService.getFileExtension(res.getMessage()));
+            }
+
+            storageService.store(file, assignmentId.toString(), studentId);
+        } catch (IOException e) {
+            throw new StorageException("Failed to store file " + originalFileName, e);
+        }
+
+        res.setMessage("Tải lên thành công tệp '" + originalFileName + "'");
+        return res;
+    }
+
+    @Transactional
+    private ResponseSecondType saveSubmissionMetaData(String originalFileName, UUID assignmentId, String studentId) {
+        Date deadline = assignRepo.getDeadline(assignmentId);
+
+        if (null == deadline) {
+            return new ResponseSecondType(
+                400,
+                "not exist",
+                "Bài tập không tồn tại");
+        }
+
+        if (deadline.compareTo(new Date()) < 0) {
+            return new ResponseSecondType(
+                400,
+                "deadline exceeded",
+                "Đã quá hạn nộp bài");
+        }
+
+        UserLogin student = new UserLogin();
+        Assignment assignment = new Assignment();
+        AssignmentSubmission submission = submissionRepo.findByAssignmentIdAndStudentUserLoginId(
+            assignmentId,
+            studentId);
+
+        if (null == submission) {
+            submission = new AssignmentSubmission();
+        }
+
+        String submitedFileName = submission.getOriginalFileName();
+
+        student.setUserLoginId(studentId);
+        assignment.setId(assignmentId);
+
+        submission.setAssignment(assignment);
+        submission.setOriginalFileName(originalFileName);
+        submission.setStudent(student);
+        submission.setLastUpdatedStamp(new Date());
+
+        submissionRepo.save(submission);
+
+        return new ResponseSecondType(200, null, submitedFileName);
     }
 }

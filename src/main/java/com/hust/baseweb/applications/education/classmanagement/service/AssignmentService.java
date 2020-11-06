@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.CreateAssignmentIM;
 import com.hust.baseweb.applications.education.model.getassignmentdetail.GetAssignmentDetailOM;
 import com.hust.baseweb.applications.education.model.getassignmentdetail4teacher.GetAssignmentDetail4TeacherOM;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,5 +21,7 @@ public interface AssignmentService {
 
     ResponseSecondType createAssignment(CreateAssignmentIM im);
 
-    ResponseSecondType updateAssignment(UUID id,CreateAssignmentIM im);
+    ResponseSecondType updateAssignment(UUID id, CreateAssignmentIM im);
+
+    ResponseSecondType saveSubmission(String studentId, UUID assignmentId, MultipartFile file);
 }

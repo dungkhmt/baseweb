@@ -2,7 +2,7 @@ package com.hust.baseweb.applications.education.classmanagement.controller;
 
 import com.hust.baseweb.applications.education.classmanagement.service.AssignmentServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
-import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageFileNotFoundException;
+import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
 import com.hust.baseweb.applications.education.exception.ResponseSecondType;
 import com.hust.baseweb.applications.education.model.CreateAssignmentIM;
 import com.hust.baseweb.applications.education.model.GetFilesIM;
@@ -43,13 +43,10 @@ public class AssignmentController {
         @PathVariable UUID id,
         @RequestParam("file") MultipartFile file
     ) {
-        ResponseSecondType res = new ResponseSecondType(
-            200,
-            null,
-            "Tải lên thành công tệp '" + file.getOriginalFilename() + "'");
+        ResponseSecondType res;
 
         try {
-            storageService.store(file, id, principal.getName());
+            res = assignService.saveSubmission(principal.getName(), id, file);
         } catch (JpaSystemException e) {
             if ("fk_assignment_submission_assignment"
                 .equals(e.getRootCause().getMessage().substring(94, 129))) {
@@ -140,8 +137,13 @@ public class AssignmentController {
     }
 
     // Handle exception.
-    @ExceptionHandler(StorageFileNotFoundException.class)
-    public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException e) {
-        return ResponseEntity.notFound().build();
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<?> handleStorageException(StorageException e) {
+        ResponseSecondType res = new ResponseSecondType(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "Failed to store file",
+            e.getMessage());
+
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 }
