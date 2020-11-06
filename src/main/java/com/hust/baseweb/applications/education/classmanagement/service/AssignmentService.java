@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.education.classmanagement.service;
 
-import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.CreateAssignmentIM;
 import com.hust.baseweb.applications.education.model.getassignmentdetail.GetAssignmentDetailOM;
 import com.hust.baseweb.applications.education.model.getassignmentdetail4teacher.GetAssignmentDetail4TeacherOM;
@@ -17,11 +17,11 @@ public interface AssignmentService {
 
     String getSubmissionsOf(String assignmentId, List<String> studentIds);
 
-    ResponseSecondType deleteAssignment(UUID id);
+    SimpleResponse deleteAssignment(UUID id);
 
-    ResponseSecondType createAssignment(CreateAssignmentIM im);
+    SimpleResponse createAssignment(CreateAssignmentIM im);
 
-    ResponseSecondType updateAssignment(UUID id, CreateAssignmentIM im);
+    SimpleResponse updateAssignment(UUID id, CreateAssignmentIM im);
 
-    ResponseSecondType saveSubmission(String studentId, UUID assignmentId, MultipartFile file);
+    SimpleResponse saveSubmission(String studentId, UUID assignmentId, MultipartFile file);
 }

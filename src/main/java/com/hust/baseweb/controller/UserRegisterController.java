@@ -1,6 +1,6 @@
 package com.hust.baseweb.controller;
 
-import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.model.ApproveRegistrationIM;
 import com.hust.baseweb.model.RegisterIM;
 import com.hust.baseweb.service.UserService;
@@ -39,7 +39,7 @@ public class UserRegisterController {
 
     @PostMapping("/user/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterIM im) {
-        ResponseSecondType res = userService.register(im);
+        SimpleResponse res = userService.register(im);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -50,7 +50,7 @@ public class UserRegisterController {
 
     @PostMapping("/user/approve-registration")
     public ResponseEntity<?> approve(@RequestBody ApproveRegistrationIM im) {
-        ResponseSecondType res = userService.approve(im);
+        SimpleResponse res = userService.approve(im);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 }

@@ -13,7 +13,7 @@ public class ConversionFailedExceptionHandler {
 
     @ExceptionHandler(ConversionFailedException.class)
     public ResponseEntity<?> handleConversionFailed(ConversionFailedException ex) {
-        ResponseSecondType response = new ResponseSecondType(404, "Conversion failed", ex.getMessage());
+        SimpleResponse response = new SimpleResponse(404, "Conversion failed", ex.getMessage());
         ;
 
         return ResponseEntity.status(response.getStatus()).body(response);

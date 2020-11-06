@@ -2,7 +2,7 @@ package com.hust.baseweb.applications.education.classmanagement.service;
 
 import com.hust.baseweb.applications.education.classmanagement.enumeration.RegistStatus;
 import com.hust.baseweb.applications.education.entity.*;
-import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.ClassOM;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
@@ -117,12 +117,12 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @Transactional
-    public ResponseSecondType register(UUID classId, String studentId) {
-        ResponseSecondType res;
+    public SimpleResponse register(UUID classId, String studentId) {
+        SimpleResponse res;
         String check = registRepo.checkRegistration(classId, studentId);
 
         if ("WAITING_FOR_APPROVAL".equals(check) || "APPROVED".equals(check)) {
-            res = new ResponseSecondType(
+            res = new SimpleResponse(
                 400,
                 "invalid register",
                 "Bạn đã đăng ký lớp này rồi");
@@ -134,18 +134,18 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @Transactional
-    public Map<String, ResponseSecondType> updateRegistStatus(
+    public Map<String, SimpleResponse> updateRegistStatus(
         UUID classId,
         Set<String> studentIds,
         RegistStatus status
     ) {
-        Map<String, ResponseSecondType> res = new HashMap<>();
+        Map<String, SimpleResponse> res = new HashMap<>();
 
         for (String studentId : studentIds) {
             String check = registRepo.checkRegistration(classId, studentId);
 
             if (null == check) {
-                res.put(studentId, new ResponseSecondType(
+                res.put(studentId, new SimpleResponse(
                     404,
                     "invalid update",
                     "Không tìm thấy sinh viên, lớp hoặc yêu cầu đăng ký"));
@@ -156,7 +156,7 @@ public class ClassServiceImpl implements ClassService {
                         if (status.equals(RegistStatus.REMOVED)) {
                             res.put(studentId, invalidUpdateRes());
                         } else if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
-                            res.put(studentId, new ResponseSecondType(200, null, null));
+                            res.put(studentId, new SimpleResponse(200, null, null));
                         } else {
                             res.put(studentId, createOrUpdateRegist(classId, studentId, status));
                         }
@@ -166,7 +166,7 @@ public class ClassServiceImpl implements ClassService {
                         if (status.equals(RegistStatus.REMOVED)) {
                             res.put(studentId, createOrUpdateRegist(classId, studentId, status));
                         } else if (status.equals(RegistStatus.APPROVED)) {
-                            res.put(studentId, new ResponseSecondType(200, null, null));
+                            res.put(studentId, new SimpleResponse(200, null, null));
                         } else {
                             res.put(studentId, invalidUpdateRes());
                         }
@@ -176,7 +176,7 @@ public class ClassServiceImpl implements ClassService {
                         if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
                             res.put(studentId, createOrUpdateRegist(classId, studentId, status));
                         } else if (status.equals(RegistStatus.REFUSED)) {
-                            res.put(studentId, new ResponseSecondType(200, null, null));
+                            res.put(studentId, new SimpleResponse(200, null, null));
                         } else {
                             res.put(studentId, invalidUpdateRes());
                         }
@@ -186,7 +186,7 @@ public class ClassServiceImpl implements ClassService {
                         if (status.equals(RegistStatus.WAITING_FOR_APPROVAL)) {
                             res.put(studentId, createOrUpdateRegist(classId, studentId, status));
                         } else if (status.equals(RegistStatus.REMOVED)) {
-                            res.put(studentId, new ResponseSecondType(200, null, null));
+                            res.put(studentId, new SimpleResponse(200, null, null));
                         } else {
                             res.put(studentId, invalidUpdateRes());
                         }
@@ -237,7 +237,7 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Transactional
-    private ResponseSecondType createOrUpdateRegist(UUID classId, String studentId, RegistStatus status) {
+    private SimpleResponse createOrUpdateRegist(UUID classId, String studentId, RegistStatus status) {
         EduClass eduClass = new EduClass();
         UserLogin student = new UserLogin();
         ClassRegistrationId id = new ClassRegistrationId(eduClass, student);
@@ -249,11 +249,11 @@ public class ClassServiceImpl implements ClassService {
         registration.setStatus(status);
 
         registRepo.save(registration);
-        return new ResponseSecondType(200, null, null);
+        return new SimpleResponse(200, null, null);
     }
 
-    private ResponseSecondType invalidUpdateRes() {
-        return new ResponseSecondType(
+    private SimpleResponse invalidUpdateRes() {
+        return new SimpleResponse(
             400,
             "invalid update",
             "Trạng thái mới không phù hợp");

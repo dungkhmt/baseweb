@@ -1,6 +1,6 @@
 package com.hust.baseweb.service;
 
-import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.entity.*;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
 import com.hust.baseweb.entity.Status.StatusEnum;
@@ -276,13 +276,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ResponseSecondType register(RegisterIM im) {
-        ResponseSecondType res;
+    public SimpleResponse register(RegisterIM im) {
+        SimpleResponse res;
         String userLoginId = im.getUserLoginId();
         String email = im.getEmail();
 
         if (userRegisterRepo.existsByUserLoginIdOrEmail(userLoginId, email) || userLoginRepo.existsById(userLoginId)) {
-            res = new ResponseSecondType(
+            res = new SimpleResponse(
                 400,
                 "existed",
                 "Tên người dùng hoặc email đã được sử dụng");
@@ -303,7 +303,7 @@ public class UserServiceImpl implements UserService {
 
             userRegisterRepo.save(userRegister);
             EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
-            res = new ResponseSecondType(200, null, null);
+            res = new SimpleResponse(200, null, null);
         }
 
         return res;
@@ -323,15 +323,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ResponseSecondType approve(ApproveRegistrationIM im) {
+    public SimpleResponse approve(ApproveRegistrationIM im) {
         UserRegister userRegister = userRegisterRepo.findById(im.getUserLoginId()).orElse(null);
 
         if (null == userRegister) {
-            return new ResponseSecondType(404, "not existed", "Đăng ký không tồn tại hoặc đã bị xoá");
+            return new SimpleResponse(404, "not existed", "Đăng ký không tồn tại hoặc đã bị xoá");
         }
 
         if ("USER_APPROVED".equals(userRegister.getStatusItem().getStatusId())) {
-            return new ResponseSecondType(400, "approved", "Tài khoản đã được phê duyệt trước đó");
+            return new SimpleResponse(400, "approved", "Tài khoản đã được phê duyệt trước đó");
         }
 
         createAndSaveUserLogin(new PersonModel(
@@ -350,6 +350,6 @@ public class UserServiceImpl implements UserService {
 
         userRegisterRepo.save(userRegister);
 
-        return new ResponseSecondType(200, null, null);
+        return new SimpleResponse(200, null, null);
     }
 }

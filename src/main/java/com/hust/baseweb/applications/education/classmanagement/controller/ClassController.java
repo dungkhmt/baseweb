@@ -1,8 +1,11 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
 import com.hust.baseweb.applications.education.classmanagement.service.ClassServiceImpl;
-import com.hust.baseweb.applications.education.entity.*;
-import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.entity.EduClass;
+import com.hust.baseweb.applications.education.entity.EduCourse;
+import com.hust.baseweb.applications.education.entity.EduDepartment;
+import com.hust.baseweb.applications.education.entity.Semester;
+import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.service.CourseService;
 import com.hust.baseweb.applications.education.service.EduDepartmentService;
@@ -65,7 +68,7 @@ public class ClassController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegistIM im, Principal principal) {
-        ResponseSecondType res = classService.register(im.getClassId(), principal.getName());
+        SimpleResponse res = classService.register(im.getClassId(), principal.getName());
         return ResponseEntity.status(res.getStatus()).body(res.getMessage());
     }
 

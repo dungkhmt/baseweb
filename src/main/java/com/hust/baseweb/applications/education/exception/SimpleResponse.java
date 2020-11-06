@@ -7,7 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ResponseSecondType {
+public class SimpleResponse {
+
     private final int status;
 
     private final String error;

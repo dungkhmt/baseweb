@@ -1,6 +1,6 @@
 package com.hust.baseweb.service;
 
-import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.entity.UserRegister;
@@ -47,9 +47,9 @@ public interface UserService {
 
     /*List<UserRegister.OutputModel> findAllRegisterUser();*/
 
-    ResponseSecondType register(RegisterIM im);
+    SimpleResponse register(RegisterIM im);
 
     GetAllRegistsOM getAllRegists();
 
-    ResponseSecondType approve(ApproveRegistrationIM im);
+    SimpleResponse approve(ApproveRegistrationIM im);
 }

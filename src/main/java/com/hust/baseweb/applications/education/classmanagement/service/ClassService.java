@@ -2,8 +2,7 @@ package com.hust.baseweb.applications.education.classmanagement.service;
 
 import com.hust.baseweb.applications.education.classmanagement.enumeration.RegistStatus;
 import com.hust.baseweb.applications.education.entity.EduClass;
-import com.hust.baseweb.applications.education.entity.EduClass;
-import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
 import com.hust.baseweb.entity.UserLogin;
@@ -20,9 +19,9 @@ public interface ClassService {
 
     GetClassListOM getClassesOfCurrentSemester(String studentId, GetClassesIM filterParams, Pageable pageable);
 
-    ResponseSecondType register(UUID classId, String studentId);
+    SimpleResponse register(UUID classId, String studentId);
 
-    Map<String, ResponseSecondType> updateRegistStatus(UUID classId, Set<String> studentIds, RegistStatus status);
+    Map<String, SimpleResponse> updateRegistStatus(UUID classId, Set<String> studentIds, RegistStatus status);
 
     List<GetClassesOfTeacherOM> getClassesOfTeacher(String teacherId);
 

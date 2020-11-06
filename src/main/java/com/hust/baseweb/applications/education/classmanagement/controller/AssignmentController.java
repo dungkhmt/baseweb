@@ -3,7 +3,7 @@ package com.hust.baseweb.applications.education.classmanagement.controller;
 import com.hust.baseweb.applications.education.classmanagement.service.AssignmentServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
-import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.CreateAssignmentIM;
 import com.hust.baseweb.applications.education.model.GetFilesIM;
 import lombok.AllArgsConstructor;
@@ -43,19 +43,19 @@ public class AssignmentController {
         @PathVariable UUID id,
         @RequestParam("file") MultipartFile file
     ) {
-        ResponseSecondType res;
+        SimpleResponse res;
 
         try {
             res = assignService.saveSubmission(principal.getName(), id, file);
         } catch (JpaSystemException e) {
             if ("fk_assignment_submission_assignment"
                 .equals(e.getRootCause().getMessage().substring(94, 129))) {
-                res = new ResponseSecondType(
+                res = new SimpleResponse(
                     400,
                     "not exist",
                     "Bài tập không tồn tại");
             } else {
-                res = new ResponseSecondType(
+                res = new SimpleResponse(
                     500,
                     "unknown",
                     null);
@@ -109,25 +109,25 @@ public class AssignmentController {
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping
     public ResponseEntity<?> createAssign(@RequestBody CreateAssignmentIM im) {
-        ResponseSecondType res = assignService.createAssignment(im);
+        SimpleResponse res = assignService.createAssignment(im);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateAssign(@PathVariable UUID id, @RequestBody CreateAssignmentIM im) {
-        ResponseSecondType res = assignService.updateAssignment(id, im);
+        SimpleResponse res = assignService.updateAssignment(id, im);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAssign(@PathVariable UUID id) {
-        ResponseSecondType res;
+        SimpleResponse res;
 
         try {
             res = assignService.deleteAssignment(id);
         } catch (DataIntegrityViolationException e) {
-            res = new ResponseSecondType(
+            res = new SimpleResponse(
                 400,
                 "not allowed",
                 "Không thể xoá bài tập vì đã có sinh viên nộp bài");
@@ -139,7 +139,7 @@ public class AssignmentController {
     // Handle exception.
     @ExceptionHandler(StorageException.class)
     public ResponseEntity<?> handleStorageException(StorageException e) {
-        ResponseSecondType res = new ResponseSecondType(
+        SimpleResponse res = new SimpleResponse(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             "Failed to store file",
             e.getMessage());

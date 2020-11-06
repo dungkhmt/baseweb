@@ -48,14 +48,14 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         final StringBuilder builder = new StringBuilder();
         final Set<HttpMethod> supportedMethods = ex.getSupportedHttpMethods();
-        ResponseSecondType res;
+        SimpleResponse res;
 
         /*builder.append(ex.getMethod());
         " Method is not supported for this request. " +*/
         builder.append((1 == supportedMethods.size() ? "Supported method is:" : "Supported methods are:"));
         supportedMethods.forEach(method -> builder.append(" " + method));
 
-        res = new ResponseSecondType(405, ex.getLocalizedMessage(), builder.toString());
+        res = new SimpleResponse(405, ex.getLocalizedMessage(), builder.toString());
 
         return ResponseEntity.status(res.getStatus()).body(res);
     }
@@ -73,7 +73,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         builder.append("Media type is not supported. Supported media types are: ");
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t + " "));
 
-        ResponseSecondType response = new ResponseSecondType(
+        SimpleResponse response = new SimpleResponse(
             415,
             ex.getLocalizedMessage(),
             builder.substring(0, builder.length() - 2));
@@ -88,8 +88,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         final HttpStatus status,
         final WebRequest request
     ) {
-        ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(),
-                                                             ex.getParameterName() + " parameter is missing");
+        SimpleResponse response = new SimpleResponse(400, ex.getLocalizedMessage(),
+                                                     ex.getParameterName() + " parameter is missing");
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
@@ -102,12 +102,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         final HttpStatus status,
         final WebRequest request
     ) {
-        ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(),
-                                                             ex.getValue() +
-                                                             " value for " +
-                                                             ex.getPropertyName() +
-                                                             " should be of type " +
-                                                             ex.getRequiredType());
+        SimpleResponse response = new SimpleResponse(400, ex.getLocalizedMessage(),
+                                                     ex.getValue() +
+                                                     " value for " +
+                                                     ex.getPropertyName() +
+                                                     " should be of type " +
+                                                     ex.getRequiredType());
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
@@ -119,7 +119,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status,
         WebRequest request
     ) {
-        ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(), ex.getMessage());
+        SimpleResponse response = new SimpleResponse(400, ex.getLocalizedMessage(), ex.getMessage());
 
         return ResponseEntity
             .status(response.getStatus())
@@ -159,8 +159,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         final WebRequest request
     ) {
 
-        ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(),
-                                                             ex.getRequestPartName() + " part is missing");
+        SimpleResponse response = new SimpleResponse(400, ex.getLocalizedMessage(),
+                                                     ex.getRequestPartName() + " part is missing");
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
@@ -202,21 +202,21 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         final WebRequest request
     ) {
 
-        ResponseSecondType response = new ResponseSecondType(415, ex.getLocalizedMessage(),
-                                                             "No handler found for " +
-                                                             ex.getHttpMethod() +
-                                                             " " +
-                                                             ex.getRequestURL());
+        SimpleResponse response = new SimpleResponse(415, ex.getLocalizedMessage(),
+                                                     "No handler found for " +
+                                                     ex.getHttpMethod() +
+                                                     " " +
+                                                     ex.getRequestURL());
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException ex) {
-        ResponseSecondType response = new ResponseSecondType(400, ex.getLocalizedMessage(),
-                                                             ex.getName() +
-                                                             " should be of type " +
-                                                             ex.getRequiredType().getName());
+        SimpleResponse response = new SimpleResponse(400, ex.getLocalizedMessage(),
+                                                     ex.getName() +
+                                                     " should be of type " +
+                                                     ex.getRequiredType().getName());
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
@@ -250,7 +250,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     /*@ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleAll(final Exception ex, final WebRequest request) {
-        ResponseSecondType response = new ResponseSecondType(500, "Internal server error", ex.getMessage());
+        SimpleResponse response = new SimpleResponse(500, "Internal server error", ex.getMessage());
         return ResponseEntity.status(response.getStatus()).body(response);
     }*/
 }

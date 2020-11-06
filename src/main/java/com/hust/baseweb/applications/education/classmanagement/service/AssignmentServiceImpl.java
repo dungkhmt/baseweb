@@ -6,7 +6,7 @@ import com.hust.baseweb.applications.education.classmanagement.service.storage.e
 import com.hust.baseweb.applications.education.entity.Assignment;
 import com.hust.baseweb.applications.education.entity.AssignmentSubmission;
 import com.hust.baseweb.applications.education.entity.EduClass;
-import com.hust.baseweb.applications.education.exception.ResponseSecondType;
+import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.CreateAssignmentIM;
 import com.hust.baseweb.applications.education.model.GetSubmissionsOM;
 import com.hust.baseweb.applications.education.model.getassignmentdetail.GetAssignmentDetailOM;
@@ -108,11 +108,11 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     @Transactional
-    public ResponseSecondType deleteAssignment(UUID id) {
+    public SimpleResponse deleteAssignment(UUID id) {
         int isAssignExist = assignRepo.isAssignExist(id);
 
         if (0 == isAssignExist) {
-            return new ResponseSecondType(
+            return new SimpleResponse(
                 404,
                 "not exist",
                 "Bài tập không tồn tại");
@@ -124,24 +124,24 @@ public class AssignmentServiceImpl implements AssignmentService {
             try {
                 storageService.deleteIfExists("", id.toString());
             } catch (IOException e) {
-            /*return new ResponseSecondType(
+            /*return new SimpleResponse(
                 500,
                 HttpStatus.INTERNAL_SERVER_ERROR.toString(),
                 null);*/
             }
 
-            return new ResponseSecondType(200, null, null);
+            return new SimpleResponse(200, null, null);
         }
     }
 
     @Override
     @Transactional
-    public ResponseSecondType createAssignment(CreateAssignmentIM im) {
+    public SimpleResponse createAssignment(CreateAssignmentIM im) {
         // Save meta-data.
         Date deadline = im.getDeadline();
 
         if (deadline.compareTo(new Date()) < 1) {
-            return new ResponseSecondType(
+            return new SimpleResponse(
                 400,
                 "require future date",
                 "Vui lòng chọn thời điểm trong tương lai");
@@ -153,7 +153,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             eduClass = new EduClass();
             eduClass.setId(im.getClassId());
         } else {
-            return new ResponseSecondType(
+            return new SimpleResponse(
                 400,
                 "class not exist",
                 "Lớp không tồn tại");
@@ -175,16 +175,16 @@ public class AssignmentServiceImpl implements AssignmentService {
             throw new StorageException("Could not initialize storage", e);
         }
 
-        return new ResponseSecondType(200, null, null);
+        return new SimpleResponse(200, null, null);
     }
 
     @Override
     @Transactional
-    public ResponseSecondType updateAssignment(UUID id, CreateAssignmentIM im) {
+    public SimpleResponse updateAssignment(UUID id, CreateAssignmentIM im) {
         Date deadline = im.getDeadline();
 
         if (deadline.compareTo(new Date()) < 1) {
-            return new ResponseSecondType(
+            return new SimpleResponse(
                 400,
                 "require future date",
                 "Vui lòng chọn thời điểm trong tương lai");
@@ -193,7 +193,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         Assignment assignment = assignRepo.findById(id).orElse(null);
 
         if (null == assignment) {
-            return new ResponseSecondType(
+            return new SimpleResponse(
                 400,
                 "not exist",
                 "Bài tập chưa được tạo hoặc đã bị xoá trước đó");
@@ -204,14 +204,14 @@ public class AssignmentServiceImpl implements AssignmentService {
 
             assignRepo.save(assignment);
 
-            return new ResponseSecondType(200, null, null);
+            return new SimpleResponse(200, null, null);
         }
     }
 
     @Override
     @Transactional
-    public ResponseSecondType saveSubmission(String studentId, UUID assignmentId, MultipartFile file) {
-        ResponseSecondType res;
+    public SimpleResponse saveSubmission(String studentId, UUID assignmentId, MultipartFile file) {
+        SimpleResponse res;
 
         // Save meta-data.
         String originalFileName = org.springframework.util.StringUtils.cleanPath(file.getOriginalFilename());
@@ -239,18 +239,18 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Transactional
-    private ResponseSecondType saveSubmissionMetaData(String originalFileName, UUID assignmentId, String studentId) {
+    private SimpleResponse saveSubmissionMetaData(String originalFileName, UUID assignmentId, String studentId) {
         Date deadline = assignRepo.getDeadline(assignmentId);
 
         if (null == deadline) {
-            return new ResponseSecondType(
+            return new SimpleResponse(
                 400,
                 "not exist",
                 "Bài tập không tồn tại");
         }
 
         if (deadline.compareTo(new Date()) < 0) {
-            return new ResponseSecondType(
+            return new SimpleResponse(
                 400,
                 "deadline exceeded",
                 "Đã quá hạn nộp bài");
@@ -278,6 +278,6 @@ public class AssignmentServiceImpl implements AssignmentService {
 
         submissionRepo.save(submission);
 
-        return new ResponseSecondType(200, null, submitedFileName);
+        return new SimpleResponse(200, null, submitedFileName);
     }
 }
