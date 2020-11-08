@@ -132,9 +132,15 @@ public class ApiController {
     @GetMapping("/roles")
     public ResponseEntity<?> getRoles() {
         return ResponseEntity.ok().body(securityGroupService.getRoles());
-        /*Jedis jedis = new Jedis("localhost");
+    }
+
+    @GetMapping("view-permissions")
+    public ResponseEntity<?> getViewPermissions(Principal principal, @RequestParam String screenId) {
+        return ResponseEntity.ok().body(applicationService.getViewPermissions(principal.getName(), screenId));
+    }
+
+    /*Jedis jedis = new Jedis("localhost");
         Map<String, String> res = jedis.hgetAll("spring:session:sessions:154894ef-efe4-4acf-b479-bce0275694fd");
         return ResponseEntity.ok().body(res.get("sessionAttr:SPRING_SECURITY_CONTEXT"));*/
-    }
 }
 
