@@ -1,7 +1,5 @@
 package localsearch.applications.examplebook;
 
-import org.omg.CosNaming.NamingContextPackage.NotEmpty;
-
 import localsearch.constraints.basic.Implicate;
 import localsearch.constraints.basic.IsEqual;
 import localsearch.constraints.basic.NotEqual;
