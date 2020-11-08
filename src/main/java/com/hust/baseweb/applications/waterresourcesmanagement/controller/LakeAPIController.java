@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.waterresourcesmanagement.controller;
 
 import com.hust.baseweb.applications.waterresourcesmanagement.entity.Lake;
+import com.hust.baseweb.applications.waterresourcesmanagement.model.LakeLiveInfoModel;
 import com.hust.baseweb.applications.waterresourcesmanagement.model.LakeModel;
 import com.hust.baseweb.applications.waterresourcesmanagement.service.LakeService;
 import com.hust.baseweb.entity.UserLogin;
@@ -55,7 +56,9 @@ public class LakeAPIController {
     @GetMapping(path = "/lakeinfolive/{lakeId}")
     public ResponseEntity<?> getLakeInfoLiveDetail(@PathVariable String lakeId, Principal principal){
         log.info("getLakeInfoLiveDetail, lakeId = " + lakeId);
-        Lake lake = lakeService.getLiveInfoLake(lakeId);
-        return ResponseEntity.ok().body(lake);
+        //Lake lake = lakeService.getLiveInfoLake(lakeId);
+        LakeLiveInfoModel lakeLiveInfoModel = lakeService.getLiveInfoLake(lakeId);
+        //return ResponseEntity.ok().body(lake);
+        return ResponseEntity.ok().body(lakeLiveInfoModel);
     }
 }

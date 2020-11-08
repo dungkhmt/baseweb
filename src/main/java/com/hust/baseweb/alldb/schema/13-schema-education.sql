@@ -35,8 +35,11 @@ create table edu_exam_timetable_raw(
     constraint pk_edu_timetable_raw primary key(id)
 );
 
-create table edu_student_registration_raw(
-    
+create table edu_student(
+    student_code varchar(30) not null,
+    party_id uuid not null,
+    constraint pk_edu_student_code primary key (student_code),
+    constraint fk_edu_student_party_id foreign key(party_id) references
 );
 
 create table edu_room(

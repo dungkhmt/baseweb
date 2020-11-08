@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.waterresourcesmanagement.service;
 
 import com.hust.baseweb.applications.waterresourcesmanagement.entity.Lake;
 import com.hust.baseweb.applications.waterresourcesmanagement.entity.LakeRole;
+import com.hust.baseweb.applications.waterresourcesmanagement.model.LakeLiveInfoModel;
 import com.hust.baseweb.applications.waterresourcesmanagement.model.LakeModel;
 import com.hust.baseweb.applications.waterresourcesmanagement.repo.LakeRepo;
 import com.hust.baseweb.applications.waterresourcesmanagement.repo.LakeRoleRepo;
@@ -119,7 +120,7 @@ public class LakeServiceImpl implements LakeService {
     }
 
     @Override
-    public Lake getLiveInfoLake(String lakeId) {
+    public LakeLiveInfoModel getLiveInfoLake(String lakeId) {
         /*
         pseudo generate time series information
          */
@@ -137,6 +138,14 @@ public class LakeServiceImpl implements LakeService {
         lake.setLuuLuongXaLuKiemTra(luuLuongXaLuKiemTra + "");
         lake.setMucNuocDangBinhThuong(mucNuocDangBinhThuong + "");
 
-        return lake;
+        int[] mucNuocLuKiemTraHistory = new int[10];
+        int[] luuLuongLuKiemTraHistory = new int[10];
+        for(int i = 0; i < mucNuocLuKiemTraHistory.length; i++){
+            mucNuocLuKiemTraHistory[i] = R.nextInt(100) + 10;
+        }
+        for(int i = 0; i < luuLuongLuKiemTraHistory.length; i++){
+            luuLuongLuKiemTraHistory[i] = R.nextInt(100) + 50;
+        }
+        return new LakeLiveInfoModel(lake,mucNuocLuKiemTraHistory, luuLuongLuKiemTraHistory);
     }
 }
