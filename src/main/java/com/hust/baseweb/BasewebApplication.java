@@ -6,7 +6,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 @SpringBootApplication
 @EnableSwagger2WebMvc
-public class BasewebApplication {
+public class BasewebApplication { // this is temp
 
     public static void main(String[] args) {
         SpringApplication.run(BasewebApplication.class, args);
