@@ -38,6 +38,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
     public FileSystemStorageServiceImpl(StorageProperties properties) {
         rootPath = properties.getRootPath() + properties.getClassManagementDataPath();
         init(Paths.get(rootPath));
+        log.info("INIT FOLDER, PATH = " + rootPath);
     }
 
     @Override
@@ -45,6 +46,8 @@ public class FileSystemStorageServiceImpl implements StorageService {
     public void store(MultipartFile file, String folder, String savedName) throws IOException {
         Path path = Paths.get(rootPath + folder + "/");
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+        log.info("STORE METHOD, FILE PATH = " + path.toString() + ", ORIGINAL FILE NAME = " + originalFileName);
 
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file " + originalFileName);
