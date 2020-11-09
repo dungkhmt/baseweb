@@ -128,11 +128,13 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     @Override
     public void init(Path path) {
-        try {
-            Files.createDirectories(path);
-        } catch (IOException e) {
+        /*try {*/
+        File file = new File(path.toString());
+        file.mkdir();
+        /*Files.createDirectories(path);*/
+        /*} catch (IOException e) {
             throw new StorageException("Could not initialize storage", e);
-        }
+        }*/
     }
 
     // Completed.
