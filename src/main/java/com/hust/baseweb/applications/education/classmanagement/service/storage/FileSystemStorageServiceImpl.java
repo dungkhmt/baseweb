@@ -43,7 +43,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
     @Override
     @Transactional
     public void store(MultipartFile file, String folder, String savedName) throws IOException {
-        Path path = Paths.get(rootPath + folder + "\\");
+        Path path = Paths.get(rootPath + folder + "/");
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
         if (file.isEmpty()) {
@@ -75,7 +75,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     @Override
     public Path load(String fileName, String folder) {
-        return Paths.get(rootPath + folder + "\\").resolve(fileName);
+        return Paths.get(rootPath + folder + "/").resolve(fileName);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     @Override
     public void deleteIfExists(String folder, String fileName) throws IOException {
-        Path path = Paths.get(rootPath + folder + "\\").resolve(fileName);
+        Path path = Paths.get(rootPath + folder + "/").resolve(fileName);
 
         try {
             Files.deleteIfExists(path);

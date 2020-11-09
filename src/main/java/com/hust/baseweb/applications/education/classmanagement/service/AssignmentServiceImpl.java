@@ -66,7 +66,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         int noOfStudents = classRepo.getNoStudentsOf(classId);
 
         String noSubmissions = noOfStudents == 0 ? "0/0" : submissions.size() +
-                                                           "\\" +
+                                                           "/" +
                                                            noOfStudents +
                                                            " (" +
                                                            100 * submissions.size() / noOfStudents +
