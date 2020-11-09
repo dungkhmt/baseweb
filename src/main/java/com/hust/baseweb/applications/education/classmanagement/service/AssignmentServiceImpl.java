@@ -172,6 +172,8 @@ public class AssignmentServiceImpl implements AssignmentService {
         try {
             storageService.createFolder(assignment.getId().toString());
         } catch (IOException e) {
+            log.info("ERROR in method createAssignment()");
+            e.printStackTrace();
             throw new StorageException("Could not initialize storage", e);
         }
 

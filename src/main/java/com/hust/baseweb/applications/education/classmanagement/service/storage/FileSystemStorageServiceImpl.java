@@ -37,8 +37,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
     @Autowired
     public FileSystemStorageServiceImpl(StorageProperties properties) {
         rootPath = properties.getRootPath() + properties.getClassManagementDataPath();
-        init(Paths.get(rootPath));
-        log.info("INIT FOLDER, PATH = " + rootPath);
+        /*init(Paths.get(rootPath));*/
     }
 
     @Override
@@ -46,8 +45,6 @@ public class FileSystemStorageServiceImpl implements StorageService {
     public void store(MultipartFile file, String folder, String savedName) throws IOException {
         Path path = Paths.get(rootPath + folder + "/");
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
-
-        log.info("STORE METHOD, FILE PATH = " + path.toString() + ", ORIGINAL FILE NAME = " + originalFileName);
 
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file " + originalFileName);
@@ -123,18 +120,22 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     @Override
     public void createFolder(String relPath2folder) throws IOException {
+        /*File f = new File(rootPath + relPath2folder);
+        f.mkdirs();*/
         Files.createDirectories(Paths.get(rootPath + relPath2folder));
     }
 
     @Override
     public void init(Path path) {
-        /*try {*/
-        File file = new File(path.toString());
-        file.mkdir();
-        /*Files.createDirectories(path);*/
-        /*} catch (IOException e) {
+        /*File file = new File(path.toString());
+        file.mkdirs();*/
+        try {
+            Files.createDirectories(path);
+        } catch (IOException e) {
+            log.info("ERROR in method init()");
+            e.printStackTrace();
             throw new StorageException("Could not initialize storage", e);
-        }*/
+        }
     }
 
     // Completed.
