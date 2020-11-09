@@ -231,6 +231,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
             storageService.store(file, assignmentId.toString(), studentId);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new StorageException("Failed to store file " + originalFileName, e);
         }
 
