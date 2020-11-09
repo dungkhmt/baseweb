@@ -66,7 +66,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         int noOfStudents = classRepo.getNoStudentsOf(classId);
 
         String noSubmissions = noOfStudents == 0 ? "0/0" : submissions.size() +
-                                                           "/" +
+                                                           "\\" +
                                                            noOfStudents +
                                                            " (" +
                                                            100 * submissions.size() / noOfStudents +
@@ -88,13 +88,13 @@ public class AssignmentServiceImpl implements AssignmentService {
         try {
             storageService.deleteIfExists(assignmentId, assignmentId + ".zip");
 
-            File outputZipFile = new File(rootPath + assignmentId + "\\" + assignmentId + ".zip");
+            File outputZipFile = new File(rootPath + assignmentId + "/" + assignmentId + ".zip");
             List<File> fileToAdd = new ArrayList<>();
 
             for (GetSubmissionsOM submission : submissions) {
                 fileToAdd.add(new File(rootPath +
                                        assignmentId +
-                                       "\\" +
+                                       "/" +
                                        submission.getStudentId() +
                                        storageService.getFileExtension(submission.getOriginalFileName())));
             }
