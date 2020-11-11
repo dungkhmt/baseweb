@@ -37,13 +37,13 @@ public class FileSystemStorageServiceImpl implements StorageService {
     @Autowired
     public FileSystemStorageServiceImpl(StorageProperties properties) {
         rootPath = properties.getRootPath() + properties.getClassManagementDataPath();
-        init(Paths.get(rootPath));
+        /*init(Paths.get(rootPath));*/
     }
 
     @Override
     @Transactional
     public void store(MultipartFile file, String folder, String savedName) throws IOException {
-        Path path = Paths.get(rootPath + folder + "\\");
+        Path path = Paths.get(rootPath + folder + "/");
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
         if (file.isEmpty()) {
@@ -75,7 +75,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     @Override
     public Path load(String fileName, String folder) {
-        return Paths.get(rootPath + folder + "\\").resolve(fileName);
+        return Paths.get(rootPath + folder + "/").resolve(fileName);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     @Override
     public void deleteIfExists(String folder, String fileName) throws IOException {
-        Path path = Paths.get(rootPath + folder + "\\").resolve(fileName);
+        Path path = Paths.get(rootPath + folder + "/").resolve(fileName);
 
         try {
             Files.deleteIfExists(path);
@@ -120,14 +120,20 @@ public class FileSystemStorageServiceImpl implements StorageService {
 
     @Override
     public void createFolder(String relPath2folder) throws IOException {
+        /*File f = new File(rootPath + relPath2folder);
+        f.mkdirs();*/
         Files.createDirectories(Paths.get(rootPath + relPath2folder));
     }
 
     @Override
     public void init(Path path) {
+        /*File file = new File(path.toString());
+        file.mkdirs();*/
         try {
             Files.createDirectories(path);
         } catch (IOException e) {
+            log.info("ERROR in method init()");
+            e.printStackTrace();
             throw new StorageException("Could not initialize storage", e);
         }
     }

@@ -88,13 +88,13 @@ public class AssignmentServiceImpl implements AssignmentService {
         try {
             storageService.deleteIfExists(assignmentId, assignmentId + ".zip");
 
-            File outputZipFile = new File(rootPath + assignmentId + "\\" + assignmentId + ".zip");
+            File outputZipFile = new File(rootPath + assignmentId + "/" + assignmentId + ".zip");
             List<File> fileToAdd = new ArrayList<>();
 
             for (GetSubmissionsOM submission : submissions) {
                 fileToAdd.add(new File(rootPath +
                                        assignmentId +
-                                       "\\" +
+                                       "/" +
                                        submission.getStudentId() +
                                        storageService.getFileExtension(submission.getOriginalFileName())));
             }
@@ -172,6 +172,8 @@ public class AssignmentServiceImpl implements AssignmentService {
         try {
             storageService.createFolder(assignment.getId().toString());
         } catch (IOException e) {
+            log.info("ERROR in method createAssignment()");
+            e.printStackTrace();
             throw new StorageException("Could not initialize storage", e);
         }
 
@@ -231,6 +233,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
             storageService.store(file, assignmentId.toString(), studentId);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new StorageException("Failed to store file " + originalFileName, e);
         }
 

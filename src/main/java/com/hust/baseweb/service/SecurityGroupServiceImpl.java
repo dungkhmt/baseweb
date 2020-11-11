@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +28,10 @@ public class SecurityGroupServiceImpl implements SecurityGroupService {
     @Transactional(readOnly = true)
     public Set<GetAllRolesOM> getRoles() {
         Set<GetAllRolesOM> roles = securityGroupRepo.getRoles();
+
+        if (null == roles) {
+            return new HashSet<>();
+        }
 
         roles.removeIf(role -> StringUtils.isBlank(role.getName()));
         return roles;
