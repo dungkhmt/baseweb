@@ -8,5 +8,3 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- DROP EXTENSION unaccent;
 
 CREATE EXTENSION unaccent
-	SCHEMA "public"
-	VERSION 1.1;
