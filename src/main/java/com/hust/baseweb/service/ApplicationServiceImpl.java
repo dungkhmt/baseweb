@@ -94,8 +94,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<String> getViewPermissions(String userId, String screenId) {
-        List<String> permissions = applicationRepo.getViewPermissions(userId, screenId);
+    public List<String> getScrSecurInfo(String userId) {
+        List<String> permissions = applicationRepo.getScrSecurInfo(userId);
 
         if (null == permissions) {
             return new ArrayList<>();

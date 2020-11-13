@@ -78,7 +78,7 @@ public class ApiController {
 
     @GetMapping("/my-account")
     public ResponseEntity<?> getAccount(Principal principal) {
-    	System.out.println("this is temp");
+        System.out.println("this is temp");
         UserLogin userLogin = userService.findById(principal.getName());
         Party party = userLogin.getParty();
         Person person = personService.findByPartyId(party.getPartyId());
@@ -135,9 +135,9 @@ public class ApiController {
         return ResponseEntity.ok().body(securityGroupService.getRoles());
     }
 
-    @GetMapping("view-permissions")
-    public ResponseEntity<?> getViewPermissions(Principal principal, @RequestParam String screenId) {
-        return ResponseEntity.ok().body(applicationService.getViewPermissions(principal.getName(), screenId));
+    @GetMapping("screen-security")
+    public ResponseEntity<?> getScrSecurInfo(Principal principal) {
+        return ResponseEntity.ok().body(applicationService.getScrSecurInfo(principal.getName()));
     }
 
     /*Jedis jedis = new Jedis("localhost");

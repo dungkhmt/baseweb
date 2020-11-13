@@ -11,5 +11,5 @@ public interface ApplicationService {
 
     Application getById(String applicationId);
 
-    List<String> getViewPermissions(String userId, String screenId);
+    List<String> getScrSecurInfo(String userId);
 }

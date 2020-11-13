@@ -13,7 +13,7 @@ public interface ApplicationRepo extends JpaRepository<Application, String> {
     List<Application> findByTypeAndPermissionIn(ApplicationType type, List<SecurityPermission> permissions);
 
     @Query(value = "select\n" +
-                   "\tsgp.permission_id\n" +
+                   "\tpermission_id\n" +
                    "from\n" +
                    "\tuser_login_security_group ulsg\n" +
                    "inner join security_group sg on\n" +
@@ -22,7 +22,7 @@ public interface ApplicationRepo extends JpaRepository<Application, String> {
                    "\tsg.group_id = sgp.group_id\n" +
                    "where\n" +
                    "\tulsg .user_login_id = ?1\n" +
-                   "\tand permission_id like ?2",
+                   "\tand permission_id like 'SCR_%'",
            nativeQuery = true)
-    List<String> getViewPermissions(String userId, String screenId);
+    List<String> getScrSecurInfo(String userId);
 }
