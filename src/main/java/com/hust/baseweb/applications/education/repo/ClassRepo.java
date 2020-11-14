@@ -198,7 +198,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
 
     @Query(value = "select\n" +
                    "\tul.user_login_id id,\n" +
-                   "\tconcat(p.last_name , ' ', p.middle_name , ' ', p.first_name ) \"name\",\n" +
+                   "\tconcat(p.first_name , ' ', p.middle_name , ' ', p.last_name ) \"name\",\n" +
                    "\tur.email email\n" +
                    "from\n" +
                    "\tedu_class_registration ecr\n" +
@@ -212,7 +212,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
                    "\tecr.class_id = ?1\n" +
                    "\tand ecr.status = ?2\n" +
                    "order by\n" +
-                   "\tp.first_name",
+                   "\tp.last_name",
            nativeQuery = true)
     List<GetStudentsOfClassOM> getStudentsOfClass(UUID id, String status);
 
