@@ -1,8 +1,9 @@
 package com.hust.baseweb.applications.education.teacherclassassignment.service;
 
-import com.hust.baseweb.applications.education.teacherclassassignment.model.AlgoInputTeacherAssignmentModel;
-import com.hust.baseweb.applications.education.teacherclassassignment.model.OutputTeacherClassAssignmentModel;
+import com.hust.baseweb.applications.education.teacherclassassignment.model.AlgoTeacherAssignmentIM;
+import com.hust.baseweb.applications.education.teacherclassassignment.model.TeacherClassAssignmentOM;
 
 public interface TeacherClassAssignmentAlgoService {
-    public OutputTeacherClassAssignmentModel computeTeacherClassAssignment(AlgoInputTeacherAssignmentModel input);
+
+    public TeacherClassAssignmentOM computeTeacherClassAssignment(AlgoTeacherAssignmentIM input);
 }

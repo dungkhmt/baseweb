@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TeacherClassAssignmentModel {
+public class Course4Teacher {
 
-    private String classId;
+    private String courseId;
 
-    private String teacherId;
+    private String type;
 }

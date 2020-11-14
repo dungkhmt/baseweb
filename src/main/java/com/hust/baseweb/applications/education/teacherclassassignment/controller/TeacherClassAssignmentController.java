@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.education.teacherclassassignment.controller;
 
-import com.hust.baseweb.applications.education.teacherclassassignment.model.AlgoInputTeacherAssignmentModel;
+import com.hust.baseweb.applications.education.teacherclassassignment.model.AlgoTeacherAssignmentIM;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +12,7 @@ import java.security.Principal;
 public class TeacherClassAssignmentController {
     @PostMapping("/teacherclassassignment/algo")
     public ResponseEntity<?> computeTeacherClassAssignment(Principal principal, @RequestBody
-                                                           AlgoInputTeacherAssignmentModel input
+        AlgoTeacherAssignmentIM input
                                                            ){
         //TODO by TuanLA
         return null;
