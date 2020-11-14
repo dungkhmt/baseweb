@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class AlgoClassIM {
 
-    private String id;
+    private int id;
 
     private String classType;
 
