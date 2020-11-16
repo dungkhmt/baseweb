@@ -1,0 +1,2 @@
+This module aims at managing workforces of staffs: assignment tasks to staffs, management of execution of tasks
+
