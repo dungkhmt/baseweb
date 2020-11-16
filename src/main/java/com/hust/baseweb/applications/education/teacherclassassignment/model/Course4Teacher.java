@@ -11,5 +11,7 @@ public class Course4Teacher {
 
     private String courseId;
 
+    private String courseName;
+
     private String type;
 }
