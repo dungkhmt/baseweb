@@ -16,7 +16,13 @@ VALUES ('OTHER', 'Khác');
 --priority
 INSERT INTO public.backlog_task_priority
     (backlog_task_priority_id, backlog_task_priority_name)
-VALUES ('BUG', 'Lỗi');
+VALUES ('HIGH', 'Cao');
+INSERT INTO public.backlog_task_priority
+    (backlog_task_priority_id, backlog_task_priority_name)
+VALUES ('NORMAL', 'Trung bình');
+INSERT INTO public.backlog_task_priority
+    (backlog_task_priority_id, backlog_task_priority_name)
+VALUES ('LOW', 'Thấp');
 
 --status_type
 INSERT INTO public.status_type
@@ -32,13 +38,13 @@ INSERT INTO public.status_item
 VALUES ('ASSIGNMENT_INACTIVE', 'BACKLOG_STATUS', 'INACTIVE', 'Không hoạt động');
 INSERT INTO public.status_item
     (status_id, status_type_id, status_code, description)
+VALUES ('TASK_OPEN', 'BACKLOG_STATUS', 'OPEN', 'Mở');
+INSERT INTO public.status_item
+    (status_id, status_type_id, status_code, description)
 VALUES ('TASK_CLOSED', 'BACKLOG_STATUS', 'CLOSED', 'Đóng');
 INSERT INTO public.status_item
     (status_id, status_type_id, status_code, description)
 VALUES ('TASK_INPROGRESS', 'BACKLOG_STATUS', 'INPROGRESS', 'Đang xử lý');
-INSERT INTO public.status_item
-    (status_id, status_type_id, status_code, description)
-VALUES ('TASK_OPEN', 'BACKLOG_STATUS', 'OPEN', 'Mở');
 INSERT INTO public.status_item
     (status_id, status_type_id, status_code, description)
 VALUES ('TASK_RESOLVED', 'BACKLOG_STATUS', 'RESOLVED', 'Đã xử lý')
