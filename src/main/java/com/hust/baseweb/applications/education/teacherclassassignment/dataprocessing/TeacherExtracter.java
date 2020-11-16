@@ -3,17 +3,20 @@ package com.hust.baseweb.applications.education.teacherclassassignment.dataproce
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.AlgoTeacherIM;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.Course4Teacher;
+import lombok.Getter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+@Getter
 public class TeacherExtracter implements IExtracter {
 
     private Map<String, Integer> indexOfColumn;
@@ -33,31 +36,6 @@ public class TeacherExtracter implements IExtracter {
         this.file = file;
         workbook = new XSSFWorkbook(file);
 
-    }
-
-    public static void main(String[] args) {
-        try {
-            // Modify file path.
-            TeacherExtracter extracter = new TeacherExtracter(new FileInputStream(new File(
-                "D:\\sscm\\basewe\\src\\main\\java\\com\\hust\\baseweb\\applications\\education\\teacherclassassignment\\dataprocessing\\data\\course4teacher_20191.xlsx")));
-
-            extracter.getIndexOfColumnIn("Sheet1");
-            extracter.extract();
-
-            // Write to file.
-            // Modify file path.
-            BufferedWriter writer = new BufferedWriter(new FileWriter(
-                "D:\\sscm\\basewe\\src\\main\\java\\com\\hust\\baseweb\\applications\\education\\teacherclassassignment\\dataprocessing\\data\\teachers.txt"));
-
-            writer.write(extracter.toJson());
-
-            writer.close();
-            extracter.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -90,6 +68,11 @@ public class TeacherExtracter implements IExtracter {
                         indexOfColumn.put("type", i);
                     }
                     break;
+                case "course_name":
+                    if (!indexOfColumn.containsKey("course_name")) {
+                        indexOfColumn.put("course_name", i);
+                    }
+                    break;
             }
         }
     }
@@ -111,15 +94,16 @@ public class TeacherExtracter implements IExtracter {
 
                 teacher.setId(id);
                 teacher.setName(row.getCell(indexOfColumn.get("name")).getStringCellValue());
-                teacher.setClasses(new ArrayList<>());
+                teacher.setCourses(new ArrayList<>());
 
                 preTeacher = id;
                 teachers.add(teacher);
             }
 
-            teacher.getClasses().add(
+            teacher.getCourses().add(
                 new Course4Teacher(
                     row.getCell(indexOfColumn.get("course_id")).getStringCellValue(),
+                    row.getCell(indexOfColumn.get("course_name")).getStringCellValue(),
                     row.getCell(indexOfColumn.get("type")).getStringCellValue()
                 )
             );
@@ -132,7 +116,7 @@ public class TeacherExtracter implements IExtracter {
         return gson.toJson(teachers);
     }
 
-    private void close() throws IOException {
+    public void close() throws IOException {
         file.close();
     }
 }

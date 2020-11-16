@@ -2,17 +2,20 @@ package com.hust.baseweb.applications.education.teacherclassassignment.dataproce
 
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.AlgoClassIM;
+import lombok.Getter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+@Getter
 public class ClassExtracter implements IExtracter {
 
     private Map<String, Integer> indexOfColumn;
@@ -32,31 +35,6 @@ public class ClassExtracter implements IExtracter {
         this.file = file;
         workbook = new XSSFWorkbook(file);
 
-    }
-
-    public static void main(String[] args) {
-        try {
-            // Modify file path.
-            ClassExtracter extracter = new ClassExtracter(new FileInputStream(new File(
-                "D:\\sscm\\basewe\\src\\main\\java\\com\\hust\\baseweb\\applications\\education\\teacherclassassignment\\dataprocessing\\data\\CNTT_20201.xlsx")));
-
-            extracter.getIndexOfColumnIn("Sheet1");
-            extracter.extract();
-
-            // Write to file.
-            // Modify file path.
-            BufferedWriter writer = new BufferedWriter(new FileWriter(
-                "D:\\sscm\\basewe\\src\\main\\java\\com\\hust\\baseweb\\applications\\education\\teacherclassassignment\\dataprocessing\\data\\classes_TN.txt"));
-
-            writer.write(extracter.toJson());
-
-            writer.close();
-            extracter.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -89,6 +67,11 @@ public class ClassExtracter implements IExtracter {
                         indexOfColumn.put("timetable", i);
                     }
                     break;
+                case "tên hp":
+                    if (!indexOfColumn.containsKey("name")) {
+                        indexOfColumn.put("name", i);
+                    }
+                    break;
             }
         }
     }
@@ -96,17 +79,102 @@ public class ClassExtracter implements IExtracter {
     @Override
     public void extract() {
         Row row;
+        Map<Integer, Integer[]> timetable = new HashMap<>();
+
+        timetable.put(1, new Integer[]{405, 450});
+        timetable.put(2, new Integer[]{450, 495});
+        timetable.put(3, new Integer[]{505, 550});
+        timetable.put(4, new Integer[]{560, 605});
+        timetable.put(5, new Integer[]{615, 660});
+        timetable.put(6, new Integer[]{660, 705});
+        timetable.put(7, new Integer[]{750, 795});
+        timetable.put(8, new Integer[]{795, 840});
+        timetable.put(9, new Integer[]{850, 895});
+        timetable.put(10, new Integer[]{905, 950});
+        timetable.put(11, new Integer[]{960, 1005});
+        timetable.put(12, new Integer[]{1005, 1050});
+        timetable.put(13, new Integer[]{1065, 1110});
+        timetable.put(14, new Integer[]{1110, 1155});
 
         while (rowIterator.hasNext()) {
             row = rowIterator.next();
             AlgoClassIM classIM = new AlgoClassIM();
 
+            classes.add(classIM);
+
             classIM.setId((int) row.getCell(indexOfColumn.get("id")).getNumericCellValue());
             classIM.setClassType(row.getCell(indexOfColumn.get("classType")).getStringCellValue());
             classIM.setCourseId(row.getCell(indexOfColumn.get("course_id")).getStringCellValue());
+            classIM.setCourseName(row.getCell(indexOfColumn.get("name")).getStringCellValue());
             classIM.setTimetable(row.getCell(indexOfColumn.get("timetable")).getStringCellValue());
 
-            classes.add(classIM);
+            // Calculate hourLoad.
+            String[] sessions = classIM.getTimetable().split(";");
+            double total = 0;
+
+            for (String session : sessions) {
+                String[] info = session.split(",");
+
+                if ("TN".equalsIgnoreCase(classIM.getClassType())) {
+                    int start;
+                    int end;
+
+                    if (info[1].length() == 3) {
+                        if (info[2].length() != 3) {
+                            System.out.println(classIM.getId());
+                        }
+                        if (!info[1].substring(0, 1).equals(info[2].substring(0, 1))) {
+                            System.out.println(classIM.getId());
+                        }
+                        if (!info[1].substring(1, 2).equals(info[2].substring(1, 2))) {
+                            System.out.println(classIM.getId());
+                        }
+
+                        start = timetable.get((Integer.parseInt(info[1].substring(1, 2)) - 1) * 6 +
+                                              Integer.parseInt(info[1].substring(2, 3)))[0];
+                        end = timetable.get((Integer.parseInt(info[2].substring(1, 2)) - 1) * 6 +
+                                            Integer.parseInt(info[2].substring(2, 3)))[1];
+                    } else {
+                        if (info[1].length() != 6) {
+                            System.out.println(classIM.getId());
+                        }
+                        if (info[2].length() != 6) {
+                            System.out.println(classIM.getId());
+                        }
+                        if (!info[1].substring(0, 1).equals(info[2].substring(0, 1))) {
+                            System.out.println(classIM.getId());
+                        }
+                        if (!info[1].substring(1, 2).equals(info[2].substring(1, 2))) {
+                            System.out.println(classIM.getId());
+                        }
+
+                        start = Integer.parseInt(info[1].substring(2, 4)) * 60 +
+                                Integer.parseInt(info[1].substring(4, 6));
+                        end = Integer.parseInt(info[2].substring(2, 4)) * 60 +
+                              Integer.parseInt(info[2].substring(4, 6));
+                    }
+
+                    total += (end - start);
+                } else {
+                    if (info[1].length() != 3) {
+                        System.out.println(classIM.getId());
+                    }
+                    if (info[2].length() != 3) {
+                        System.out.println(classIM.getId());
+                    }
+                    if (!info[1].substring(0, 1).equals(info[2].substring(0, 1))) {
+                        System.out.println(classIM.getId());
+                    }
+                    if (!info[1].substring(1, 2).equals(info[2].substring(1, 2))) {
+                        System.out.println(classIM.getId());
+                    }
+
+                    total += (Integer.parseInt(info[2].substring(2, 3)) - Integer.parseInt(info[1].substring(2, 3)) +
+                              1) * 45;
+                }
+            }
+
+            classIM.setHourLoad(total * 1.0 / 60);
         }
     }
 
@@ -116,7 +184,7 @@ public class ClassExtracter implements IExtracter {
         return gson.toJson(classes);
     }
 
-    private void close() throws IOException {
+    public void close() throws IOException {
         file.close();
     }
 }
