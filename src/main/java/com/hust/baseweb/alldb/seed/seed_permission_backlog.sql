@@ -26,7 +26,7 @@ INSERT INTO public.application
 VALUES ('MENU_BACKLOG_CREATE_PROJECT', 'MENU', 'MENU_BACKLOG', 'BACKLOG_CREATE_PROJECT', 'Menu create project');
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description)
-VALUES ('MENU_BACKLOG_VIEW_LIST_PROJECT', 'MENU', 'BACKLOG_VIEW_LIST_PROJECT', 'BACKLOG_CREATE_PROJECT', 'Menu view related project');
+VALUES ('MENU_BACKLOG_VIEW_LIST_PROJECT', 'MENU', 'MENU_BACKLOG','BACKLOG_VIEW_LIST_PROJECT', 'Menu view related project');
 
 --group permission
 INSERT INTO public.security_group_permission
