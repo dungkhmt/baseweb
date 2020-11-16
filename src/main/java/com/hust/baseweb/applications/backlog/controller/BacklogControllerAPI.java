@@ -10,14 +10,14 @@ import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
@@ -42,6 +42,17 @@ public class BacklogControllerAPI {
         List<UserLoginReduced> assignedUsers = new ArrayList<>();
         backlogTaskAssignments.forEach((backlogTaskAssignment) -> {
             UserLogin user = userService.findUserLoginByPartyId(backlogTaskAssignment.getAssignedToPartyId());
+            assignedUsers.add(new UserLoginReduced(user));
+        });
+        return assignedUsers;
+    }
+
+    private List<UserLoginReduced> getAssignableUserByTaskId(UUID taskId) {
+        List<BacklogTaskAssignable> backlogTaskAssignables = backlogTaskAssignableService.findAllActiveByBacklogTaskId(taskId);
+
+        List<UserLoginReduced> assignedUsers = new ArrayList<>();
+        backlogTaskAssignables.forEach((backlogTaskAssignable) -> {
+            UserLogin user = userService.findUserLoginByPartyId(backlogTaskAssignable.getAssignedToPartyId());
             assignedUsers.add(new UserLoginReduced(user));
         });
         return assignedUsers;
@@ -96,32 +107,36 @@ public class BacklogControllerAPI {
     }
 
     @GetMapping("backlog/get-project-detail/{backlogProjectId}")
-    public ResponseEntity<List<BacklogTaskWithAssignment>> getProjectDetail(Principal principal, @PathVariable String backlogProjectId) {
+    public ResponseEntity<List<BacklogTaskWithAssignmentAndAssignable>> getProjectDetail(Principal principal, @PathVariable String backlogProjectId) {
         List<BacklogTask> tasks = backlogTaskService.findByBacklogProjectId(backlogProjectId);
-        List<BacklogTaskWithAssignment> tasksWithAssignment = new ArrayList<>();
+        List<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = new ArrayList<>();
 
         tasks.forEach((task) -> {
-            tasksWithAssignment.add(new BacklogTaskWithAssignment());
+            tasksWithAssignment.add(new BacklogTaskWithAssignmentAndAssignable());
             tasksWithAssignment.get(tasksWithAssignment.size() - 1).setBacklogTask(task);
 
             UUID taskId = task.getBacklogTaskId();
             List<UserLoginReduced> assignedUsers = getAssignedUserByTaskId(taskId);
+            List<UserLoginReduced> assignableUsers = getAssignableUserByTaskId(taskId);
             tasksWithAssignment.get(tasksWithAssignment.size() - 1).setAssignment(assignedUsers);
+            tasksWithAssignment.get(tasksWithAssignment.size() - 1).setAssignable(assignableUsers);
         });
 
         return ResponseEntity.ok(tasksWithAssignment);
     }
 
     @GetMapping("backlog/get-task-detail/{backlogTaskId}")
-    public ResponseEntity<BacklogTaskWithAssignment> getTaskDetail(Principal principal, @PathVariable UUID backlogTaskId) {
+    public ResponseEntity<BacklogTaskWithAssignmentAndAssignable> getTaskDetail(Principal principal, @PathVariable UUID backlogTaskId) {
         BacklogTask task = backlogTaskService.findByBacklogTaskId(backlogTaskId);
         List<UserLoginReduced> assignedUsers = getAssignedUserByTaskId(backlogTaskId);
+        List<UserLoginReduced> assignableUsers = getAssignableUserByTaskId(backlogTaskId);
 
-        BacklogTaskWithAssignment backlogTaskWithAssignment = new BacklogTaskWithAssignment();
-        backlogTaskWithAssignment.setBacklogTask(task);
-        backlogTaskWithAssignment.setAssignment(assignedUsers);
+        BacklogTaskWithAssignmentAndAssignable backlogTaskWithAssignmentAndAssignable = new BacklogTaskWithAssignmentAndAssignable();
+        backlogTaskWithAssignmentAndAssignable.setBacklogTask(task);
+        backlogTaskWithAssignmentAndAssignable.setAssignment(assignedUsers);
+        backlogTaskWithAssignmentAndAssignable.setAssignable(assignableUsers);
 
-        return ResponseEntity.ok(backlogTaskWithAssignment);
+        return ResponseEntity.ok(backlogTaskWithAssignmentAndAssignable);
     }
 
     @PostMapping("backlog/add-task")
@@ -218,5 +233,52 @@ public class BacklogControllerAPI {
             usersLoginReduced.add(new UserLoginReduced(user));
         });
         return ResponseEntity.ok(usersLoginReduced);
+    }
+
+    @PostMapping("backlog/suggest-assignment")
+    public ResponseEntity<List<AssignSuggestionResponseModel>> suggestAssignment(Principal principal, @RequestBody List<UUID> taskId) {
+        // get task and assignable information
+        ArrayList<AssignmentSuggestionSolverInput> suggestionSolverInput = new ArrayList<>();
+        for(UUID id: taskId) {
+            AssignmentSuggestionSolverInput input = new AssignmentSuggestionSolverInput();
+
+            // get task information
+            BacklogTask task = backlogTaskService.findByBacklogTaskId(id);
+            input.setStartDate(task.getFromDate());
+            input.setEndDate(task.getDueDate());
+            input.setBacklogTaskId(id);
+
+            // get assignable party id
+            List<BacklogTaskAssignable> assignable = backlogTaskAssignableService.findAllActiveByBacklogTaskId(id);
+            ArrayList<UUID> assignablePartyIds = new ArrayList<>();
+            for(BacklogTaskAssignable element: assignable) {
+                assignablePartyIds.add(element.getAssignedToPartyId());
+            }
+            input.setAssignablePartyIds(assignablePartyIds);
+
+            suggestionSolverInput.add(input);
+        }
+
+        // call solver api
+        final String uri = "http://localhost:8776/solver/solve";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<ArrayList<AssignmentSuggestionSolverInput>> request = new HttpEntity<ArrayList<AssignmentSuggestionSolverInput>>(suggestionSolverInput);
+        AssignmentSuggestionSolverOutput result = restTemplate.postForObject(uri, request, AssignmentSuggestionSolverOutput.class);
+
+        // create ResponseEntity
+        List<AssignSuggestionResponseModel> suggestion = new ArrayList<>();
+        assert result != null;
+        if(result.getAssignmentSuggestion() != null && result.getAssignmentSuggestion().size() > 0)
+        for (Map.Entry<UUID, UUID> entry : result.getAssignmentSuggestion().entrySet()) {
+            UUID suggestionTaskId = entry.getKey();
+            UUID suggestionPartyId = entry.getValue();
+            BacklogTask task = backlogTaskService.findByBacklogTaskId(suggestionTaskId);
+            UserLogin user = userService.findUserLoginByPartyId(suggestionPartyId);
+            UserLoginReduced userReduced = new UserLoginReduced(user);
+
+            suggestion.add(new AssignSuggestionResponseModel(task, userReduced));
+        }
+
+        return ResponseEntity.ok(suggestion);
     }
 }
