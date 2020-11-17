@@ -17,10 +17,11 @@ import java.util.UUID;
 public interface AssignmentRepo extends JpaRepository<Assignment, UUID> {
 
     @Query(value = "select\n" +
-                   "\tea.assignment_name \"name\",\n" +
-                   "\tea.subject,\n" +
-                   "\tea.dead_line deadLine,\n" +
-                   "\tea.created_stamp createdStamp\n" +
+                   "\tassignment_name \"name\",\n" +
+                   "\tsubject,\n" +
+                   "\tclose_time closeTime,\n" +
+                   "\topen_time openTime,\n" +
+                   "\tdeleted\n" +
                    "from\n" +
                    "\tedu_assignment ea\n" +
                    "where\n" +
@@ -66,9 +67,10 @@ public interface AssignmentRepo extends JpaRepository<Assignment, UUID> {
 
     @Modifying
     @Transactional
-    @Query(value = "delete\n" +
-                   "from\n" +
+    @Query(value = "update\n" +
                    "\tedu_assignment\n" +
+                   "set\n" +
+                   "\tdeleted = true\n" +
                    "where\n" +
                    "\tid = ?1",
            nativeQuery = true)
@@ -84,11 +86,14 @@ public interface AssignmentRepo extends JpaRepository<Assignment, UUID> {
     int isAssignExist(UUID id);
 
     @Query(value = "select\n" +
-                   "\tdead_line\n" +
+                   "\tclose_time\n" +
                    "from\n" +
                    "\tedu_assignment\n" +
                    "where\n" +
-                   "\tid = ?1\n",
+                   "\tid = ?1\n" +
+                   "\tand deleted = false ",
            nativeQuery = true)
-    Date getDeadline(UUID assignmentId);
+    Date getCloseTime(UUID assignmentId);
+
+    Assignment findByIdAndDeletedFalse(UUID id);
 }
