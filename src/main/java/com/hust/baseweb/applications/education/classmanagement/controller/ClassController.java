@@ -107,18 +107,25 @@ public class ClassController {
         return ResponseEntity.ok().body(classService.getClassDetail(id));
     }
 
-    @GetMapping("/{id}/assignments")
-    public ResponseEntity<?> getAssignmentsOfClass(@PathVariable UUID id) {
-        return ResponseEntity.ok().body(classService.getAssignments(id));
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/{id}/assignments/teacher")
+    public ResponseEntity<?> getAssignOfClass4Teacher(@PathVariable UUID id) {
+        return ResponseEntity.ok().body(classService.getAssign4Teacher(id));
+    }
+
+    @GetMapping("/{id}/assignments/student")
+    public ResponseEntity<?> getAssignOfClass4Student(@PathVariable UUID id) {
+        return ResponseEntity.ok().body(classService.getAssign4Student(id));
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addEduClass(Principal principal, @RequestBody AddClassModel addClassModel){
+    public ResponseEntity<?> addEduClass(Principal principal, @RequestBody AddClassModel addClassModel) {
         log.info("addEduClass, start....");
         UserLogin userLogin = userService.findById(principal.getName());
-        EduClass aClass = classService.save(userLogin,addClassModel);
+        EduClass aClass = classService.save(userLogin, addClassModel);
         return ResponseEntity.ok().body(aClass);
     }
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-all-courses")
     public ResponseEntity<?> getAllCourses(Principal principal){
