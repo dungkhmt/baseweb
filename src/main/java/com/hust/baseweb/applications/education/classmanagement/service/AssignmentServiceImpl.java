@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.education.classmanagement.service.storage.e
 import com.hust.baseweb.applications.education.entity.Assignment;
 import com.hust.baseweb.applications.education.entity.AssignmentSubmission;
 import com.hust.baseweb.applications.education.entity.EduClass;
+import com.hust.baseweb.applications.education.exception.ResponseFirstType;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.CreateAssignmentIM;
 import com.hust.baseweb.applications.education.model.GetSubmissionsOM;
@@ -109,7 +110,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional
     public SimpleResponse deleteAssignment(UUID id) {
-        int isAssignExist = assignRepo.isAssignExist(id);
+        /*int isAssignExist = assignRepo.isAssignExist(id);
 
         if (0 == isAssignExist) {
             return new SimpleResponse(
@@ -124,27 +125,30 @@ public class AssignmentServiceImpl implements AssignmentService {
             try {
                 storageService.deleteIfExists("", id.toString());
             } catch (IOException e) {
-            /*return new SimpleResponse(
+            *//*return new SimpleResponse(
                 500,
                 HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-                null);*/
+                null);*//*
             }
 
             return new SimpleResponse(200, null, null);
-        }
+        }*/
+
+        assignRepo.deleteAssignment(id);
+
+        return new SimpleResponse(200, null, null);
     }
 
     @Override
     @Transactional
-    public SimpleResponse createAssignment(CreateAssignmentIM im) {
-        // Save meta-data.
-        Date deadline = im.getDeadline();
+    public ResponseFirstType createAssignment(CreateAssignmentIM im) {
+        ResponseFirstType res;
 
-        if (deadline.compareTo(new Date()) < 1) {
-            return new SimpleResponse(
-                400,
-                "require future date",
-                "Vui lòng chọn thời điểm trong tương lai");
+        // Save meta-data.
+        res = validateTime(im.getOpenTime(), im.getCloseTime());
+
+        if (res.getErrors().size() > 0) {
+            return res;
         }
 
         EduClass eduClass;
@@ -153,17 +157,16 @@ public class AssignmentServiceImpl implements AssignmentService {
             eduClass = new EduClass();
             eduClass.setId(im.getClassId());
         } else {
-            return new SimpleResponse(
-                400,
-                "class not exist",
-                "Lớp không tồn tại");
+            res.addError("classId", "not exist", "Lớp không tồn tại");
+            return res;
         }
 
         Assignment assignment = new Assignment();
 
         assignment.setName(StringUtils.normalizeSpace(im.getName()));
         assignment.setSubject(im.getSubject());
-        assignment.setDeadLine(deadline);
+        assignment.setOpenTime(im.getOpenTime());
+        assignment.setCloseTime(im.getCloseTime());
         assignment.setEduClass(eduClass);
 
         assignment = assignRepo.save(assignment);
@@ -177,37 +180,36 @@ public class AssignmentServiceImpl implements AssignmentService {
             throw new StorageException("Could not initialize storage", e);
         }
 
-        return new SimpleResponse(200, null, null);
+        return new ResponseFirstType(200);
     }
 
     @Override
     @Transactional
-    public SimpleResponse updateAssignment(UUID id, CreateAssignmentIM im) {
-        Date deadline = im.getDeadline();
+    public ResponseFirstType updateAssignment(UUID id, CreateAssignmentIM im) {
+        ResponseFirstType res;
 
-        if (deadline.compareTo(new Date()) < 1) {
-            return new SimpleResponse(
-                400,
-                "require future date",
-                "Vui lòng chọn thời điểm trong tương lai");
+        res = validateTime(im.getOpenTime(), im.getCloseTime());
+
+        if (res.getErrors().size() > 0) {
+            return res;
         }
 
-        Assignment assignment = assignRepo.findById(id).orElse(null);
+        Assignment assignment = assignRepo.findByIdAndDeletedFalse(id);
 
         if (null == assignment) {
-            return new SimpleResponse(
-                400,
-                "not exist",
-                "Bài tập chưa được tạo hoặc đã bị xoá trước đó");
+            res.addError("id", "not exist", "Bài tập không tồn tại");
         } else {
             assignment.setName(StringUtils.normalizeSpace(im.getName()));
             assignment.setSubject(im.getSubject());
-            assignment.setDeadLine(deadline);
+            assignment.setOpenTime(im.getOpenTime());
+            assignment.setCloseTime(im.getCloseTime());
 
             assignRepo.save(assignment);
 
-            return new SimpleResponse(200, null, null);
+            res = new ResponseFirstType(200);
         }
+
+        return res;
     }
 
     @Override
@@ -243,16 +245,16 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Transactional
     private SimpleResponse saveSubmissionMetaData(String originalFileName, UUID assignmentId, String studentId) {
-        Date deadline = assignRepo.getDeadline(assignmentId);
+        Date closeTime = assignRepo.getCloseTime(assignmentId);
 
-        if (null == deadline) {
+        if (null == closeTime) {
             return new SimpleResponse(
                 400,
                 "not exist",
                 "Bài tập không tồn tại");
         }
 
-        if (deadline.compareTo(new Date()) < 0) {
+        if (closeTime.compareTo(new Date()) < 0) {
             return new SimpleResponse(
                 400,
                 "deadline exceeded",
@@ -282,5 +284,19 @@ public class AssignmentServiceImpl implements AssignmentService {
         submissionRepo.save(submission);
 
         return new SimpleResponse(200, null, submitedFileName);
+    }
+
+    private ResponseFirstType validateTime(Date openTime, Date closeTime) {
+        ResponseFirstType res = new ResponseFirstType(400);
+
+        if (openTime.compareTo(new Date()) < 0) {
+            res.addError("openTime", "require future date", "Vui lòng chọn thời điểm trong tương lai");
+        }
+
+        if (openTime.compareTo(closeTime) > 0) {
+            res.addError("closeTime", "require subsequent date", "Vui lòng chọn thời điểm sau ngày giao");
+        }
+
+        return res;
     }
 }
