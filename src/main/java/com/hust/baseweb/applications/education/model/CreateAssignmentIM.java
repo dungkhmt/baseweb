@@ -19,7 +19,10 @@ public class CreateAssignmentIM {
     private String name;
 
     @NotNull
-    private Date deadline;
+    private Date openTime;
+
+    @NotNull
+    private Date closeTime;
 
     private String subject;
 }

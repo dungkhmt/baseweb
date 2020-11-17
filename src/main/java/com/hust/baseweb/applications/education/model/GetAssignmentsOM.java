@@ -8,5 +8,5 @@ public interface GetAssignmentsOM {
 
     String getName();
 
-    Date getDeadLine();
+    Date getCloseTime();
 }

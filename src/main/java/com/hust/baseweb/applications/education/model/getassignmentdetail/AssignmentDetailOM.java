@@ -8,7 +8,9 @@ public interface AssignmentDetailOM {
 
     String getSubject();
 
-    Date getCreatedStamp();
+    Date getOpenTime();
 
-    Date getDeadLine();
+    Date getCloseTime();
+
+    boolean getDeleted();
 }
