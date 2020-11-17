@@ -30,7 +30,11 @@ public class Assignment {
     @JoinColumn(name = "class_id")
     private EduClass eduClass;
 
-    private Date deadLine;
+    private Date openTime;
+
+    private Date closeTime;
+
+    private boolean deleted;
 
     @LastModifiedDate
     private Date lastUpdatedStamp;
