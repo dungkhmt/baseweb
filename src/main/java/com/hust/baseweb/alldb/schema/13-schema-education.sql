@@ -99,7 +99,7 @@ create TABLE public.edu_semester (
 
 -- DROP TABLE edu_class;
 
-CREATE TABLE edu_class (
+create TABLE edu_class (
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
 	code int4 NOT NULL,
 	semester_id int2 NOT NULL,
@@ -116,10 +116,10 @@ CREATE TABLE edu_class (
 
 -- public.edu_class foreign keys
 
-ALTER TABLE public.edu_class ADD CONSTRAINT fk_class__user_login FOREIGN KEY (teacher_id) REFERENCES user_login(user_login_id);
-ALTER TABLE public.edu_class ADD CONSTRAINT fk_class_course FOREIGN KEY (course_id) REFERENCES edu_course(id);
-ALTER TABLE public.edu_class ADD CONSTRAINT fk_class_department FOREIGN KEY (department_id) REFERENCES edu_department(id);
-ALTER TABLE public.edu_class ADD CONSTRAINT fk_class_semester FOREIGN KEY (semester_id) REFERENCES edu_semester(id);
+alter table public.edu_class add CONSTRAINT fk_class__user_login FOREIGN KEY (teacher_id) REFERENCES user_login(user_login_id);
+alter table public.edu_class add CONSTRAINT fk_class_course FOREIGN KEY (course_id) REFERENCES edu_course(id);
+alter table public.edu_class add CONSTRAINT fk_class_department FOREIGN KEY (department_id) REFERENCES edu_department(id);
+alter table public.edu_class add CONSTRAINT fk_class_semester FOREIGN KEY (semester_id) REFERENCES edu_semester(id);
 
 
 
@@ -129,7 +129,7 @@ ALTER TABLE public.edu_class ADD CONSTRAINT fk_class_semester FOREIGN KEY (semes
 
 -- DROP TABLE edu_class_registration;
 
-CREATE TABLE edu_class_registration (
+create TABLE edu_class_registration (
 	class_id uuid NOT NULL,
 	student_id varchar(255) NOT NULL,
 	status varchar(20) NOT NULL,
@@ -142,8 +142,8 @@ CREATE TABLE edu_class_registration (
 
 -- public.edu_class_registration foreign keys
 
-ALTER TABLE public.edu_class_registration ADD CONSTRAINT fk_class_registration__user_login FOREIGN KEY (student_id) REFERENCES user_login(user_login_id);
-ALTER TABLE public.edu_class_registration ADD CONSTRAINT fk_class_registration_class FOREIGN KEY (class_id) REFERENCES edu_class(id);
+alter table public.edu_class_registration add CONSTRAINT fk_class_registration__user_login FOREIGN KEY (student_id) REFERENCES user_login(user_login_id);
+alter table public.edu_class_registration add CONSTRAINT fk_class_registration_class FOREIGN KEY (class_id) REFERENCES edu_class(id);
 
 
 
@@ -153,7 +153,7 @@ ALTER TABLE public.edu_class_registration ADD CONSTRAINT fk_class_registration_c
 
 -- DROP TABLE edu_assignment;
 
-CREATE TABLE edu_assignment (
+create TABLE edu_assignment (
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
 	assignment_name varchar(255) NOT NULL,
 	subject text NULL,
@@ -169,7 +169,7 @@ CREATE TABLE edu_assignment (
 
 -- public.edu_assignment foreign keys
 
-ALTER TABLE public.edu_assignment ADD CONSTRAINT fk_assignment_class FOREIGN KEY (class_id) REFERENCES edu_class(id);
+alter table public.edu_assignment add CONSTRAINT fk_assignment_class FOREIGN KEY (class_id) REFERENCES edu_class(id);
 
 
 
@@ -179,7 +179,7 @@ ALTER TABLE public.edu_assignment ADD CONSTRAINT fk_assignment_class FOREIGN KEY
 
 -- DROP TABLE edu_assignment_submission;
 
-CREATE TABLE edu_assignment_submission (
+create TABLE edu_assignment_submission (
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
 	assignment_id uuid NOT NULL,
 	student_id varchar(255) NOT NULL,
@@ -193,8 +193,8 @@ CREATE TABLE edu_assignment_submission (
 
 -- public.edu_assignment_submission foreign keys
 
-ALTER TABLE public.edu_assignment_submission ADD CONSTRAINT fk_assignment_submission__user_login FOREIGN KEY (student_id) REFERENCES user_login(user_login_id);
-ALTER TABLE public.edu_assignment_submission ADD CONSTRAINT fk_assignment_submission_assignment FOREIGN KEY (assignment_id) REFERENCES edu_assignment(id);
+alter table public.edu_assignment_submission add CONSTRAINT fk_assignment_submission__user_login FOREIGN KEY (student_id) REFERENCES user_login(user_login_id);
+alter table public.edu_assignment_submission add CONSTRAINT fk_assignment_submission_assignment FOREIGN KEY (assignment_id) REFERENCES edu_assignment(id);
 
 
 
@@ -230,3 +230,11 @@ create table edu_class_teacher_asignment
     constraint fk_class_teacher_assignment_teacher_id foreign key (teacher_id) references edu_teacher (teacher_id),
     constraint fk_class_teacher_assignment_class_id foreign key (class_id) references edu_class (class_id)
 );*/
+
+
+alter table public.edu_assignment add open_time timestamp NULL DEFAULT CURRENT_TIMESTAMP;
+alter table public.edu_assignment add deleted boolean NOT NULL DEFAULT false;
+alter table public.edu_assignment drop CONSTRAINT edu_assignment_check1;
+alter table public.edu_assignment rename COLUMN dead_line to close_time;
+/*alter table public.edu_assignment add CONSTRAINT edu_assignment_check1 CHECK ((created_stamp <= open_time));
+alter table public.edu_assignment add CONSTRAINT edu_assignment_check2 CHECK ((open_time <= close_time));*/
