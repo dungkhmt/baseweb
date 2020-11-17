@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.education.classmanagement.controller;
 import com.hust.baseweb.applications.education.classmanagement.service.AssignmentServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
+import com.hust.baseweb.applications.education.exception.ResponseFirstType;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.CreateAssignmentIM;
 import com.hust.baseweb.applications.education.model.GetFilesIM;
@@ -10,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -109,13 +109,13 @@ public class AssignmentController {
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping
     public ResponseEntity<?> createAssign(@RequestBody CreateAssignmentIM im) {
-        SimpleResponse res = assignService.createAssignment(im);
+        ResponseFirstType res = assignService.createAssignment(im);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateAssign(@PathVariable UUID id, @RequestBody CreateAssignmentIM im) {
-        SimpleResponse res = assignService.updateAssignment(id, im);
+        ResponseFirstType res = assignService.updateAssignment(id, im);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -124,14 +124,16 @@ public class AssignmentController {
     public ResponseEntity<?> deleteAssign(@PathVariable UUID id) {
         SimpleResponse res;
 
-        try {
+        /*try {
             res = assignService.deleteAssignment(id);
         } catch (DataIntegrityViolationException e) {
             res = new SimpleResponse(
                 400,
                 "not allowed",
                 "Không thể xoá bài tập vì đã có sinh viên nộp bài");
-        }
+        }*/
+
+        res = assignService.deleteAssignment(id);
 
         return ResponseEntity.status(res.getStatus()).body(res);
     }
