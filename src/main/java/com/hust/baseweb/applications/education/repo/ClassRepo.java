@@ -166,7 +166,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
                    "\tec.course_name \"name\",\n" +
                    "\tecl.class_type classType,\n" +
                    "\tecl.semester_id semester,\n" +
-                   "\tconcat(p.last_name , ' ', p.middle_name , ' ', p.first_name ) teacherName,\n" +
+                   "\tconcat(p.first_name , ' ', p.middle_name , ' ', p.last_name ) teacherName,\n" +
                    "\tur.email email\n" +
                    "from\n" +
                    "\tedu_class ecl\n" +
@@ -186,7 +186,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
     @Query(value = "select\n" +
                    "\tcast(id as varchar) id,\n" +
                    "\tassignment_name \"name\",\n" +
-                   "\tdead_line deadLine\n" +
+                   "\tclose_time closeTime\n" +
                    "from\n" +
                    "\tedu_assignment ea\n" +
                    "where\n" +
@@ -194,7 +194,22 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
                    "order by\n" +
                    "\tcreated_stamp",
            nativeQuery = true)
-    List<GetAssignmentsOM> getAssignments(UUID classId);
+    List<GetAssignmentsOM> getAssignments4Teacher(UUID classId);
+
+    @Query(value = "select\n" +
+                   "\tcast(id as varchar) id,\n" +
+                   "\tassignment_name \"name\",\n" +
+                   "\tclose_time closeTime\n" +
+                   "from\n" +
+                   "\tedu_assignment\n" +
+                   "where\n" +
+                   "\tclass_id = ?1\n" +
+                   "\tand deleted = false\n" +
+                   "\tand open_time <= now()\n" +
+                   "order by\n" +
+                   "\topen_time",
+           nativeQuery = true)
+    List<GetAssignmentsOM> getAssignments4Student(UUID classId);
 
     @Query(value = "select\n" +
                    "\tul.user_login_id id,\n" +
