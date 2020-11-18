@@ -46,7 +46,7 @@ public class TeacherExtracter implements IExtracter {
 
         for (int i = 0; i < row.getLastCellNum(); i++) {
             Cell cell = row.getCell(i);
-
+            System.out.println(cell.getStringCellValue().toLowerCase());
             switch (cell.getStringCellValue().toLowerCase()) {
                 case "email":
                     if (!indexOfColumn.containsKey("id")) {
@@ -81,15 +81,20 @@ public class TeacherExtracter implements IExtracter {
     public void extract() {
         Row row;
         String preTeacher = "";
-
+        HashMap<String, AlgoTeacherIM> mID2Teacher = new HashMap();
         while (rowIterator.hasNext()) {
             row = rowIterator.next();
-            AlgoTeacherIM teacher;
             String id = row.getCell(indexOfColumn.get("id")).getStringCellValue();
 
+            AlgoTeacherIM teacher = mID2Teacher.get(id);
+
+            /*
             if (preTeacher.equalsIgnoreCase(id)) {
                 teacher = teachers.get(teachers.size() - 1);
             } else {
+
+             */
+            if(teacher == null){
                 teacher = new AlgoTeacherIM();
 
                 teacher.setId(id);
@@ -98,6 +103,7 @@ public class TeacherExtracter implements IExtracter {
 
                 preTeacher = id;
                 teachers.add(teacher);
+                mID2Teacher.put(id,teacher);
             }
 
             teacher.getCourses().add(
