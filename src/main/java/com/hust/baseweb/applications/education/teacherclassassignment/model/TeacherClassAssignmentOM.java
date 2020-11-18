@@ -1,7 +1,15 @@
 package com.hust.baseweb.applications.education.teacherclassassignment.model;
 
-public class TeacherClassAssignmentOM {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class TeacherClassAssignmentOM {
     private TeacherClassAssignmentModel[] assignments;
 }
 
