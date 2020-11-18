@@ -281,7 +281,8 @@ public class UserServiceImpl implements UserService {
         String userLoginId = im.getUserLoginId();
         String email = im.getEmail();
 
-        if (userRegisterRepo.existsByUserLoginIdOrEmail(userLoginId, email) || userLoginRepo.existsById(userLoginId)) {
+        //if (userRegisterRepo.existsByUserLoginIdOrEmail(userLoginId, email) || userLoginRepo.existsById(userLoginId)) {
+        if (userLoginRepo.existsById(userLoginId)) {
             res = new SimpleResponse(
                 400,
                 "existed",

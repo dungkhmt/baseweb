@@ -11,9 +11,9 @@ public class Main {
         try {
             // Modify file path.
             TeacherExtracter teacherExtracter = new TeacherExtracter(new FileInputStream(new File(
-                "D:\\PersonalProjects\\IdeaProjects\\bca\\course4teacher_20191.xlsx")));
+                "D:/projects/baseweb/Data-phan-cong-giang-day-soict/course4teacher_20191.xlsx")));
             ClassExtracter classExtracter = new ClassExtracter(new FileInputStream(new File(
-                "D:\\PersonalProjects\\IdeaProjects\\bca\\CNTT_20201.xlsx")));
+                "D:/projects/baseweb/Data-phan-cong-giang-day-soict/CNTT_20201.xlsx")));
 
             teacherExtracter.getIndexOfColumnIn("Sheet1");
             teacherExtracter.extract();
@@ -29,7 +29,7 @@ public class Main {
 
             // Modify file path.
             BufferedWriter writer = new BufferedWriter(new FileWriter(
-                "D:\\PersonalProjects\\IdeaProjects\\bca\\input_hour.json"));
+                "D:/projects/baseweb/Data-phan-cong-giang-day-soict/input_hour.json"));
 
             Gson gson = new Gson();
 

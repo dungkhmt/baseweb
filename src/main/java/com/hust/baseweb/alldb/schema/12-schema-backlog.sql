@@ -29,6 +29,7 @@ create table backlog_task
     due_date                 timestamp,
     status_id                varchar(60),
     priority_id              varchar(10),
+    attachment_paths         text,
     last_updated_stamp       timestamp,
     created_stamp            timestamp DEFAULT CURRENT_TIMESTAMP,
     constraint pk_backlog_task primary key (backlog_task_id),

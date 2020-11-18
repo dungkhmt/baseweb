@@ -47,4 +47,4 @@ INSERT INTO public.status_item
 VALUES ('TASK_INPROGRESS', 'BACKLOG_STATUS', 'INPROGRESS', 'Đang xử lý');
 INSERT INTO public.status_item
     (status_id, status_type_id, status_code, description)
-VALUES ('TASK_RESOLVED', 'BACKLOG_STATUS', 'RESOLVED', 'Đã xử lý')
+VALUES ('TASK_RESOLVED', 'BACKLOG_STATUS', 'RESOLVED', 'Đã xử lý');
