@@ -186,13 +186,15 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
     @Query(value = "select\n" +
                    "\tcast(id as varchar) id,\n" +
                    "\tassignment_name \"name\",\n" +
-                   "\tclose_time closeTime\n" +
+                   "\topen_time openTime,\n" +
+                   "\tclose_time closeTime,\n" +
+                   "\tdeleted\n" +
                    "from\n" +
                    "\tedu_assignment ea\n" +
                    "where\n" +
-                   "\tea.class_id = ?1\n" +
+                   "\tclass_id = ?1\n" +
                    "order by\n" +
-                   "\tcreated_stamp",
+                   "\topen_time desc",
            nativeQuery = true)
     List<GetAssignmentsOM> getAssignments4Teacher(UUID classId);
 

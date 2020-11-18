@@ -8,5 +8,9 @@ public interface GetAssignmentsOM {
 
     String getName();
 
+    Date getOpenTime();
+
     Date getCloseTime();
+
+    boolean getDeleted();
 }
