@@ -157,4 +157,11 @@ public class UserController {
                                      .map(UserLogin::getUserLoginId)
                                      .collect(Collectors.toList()));
     }
+	
+	 @PostMapping("/user/updatepassword2")
+    public ResponseEntity<?> update(Principal principal, @RequestBody UpdatePasswordModel input) {
+        log.info("okController: ");
+        UserLogin u  = userService.updatePassword2(input.getUserLoginId(),input.getPassword());
+        return ResponseEntity.ok().body(u);
+    }
 }

@@ -41,6 +41,7 @@ import java.util.concurrent.Executors;
 @javax.transaction.Transactional
 public class UserServiceImpl implements UserService {
 
+	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
     public static final String module = UserService.class.getName();
     private final UserLoginRepo userLoginRepo;
     private final UserRestRepository userRestRepository;
@@ -352,5 +353,14 @@ public class UserServiceImpl implements UserService {
         userRegisterRepo.save(userRegister);
 
         return new SimpleResponse(200, null, null);
+    }
+	
+	@Override
+    public UserLogin updatePassword2(String userLoginId, String password) {
+        String passWordOut = PASSWORD_ENCODER.encode(password);
+        log.info(userLoginId + " "+ password);
+        UserLogin u = userLoginRepo.getByUserLoginId(userLoginId);
+        u.setPassword(passWordOut);
+        return u;
     }
 }

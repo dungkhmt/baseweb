@@ -52,4 +52,6 @@ public interface UserService {
     GetAllRegistsOM getAllRegists();
 
     SimpleResponse approve(ApproveRegistrationIM im);
+	
+	UserLogin updatePassword2(String userLoginId, String password);
 }
