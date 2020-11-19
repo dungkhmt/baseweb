@@ -6,6 +6,7 @@ import com.hust.baseweb.entity.SecurityPermission;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.model.PersonUpdateModel;
+import com.hust.baseweb.model.UpdatePasswordModel;
 import com.hust.baseweb.model.dto.DPersonDetailModel;
 import com.hust.baseweb.service.PartyService;
 import com.hust.baseweb.service.SecurityGroupService;

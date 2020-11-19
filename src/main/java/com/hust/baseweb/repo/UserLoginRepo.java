@@ -13,4 +13,5 @@ public interface UserLoginRepo extends JpaRepository<UserLogin, String> {
     UserLogin findByUserLoginId(String userLoginId);
 
     List<UserLogin> findByParty(Party party);
+
 }

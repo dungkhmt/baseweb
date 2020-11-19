@@ -361,7 +361,7 @@ public class UserServiceImpl implements UserService {
     public UserLogin updatePassword2(String userLoginId, String password) {
         String passWordOut = PASSWORD_ENCODER.encode(password);
         log.info(userLoginId + " "+ password);
-        //UserLogin u = userLoginRepo.getByUserLoginId(userLoginId);
+//        UserLogin u = userLoginRepo.getByUserLoginId(userLoginId);
         UserLogin u = userLoginRepo.findByUserLoginId(userLoginId);
         u.setPassword(passWordOut);
         return u;
