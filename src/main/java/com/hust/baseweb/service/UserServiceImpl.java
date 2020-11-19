@@ -26,6 +26,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -359,7 +361,8 @@ public class UserServiceImpl implements UserService {
     public UserLogin updatePassword2(String userLoginId, String password) {
         String passWordOut = PASSWORD_ENCODER.encode(password);
         log.info(userLoginId + " "+ password);
-        UserLogin u = userLoginRepo.getByUserLoginId(userLoginId);
+        //UserLogin u = userLoginRepo.getByUserLoginId(userLoginId);
+        UserLogin u = userLoginRepo.findByUserLoginId(userLoginId);
         u.setPassword(passWordOut);
         return u;
     }
