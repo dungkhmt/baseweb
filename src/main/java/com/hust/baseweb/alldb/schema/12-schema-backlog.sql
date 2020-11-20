@@ -28,12 +28,14 @@ create table backlog_task
     from_date                timestamp,
     due_date                 timestamp,
     status_id                varchar(60),
-    priority_id              varchar(10),
+    priority_id              varchar(60),
     attachment_paths         text,
     last_updated_stamp       timestamp,
     created_stamp            timestamp DEFAULT CURRENT_TIMESTAMP,
     constraint pk_backlog_task primary key (backlog_task_id),
-    constraint fk_backlog_task_category_id foreign key (backlog_task_category_id) references backlog_task_category (backlog_task_category_id)
+    constraint fk_backlog_task_category_id foreign key (backlog_task_category_id) references backlog_task_category (backlog_task_category_id),
+    constraint fk_backlog_task_backlog_project_id foreign key(backlog_project_id) references backlog_project(backlog_project_id)
+
 );
 
 create table backlog_task_assignment

@@ -359,11 +359,14 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
     public UserLogin updatePassword2(String userLoginId, String password) {
-        String passWordOut = PASSWORD_ENCODER.encode(password);
-        log.info(userLoginId + " "+ password);
+        //String passWordOut = PASSWORD_ENCODER.encode(password);
+        log.info("::updatePassword2, user_login " + userLoginId + " "+ password);
 //        UserLogin u = userLoginRepo.getByUserLoginId(userLoginId);
         UserLogin u = userLoginRepo.findByUserLoginId(userLoginId);
-        u.setPassword(passWordOut);
+        //u.setPassword(passWordOut);
+        u.setPassword(password);
+        u = userLoginRepo.save(u);
+        //log.info("::updatePassword2, user_login " + u.getUserLoginId() + " encrypted password = "+ passWordOut);
         return u;
     }
 }

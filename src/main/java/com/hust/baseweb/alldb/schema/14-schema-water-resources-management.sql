@@ -70,3 +70,12 @@ create table lake_role(
     constraint fk_lake_role_user_login_id foreign key(user_login_id) references user_login(user_login_id),
     constraint fk_lake_role_role_type_id foreign key(role_type_id) references role_type(role_type_id)
 );
+
+create table lake_sensing_information(
+    lake_id varchar(100),
+    time_point timestamp,
+    
+    last_updated_stamp timestamp NULL,
+	created_stamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_
+);
