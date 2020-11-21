@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -23,14 +24,27 @@ public class BacklogTask {
         backlogTaskCategoryId = input.getBacklogTaskCategoryId();
         backlogDescription = input.getBacklogDescription();
         backlogProjectId = input.getBacklogProjectId();
-        createdDate = input.getCreatedDate();
         createdByUserLoginId = input.getCreatedByUserLoginId();
         fromDate = input.getFromDate();
         dueDate = input.getDueDate();
         statusId = input.getStatusId();
         priorityId = input.getPriorityId();
-        lastUpdateStamp = input.getLastUpdateStamp();
-        createdStamp = input.getCreatedStamp();
+//        createdDate = input.getCreatedDate();
+//        lastUpdateStamp = input.getLastUpdateStamp();
+//        createdStamp = input.getCreatedStamp();
+
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String prefixFileName = formatter.format(now);
+        StringBuilder attachmentPaths = new StringBuilder();
+
+        for(int i = 0; i < input.getAttachmentPaths().length; i++) {
+            attachmentPaths.append(prefixFileName).append("-").append(input.getAttachmentPaths()[i]);
+            if(i < input.getAttachmentPaths().length - 1) {
+                attachmentPaths.append(";");
+            }
+        }
+        this.attachmentPaths = attachmentPaths.toString();
     }
 
     @Id
@@ -73,6 +87,9 @@ public class BacklogTask {
 
     @Column(name = "created_stamp")
     private Date createdStamp;
+
+    @Column(name = "attachment_paths")
+    private String attachmentPaths;
 
     public void update(CreateBacklogTaskInputModel input) {
         if(input.getBacklogTaskName() != null) {

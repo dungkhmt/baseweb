@@ -1,10 +1,11 @@
-package com.hust.baseweb.applications.backlog.service;
+package com.hust.baseweb.applications.backlog.service.task;
 
 import com.hust.baseweb.applications.backlog.entity.BacklogTask;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogTaskInputModel;
 import com.hust.baseweb.applications.backlog.repo.BacklogTaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,11 +36,10 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
 
     @Override
     public BacklogTask create(CreateBacklogTaskInputModel input, String userLoginId) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = new Date();
-        input.setCreatedStamp(date);
-        input.setCreatedDate(date);
-        input.setLastUpdateStamp(date);
+
+//        input.setCreatedStamp(date);
+//        input.setCreatedDate(date);
+//        input.setLastUpdateStamp(date);
         input.setCreatedByUserLoginId(userLoginId);
 
         return backlogTaskRepo.save(new BacklogTask(input));
@@ -53,5 +53,10 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
         task.update(input);
 
         return backlogTaskRepo.save(task);
+    }
+
+    @Override
+    public void saveAttachment(MultipartFile file) {
+
     }
 }

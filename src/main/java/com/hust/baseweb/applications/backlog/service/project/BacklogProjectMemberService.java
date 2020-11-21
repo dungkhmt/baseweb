@@ -1,4 +1,4 @@
-package com.hust.baseweb.applications.backlog.service;
+package com.hust.baseweb.applications.backlog.service.project;
 
 import com.hust.baseweb.applications.backlog.entity.BacklogProjectMember;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogProjectMemberModel;

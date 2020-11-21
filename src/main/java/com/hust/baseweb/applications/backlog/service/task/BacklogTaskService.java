@@ -1,9 +1,9 @@
-package com.hust.baseweb.applications.backlog.service;
+package com.hust.baseweb.applications.backlog.service.task;
 
 import com.hust.baseweb.applications.backlog.entity.BacklogTask;
-import com.hust.baseweb.applications.backlog.entity.BacklogTaskAssignment;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogTaskInputModel;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.util.List;
@@ -16,4 +16,5 @@ public interface BacklogTaskService {
     BacklogTask findByBacklogTaskId(UUID backlogTaskId);
     BacklogTask create(CreateBacklogTaskInputModel input, String userLoginId) throws ParseException;
     BacklogTask update(CreateBacklogTaskInputModel input);
+    void saveAttachment(MultipartFile file);
 }
