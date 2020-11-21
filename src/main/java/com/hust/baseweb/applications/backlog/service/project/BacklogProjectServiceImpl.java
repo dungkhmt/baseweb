@@ -1,4 +1,4 @@
-package com.hust.baseweb.applications.backlog.service;
+package com.hust.baseweb.applications.backlog.service.project;
 
 import com.hust.baseweb.applications.backlog.entity.BacklogProject;
 import com.hust.baseweb.applications.backlog.entity.BacklogProjectMember;
@@ -6,7 +6,6 @@ import com.hust.baseweb.applications.backlog.model.CreateProjectInputModel;
 import com.hust.baseweb.applications.backlog.repo.BacklogProjectMemberRepo;
 import com.hust.baseweb.applications.backlog.repo.BacklogProjectRepo;
 
-import com.hust.baseweb.applications.logistics.entity.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

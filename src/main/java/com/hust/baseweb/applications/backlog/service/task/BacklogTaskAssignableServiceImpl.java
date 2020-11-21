@@ -1,7 +1,6 @@
-package com.hust.baseweb.applications.backlog.service;
+package com.hust.baseweb.applications.backlog.service.task;
 
 import com.hust.baseweb.applications.backlog.entity.BacklogTaskAssignable;
-import com.hust.baseweb.applications.backlog.entity.BacklogTaskAssignment;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogTaskAssignableInputModel;
 import com.hust.baseweb.applications.backlog.repo.BacklogTaskAssignableRepo;
 import org.springframework.beans.factory.annotation.Autowired;

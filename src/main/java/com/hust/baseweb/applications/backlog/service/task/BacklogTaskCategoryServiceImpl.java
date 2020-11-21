@@ -1,4 +1,4 @@
-package com.hust.baseweb.applications.backlog.service;
+package com.hust.baseweb.applications.backlog.service.task;
 
 import com.hust.baseweb.applications.backlog.entity.BacklogTaskCategory;
 import com.hust.baseweb.applications.backlog.repo.BacklogTaskCategoryRepo;

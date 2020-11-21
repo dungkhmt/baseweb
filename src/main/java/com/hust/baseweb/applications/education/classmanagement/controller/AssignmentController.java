@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
+import com.hust.baseweb.applications.backlog.service.Storage.BacklogFileStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.AssignmentServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
@@ -34,6 +35,7 @@ import java.util.UUID;
 public class AssignmentController {
 
     private FileSystemStorageServiceImpl storageService;
+    private BacklogFileStorageServiceImpl storageService2;
 
     private AssignmentServiceImpl assignService;
 
