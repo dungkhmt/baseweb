@@ -186,19 +186,55 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional
     public ResponseFirstType updateAssignment(UUID id, CreateAssignmentIM im) {
-        ResponseFirstType res;
-
-        res = validateTime(im.getOpenTime(), im.getCloseTime());
-
-        if (res.getErrors().size() > 0) {
-            return res;
-        }
+        ResponseFirstType res = new ResponseFirstType(400);
 
         Assignment assignment = assignRepo.findByIdAndDeletedFalse(id);
 
         if (null == assignment) {
             res.addError("id", "not exist", "Bài tập không tồn tại");
         } else {
+            // Validate open and close time.
+            Date currTime = new Date();
+
+            // Error: open time> close time.
+            if (im.getOpenTime().compareTo(im.getCloseTime()) > 0) {
+                res.addError("closeTime", "require subsequent date", "Vui lòng chọn thời điểm sau ngày giao");
+            }
+
+            // Validate open time.
+            // Old open time < current, only close time modification is allowed.
+            if (assignment.getOpenTime().compareTo(currTime) < 0) {
+                // Error: modify open time is not allowed.
+                if (assignment.getOpenTime().compareTo(im.getOpenTime()) != 0) {
+                    res.addError(
+                        "openTime",
+                        "not allowed changing",
+                        "Vui lòng chọn thời điểm ban đầu vì bài tập đã được giao");
+                    return res;
+                }
+            } else { // Allow to modify both open and close time.
+                // Error: new open time < current.
+                if (im.getOpenTime().compareTo(currTime) < 0) {
+                    res.addError("openTime", "require future date", "Vui lòng chọn thời điểm trong tương lai");
+                    return res;
+                }
+            }
+
+            // Validate close time.
+            if (assignment.getCloseTime().compareTo(im.getCloseTime()) != 0) {
+                if (im.getCloseTime().compareTo(currTime) < 0) {
+                    res.addError(
+                        "closeTime",
+                        "invalid change",
+                        "Vui lòng chọn thời điểm ban đầu hoặc trong tương lai");
+                }
+            }
+
+            if (res.getErrors().size() > 0) {
+                return res;
+            }
+
+            // Valid update.
             assignment.setName(StringUtils.normalizeSpace(im.getName()));
             assignment.setSubject(im.getSubject());
             assignment.setOpenTime(im.getOpenTime());
