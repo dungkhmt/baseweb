@@ -2,15 +2,9 @@ package com.hust.baseweb.applications.education.model;
 
 import java.util.Date;
 
-public interface GetAssignmentsOM {
-
-    String getId();
-
-    String getName();
+public interface GetAssigns4TeacherOM extends GetAssigns4StudentOM {
 
     Date getOpenTime();
-
-    Date getCloseTime();
 
     boolean getDeleted();
 }

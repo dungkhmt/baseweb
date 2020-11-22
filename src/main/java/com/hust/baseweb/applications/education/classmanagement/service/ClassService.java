@@ -29,9 +29,9 @@ public interface ClassService {
 
     GetClassDetailOM getClassDetail(UUID id);
 
-    List<GetAssignmentsOM> getAssign4Teacher(UUID classId);
+    List<GetAssigns4TeacherOM> getAssign4Teacher(UUID classId);
 
-    List<GetAssignmentsOM> getAssign4Student(UUID classId);
+    List<GetAssigns4StudentOM> getAssign4Student(UUID classId);
 
     List<GetStudentsOfClassOM> getStudentsOfClass(UUID id);
 
