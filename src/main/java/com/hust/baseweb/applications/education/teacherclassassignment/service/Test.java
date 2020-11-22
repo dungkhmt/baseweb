@@ -1,25 +1,21 @@
 package com.hust.baseweb.applications.education.teacherclassassignment.service;
 
-import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
-import lombok.extern.log4j.Log4j2;
+import com.hust.baseweb.applications.education.teacherclassassignment.model.AlgoClassIM;
+import com.hust.baseweb.applications.education.teacherclassassignment.model.ExtractTimetable;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Log4j2
-@Service
-public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssignmentAlgoService {
+public class Test {
 
     private Map<Integer, String[]> period;
 
-    // Remember to re-initialize this property after checking conflicts between all pairs of classes.
     private Map<Integer, ExtractTimetable> extractTimetable;
 
-    public TeacherClassAssignmentAlgoServiceImpl() {
-        extractTimetable = new HashMap<>();
+    public Test() {
         period = new HashMap<>();
+        extractTimetable = new HashMap<>();
 
         period.put(1, new String[]{"0645", "0730"});
         period.put(2, new String[]{"0730", "0815"});
@@ -133,72 +129,20 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         return false;
     }
 
-    @Override
-    public TeacherClassAssignmentOM computeTeacherClassAssignment(AlgoTeacherAssignmentIM input) {
-        AlgoTeacherIM[] algoTeacherIMs = input.getTeachers();
-        AlgoClassIM[] algoClassIMS = input.getClasses();
-        int n = algoClassIMS.length;// number of classes;
-        int m = algoTeacherIMs.length;// number of teachers;
-        HashMap<String, Integer> mTeacher2Index = new HashMap();
-        for (int i = 0; i < m; i++) {
-            mTeacher2Index.put(algoTeacherIMs[i].getId(), i);
-        }
-        HashMap<String, List<Integer>> mCourseID2ClassIndex = new HashMap();
-        for (int i = 0; i < n; i++) {
-            if (mCourseID2ClassIndex.get(algoClassIMS[i].getCourseId()) == null) {
-                mCourseID2ClassIndex.put(algoClassIMS[i].getCourseId(), new ArrayList<Integer>());
-            }
-            mCourseID2ClassIndex.get(algoClassIMS[i].getCourseId()).add(i);
-        }
-        HashSet<Integer>[] D = new HashSet[n];
-        for (int i = 0; i < n; i++) {
-            D[i] = new HashSet<Integer>();
-        }
-        for (int i = 0; i < m; i++) {
-            AlgoTeacherIM t = algoTeacherIMs[i];
-            for (int j = 0; j < t.getCourses().size(); j++) {
-                Course4Teacher course4Teacher = t.getCourses().get(j);
-                if (mCourseID2ClassIndex.get(course4Teacher.getCourseId()) == null) {
-                    System.out.println("no class for course " + course4Teacher.getCourseId());
-                } else {
-                    for (int c : mCourseID2ClassIndex.get(course4Teacher.getCourseId())) {
-                        D[c].add(i);
-                    }
-                }
-            }
-        }
-        for (int i = 0; i < n; i++) {
-            System.out.println("Class " +
-                               algoClassIMS[i].getId() +
-                               " " +
-                               algoClassIMS[i].getCourseId() +
-                               "-" +
-                               algoClassIMS[i].getCourseName() +
-                               ": ");
-            for (int j : D[i]) {
-                System.out.println(algoTeacherIMs[j].getId());
-            }
-        }
-        boolean[][] conflict = new boolean[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                conflict[i][j] = conflictTimeTable(algoClassIMS[i], algoClassIMS[j]);
-            }
-        }
-        CBLSSolver solver = new CBLSSolver(n, m, D, conflict);
-        solver.solve();
-        int[] sol = solver.getSolution();
+    public static void main(String[] args) {
+        Test t = new Test();
+        AlgoClassIM cls1 = new AlgoClassIM();
+        AlgoClassIM cls2 = new AlgoClassIM();
 
-        Random R = new Random();
-        TeacherClassAssignmentModel[] assignmentModels = new TeacherClassAssignmentModel[algoClassIMS.length];
-        for (int i = 0; i < algoClassIMS.length; i++) {
-            //int j = R.nextInt(algoTeacherIMs.length);
-            AlgoTeacherIM t = algoTeacherIMs[sol[i]];
-            assignmentModels[i] = new TeacherClassAssignmentModel(algoClassIMS[i], t);
-        }
+        cls1.setId(121294);
+        cls1.setTimetable(
+            "1,215,216,2-9,11-18,D9-403;2,315,316,2-9,11-18,D9-403;3,515,516,2-9,11-18,D9-403;4,615,616,2-9,11-18,D9-403;");
 
-        TeacherClassAssignmentOM teacherClassAssignmentOM = new TeacherClassAssignmentOM(assignmentModels);
+        cls2.setId(121295);
+        cls2.setTimetable("1,221,224,2-9,11-18,D5-304;");
 
-        return teacherClassAssignmentOM;
+        System.out.println(t.conflictTimeTable(cls1, cls2));
+        /*System.out.println(t.extractTimetable.get(cls1.getId()).getStart()[0]);
+        System.out.println(t.extractTimetable.get(cls2.getId()).getStart()[0]);*/
     }
 }
