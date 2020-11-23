@@ -71,6 +71,7 @@ public class UserController {
         Party party;
         party = userService.update(personUpdateModel, UUID.fromString(partyId));
 
+
         return ResponseEntity.status(HttpStatus.OK).body(party.getPartyId());
     }
 
@@ -81,6 +82,7 @@ public class UserController {
         @RequestParam(name = "filter", required = false) String filterString
     ) {
         log.info("::getUsers, searchString = " + searchString);
+
 
         return ResponseEntity.ok().body(
             userService.findPersonByFullName(page, searchString));
@@ -163,6 +165,14 @@ public class UserController {
     public ResponseEntity<?> update(Principal principal, @RequestBody UpdatePasswordModel input) {
         log.info("okController: ");
         UserLogin u  = userService.updatePassword2(input.getUserLoginId(),input.getPassword());
+        return ResponseEntity.ok().body(u);
+    }
+
+    @PostMapping("/user/updatepassword3/{partyId}")
+    public ResponseEntity<?> update3(Principal principal,@PathVariable String partyId, @RequestBody UpdatePasswordModel input){
+        DPerson p = userService.findByPartyId(partyId);
+        DPersonDetailModel detailModel = new DPersonDetailModel(p);
+        UserLogin u = userService.updatePassword2(detailModel.getUserLoginId(),input.getPassword());
         return ResponseEntity.ok().body(u);
     }
 }
