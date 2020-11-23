@@ -139,6 +139,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         AlgoClassIM[] algoClassIMS = input.getClasses();
         int n = algoClassIMS.length;// number of classes;
         int m = algoTeacherIMs.length;// number of teachers;
+        double[] hourClass;// hourClass[i] is the number of hours of class i
         HashMap<String, Integer> mTeacher2Index = new HashMap();
         for (int i = 0; i < m; i++) {
             mTeacher2Index.put(algoTeacherIMs[i].getId(), i);
@@ -151,8 +152,10 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             mCourseID2ClassIndex.get(algoClassIMS[i].getCourseId()).add(i);
         }
         HashSet<Integer>[] D = new HashSet[n];
+        hourClass = new double[n];
         for (int i = 0; i < n; i++) {
             D[i] = new HashSet<Integer>();
+            hourClass[i] = algoClassIMS[i].getHourLoad();
         }
         for (int i = 0; i < m; i++) {
             AlgoTeacherIM t = algoTeacherIMs[i];
@@ -183,21 +186,41 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 conflict[i][j] = conflictTimeTable(algoClassIMS[i], algoClassIMS[j]);
+                if(conflict[i][j]){
+                    System.out.println("Conflict " + algoClassIMS[i].getTimetable() + " VS. " + algoClassIMS[j].getTimetable());
+                }else{
+                    //System.out.println("NOT Conflict " + algoClassIMS[i].getTimetable() + " VS. " + algoClassIMS[j].getTimetable());
+                }
             }
         }
-        CBLSSolver solver = new CBLSSolver(n, m, D, conflict);
+        CBLSSolver solver = new CBLSSolver(n, m, D, conflict, hourClass);
         solver.solve();
         int[] sol = solver.getSolution();
 
+        HashMap<AlgoTeacherIM, List<AlgoClassIM>> mTeacher2AssignedClass = new HashMap();
+
         Random R = new Random();
         TeacherClassAssignmentModel[] assignmentModels = new TeacherClassAssignmentModel[algoClassIMS.length];
+        List<AlgoClassIM> notAssigned = new ArrayList<AlgoClassIM>();
         for (int i = 0; i < algoClassIMS.length; i++) {
             //int j = R.nextInt(algoTeacherIMs.length);
-            AlgoTeacherIM t = algoTeacherIMs[sol[i]];
-            assignmentModels[i] = new TeacherClassAssignmentModel(algoClassIMS[i], t);
+            if(sol[i] >= 0) {
+                AlgoTeacherIM t = algoTeacherIMs[sol[i]];
+                assignmentModels[i] = new TeacherClassAssignmentModel(algoClassIMS[i], t);
+                if(mTeacher2AssignedClass.get(t) == null){
+                    mTeacher2AssignedClass.put(t,new ArrayList<AlgoClassIM>());
+                }
+                mTeacher2AssignedClass.get(t).add(algoClassIMS[i]);
+            }else{
+                notAssigned.add(algoClassIMS[i]);
+            }
+        }
+        ClassesAssigned2TeacherModel[] classesAssigned2TeacherModels = new ClassesAssigned2TeacherModel[algoTeacherIMs.length];
+        for(int t = 0;t < algoTeacherIMs.length; t++){
+            classesAssigned2TeacherModels[t] = new ClassesAssigned2TeacherModel(algoTeacherIMs[t],mTeacher2AssignedClass.get(algoTeacherIMs[t]));
         }
 
-        TeacherClassAssignmentOM teacherClassAssignmentOM = new TeacherClassAssignmentOM(assignmentModels);
+        TeacherClassAssignmentOM teacherClassAssignmentOM = new TeacherClassAssignmentOM(assignmentModels,classesAssigned2TeacherModels,notAssigned);
 
         return teacherClassAssignmentOM;
     }

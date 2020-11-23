@@ -32,6 +32,7 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/edu/assignment")
 @AllArgsConstructor(onConstructor_ = @Autowired)
+@CrossOrigin
 public class AssignmentController {
 
     private FileSystemStorageServiceImpl storageService;
