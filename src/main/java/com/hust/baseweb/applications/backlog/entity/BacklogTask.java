@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -91,33 +94,53 @@ public class BacklogTask {
     @Column(name = "attachment_paths")
     private String attachmentPaths;
 
-    public void update(CreateBacklogTaskInputModel input) {
-        if(input.getBacklogTaskName() != null) {
-            backlogTaskName = input.getBacklogTaskName();
-        }
+    public ArrayList<String> update(CreateBacklogTaskInputModel input) {
+        if(input.getBacklogTaskName() != null) backlogTaskName = input.getBacklogTaskName();
+        if(input.getBacklogTaskCategoryId() != null) backlogTaskCategoryId = input.getBacklogTaskCategoryId();
+        if(input.getBacklogDescription() != null) backlogDescription = input.getBacklogDescription();
+        if(input.getDueDate() != null) dueDate = input.getDueDate();
+        if(input.getStatusId() != null) statusId = input.getStatusId();
+        if(input.getPriorityId() != null) priorityId = input.getPriorityId();
+        if(input.getLastUpdateStamp() != null) lastUpdateStamp = input.getLastUpdateStamp();
 
-        if(input.getBacklogTaskCategoryId() != null) {
-            backlogTaskCategoryId = input.getBacklogTaskCategoryId();
-        }
+        // update attachmentPaths
+        String[] savedNames = this.attachmentPaths.split(";");
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String prefixFileName = formatter.format(now);
+        StringBuilder newAttachmentPaths = new StringBuilder();
+        ArrayList<String> needToDelete = new ArrayList<>();
 
-        if(input.getBacklogDescription() != null) {
-            backlogDescription = input.getBacklogDescription();
-        }
+        for(int i = 0; i < input.getAttachmentPaths().length; i++) {
+            boolean isFileExisted = Arrays.stream(savedNames).anyMatch(input.getAttachmentPaths()[i]::equals);
 
-        if(input.getDueDate() != null) {
-            dueDate = input.getDueDate();
+            switch(input.getAttachmentStatus()[i]) {
+                case "deleted":
+                    if(isFileExisted) {
+                        needToDelete.add(input.getAttachmentPaths()[i]);
+                    }
+                    break;
+                case "new":
+                    newAttachmentPaths.append(prefixFileName).append("-").append(input.getAttachmentPaths()[i]);
+                    break;
+                case "uploaded":
+                    newAttachmentPaths.append(input.getAttachmentPaths()[i]);
+                    break;
+                default:
+                    break;
+            }
+            newAttachmentPaths.append(";");
         }
+        if(newAttachmentPaths.length() > 0) {
+            if(newAttachmentPaths.charAt(0) == ';') {
+                newAttachmentPaths.deleteCharAt(0);
+            }
+            if(newAttachmentPaths.charAt(newAttachmentPaths.length() - 1) == ';') {
+                newAttachmentPaths.deleteCharAt(newAttachmentPaths.length() - 1);
+            }
+        }
+        this.attachmentPaths = newAttachmentPaths.toString();
 
-        if(input.getStatusId() != null) {
-            statusId = input.getStatusId();
-        }
-
-        if(input.getPriorityId() != null) {
-            priorityId = input.getPriorityId();
-        }
-
-        if(input.getLastUpdateStamp() != null) {
-            lastUpdateStamp = input.getLastUpdateStamp();
-        }
+        return needToDelete;
     }
 }

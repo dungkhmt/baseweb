@@ -24,4 +24,5 @@ public class CreateBacklogTaskInputModel {
     private Date lastUpdateStamp;
     private Date createdStamp;
     private String[] attachmentPaths;
+    private String[] attachmentStatus;
 }

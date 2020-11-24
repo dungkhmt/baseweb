@@ -6,8 +6,6 @@ import com.hust.baseweb.applications.backlog.service.Storage.BacklogFileStorageS
 import com.hust.baseweb.applications.backlog.service.project.BacklogProjectMemberService;
 import com.hust.baseweb.applications.backlog.service.project.BacklogProjectService;
 import com.hust.baseweb.applications.backlog.service.task.*;
-import com.hust.baseweb.applications.education.classmanagement.service.AssignmentServiceImpl;
-import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.entity.StatusItem;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.StatusItemRepo;
@@ -24,16 +22,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
-import java.text.Format;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -53,7 +47,6 @@ public class BacklogControllerAPI {
     private BacklogTaskPriorityService backlogTaskPriorityService;
     private BacklogFileStorageServiceImpl storageService;
     private StatusItemRepo statusItemRepo;
-    private FileSystemStorageServiceImpl storageService2;
 
 
     private List<UserLoginReduced> getAssignedUserByTaskId(UUID taskId) {
@@ -180,7 +173,7 @@ public class BacklogControllerAPI {
     }
 
     @PostMapping("backlog/edit-task")
-    public ResponseEntity<BacklogTask> editTask(Principal principal, @RequestBody CreateBacklogTaskInputModel input) {
+    public ResponseEntity<BacklogTask> editTask(Principal principal, @RequestBody CreateBacklogTaskInputModel input) throws IOException {
         return ResponseEntity.ok(backlogTaskService.update(input));
     }
 

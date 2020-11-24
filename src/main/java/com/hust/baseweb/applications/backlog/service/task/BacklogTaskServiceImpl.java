@@ -3,12 +3,15 @@ package com.hust.baseweb.applications.backlog.service.task;
 import com.hust.baseweb.applications.backlog.entity.BacklogTask;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogTaskInputModel;
 import com.hust.baseweb.applications.backlog.repo.BacklogTaskRepo;
+import com.hust.baseweb.applications.backlog.service.Storage.BacklogFileStorageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +21,8 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
 
     @Autowired
     BacklogTaskRepo backlogTaskRepo;
+    @Autowired
+    private BacklogFileStorageServiceImpl storageService;
 
     @Override
     public BacklogTaskService save(CreateBacklogTaskInputModel input) {
@@ -46,11 +51,14 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
     }
 
     @Override
-    public BacklogTask update(CreateBacklogTaskInputModel input) {
+    public BacklogTask update(CreateBacklogTaskInputModel input) throws IOException {
         BacklogTask task = backlogTaskRepo.findByBacklogTaskId(input.getBacklogTaskId());
         Date date = new Date();
         input.setLastUpdateStamp(date);
-        task.update(input);
+        ArrayList<String> deleteFiles = task.update(input);
+        for(String file: deleteFiles) {
+            storageService.deleteIfExists("", file);
+        }
 
         return backlogTaskRepo.save(task);
     }

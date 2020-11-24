@@ -36,7 +36,6 @@ import java.util.UUID;
 public class AssignmentController {
 
     private FileSystemStorageServiceImpl storageService;
-    private BacklogFileStorageServiceImpl storageService2;
 
     private AssignmentServiceImpl assignService;
 
