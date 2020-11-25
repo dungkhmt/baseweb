@@ -170,7 +170,9 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
                 }
             }
         }
+
         for (int i = 0; i < n; i++) {
+            /*
             System.out.println("Class " +
                                algoClassIMS[i].getId() +
                                " " +
@@ -178,8 +180,19 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
                                "-" +
                                algoClassIMS[i].getCourseName() +
                                ": ");
+            */
             for (int j : D[i]) {
-                System.out.println(algoTeacherIMs[j].getId());
+                if(algoTeacherIMs[j].getId().equals("bang.banha@hust.edu.vn")) {
+                    System.out.println("teacher " + j + ": " + algoTeacherIMs[j].getId());
+                    System.out.println("Class " +
+                                       algoClassIMS[i].getId() +
+                                       " " +
+                                       algoClassIMS[i].getCourseId() +
+                                       "-" +
+                                       algoClassIMS[i].getCourseName() +
+                                       ": ");
+
+                }
             }
         }
         boolean[][] conflict = new boolean[n][n];
@@ -187,7 +200,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             for (int j = 0; j < n; j++) {
                 conflict[i][j] = conflictTimeTable(algoClassIMS[i], algoClassIMS[j]);
                 if(conflict[i][j]){
-                    System.out.println("Conflict " + algoClassIMS[i].getTimetable() + " VS. " + algoClassIMS[j].getTimetable());
+                    //System.out.println("Conflict " + algoClassIMS[i].getTimetable() + " VS. " + algoClassIMS[j].getTimetable());
                 }else{
                     //System.out.println("NOT Conflict " + algoClassIMS[i].getTimetable() + " VS. " + algoClassIMS[j].getTimetable());
                 }
@@ -219,7 +232,12 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         for(int t = 0;t < algoTeacherIMs.length; t++){
             classesAssigned2TeacherModels[t] = new ClassesAssigned2TeacherModel(algoTeacherIMs[t],mTeacher2AssignedClass.get(algoTeacherIMs[t]));
         }
-
+        int nbEmpty = 0;
+        for(int i = 0; i < n; i++) if(D[i].size() == 0){
+            System.out.println("empty domain course " + algoClassIMS[i].getCourseId() + " - " + algoClassIMS[i].getCourseName());
+            nbEmpty++;
+        }
+        System.out.println("nb empty domain = " + nbEmpty);
         TeacherClassAssignmentOM teacherClassAssignmentOM = new TeacherClassAssignmentOM(assignmentModels,classesAssigned2TeacherModels,notAssigned);
 
         return teacherClassAssignmentOM;
