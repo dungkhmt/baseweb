@@ -12,4 +12,5 @@ public interface PostTripRepo extends JpaRepository<PostTrip, UUID> {
     List<PostTrip> findAll();
     PostTrip findByPostOfficeFixedTripId(UUID postOfficeFixedTripId);
     PostTrip save(PostTrip postTrip);
+
 }

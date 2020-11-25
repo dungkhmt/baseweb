@@ -5,8 +5,11 @@ import com.hust.baseweb.applications.geo.entity.PostalAddress;
 import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.postsys.entity.PostOffice;
+import com.hust.baseweb.applications.postsys.entity.PostOrder;
 import com.hust.baseweb.applications.postsys.model.postoffice.CreatePostOfficeInputModel;
+import com.hust.baseweb.applications.postsys.model.postoffice.OfficeOrderDetailOutput;
 import com.hust.baseweb.applications.postsys.repo.PostOfficeRepo;
+import com.hust.baseweb.applications.postsys.repo.PostOrderRepo;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.StatusRepo;
 import lombok.AllArgsConstructor;
@@ -27,7 +30,7 @@ public class PostOfficeServiceImpl implements PostOfficeService {
     private PartyRepo partyRepo;
     private GeoPointRepo geoPointRepo;
     private PostalAddressRepo postalAddressRepo;
-
+    private PostOrderRepo postOrderRepo;
     @Override
     public PostOffice save(CreatePostOfficeInputModel input) {
         // TODO Auto-generated method stub
@@ -59,8 +62,6 @@ public class PostOfficeServiceImpl implements PostOfficeService {
 
         return postOffice;
     }
-
-
 
     @Override
     public List<PostOffice> findAll() {
@@ -112,5 +113,13 @@ public class PostOfficeServiceImpl implements PostOfficeService {
         postalAddressRepo.saveAll(postalAddresses);
         postOfficeRepo.saveAll(postOffices);
         return postOffices;
+    }
+
+    @Override
+    public OfficeOrderDetailOutput getOfficeOrderDetailOutput(String postOfficeId) {
+        PostOffice postOffice = postOfficeRepo.findById(postOfficeId).get();
+        List<PostOrder> fromPostOrders = postOrderRepo.findByFromPostOffice(postOfficeId);
+        List<PostOrder> toPostOrders = postOrderRepo.findByToPostOffice(postOfficeId);
+        return new OfficeOrderDetailOutput(postOffice, fromPostOrders, toPostOrders);
     }
 }

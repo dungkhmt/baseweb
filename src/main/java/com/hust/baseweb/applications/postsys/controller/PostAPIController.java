@@ -35,6 +35,9 @@ public class PostAPIController {
     PostPackageTypeService postPackageTypeService;
     @Autowired
     PostTripService postTripService;
+    @Autowired
+    PostmanService postmanService;
+
     @PostMapping("/create-post-office")
     public ResponseEntity<?> createPostOffice(Principal principal, @RequestBody CreatePostOfficeInputModel input) {
         PostOffice newPostOffice = postOfficeService.save(input);
@@ -118,30 +121,47 @@ public class PostAPIController {
     }
 
     @GetMapping("/get-post-trip-list")
-    public ResponseEntity getVehicleList() {
+    public ResponseEntity getPostTripList() {
         List<PostTrip> postTrips = postTripService.findAllVehicle();
         return ResponseEntity.ok().body(postTrips);
     }
 
     @GetMapping("/get-post-trip/{postTripId}")
-    public ResponseEntity getVehicle(@PathVariable(required = true) String postTripId) {
+    public ResponseEntity getPostTrip(@PathVariable String postTripId) {
         PostTrip postTrip = postTripService.findByPostOfficeFixedTripId(postTripId);
         return ResponseEntity.ok().body(postTrip);
     }
 
-    @GetMapping("/create-post-trip")
-    public ResponseEntity createVehicle(@RequestBody CreatePostTripModel creatPostTripModel) {
+    @PostMapping("/create-post-trip")
+    public ResponseEntity createPostTrip(@RequestBody CreatePostTripModel creatPostTripModel) {
         PostTrip postTrip = postTripService.createPostTrip(creatPostTripModel);
         return ResponseEntity.ok().body(postTrip);
     }
 
-    @GetMapping("/create-post-trip-list")
-    public ResponseEntity createVehicleList(@RequestParam("file") MultipartFile multipartFile) throws IOException  {
+    @PostMapping("/create-post-trip-list")
+    public ResponseEntity createPostTripList(@RequestParam("file") MultipartFile multipartFile) throws IOException  {
         List<CreatePostOfficeInputModel> createPostOfficeInputModels
             = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreatePostOfficeInputModel.class,
                               PoijiOptions.PoijiOptionsBuilder.settings().sheetName("DanhSachBuuCuc").build());
         List<PostOffice> postOffices = postOfficeService.save(createPostOfficeInputModels);
         log.info("Uploaded " + postOffices.size() + " postoffice");
         return ResponseEntity.ok().body(postOffices.size());
+    }
+
+    @DeleteMapping("/delete-post-trip/{postTripId}")
+    public ResponseEntity<?> deletePostTripById(@PathVariable String postTripId) {
+        postTripService.deleteByPostTripId(postTripId);
+        log.info("deletePostOfficeById = " + postTripId);
+        return ResponseEntity.ok().body(null);
+    }
+
+    @GetMapping("/get_office_order_detail/{postOfficeId}")
+    public ResponseEntity getOfficeOrderDetail(@PathVariable String postOfficeId) {
+        return ResponseEntity.ok().body(postOfficeService.getOfficeOrderDetailOutput(postOfficeId));
+    }
+
+    @GetMapping("/get-postman-list/{postOfficeId}")
+    public ResponseEntity getPostmanList(@PathVariable String postOfficeId) {
+        return ResponseEntity.ok().body(postmanService.findByPostOfficeId(postOfficeId));
     }
 }

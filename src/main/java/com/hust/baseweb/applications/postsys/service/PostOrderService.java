@@ -27,13 +27,11 @@ public class PostOrderService {
     @Autowired PostalAddressRepo postalAddressRepo;    
     
     public List<PostOrder> findAllPostOrder(){
-        List<PostOrder> orders =  postOrderRepo.findAll();
-        orders.forEach(order -> {
-            order.setStatus_id(null);
-        });
+        List<PostOrder> orders = (List<PostOrder>) postOrderRepo.findAll();
         return orders;
     }
     public CreatePostShipOrderOutputModel createPostShipOrder(CreatePostShipOrderInputModel input){
+        input.print();
         CreatePostShipOrderOutputModel result = new CreatePostShipOrderOutputModel();
         PostOrder postOrder = new PostOrder();
         if (input.isFromCustomerExist()) {
@@ -83,7 +81,7 @@ public class PostOrderService {
         postOrder.setDescription(input.getDescription());
         postOrder.getPostPackageType().setPostPackageTypeId(input.getPostPackageTypeId());
         postOrder.getStatusItem().setStatusId("ORDER_CREATED");
-        postOrder.setStatus_id("ORDER_CREATED");
+        postOrder.setStatusId("ORDER_CREATED");
         PostOrder postOrderResult = postOrderRepo.save(postOrder);
         result.setStatusCode("SUCCESS");
         result.setPostOrder(postOrderResult);

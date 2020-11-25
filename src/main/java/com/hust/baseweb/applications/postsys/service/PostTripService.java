@@ -7,7 +7,8 @@ import com.hust.baseweb.applications.postsys.repo.PostTripRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class PostTripService {
     @Autowired
     PostTripRepo postTripRepo;
+
     public List<PostTrip> findAllVehicle() {
         return postTripRepo.findAll();
     }
@@ -30,8 +32,13 @@ public class PostTripService {
         postTrip.setToPostOffice(new PostOffice());
         postTrip.getFromPostOffice().setPostOfficeId(input.getFromPostOfficeId());
         postTrip.getToPostOffice().setPostOfficeId(input.getToPostOfficeId());
-        postTrip.setFromDate((Date) input.getFromDate());
-        postTrip.setThruDate((Date) input.getThruDate());
+        postTrip.setFromDate(input.getFromDate());
+        postTrip.setThruDate(input.getThruDate());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        postTrip.setScheduleDepartureTime(simpleDateFormat.format(input.getSheduleDepatureTime()));
+        if (postTrip.getFromDate() == null) {
+            postTrip.setFromDate(new Date());
+        }
         return postTripRepo.save(postTrip);
     }
 
@@ -41,10 +48,20 @@ public class PostTripService {
             PostTrip postTrip = new PostTrip();
             postTrip.getFromPostOffice().setPostOfficeId(createPostTripModel.getFromPostOfficeId());
             postTrip.getToPostOffice().setPostOfficeId(createPostTripModel.getToPostOfficeId());
-            postTrip.setFromDate((Date) createPostTripModel.getFromDate());
-            postTrip.setThruDate((Date) createPostTripModel.getThruDate());
+            postTrip.setFromDate(createPostTripModel.getFromDate());
+            postTrip.setThruDate(createPostTripModel.getThruDate());
+            if (postTrip.getFromDate() == null) {
+                postTrip.setFromDate(new Date());
+            }
             postTrips.add(postTrip);
         }
         return postTripRepo.saveAll(postTrips);
+    }
+
+    public void deleteByPostTripId(String postTripId) {
+        PostTrip postTrip = postTripRepo.findByPostOfficeFixedTripId(UUID.fromString(postTripId));
+        if (postTrip != null) {
+            postTripRepo.delete(postTrip);
+        }
     }
 }

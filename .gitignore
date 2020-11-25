@@ -34,3 +34,4 @@ build/
 /gg_api_key.txt
 /.ssh/
 *.bat
+*.log
