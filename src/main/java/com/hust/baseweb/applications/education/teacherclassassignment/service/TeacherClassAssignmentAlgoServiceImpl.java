@@ -132,6 +132,9 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
 
         return false;
     }
+    public String name(){
+        return "TeacherClassAssignmentAlgoServiceImpl";
+    }
 
     @Override
     public TeacherClassAssignmentOM computeTeacherClassAssignment(AlgoTeacherAssignmentIM input) {
@@ -162,7 +165,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             for (int j = 0; j < t.getCourses().size(); j++) {
                 Course4Teacher course4Teacher = t.getCourses().get(j);
                 if (mCourseID2ClassIndex.get(course4Teacher.getCourseId()) == null) {
-                    System.out.println("no class for course " + course4Teacher.getCourseId());
+                    //System.out.println(name() + "::no class for course " + course4Teacher.getCourseId());
                 } else {
                     for (int c : mCourseID2ClassIndex.get(course4Teacher.getCourseId())) {
                         D[c].add(i);
@@ -234,12 +237,30 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         }
         int nbEmpty = 0;
         for(int i = 0; i < n; i++) if(D[i].size() == 0){
-            System.out.println("empty domain course " + algoClassIMS[i].getCourseId() + " - " + algoClassIMS[i].getCourseName());
+            //System.out.println("empty domain course " + algoClassIMS[i].getCourseId() + " - " + algoClassIMS[i].getCourseName());
             nbEmpty++;
         }
         System.out.println("nb empty domain = " + nbEmpty);
         TeacherClassAssignmentOM teacherClassAssignmentOM = new TeacherClassAssignmentOM(assignmentModels,classesAssigned2TeacherModels,notAssigned);
 
+        int[] nbCourseOfTeacher = new int[m];
+        for(int i = 0; i < m; i++) nbCourseOfTeacher[i] = 0;
+        for(int i = 0; i < n; i++){
+            if(sol[i] >= 0){
+                nbCourseOfTeacher[sol[i]]++;
+            }
+        }
+        for(int t = 0;t < m; t++){
+            System.out.println("Teacher[" + t + "] = " + algoTeacherIMs[t].getId() + " has " + nbCourseOfTeacher[t]);
+            for(int i = 0; i < n; i++){
+                for(int j = i+1; j < n; j++){
+                    if(sol[i] == t && sol[j] == t && conflict[i][j]){
+                        System.out.println("BUG with class " + i + " and " + j + " of teacher " + t + ": " + algoClassIMS[i].getTimetable() +
+                                           " <-> " + algoClassIMS[j].getTimetable());
+                    }
+                }
+            }
+        }
         return teacherClassAssignmentOM;
     }
 }

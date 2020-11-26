@@ -50,6 +50,33 @@ public class CBLSSolver {
             this.i = i; this.v = v;
         }
     }
+    public String name(){
+        return "CBLSSolver";
+    }
+    private boolean checkDomain(){
+        for(int t = 0; t < m; t++){
+            for(int i = 0; i < n; i++) if(teacherAssigned2Class[i] == t){
+                if(!D[i].contains(t)){
+                    System.out.println(name() + "::checkDomain FAILED???, teacher " + t + " is not in the domain of course " + i);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    private boolean checkConflict(){
+        for(int t = 0; t < m; t++){
+            for(int i = 0; i < n; i++)if(teacherAssigned2Class[i] == t){
+                for(int j = i+1; j < n; j++)if(teacherAssigned2Class[j] == t){
+                    if(conflict[i][j]){
+                        System.out.println(name() + "::checkConflict " + i + " and " + j + " of teacher " + t + " failed???");
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
     private HashSet<Integer> initSolution(){
         HashSet<Integer> cand = new HashSet();
         HashSet<Integer> assigned = new HashSet();
@@ -85,10 +112,14 @@ public class CBLSSolver {
             }else {
                 //x[sel_i].setValuePropagate(sel_t);
                 teacherAssigned2Class[sel_i] = sel_t;
-                if(sel_t == 0) System.out.println("Assign class " + sel_i + " to teacher " + sel_t);
+                //if(sel_t == 0) System.out.println("Assign class " + sel_i + " to teacher " + sel_t);
                 assigned.add(sel_i);
                 classesAssigned2Teacher[sel_t].add(sel_i);
                 load[sel_t] += hourClass[sel_i];
+                if(!checkConflict()){
+                    System.out.println("BUG???");
+                    break;
+                }
             }
             cand.remove(sel_i);
         }
@@ -101,7 +132,7 @@ public class CBLSSolver {
     }
     private HashSet<Integer> getPossibleNewTeachers4Class(int i){
         HashSet<Integer> cand = new HashSet();
-        for(int t = 0; t < m; t++)if(t != teacherAssigned2Class[i]){
+        for(int t: D[i])if(t != teacherAssigned2Class[i]){
             if(canAssignClass2Teacher(i,t)) cand.add(t);
         }
         return cand;
@@ -276,17 +307,38 @@ public class CBLSSolver {
             }
         }
     }
+    private boolean checkAll(){
+        return checkDomain() && checkConflict();
+    }
     private HashSet<Integer> search(int maxIter, int maxTime){
         HashSet<Integer> notAssigned = initSolution();
         for(int i: notAssigned){
-            System.out.println("not assigned class " + i + ", D = " + D[i].size());
+            //System.out.println("not assigned class " + i + ", D = " + D[i].size());
         }
+        boolean ok = checkAll();
+        if(!ok){
+            System.out.println(name() + "::search, after initSolution, FAILED check???");
+            return notAssigned;
+        }
+
         notAssigned = reinsertImprove(notAssigned);
+        ok = checkAll();
+        if(!ok){
+            System.out.println(name() + "::search, after reinsertImprove, FAILED check???");
+            return notAssigned;
+        }
+
         //notAssigned = reinsertImprove(notAssigned);
         //notAssigned = reinsertImprove(notAssigned);
         //notAssigned = reinsertImprove(notAssigned);
-        analyzeNotAssigned(notAssigned);
+        //analyzeNotAssigned(notAssigned);
         notAssigned = reinsertMovePath(notAssigned);
+        ok = checkAll();
+        if(!ok){
+            System.out.println(name() + "::search, after reinsertMovePath, FAILED check???");
+            return notAssigned;
+        }
+
         /*for(int cls: notAssigned){
             findMultiMoves(cls);
         }*/
@@ -326,15 +378,17 @@ public class CBLSSolver {
         solution= new int[x.length];
         for(int i = 0; i < n; i++) {
             if (!notAssign.contains(i)) {
-                solution[i] = x[i].getValue();
+                solution[i] = teacherAssigned2Class[i];////x[i].getValue();
             }else{
                 solution[i] = -1;
             }
         }
         for(int i: notAssign){
-            System.out.println("not assigned " + i + ", D = " + D[i].size());
+            //System.out.println("not assigned " + i + ", D = " + D[i].size());
         }
-        System.out.println("Solver finished, notAssigned = " + notAssign.size());
+        boolean ok = checkDomain() && checkConflict();
+
+        System.out.println("Solver finished with " + ok + ", notAssigned = " + notAssign.size());
     }
     public int[] getSolution(){
         //int[] s = new int[x.length];
