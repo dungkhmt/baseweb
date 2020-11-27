@@ -135,7 +135,7 @@ public class BacklogTask {
             if(newAttachmentPaths.charAt(0) == ';') {
                 newAttachmentPaths.deleteCharAt(0);
             }
-            if(newAttachmentPaths.charAt(newAttachmentPaths.length() - 1) == ';') {
+            if(newAttachmentPaths.length() > 0 && newAttachmentPaths.charAt(newAttachmentPaths.length() - 1) == ';') {
                 newAttachmentPaths.deleteCharAt(newAttachmentPaths.length() - 1);
             }
         }
