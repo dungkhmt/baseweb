@@ -10,6 +10,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TeacherClassAssignmentModel {
+
     private AlgoClassIM algoClassIM;
+
     private AlgoTeacherIM algoTeacherIM;
 }
