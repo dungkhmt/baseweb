@@ -90,11 +90,13 @@ public class BacklogControllerAPI {
     }
 
     @PostMapping("backlog/create-project")
-    public ResponseEntity<BacklogProject> createProject(
+    public ResponseEntity<?> createProject(
         Principal principal,
         @RequestBody CreateProjectInputModel input
     ) {
         BacklogProject backlogProject = backlogProjectService.save(input);
+
+        if(backlogProject == null) return (ResponseEntity<?>) ResponseEntity.noContent();
 
         UserLogin userLogin = userService.findById(principal.getName());
         UUID userPartyId = userLogin.getParty().getPartyId();
