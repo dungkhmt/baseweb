@@ -1,148 +1,190 @@
 package com.hust.baseweb.applications.education.teacherclassassignment.service;
 
-import com.hust.baseweb.applications.education.teacherclassassignment.model.AlgoClassIM;
-import com.hust.baseweb.applications.education.teacherclassassignment.model.ExtractTimetable;
-import org.apache.commons.lang3.StringUtils;
+import com.google.ortools.Loader;
+import com.google.ortools.linearsolver.MPConstraint;
+import com.google.ortools.linearsolver.MPObjective;
+import com.google.ortools.linearsolver.MPSolver;
+import com.google.ortools.linearsolver.MPVariable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Test {
 
-    private Map<Integer, String[]> period;
+    private Set<Integer> infeasibleClasses;
 
-    private Map<Integer, ExtractTimetable> extractTimetable;
+    private int numVertices;
+
+    private List<Integer>[] graph;
 
     public Test() {
-        period = new HashMap<>();
-        extractTimetable = new HashMap<>();
-
-        period.put(1, new String[]{"0645", "0730"});
-        period.put(2, new String[]{"0730", "0815"});
-        period.put(3, new String[]{"0825", "0910"});
-        period.put(4, new String[]{"0920", "1005"});
-        period.put(5, new String[]{"1015", "1100"});
-        period.put(6, new String[]{"1100", "1145"});
-
-        period.put(7, new String[]{"1230", "1315"});
-        period.put(8, new String[]{"1315", "1400"});
-        period.put(9, new String[]{"1410", "1455"});
-        period.put(10, new String[]{"1505", "1550"});
-        period.put(11, new String[]{"1600", "1645"});
-        period.put(12, new String[]{"1645", "1730"});
-
-        period.put(13, new String[]{"1745", "1830"});
-        period.put(14, new String[]{"1830", "1915"});
+        infeasibleClasses = new HashSet<>();
     }
 
-    private ExtractTimetable extractTimetable(AlgoClassIM classIM) {
-        if (extractTimetable.containsKey(classIM.getId())) {
-            return extractTimetable.get(classIM.getId());
-        } else {
-            ExtractTimetable timetable = new ExtractTimetable();
-            List<String[]> sessions = Arrays
-                .stream(classIM.getTimetable().split(";"))
-                .map(session -> session.split(","))
-                .collect(
-                    Collectors.toList());
+    private int checkClassesAssign2OnlyOneTeacher() {
+        System.out.println("Solving by greedy");
+        // Greedy Algorithm.
+        while (true) {
+            // Short is important, if use short, graph[vertex].remove(removedVertex) will not work
+            // because removedVertex is an index, not object.
+            Integer removedVertex = -1;
+            short max = 0;
 
-            int noSessions = sessions.size();
-            String[] start = new String[noSessions];
-            String[] end = new String[noSessions];
-            Set<Integer>[] weeks = new Set[noSessions];
-
-            for (int i = 0; i < noSessions; i++) {
-                start[i] = normalize(StringUtils.deleteWhitespace(sessions.get(i)[1]), true);
-                end[i] = normalize(StringUtils.deleteWhitespace(sessions.get(i)[2]), false);
-                weeks[i] = new HashSet();
-
-                List<String[]> weekStr = Arrays
-                    .stream(Arrays.copyOfRange(sessions.get(i), 3, sessions.get(i).length - 1))
-                    .map(ele -> StringUtils.deleteWhitespace(ele).split("-")).collect(Collectors.toList());
-
-                for (String[] ele : weekStr) {
-                    if (ele.length == 1) {
-                        weeks[i].add(Integer.parseInt(ele[0]));
-                    } else {
-                        int from = Integer.parseInt(ele[0]);
-                        int to = Integer.parseInt(ele[1]) + 1;
-
-                        for (int j = from; j < to; j++) {
-                            weeks[i].add(j);
-                        }
+            for (Integer i = 0; i < graph.length; i++) {
+                if (!infeasibleClasses.contains(i)) {
+                    if (graph[i].size() > max) {
+                        max = (short) graph[i].size();
+                        removedVertex = i;
                     }
                 }
             }
 
-            timetable.setStart(start);
-            timetable.setEnd(end);
-            timetable.setWeeks(weeks);
-
-            extractTimetable.put(classIM.getId(), timetable);
-            return timetable;
-        }
-    }
-
-    private String normalize(String timetable, boolean start) {
-        String result;
-
-        switch (timetable.length()) {
-            case 3:
-                final int period = (Integer.parseInt(timetable.substring(1, 2)) - 1) * 6 +
-                                   Integer.parseInt(timetable.substring(2, 3));
-
-                if (start) {
-                    result = timetable.substring(0, 2) +
-                             this.period.get(period)[0];
-                } else {
-                    result = timetable.substring(0, 2) +
-                             this.period.get(period)[1];
-                }
+            if (0 == max) {
                 break;
-            default:
-                result = timetable;
+            } else {
+                infeasibleClasses.add(removedVertex);
+                System.out.println("Remove class: " + removedVertex);
+
+                for (int i = 0; i < graph[removedVertex].size(); i++) {
+                    int vertex = graph[removedVertex].get(i);
+                    graph[vertex].remove(removedVertex);
+                }
+            }
         }
 
-        return result;
+        return numVertices - infeasibleClasses.size();
     }
 
-    private boolean conflictTimeTable(AlgoClassIM cls1, AlgoClassIM cls2) {
-        ExtractTimetable timetable1 = extractTimetable(cls1);
-        ExtractTimetable timetable2 = extractTimetable(cls2);
+    private int solveBySolver() {
+        System.out.println("Solving by solver");
 
-        for (int i = 0; i < timetable1.getStart().length; i++) {
-            for (int j = 0; j < timetable2.getStart().length; j++) {
-                // Session does not overlap.
-                if (timetable1.getEnd()[i].compareTo(timetable2.getStart()[j]) < 0 ||
-                    timetable2.getEnd()[j].compareTo(timetable1.getStart()[i]) < 0) {
-                } else { // Sessions overlap.
-                    Set<Integer> intersection = new HashSet<>(timetable1.getWeeks()[i]);
-                    intersection.retainAll(timetable2.getWeeks()[j]);
+        Loader.loadNativeLibraries();
+        MPSolver solver = MPSolver.createSolver("SCIP");
+        MPVariable[] x = new MPVariable[numVertices];
 
-                    if (intersection.size() > 0) {
-                        return true;
+        for (int i = 0; i < x.length; i++) {
+            x[i] = solver.makeIntVar(0, 1, "x[" + i + "]");
+        }
+
+        for (int i = 0; i < graph.length; i++) {
+            for (Integer vertex : graph[i]) {
+                MPConstraint conflict = solver.makeConstraint(0, 1, "conflict_" + i + "_" + vertex);
+                conflict.setCoefficient(x[i], 1);
+                conflict.setCoefficient(x[vertex], 1);
+            }
+        }
+
+        MPVariable sum = solver.makeIntVar(0, 1000, "sum");
+        MPConstraint totalVertices = solver.makeConstraint(0, 0);
+
+        for (int i = 0; i < x.length; i++) {
+            totalVertices.setCoefficient(x[i], 1);
+        }
+
+        totalVertices.setCoefficient(sum, -1);
+
+        MPObjective objective = solver.objective();
+        objective.setCoefficient(sum, 1);
+        objective.setMaximization();
+
+        final MPSolver.ResultStatus resultStatus = solver.solve();
+
+        if (resultStatus == MPSolver.ResultStatus.OPTIMAL) {
+            System.out.print("Keep: ");
+            for (int i = 0; i < x.length; i++) {
+                if ((int) (x[i].solutionValue() + 0.25) == 1) {
+                    System.out.print(i + ", ");
+                }
+            }
+
+            return (int) (objective.value() + 0.25);
+        } else {
+            System.err.println("This problem not have optimal solution");
+            return -1;
+        }
+    }
+
+    private void genGraph() {
+        Random generator = new Random();
+        numVertices = generator.nextInt(9) + 2; // 2-100
+
+        graph = new ArrayList[numVertices];
+
+        for (int i = 0; i < graph.length; i++) {
+            graph[i] = new ArrayList<>();
+        }
+
+        for (Integer i = 0; i < graph.length; i++) {
+            int m = -1;
+
+            while (m < graph[i].size()) {
+                m = generator.nextInt(10); // 0-100
+            }
+
+            Set<Integer> exited = new HashSet<>();
+            exited.add(i);
+
+            graph[i].forEach(vertex -> {
+                exited.add(vertex);
+            });
+
+            for (int j = graph[i].size(); j < m; j++) {
+                Integer vertex = generator.nextInt(numVertices); // 0-(numVertices-1)
+
+                if (!exited.contains(vertex)) {
+                    if (vertex > i) {
+                        exited.add(vertex);
+                        graph[i].add(vertex);
+                        graph[vertex].add(i);
                     }
                 }
             }
         }
 
-        return false;
+        for (int j = 0; j < graph.length; j++) {
+            System.out.println(graph[j].toString());
+        }
+
+        numVertices = 8;
+        graph = new ArrayList[numVertices];
+
+        graph[0] = new ArrayList<>(Arrays.asList(1, 6, 2));
+        graph[1] = new ArrayList<>(Arrays.asList(0, 4, 6, 2, 3, 7));
+        graph[2] = new ArrayList<>(Arrays.asList(0, 1, 4));
+        graph[3] = new ArrayList<>(Arrays.asList(1, 5, 6));
+        graph[4] = new ArrayList<>(Arrays.asList(1, 2, 6, 5));
+
+        graph[5] = new ArrayList<>(Arrays.asList(3, 4, 7));
+        graph[6] = new ArrayList<>(Arrays.asList(0, 1, 3, 4));
+        graph[7] = new ArrayList<>(Arrays.asList(1, 5));
+
+
+        for (Integer i = 0; i < graph.length; i++) {
+            for (Integer vertex : graph[i]) {
+                if (!graph[vertex].contains(i)) {
+                    System.out.println("Conflict: " + i + ", " + vertex);
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
-        Test t = new Test();
-        AlgoClassIM cls1 = new AlgoClassIM();
-        AlgoClassIM cls2 = new AlgoClassIM();
+        /*for (int i = 0; i < 10000; i++) {
+            System.out.println("Iteration: " + i);
 
-        cls1.setId(121294);
-        cls1.setTimetable(
-            "1,215,216,2-9,11-18,D9-403;2,315,316,2-9,11-18,D9-403;3,515,516,2-9,11-18,D9-403;4,615,616,2-9,11-18,D9-403;");
+            Test t = new Test();
+            t.genGraph();
 
-        cls2.setId(121295);
-        cls2.setTimetable("1,221,224,2-9,11-18,D5-304;");
+            int result = t.solveBySolver();
+            int result2 = t.checkClassesAssign2OnlyOneTeacher();
 
-        System.out.println(t.conflictTimeTable(cls1, cls2));
-        /*System.out.println(t.extractTimetable.get(cls1.getId()).getStart()[0]);
-        System.out.println(t.extractTimetable.get(cls2.getId()).getStart()[0]);*/
+            if (result != result2) {
+                System.out.println("NOT CORRECT");
+                System.out.println("SOLVER = " + result);
+                System.out.println("GREEDY = " + result2);
+                break;
+            }
+
+        }*/
+        System.out.println((int)1.99);
     }
 }

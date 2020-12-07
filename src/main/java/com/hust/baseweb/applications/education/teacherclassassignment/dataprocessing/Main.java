@@ -36,27 +36,27 @@ public class Main {
             // add additional Course4Teacher based on solution plan
             List<AlgoTeacherIM> teacherIMList = teacherExtracter.getTeachers();
             HashMap<String, AlgoTeacherIM> mId2Teacher = new HashMap();
-            for(AlgoTeacherIM t: teacherIMList){
-                mId2Teacher.put(t.getId(),t);
+            for (AlgoTeacherIM t : teacherIMList) {
+                mId2Teacher.put(t.getId(), t);
             }
-            Set<AlgoClassIM> illegalClass= new HashSet();
+            Set<AlgoClassIM> illegalClass = new HashSet();
 
-            for(AlgoClassIM cls: classExtracter.getClasses()){
+            for (AlgoClassIM cls : classExtracter.getClasses()) {
                 String teacherIds = classExtracter.getTeacherAssigned2Class(cls);
-                if(teacherIds == null || teacherIds.equals("email@gmail.com")){
+                if (teacherIds == null || teacherIds.equals("email@gmail.com")) {
                     illegalClass.add(cls);
                     continue;
                 }
                 List<String> listTeacherIds = new ArrayList<String>();
-                if(teacherIds.contains("-")){
+                if (teacherIds.contains("-")) {
                     String[] s = teacherIds.split("-");
-                    for(String si: s){
+                    for (String si : s) {
                         listTeacherIds.add(si.trim());
                     }
-                }else{
+                } else {
                     listTeacherIds.add(teacherIds.trim());
                 }
-                for(String teacherId: listTeacherIds) {
+                for (String teacherId : listTeacherIds) {
                     if (teacherId != null) {
                         AlgoTeacherIM t = mId2Teacher.get(teacherId);
                         if (t == null) {
@@ -75,7 +75,7 @@ public class Main {
                 }
             }
             List<AlgoClassIM> algoClassIMList = classExtracter.getClasses();
-            for(AlgoClassIM cls: illegalClass){
+            for (AlgoClassIM cls : illegalClass) {
                 algoClassIMList.remove((algoClassIMList.indexOf(cls)));
             }
 
