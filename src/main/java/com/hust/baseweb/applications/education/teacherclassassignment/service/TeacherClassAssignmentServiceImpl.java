@@ -9,7 +9,8 @@ public class TeacherClassAssignmentServiceImpl implements TeacherClassAssignment
 
     @Override
     public TeacherClassAssignmentOM assign(AlgoTeacherAssignmentIM im) {
-        SolverContext solver = new SolverContext(new ORToolsMIPSolver(im));
+        //SolverContext solver = new SolverContext(new ORToolsMIPSolver(im));
+        SolverContext solver = new SolverContext(new CPLEXMIPSolver(im));
         solver.solve();
 
         return solver.getOm();
