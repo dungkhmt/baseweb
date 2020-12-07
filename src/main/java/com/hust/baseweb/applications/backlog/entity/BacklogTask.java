@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +23,7 @@ public class BacklogTask {
 
     public BacklogTask(CreateBacklogTaskInputModel input) {
         backlogTaskName = input.getBacklogTaskName();
-        backlogTaskCategoryId = input.getBacklogTaskCategoryId();
+        categoryId = input.getBacklogTaskCategoryId();
         backlogDescription = input.getBacklogDescription();
         backlogProjectId = input.getBacklogProjectId();
         createdByUserLoginId = input.getCreatedByUserLoginId();
@@ -59,7 +58,7 @@ public class BacklogTask {
     private String backlogTaskName;
 
     @Column(name = "backlog_task_category_id")
-    private String backlogTaskCategoryId;
+    private String categoryId;
 
     @Column(name = "backlog_description")
     private String backlogDescription;
@@ -96,7 +95,7 @@ public class BacklogTask {
 
     public ArrayList<String> update(CreateBacklogTaskInputModel input) {
         if(input.getBacklogTaskName() != null) backlogTaskName = input.getBacklogTaskName();
-        if(input.getBacklogTaskCategoryId() != null) backlogTaskCategoryId = input.getBacklogTaskCategoryId();
+        if(input.getBacklogTaskCategoryId() != null) categoryId = input.getBacklogTaskCategoryId();
         if(input.getBacklogDescription() != null) backlogDescription = input.getBacklogDescription();
         if(input.getDueDate() != null) dueDate = input.getDueDate();
         if(input.getStatusId() != null) statusId = input.getStatusId();

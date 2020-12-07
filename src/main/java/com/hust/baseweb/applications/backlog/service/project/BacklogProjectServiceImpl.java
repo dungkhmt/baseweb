@@ -27,7 +27,7 @@ public class BacklogProjectServiceImpl implements BacklogProjectService {
         if (backlogProject == null) {
             return backlogProjectRepo.save(new BacklogProject(input));
         }
-        return backlogProject;
+        return null;
     }
 
     @Override
