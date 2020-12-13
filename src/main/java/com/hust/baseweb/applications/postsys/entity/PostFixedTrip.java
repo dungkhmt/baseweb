@@ -1,9 +1,7 @@
 package com.hust.baseweb.applications.postsys.entity;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,16 +9,14 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name="post_office_trip")
+@Table(name="post_office_fixed_trip")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructorp
-public class PostTrip {
+public class PostFixedTrip {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="post_office_trip_id")
-    private UUID postOfficeTripId;
+    @Column(name="post_office_fixed_trip_id")
+    private UUID postOfficeFixedTripId;
 
     @ManyToOne
     @JoinColumn(name="from_post_office_id", referencedColumnName = "post_office_id")
@@ -30,6 +26,8 @@ public class PostTrip {
     @JoinColumn(name="to_post_office_id", referencedColumnName = "post_office_id")
     private PostOffice toPostOffice;
 
+    @Column(name="schedule_departure_time")
+    private String ScheduleDepartureTime;
     @Column(name="from_date")
     private Date FromDate;
     @Column(name="thru_date")

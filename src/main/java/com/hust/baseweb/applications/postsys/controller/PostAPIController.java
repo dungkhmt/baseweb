@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.postsys.model.postoffice.CreatePostOfficeIn
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderOutputModel;
 import com.hust.baseweb.applications.postsys.model.posttrip.CreatePostTripModel;
+import com.hust.baseweb.applications.postsys.model.posttrip.ExecuteTripInputModel;
 import com.hust.baseweb.applications.postsys.service.*;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -122,20 +124,20 @@ public class PostAPIController {
 
     @GetMapping("/get-post-trip-list")
     public ResponseEntity getPostTripList() {
-        List<PostTrip> postTrips = postTripService.findAllVehicle();
-        return ResponseEntity.ok().body(postTrips);
+        List<PostFixedTrip> postFixedTrips = postTripService.findAllVehicle();
+        return ResponseEntity.ok().body(postFixedTrips);
     }
 
     @GetMapping("/get-post-trip/{postTripId}")
     public ResponseEntity getPostTrip(@PathVariable String postTripId) {
-        PostTrip postTrip = postTripService.findByPostOfficeFixedTripId(postTripId);
-        return ResponseEntity.ok().body(postTrip);
+        PostFixedTrip postFixedTrip = postTripService.findByPostOfficeFixedTripId(postTripId);
+        return ResponseEntity.ok().body(postFixedTrip);
     }
 
     @PostMapping("/create-post-trip")
     public ResponseEntity createPostTrip(@RequestBody CreatePostTripModel creatPostTripModel) {
-        PostTrip postTrip = postTripService.createPostTrip(creatPostTripModel);
-        return ResponseEntity.ok().body(postTrip);
+        PostFixedTrip postFixedTrip = postTripService.createPostTrip(creatPostTripModel);
+        return ResponseEntity.ok().body(postFixedTrip);
     }
 
     @PostMapping("/create-post-trip-list")
@@ -163,5 +165,20 @@ public class PostAPIController {
     @GetMapping("/get-postman-list/{postOfficeId}")
     public ResponseEntity getPostmanList(@PathVariable String postOfficeId) {
         return ResponseEntity.ok().body(postmanService.findByPostOfficeId(postOfficeId));
+    }
+
+    @PostMapping("/execute-trip")
+    public ResponseEntity executeTrip(@RequestBody ExecuteTripInputModel executeTripInputModel) {
+        return ResponseEntity.ok().body(postTripService.createPostTripExecute(executeTripInputModel));
+    }
+
+    @PostMapping("/update-execute-trip")
+    public ResponseEntity updateExecuteTrip(@RequestBody ExecuteTripInputModel executeTripInputModel) {
+        return ResponseEntity.ok().body(postTripService.updatePostTripExecute(executeTripInputModel));
+    }
+
+    @GetMapping
+    public ResponseEntity getExecuteTripByDate(@RequestParam Date date) {
+        return ResponseEntity.ok().body(postTripService.getExecuteTripByDate(date));
     }
 }
