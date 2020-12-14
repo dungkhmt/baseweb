@@ -18,16 +18,15 @@ public class PostFixedTrip {
     @Column(name="post_office_fixed_trip_id")
     private UUID postOfficeFixedTripId;
 
-    @ManyToOne
-    @JoinColumn(name="from_post_office_id", referencedColumnName = "post_office_id")
-    private PostOffice fromPostOffice;
+    @OneToOne
+    @JoinColumn(name="post_office_trip_id", referencedColumnName = "post_office_trip_id", insertable = false, updatable = false)
+    private PostOfficeTrip postOfficetrip;
 
-    @ManyToOne
-    @JoinColumn(name="to_post_office_id", referencedColumnName = "post_office_id")
-    private PostOffice toPostOffice;
+    @Column(name="post_office_trip_id")
+    private UUID postOfficeTripId;
 
     @Column(name="schedule_departure_time")
-    private String ScheduleDepartureTime;
+    private String scheduleDepartureTime;
     @Column(name="from_date")
     private Date FromDate;
     @Column(name="thru_date")

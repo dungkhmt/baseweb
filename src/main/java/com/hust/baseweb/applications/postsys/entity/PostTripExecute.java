@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name="post_office_fixed_trip_execute")
@@ -18,9 +19,9 @@ import java.util.Date;
 public class PostTripExecute {
     @Id
     @Column(name="post_office_fixed_trip_execute_id")
-    private String postOfficeFixedTripExecuteId;
+    private UUID postOfficeFixedTripExecuteId;
     @Column(name="post_office_fixed_trip_id")
-    private String postOfficeFixedTripId;
+    private UUID postOfficeFixedTripId;
     @Column(name="postman_id")
     private String postmanId;
     @Column(name="departure_date_time")

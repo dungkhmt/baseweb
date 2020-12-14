@@ -1,14 +1,10 @@
 package com.hust.baseweb.applications.postsys.system;
 
-import com.hust.baseweb.applications.postsys.entity.PostOffice;
-import com.hust.baseweb.applications.postsys.entity.PostOrder;
-import com.hust.baseweb.applications.postsys.entity.PostShipOrderTripPostOfficeAssignment;
-import com.hust.baseweb.applications.postsys.entity.PostTrip;
-import com.hust.baseweb.applications.postsys.repo.PostOfficeRepo;
-import com.hust.baseweb.applications.postsys.repo.PostOrderRepo;
-import com.hust.baseweb.applications.postsys.repo.PostTripRepo;
+import com.hust.baseweb.applications.postsys.entity.*;
+import com.hust.baseweb.applications.postsys.repo.*;
 import com.hust.baseweb.utils.LatLngUtils;
 import lombok.extern.log4j.Log4j2;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -26,6 +22,19 @@ public class OrderOfficeAssignment {
     PostOrderRepo postOrderRepo;
 
     PostTripRepo postTripRepo;
+
+    PostShipOrderFixedTripPostOfficeAssignmentRepo postShipOrderFixedTripPostOfficeAssignmentRepo;
+
+    PostShipOrderTripPostOfficeAssignmentRepo postShipOrderTripPostOfficeAssignmentRepo;
+
+    @Autowired
+    public void setPostShipOrderTripPostOfficeAssignmentRepo(PostShipOrderTripPostOfficeAssignmentRepo postShipOrderTripPostOfficeAssignmentRepo) {
+        this.postShipOrderTripPostOfficeAssignmentRepo = postShipOrderTripPostOfficeAssignmentRepo;
+    }
+    @Autowired
+    public void setPostShipOrderFixedTripPostOfficeAssignmentRepo(PostShipOrderFixedTripPostOfficeAssignmentRepo postShipOrderFixedTripPostOfficeAssignmentRepo) {
+        this.postShipOrderFixedTripPostOfficeAssignmentRepo = postShipOrderFixedTripPostOfficeAssignmentRepo;
+    }
 
     @Autowired
     public void setPostOfficeRepo(PostOfficeRepo postOfficeRepo) {
@@ -89,14 +98,14 @@ public class OrderOfficeAssignment {
 //    @Transactional("jpa_transaction_manager")
     public void orderTripAssignment() {
         List<PostOrder> postOrders = postOrderRepo.findByStatusId("READY_DELIVERY");
-        List<PostTrip> postTrips = postTripRepo.findAll();
+        List<PostOfficeTrip> postOfficeTrips = postTripRepo.findAll();
         List<PostOffice> postOffices = postOfficeRepo.findAll();
         for (PostOrder postOrder : postOrders) {
-            findShortestTrip(postTrips, postOffices, postOrder);
+            findShortestTrip(postOfficeTrips, postOffices, postOrder);
         }
     }
 
-    public void findShortestTrip(List<PostTrip> postTrips, List<PostOffice> postOffices, PostOrder postOrder) {
+    public void findShortestTrip(List<PostOfficeTrip> postOfficeTrips, List<PostOffice> postOffices, PostOrder postOrder) {
         Map<String, Integer> postOfficeIndex = new HashMap<>();
         for (int i = 0; i < postOffices.size(); i++) {
             postOfficeIndex.put(postOffices.get(i).getPostOfficeId(), i);
@@ -116,10 +125,10 @@ public class OrderOfficeAssignment {
         }
         for (int i = 0; i < postOffices.size(); i++) {
             for (int j = 0; j < postOffices.size(); j++) {
-                for (PostTrip postTrip : postTrips) {
-                    if (postTrip
+                for (PostOfficeTrip postOfficetrip : postOfficeTrips) {
+                    if (postOfficetrip
                             .getFromPostOffice().getPostOfficeId().equals(postOffices.get(i).getPostOfficeId()) &&
-                        postTrip.getToPostOffice().getPostOfficeId().equals(postOffices.get(j).getPostOfficeId())) {
+                        postOfficetrip.getToPostOffice().getPostOfficeId().equals(postOffices.get(j).getPostOfficeId())) {
                         distanceMatrix[postOfficeIndex.get(postOffices.get(i).getPostOfficeId())][postOfficeIndex.get(
                             postOffices.get(j).getPostOfficeId())] =
                             LatLngUtils.distance(
@@ -129,11 +138,12 @@ public class OrderOfficeAssignment {
                 }
             }
         }
-        int source = postOfficeIndex.get(postOrder.getFromPostOfficeId());
+        int source = postOfficeIndex.get(postOrder.getCurrentPostOfficeId());
         int dest = postOfficeIndex.get(postOrder.getToPostOfficeId());
         int[] dist = new int[postOffices.size()];
         int[] prev = new int[postOffices.size()];
-        int[] ntrips = new int[postOffices.size()];
+        int[] next = new int[postOffices.size()];
+//        int[] ntrips = new int[postOffices.size()];
         Queue<Integer> Q = new PriorityQueue<>((integer, t1) -> Integer.compare(
             distanceMatrix[integer][source],
             distanceMatrix[t1][source]));
@@ -141,7 +151,8 @@ public class OrderOfficeAssignment {
             if (!postOffice.getPostOfficeId().equals(source)) {
                 dist[postOfficeIndex.get(postOffice.getPostOfficeId())] = Integer.MAX_VALUE;
                 prev[postOfficeIndex.get(postOffice.getPostOfficeId())] = -1;
-                ntrips[postOfficeIndex.get(postOffice.getPostOfficeId())] = 0;
+                next[postOfficeIndex.get(postOffice.getPostOfficeId())] = -1;
+//                ntrips[postOfficeIndex.get(postOffice.getPostOfficeId())] = 0;
                 Q.offer(postOfficeIndex.get(postOffice.getPostOfficeId()));
             }
         }
@@ -163,27 +174,41 @@ public class OrderOfficeAssignment {
                     if (temp < dist[v]) {
                         dist[v] = temp;
                         prev[v] = u;
-                        ntrips[v] += 1;
+                        next[u] = v;
+//                        ntrips[v] += 1;
                     }
                 }
             }
         }
-        System.out.println();
-        int cur = dest;
-        List<PostShipOrderTripPostOfficeAssignment> postShipOrderTripPostOfficeAssignment;
-//        while(prev[cur] != source) {
-            // add connection from prev[cur] to cur
-//            getKeysByValue(postOfficeIndex, prev[cur]), getKeysByValue(postOfficeIndex, cur));
-//            UUID postOfficeTripId;
-//            postShipOrderPostOfficeAssignment.add(new PostShipOrderPostOfficeAssignment(null, postOrder.getPostShipOrderId(), postOfficeTripId, ntrips[dest]--);
-//        }
+        PostShipOrderFixedTripPostOfficeAssignment postShipOrderFixedTripPostOfficeAssignment = postShipOrderFixedTripPostOfficeAssignmentRepo.findByPostShipOrderId(postOrder.getPostShipOrderId());
+        int current_order = 0;
+        try {
+            current_order = postShipOrderFixedTripPostOfficeAssignment.getDelivery_order();
+        } catch (Exception e) {
+            log.info(e.getMessage());
+        }
+        PostShipOrderTripPostOfficeAssignment postShipOrderTripPostOfficeAssignment = new PostShipOrderTripPostOfficeAssignment();
+        postShipOrderTripPostOfficeAssignment.setDelivery_order(current_order + 1);
+        postShipOrderTripPostOfficeAssignment.setPostShipOrderId(postOrder.getPostShipOrderId());
+        for (PostOfficeTrip postOfficetrip : postOfficeTrips) {
+            String nextPostOfficeId = getKeysByValue(postOfficeIndex, next[source]);
+            if (postOfficetrip.getToPostOffice().getPostOfficeId().equals(postOrder.getCurrentPostOfficeId()) &&
+                postOfficetrip.getFromPostOffice().getPostOfficeId().equals(nextPostOfficeId)) {
+                postShipOrderTripPostOfficeAssignment.setPostOfficeTripId(postOfficetrip.getPostOfficeTripId());
+            }
+        }
+        postShipOrderTripPostOfficeAssignment = postShipOrderTripPostOfficeAssignmentRepo.save(postShipOrderTripPostOfficeAssignment);
+        log.info("Order Id: " + postOrder.getPostShipOrderId() + ", assign from post office: " +
+                 postOrder.getFromPostOffice().getPostOfficeName() + " to post office: " + postOrder.getToPostOffice().getPostOfficeName() +
+                 ", trip id: " + postShipOrderTripPostOfficeAssignment.getPostOfficeTripId());
     }
 
-    public static <T, E> Set<T> getKeysByValue(Map<T, E> map, E value) {
-        return map.entrySet()
-                  .stream()
-                  .filter(entry -> Objects.equals(entry.getValue(), value))
-                  .map(Map.Entry::getKey)
-                  .collect(Collectors.toSet());
+    public static <T, E> T getKeysByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 }

@@ -62,11 +62,19 @@ public class PostOrder {
     @JoinColumn(name="to_post_office_id", referencedColumnName = "post_office_id", insertable = false, updatable = false)
     private PostOffice toPostOffice;
 
+    @ManyToOne()
+    @JoinColumn(name="current_post_office_id", referencedColumnName = "post_office_id", insertable = false, updatable = false)
+    private PostOffice currentPostOffice;
+
     @Column(name="to_post_office_id")
     private String toPostOfficeId;
 
     @Column(name="from_post_office_id")
     private String fromPostOfficeId;
+
+    @Column(name="current_post_office_id")
+    private String currentPostOfficeId;
+
 
     public PostOrder() {
         fromCustomer = new PostCustomer();

@@ -26,7 +26,7 @@ public interface PostOrderRepo extends JpaRepository<PostOrder, UUID> {
     List<PostOrder> findByToPostOffice(String postOfficeId);
 
     @Modifying
-    @Query("update PostOrder set status_id = ?2 where post_ship_order_id = ?1")
+    @Query("update PostOrder set statusId = ?2 where postShipOrderId = ?1")
     void updatePostOrderStatus(UUID post_ship_order_id, String status_id);
 
 

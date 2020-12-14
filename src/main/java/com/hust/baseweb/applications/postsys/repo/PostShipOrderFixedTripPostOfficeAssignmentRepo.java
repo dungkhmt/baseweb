@@ -1,0 +1,13 @@
+package com.hust.baseweb.applications.postsys.repo;
+
+import com.hust.baseweb.applications.postsys.entity.PostShipOrderFixedTripPostOfficeAssignment;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
+
+@Repository
+public interface PostShipOrderFixedTripPostOfficeAssignmentRepo extends JpaRepository<PostShipOrderFixedTripPostOfficeAssignment, UUID> {
+
+    PostShipOrderFixedTripPostOfficeAssignment findByPostShipOrderId(UUID postShipOrderId);
+}

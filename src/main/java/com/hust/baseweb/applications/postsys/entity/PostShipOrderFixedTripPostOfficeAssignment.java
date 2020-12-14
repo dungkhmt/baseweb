@@ -12,17 +12,17 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="post_ship_order_trip_post_office_assignment")
+@Table(name="post_ship_order_fixed_trip_post_office_assignment")
 @Entity
-public class PostShipOrderTripPostOfficeAssignment {
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class PostShipOrderFixedTripPostOfficeAssignment {
     @Id
-    @Column(name="post_ship_order_trip_post_office_assignment_id")
-    private UUID postShipOrderPostOfficeTripAssignmentId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="post_ship_order_fixed_trip_post_office_assignment_id")
+    private UUID postShipOrderFixedTripPostOfficeAssignmentId;
     @Column(name="post_ship_order_id")
     private UUID postShipOrderId;
-    @Column(name="post_office_trip_id")
-    private UUID postOfficeTripId;
+    @Column(name="post_office_fixed_trip_execute_id")
+    private UUID postOfficeFixedTripExecuteId;
     @Column(name="delivery_order")
     private int delivery_order;
 }
