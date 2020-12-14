@@ -15,4 +15,5 @@ public interface LakeService {
     public List<Lake> findAll();
     public Lake save(UserLogin userLogin, LakeModel lakeModel);
     public LakeLiveInfoModel getLiveInfoLake(String  lakeId);
+    public Lake edit(UserLogin userLogin, LakeModel lakeModel, String lakeId);
 }
