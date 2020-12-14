@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
+import com.hust.baseweb.applications.backlog.service.Storage.BacklogFileStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.AssignmentServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
@@ -31,6 +32,7 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/edu/assignment")
 @AllArgsConstructor(onConstructor_ = @Autowired)
+@CrossOrigin
 public class AssignmentController {
 
     private FileSystemStorageServiceImpl storageService;

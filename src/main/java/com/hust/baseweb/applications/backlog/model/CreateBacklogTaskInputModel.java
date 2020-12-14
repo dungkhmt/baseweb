@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.backlog.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.UUID;
@@ -22,4 +23,6 @@ public class CreateBacklogTaskInputModel {
     private String priorityId;
     private Date lastUpdateStamp;
     private Date createdStamp;
+    private String[] attachmentPaths;
+    private String[] attachmentStatus;
 }

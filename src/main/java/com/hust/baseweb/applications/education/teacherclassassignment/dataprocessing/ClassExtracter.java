@@ -30,6 +30,8 @@ public class ClassExtracter implements IExtracter {
 
     private ArrayList<AlgoClassIM> classes = new ArrayList<>();
 
+    private HashMap<AlgoClassIM, String> mClass2PreAssignedTeacher;
+
     public ClassExtracter(FileInputStream file) throws IOException {
         indexOfColumn = new HashMap<>();
         this.file = file;
@@ -72,10 +74,20 @@ public class ClassExtracter implements IExtracter {
                         indexOfColumn.put("name", i);
                     }
                     break;
+                case "emails":
+                    if (!indexOfColumn.containsKey("email")) {
+                        indexOfColumn.put("email", i);
+                    }
             }
         }
     }
+    public HashMap getMapClass2PreassignedTeacher(){
+        return mClass2PreAssignedTeacher;
+    }
 
+    public String getTeacherAssigned2Class(AlgoClassIM cls){
+        return mClass2PreAssignedTeacher.get(cls);
+    }
     @Override
     public void extract() {
         Row row;
@@ -96,6 +108,7 @@ public class ClassExtracter implements IExtracter {
         timetable.put(13, new Integer[]{1065, 1110});
         timetable.put(14, new Integer[]{1110, 1155});
 
+        mClass2PreAssignedTeacher = new HashMap<AlgoClassIM,String>();
         while (rowIterator.hasNext()) {
             row = rowIterator.next();
             AlgoClassIM classIM = new AlgoClassIM();
@@ -107,6 +120,10 @@ public class ClassExtracter implements IExtracter {
             classIM.setCourseId(row.getCell(indexOfColumn.get("course_id")).getStringCellValue());
             classIM.setCourseName(row.getCell(indexOfColumn.get("name")).getStringCellValue());
             classIM.setTimetable(row.getCell(indexOfColumn.get("timetable")).getStringCellValue());
+
+            String teacherId = row.getCell(indexOfColumn.get("email")).getStringCellValue();
+            if(teacherId != null && !teacherId.equals(""))
+                mClass2PreAssignedTeacher.put(classIM,teacherId);
 
             // Calculate hourLoad.
             String[] sessions = classIM.getTimetable().split(";");

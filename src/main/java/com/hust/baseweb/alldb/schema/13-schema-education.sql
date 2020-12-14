@@ -238,3 +238,18 @@ alter table public.edu_assignment drop CONSTRAINT edu_assignment_check1;
 alter table public.edu_assignment rename COLUMN dead_line to close_time;
 /*alter table public.edu_assignment add CONSTRAINT edu_assignment_check1 CHECK ((created_stamp <= open_time));
 alter table public.edu_assignment add CONSTRAINT edu_assignment_check2 CHECK ((open_time <= close_time));*/
+
+
+create table comments_edu_assignment(
+     comment_id uuid not null default uuid_generate_v1(),
+     comment_content text,
+     author_by_user_login_id varchar(60),
+     replied_comment_id uuid,
+     date_post timestamp,
+     last_updated_stamp timestamp NULL,
+   	 created_stamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+     constraint pk_comment_id primary key(comment_id),
+     constraint fk_comment_author_by_user_login_id foreign key(author_by_user_login_id) references user_login(user_login_id)
+
+);

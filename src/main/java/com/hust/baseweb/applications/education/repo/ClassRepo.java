@@ -196,7 +196,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
                    "order by\n" +
                    "\topen_time desc",
            nativeQuery = true)
-    List<GetAssignmentsOM> getAssignments4Teacher(UUID classId);
+    List<GetAssigns4TeacherOM> getAssignments4Teacher(UUID classId);
 
     @Query(value = "select\n" +
                    "\tcast(id as varchar) id,\n" +
@@ -211,7 +211,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
                    "order by\n" +
                    "\topen_time",
            nativeQuery = true)
-    List<GetAssignmentsOM> getAssignments4Student(UUID classId);
+    List<GetAssigns4StudentOM> getAssignments4Student(UUID classId);
 
     @Query(value = "select\n" +
                    "\tul.user_login_id id,\n" +

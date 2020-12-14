@@ -221,13 +221,13 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GetAssignmentsOM> getAssign4Teacher(UUID classId) {
+    public List<GetAssigns4TeacherOM> getAssign4Teacher(UUID classId) {
         return classRepo.getAssignments4Teacher(classId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<GetAssignmentsOM> getAssign4Student(UUID classId) {
+    public List<GetAssigns4StudentOM> getAssign4Student(UUID classId) {
         return classRepo.getAssignments4Student(classId);
     }
 

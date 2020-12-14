@@ -70,3 +70,13 @@ INSERT INTO public.edu_class_registration (class_id,student_id,status,last_updat
 INSERT INTO public.edu_assignment (id,assignment_name,subject,class_id,last_updated_stamp,created_stamp,dead_line) VALUES
 ('717729ee-fe55-11ea-8b6c-0862665303f9','Test','Viết chương trình Hello World','1a8a7596-fd6f-11ea-bf67-0862665303f9',NULL,'2020-09-24 18:02:31.739','2020-09-29 14:30:51.000')
 ;
+
+
+-- screen security
+INSERT INTO security_permission
+(permission_id, description, last_updated_stamp, created_stamp)
+VALUES('SCR_TCLASSLIST', 'The permission to view class list screen for teachers', now(), now());
+
+INSERT INTO security_group_permission
+(group_id, permission_id, last_updated_stamp, created_stamp)
+VALUES('ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER', 'SCR_TCLASSLIST', now(), now());

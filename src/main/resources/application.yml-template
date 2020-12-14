@@ -12,6 +12,9 @@ server:
     enabled: true
 google:
   api_key: ${GOOGLE_MAP_API_KEY} #push google map api key here
+upload:
+  rootPath: path/to/baseweb/
+  backlogDataPath: src/main/java/com/hust/baseweb/applications/backlog/data/
 spring:
   redis:
     host : ${REDIS_HOST} #localhost

@@ -202,6 +202,40 @@
             <artifactId>jedis</artifactId>
             <version>3.3.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>5.6.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.sun.jna/jna -->
+        <dependency>
+            <groupId>com.sun.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>3.0.9</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.14.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.ortools</groupId>
+            <artifactId>ortools-java-8.0.8283</artifactId>
+            <version>8.0.8283</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.ortools</groupId>
+            <artifactId>ortools-win32-x86-64-8.0.8283</artifactId>
+            <version>8.0.8283</version>
+        </dependency>
+
     </dependencies>
 
     <repositories>
@@ -218,6 +252,48 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>install-ortools-java-8.0.8283</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${project.basedir}/libs/ortools-java-8.0.8283.jar</file>
+                            <repositoryLayout>default</repositoryLayout>
+                            <groupId>com.google.ortools</groupId>
+                            <artifactId>ortools-java-8.0.8283</artifactId>
+                            <version>8.0.8283</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>install-ortools-win32-x86-64-8.0.8283</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${project.basedir}/libs/ortools-win32-x86-64-8.0.8283.jar</file>
+                            <repositoryLayout>default</repositoryLayout>
+                            <groupId>com.google.ortools</groupId>
+                            <artifactId>ortools-win32-x86-64-8.0.8283</artifactId>
+                            <version>8.0.8283</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>com.mysema.maven</groupId>
                 <artifactId>apt-maven-plugin</artifactId>
