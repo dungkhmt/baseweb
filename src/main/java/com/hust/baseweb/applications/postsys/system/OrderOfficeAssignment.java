@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.postsys.system;
 
 import com.hust.baseweb.applications.postsys.entity.*;
+import com.hust.baseweb.applications.postsys.model.posttrip.PostShipOrderFixedTripPostOfficeAssignmentOM;
 import com.hust.baseweb.applications.postsys.repo.*;
 import com.hust.baseweb.utils.LatLngUtils;
 import lombok.extern.log4j.Log4j2;
@@ -95,9 +96,10 @@ public class OrderOfficeAssignment {
     }
 
     @Scheduled(fixedDelayString = "${postsys.post_assign_delay}")
-//    @Transactional("jpa_transaction_manager")
+    @Transactional("jpa_transaction_manager")
     public void orderTripAssignment() {
-        List<PostOrder> postOrders = postOrderRepo.findByStatusId("READY_DELIVERY");
+        log.info("Starting find post order path");
+        List<PostOrder> postOrders = postOrderRepo.findByStatusId("POST_ORDER_READY_FIND_PATH");
         List<PostOfficeTrip> postOfficeTrips = postTripRepo.findAll();
         List<PostOffice> postOffices = postOfficeRepo.findAll();
         for (PostOrder postOrder : postOrders) {
@@ -168,9 +170,6 @@ public class OrderOfficeAssignment {
                     if (temp < 0) {
                         temp = Integer.MAX_VALUE;
                     }
-                    if (temp < 5000) {
-                        System.out.println();
-                    }
                     if (temp < dist[v]) {
                         dist[v] = temp;
                         prev[v] = u;
@@ -180,24 +179,26 @@ public class OrderOfficeAssignment {
                 }
             }
         }
-        PostShipOrderFixedTripPostOfficeAssignment postShipOrderFixedTripPostOfficeAssignment = postShipOrderFixedTripPostOfficeAssignmentRepo.findByPostShipOrderId(postOrder.getPostShipOrderId());
+        PostShipOrderFixedTripPostOfficeAssignmentOM postShipOrderFixedTripPostOfficeAssignment = postShipOrderFixedTripPostOfficeAssignmentRepo.findByPostShipOrderId(postOrder.getPostShipOrderId()).get(0);
         int current_order = 0;
         try {
-            current_order = postShipOrderFixedTripPostOfficeAssignment.getDelivery_order();
-        } catch (Exception e) {
-            log.info(e.getMessage());
+            current_order = postShipOrderFixedTripPostOfficeAssignment.getDeliveryOrder();
+        } catch (NullPointerException e) {
+            log.error("Order executing trip not found, create new");
         }
         PostShipOrderTripPostOfficeAssignment postShipOrderTripPostOfficeAssignment = new PostShipOrderTripPostOfficeAssignment();
-        postShipOrderTripPostOfficeAssignment.setDelivery_order(current_order + 1);
+        postShipOrderTripPostOfficeAssignment.setDeliveryOrder(current_order + 1);
         postShipOrderTripPostOfficeAssignment.setPostShipOrderId(postOrder.getPostShipOrderId());
         for (PostOfficeTrip postOfficetrip : postOfficeTrips) {
             String nextPostOfficeId = getKeysByValue(postOfficeIndex, next[source]);
-            if (postOfficetrip.getToPostOffice().getPostOfficeId().equals(postOrder.getCurrentPostOfficeId()) &&
-                postOfficetrip.getFromPostOffice().getPostOfficeId().equals(nextPostOfficeId)) {
+            if (postOfficetrip.getFromPostOffice().getPostOfficeId().equals(postOrder.getCurrentPostOfficeId()) &&
+                postOfficetrip.getToPostOffice().getPostOfficeId().equals(nextPostOfficeId)) {
                 postShipOrderTripPostOfficeAssignment.setPostOfficeTripId(postOfficetrip.getPostOfficeTripId());
             }
         }
         postShipOrderTripPostOfficeAssignment = postShipOrderTripPostOfficeAssignmentRepo.save(postShipOrderTripPostOfficeAssignment);
+        postOrder.setStatusId("POST_ORDER_READY_DELIVERY");
+        postOrderRepo.save(postOrder);
         log.info("Order Id: " + postOrder.getPostShipOrderId() + ", assign from post office: " +
                  postOrder.getFromPostOffice().getPostOfficeName() + " to post office: " + postOrder.getToPostOffice().getPostOfficeName() +
                  ", trip id: " + postShipOrderTripPostOfficeAssignment.getPostOfficeTripId());

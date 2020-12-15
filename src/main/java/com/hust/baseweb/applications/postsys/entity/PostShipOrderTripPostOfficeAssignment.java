@@ -24,5 +24,5 @@ public class PostShipOrderTripPostOfficeAssignment {
     @Column(name="post_office_trip_id")
     private UUID postOfficeTripId;
     @Column(name="delivery_order")
-    private int delivery_order;
+    private int deliveryOrder;
 }

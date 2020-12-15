@@ -57,12 +57,21 @@ public class PostTripService {
         postFixedTrip.setPostOfficeTripId(postOfficetrip.getPostOfficeTripId());
         postFixedTrip.setFromDate(input.getFromDate());
         postFixedTrip.setThruDate(input.getThruDate());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
-        postFixedTrip.setScheduleDepartureTime(simpleDateFormat.format(input.getSheduleDepatureTime()));
+        postFixedTrip.setScheduleDepartureTime(input.getSheduleDepatureTime());
         if (postFixedTrip.getFromDate() == null) {
             postFixedTrip.setFromDate(new Date());
         }
         return postFixedTripRepo.save(postFixedTrip);
+    }
+
+
+    public void createPostTrip1(CreatePostTripModel input) {
+        PostOfficeTrip postOfficetrip = new PostOfficeTrip();
+        postOfficetrip.setFromPostOfficeId(input.getFromPostOfficeId());
+        postOfficetrip.setToPostOfficeId(input.getToPostOfficeId());
+        postOfficetrip.setFromDate(input.getFromDate());
+        postOfficetrip.setThruDate(input.getThruDate());
+        postOfficetrip = postOfficeTripRepo.save(postOfficetrip);
     }
 
     public List<PostFixedTrip> createVehicleList(List<CreatePostTripModel> createPostTripModels) {

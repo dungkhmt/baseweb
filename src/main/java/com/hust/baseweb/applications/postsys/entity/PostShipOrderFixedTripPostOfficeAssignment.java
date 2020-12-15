@@ -12,17 +12,26 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="post_ship_order_fixed_trip_post_office_assignment")
+@Table(name = "post_ship_order_fixed_trip_post_office_assignment")
 @Entity
 public class PostShipOrderFixedTripPostOfficeAssignment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="post_ship_order_fixed_trip_post_office_assignment_id")
+    @Column(name = "post_ship_order_fixed_trip_post_office_assignment_id")
     private UUID postShipOrderFixedTripPostOfficeAssignmentId;
-    @Column(name="post_ship_order_id")
+    @Column(name = "post_ship_order_id")
     private UUID postShipOrderId;
-    @Column(name="post_office_fixed_trip_execute_id")
+    @Column(name = "post_office_fixed_trip_execute_id")
     private UUID postOfficeFixedTripExecuteId;
-    @Column(name="delivery_order")
-    private int delivery_order;
+
+    @OneToOne
+    @JoinColumn(name = "post_ship_order_trip_post_office_assignment_id",
+                referencedColumnName = "post_ship_order_trip_post_office_assignment_id",
+                insertable = false,
+                updatable = false)
+    private PostShipOrderTripPostOfficeAssignment postShipOrderTripPostOfficeAssignment;
+
+    @Column(name = "post_ship_order_trip_post_office_assignment_id")
+    private UUID postShipOrderTripPostOfficeAssignmentId;
 }

@@ -9,36 +9,46 @@ import com.hust.baseweb.applications.postsys.entity.PostOrder;
 import com.hust.baseweb.applications.postsys.model.ResponseSample;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderOutputModel;
+import com.hust.baseweb.applications.postsys.model.postshiporder.UpdatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.repo.PostCustomerRepo;
 import com.hust.baseweb.applications.postsys.repo.PostOrderRepo;
 import com.hust.baseweb.service.UserService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@Log4j2
 public class PostOrderService {
-    @Autowired private PostOrderRepo postOrderRepo;
-    @Autowired UserService userService;
-    @Autowired PostCustomerRepo postCustomerRepo;
-    @Autowired GeoPointRepo geoPointRepo;
-    @Autowired PostalAddressRepo postalAddressRepo;    
-    
-    public List<PostOrder> findAllPostOrder(){
+
+    @Autowired
+    private PostOrderRepo postOrderRepo;
+    @Autowired
+    UserService userService;
+    @Autowired
+    PostCustomerRepo postCustomerRepo;
+    @Autowired
+    GeoPointRepo geoPointRepo;
+    @Autowired
+    PostalAddressRepo postalAddressRepo;
+
+    public List<PostOrder> findAllPostOrder() {
         List<PostOrder> orders = (List<PostOrder>) postOrderRepo.findAll();
         return orders;
     }
-    public CreatePostShipOrderOutputModel createPostShipOrder(CreatePostShipOrderInputModel input){
+
+    public CreatePostShipOrderOutputModel createPostShipOrder(CreatePostShipOrderInputModel input) {
         input.print();
         CreatePostShipOrderOutputModel result = new CreatePostShipOrderOutputModel();
         PostOrder postOrder = new PostOrder();
         if (input.isFromCustomerExist()) {
             PostCustomer fromCustomer = postCustomerRepo.findByPostCustomerId(UUID.fromString(input.getFromCustomerId()));
             postOrder.setFromCustomer(fromCustomer);
-        }
-        else {
+        } else {
             //Create new post customer
             GeoPoint geoPoint = new GeoPoint();
             geoPoint.setLatitude(input.getFromCustomerLat());
@@ -58,8 +68,7 @@ public class PostOrderService {
         if (input.isToCustomerExist()) {
             PostCustomer toCustomer = postCustomerRepo.findByPostCustomerId(UUID.fromString(input.getToCustomerId()));
             postOrder.setToCustomer(toCustomer);
-        }
-        else {
+        } else {
             //Create new post customer
             GeoPoint geoPoint = new GeoPoint();
             geoPoint.setLatitude(input.getToCustomerLat());
@@ -88,11 +97,33 @@ public class PostOrderService {
         result.setDetail("Create post order success");
         return result;
     }
+
     public ResponseSample CancelPostOrder(String postOrderId) {
         try {
-            postOrderRepo.updatePostOrderStatus(UUID.fromString(postOrderId),"ORDER_CANCELLED");
+            postOrderRepo.updatePostOrderStatus(UUID.fromString(postOrderId), "ORDER_CANCELLED");
             return new ResponseSample("SUCCESS", "Delete order success");
         } catch (Exception e) {
+            return new ResponseSample("ERROR", "");
+        }
+    }
+
+    @Transactional("jpa_transaction_manager")
+    public ResponseSample updatePostOrderStatus(UpdatePostShipOrderInputModel updatePostShipOrderInputModel) {
+        try {
+            if (updatePostShipOrderInputModel.getCurrentPostOfficeId() == null ||
+                updatePostShipOrderInputModel.getCurrentPostOfficeId().length() == 0) {
+                postOrderRepo.updatePostOrderStatus(
+                    UUID.fromString(updatePostShipOrderInputModel.getPostOrderId()),
+                    updatePostShipOrderInputModel.getStatus());
+            } else {
+                postOrderRepo.updatePostOrderStatusAndCurrentPostOffice(
+                    UUID.fromString(updatePostShipOrderInputModel.getPostOrderId()),
+                    updatePostShipOrderInputModel.getStatus(),
+                    updatePostShipOrderInputModel.getCurrentPostOfficeId());
+            }
+            return new ResponseSample("SUCCESS", "Update order success");
+        } catch (Exception e) {
+            log.error(e);
             return new ResponseSample("ERROR", "");
         }
     }

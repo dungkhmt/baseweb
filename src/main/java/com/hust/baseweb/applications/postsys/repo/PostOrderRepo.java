@@ -29,6 +29,8 @@ public interface PostOrderRepo extends JpaRepository<PostOrder, UUID> {
     @Query("update PostOrder set statusId = ?2 where postShipOrderId = ?1")
     void updatePostOrderStatus(UUID post_ship_order_id, String status_id);
 
-
+    @Modifying
+    @Query("update PostOrder set statusId = ?2, currentPostOfficeId = ?3 where postShipOrderId = ?1")
+    void updatePostOrderStatusAndCurrentPostOffice(UUID post_ship_order_id, String status_id, String currentPostOfficeId);
 }
 

@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.postsys.model.postcustomer.CreatePostCustom
 import com.hust.baseweb.applications.postsys.model.postoffice.CreatePostOfficeInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderOutputModel;
+import com.hust.baseweb.applications.postsys.model.postshiporder.UpdatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.model.posttrip.CreatePostTripModel;
 import com.hust.baseweb.applications.postsys.model.posttrip.ExecuteTripInputModel;
 import com.hust.baseweb.applications.postsys.service.*;
@@ -104,6 +105,12 @@ public class PostAPIController {
         return ResponseEntity.ok().body(result);
     }
 
+
+    @PostMapping("/update-post-order-status")
+    public ResponseEntity updatePostOrderStatus(@RequestBody UpdatePostShipOrderInputModel updatePostShipOrderInputModel) {
+        return ResponseEntity.ok().body(postOrderService.updatePostOrderStatus(updatePostShipOrderInputModel));
+    }
+
     @GetMapping("/find-customer-by-partyid")
     public ResponseEntity findCustomerByPartyId(Principal principal) {
         PostCustomer result = postCustomerService.findCustomerByPartyId(principal);
@@ -139,6 +146,13 @@ public class PostAPIController {
         PostFixedTrip postFixedTrip = postTripService.createPostTrip(creatPostTripModel);
         return ResponseEntity.ok().body(postFixedTrip);
     }
+
+    @PostMapping("/create-post-trip1")
+    public ResponseEntity createPostTrip1(@RequestBody CreatePostTripModel creatPostTripModel) {
+        postTripService.createPostTrip1(creatPostTripModel);
+        return ResponseEntity.ok().body(new Object());
+    }
+
 
     @PostMapping("/create-post-trip-list")
     public ResponseEntity createPostTripList(@RequestParam("file") MultipartFile multipartFile) throws IOException  {
@@ -181,4 +195,5 @@ public class PostAPIController {
     public ResponseEntity getExecuteTripByDate(@RequestParam Date date) {
         return ResponseEntity.ok().body(postTripService.getExecuteTripByDate(date));
     }
+
 }

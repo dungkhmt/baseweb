@@ -9,7 +9,7 @@ import java.util.Date;
 public class CreatePostTripModel {
     private String fromPostOfficeId;
     private String toPostOfficeId;
-    private Date sheduleDepatureTime;
+    private String sheduleDepatureTime;
     private Date fromDate;
     private Date thruDate;
 }
