@@ -31,6 +31,47 @@ public class LakeServiceImpl implements LakeService {
     }
 
     @Override
+    public Lake edit(UserLogin userLogin, LakeModel lakeModel, String lakeId){
+        Lake lake = lakeRepo.findByLakeId(lakeId);
+
+        lake.setLakeName(lakeModel.getLakeName());
+        try {
+            String[] latlng = lakeModel.getPosition().split(",");
+            if (latlng[0].trim() != "")
+            lake.setLatitude(latlng[0].trim());
+            if (latlng[1].trim() != "")
+                lake.setLatitude(latlng[0].trim());
+            lake.setLongitude(latlng[1].trim());
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
+        lake.setCapCongTrinh(lakeModel.getCapCongTrinh());
+
+        lake.setDienTichLuuVuc(lakeModel.getDienTichLuuVuc());
+
+        lake = lakeRepo.save(lake);
+
+        /*List<LakeRole> lakeRoleList = lakeRoleRepo.findAllByUserLoginIdAndLakeAndThruDate(userLogin.getUserLoginId(), lake, null);
+        if(lakeRoleList != null && lakeRoleList.size() > 0){
+            log.info("save, lakeId " + lake.getLakeId() + " owned by userloginId " + userLogin.getUserLoginId() + " EXISTS!!!");
+            return null;
+        }
+
+        LakeRole lakeRole = new LakeRole();
+        lakeRole.setLake(lake);
+        lakeRole.setUserLoginId(userLogin.getUserLoginId());
+        lakeRole.setFromDate(new Date());
+        lakeRole.setRoleTypeId("LAKE_OWNER");
+        lakeRole = lakeRoleRepo.save(lakeRole);
+        log.info("save, saved lakeRole successfully, lakeRoleId = " + lakeRole.getLakeRoleId());
+        */
+        return lake;
+    }
+
+    @Override
     public List<Lake> getLakesOwnedByUserLogin(UserLogin userLogin) {
         List<LakeRole> lakeRoles = lakeRoleRepo.findAllByUserLoginIdAndThruDate(userLogin.getUserLoginId(),null);
         log.info("getLakesOwnedByUserLogin, list.sz = " + lakeRoles.size());
@@ -43,10 +84,12 @@ public class LakeServiceImpl implements LakeService {
         return lakes;
     }
 
+
     @Override
     public List<Lake> findAll() {
         return lakeRepo.findAll();
     }
+
 
     @Override
     @Transactional
@@ -108,6 +151,8 @@ public class LakeServiceImpl implements LakeService {
             return null;
         }
 
+
+
         LakeRole lakeRole = new LakeRole();
         lakeRole.setLake(lake);
         lakeRole.setUserLoginId(userLogin.getUserLoginId());
@@ -126,13 +171,16 @@ public class LakeServiceImpl implements LakeService {
          */
         Lake lake = lakeRepo.findByLakeId(lakeId);
         Random R = new Random();
-        double mucDamBaoTuoi = (1000+ R.nextInt(1000))*1.0/100;
-        double dienTichTuoi = (10000+ R.nextInt(10000))*1.0/100;
-        double mucNuocLuKiemTra = (10000+ R.nextInt(10000))*1.0/100;;
-        double luuLuongXaLuKiemTra = (10000+ R.nextInt(10000))*1.0/100;;
-        double mucNuocDangBinhThuong = (10000+ R.nextInt(10000))*1.0/100;;
+        double mucDamBaoTuoi = (1000 + R.nextInt(1000)) * 1.0 / 100;
+        double dienTichTuoi = (10000 + R.nextInt(10000)) * 1.0 / 100;
+        double mucNuocLuKiemTra = (10000 + R.nextInt(10000)) * 1.0 / 100;
+        ;
+        double luuLuongXaLuKiemTra = (10000 + R.nextInt(10000)) * 1.0 / 100;
+        ;
+        double mucNuocDangBinhThuong = (10000 + R.nextInt(10000)) * 1.0 / 100;
+        ;
 
-        lake.setMucDamBaoTuoi(mucDamBaoTuoi+"");
+        lake.setMucDamBaoTuoi(mucDamBaoTuoi + "");
         lake.setDienTichTuoi(dienTichTuoi + "");
         lake.setMucNuocLuKiemTra(mucNuocLuKiemTra + "");
         lake.setLuuLuongXaLuKiemTra(luuLuongXaLuKiemTra + "");
@@ -140,12 +188,12 @@ public class LakeServiceImpl implements LakeService {
 
         int[] mucNuocLuKiemTraHistory = new int[10];
         int[] luuLuongLuKiemTraHistory = new int[10];
-        for(int i = 0; i < mucNuocLuKiemTraHistory.length; i++){
+        for (int i = 0; i < mucNuocLuKiemTraHistory.length; i++) {
             mucNuocLuKiemTraHistory[i] = R.nextInt(100) + 10;
         }
-        for(int i = 0; i < luuLuongLuKiemTraHistory.length; i++){
+        for (int i = 0; i < luuLuongLuKiemTraHistory.length; i++) {
             luuLuongLuKiemTraHistory[i] = R.nextInt(100) + 50;
         }
-        return new LakeLiveInfoModel(lake,mucNuocLuKiemTraHistory, luuLuongLuKiemTraHistory);
+        return new LakeLiveInfoModel(lake, mucNuocLuKiemTraHistory, luuLuongLuKiemTraHistory);
     }
 }

@@ -111,7 +111,7 @@ public class BacklogTask {
         ArrayList<String> needToDelete = new ArrayList<>();
 
         for(int i = 0; i < input.getAttachmentPaths().length; i++) {
-            boolean isFileExisted = Arrays.stream(savedNames).anyMatch(input.getAttachmentPaths()[i]::equals);
+            boolean isFileExisted = Arrays.asList(savedNames).contains(input.getAttachmentPaths()[i]);
 
             switch(input.getAttachmentStatus()[i]) {
                 case "deleted":
@@ -121,14 +121,15 @@ public class BacklogTask {
                     break;
                 case "new":
                     newAttachmentPaths.append(prefixFileName).append("-").append(input.getAttachmentPaths()[i]);
+                    newAttachmentPaths.append(";");
                     break;
                 case "uploaded":
                     newAttachmentPaths.append(input.getAttachmentPaths()[i]);
+                    newAttachmentPaths.append(";");
                     break;
                 default:
                     break;
             }
-            newAttachmentPaths.append(";");
         }
         if(newAttachmentPaths.length() > 0) {
             if(newAttachmentPaths.charAt(0) == ';') {

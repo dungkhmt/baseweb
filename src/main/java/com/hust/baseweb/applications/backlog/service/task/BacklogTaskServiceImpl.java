@@ -25,22 +25,26 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
     private BacklogFileStorageServiceImpl storageService;
 
     @Override
-    public BacklogTaskService save(CreateBacklogTaskInputModel input) {
-        return null;
+    public BacklogTask save(BacklogTask task) {
+        return backlogTaskRepo.save(task);
     }
 
     @Override
     public List<BacklogTask> findByBacklogProjectId(String backlogProjectId) {
-        return backlogTaskRepo.findByBacklogProjectId(backlogProjectId);
+        List<BacklogTask> taskList = backlogTaskRepo.findByBacklogProjectId(backlogProjectId);
+        if(taskList == null) return  new ArrayList<>();
+        return taskList;
     }
 
     @Override
     public BacklogTask findByBacklogTaskId(UUID backlogTaskId) {
-        return backlogTaskRepo.findByBacklogTaskId(backlogTaskId);
+        BacklogTask task = backlogTaskRepo.findByBacklogTaskId(backlogTaskId);
+        if(task == null) return new BacklogTask();
+        return task;
     }
 
     @Override
-    public BacklogTask create(CreateBacklogTaskInputModel input, String userLoginId) throws ParseException {
+    public BacklogTask create(CreateBacklogTaskInputModel input, String userLoginId) {
 
 //        input.setCreatedStamp(date);
 //        input.setCreatedDate(date);

@@ -23,6 +23,12 @@ public class LakeAPIController {
     private LakeService lakeService;
     private UserService userService;
 
+    @PostMapping("/edit-lake/{lakeId}")
+    public ResponseEntity<?> editLake(Principal principal,@RequestBody LakeModel lakeModel,@PathVariable String lakeId){
+        UserLogin u = userService.findById(principal.getName());
+        Lake lake = lakeService.edit(u,lakeModel,lakeId);
+        return ResponseEntity.ok().body(lake);
+    }
 
     @PostMapping("/create-lake")
     public ResponseEntity<?> createLake(Principal principal, @RequestBody LakeModel lakeModel){

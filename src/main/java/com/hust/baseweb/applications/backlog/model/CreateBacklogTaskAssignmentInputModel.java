@@ -14,4 +14,5 @@ public class CreateBacklogTaskAssignmentInputModel {
     private List<UUID> assignedToPartyId;
     private Date startDate;
     private Date finishedDate;
+    private String statusId;
 }

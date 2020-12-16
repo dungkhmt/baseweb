@@ -18,7 +18,12 @@ public class BacklogTaskAssignmentServiceImpl implements BacklogTaskAssignmentSe
     BacklogTaskAssignmentRepo backlogTaskAssignmentRepo;
 
     @Override
-    public List<BacklogTaskAssignment> save(CreateBacklogTaskAssignmentInputModel input) {
+    public BacklogTaskAssignment save(BacklogTaskAssignment taskAssignment) {
+        return backlogTaskAssignmentRepo.save(taskAssignment);
+    }
+
+    @Override
+    public List<BacklogTaskAssignment> create(CreateBacklogTaskAssignmentInputModel input) {
         List<BacklogTaskAssignment> backlogTaskAssignments = new ArrayList<>();
 
         // add new assignment or modify existed assigment
