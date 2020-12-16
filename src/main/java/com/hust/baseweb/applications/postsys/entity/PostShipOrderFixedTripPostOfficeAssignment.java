@@ -20,10 +20,16 @@ public class PostShipOrderFixedTripPostOfficeAssignment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "post_ship_order_fixed_trip_post_office_assignment_id")
     private UUID postShipOrderFixedTripPostOfficeAssignmentId;
-    @Column(name = "post_ship_order_id")
-    private UUID postShipOrderId;
+
     @Column(name = "post_office_fixed_trip_execute_id")
     private UUID postOfficeFixedTripExecuteId;
+
+    @OneToOne
+    @JoinColumn(name = "post_office_fixed_trip_execute_id",
+                referencedColumnName = "post_office_fixed_trip_execute_id",
+                insertable = false,
+                updatable = false)
+    private PostTripExecute postOfficeFixedTripExecute;
 
     @OneToOne
     @JoinColumn(name = "post_ship_order_trip_post_office_assignment_id",
@@ -31,6 +37,8 @@ public class PostShipOrderFixedTripPostOfficeAssignment {
                 insertable = false,
                 updatable = false)
     private PostShipOrderTripPostOfficeAssignment postShipOrderTripPostOfficeAssignment;
+
+
 
     @Column(name = "post_ship_order_trip_post_office_assignment_id")
     private UUID postShipOrderTripPostOfficeAssignmentId;

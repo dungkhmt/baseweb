@@ -18,6 +18,6 @@ public class ExecuteTripInputModel {
     private Date depatureDateTime;
     private String postmanId;
     private String status;
-    private List<String> postOrderIds;
+    private List<String> postShipOrderFixedTripPostOfficeAssignmentIds;
 
 }

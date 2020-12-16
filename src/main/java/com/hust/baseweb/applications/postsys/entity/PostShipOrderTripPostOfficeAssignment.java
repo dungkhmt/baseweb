@@ -21,6 +21,14 @@ public class PostShipOrderTripPostOfficeAssignment {
     private UUID postShipOrderPostOfficeTripAssignmentId;
     @Column(name="post_ship_order_id")
     private UUID postShipOrderId;
+
+    @OneToOne
+    @JoinColumn(name = "post_ship_order_id",
+                referencedColumnName = "post_ship_order_id",
+                insertable = false,
+                updatable = false)
+    private PostOrder postOrder;
+
     @Column(name="post_office_trip_id")
     private UUID postOfficeTripId;
     @Column(name="delivery_order")

@@ -18,12 +18,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PostTripExecute {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="post_office_fixed_trip_execute_id")
     private UUID postOfficeFixedTripExecuteId;
     @Column(name="post_office_fixed_trip_id")
     private UUID postOfficeFixedTripId;
     @Column(name="postman_id")
-    private String postmanId;
+    private UUID postmanId;
     @Column(name="departure_date_time")
     private Date departureDateTime;
     @Column(name="status")

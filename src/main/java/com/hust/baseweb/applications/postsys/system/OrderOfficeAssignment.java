@@ -1,18 +1,16 @@
 package com.hust.baseweb.applications.postsys.system;
 
 import com.hust.baseweb.applications.postsys.entity.*;
-import com.hust.baseweb.applications.postsys.model.posttrip.PostShipOrderFixedTripPostOfficeAssignmentOM;
+import com.hust.baseweb.applications.postsys.model.posttrip.PostShipOrderTripPostOfficeAssignmentOM;
 import com.hust.baseweb.applications.postsys.repo.*;
 import com.hust.baseweb.utils.LatLngUtils;
 import lombok.extern.log4j.Log4j2;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Log4j2
 @Component
@@ -32,6 +30,7 @@ public class OrderOfficeAssignment {
     public void setPostShipOrderTripPostOfficeAssignmentRepo(PostShipOrderTripPostOfficeAssignmentRepo postShipOrderTripPostOfficeAssignmentRepo) {
         this.postShipOrderTripPostOfficeAssignmentRepo = postShipOrderTripPostOfficeAssignmentRepo;
     }
+
     @Autowired
     public void setPostShipOrderFixedTripPostOfficeAssignmentRepo(PostShipOrderFixedTripPostOfficeAssignmentRepo postShipOrderFixedTripPostOfficeAssignmentRepo) {
         this.postShipOrderFixedTripPostOfficeAssignmentRepo = postShipOrderFixedTripPostOfficeAssignmentRepo;
@@ -107,7 +106,11 @@ public class OrderOfficeAssignment {
         }
     }
 
-    public void findShortestTrip(List<PostOfficeTrip> postOfficeTrips, List<PostOffice> postOffices, PostOrder postOrder) {
+    public void findShortestTrip(
+        List<PostOfficeTrip> postOfficeTrips,
+        List<PostOffice> postOffices,
+        PostOrder postOrder
+    ) {
         Map<String, Integer> postOfficeIndex = new HashMap<>();
         for (int i = 0; i < postOffices.size(); i++) {
             postOfficeIndex.put(postOffices.get(i).getPostOfficeId(), i);
@@ -130,7 +133,10 @@ public class OrderOfficeAssignment {
                 for (PostOfficeTrip postOfficetrip : postOfficeTrips) {
                     if (postOfficetrip
                             .getFromPostOffice().getPostOfficeId().equals(postOffices.get(i).getPostOfficeId()) &&
-                        postOfficetrip.getToPostOffice().getPostOfficeId().equals(postOffices.get(j).getPostOfficeId())) {
+                        postOfficetrip
+                            .getToPostOffice()
+                            .getPostOfficeId()
+                            .equals(postOffices.get(j).getPostOfficeId())) {
                         distanceMatrix[postOfficeIndex.get(postOffices.get(i).getPostOfficeId())][postOfficeIndex.get(
                             postOffices.get(j).getPostOfficeId())] =
                             LatLngUtils.distance(
@@ -179,11 +185,12 @@ public class OrderOfficeAssignment {
                 }
             }
         }
-        PostShipOrderFixedTripPostOfficeAssignmentOM postShipOrderFixedTripPostOfficeAssignment = postShipOrderFixedTripPostOfficeAssignmentRepo.findByPostShipOrderId(postOrder.getPostShipOrderId()).get(0);
         int current_order = 0;
         try {
-            current_order = postShipOrderFixedTripPostOfficeAssignment.getDeliveryOrder();
-        } catch (NullPointerException e) {
+            PostShipOrderTripPostOfficeAssignmentOM postShipOrderTripPostOfficeAssignment = postShipOrderTripPostOfficeAssignmentRepo
+                .findByMaxDeliveryOrderPostShipOrderId(postOrder.getPostShipOrderId());
+            current_order = postShipOrderTripPostOfficeAssignment.getDeliveryOrder();
+        } catch (NullPointerException | IndexOutOfBoundsException e) {
             log.error("Order executing trip not found, create new");
         }
         PostShipOrderTripPostOfficeAssignment postShipOrderTripPostOfficeAssignment = new PostShipOrderTripPostOfficeAssignment();
@@ -196,12 +203,18 @@ public class OrderOfficeAssignment {
                 postShipOrderTripPostOfficeAssignment.setPostOfficeTripId(postOfficetrip.getPostOfficeTripId());
             }
         }
-        postShipOrderTripPostOfficeAssignment = postShipOrderTripPostOfficeAssignmentRepo.save(postShipOrderTripPostOfficeAssignment);
+        postShipOrderTripPostOfficeAssignment = postShipOrderTripPostOfficeAssignmentRepo.save(
+            postShipOrderTripPostOfficeAssignment);
         postOrder.setStatusId("POST_ORDER_READY_DELIVERY");
         postOrderRepo.save(postOrder);
-        log.info("Order Id: " + postOrder.getPostShipOrderId() + ", assign from post office: " +
-                 postOrder.getFromPostOffice().getPostOfficeName() + " to post office: " + postOrder.getToPostOffice().getPostOfficeName() +
-                 ", trip id: " + postShipOrderTripPostOfficeAssignment.getPostOfficeTripId());
+        log.info("Order Id: " +
+                 postOrder.getPostShipOrderId() +
+                 ", assign from post office: " +
+                 postOrder.getFromPostOffice().getPostOfficeName() +
+                 " to post office: " +
+                 postOrder.getToPostOffice().getPostOfficeName() +
+                 ", trip id: " +
+                 postShipOrderTripPostOfficeAssignment.getPostOfficeTripId());
     }
 
     public static <T, E> T getKeysByValue(Map<T, E> map, E value) {
