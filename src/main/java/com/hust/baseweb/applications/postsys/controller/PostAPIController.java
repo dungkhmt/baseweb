@@ -191,9 +191,9 @@ public class PostAPIController {
         return ResponseEntity.ok().body(postTripService.updatePostTripExecute(executeTripInputModel));
     }
 
-    @GetMapping
-    public ResponseEntity getExecuteTripByDate(@RequestParam Date date) {
-        return ResponseEntity.ok().body(postTripService.getExecuteTripByDate(date));
-    }
+//    @GetMapping("/get-execute-trip-by-date")
+//    public ResponseEntity getExecuteTripByDate(@RequestParam Date date) {
+//        return ResponseEntity.ok().body(postTripService.getExecuteTripByDate(date));
+//    }
 
 }

@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.postsys.model.posttrip;
 
 import com.hust.baseweb.applications.postsys.entity.PostOrder;
+import com.hust.baseweb.applications.postsys.entity.PostShipOrderFixedTripPostOfficeAssignment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,5 @@ public class ExecuteTripOutputModel {
     private Date depatureDateTime;
     private String postmanName;
     private String status;
-    private List<PostOrder> postOrders;
+    private List<PostShipOrderFixedTripPostOfficeAssignment> postShipOrderFixedTripPostOfficeAssignments;
 }

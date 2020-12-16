@@ -146,6 +146,9 @@ public class PostTripService {
         if (executeTripInputModel.getStatus() != null && executeTripInputModel.getStatus().length() > 0) {
             postTripExecute.setStatus(executeTripInputModel.getStatus());
         }
+        if (executeTripInputModel.getDepatureDateTime() != null) {
+            postTripExecute.setDepartureDateTime(executeTripInputModel.getDepatureDateTime());
+        }
         if (executeTripInputModel.getStatus().equals("EXECUTING")) {
             List<PostOrder> postOrders = new ArrayList<>();
             for (PostShipOrderFixedTripPostOfficeAssignment postShipOrderFixedTripPostOfficeAssignment : postShipOrderFixedTripPostOfficeAssignments) {
