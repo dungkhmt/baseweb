@@ -75,6 +75,8 @@ public class PostOrder {
     @Column(name="current_post_office_id")
     private String currentPostOfficeId;
 
+    @Column(name="created_stamp")
+    private Date createdStamp;
 
     public PostOrder() {
         fromCustomer = new PostCustomer();

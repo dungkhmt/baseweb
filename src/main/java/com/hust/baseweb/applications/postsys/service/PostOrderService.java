@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -126,5 +127,11 @@ public class PostOrderService {
             log.error(e);
             return new ResponseSample("ERROR", "");
         }
+    }
+
+    public List<PostOrder> findAllOrderByDay(Date input) {
+        Date tomorrow = new Date(input.getTime() + (1000 * 60 * 60 * 24));
+        log.info("Select post order between " + input + ", " + tomorrow);
+        return postOrderRepo.findAllByCreatedStampGreaterThanEqualAndCreatedStampLessThan(input, tomorrow);
     }
 }

@@ -15,12 +15,14 @@ import com.poiji.exception.PoijiExcelType;
 import com.poiji.option.PoijiOptions;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +58,8 @@ public class PostAPIController {
     }
 
     @PostMapping("/upload-post-office-list")
-    public ResponseEntity<?> uploadPostOfficeList(@RequestParam("file") MultipartFile multipartFile
+    public ResponseEntity<?> uploadPostOfficeList(
+        @RequestParam("file") MultipartFile multipartFile
     ) throws IOException {
         List<CreatePostOfficeInputModel> createPostOfficeInputModels
             = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreatePostOfficeInputModel.class,
@@ -107,7 +110,9 @@ public class PostAPIController {
 
 
     @PostMapping("/update-post-order-status")
-    public ResponseEntity updatePostOrderStatus(@RequestBody UpdatePostShipOrderInputModel updatePostShipOrderInputModel) {
+    public ResponseEntity updatePostOrderStatus(
+        @RequestBody UpdatePostShipOrderInputModel updatePostShipOrderInputModel
+    ) {
         return ResponseEntity.ok().body(postOrderService.updatePostOrderStatus(updatePostShipOrderInputModel));
     }
 
@@ -124,7 +129,7 @@ public class PostAPIController {
     }
 
     @DeleteMapping("/delete-post-ship-order/{postShipOrderID}")
-    public ResponseEntity deletePostShipOrder(@PathVariable(required = true) String postShipOrderID ) {
+    public ResponseEntity deletePostShipOrder(@PathVariable(required = true) String postShipOrderID) {
         ResponseSample response = postOrderService.CancelPostOrder(postShipOrderID);
         return ResponseEntity.ok().body(response);
     }
@@ -155,7 +160,7 @@ public class PostAPIController {
 
 
     @PostMapping("/create-post-trip-list")
-    public ResponseEntity createPostTripList(@RequestParam("file") MultipartFile multipartFile) throws IOException  {
+    public ResponseEntity createPostTripList(@RequestParam("file") MultipartFile multipartFile) throws IOException {
         List<CreatePostOfficeInputModel> createPostOfficeInputModels
             = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreatePostOfficeInputModel.class,
                               PoijiOptions.PoijiOptionsBuilder.settings().sheetName("DanhSachBuuCuc").build());
@@ -191,9 +196,11 @@ public class PostAPIController {
         return ResponseEntity.ok().body(postTripService.updatePostTripExecute(executeTripInputModel));
     }
 
-//    @GetMapping("/get-execute-trip-by-date")
-//    public ResponseEntity getExecuteTripByDate(@RequestParam Date date) {
-//        return ResponseEntity.ok().body(postTripService.getExecuteTripByDate(date));
-//    }
+    @GetMapping("/get-order-by-day/{day}")
+    public ResponseEntity getPostOrderByDay(
+        @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date day
+    ) {
+        return ResponseEntity.ok().body(postOrderService.findAllOrderByDay(day));
+    }
 
 }

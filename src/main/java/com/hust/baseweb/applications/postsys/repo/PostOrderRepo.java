@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 @Repository
@@ -24,6 +25,8 @@ public interface PostOrderRepo extends JpaRepository<PostOrder, UUID> {
 
     @Query(value = "select * from post_ship_order pso where pso.to_post_office_id = ?1 and pso.status_id not in ('ORDER_CANCELLED')", nativeQuery = true)
     List<PostOrder> findByToPostOffice(String postOfficeId);
+
+    List<PostOrder> findAllByCreatedStampGreaterThanEqualAndCreatedStampLessThan(Date date1, Date date2);
 
     @Modifying
     @Query("update PostOrder set statusId = ?2 where postShipOrderId = ?1")
