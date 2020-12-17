@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,6 +25,7 @@ public class BacklogTaskAssignableServiceImpl implements BacklogTaskAssignableSe
         input.getAssignedToPartyId().forEach((assignedPartyId) -> {
             BacklogTaskAssignable assignment = backlogTaskAssignableRepo.findByBacklogTaskIdAndAndAssignedToPartyId(input.getBacklogTaskId(), assignedPartyId);
             if(assignment == null) {
+                if(input.getStartDate() == null) input.setStartDate(new Date());
                 backlogTaskAssignments.add(backlogTaskAssignableRepo.save(
                     new BacklogTaskAssignable(
                         input.getBacklogTaskId(),

@@ -273,6 +273,13 @@ public class BacklogControllerAPI {
         return ResponseEntity.ok(assignments);
     }
 
+    @PostMapping("backlog/add-multi-task-assignments")
+    public void addMultipleTaskAssignments(Principal principal, @RequestBody List<CreateBacklogTaskAssignmentInputModel> input) {
+        for(CreateBacklogTaskAssignmentInputModel assignment: input) {
+            addAssignments(principal, assignment);
+        }
+    }
+
     @PostMapping("backlog/add-assignable")
     public ResponseEntity<List<BacklogTaskAssignable>> addAssignable(Principal principal, @RequestBody CreateBacklogTaskAssignableInputModel input) {
         String userCreatedTask = backlogTaskService.findByBacklogTaskId(input.getBacklogTaskId()).getCreatedByUserLoginId();
