@@ -1,14 +1,13 @@
 package com.hust.baseweb.applications.postsys.entity;
 
+import com.hust.baseweb.applications.postsys.repo.PostShipOrderPostmanLastMileAssignmentRepo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -28,4 +27,7 @@ public class Postman {
     @Column(name="post_office_id")
     private String postOfficeId;
 
+    @OneToMany
+    @JoinColumn(name = "postman_id", referencedColumnName = "postman_id",insertable = false, updatable = false)
+    private List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments;
 }

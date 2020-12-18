@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.postsys.controller;
 import com.hust.baseweb.applications.postsys.entity.*;
 import com.hust.baseweb.applications.postsys.model.ResponseSample;
 import com.hust.baseweb.applications.postsys.model.postcustomer.CreatePostCustomerModel;
+import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignInput;
 import com.hust.baseweb.applications.postsys.model.postoffice.CreatePostOfficeInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderOutputModel;
@@ -203,4 +204,13 @@ public class PostAPIController {
         return ResponseEntity.ok().body(postOrderService.findAllOrderByDay(day));
     }
 
+    @GetMapping("/get-postman-list-order/{postOfficeId}")
+    public ResponseEntity getPostmanListAndOrderList(@PathVariable String postOfficeId) {
+        return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeId(postOfficeId));
+    }
+
+    @PostMapping("/submit-postman-assign")
+    public ResponseEntity getPostmanListAndOrderList(@RequestBody List<PostmanAssignInput> postmanAssignInputs) {
+        return ResponseEntity.ok().body(postmanService.createAssignment(postmanAssignInputs));
+    }
 }
