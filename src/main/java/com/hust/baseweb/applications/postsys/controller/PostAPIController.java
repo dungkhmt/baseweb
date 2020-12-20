@@ -209,6 +209,16 @@ public class PostAPIController {
         return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeId(postOfficeId));
     }
 
+    @GetMapping("/get-postman-list-order-bydate/{postOfficeId}")
+    public ResponseEntity getPostmanListAndOrderList(
+        @PathVariable String postOfficeId,
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
+            Date fromDate,
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate
+    ) {
+        return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeIdAndDate(postOfficeId, fromDate, toDate));
+    }
+
     @PostMapping("/submit-postman-assign")
     public ResponseEntity getPostmanListAndOrderList(@RequestBody List<PostmanAssignInput> postmanAssignInputs) {
         return ResponseEntity.ok().body(postmanService.createAssignment(postmanAssignInputs));

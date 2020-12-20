@@ -37,7 +37,7 @@ public class PostOfficeTrip {
     private String toPostOfficeId;
 
     @Column(name="from_date")
-    private Date FromDate;
+    private Date fromDate;
     @Column(name="thru_date")
-    private Date ThruDate;
+    private Date thruDate;
 }
