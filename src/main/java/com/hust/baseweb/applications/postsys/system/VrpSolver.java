@@ -4,10 +4,11 @@ import com.google.ortools.Loader;
 import com.google.ortools.constraintsolver.*;
 import com.hust.baseweb.applications.geo.entity.GeoPoint;
 import com.hust.baseweb.utils.LatLngUtils;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Log4j2
 public class VrpSolver {
     private long[][] distanceMatrix;
     private int vehicleNumber;
@@ -139,10 +140,10 @@ public class VrpSolver {
         List<Long> distances = new ArrayList<>();
         switch (routing.status()) {
             case 0:
-                System.out.println("ROUTING_NOT_SOLVED: Problem not solved yet.");
+                log.info("ROUTING_NOT_SOLVED: Problem not solved yet.");
                 break;
             case 1:
-                System.out.println("ROUTING_SUCCESS: Problem solved successfully.");
+                log.info("ROUTING_SUCCESS: Problem solved successfully.");
                 for (int i = 0; i < vehicleNumber; ++i) {
                     routes.add(new ArrayList<>());
                     long index = routing.start(i);
@@ -157,13 +158,13 @@ public class VrpSolver {
                 }
                 return new Route(true, routes, distances);
             case 2:
-                System.out.println("ROUTING_FAIL: No solution found to the problem.");
+                log.info("ROUTING_FAIL: No solution found to the problem.");
                 break;
             case 3:
-                System.out.println("ROUTING_FAIL_TIMEOUT: Time limit reached before finding a solution.");
+                log.info("ROUTING_FAIL_TIMEOUT: Time limit reached before finding a solution.");
                 break;
             case 4:
-                System.out.println("ROUTING_INVALID: Model, model parameters, or flags are not valid.");
+                log.info("ROUTING_INVALID: Model, model parameters, or flags are not valid.");
                 break;
         }
         return new Route(false, null, null);

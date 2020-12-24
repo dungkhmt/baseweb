@@ -60,12 +60,12 @@ public class PostmanService {
     public ResponseSample createAssignment(List<PostmanAssignInput> postmanAssignInputs) {
         List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = new ArrayList<>();
         for (PostmanAssignInput postmanAssignInput : postmanAssignInputs) {
-            PostShipOrderPostmanLastMileAssignment postShipOrderPostmanLastMileAssignment = new PostShipOrderPostmanLastMileAssignment();
-            postShipOrderPostmanLastMileAssignment.setPostmanId(UUID.fromString(postmanAssignInput.getPostmanId()));
             for (String postOrderId : postmanAssignInput.getPostOrderIds()) {
+                PostShipOrderPostmanLastMileAssignment postShipOrderPostmanLastMileAssignment = new PostShipOrderPostmanLastMileAssignment();
+                postShipOrderPostmanLastMileAssignment.setPostmanId(UUID.fromString(postmanAssignInput.getPostmanId()));
                 postShipOrderPostmanLastMileAssignment.setPostShipOrderId(UUID.fromString(postOrderId));
+                postShipOrderPostmanLastMileAssignments.add(postShipOrderPostmanLastMileAssignment);
             }
-            postShipOrderPostmanLastMileAssignments.add(postShipOrderPostmanLastMileAssignment);
         }
         postShipOrderPostmanLastMileAssignmentRepo.saveAll(postShipOrderPostmanLastMileAssignments);
         log.info("Successfully create " + + postShipOrderPostmanLastMileAssignments.size() +"  postman - postorder assignment");

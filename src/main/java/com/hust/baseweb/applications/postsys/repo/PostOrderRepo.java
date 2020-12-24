@@ -18,6 +18,8 @@ public interface PostOrderRepo extends JpaRepository<PostOrder, UUID> {
 
     List<PostOrder> findByStatusId(String statusId);
 
+    List<PostOrder> findByPostShipOrderIdIn(List<UUID> postOrderIds);
+
     List<PostOrder> findByStatusIdAndFromPostOfficeId(String statusId, String fromPostOfficeId);
 
     @Query(value = "select * from post_ship_order pso where pso.from_post_office_id = ?1 and pso.status_id not in ('ORDER_CANCELLED')", nativeQuery = true)

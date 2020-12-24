@@ -29,29 +29,31 @@ public class SolverService {
     PostmanRepo postmanRepo;
     public PostOfficeVrpSolveOutputModel postOfficeVrpSolve(PostOfficeVrpSolveInputModel postOfficeVrpSolveInputModel) {
         PostOffice postOffice = postOfficeRepo.findById(postOfficeVrpSolveInputModel.getPostOfficeId()).get();
+        List<PostOrder> postOrders = postOrderRepo.findByPostShipOrderIdIn(postOfficeVrpSolveInputModel.getPostOrderIds());
         List<GeoPoint> geoPoints = new ArrayList<>();
         geoPoints.add(postOffice.getPostalAddress().getGeoPoint());
-        List<PostOrder> postOrders;
         if (postOfficeVrpSolveInputModel.getType().equals("pick")) {
-            postOrders = postOrderRepo.findByFromPostOffice(postOfficeVrpSolveInputModel.getPostOfficeId());
             for (int i = 0; i < postOrders.size(); i++) {
                 geoPoints.add(postOrders.get(i).getFromCustomer().getPostalAddress().getGeoPoint());
             }
         }
         else {
-            postOrders = postOrderRepo.findByToPostOffice(postOfficeVrpSolveInputModel.getPostOfficeId());
             for (int i = 0; i < postOrders.size(); i++) {
                 geoPoints.add(postOrders.get(i).getToCustomer().getPostalAddress().getGeoPoint());
             }
         }
         if (postOrders.size() == 0) {
             log.info("No order to solve, postOfficeId = " + postOfficeVrpSolveInputModel.getPostOfficeId());
-            return new PostOfficeVrpSolveOutputModel(false, null, null);
+            return new PostOfficeVrpSolveOutputModel(false, null, null, postOfficeVrpSolveInputModel.getPostmanIds());
         }
-        List<Postman> postmen = postmanRepo.findByPostOfficeId(postOfficeVrpSolveInputModel.getPostOfficeId());
+        List<Postman> postmen = postmanRepo.findByPostmanIdIn(postOfficeVrpSolveInputModel.getPostmanIds());
+        if (postOrders.size() == 0) {
+            log.info("No postman to solve, postOfficeId = " + postOfficeVrpSolveInputModel.getPostOfficeId());
+            return new PostOfficeVrpSolveOutputModel(false, null, null, postOfficeVrpSolveInputModel.getPostmanIds());
+        }
         VrpSolver vrpSolver = new VrpSolver(geoPoints, postmen.size(), 0);
         Route route =  vrpSolver.solve();
-        PostOfficeVrpSolveOutputModel solution = new PostOfficeVrpSolveOutputModel(false, null, null);
+        PostOfficeVrpSolveOutputModel solution = new PostOfficeVrpSolveOutputModel(false, null, null, postOfficeVrpSolveInputModel.getPostmanIds());
         if (route.isSolutionFound()) {
             solution.setRoutes(new ArrayList<>());
             for (int i = 0; i < postmen.size(); i++) {

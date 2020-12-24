@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * postmen: danh sach nguoi dua thu
@@ -21,4 +22,5 @@ public class PostOfficeVrpSolveOutputModel {
     private boolean isSolutionFound;
     private List<List<PostOrder>> routes;
     private List<Long> distance;
+    private List<UUID> postmanIds;
 }

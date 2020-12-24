@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface PostmanRepo extends JpaRepository<Postman, UUID> {
     List<Postman> findByPostOfficeId(String postOfficeId);
+
+    List<Postman> findByPostmanIdIn(List<UUID> postmanIds);
 }
