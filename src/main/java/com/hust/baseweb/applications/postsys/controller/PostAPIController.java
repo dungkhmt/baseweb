@@ -153,12 +153,6 @@ public class PostAPIController {
         return ResponseEntity.ok().body(postFixedTrip);
     }
 
-    @PostMapping("/create-post-trip1")
-    public ResponseEntity createPostTrip1(@RequestBody CreatePostTripModel creatPostTripModel) {
-        postTripService.createPostTrip1(creatPostTripModel);
-        return ResponseEntity.ok().body(new Object());
-    }
-
 
     @PostMapping("/create-post-trip-list")
     public ResponseEntity createPostTripList(@RequestParam("file") MultipartFile multipartFile) throws IOException {
@@ -178,8 +172,12 @@ public class PostAPIController {
     }
 
     @GetMapping("/get_office_order_detail/{postOfficeId}")
-    public ResponseEntity getOfficeOrderDetail(@PathVariable String postOfficeId) {
-        return ResponseEntity.ok().body(postOfficeService.getOfficeOrderDetailOutput(postOfficeId));
+    public ResponseEntity getOfficeOrderDetail(
+        @PathVariable String postOfficeId, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
+        Date fromDate,
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate
+    ) {
+        return ResponseEntity.ok().body(postOfficeService.getOfficeOrderDetailOutput(postOfficeId, fromDate, toDate));
     }
 
     @GetMapping("/get-postman-list/{postOfficeId}")
@@ -222,5 +220,15 @@ public class PostAPIController {
     @PostMapping("/submit-postman-assign")
     public ResponseEntity getPostmanListAndOrderList(@RequestBody List<PostmanAssignInput> postmanAssignInputs) {
         return ResponseEntity.ok().body(postmanService.createAssignment(postmanAssignInputs));
+    }
+
+    @GetMapping("get-order-by-trip")
+    public ResponseEntity getPostOrderByTrip(
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
+            Date fromDate,
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate
+    ) {
+        List<PostFixedTrip> postFixedTrips = postOrderService.findAllVehicle();
+        return ResponseEntity.ok().body(postFixedTrips);
     }
 }

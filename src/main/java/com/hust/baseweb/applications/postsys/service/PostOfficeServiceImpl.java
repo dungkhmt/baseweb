@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -116,10 +117,12 @@ public class PostOfficeServiceImpl implements PostOfficeService {
     }
 
     @Override
-    public OfficeOrderDetailOutput getOfficeOrderDetailOutput(String postOfficeId) {
+    public OfficeOrderDetailOutput getOfficeOrderDetailOutput(String postOfficeId, Date startDate, Date endDate) {
         PostOffice postOffice = postOfficeRepo.findById(postOfficeId).get();
-        List<PostOrder> fromPostOrders = postOrderRepo.findByFromPostOffice(postOfficeId);
-        List<PostOrder> toPostOrders = postOrderRepo.findByToPostOffice(postOfficeId);
+        Date tomorrow = new Date(endDate.getTime() + (1000 * 60 * 60 * 24));
+        List<PostOrder> fromPostOrders = postOrderRepo.findByFromPostOfficeIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(postOfficeId, startDate, tomorrow);
+        List<PostOrder> toPostOrders = postOrderRepo.findByToPostOfficeIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(postOfficeId, startDate, tomorrow);
+        log.info(startDate + " -> " + endDate + " found " + fromPostOrders.size() + " frompostOrders, " + toPostOrders.size() + " toPostOrders");
         return new OfficeOrderDetailOutput(postOffice, fromPostOrders, toPostOrders);
     }
 }

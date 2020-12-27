@@ -31,4 +31,5 @@ public class PostFixedTrip {
     private Date FromDate;
     @Column(name="thru_date")
     private Date ThruDate;
+
 }

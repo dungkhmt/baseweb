@@ -43,6 +43,7 @@ public class PostTripService {
         return postFixedTripRepo.findByPostOfficeFixedTripId(UUID.fromString(postOfficeFixedTripId));
     }
 
+
     public PostFixedTrip createPostTrip(CreatePostTripModel input) {
         PostOfficeTrip postOfficetrip = postOfficeTripRepo.findByFromPostOfficeIdAndToPostOfficeId(
             input.getFromPostOfficeId(),
@@ -66,15 +67,15 @@ public class PostTripService {
         return postFixedTripRepo.save(postFixedTrip);
     }
 
-
-    public void createPostTrip1(CreatePostTripModel input) {
-        PostOfficeTrip postOfficetrip = new PostOfficeTrip();
-        postOfficetrip.setFromPostOfficeId(input.getFromPostOfficeId());
-        postOfficetrip.setToPostOfficeId(input.getToPostOfficeId());
-        postOfficetrip.setFromDate(input.getFromDate());
-        postOfficetrip.setThruDate(input.getThruDate());
-        postOfficetrip = postOfficeTripRepo.save(postOfficetrip);
-    }
+//
+//    public void createPostTrip1(CreatePostTripModel input) {
+//        PostOfficeTrip postOfficetrip = new PostOfficeTrip();
+//        postOfficetrip.setFromPostOfficeId(input.getFromPostOfficeId());
+//        postOfficetrip.setToPostOfficeId(input.getToPostOfficeId());
+//        postOfficetrip.setFromDate(input.getFromDate());
+//        postOfficetrip.setThruDate(input.getThruDate());
+//        postOfficetrip = postOfficeTripRepo.save(postOfficetrip);
+//    }
 
     public List<PostFixedTrip> createVehicleList(List<CreatePostTripModel> createPostTripModels) {
         List<PostFixedTrip> postFixedTrips = new ArrayList<>();

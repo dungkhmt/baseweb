@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.postsys.model.postoffice.CreatePostOfficeIn
 import com.hust.baseweb.applications.postsys.model.postoffice.OfficeOrderDetailOutput;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -20,5 +21,5 @@ public interface PostOfficeService {
 
     List<PostOffice> save(List<CreatePostOfficeInputModel> input);
 
-    OfficeOrderDetailOutput getOfficeOrderDetailOutput(String postOfficeId);
+    OfficeOrderDetailOutput getOfficeOrderDetailOutput(String postOfficeId, Date startDate, Date endDate);
 }

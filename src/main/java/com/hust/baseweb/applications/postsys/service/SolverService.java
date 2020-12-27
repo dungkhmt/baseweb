@@ -47,13 +47,14 @@ public class SolverService {
             return new PostOfficeVrpSolveOutputModel(false, null, null, postOfficeVrpSolveInputModel.getPostmanIds());
         }
         List<Postman> postmen = postmanRepo.findByPostmanIdIn(postOfficeVrpSolveInputModel.getPostmanIds());
-        if (postOrders.size() == 0) {
+        if (postmen.size() == 0) {
             log.info("No postman to solve, postOfficeId = " + postOfficeVrpSolveInputModel.getPostOfficeId());
             return new PostOfficeVrpSolveOutputModel(false, null, null, postOfficeVrpSolveInputModel.getPostmanIds());
         }
+        log.info("Solving " + postOrders.size() + " orders, " + postmen.size() + " postmen");
         VrpSolver vrpSolver = new VrpSolver(geoPoints, postmen.size(), 0);
         Route route =  vrpSolver.solve();
-        PostOfficeVrpSolveOutputModel solution = new PostOfficeVrpSolveOutputModel(false, null, null, postOfficeVrpSolveInputModel.getPostmanIds());
+        PostOfficeVrpSolveOutputModel solution = new PostOfficeVrpSolveOutputModel(false, new ArrayList<>(), null, postOfficeVrpSolveInputModel.getPostmanIds());
         if (route.isSolutionFound()) {
             solution.setRoutes(new ArrayList<>());
             for (int i = 0; i < postmen.size(); i++) {
@@ -66,6 +67,9 @@ public class SolverService {
             }
             solution.setSolutionFound(true);
             solution.setDistance(route.getDistance());
+        }
+        else {
+            log.info("Postman vrp solve: no solution found");
         }
         return solution;
     }

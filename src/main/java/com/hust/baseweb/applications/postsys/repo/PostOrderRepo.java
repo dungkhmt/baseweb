@@ -28,6 +28,10 @@ public interface PostOrderRepo extends JpaRepository<PostOrder, UUID> {
     @Query(value = "select * from post_ship_order pso where pso.to_post_office_id = ?1 and pso.status_id not in ('ORDER_CANCELLED')", nativeQuery = true)
     List<PostOrder> findByToPostOffice(String postOfficeId);
 
+    List<PostOrder> findByFromPostOfficeIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(String postOfficeId, Date date1, Date date2);
+
+    List<PostOrder> findByToPostOfficeIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(String postOfficeId, Date date1, Date date2);
+
     List<PostOrder> findAllByCreatedStampGreaterThanEqualAndCreatedStampLessThan(Date date1, Date date2);
 
     @Modifying
