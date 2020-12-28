@@ -1,6 +1,8 @@
 package com.hust.baseweb.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,6 +11,8 @@ import java.util.Date;
 @Entity
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class StatusType {
 
     @Id
@@ -28,9 +32,6 @@ public class StatusType {
         this.id = id;
         this.parentType = parentType;
         this.description = description;
-    }
-
-    public StatusType() {
     }
 }
 

@@ -211,7 +211,7 @@ public class UserServiceImpl implements UserService {
             "Bạn đã đăng ký thành công tài khoản tại hệ thống với tên đăng nhập %s, " +
             "vui lòng chờ cho đến khi được quản trị viên phê duyệt. \nXin cảm ơn!",
             userLoginId));
-        javaMailSender.send(simpleMailMessage);
+//        javaMailSender.send(simpleMailMessage);
     }
 
     /*@Override

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration >
 
-    <property name="LOG_PATTERN"    value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:-} --- [%15.15t{14}]  %-40.40logger{39} : %m%n"/>
-    <property name="FILE_LOG_PATTERN"    value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:-} --- [%15.15t{14}]  %-40.40logger{39} : %m%n"/>
+    <property name="LOG_PATTERN"    value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:-} --- [%15.15t{14}]  %-40.40logger{39} Line %L : %m%n"/>
+    <property name="FILE_LOG_PATTERN"    value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:-} --- [%15.15t{14}]  %-40.40logger{39} Line %L: %m%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

@@ -3,22 +3,28 @@ package com.hust.baseweb.applications.postsys.controller;
 import com.hust.baseweb.applications.postsys.entity.*;
 import com.hust.baseweb.applications.postsys.model.ResponseSample;
 import com.hust.baseweb.applications.postsys.model.postcustomer.CreatePostCustomerModel;
+import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignInput;
 import com.hust.baseweb.applications.postsys.model.postoffice.CreatePostOfficeInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderOutputModel;
+import com.hust.baseweb.applications.postsys.model.postshiporder.UpdatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.model.posttrip.CreatePostTripModel;
+import com.hust.baseweb.applications.postsys.model.posttrip.ExecuteTripInputModel;
 import com.hust.baseweb.applications.postsys.service.*;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
 import com.poiji.option.PoijiOptions;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -35,6 +41,9 @@ public class PostAPIController {
     PostPackageTypeService postPackageTypeService;
     @Autowired
     PostTripService postTripService;
+    @Autowired
+    PostmanService postmanService;
+
     @PostMapping("/create-post-office")
     public ResponseEntity<?> createPostOffice(Principal principal, @RequestBody CreatePostOfficeInputModel input) {
         PostOffice newPostOffice = postOfficeService.save(input);
@@ -50,7 +59,8 @@ public class PostAPIController {
     }
 
     @PostMapping("/upload-post-office-list")
-    public ResponseEntity<?> uploadPostOfficeList(@RequestParam("file") MultipartFile multipartFile
+    public ResponseEntity<?> uploadPostOfficeList(
+        @RequestParam("file") MultipartFile multipartFile
     ) throws IOException {
         List<CreatePostOfficeInputModel> createPostOfficeInputModels
             = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreatePostOfficeInputModel.class,
@@ -99,6 +109,14 @@ public class PostAPIController {
         return ResponseEntity.ok().body(result);
     }
 
+
+    @PostMapping("/update-post-order-status")
+    public ResponseEntity updatePostOrderStatus(
+        @RequestBody UpdatePostShipOrderInputModel updatePostShipOrderInputModel
+    ) {
+        return ResponseEntity.ok().body(postOrderService.updatePostOrderStatus(updatePostShipOrderInputModel));
+    }
+
     @GetMapping("/find-customer-by-partyid")
     public ResponseEntity findCustomerByPartyId(Principal principal) {
         PostCustomer result = postCustomerService.findCustomerByPartyId(principal);
@@ -112,36 +130,105 @@ public class PostAPIController {
     }
 
     @DeleteMapping("/delete-post-ship-order/{postShipOrderID}")
-    public ResponseEntity deletePostShipOrder(@PathVariable(required = true) String postShipOrderID ) {
+    public ResponseEntity deletePostShipOrder(@PathVariable(required = true) String postShipOrderID) {
         ResponseSample response = postOrderService.CancelPostOrder(postShipOrderID);
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/get-post-trip-list")
-    public ResponseEntity getVehicleList() {
-        List<PostTrip> postTrips = postTripService.findAllVehicle();
-        return ResponseEntity.ok().body(postTrips);
+    public ResponseEntity getPostTripList() {
+        List<PostFixedTrip> postFixedTrips = postTripService.findAllVehicle();
+        return ResponseEntity.ok().body(postFixedTrips);
     }
 
     @GetMapping("/get-post-trip/{postTripId}")
-    public ResponseEntity getVehicle(@PathVariable(required = true) String postTripId) {
-        PostTrip postTrip = postTripService.findByPostOfficeFixedTripId(postTripId);
-        return ResponseEntity.ok().body(postTrip);
+    public ResponseEntity getPostTrip(@PathVariable String postTripId) {
+        PostFixedTrip postFixedTrip = postTripService.findByPostOfficeFixedTripId(postTripId);
+        return ResponseEntity.ok().body(postFixedTrip);
     }
 
-    @GetMapping("/create-post-trip")
-    public ResponseEntity createVehicle(@RequestBody CreatePostTripModel creatPostTripModel) {
-        PostTrip postTrip = postTripService.createPostTrip(creatPostTripModel);
-        return ResponseEntity.ok().body(postTrip);
+    @PostMapping("/create-post-trip")
+    public ResponseEntity createPostTrip(@RequestBody CreatePostTripModel creatPostTripModel) {
+        PostFixedTrip postFixedTrip = postTripService.createPostTrip(creatPostTripModel);
+        return ResponseEntity.ok().body(postFixedTrip);
     }
 
-    @GetMapping("/create-post-trip-list")
-    public ResponseEntity createVehicleList(@RequestParam("file") MultipartFile multipartFile) throws IOException  {
+
+    @PostMapping("/create-post-trip-list")
+    public ResponseEntity createPostTripList(@RequestParam("file") MultipartFile multipartFile) throws IOException {
         List<CreatePostOfficeInputModel> createPostOfficeInputModels
             = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreatePostOfficeInputModel.class,
                               PoijiOptions.PoijiOptionsBuilder.settings().sheetName("DanhSachBuuCuc").build());
         List<PostOffice> postOffices = postOfficeService.save(createPostOfficeInputModels);
         log.info("Uploaded " + postOffices.size() + " postoffice");
         return ResponseEntity.ok().body(postOffices.size());
+    }
+
+    @DeleteMapping("/delete-post-trip/{postTripId}")
+    public ResponseEntity<?> deletePostTripById(@PathVariable String postTripId) {
+        postTripService.deleteByPostTripId(postTripId);
+        log.info("deletePostOfficeById = " + postTripId);
+        return ResponseEntity.ok().body(null);
+    }
+
+    @GetMapping("/get_office_order_detail/{postOfficeId}")
+    public ResponseEntity getOfficeOrderDetail(
+        @PathVariable String postOfficeId, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
+        Date fromDate,
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate
+    ) {
+        return ResponseEntity.ok().body(postOfficeService.getOfficeOrderDetailOutput(postOfficeId, fromDate, toDate));
+    }
+
+    @GetMapping("/get-postman-list/{postOfficeId}")
+    public ResponseEntity getPostmanList(@PathVariable String postOfficeId) {
+        return ResponseEntity.ok().body(postmanService.findByPostOfficeId(postOfficeId));
+    }
+
+    @PostMapping("/execute-trip")
+    public ResponseEntity executeTrip(@RequestBody ExecuteTripInputModel executeTripInputModel) {
+        return ResponseEntity.ok().body(postTripService.createPostTripExecute(executeTripInputModel));
+    }
+
+    @PostMapping("/update-execute-trip")
+    public ResponseEntity updateExecuteTrip(@RequestBody ExecuteTripInputModel executeTripInputModel) {
+        return ResponseEntity.ok().body(postTripService.updatePostTripExecute(executeTripInputModel));
+    }
+
+    @GetMapping("/get-order-by-day/{day}")
+    public ResponseEntity getPostOrderByDay(
+        @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date day
+    ) {
+        return ResponseEntity.ok().body(postOrderService.findAllOrderByDay(day));
+    }
+
+    @GetMapping("/get-postman-list-order/{postOfficeId}")
+    public ResponseEntity getPostmanListAndOrderList(@PathVariable String postOfficeId) {
+        return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeId(postOfficeId));
+    }
+
+    @GetMapping("/get-postman-list-order-bydate/{postOfficeId}")
+    public ResponseEntity getPostmanListAndOrderList(
+        @PathVariable String postOfficeId,
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
+            Date fromDate,
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate
+    ) {
+        return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeIdAndDate(postOfficeId, fromDate, toDate));
+    }
+
+    @PostMapping("/submit-postman-assign")
+    public ResponseEntity getPostmanListAndOrderList(@RequestBody List<PostmanAssignInput> postmanAssignInputs) {
+        return ResponseEntity.ok().body(postmanService.createAssignment(postmanAssignInputs));
+    }
+
+    @GetMapping("/get-order-by-trip")
+    public ResponseEntity getPostOrderByTrip(
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
+            Date fromDate,
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate
+    ) {
+        List<PostShipOrderTripPostOfficeAssignment> postShipOrderTripPostOfficeAssignments = postTripService.getPostOrderByTrip(fromDate, toDate);
+        return ResponseEntity.ok().body(postShipOrderTripPostOfficeAssignments);
     }
 }
