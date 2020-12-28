@@ -35,6 +35,8 @@ public class PostTripService {
     @Autowired
     PostShipOrderFixedTripPostOfficeAssignmentRepo postShipOrderFixedTripPostOfficeAssignmentRepo;
 
+    @Autowired
+    PostShipOrderTripPostOfficeAssignmentRepo postShipOrderTripPostOfficeAssignmentRepo;
     public List<PostFixedTrip> findAllVehicle() {
         return postFixedTripRepo.findAll();
     }
@@ -119,19 +121,19 @@ public class PostTripService {
         postTripExecute.setPostOfficeFixedTripId(UUID.fromString(executeTripInputModel.getPostOfficeFixedTripId()));
         postTripExecute.setStatus("WAITING");
         postTripExecute = postTripExecuteRepo.save(postTripExecute);
-        for (String postShipOrderFixedTripPostOfficeAssignmentId : executeTripInputModel.getPostShipOrderFixedTripPostOfficeAssignmentIds()) {
+        for (String postShipOrderTripPostOfficeAssignmentId : executeTripInputModel.getPostShipOrderTripPostOfficeAssignmentIds()) {
             PostShipOrderFixedTripPostOfficeAssignment postShipOrderFixedTripPostOfficeAssignment = new PostShipOrderFixedTripPostOfficeAssignment();
             postShipOrderFixedTripPostOfficeAssignment.setPostOfficeFixedTripExecuteId(postTripExecute.getPostOfficeFixedTripExecuteId());
             postShipOrderFixedTripPostOfficeAssignment.setPostShipOrderTripPostOfficeAssignmentId(UUID.fromString(
-                postShipOrderFixedTripPostOfficeAssignmentId));
+                postShipOrderTripPostOfficeAssignmentId));
             postShipOrderFixedTripPostOfficeAssignmentRepo.save(postShipOrderFixedTripPostOfficeAssignment);
         }
         log.info("Create post trip execute success, postTripExecuteId: " +
                  postTripExecute.getPostOfficeFixedTripExecuteId() +
                  " fromPostOffice " +
-                 postFixedTrip.getPostOfficetrip().getFromPostOfficeId() +
+                 postFixedTrip.getPostOfficeTrip().getFromPostOfficeId() +
                  " -> toPostOffice: " +
-                 postFixedTrip.getPostOfficetrip().getToPostOfficeId());
+                 postFixedTrip.getPostOfficeTrip().getToPostOfficeId());
         return new ResponseSample("SUCCESS", "Execute Trip Success");
     }
 
@@ -168,5 +170,13 @@ public class PostTripService {
     public List<ExecuteTripOutputModel> getExecuteTripByDate(Date date) {
         List<ExecuteTripOutputModel> executeTripOutputModels = new ArrayList<>();
         return executeTripOutputModels;
+    }
+
+    /**
+     * @return Lay danh sach don hang da duoc gan boi chuyen xe
+     */
+    public List<PostShipOrderTripPostOfficeAssignment> getPostOrderByTrip(Date fromDate, Date toDate) {
+        Date tomorrow = new Date(toDate.getTime() + (1000 * 60 * 60 * 24));
+        return postShipOrderTripPostOfficeAssignmentRepo.findByMaxDeliveryOrderAndDate(fromDate, tomorrow, "POST_ORDER_READY_DELIVERY");
     }
 }

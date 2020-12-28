@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.postsys.entity.Postman;
 import com.hust.baseweb.applications.postsys.model.ResponseSample;
 import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignInput;
 import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignmentByDate;
+import com.hust.baseweb.applications.postsys.repo.PostOrderRepo;
 import com.hust.baseweb.applications.postsys.repo.PostShipOrderPostmanLastMileAssignmentRepo;
 import com.hust.baseweb.applications.postsys.repo.PostmanRepo;
 import lombok.extern.log4j.Log4j2;
@@ -25,6 +26,9 @@ public class PostmanService {
     PostmanRepo postmanRepo;
     @Autowired
     PostShipOrderPostmanLastMileAssignmentRepo postShipOrderPostmanLastMileAssignmentRepo;
+
+    @Autowired
+    PostOrderRepo postOrderRepo;
 
     public List<Postman> findByPostOfficeId(String postOfficeId) {
         return postmanRepo.findByPostOfficeId(postOfficeId);
@@ -59,8 +63,12 @@ public class PostmanService {
 
     public ResponseSample createAssignment(List<PostmanAssignInput> postmanAssignInputs) {
         List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = new ArrayList<>();
+        List<PostOrder> postOrders = new ArrayList<>();
         for (PostmanAssignInput postmanAssignInput : postmanAssignInputs) {
             for (String postOrderId : postmanAssignInput.getPostOrderIds()) {
+                PostOrder postOrder = postOrderRepo.findById(UUID.fromString(postOrderId)).get();
+                postOrder.setStatusId("POST_ORDER_READY_PICKUP"); //san sang doi postman pickup
+                postOrders.add(postOrder);
                 PostShipOrderPostmanLastMileAssignment postShipOrderPostmanLastMileAssignment = new PostShipOrderPostmanLastMileAssignment();
                 postShipOrderPostmanLastMileAssignment.setPostmanId(UUID.fromString(postmanAssignInput.getPostmanId()));
                 postShipOrderPostmanLastMileAssignment.setPostShipOrderId(UUID.fromString(postOrderId));
@@ -68,6 +76,7 @@ public class PostmanService {
             }
         }
         postShipOrderPostmanLastMileAssignmentRepo.saveAll(postShipOrderPostmanLastMileAssignments);
+        postOrderRepo.saveAll(postOrders);
         log.info("Successfully create " + + postShipOrderPostmanLastMileAssignments.size() +"  postman - postorder assignment");
         return new ResponseSample("SUCCESS", "Tạo mới thành công");
     }

@@ -135,5 +135,9 @@ public class PostOrderService {
         return postOrderRepo.findAllByCreatedStampGreaterThanEqualAndCreatedStampLessThan(input, tomorrow);
     }
 
-    public List<PostOrder> find
+    public List<PostOrder> findPostOrderbyDate(String statusId, Date fromDate, Date toDate) {
+        Date tomorrow = new Date(toDate.getTime() + (1000 * 60 * 60 * 24));
+        return postOrderRepo.findByStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(statusId, fromDate, toDate);
+    }
+
 }

@@ -12,8 +12,10 @@ import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
 @Repository
 public interface PostOrderRepo extends JpaRepository<PostOrder, UUID> {
+
     List<PostOrder> findAll();
 
     List<PostOrder> findByStatusId(String statusId);
@@ -22,15 +24,33 @@ public interface PostOrderRepo extends JpaRepository<PostOrder, UUID> {
 
     List<PostOrder> findByStatusIdAndFromPostOfficeId(String statusId, String fromPostOfficeId);
 
-    @Query(value = "select * from post_ship_order pso where pso.from_post_office_id = ?1 and pso.status_id not in ('ORDER_CANCELLED')", nativeQuery = true)
+    @Query(value = "select * from post_ship_order pso where pso.from_post_office_id = ?1 and pso.status_id not in ('ORDER_CANCELLED')",
+           nativeQuery = true)
     List<PostOrder> findByFromPostOffice(String postOfficeId);
 
-    @Query(value = "select * from post_ship_order pso where pso.to_post_office_id = ?1 and pso.status_id not in ('ORDER_CANCELLED')", nativeQuery = true)
+    @Query(value = "select * from post_ship_order pso where pso.to_post_office_id = ?1 and pso.status_id not in ('ORDER_CANCELLED')",
+           nativeQuery = true)
     List<PostOrder> findByToPostOffice(String postOfficeId);
 
-    List<PostOrder> findByFromPostOfficeIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(String postOfficeId, Date date1, Date date2);
+    List<PostOrder> findByFromPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(
+        String postOfficeId,
+        String statusId,
+        Date date1,
+        Date date2
+    );
 
-    List<PostOrder> findByToPostOfficeIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(String postOfficeId, Date date1, Date date2);
+    List<PostOrder> findByToPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(
+        String postOfficeId,
+        String statusId,
+        Date date1,
+        Date date2
+    );
+
+    List<PostOrder> findByStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(
+        String statusId,
+        Date date1,
+        Date date2
+    );
 
     List<PostOrder> findAllByCreatedStampGreaterThanEqualAndCreatedStampLessThan(Date date1, Date date2);
 
@@ -40,6 +60,10 @@ public interface PostOrderRepo extends JpaRepository<PostOrder, UUID> {
 
     @Modifying
     @Query("update PostOrder set statusId = ?2, currentPostOfficeId = ?3 where postShipOrderId = ?1")
-    void updatePostOrderStatusAndCurrentPostOffice(UUID post_ship_order_id, String status_id, String currentPostOfficeId);
+    void updatePostOrderStatusAndCurrentPostOffice(
+        UUID post_ship_order_id,
+        String status_id,
+        String currentPostOfficeId
+    );
 }
 

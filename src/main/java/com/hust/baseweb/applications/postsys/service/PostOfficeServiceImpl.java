@@ -120,8 +120,8 @@ public class PostOfficeServiceImpl implements PostOfficeService {
     public OfficeOrderDetailOutput getOfficeOrderDetailOutput(String postOfficeId, Date startDate, Date endDate) {
         PostOffice postOffice = postOfficeRepo.findById(postOfficeId).get();
         Date tomorrow = new Date(endDate.getTime() + (1000 * 60 * 60 * 24));
-        List<PostOrder> fromPostOrders = postOrderRepo.findByFromPostOfficeIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(postOfficeId, startDate, tomorrow);
-        List<PostOrder> toPostOrders = postOrderRepo.findByToPostOfficeIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(postOfficeId, startDate, tomorrow);
+        List<PostOrder> fromPostOrders = postOrderRepo.findByFromPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(postOfficeId, "POST_ORDER_ASSIGNED", startDate, tomorrow);
+        List<PostOrder> toPostOrders = postOrderRepo.findByToPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(postOfficeId, "POST_ORDER_ASSIGNED", startDate, tomorrow);
         log.info(startDate + " -> " + endDate + " found " + fromPostOrders.size() + " frompostOrders, " + toPostOrders.size() + " toPostOrders");
         return new OfficeOrderDetailOutput(postOffice, fromPostOrders, toPostOrders);
     }

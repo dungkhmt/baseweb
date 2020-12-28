@@ -222,13 +222,13 @@ public class PostAPIController {
         return ResponseEntity.ok().body(postmanService.createAssignment(postmanAssignInputs));
     }
 
-    @GetMapping("get-order-by-trip")
+    @GetMapping("/get-order-by-trip")
     public ResponseEntity getPostOrderByTrip(
         @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
             Date fromDate,
         @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate
     ) {
-        List<PostFixedTrip> postFixedTrips = postOrderService.findAllVehicle();
-        return ResponseEntity.ok().body(postFixedTrips);
+        List<PostShipOrderTripPostOfficeAssignment> postShipOrderTripPostOfficeAssignments = postTripService.getPostOrderByTrip(fromDate, toDate);
+        return ResponseEntity.ok().body(postShipOrderTripPostOfficeAssignments);
     }
 }

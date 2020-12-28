@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -31,6 +32,14 @@ public class PostShipOrderTripPostOfficeAssignment {
 
     @Column(name="post_office_trip_id")
     private UUID postOfficeTripId;
+
+    @OneToOne
+    @JoinColumn(name="post_office_trip_id", referencedColumnName = "post_office_trip_id", insertable = false, updatable = false)
+    private PostOfficeTrip postOfficeTrip;
+
     @Column(name="delivery_order")
     private int deliveryOrder;
+
+    @Column(name="created_stamp")
+    private Date createdStamp;
 }

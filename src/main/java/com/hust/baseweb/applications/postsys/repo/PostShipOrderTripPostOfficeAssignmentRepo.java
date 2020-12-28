@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -18,4 +20,17 @@ public interface PostShipOrderTripPostOfficeAssignmentRepo
         "group by psotpoa.postShipOrderId"
     )
     PostShipOrderTripPostOfficeAssignmentOM findByMaxDeliveryOrderPostShipOrderId(UUID postShipOrderId);
+
+    @Query("select new PostShipOrderTripPostOfficeAssignment (psopoa.postShipOrderPostOfficeTripAssignmentId, " +
+           "psopoa.postShipOrderId," +
+           "psopoa.postOrder," +
+           "psopoa.postOfficeTripId," +
+           "psopoa.postOfficeTrip," +
+           "MAX (psopoa.deliveryOrder)," +
+           "psopoa.createdStamp) " +
+           "from PostShipOrderTripPostOfficeAssignment psopoa " +
+           "where psopoa.createdStamp >= ?1 and psopoa.createdStamp < ?2 " +
+           "and psopoa.postOrder.statusId = ?3 " +
+           "group by psopoa.postShipOrderPostOfficeTripAssignmentId, psopoa.postShipOrderId")
+    List<PostShipOrderTripPostOfficeAssignment> findByMaxDeliveryOrderAndDate(Date fromDate, Date toDate, String statusId);
 }
