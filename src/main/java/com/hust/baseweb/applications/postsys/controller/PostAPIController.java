@@ -141,6 +141,14 @@ public class PostAPIController {
         return ResponseEntity.ok().body(postFixedTrips);
     }
 
+    @GetMapping("/get-post-execute-trip-list")
+    public ResponseEntity getPostTripExecuteList(
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
+            Date date
+    ) {
+        return ResponseEntity.ok().body(postTripService.getExecuteTripByDate(date));
+    }
+
     @GetMapping("/get-post-trip/{postTripId}")
     public ResponseEntity getPostTrip(@PathVariable String postTripId) {
         PostFixedTrip postFixedTrip = postTripService.findByPostOfficeFixedTripId(postTripId);
@@ -228,7 +236,9 @@ public class PostAPIController {
             Date fromDate,
         @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate
     ) {
-        List<PostShipOrderTripPostOfficeAssignment> postShipOrderTripPostOfficeAssignments = postTripService.getPostOrderByTrip(fromDate, toDate);
+        List<PostShipOrderTripPostOfficeAssignment> postShipOrderTripPostOfficeAssignments = postTripService.getPostOrderByTrip(
+            fromDate,
+            toDate);
         return ResponseEntity.ok().body(postShipOrderTripPostOfficeAssignments);
     }
 }

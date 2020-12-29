@@ -7,7 +7,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 @SpringBootApplication
 @EnableSwagger2WebMvc
-public class BasewebApplication { // this is temp
 @EnableScheduling
 public class BasewebApplication {
 

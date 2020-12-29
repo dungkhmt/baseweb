@@ -30,4 +30,11 @@ public class PostTripExecute {
     @Column(name="status")
     private String status;
 
+    @OneToOne
+    @JoinColumn(name="postman_id", referencedColumnName = "postman_id", insertable = false, updatable = false)
+    Postman postman;
+
+    @Column(name="created_stamp")
+    private Date createdStamp;
+
 }

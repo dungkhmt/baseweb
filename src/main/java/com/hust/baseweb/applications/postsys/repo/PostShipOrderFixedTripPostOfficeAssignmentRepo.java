@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface PostShipOrderFixedTripPostOfficeAssignmentRepo
     extends JpaRepository<PostShipOrderFixedTripPostOfficeAssignment, UUID> {
     List<PostShipOrderFixedTripPostOfficeAssignment> findByPostOfficeFixedTripExecuteId(UUID postOfficeFixedTripExecuteId);
+    List<PostShipOrderFixedTripPostOfficeAssignment> findByPostOfficeFixedTripExecuteIdIn(List<UUID> postOfficeFixedTripExecuteIds);
 }
