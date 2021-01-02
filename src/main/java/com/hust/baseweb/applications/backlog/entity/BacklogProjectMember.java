@@ -1,12 +1,14 @@
 package com.hust.baseweb.applications.backlog.entity;
 
 import com.hust.baseweb.applications.backlog.model.CreateBacklogProjectMemberModel;
+import com.hust.baseweb.applications.order.entity.CompositeOrderRoleId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -14,6 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@IdClass(CompositeProjectMember.class)
 @Table(name="backlog_project_member")
 public class BacklogProjectMember {
 
@@ -23,13 +26,13 @@ public class BacklogProjectMember {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="backlog_project_member_id")
-    private UUID backlogProjectMemberId;
-
     @Column(name="backlog_project_id")
-    private String backlogProjectId;
+    private UUID backlogProjectId;
 
+    @Id
     @Column(name="member_party_id")
     private UUID memberPartyId;
+
+    @Column(name="created_stamp", insertable = false, updatable = false)
+    private Date createdStamp;
 }

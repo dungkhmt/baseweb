@@ -31,7 +31,7 @@ public class BacklogProjectMemberServiceImpl implements BacklogProjectMemberServ
     }
 
     @Override
-    public List<BacklogProjectMember> findAllByBacklogProjectId(String backlogProjectId) {
+    public List<BacklogProjectMember> findAllByBacklogProjectId(UUID backlogProjectId) {
         return backlogProjectMemberRepo.findAllByBacklogProjectId(backlogProjectId);
     }
 

@@ -6,12 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class AddBacklogProjectMemberInputModel {
-    String backlogProjectId;
+    UUID backlogProjectId;
     List<String> usersLoginId;
 }

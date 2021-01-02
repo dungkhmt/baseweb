@@ -10,6 +10,6 @@ import java.util.UUID;
 
 public interface BacklogTaskRepo extends JpaRepository<BacklogTask, UUID> {
     BacklogTask save(BacklogTask backlogTask);
-    List<BacklogTask> findByBacklogProjectId(String backlogProjectId);
+    List<BacklogTask> findByBacklogProjectId(UUID backlogProjectId);
     BacklogTask findByBacklogTaskId(UUID backlogTaskId);
 }

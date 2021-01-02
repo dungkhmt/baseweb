@@ -10,6 +10,6 @@ import java.util.UUID;
 @Service
 public interface BacklogProjectMemberService {
     BacklogProjectMember save(CreateBacklogProjectMemberModel input);
-    List<BacklogProjectMember> findAllByBacklogProjectId(String backlogProjectId);
+    List<BacklogProjectMember> findAllByBacklogProjectId(UUID backlogProjectId);
     List<BacklogProjectMember> findAllByMemberPartyId(UUID partyId);
 }

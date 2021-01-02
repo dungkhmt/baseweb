@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface BacklogProjectService {
     BacklogProject save(CreateProjectInputModel input);
     List<BacklogProject> findAll();
-    BacklogProject findByBacklogProjectId(String backlogProjectId);
+    BacklogProject findByBacklogProjectId(UUID backlogProjectId);
     List<BacklogProject> findAllByMemberPartyId(UUID partyId);
     BacklogProject create(CreateProjectInputModel projectModel);
 }

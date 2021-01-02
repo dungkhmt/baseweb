@@ -6,9 +6,11 @@ import com.hust.baseweb.applications.backlog.service.Storage.BacklogFileStorageS
 import com.hust.baseweb.applications.backlog.service.project.BacklogProjectMemberService;
 import com.hust.baseweb.applications.backlog.service.project.BacklogProjectService;
 import com.hust.baseweb.applications.backlog.service.task.*;
+import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.entity.StatusItem;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.StatusItemRepo;
+import com.hust.baseweb.service.PersonService;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -46,6 +48,7 @@ public class BacklogControllerAPI {
     private BacklogTaskPriorityService backlogTaskPriorityService;
     private BacklogFileStorageServiceImpl storageService;
     private StatusItemRepo statusItemRepo;
+    private PersonService personService;
 
 
     private List<UserLoginReduced> getAssignedUserByTaskId(UUID taskId) {
@@ -72,7 +75,7 @@ public class BacklogControllerAPI {
         return assignedUsers;
     }
 
-    private boolean isProjectMember(String projectId, String userLoginId) {
+    private boolean isProjectMember(UUID projectId, String userLoginId) {
         UserLogin user = userService.findById(userLoginId);
         UUID userPartyId = user.getParty().getPartyId();
 
@@ -94,12 +97,12 @@ public class BacklogControllerAPI {
     ) {
         BacklogProject backlogProject = backlogProjectService.save(input);
 
-        if(backlogProject == null) return (ResponseEntity<?>) ResponseEntity.noContent();
+        if(backlogProject == null) return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(null);
 
         UserLogin userLogin = userService.findById(principal.getName());
         UUID userPartyId = userLogin.getParty().getPartyId();
         CreateBacklogProjectMemberModel backlogProjectMemberInput = new CreateBacklogProjectMemberModel(
-            input.getBacklogProjectId(),
+            backlogProject.getBacklogProjectId(),
             userPartyId
         );
         backlogProjectMemberService.save(backlogProjectMemberInput);
@@ -118,7 +121,7 @@ public class BacklogControllerAPI {
     }
 
     @GetMapping("backlog/get-project-by-id/{backlogProjectId}")
-    public ResponseEntity<BacklogProject> getProjectById(Principal principal, @PathVariable String backlogProjectId) {
+    public ResponseEntity<BacklogProject> getProjectById(Principal principal, @PathVariable UUID backlogProjectId) {
         boolean isMember = isProjectMember(backlogProjectId, principal.getName());
 
         if (isMember) {
@@ -133,7 +136,7 @@ public class BacklogControllerAPI {
     @GetMapping("backlog/get-project-detail/{backlogProjectId}")
     public ResponseEntity<List<BacklogTaskWithAssignmentAndAssignable>> getProjectDetail(
         Principal principal,
-        @PathVariable String backlogProjectId
+        @PathVariable UUID backlogProjectId
     ) {
         boolean isMember = isProjectMember(backlogProjectId, principal.getName());
         if(!isMember) {
@@ -294,7 +297,7 @@ public class BacklogControllerAPI {
     }
 
     @GetMapping("backlog/get-members-of-project/{backlogProjectId}")
-    public ResponseEntity<List<UserLoginReduced>> getMemberOfProject(Principal principal, @PathVariable String backlogProjectId) {
+    public ResponseEntity<List<UserLoginReduced>> getMemberOfProject(Principal principal, @PathVariable UUID backlogProjectId) {
         boolean isMember = isProjectMember(backlogProjectId, principal.getName());
 
         if(!isMember) {
@@ -306,7 +309,8 @@ public class BacklogControllerAPI {
 
         backlogProjectMembers.forEach((backlogProjectMember) -> {
             UserLogin user = userService.findUserLoginByPartyId(backlogProjectMember.getMemberPartyId());
-            member.add(new UserLoginReduced(user));
+            Person person = personService.findByPartyId(user.getParty().getPartyId());
+            member.add(new UserLoginReduced(user, person));
         });
 
         log.info("get members of projectId = " + backlogProjectId);
@@ -315,7 +319,7 @@ public class BacklogControllerAPI {
 
     @GetMapping("backlog/get-assigned-user-by-task-id/{backlogTaskId}")
     public ResponseEntity<List<UserLoginReduced>> getAssignedUserByTaskId(Principal principal, @PathVariable UUID backlogTaskId) {
-        String projectId = backlogTaskService.findByBacklogTaskId(backlogTaskId).getBacklogProjectId();
+        UUID projectId = backlogTaskService.findByBacklogTaskId(backlogTaskId).getBacklogProjectId();
         boolean isMember = isProjectMember(projectId, principal.getName());
         if(!isMember) {
             log.warn("get assigned user by taskId failed, userLoginId = " + principal.getName() + " doesn't have permission");
@@ -328,7 +332,7 @@ public class BacklogControllerAPI {
 
     @GetMapping("backlog/get-assignable-user-by-task-id/{backlogTaskId}")
     public ResponseEntity<List<UserLoginReduced>> getAssignableUserByTaskId(Principal principal, @PathVariable UUID backlogTaskId) {
-        String projectId = backlogTaskService.findByBacklogTaskId(backlogTaskId).getBacklogProjectId();
+        UUID projectId = backlogTaskService.findByBacklogTaskId(backlogTaskId).getBacklogProjectId();
         boolean isMember = isProjectMember(projectId, principal.getName());
         if(!isMember) {
             log.warn("get assignables user by taskId failed, userLoginId = " + principal.getName() + " doesn't have permission");
@@ -390,14 +394,15 @@ public class BacklogControllerAPI {
         List<UserLogin> users = userService.getAllUserLogins();
         List<UserLoginReduced> usersLoginReduced = new ArrayList<>();
         users.forEach(user -> {
-            usersLoginReduced.add(new UserLoginReduced(user));
+            Person person = personService.findByPartyId(user.getParty().getPartyId());
+            usersLoginReduced.add(new UserLoginReduced(user, person));
         });
         return ResponseEntity.ok(usersLoginReduced);
     }
 
     @PostMapping("backlog/upload-task-attachment-files/{taskId}")
     public ResponseEntity<String> uploadTaskAttachment(Principal principal, @PathVariable UUID taskId, @RequestParam("file") MultipartFile[] files) {
-        String projectId = backlogTaskService.findByBacklogTaskId(taskId).getBacklogProjectId();
+        UUID projectId = backlogTaskService.findByBacklogTaskId(taskId).getBacklogProjectId();
         boolean isMember = isProjectMember(projectId, principal.getName());
         if(!isMember) {
             log.warn("upload attachment files failed, userLoginId = " + principal.getName() + "doesn't have permission");

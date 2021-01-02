@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface BacklogProjectMemberRepo extends JpaRepository<BacklogProjectMember, UUID> {
     BacklogProjectMember save(BacklogProjectMember backlogProjectMember);
-    List<BacklogProjectMember> findAllByBacklogProjectId(String backlogProjectId);
+    List<BacklogProjectMember> findAllByBacklogProjectId(UUID backlogProjectId);
     List<BacklogProjectMember> findAllByMemberPartyId(UUID partyId);
-    boolean existsByBacklogProjectIdAndMemberPartyId(String backlogProjectId, UUID memberPartyId);
+    boolean existsByBacklogProjectIdAndMemberPartyId(UUID backlogProjectId, UUID memberPartyId);
 }

@@ -30,7 +30,7 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
     }
 
     @Override
-    public List<BacklogTask> findByBacklogProjectId(String backlogProjectId) {
+    public List<BacklogTask> findByBacklogProjectId(UUID backlogProjectId) {
         List<BacklogTask> taskList = backlogTaskRepo.findByBacklogProjectId(backlogProjectId);
         if(taskList == null) return  new ArrayList<>();
         return taskList;

@@ -13,7 +13,7 @@ import java.util.UUID;
 @Service
 public interface BacklogTaskService {
     BacklogTask save(BacklogTask task);
-    List<BacklogTask> findByBacklogProjectId(String backlogProjectId);
+    List<BacklogTask> findByBacklogProjectId(UUID backlogProjectId);
     BacklogTask findByBacklogTaskId(UUID backlogTaskId);
     BacklogTask create(CreateBacklogTaskInputModel input, String userLoginId);
     BacklogTask update(CreateBacklogTaskInputModel input) throws IOException;

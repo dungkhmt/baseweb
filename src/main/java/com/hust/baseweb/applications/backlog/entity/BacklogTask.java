@@ -23,7 +23,7 @@ public class BacklogTask {
 
     public BacklogTask(CreateBacklogTaskInputModel input) {
         backlogTaskName = input.getBacklogTaskName();
-        categoryId = input.getBacklogTaskCategoryId();
+        categoryId = input.getCategoryId();
         backlogDescription = input.getBacklogDescription();
         backlogProjectId = input.getBacklogProjectId();
         createdByUserLoginId = input.getCreatedByUserLoginId();
@@ -64,7 +64,7 @@ public class BacklogTask {
     private String backlogDescription;
 
     @Column(name = "backlog_project_id")
-    private String backlogProjectId;
+    private UUID backlogProjectId;
 
     @Column(name = "created_date")
     private Date createdDate;
@@ -87,7 +87,7 @@ public class BacklogTask {
     @Column(name = "last_updated_stamp")
     private Date lastUpdateStamp;
 
-    @Column(name = "created_stamp")
+    @Column(name = "created_stamp", insertable = false, updatable = false)
     private Date createdStamp;
 
     @Column(name = "attachment_paths")
@@ -95,7 +95,7 @@ public class BacklogTask {
 
     public ArrayList<String> update(CreateBacklogTaskInputModel input) {
         if(input.getBacklogTaskName() != null) backlogTaskName = input.getBacklogTaskName();
-        if(input.getBacklogTaskCategoryId() != null) categoryId = input.getBacklogTaskCategoryId();
+        if(input.getCategoryId() != null) categoryId = input.getCategoryId();
         if(input.getBacklogDescription() != null) backlogDescription = input.getBacklogDescription();
         if(input.getDueDate() != null) dueDate = input.getDueDate();
         if(input.getStatusId() != null) statusId = input.getStatusId();

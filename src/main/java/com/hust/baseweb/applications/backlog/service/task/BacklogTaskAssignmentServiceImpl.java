@@ -28,7 +28,8 @@ public class BacklogTaskAssignmentServiceImpl implements BacklogTaskAssignmentSe
         List<BacklogTaskAssignment> backlogTaskAssignments = new ArrayList<>();
 
         // add new assignment or modify existed assigment
-        input.getAssignedToPartyId().forEach((assignedPartyId) -> {
+        for(UUID assignedPartyId : input.getAssignedToPartyId()) {
+            if(assignedPartyId == null) break;
             BacklogTaskAssignment assignment = backlogTaskAssignmentRepo.findByBacklogTaskIdAndAndAssignedToPartyId(input.getBacklogTaskId(), assignedPartyId);
             if(assignment == null) {
                 if(input.getStartDate() == null) input.setStartDate(new Date());
@@ -47,7 +48,7 @@ public class BacklogTaskAssignmentServiceImpl implements BacklogTaskAssignmentSe
 
                 backlogTaskAssignmentRepo.save(assignment);
             }
-        });
+        };
 
         // set status "ASSIGNMENT_INACTIVE" for inactive assignment
         List<BacklogTaskAssignment> assignments = backlogTaskAssignmentRepo.findAllByBacklogTaskId(input.getBacklogTaskId());

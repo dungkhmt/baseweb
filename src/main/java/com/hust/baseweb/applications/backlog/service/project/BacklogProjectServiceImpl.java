@@ -23,11 +23,7 @@ public class BacklogProjectServiceImpl implements BacklogProjectService {
 
     @Override
     public BacklogProject save(CreateProjectInputModel input) {
-        BacklogProject backlogProject = backlogProjectRepo.findByBacklogProjectId(input.getBacklogProjectId());
-        if (backlogProject == null) {
-            return backlogProjectRepo.save(new BacklogProject(input));
-        }
-        return null;
+        return backlogProjectRepo.save(new BacklogProject(input));
     }
 
     @Override
@@ -37,7 +33,7 @@ public class BacklogProjectServiceImpl implements BacklogProjectService {
     }
 
     @Override
-    public BacklogProject findByBacklogProjectId(String backlogProjectId) {
+    public BacklogProject findByBacklogProjectId(UUID backlogProjectId) {
         // TODO Auto-generated method stub
         return backlogProjectRepo.findByBacklogProjectId(backlogProjectId);
     }
@@ -54,12 +50,11 @@ public class BacklogProjectServiceImpl implements BacklogProjectService {
 
     @Override
     public BacklogProject create(CreateProjectInputModel projectModel) {
-        if ((backlogProjectRepo.existsByBacklogProjectId(projectModel.getBacklogProjectId()))) {
-            return new BacklogProject();
-        }
         return backlogProjectRepo.save(new BacklogProject(
-            projectModel.getBacklogProjectId(),
-            projectModel.getBacklogProjectName()
+            new CreateProjectInputModel(
+                projectModel.getBacklogProjectCode(),
+                projectModel.getBacklogProjectName()
+            )
         ));
     }
 }
