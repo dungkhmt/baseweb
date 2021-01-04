@@ -188,6 +188,7 @@ public class PostTripService {
                     .getPostShipOrderTripPostOfficeAssignment()
                     .getPostOrder();
                 postOrder.setStatusId("POST_ORDER_READY_FIND_PATH");
+                postOrder.setCurrentPostOfficeId(postShipOrderFixedTripPostOfficeAssignment.getPostOfficeFixedTripExecute().getPostOfficeFixedTrip().getPostOfficeTrip().getToPostOfficeId());
                 postOrders.add(postOrder);
             }
             postOrderRepo.saveAll(postOrders);

@@ -42,4 +42,10 @@ public class PostShipOrderTripPostOfficeAssignment {
 
     @Column(name="created_stamp", updatable = false, insertable = false)
     private Date createdStamp;
+
+    public PostShipOrderTripPostOfficeAssignment(UUID postShipOrderId, PostOrder postOrder, int deliveryOrder) {
+        this.postShipOrderId = postShipOrderId;
+        this.postOrder = postOrder;
+        this.deliveryOrder = deliveryOrder;
+    }
 }

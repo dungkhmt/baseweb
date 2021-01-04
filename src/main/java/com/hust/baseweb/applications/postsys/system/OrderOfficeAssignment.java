@@ -118,7 +118,6 @@ public class OrderOfficeAssignment {
             Map<String, Integer> postOfficeIndex = new HashMap<>();
             for (int i = 0; i < postOffices.size(); i++) {
                 postOfficeIndex.put(postOffices.get(i).getPostOfficeId(), i);
-                log.info(postOffices.get(i).getPostOfficeId() + " <-> " + i);
             }
             // init matrix distance
             int[][] distanceMatrix = new int[postOffices.size()][postOffices.size()];
@@ -137,10 +136,10 @@ public class OrderOfficeAssignment {
             }
             for (int i = 0; i < postOffices.size(); i++) {
                 for (int j = 0; j < postOffices.size(); j++) {
-                    for (PostOfficeTrip postOfficetrip : postOfficeTrips) {
-                        if (postOfficetrip
+                    for (PostOfficeTrip postOfficeTrip : postOfficeTrips) {
+                        if (postOfficeTrip
                                 .getFromPostOffice().getPostOfficeId().equals(postOffices.get(i).getPostOfficeId()) &&
-                            postOfficetrip
+                            postOfficeTrip
                                 .getToPostOffice()
                                 .getPostOfficeId()
                                 .equals(postOffices.get(j).getPostOfficeId())) {
@@ -151,6 +150,20 @@ public class OrderOfficeAssignment {
                                 LatLngUtils.distance(
                                     postOffices.get(i).getPostalAddress(),
                                     postOffices.get(j).getPostalAddress());
+                            String fromPostOffice = postOfficeTrip.getFromPostOfficeId();
+                            String toPostOffice = postOfficeTrip.getToPostOfficeId();
+                            log.info(fromPostOffice +
+                                     "(" +
+                                     postOfficeIndex.get(fromPostOffice) +
+                                     ")" +
+                                     " -> " +
+                                     toPostOffice +
+                                     "(" +
+                                     postOfficeIndex.get(toPostOffice) +
+                                     "): " +
+                                     LatLngUtils.distance(
+                                         postOffices.get(i).getPostalAddress(),
+                                         postOffices.get(j).getPostalAddress()));
                         }
                     }
                 }
@@ -167,16 +180,15 @@ public class OrderOfficeAssignment {
                 if (!postOffice.getPostOfficeId().equals(source)) {
                     dist[postOfficeIndex.get(postOffice.getPostOfficeId())] = Integer.MAX_VALUE;
                     prev[postOfficeIndex.get(postOffice.getPostOfficeId())] = -1;
-//                ntrips[postOfficeIndex.get(postOffice.getPostOfficeId())] = 0;
                     Q.offer(postOfficeIndex.get(postOffice.getPostOfficeId()));
                 }
             }
             dist[source] = 0;
             while (!Q.isEmpty()) {
                 int u = Q.poll();
-                if (u == dest) {
-                    break;
-                }
+//                if (u == dest) {
+//                    break;
+//                }
                 for (int v = 0; v < postOffices.size(); v++) {
                     if (distanceMatrix[u][v] != Integer.MAX_VALUE) {
                         int temp = dist[u] + distanceMatrix[u][v];
@@ -186,7 +198,6 @@ public class OrderOfficeAssignment {
                         if (temp < dist[v]) {
                             dist[v] = temp;
                             prev[v] = u;
-//                        ntrips[v] += 1;
                         }
                     }
                 }
@@ -204,7 +215,9 @@ public class OrderOfficeAssignment {
             pathLog += postOffices.get(dest).getPostOfficeId();
             while (prev[cur] != -1) {
                 pathLog += " <- " + postOffices.get(prev[cur]).getPostOfficeId();
-                if (prev[cur] == source) nextOfficeIndex = cur;
+                if (prev[cur] == source) {
+                    nextOfficeIndex = cur;
+                }
                 cur = prev[cur];
             }
             log.info(pathLog);
@@ -241,13 +254,13 @@ public class OrderOfficeAssignment {
         }
         return result;
     }
-//
-//    public static <T, E> T getKeysByValue(Map<T, E> map, E value) {
-//        for (Map.Entry<T, E> entry : map.entrySet()) {
-//            if (Objects.equals(value, entry.getValue())) {
-//                return entry.getKey();
-//            }
-//        }
-//        return null;
-//    }
+
+    public void printDistanceMatrix(int[][] distanceMatrix) {
+        for (int i = 0; i < distanceMatrix.length; i++) {
+            for (int j = 0; j < distanceMatrix[i].length; j++) {
+                System.out.print(distanceMatrix[i][j] + "\t");
+            }
+            System.out.println();
+        }
+    }
 }
