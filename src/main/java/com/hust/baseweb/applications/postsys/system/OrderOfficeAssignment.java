@@ -99,134 +99,147 @@ public class OrderOfficeAssignment {
         List<PostOrder> postOrders = postOrderRepo.findByStatusId("POST_ORDER_READY_FIND_PATH");
         List<PostOfficeTrip> postOfficeTrips = postTripRepo.findAll();
         List<PostOffice> postOffices = postOfficeRepo.findAll();
-        for (PostOrder postOrder : postOrders) {
-            findShortestTrip(postOfficeTrips, postOffices, postOrder);
-        }
+        postOrderRepo.saveAll(findShortestTrip(postOfficeTrips, postOffices, postOrders));
     }
 
-    public void findShortestTrip(
+    public List<PostOrder> findShortestTrip(
         List<PostOfficeTrip> postOfficeTrips,
         List<PostOffice> postOffices,
-        PostOrder postOrder
+        List<PostOrder> postOrders
     ) {
-        if (postOrder.getToPostOfficeId().equals(postOrder.getCurrentPostOfficeId())) {
-            postOrder.setStatusId("POST_ORDER_FINAL_TRIP");
-            log.info("Post order " + postOrder.getPostShipOrderId() + " reach final post office");
-            postOrderRepo.save(postOrder);
-            return;
-        }
-        Map<String, Integer> postOfficeIndex = new HashMap<>();
-        for (int i = 0; i < postOffices.size(); i++) {
-            postOfficeIndex.put(postOffices.get(i).getPostOfficeId(), i);
-            log.info(postOffices.get(i).getPostOfficeId() + " <-> " + i);
-        }
-        // init matrix distance
-        int[][] distanceMatrix = new int[postOffices.size()][postOffices.size()];
-        for (int i = 0; i < postOffices.size(); i++) {
-            for (int j = 0; j < postOffices.size(); j++) {
-                if (i != j) {
-                    distanceMatrix[postOfficeIndex.get(postOffices.get(i).getPostOfficeId())][postOfficeIndex.get(
-                        postOffices.get(j).getPostOfficeId())]
-                        = distanceMatrix[postOfficeIndex.get(postOffices.get(j).getPostOfficeId())][postOfficeIndex.get(
-                        postOffices.get(i).getPostOfficeId())]
-                        = Integer.MAX_VALUE;
-                }
+        List<PostOrder> result = new ArrayList<>();
+        for (PostOrder postOrder : postOrders) {
+            if (postOrder.getToPostOfficeId().equals(postOrder.getCurrentPostOfficeId())) {
+                postOrder.setStatusId("POST_ORDER_FINAL_TRIP");
+                log.info("Post order " + postOrder.getPostShipOrderId() + " reach final post office");
+                postOrderRepo.save(postOrder);
+                return result;
             }
-        }
-        for (int i = 0; i < postOffices.size(); i++) {
-            for (int j = 0; j < postOffices.size(); j++) {
-                for (PostOfficeTrip postOfficetrip : postOfficeTrips) {
-                    if (postOfficetrip
-                            .getFromPostOffice().getPostOfficeId().equals(postOffices.get(i).getPostOfficeId()) &&
-                        postOfficetrip
-                            .getToPostOffice()
-                            .getPostOfficeId()
-                            .equals(postOffices.get(j).getPostOfficeId())) {
+            Map<String, Integer> postOfficeIndex = new HashMap<>();
+            for (int i = 0; i < postOffices.size(); i++) {
+                postOfficeIndex.put(postOffices.get(i).getPostOfficeId(), i);
+                log.info(postOffices.get(i).getPostOfficeId() + " <-> " + i);
+            }
+            // init matrix distance
+            int[][] distanceMatrix = new int[postOffices.size()][postOffices.size()];
+            for (int i = 0; i < postOffices.size(); i++) {
+                for (int j = 0; j < postOffices.size(); j++) {
+                    if (i != j) {
                         distanceMatrix[postOfficeIndex.get(postOffices.get(i).getPostOfficeId())][postOfficeIndex.get(
-                            postOffices.get(j).getPostOfficeId())] =
-                            LatLngUtils.distance(
-                                postOffices.get(i).getPostalAddress(),
-                                postOffices.get(j).getPostalAddress());
+                            postOffices.get(j).getPostOfficeId())]
+                            = distanceMatrix[postOfficeIndex.get(postOffices
+                                                                     .get(j)
+                                                                     .getPostOfficeId())][postOfficeIndex.get(
+                            postOffices.get(i).getPostOfficeId())]
+                            = Integer.MAX_VALUE;
                     }
                 }
             }
-        }
-        int source = postOfficeIndex.get(postOrder.getCurrentPostOfficeId());
-        int dest = postOfficeIndex.get(postOrder.getToPostOfficeId());
-        int[] dist = new int[postOffices.size()];
-        int[] prev = new int[postOffices.size()];
+            for (int i = 0; i < postOffices.size(); i++) {
+                for (int j = 0; j < postOffices.size(); j++) {
+                    for (PostOfficeTrip postOfficetrip : postOfficeTrips) {
+                        if (postOfficetrip
+                                .getFromPostOffice().getPostOfficeId().equals(postOffices.get(i).getPostOfficeId()) &&
+                            postOfficetrip
+                                .getToPostOffice()
+                                .getPostOfficeId()
+                                .equals(postOffices.get(j).getPostOfficeId())) {
+                            distanceMatrix[postOfficeIndex.get(postOffices
+                                                                   .get(i)
+                                                                   .getPostOfficeId())][postOfficeIndex.get(
+                                postOffices.get(j).getPostOfficeId())] =
+                                LatLngUtils.distance(
+                                    postOffices.get(i).getPostalAddress(),
+                                    postOffices.get(j).getPostalAddress());
+                        }
+                    }
+                }
+            }
+            int source = postOfficeIndex.get(postOrder.getCurrentPostOfficeId());
+            int dest = postOfficeIndex.get(postOrder.getToPostOfficeId());
+            int[] dist = new int[postOffices.size()];
+            int[] prev = new int[postOffices.size()];
 //        int[] ntrips = new int[postOffices.size()];
-        Queue<Integer> Q = new PriorityQueue<>((integer, t1) -> Integer.compare(
-            distanceMatrix[integer][source],
-            distanceMatrix[t1][source]));
-        for (PostOffice postOffice : postOffices) {
-            if (!postOffice.getPostOfficeId().equals(source)) {
-                dist[postOfficeIndex.get(postOffice.getPostOfficeId())] = Integer.MAX_VALUE;
-                prev[postOfficeIndex.get(postOffice.getPostOfficeId())] = -1;
+            Queue<Integer> Q = new PriorityQueue<>((integer, t1) -> Integer.compare(
+                distanceMatrix[integer][source],
+                distanceMatrix[t1][source]));
+            for (PostOffice postOffice : postOffices) {
+                if (!postOffice.getPostOfficeId().equals(source)) {
+                    dist[postOfficeIndex.get(postOffice.getPostOfficeId())] = Integer.MAX_VALUE;
+                    prev[postOfficeIndex.get(postOffice.getPostOfficeId())] = -1;
 //                ntrips[postOfficeIndex.get(postOffice.getPostOfficeId())] = 0;
-                Q.offer(postOfficeIndex.get(postOffice.getPostOfficeId()));
+                    Q.offer(postOfficeIndex.get(postOffice.getPostOfficeId()));
+                }
             }
-        }
-        dist[source] = 0;
-        while (!Q.isEmpty()) {
-            int u = Q.poll();
-            if (u == dest) {
-                break;
-            }
-            for (int v = 0; v < postOffices.size(); v++) {
-                if (distanceMatrix[u][v] != Integer.MAX_VALUE) {
-                    int temp = dist[u] + distanceMatrix[u][v];
-                    if (temp < 0) {
-                        temp = Integer.MAX_VALUE;
-                    }
-                    if (temp < dist[v]) {
-                        dist[v] = temp;
-                        prev[v] = u;
+            dist[source] = 0;
+            while (!Q.isEmpty()) {
+                int u = Q.poll();
+                if (u == dest) {
+                    break;
+                }
+                for (int v = 0; v < postOffices.size(); v++) {
+                    if (distanceMatrix[u][v] != Integer.MAX_VALUE) {
+                        int temp = dist[u] + distanceMatrix[u][v];
+                        if (temp < 0) {
+                            temp = Integer.MAX_VALUE;
+                        }
+                        if (temp < dist[v]) {
+                            dist[v] = temp;
+                            prev[v] = u;
 //                        ntrips[v] += 1;
+                        }
                     }
                 }
             }
-        }
-        int current_order = 0;
-        try {
-            PostShipOrderTripPostOfficeAssignmentOM postShipOrderTripPostOfficeAssignment = postShipOrderTripPostOfficeAssignmentRepo
-                .findByMaxDeliveryOrderPostShipOrderId(postOrder.getPostShipOrderId());
-            current_order = postShipOrderTripPostOfficeAssignment.getDeliveryOrder();
-        } catch (NullPointerException | IndexOutOfBoundsException e) {
-            log.error("Order executing trip not found, create new");
-        }
-        String pathLog = "Expected path order Id " + postOrder.getPostShipOrderId() + ": ";
-        int cur = dest, nextOfficeIndex = -1;
-        pathLog += postOffices.get(dest).getPostOfficeId();
-        while (prev[cur] != -1) {
-            pathLog += " <- " + postOffices.get(prev[cur]).getPostOfficeId();
-            if (prev[cur] == source) nextOfficeIndex = cur;
-            cur = prev[cur];
-        }
-        log.info(pathLog);
-        PostShipOrderTripPostOfficeAssignment postShipOrderTripPostOfficeAssignment = new PostShipOrderTripPostOfficeAssignment();
-        postShipOrderTripPostOfficeAssignment.setDeliveryOrder(current_order + 1);
-        postShipOrderTripPostOfficeAssignment.setPostShipOrderId(postOrder.getPostShipOrderId());
-        for (PostOfficeTrip postOfficetrip : postOfficeTrips) {
-            String nextPostOfficeId = postOffices.get(nextOfficeIndex).getPostOfficeId();
-            if (postOfficetrip.getFromPostOffice().getPostOfficeId().equals(postOrder.getCurrentPostOfficeId()) &&
-                postOfficetrip.getToPostOffice().getPostOfficeId().equals(nextPostOfficeId)) {
-                postShipOrderTripPostOfficeAssignment.setPostOfficeTripId(postOfficetrip.getPostOfficeTripId());
+            int current_order = 0;
+            try {
+                PostShipOrderTripPostOfficeAssignmentOM postShipOrderTripPostOfficeAssignment = postShipOrderTripPostOfficeAssignmentRepo
+                    .findByMaxDeliveryOrderPostShipOrderId(postOrder.getPostShipOrderId());
+                current_order = postShipOrderTripPostOfficeAssignment.getDeliveryOrder();
+            } catch (NullPointerException | IndexOutOfBoundsException e) {
+                log.error("Order executing trip not found, create new");
             }
+            String pathLog = "Expected path order Id " + postOrder.getPostShipOrderId() + ": ";
+            int cur = dest, nextOfficeIndex = -1;
+            pathLog += postOffices.get(dest).getPostOfficeId();
+            while (prev[cur] != -1) {
+                pathLog += " <- " + postOffices.get(prev[cur]).getPostOfficeId();
+                if (prev[cur] == source) nextOfficeIndex = cur;
+                cur = prev[cur];
+            }
+            log.info(pathLog);
+            PostShipOrderTripPostOfficeAssignment postShipOrderTripPostOfficeAssignment = new PostShipOrderTripPostOfficeAssignment();
+            postShipOrderTripPostOfficeAssignment.setDeliveryOrder(current_order + 1);
+            postShipOrderTripPostOfficeAssignment.setPostShipOrderId(postOrder.getPostShipOrderId());
+            for (PostOfficeTrip postOfficetrip : postOfficeTrips) {
+                String nextPostOfficeId = postOffices.get(nextOfficeIndex).getPostOfficeId();
+                if (postOfficetrip.getFromPostOffice().getPostOfficeId().equals(postOrder.getCurrentPostOfficeId()) &&
+                    postOfficetrip.getToPostOffice().getPostOfficeId().equals(nextPostOfficeId)) {
+                    postShipOrderTripPostOfficeAssignment.setPostOfficeTripId(postOfficetrip.getPostOfficeTripId());
+                }
+            }
+            postShipOrderTripPostOfficeAssignment = postShipOrderTripPostOfficeAssignmentRepo.save(
+                postShipOrderTripPostOfficeAssignment);
+            postOrder.setStatusId("POST_ORDER_READY_DELIVERY");
+            result.add(postOrder);
+            log.info("Order Id: " +
+                     postOrder.getPostShipOrderId() +
+                     ", assign from post office: " +
+                     postOrder.getFromPostOffice().getPostOfficeName() +
+                     " (" +
+                     postOrder.getFromPostOfficeId() +
+                     ") " +
+                     " to post office: " +
+                     postOrder.getToPostOffice().getPostOfficeName() +
+                     " (" +
+                     postOrder.getToPostOfficeId() +
+                     ") " +
+                     ", trip id: " +
+                     postShipOrderTripPostOfficeAssignment.getPostOfficeTripId() +
+                     ", assignment id: " +
+                     postShipOrderTripPostOfficeAssignment.getPostShipOrderPostOfficeTripAssignmentId());
         }
-        postShipOrderTripPostOfficeAssignment = postShipOrderTripPostOfficeAssignmentRepo.save(
-            postShipOrderTripPostOfficeAssignment);
-        postOrder.setStatusId("POST_ORDER_READY_DELIVERY");
-        postOrderRepo.save(postOrder);
-        log.info("Order Id: " +
-                 postOrder.getPostShipOrderId() +
-                 ", assign from post office: " +
-                 postOrder.getFromPostOffice().getPostOfficeName() + " (" +postOrder.getFromPostOfficeId() + ") " +
-                 " to post office: " +
-                 postOrder.getToPostOffice().getPostOfficeName() + " (" +postOrder.getToPostOfficeId() + ") " +
-                 ", trip id: " +
-                 postShipOrderTripPostOfficeAssignment.getPostOfficeTripId() +
-                 ", assignment id: " + postShipOrderTripPostOfficeAssignment.getPostShipOrderPostOfficeTripAssignmentId());
+        return result;
     }
 //
 //    public static <T, E> T getKeysByValue(Map<T, E> map, E value) {

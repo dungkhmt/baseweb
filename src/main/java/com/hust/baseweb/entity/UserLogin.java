@@ -12,6 +12,7 @@ import java.util.Set;
 @Entity
 @Setter
 @Getter
+@Table(name="user_login")
 public class UserLogin {
 
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();

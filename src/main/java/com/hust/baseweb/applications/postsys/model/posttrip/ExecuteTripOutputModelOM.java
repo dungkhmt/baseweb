@@ -6,15 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public interface ExecuteTripOutputModelOM {
     String getPostOfficeFixedTripExecuteId();
     String getPostOfficeFixedTripId();
-    Date getDepatureDateTime();
-    Postman getPostman();
     String getStatus();
-    List<PostShipOrderFixedTripPostOfficeAssignment> getPostShipOrderFixedTripPostOfficeAssignments();
 }

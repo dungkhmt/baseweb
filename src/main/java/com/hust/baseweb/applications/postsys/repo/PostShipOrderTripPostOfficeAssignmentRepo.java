@@ -21,16 +21,17 @@ public interface PostShipOrderTripPostOfficeAssignmentRepo
     )
     PostShipOrderTripPostOfficeAssignmentOM findByMaxDeliveryOrderPostShipOrderId(UUID postShipOrderId);
 
-    @Query("select new PostShipOrderTripPostOfficeAssignment (psopoa.postShipOrderPostOfficeTripAssignmentId, " +
-           "psopoa.postShipOrderId," +
-           "psopoa.postOrder," +
-           "psopoa.postOfficeTripId," +
-           "psopoa.postOfficeTrip," +
-           "MAX (psopoa.deliveryOrder)," +
-           "psopoa.createdStamp) " +
+    @Query("select new PostShipOrderTripPostOfficeAssignment (" +
+               "psopoa.postShipOrderPostOfficeTripAssignmentId, " +
+               "psopoa.postShipOrderId," +
+               "psopoa.postOrder," +
+               "psopoa.postOfficeTripId," +
+               "psopoa.postOfficeTrip," +
+               "max(psopoa.deliveryOrder)," +
+               "psopoa.createdStamp) " +
            "from PostShipOrderTripPostOfficeAssignment psopoa " +
            "where psopoa.createdStamp >= ?1 and psopoa.createdStamp < ?2 " +
            "and psopoa.postOrder.statusId = ?3 " +
-           "group by psopoa.postShipOrderPostOfficeTripAssignmentId, psopoa.postShipOrderId")
+           "group by psopoa.postOfficeTripId, psopoa.postShipOrderId")
     List<PostShipOrderTripPostOfficeAssignment> findByMaxDeliveryOrderAndDate(Date fromDate, Date toDate, String statusId);
 }

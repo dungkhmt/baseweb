@@ -4,10 +4,12 @@ import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.UserLogin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @RepositoryRestResource(exported = false)
+@Repository
 public interface UserLoginRepo extends JpaRepository<UserLogin, String> {
 
     UserLogin findByUserLoginId(String userLoginId);

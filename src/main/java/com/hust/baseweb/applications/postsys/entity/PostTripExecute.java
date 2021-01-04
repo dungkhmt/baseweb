@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
@@ -30,11 +31,16 @@ public class PostTripExecute {
     @Column(name="status")
     private String status;
 
-    @OneToOne
+    @Column(name="created_stamp", insertable = false, updatable = false)
+    private Date createdStamp;
+
+    @OneToOne()
     @JoinColumn(name="postman_id", referencedColumnName = "postman_id", insertable = false, updatable = false)
     Postman postman;
 
-    @Column(name="created_stamp")
-    private Date createdStamp;
+    @OneToOne
+    @JoinColumn(name="post_office_fixed_trip_id", referencedColumnName = "post_office_fixed_trip_id", insertable = false, updatable = false)
+    private PostFixedTrip postOfficeFixedTrip;
+
 
 }

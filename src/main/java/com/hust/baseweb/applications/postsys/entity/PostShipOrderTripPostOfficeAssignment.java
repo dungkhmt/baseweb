@@ -40,6 +40,6 @@ public class PostShipOrderTripPostOfficeAssignment {
     @Column(name="delivery_order")
     private int deliveryOrder;
 
-    @Column(name="created_stamp")
+    @Column(name="created_stamp", updatable = false, insertable = false)
     private Date createdStamp;
 }

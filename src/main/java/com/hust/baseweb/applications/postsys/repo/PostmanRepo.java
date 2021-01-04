@@ -12,4 +12,6 @@ public interface PostmanRepo extends JpaRepository<Postman, UUID> {
     List<Postman> findByPostOfficeId(String postOfficeId);
 
     List<Postman> findByPostmanIdIn(List<UUID> postmanIds);
+
+    Postman findByPostmanId(UUID postmanId);
 }

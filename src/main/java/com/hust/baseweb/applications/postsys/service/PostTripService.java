@@ -5,14 +5,17 @@ import com.hust.baseweb.applications.postsys.model.ResponseSample;
 import com.hust.baseweb.applications.postsys.model.posttrip.CreatePostTripModel;
 import com.hust.baseweb.applications.postsys.model.posttrip.ExecuteTripInputModel;
 import com.hust.baseweb.applications.postsys.model.posttrip.ExecuteTripOutputModel;
+import com.hust.baseweb.applications.postsys.model.posttrip.ExecuteTripOutputModelOM;
 import com.hust.baseweb.applications.postsys.repo.*;
+import com.hust.baseweb.repo.UserLoginRepo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,6 +41,12 @@ public class PostTripService {
 
     @Autowired
     PostShipOrderTripPostOfficeAssignmentRepo postShipOrderTripPostOfficeAssignmentRepo;
+
+    @Autowired
+    PostmanRepo postmanRepo;
+
+    @Autowired
+    UserLoginRepo userLoginRepo;
 
     public List<PostFixedTrip> findAllVehicle() {
         return postFixedTripRepo.findAll();
@@ -69,16 +78,6 @@ public class PostTripService {
         }
         return postFixedTripRepo.save(postFixedTrip);
     }
-
-//
-//    public void createPostTrip1(CreatePostTripModel input) {
-//        PostOfficeTrip postOfficetrip = new PostOfficeTrip();
-//        postOfficetrip.setFromPostOfficeId(input.getFromPostOfficeId());
-//        postOfficetrip.setToPostOfficeId(input.getToPostOfficeId());
-//        postOfficetrip.setFromDate(input.getFromDate());
-//        postOfficetrip.setThruDate(input.getThruDate());
-//        postOfficetrip = postOfficeTripRepo.save(postOfficetrip);
-//    }
 
     public List<PostFixedTrip> createVehicleList(List<CreatePostTripModel> createPostTripModels) {
         List<PostFixedTrip> postFixedTrips = new ArrayList<>();
@@ -182,6 +181,17 @@ public class PostTripService {
             }
             postOrderRepo.saveAll(postOrders);
         }
+        if (executeTripInputModel.getStatus().equals("ARRIVED")) {
+            List<PostOrder> postOrders = new ArrayList<>();
+            for (PostShipOrderFixedTripPostOfficeAssignment postShipOrderFixedTripPostOfficeAssignment : postShipOrderFixedTripPostOfficeAssignments) {
+                PostOrder postOrder = postShipOrderFixedTripPostOfficeAssignment
+                    .getPostShipOrderTripPostOfficeAssignment()
+                    .getPostOrder();
+                postOrder.setStatusId("POST_ORDER_READY_FIND_PATH");
+                postOrders.add(postOrder);
+            }
+            postOrderRepo.saveAll(postOrders);
+        }
         postTripExecuteRepo.save(postTripExecute);
         return new ResponseSample("SUCCESS", "Update Trip Success");
     }
@@ -205,13 +215,15 @@ public class PostTripService {
                                                                        .getPostOfficeFixedTripExecuteId()
                                                                        .toString());
             executeTripOutputModel.setPostOfficeFixedTripId(postTripExecute.getPostOfficeFixedTripId().toString());
-            executeTripOutputModel.setDepatureDateTime(postTripExecute.getDepartureDateTime());
-            executeTripOutputModel.setPostmanName(postTripExecute.getPostman().getPostmanName());
+            executeTripOutputModel.setDepartureDateTime(postTripExecute.getDepartureDateTime());
+            if (postTripExecute.getPostman() != null) {
+                executeTripOutputModel.setPostmanName(postTripExecute.getPostman().getPostmanName());
+            }
             executeTripOutputModel.setStatus(postTripExecute.getStatus());
             executeTripOutputModel.setPostShipOrderFixedTripPostOfficeAssignments(new ArrayList<>());
             for (PostShipOrderFixedTripPostOfficeAssignment postShipOrderFixedTripPostOfficeAssignment : postShipOrderFixedTripPostOfficeAssignments) {
                 if (postShipOrderFixedTripPostOfficeAssignment
-                    .getPostOfficeFixedTripExecute()
+                    .getPostOfficeFixedTripExecute().getPostOfficeFixedTripExecuteId()
                     .equals(postTripExecute.getPostOfficeFixedTripExecuteId())) {
                     executeTripOutputModel
                         .getPostShipOrderFixedTripPostOfficeAssignments()
@@ -220,7 +232,7 @@ public class PostTripService {
             }
             executeTripOutputModels.add(executeTripOutputModel);
         }
-        log.info("Get execute trip list " + executeTripOutputModels.size() + " records found");
+        log.info("Get execute trip list " + executeTripOutputModels.size() + " records found, " + postShipOrderFixedTripPostOfficeAssignments.size() + " assignments count");
         return executeTripOutputModels;
     }
 
@@ -229,9 +241,56 @@ public class PostTripService {
      */
     public List<PostShipOrderTripPostOfficeAssignment> getPostOrderByTrip(Date fromDate, Date toDate) {
         Date tomorrow = new Date(toDate.getTime() + (1000 * 60 * 60 * 24));
-        return postShipOrderTripPostOfficeAssignmentRepo.findByMaxDeliveryOrderAndDate(
+        List<PostShipOrderTripPostOfficeAssignment> postShipOrderTripPostOfficeAssignments =  postShipOrderTripPostOfficeAssignmentRepo.findByMaxDeliveryOrderAndDate(
             fromDate,
             tomorrow,
             "POST_ORDER_READY_DELIVERY");
+        log.info("Get order by trip fromDate = " + fromDate + ", toDate = " + tomorrow + ", " + postShipOrderTripPostOfficeAssignments.size() + "  assingments found");
+        return postShipOrderTripPostOfficeAssignments;
+    }
+
+    public List<PostFixedTrip> findAllVehicleByPostman(Principal principal) {
+        UUID postmanId = userLoginRepo.findByUserLoginId(principal.getName()).getParty().getPartyId();
+        Postman postman = postmanRepo.findByPostmanId(postmanId);
+        return postFixedTripRepo.findByPostOfficeTrip_fromPostOfficeId(postman.getPostOfficeId());
+    }
+
+    public List<ExecuteTripOutputModel> getExecuteTripByDateAndPostman(Date date, Principal principal) {
+        UUID postmanId = userLoginRepo.findByUserLoginId(principal.getName()).getParty().getPartyId();
+        Postman postman = postmanRepo.findByPostmanId(postmanId);
+        Date tomorrow = new Date(date.getTime() + (1000 * 60 * 60 * 24));
+        List<ExecuteTripOutputModelOM> executeTripOutputModelOMs = postTripExecuteRepo.findAllByDateAndFromPostOfficeId(
+            date,
+            tomorrow,
+            postman.getPostOfficeId());
+        List<PostShipOrderFixedTripPostOfficeAssignment> postShipOrderFixedTripPostOfficeAssignments = postShipOrderFixedTripPostOfficeAssignmentRepo
+            .findByPostOfficeFixedTripExecuteIdIn(
+                executeTripOutputModelOMs
+                    .stream()
+                    .map((postTripExecute) -> UUID.fromString(postTripExecute.getPostOfficeFixedTripExecuteId()))
+                    .collect(Collectors.toList())
+            );
+        List<ExecuteTripOutputModel> executeTripOutputModels = new ArrayList<>();
+        for (ExecuteTripOutputModelOM executeTripOutputModelOM : executeTripOutputModelOMs) {
+            ExecuteTripOutputModel executeTripOutputModel = new ExecuteTripOutputModel();
+            executeTripOutputModel.setPostOfficeFixedTripExecuteId(executeTripOutputModelOM
+                                                                       .getPostOfficeFixedTripExecuteId()
+                                                                       .toString());
+            executeTripOutputModel.setPostOfficeFixedTripId(executeTripOutputModelOM.getPostOfficeFixedTripId().toString());
+            executeTripOutputModel.setStatus(executeTripOutputModelOM.getStatus());
+            executeTripOutputModel.setPostShipOrderFixedTripPostOfficeAssignments(new ArrayList<>());
+            for (PostShipOrderFixedTripPostOfficeAssignment postShipOrderFixedTripPostOfficeAssignment : postShipOrderFixedTripPostOfficeAssignments) {
+                if (postShipOrderFixedTripPostOfficeAssignment
+                    .getPostOfficeFixedTripExecute().getPostOfficeFixedTripExecuteId().toString()
+                    .equals(executeTripOutputModelOM.getPostOfficeFixedTripExecuteId())) {
+                    executeTripOutputModel
+                        .getPostShipOrderFixedTripPostOfficeAssignments()
+                        .add(postShipOrderFixedTripPostOfficeAssignment);
+                }
+            }
+            executeTripOutputModels.add(executeTripOutputModel);
+        }
+        log.info("Get execute trip list by postman " + postman.getPostmanName() + ", " + executeTripOutputModels.size() + " records found, " + postShipOrderFixedTripPostOfficeAssignments.size() + " assignments found");
+        return executeTripOutputModels;
     }
 }

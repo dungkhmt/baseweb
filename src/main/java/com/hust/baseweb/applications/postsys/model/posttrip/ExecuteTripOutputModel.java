@@ -17,7 +17,7 @@ import java.util.List;
 public class ExecuteTripOutputModel {
     private String postOfficeFixedTripExecuteId;
     private String postOfficeFixedTripId;
-    private Date depatureDateTime;
+    private Date departureDateTime;
     private String postmanName;
     private String status;
     private List<PostShipOrderFixedTripPostOfficeAssignment> postShipOrderFixedTripPostOfficeAssignments;
