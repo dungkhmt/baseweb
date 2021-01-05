@@ -164,6 +164,21 @@ public class PostAPIController {
         return ResponseEntity.ok().body(postTripService.getExecuteTripByDateAndPostman(date, principal));
     }
 
+    @GetMapping("/get-post-trip-list-by-post-driver")
+    public ResponseEntity getPostTripListByPostDriver(Principal principal) {
+        List<PostFixedTrip> postFixedTrips = postTripService.findAllVehicleByPostDriver(principal);
+        return ResponseEntity.ok().body(postFixedTrips);
+    }
+
+    @GetMapping("/get-post-execute-trip-list-by-post-driver")
+    public ResponseEntity getPostTripExecuteListByDriver(
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
+            Date date,
+        Principal principal
+    ) {
+        return ResponseEntity.ok().body(postTripService.getExecuteTripByDateAndPostDriver(date, principal));
+    }
+
     @GetMapping("/get-post-trip/{postTripId}")
     public ResponseEntity getPostTrip(@PathVariable String postTripId) {
         PostFixedTrip postFixedTrip = postTripService.findByPostOfficeFixedTripId(postTripId);

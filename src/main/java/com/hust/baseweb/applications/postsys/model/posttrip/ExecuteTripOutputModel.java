@@ -18,7 +18,7 @@ public class ExecuteTripOutputModel {
     private String postOfficeFixedTripExecuteId;
     private String postOfficeFixedTripId;
     private Date departureDateTime;
-    private String postmanName;
+    private String postDriverName;
     private String status;
     private List<PostShipOrderFixedTripPostOfficeAssignment> postShipOrderFixedTripPostOfficeAssignments;
 }

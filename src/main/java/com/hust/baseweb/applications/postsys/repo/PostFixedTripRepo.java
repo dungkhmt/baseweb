@@ -13,4 +13,7 @@ public interface PostFixedTripRepo extends JpaRepository<PostFixedTrip, UUID> {
     PostFixedTrip findByPostOfficeFixedTripId(UUID postOfficeFixedTripId);
     PostFixedTrip save(PostFixedTrip postFixedTrip);
     List<PostFixedTrip> findByPostOfficeTrip_fromPostOfficeId(String fromPostOfficeId);
+    List<PostFixedTrip> findByPostOfficeTrip_fromPostOfficeIdIn(List<String> fromPostOfficeIds);
+
+    List<PostFixedTrip> findByPostOfficeTrip_fromPostOfficeIdInAndPostOfficeTrip_toPostOfficeIdIn(List<String> fromPostOfficeIds, List<String> toPostOfficeIds);
 }

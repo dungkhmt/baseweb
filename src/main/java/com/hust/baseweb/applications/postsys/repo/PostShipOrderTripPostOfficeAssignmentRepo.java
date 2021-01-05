@@ -36,6 +36,6 @@ public interface PostShipOrderTripPostOfficeAssignmentRepo
                         "where psotpoa.created_stamp >= ?1 and psotpoa.created_stamp < ?2 " +
                         "and pso.status_id = ?3 " +
                         "group by psotpoa.post_ship_order_id " +
-                   ") a on a.post_ship_order_id = psotpoa1.post_ship_order_id", nativeQuery = true)
+                   ") a on a.post_ship_order_id = psotpoa1.post_ship_order_id and a.delivery_order = psotpoa1.delivery_order", nativeQuery = true)
     List<PostShipOrderTripPostOfficeAssignment> findByMaxDeliveryOrderAndDate(Date fromDate, Date toDate, String statusId);
 }
