@@ -21,5 +21,10 @@ public class PostDriver {
 
     @Column(name="post_driver_name")
     private String postDriverName;
+
+//    @OneToMany
+//    @JoinColumn(name="post_driver_id", referencedColumnName = "post_driver_id", insertable = false, updatable = false)
+//    private List<PostDriverPostOfficeAssignment> postDriverPostOfficeAssignment;
+
 }
 

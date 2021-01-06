@@ -325,21 +325,25 @@ public class PostTripService {
         return executeTripOutputModels;
     }
 
-    public List<PostFixedTrip> findAllVehicleByPostDriver(Principal principal) {
+    public List<PostFixedTrip> findAllTripByPostDriver(Principal principal) {
         UUID postDriverId = userLoginRepo.findByUserLoginId(principal.getName()).getParty().getPartyId();
+        return findAllTripByPostDriver(postDriverId);
+    }
+
+    public List<PostFixedTrip> findAllTripByPostDriver(UUID postDriverId) {
         List<PostDriverPostOfficeAssignment> postDriverPostOfficeAssignments = postDriverPostOfficeAssignmentRepo.findByPostDriverId(
             postDriverId);
-        List<String> fromPostOfficeIds = postDriverPostOfficeAssignments
+        List<UUID> postOfficeFixedTripIds = postDriverPostOfficeAssignments
             .stream()
-            .map(postDriverPostOfficeAssignment -> postDriverPostOfficeAssignment.getFromPostOfficeId())
+            .map(postDriverPostOfficeAssignment -> UUID.fromString(postDriverPostOfficeAssignment.getPostOfficeFixedTripId()))
             .collect(
                 Collectors.toList());
-        List<String> toPostOfficeIds = postDriverPostOfficeAssignments
-            .stream()
-            .map(postDriverPostOfficeAssignment -> postDriverPostOfficeAssignment.getToPostOfficeId())
-            .collect(
-                Collectors.toList());
-        return postFixedTripRepo.findByPostOfficeTrip_fromPostOfficeIdInAndPostOfficeTrip_toPostOfficeIdIn(fromPostOfficeIds, toPostOfficeIds);
+        return postFixedTripRepo.findByPostOfficeFixedTripIdIn(postOfficeFixedTripIds);
+    }
+
+    public List<PostDriverPostOfficeAssignment> findAllPostOfficeAssignmentByPostDriver(UUID postDriverId) {
+        return postDriverPostOfficeAssignmentRepo.findByPostDriverId(
+            postDriverId);
     }
 
     public List<ExecuteTripOutputModel> getExecuteTripByDateAndPostDriver(Date date, Principal principal) {
@@ -347,24 +351,18 @@ public class PostTripService {
         PostDriver postdriver = postDriverRepo.findByPostDriverId(postDriverId);
         List<PostDriverPostOfficeAssignment> postDriverPostOfficeAssignments = postDriverPostOfficeAssignmentRepo.findByPostDriverId(
             postDriverId);
-        List<String> fromPostOfficeIds = postDriverPostOfficeAssignments
+        List<UUID> postOfficeFixedTripIds = postDriverPostOfficeAssignments
             .stream()
-            .map(postDriverPostOfficeAssignment -> postDriverPostOfficeAssignment.getFromPostOfficeId())
-            .collect(
-                Collectors.toList());
-        List<String> toPostOfficeIds = postDriverPostOfficeAssignments
-            .stream()
-            .map(postDriverPostOfficeAssignment -> postDriverPostOfficeAssignment.getToPostOfficeId())
+            .map(postDriverPostOfficeAssignment -> UUID.fromString(postDriverPostOfficeAssignment.getPostOfficeFixedTripId()))
             .collect(
                 Collectors.toList());
         Date tomorrow = new Date(date.getTime() + (1000 * 60 * 60 * 24));
         List<ExecuteTripOutputModelOM> executeTripOutputModelOMs = new ArrayList<>();
-        if (fromPostOfficeIds.size() > 0) {
-            executeTripOutputModelOMs = postTripExecuteRepo.findAllByDateAndFromPostOfficeIdInAndToPostOfficeIdIn(
+        if (postOfficeFixedTripIds.size() > 0) {
+            executeTripOutputModelOMs = postTripExecuteRepo.findAllByDateAndPostOfficeFixedTripIdsIn(
                 date,
                 tomorrow,
-                fromPostOfficeIds,
-                toPostOfficeIds );
+                postOfficeFixedTripIds);
         }
         List<PostShipOrderFixedTripPostOfficeAssignment> postShipOrderFixedTripPostOfficeAssignments = postShipOrderFixedTripPostOfficeAssignmentRepo
             .findByPostOfficeFixedTripExecuteIdIn(

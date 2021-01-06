@@ -12,6 +12,8 @@ public interface PostOfficeRepo extends JpaRepository<PostOffice, String> {
 
     PostOffice findByPostOfficeId(String postOfficeId);
 
+    List<PostOffice> findByPostOfficeIdIn(List<String> postOfficeId);
+
     List<PostOffice> findAll();
 
     void deleteById(String postOfficeId);

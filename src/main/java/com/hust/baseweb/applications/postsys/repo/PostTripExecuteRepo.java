@@ -39,12 +39,10 @@ public interface PostTripExecuteRepo extends JpaRepository<PostTripExecute, UUID
                    "pofte.status status " +
                    "from post_office_fixed_trip_execute pofte " +
                    "inner join post_office_fixed_trip poft on pofte.post_office_fixed_trip_id = poft.post_office_fixed_trip_id " +
-                   "inner join post_office_trip pot on poft.post_office_trip_id = pot.post_office_trip_id " +
                    "where pofte.created_stamp>=:fromDate and pofte.created_stamp<:toDate and " +
-                   "pot.from_post_office_id in (:fromPostOfficeIds) and pot.to_post_office_id in (:toPostOfficeIds)",
+                   "poft.post_office_fixed_trip_id in (:postOfficeFixedTripIds)",
            nativeQuery = true)
-    List<ExecuteTripOutputModelOM> findAllByDateAndFromPostOfficeIdInAndToPostOfficeIdIn(
+    List<ExecuteTripOutputModelOM> findAllByDateAndPostOfficeFixedTripIdsIn(
         @Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
-        @Param("fromPostOfficeIds") List<String> fromPostOfficeIds, @Param("toPostOfficeIds") List<String> toPostOfficeIds
-    );
+        @Param("postOfficeFixedTripIds") List<UUID> postOfficeFixedTripIds);
 }

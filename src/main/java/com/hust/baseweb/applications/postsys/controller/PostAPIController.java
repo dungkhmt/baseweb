@@ -3,7 +3,10 @@ package com.hust.baseweb.applications.postsys.controller;
 import com.hust.baseweb.applications.postsys.entity.*;
 import com.hust.baseweb.applications.postsys.model.ResponseSample;
 import com.hust.baseweb.applications.postsys.model.postcustomer.CreatePostCustomerModel;
+import com.hust.baseweb.applications.postsys.model.postdriver.PostDriverUpdateInputModel;
+import com.hust.baseweb.applications.postsys.model.postdriver.UpdatePostDriverPostOfficeAssignmentInputModel;
 import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignInput;
+import com.hust.baseweb.applications.postsys.model.postman.PostmanUpdateInputModel;
 import com.hust.baseweb.applications.postsys.model.postoffice.CreatePostOfficeInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderOutputModel;
@@ -23,14 +26,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @Log4j2(topic = "POST_LOG")
 public class PostAPIController {
-
     @Autowired
     private PostOfficeService postOfficeService;
     @Autowired
@@ -43,6 +45,8 @@ public class PostAPIController {
     PostTripService postTripService;
     @Autowired
     PostmanService postmanService;
+    @Autowired
+    private PostDriverService postDriverService;
 
     @PostMapping("/create-post-office")
     public ResponseEntity<?> createPostOffice(Principal principal, @RequestBody CreatePostOfficeInputModel input) {
@@ -166,7 +170,13 @@ public class PostAPIController {
 
     @GetMapping("/get-post-trip-list-by-post-driver")
     public ResponseEntity getPostTripListByPostDriver(Principal principal) {
-        List<PostFixedTrip> postFixedTrips = postTripService.findAllVehicleByPostDriver(principal);
+        List<PostFixedTrip> postFixedTrips = postTripService.findAllTripByPostDriver(principal);
+        return ResponseEntity.ok().body(postFixedTrips);
+    }
+
+    @GetMapping("/get-post-trip-list-by-post-driver/{postDriverId}")
+    public ResponseEntity getPostTripListByPostDriver(@PathVariable String postDriverId) {
+        List<PostFixedTrip> postFixedTrips = postTripService.findAllTripByPostDriver(UUID.fromString(postDriverId));
         return ResponseEntity.ok().body(postFixedTrips);
     }
 
@@ -218,9 +228,39 @@ public class PostAPIController {
         return ResponseEntity.ok().body(postOfficeService.getOfficeOrderDetailOutput(postOfficeId, fromDate, toDate));
     }
 
+    @GetMapping("/get-postman-list")
+    public ResponseEntity getPostmanList() {
+        return ResponseEntity.ok().body(postmanService.findAll());
+    }
+
     @GetMapping("/get-postman-list/{postOfficeId}")
     public ResponseEntity getPostmanList(@PathVariable String postOfficeId) {
         return ResponseEntity.ok().body(postmanService.findByPostOfficeId(postOfficeId));
+    }
+
+    @PostMapping("/update-postman")
+    public ResponseEntity updatePostman(@RequestBody PostmanUpdateInputModel postmanUpdateInputModel) {
+        return ResponseEntity.ok().body(postmanService.updatePostman(postmanUpdateInputModel));
+    }
+
+    @GetMapping("/get-post-driver-list")
+    public ResponseEntity getPostDriverList() {
+        return ResponseEntity.ok().body(postDriverService.findAll());
+    }
+
+    @PostMapping("/update-post-driver")
+    public ResponseEntity updatePostDriver(@RequestBody PostDriverUpdateInputModel postDriverUpdateInputModel) {
+        return ResponseEntity.ok().body(postDriverService.updatePostDriver(postDriverUpdateInputModel));
+    }
+
+    @PostMapping("/update-post-driver-post-office-assignment")
+    public ResponseEntity updatePostDriverPostOfficeAssignment(
+        @RequestBody
+            UpdatePostDriverPostOfficeAssignmentInputModel updatePostDriverPostOfficeAssignmentInputModel
+    ) {
+        return ResponseEntity
+            .ok()
+            .body(postDriverService.updatePostDriverPostOfficeAssignment(updatePostDriverPostOfficeAssignmentInputModel));
     }
 
     @PostMapping("/execute-trip")

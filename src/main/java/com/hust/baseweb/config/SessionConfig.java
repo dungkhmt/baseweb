@@ -37,7 +37,7 @@ public class SessionConfig {
     @Bean
     public RedisSessionRepository sessionRepository(RedisOperations<String, Object> sessionRedisOperations) {
         RedisSessionRepository redisSessionRepository = new RedisSessionRepository(sessionRedisOperations);
-        redisSessionRepository.setDefaultMaxInactiveInterval(Duration.ofSeconds(3600L));
+        redisSessionRepository.setDefaultMaxInactiveInterval(Duration.ofSeconds(7200L));
         return redisSessionRepository;
     }
 

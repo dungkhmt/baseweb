@@ -1,16 +1,18 @@
 package com.hust.baseweb.applications.postsys.service;
 
+import com.hust.baseweb.applications.postsys.entity.PostOffice;
 import com.hust.baseweb.applications.postsys.entity.PostOrder;
 import com.hust.baseweb.applications.postsys.entity.PostShipOrderPostmanLastMileAssignment;
 import com.hust.baseweb.applications.postsys.entity.Postman;
 import com.hust.baseweb.applications.postsys.model.ResponseSample;
 import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignInput;
 import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignmentByDate;
-import com.hust.baseweb.applications.postsys.repo.PostOrderRepo;
-import com.hust.baseweb.applications.postsys.repo.PostShipOrderPostmanLastMileAssignmentRepo;
-import com.hust.baseweb.applications.postsys.repo.PostmanRepo;
+import com.hust.baseweb.applications.postsys.model.postman.PostmanUpdateInputModel;
+import com.hust.baseweb.applications.postsys.model.postman.PostmanUpdateOutputModel;
+import com.hust.baseweb.applications.postsys.repo.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,6 +32,16 @@ public class PostmanService {
     @Autowired
     PostOrderRepo postOrderRepo;
 
+    @Autowired
+    private PostDriverRepo postDriverRepo;
+
+    @Autowired
+    private PostOfficeRepo postOfficeRepo;
+
+    public List<Postman> findAll() {
+        return postmanRepo.findAll();
+    }
+
     public List<Postman> findByPostOfficeId(String postOfficeId) {
         return postmanRepo.findByPostOfficeId(postOfficeId);
     }
@@ -41,7 +53,7 @@ public class PostmanService {
     public List<PostmanAssignmentByDate> findOrdersByPostOfficeIdAndDate(String postOfficeId, Date startDate, Date endDate) {
         List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = postShipOrderPostmanLastMileAssignmentRepo
             .findAllByCreatedStampGreaterThanEqualAndCreatedStampLessThan(startDate, new Date(endDate.getTime() + (1000 * 60 * 60 * 24)));
-        log.info(startDate + " -> " + endDate + ": found " +  postShipOrderPostmanLastMileAssignments.size() + " results");
+        log.info("Get Postman assignment: " + startDate + " -> " + endDate + ": found " +  postShipOrderPostmanLastMileAssignments.size() + " results");
         List<PostmanAssignmentByDate> postmanAssignmentByDates = new ArrayList<>();
         List<Postman> postmen =  postmanRepo.findByPostOfficeId(postOfficeId);
         for (Postman postman : postmen) {
@@ -59,7 +71,6 @@ public class PostmanService {
         }
         return postmanAssignmentByDates;
     }
-
 
     public ResponseSample createAssignment(List<PostmanAssignInput> postmanAssignInputs) {
         List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = new ArrayList<>();
@@ -79,5 +90,18 @@ public class PostmanService {
         postOrderRepo.saveAll(postOrders);
         log.info("Successfully create " + + postShipOrderPostmanLastMileAssignments.size() +"  postman - postorder assignment");
         return new ResponseSample("SUCCESS", "Tạo mới thành công");
+    }
+
+    public PostmanUpdateOutputModel updatePostman(PostmanUpdateInputModel postmanUpdateInputModel) {
+        Postman postman = postmanRepo.findByPostmanId(UUID.fromString(postmanUpdateInputModel.getPostmanId()));
+        PostOffice postOffice = postOfficeRepo.findByPostOfficeId(postmanUpdateInputModel.getPostOfficeId());
+        if (postOffice == null) {
+            return new PostmanUpdateOutputModel("ERROR", "Không có mã bưu cục này", null);
+        }
+        postman.setPostmanName(postmanUpdateInputModel.getPostmanName());
+        postman.setPostOfficeId(postmanUpdateInputModel.getPostOfficeId());
+        postman.setPostOffice(postOffice);
+        postmanRepo.save(postman);
+        return new PostmanUpdateOutputModel("SUCCESS", "Cập nhật thành công", postman);
     }
 }

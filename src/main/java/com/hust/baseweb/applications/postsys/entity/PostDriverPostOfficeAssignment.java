@@ -18,20 +18,14 @@ public class PostDriverPostOfficeAssignment {
     private UUID postDriverPostOfficeAssignmentId;
     @Column(name="post_driver_id")
     private UUID postDriverId;
-    @Column(name="from_post_office_id")
-    private String fromPostOfficeId;
+    @Column(name="post_office_fixed_trip_id")
+    private String postOfficeFixedTripId;
 
-    @Column(name="to_post_office_id")
-    private String toPostOfficeId;
     @ManyToOne
     @JoinColumn(name="post_driver_id", referencedColumnName = "post_driver_id", insertable = false, updatable = false)
     PostDriver postDriver;
 
     @ManyToOne
-    @JoinColumn(name="from_post_office_id", referencedColumnName = "post_office_id", insertable = false, updatable = false)
-    PostOffice fromPostOffice;
-
-    @ManyToOne
-    @JoinColumn(name="to_post_office_id", referencedColumnName = "post_office_id", insertable = false, updatable = false)
-    PostOffice toPostOffice;
+    @JoinColumn(name="post_office_fixed_trip_id", referencedColumnName = "post_office_fixed_trip_id", updatable = false, insertable = false)
+    PostFixedTrip postFixedTrip;
 }

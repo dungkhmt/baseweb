@@ -20,7 +20,7 @@ public class PostFixedTrip {
 
     @OneToOne
     @JoinColumn(name="post_office_trip_id", referencedColumnName = "post_office_trip_id", insertable = false, updatable = false)
-    private PostOfficeTrip postOfficeTrip;
+        private PostOfficeTrip postOfficeTrip;
 
     @Column(name="post_office_trip_id")
     private UUID postOfficeTripId;

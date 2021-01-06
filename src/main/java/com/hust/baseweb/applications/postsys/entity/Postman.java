@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.mapping.ToOne;
 
 import javax.persistence.*;
 import java.util.List;
@@ -26,7 +27,7 @@ public class Postman {
     @Column(name="post_office_id")
     private String postOfficeId;
 
-//    @OneToMany
-//    @JoinColumn(name = "postman_id", referencedColumnName = "postman_id",insertable = false, updatable = false)
-//    private List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments;
+    @ManyToOne
+    @JoinColumn(name = "post_office_id", referencedColumnName = "post_office_id",insertable = false, updatable = false)
+    PostOffice postOffice;
 }
