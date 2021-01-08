@@ -28,7 +28,7 @@ public class PostShipOrderPostmanLastMileAssignment {
     private String pickupDelivery;
     @Column(name="status_id")
     private String statusId;
-    @Column(name="created_stamp")
+    @Column(name="created_stamp", insertable = false, updatable = false)
     private Date createdStamp;
 
     @OneToOne()

@@ -10,11 +10,13 @@ import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignmentByDa
 import com.hust.baseweb.applications.postsys.model.postman.PostmanUpdateInputModel;
 import com.hust.baseweb.applications.postsys.model.postman.PostmanUpdateOutputModel;
 import com.hust.baseweb.applications.postsys.repo.*;
+import com.hust.baseweb.repo.UserLoginRepo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +40,10 @@ public class PostmanService {
     @Autowired
     private PostOfficeRepo postOfficeRepo;
 
+    @Autowired
+    private UserLoginRepo userLoginRepo;
+
+
     public List<Postman> findAll() {
         return postmanRepo.findAll();
     }
@@ -50,12 +56,25 @@ public class PostmanService {
         return postmanRepo.findByPostOfficeId(postOfficeId);
     }
 
-    public List<PostmanAssignmentByDate> findOrdersByPostOfficeIdAndDate(String postOfficeId, Date startDate, Date endDate) {
+    public List<PostmanAssignmentByDate> findOrdersByPostOfficeIdAndDate(
+        String postOfficeId,
+        Date startDate,
+        Date endDate
+    ) {
         List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = postShipOrderPostmanLastMileAssignmentRepo
-            .findAllByCreatedStampGreaterThanEqualAndCreatedStampLessThan(startDate, new Date(endDate.getTime() + (1000 * 60 * 60 * 24)));
-        log.info("Get Postman assignment: " + startDate + " -> " + endDate + ": found " +  postShipOrderPostmanLastMileAssignments.size() + " results");
+            .findAllByCreatedStampGreaterThanEqualAndCreatedStampLessThan(
+                startDate,
+                new Date(endDate.getTime() +
+                         (1000 * 60 * 60 * 24)));
+        log.info("Get Postman assignment: " +
+                 startDate +
+                 " -> " +
+                 new Date(endDate.getTime() + (1000 * 60 * 60 * 24)) +
+                 ": found " +
+                 postShipOrderPostmanLastMileAssignments.size() +
+                 " results");
         List<PostmanAssignmentByDate> postmanAssignmentByDates = new ArrayList<>();
-        List<Postman> postmen =  postmanRepo.findByPostOfficeId(postOfficeId);
+        List<Postman> postmen = postmanRepo.findByPostOfficeId(postOfficeId);
         for (Postman postman : postmen) {
             PostmanAssignmentByDate postmanAssignmentByDate = new PostmanAssignmentByDate();
             postmanAssignmentByDate.setPostmanId(postman.getPostmanId());
@@ -71,6 +90,27 @@ public class PostmanService {
         }
         return postmanAssignmentByDates;
     }
+
+
+    public List<PostShipOrderPostmanLastMileAssignment> findOrdersByPostmanAndDate(
+        Principal principal,
+        Date startDate,
+        Date endDate
+    ) {
+        UUID postmanId = userLoginRepo.findByUserLoginId(principal.getName()).getParty().getPartyId();
+        List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = postShipOrderPostmanLastMileAssignmentRepo
+            .findByCreatedStampGreaterThanEqualAndCreatedStampLessThanAndPostmanId(startDate,
+               new Date(endDate.getTime() + (1000 * 60 * 60 * 24)), postmanId);
+        log.info("Get order assignment by postman: " +
+                 startDate +
+                 " -> " +
+                 new Date(endDate.getTime() + (1000 * 60 * 60 * 24)) +
+                 ": found " +
+                 postShipOrderPostmanLastMileAssignments.size() +
+                 " records");
+        return postShipOrderPostmanLastMileAssignments;
+    }
+
 
     public ResponseSample createAssignment(List<PostmanAssignInput> postmanAssignInputs) {
         List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = new ArrayList<>();
@@ -88,7 +128,9 @@ public class PostmanService {
         }
         postShipOrderPostmanLastMileAssignmentRepo.saveAll(postShipOrderPostmanLastMileAssignments);
         postOrderRepo.saveAll(postOrders);
-        log.info("Successfully create " + + postShipOrderPostmanLastMileAssignments.size() +"  postman - postorder assignment");
+        log.info("Successfully create " +
+                 +postShipOrderPostmanLastMileAssignments.size() +
+                 "  postman - postorder assignment");
         return new ResponseSample("SUCCESS", "Tạo mới thành công");
     }
 
@@ -103,5 +145,10 @@ public class PostmanService {
         postman.setPostOffice(postOffice);
         postmanRepo.save(postman);
         return new PostmanUpdateOutputModel("SUCCESS", "Cập nhật thành công", postman);
+    }
+
+    public PostOffice getPostOfficeByPostman(Principal principal) {
+        UUID postmanId = userLoginRepo.findByUserLoginId(principal.getName()).getParty().getPartyId();
+        return postmanRepo.findByPostmanId(postmanId).getPostOffice();
     }
 }

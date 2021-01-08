@@ -11,5 +11,6 @@ import java.util.UUID;
 @Repository
 public interface PostShipOrderPostmanLastMileAssignmentRepo extends JpaRepository<PostShipOrderPostmanLastMileAssignment, UUID> {
     List<PostShipOrderPostmanLastMileAssignment> findAllByCreatedStampGreaterThanEqualAndCreatedStampLessThan(Date date1, Date date2);
+    List<PostShipOrderPostmanLastMileAssignment> findByCreatedStampGreaterThanEqualAndCreatedStampLessThanAndPostmanId(Date date1, Date date2, UUID postmanId);
     List<PostShipOrderPostmanLastMileAssignment> findByStatusId(String statusId);
 }
