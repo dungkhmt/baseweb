@@ -335,7 +335,7 @@ public class PostTripService {
             postDriverId);
         List<UUID> postOfficeFixedTripIds = postDriverPostOfficeAssignments
             .stream()
-            .map(postDriverPostOfficeAssignment -> UUID.fromString(postDriverPostOfficeAssignment.getPostOfficeFixedTripId()))
+            .map(postDriverPostOfficeAssignment -> postDriverPostOfficeAssignment.getPostOfficeFixedTripId())
             .collect(
                 Collectors.toList());
         return postFixedTripRepo.findByPostOfficeFixedTripIdIn(postOfficeFixedTripIds);
@@ -353,7 +353,7 @@ public class PostTripService {
             postDriverId);
         List<UUID> postOfficeFixedTripIds = postDriverPostOfficeAssignments
             .stream()
-            .map(postDriverPostOfficeAssignment -> UUID.fromString(postDriverPostOfficeAssignment.getPostOfficeFixedTripId()))
+            .map(postDriverPostOfficeAssignment -> postDriverPostOfficeAssignment.getPostOfficeFixedTripId())
             .collect(
                 Collectors.toList());
         Date tomorrow = new Date(date.getTime() + (1000 * 60 * 60 * 24));

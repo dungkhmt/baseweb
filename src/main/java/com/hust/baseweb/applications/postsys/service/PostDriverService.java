@@ -51,7 +51,7 @@ public class PostDriverService {
         PostDriverPostOfficeAssignment postDriverPostOfficeAssignment = new PostDriverPostOfficeAssignment();
         PostDriver postDriver = postDriverRepo.findByPostDriverId(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostDriverId()));
         PostFixedTrip postFixedTrip = postFixedTripRepo.findById(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostOfficeFixedTripId())).get();
-        postDriverPostOfficeAssignment.setPostOfficeFixedTripId(updatePostDriverPostOfficeAssignmentInputModel.getPostOfficeFixedTripId());
+        postDriverPostOfficeAssignment.setPostOfficeFixedTripId(postFixedTrip.getPostOfficeFixedTripId());
         postDriverPostOfficeAssignment.setPostFixedTrip(postFixedTrip);
         postDriverPostOfficeAssignment.setPostDriver(postDriver);
         postDriverPostOfficeAssignment.setPostDriverId(postDriver.getPostDriverId());
@@ -62,7 +62,7 @@ public class PostDriverService {
     public UpdatePostDriverPostOfficeAssignmentOutputModel updatePostDriverPostOfficeAssignment(UpdatePostDriverPostOfficeAssignmentInputModel updatePostDriverPostOfficeAssignmentInputModel) {
         PostDriverPostOfficeAssignment postDriverPostOfficeAssignment = postDriverPostOfficeAssignmentRepo.findById(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostDriverPostOfficeAssignmentId())).get();
         PostFixedTrip postFixedTrip = postFixedTripRepo.findById(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostOfficeFixedTripId())).get();
-        postDriverPostOfficeAssignment.setPostOfficeFixedTripId(updatePostDriverPostOfficeAssignmentInputModel.getPostOfficeFixedTripId());
+        postDriverPostOfficeAssignment.setPostOfficeFixedTripId(postFixedTrip.getPostOfficeFixedTripId());
         postDriverPostOfficeAssignment.setPostFixedTrip(postFixedTrip);
         postDriverPostOfficeAssignmentRepo.save(postDriverPostOfficeAssignment);
         return new UpdatePostDriverPostOfficeAssignmentOutputModel("SUCCESS", "Cập nhật thành công", postDriverPostOfficeAssignment);

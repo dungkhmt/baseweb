@@ -19,7 +19,7 @@ public class PostDriverPostOfficeAssignment {
     @Column(name="post_driver_id")
     private UUID postDriverId;
     @Column(name="post_office_fixed_trip_id")
-    private String postOfficeFixedTripId;
+    private UUID postOfficeFixedTripId;
 
     @ManyToOne
     @JoinColumn(name="post_driver_id", referencedColumnName = "post_driver_id", insertable = false, updatable = false)
