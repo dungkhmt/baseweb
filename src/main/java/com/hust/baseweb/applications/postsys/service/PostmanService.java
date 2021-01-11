@@ -1,26 +1,18 @@
 package com.hust.baseweb.applications.postsys.service;
 
-import com.hust.baseweb.applications.postsys.entity.PostOffice;
-import com.hust.baseweb.applications.postsys.entity.PostOrder;
-import com.hust.baseweb.applications.postsys.entity.PostShipOrderPostmanLastMileAssignment;
-import com.hust.baseweb.applications.postsys.entity.Postman;
+import com.hust.baseweb.applications.geo.entity.GeoPoint;
+import com.hust.baseweb.applications.postsys.entity.*;
 import com.hust.baseweb.applications.postsys.model.ResponseSample;
-import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignInput;
-import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignmentByDate;
-import com.hust.baseweb.applications.postsys.model.postman.PostmanUpdateInputModel;
-import com.hust.baseweb.applications.postsys.model.postman.PostmanUpdateOutputModel;
+import com.hust.baseweb.applications.postsys.model.postman.*;
 import com.hust.baseweb.applications.postsys.repo.*;
+import com.hust.baseweb.applications.postsys.system.TspSolver;
 import com.hust.baseweb.repo.UserLoginRepo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Log4j2
@@ -99,8 +91,31 @@ public class PostmanService {
     ) {
         UUID postmanId = userLoginRepo.findByUserLoginId(principal.getName()).getParty().getPartyId();
         List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = postShipOrderPostmanLastMileAssignmentRepo
-            .findByCreatedStampGreaterThanEqualAndCreatedStampLessThanAndPostmanId(startDate,
-               new Date(endDate.getTime() + (1000 * 60 * 60 * 24)), postmanId);
+            .findByCreatedStampGreaterThanEqualAndCreatedStampLessThanAndPostmanId(
+                startDate,
+                new Date(endDate.getTime() +
+                         (1000 * 60 * 60 * 24)),
+                postmanId);
+        List<PostShipOrderPostmanLastMileAssignment> pickWaitingAssignment= new ArrayList<>();
+        List<PostShipOrderPostmanLastMileAssignment> shipWaitingAssigment= new ArrayList<>();
+        List<PostShipOrderPostmanLastMileAssignment> successAssignment= new ArrayList<>();
+        for (PostShipOrderPostmanLastMileAssignment postShipOrderPostmanLastMileAssignment : postShipOrderPostmanLastMileAssignments) {
+            switch (postShipOrderPostmanLastMileAssignment.getStatusId()) {
+                case "POST_ORDER_ASSIGNMENT_PICKUP_WAITING":
+                    pickWaitingAssignment.add(postShipOrderPostmanLastMileAssignment);
+                    break;
+                case "POST_ORDER_ASSIGNMENT_SHIP_WAITING":
+                    shipWaitingAssigment.add(postShipOrderPostmanLastMileAssignment);
+                    break;
+                default:
+                    successAssignment.add(postShipOrderPostmanLastMileAssignment);
+            }
+        }
+        PostOffice postOffice = getPostOfficeByPostman(principal);
+        Map<Integer, PostShipOrderPostmanLastMileAssignment> map = new HashMap<>();
+        for (int i = 0; i < postShipOrderPostmanLastMileAssignments.size(); i++) {
+            map.put(i, postShipOrderPostmanLastMileAssignments.get(i));
+        }
         log.info("Get order assignment by postman: " +
                  startDate +
                  " -> " +
@@ -111,6 +126,33 @@ public class PostmanService {
         return postShipOrderPostmanLastMileAssignments;
     }
 
+    public List<PostShipOrderPostmanLastMileAssignment> solveAssignmentTsp(
+        List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments,
+        PostOffice postOffice
+    ) {
+        Map<PostShipOrderPostmanLastMileAssignment, Integer> map = new HashMap<>();
+        List<GeoPoint> geoPoints = new ArrayList<>();
+        geoPoints.add(postOffice.getPostalAddress().getGeoPoint());
+        for (int i = 0; i < postShipOrderPostmanLastMileAssignments.size(); i++) {
+            if (postShipOrderPostmanLastMileAssignments.get(i).getStatusId()
+                    .equals("POST_ORDER_ASSIGNMENT_PICKUP_WAITING")) {
+                geoPoints.add(postShipOrderPostmanLastMileAssignments.get(i).getPostOrder().getFromCustomer().getPostalAddress().getGeoPoint());
+            }
+        }
+        // solve tsp
+        TspSolver tspSolver = new TspSolver(geoPoints, 0);
+        List<Integer> solution = tspSolver.solve();
+        for (int s : solution) {
+        }
+        postShipOrderPostmanLastMileAssignments.
+    }
+
+    public List<PostShipOrderPostmanLastMileAssignment> solveShipAssignmentTsp(
+        List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments,
+        PostOffice postOffice
+    ) {
+
+    }
 
     public ResponseSample createAssignment(List<PostmanAssignInput> postmanAssignInputs) {
         List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = new ArrayList<>();
@@ -150,5 +192,20 @@ public class PostmanService {
     public PostOffice getPostOfficeByPostman(Principal principal) {
         UUID postmanId = userLoginRepo.findByUserLoginId(principal.getName()).getParty().getPartyId();
         return postmanRepo.findByPostmanId(postmanId).getPostOffice();
+    }
+
+    public ResponseSample updatePostOrderAssignment(UpdatePostmanPostOrderAssignmentInputModel updatePostmanPostOrderAssignmentInputModel) {
+        PostShipOrderPostmanLastMileAssignment postShipOrderPostmanLastMileAssignment = postShipOrderPostmanLastMileAssignmentRepo
+            .findById(UUID.fromString(updatePostmanPostOrderAssignmentInputModel.getPostShipOrderPostmanLastMileAssignmentId()))
+            .get();
+        if (!updatePostmanPostOrderAssignmentInputModel
+            .getStatus()
+            .equals(postShipOrderPostmanLastMileAssignment.getStatusId())) {
+            postShipOrderPostmanLastMileAssignment.setStatusId(updatePostmanPostOrderAssignmentInputModel.getStatus());
+            PostOrder postOrder = postShipOrderPostmanLastMileAssignment.getPostOrder();
+            postOrder.setStatusId("POST_ORDER_READY_FIND_PATH");
+            postOrderRepo.save(postOrder);
+        }
+        return new ResponseSample("SUCCESS", "Update success");
     }
 }

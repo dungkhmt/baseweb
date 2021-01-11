@@ -47,14 +47,14 @@ public class ApplicationServiceImpl implements ApplicationService {
             .stream()
             .map(Application::getModule)
             .collect(Collectors.toList());
-        log.info("getListByPermissionAndType, permissionList = " +
-                 permissionStr +
-                 ", type = " +
-                 type +
-                 ", applicationList.sz = " +
-                 applicationList.size() +
-                 ", applicationList1.sz = " +
-                 applicationList1.size());
+//        log.info("getListByPermissionAndType, permissionList = " +
+//                 permissionStr +
+//                 ", type = " +
+//                 type +
+//                 ", applicationList.sz = " +
+//                 applicationList.size() +
+//                 ", applicationList1.sz = " +
+//                 applicationList1.size());
 
 
         for (Application a : applicationList1) {
@@ -69,14 +69,14 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         }
 
-        log.info("getListByPermissionAndType, permissionList = " +
-                 permissionStr +
-                 ", type = " +
-                 type +
-                 ", applicationList.sz = " +
-                 applicationList.size() +
-                 ", applicationList2.sz = " +
-                 applicationList2.size());
+//        log.info("getListByPermissionAndType, permissionList = " +
+//                 permissionStr +
+//                 ", type = " +
+//                 type +
+//                 ", applicationList.sz = " +
+//                 applicationList.size() +
+//                 ", applicationList2.sz = " +
+//                 applicationList2.size());
 
         applicationList.addAll(applicationList1);
         applicationList.addAll(applicationList2);
