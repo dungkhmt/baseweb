@@ -16,6 +16,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
@@ -90,6 +93,32 @@ public class BacklogControllerAPI {
         return isExist.get();
     }
 
+    private List<BacklogTaskWithAssignmentAndAssignable> tasksToTaskWithAssigns(List<BacklogTask> tasks) {
+        List<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = new ArrayList<>();
+
+        tasks.forEach((task) -> {
+            tasksWithAssignment.add(new BacklogTaskWithAssignmentAndAssignable());
+            tasksWithAssignment.get(tasksWithAssignment.size() - 1).setBacklogTask(task);
+
+            UUID taskId = task.getBacklogTaskId();
+            List<UserLoginReduced> assignedUsers = getAssignedUserByTaskId(taskId);
+            assignedUsers.forEach(user -> {
+                Person person = personService.findByPartyId(user.getPartyId());
+                user.setPerson(person);
+            });
+
+            List<UserLoginReduced> assignableUsers = getAssignableUserByTaskId(taskId);
+            assignableUsers.forEach(user -> {
+                Person person = personService.findByPartyId(user.getPartyId());
+                user.setPerson(person);
+            });
+            tasksWithAssignment.get(tasksWithAssignment.size() - 1).setAssignment(assignedUsers);
+            tasksWithAssignment.get(tasksWithAssignment.size() - 1).setAssignable(assignableUsers);
+        });
+
+        return tasksWithAssignment;
+    }
+
     @PostMapping("backlog/create-project")
     public ResponseEntity<?> createProject(
         Principal principal,
@@ -145,20 +174,87 @@ public class BacklogControllerAPI {
         }
 
         List<BacklogTask> tasks = backlogTaskService.findByBacklogProjectId(backlogProjectId);
-        List<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = new ArrayList<>();
-
-        tasks.forEach((task) -> {
-            tasksWithAssignment.add(new BacklogTaskWithAssignmentAndAssignable());
-            tasksWithAssignment.get(tasksWithAssignment.size() - 1).setBacklogTask(task);
-
-            UUID taskId = task.getBacklogTaskId();
-            List<UserLoginReduced> assignedUsers = getAssignedUserByTaskId(taskId);
-            List<UserLoginReduced> assignableUsers = getAssignableUserByTaskId(taskId);
-            tasksWithAssignment.get(tasksWithAssignment.size() - 1).setAssignment(assignedUsers);
-            tasksWithAssignment.get(tasksWithAssignment.size() - 1).setAssignable(assignableUsers);
-        });
+        List<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = tasksToTaskWithAssigns(tasks);
 
         log.info("get project detail, projectId = " + backlogProjectId);
+        return ResponseEntity.status(HttpStatus.OK).body(tasksWithAssignment);
+    }
+
+    @GetMapping("backlog/get-project-detail-by-page/{backlogProjectId}")
+    public ResponseEntity<Page<BacklogTaskWithAssignmentAndAssignable>> getProjectDetail(
+        Principal principal,
+        @PathVariable UUID backlogProjectId,
+        Pageable pageable,
+        @RequestParam(required = false) String backlogTaskName,
+        @RequestParam(required = false) String categoryName,
+        @RequestParam(required = false) String statusName,
+        @RequestParam(required = false) String priorityName,
+        @RequestParam(required = false) String assignment
+    ) {
+        boolean isMember = isProjectMember(backlogProjectId, principal.getName());
+        if(!isMember) {
+            log.warn("get project detail failed, userLoginId = " + principal.getName() + " doesn't have permission");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new PageImpl<>(new ArrayList<>(), pageable, 0));
+        }
+
+        ProjectFilterParamsModel filter = new ProjectFilterParamsModel(backlogTaskName, categoryName, statusName, priorityName, assignment);
+        Page<BacklogTask> tasks = backlogTaskService.findByBacklogProjectId(backlogProjectId, pageable, filter);
+        Page<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = new PageImpl<>(tasksToTaskWithAssigns(tasks.getContent()), pageable, tasks.getTotalElements());
+
+        log.info("get project detail, pageNumber = " + pageable.getPageNumber() + ", pageSize = " + pageable.getPageSize() + ", projectId = " + backlogProjectId);
+        return ResponseEntity.status(HttpStatus.OK).body(tasksWithAssignment);
+    }
+
+    @GetMapping("backlog/get-my-task/{backlogProjectId}")
+    public ResponseEntity<Page<BacklogTaskWithAssignmentAndAssignable>> getMyTask(
+        Principal principal,
+        @PathVariable UUID backlogProjectId,
+        Pageable pageable,
+        @RequestParam(required = false) String backlogTaskName,
+        @RequestParam(required = false) String categoryName,
+        @RequestParam(required = false) String statusName,
+        @RequestParam(required = false) String priorityName,
+        @RequestParam(required = false) String assignment
+    ) {
+        boolean isMember = isProjectMember(backlogProjectId, principal.getName());
+        if(!isMember) {
+            log.warn("get my tasks failed, userLoginId = " + principal.getName() + " doesn't have permission");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new PageImpl<>(new ArrayList<>(), pageable, 0));
+        }
+
+        UserLogin userLogin = userService.findById(principal.getName());
+        UUID userPartyId = userLogin.getParty().getPartyId();
+
+        ProjectFilterParamsModel filter = new ProjectFilterParamsModel(backlogTaskName, categoryName, statusName, priorityName, assignment);
+        Page<BacklogTask> tasks = backlogTaskService.findByBacklogProjectIdAndPartyAssigned(backlogProjectId, userPartyId, filter, pageable);
+        Page<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = new PageImpl<>(tasksToTaskWithAssigns(tasks.getContent()), pageable, tasks.getTotalElements());
+
+        log.info("get my tasks, pageNumber = " + pageable.getPageNumber() + ", pageSize = " + pageable.getPageSize() + ", projectId = " + backlogProjectId);
+        return ResponseEntity.status(HttpStatus.OK).body(tasksWithAssignment);
+    }
+
+    @GetMapping("backlog/get-opening-task/{backlogProjectId}")
+    public ResponseEntity<Page<BacklogTaskWithAssignmentAndAssignable>> getOpeningTask(
+        Principal principal,
+        @PathVariable UUID backlogProjectId,
+        Pageable pageable,
+        @RequestParam(required = false) String backlogTaskName,
+        @RequestParam(required = false) String categoryName,
+        @RequestParam(required = false) String statusName,
+        @RequestParam(required = false) String priorityName,
+        @RequestParam(required = false) String assignment
+    ) {
+        boolean isMember = isProjectMember(backlogProjectId, principal.getName());
+        if(!isMember) {
+            log.warn("get opening task failed, userLoginId = " + principal.getName() + " doesn't have permission");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new PageImpl<>(new ArrayList<>(), pageable, 0));
+        }
+
+        ProjectFilterParamsModel filter = new ProjectFilterParamsModel(backlogTaskName, categoryName, statusName, priorityName, assignment);
+        Page<BacklogTask> tasks = backlogTaskService.findOpeningTaskByCreatedUserLogin(backlogProjectId, principal.getName(), filter, pageable);
+        Page<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = new PageImpl<>(tasksToTaskWithAssigns(tasks.getContent()), pageable, tasks.getTotalElements());
+
+        log.info("get opening tasks, pageNumber = " + pageable.getPageNumber() + ", pageSize = " + pageable.getPageSize() + ", projectId = " + backlogProjectId);
         return ResponseEntity.status(HttpStatus.OK).body(tasksWithAssignment);
     }
 

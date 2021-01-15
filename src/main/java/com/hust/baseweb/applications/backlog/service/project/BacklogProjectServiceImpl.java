@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.backlog.model.CreateProjectInputModel;
 import com.hust.baseweb.applications.backlog.repo.BacklogProjectMemberRepo;
 import com.hust.baseweb.applications.backlog.repo.BacklogProjectRepo;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +15,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class BacklogProjectServiceImpl implements BacklogProjectService {
 
-    @Autowired
     BacklogProjectRepo backlogProjectRepo;
-    @Autowired
     BacklogProjectMemberRepo backlogProjectMemberRepo;
 
     @Override
@@ -28,13 +28,11 @@ public class BacklogProjectServiceImpl implements BacklogProjectService {
 
     @Override
     public List<BacklogProject> findAll() {
-        // TODO Auto-generated method stub
         return backlogProjectRepo.findAll();
     }
 
     @Override
     public BacklogProject findByBacklogProjectId(UUID backlogProjectId) {
-        // TODO Auto-generated method stub
         return backlogProjectRepo.findByBacklogProjectId(backlogProjectId);
     }
 

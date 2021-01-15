@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.backlog.service.Storage;
 
-import com.hust.baseweb.applications.education.classmanagement.service.storage.StorageProperties;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.StorageService;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageFileNotFoundException;

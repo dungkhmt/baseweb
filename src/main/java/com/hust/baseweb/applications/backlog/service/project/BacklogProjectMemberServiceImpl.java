@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.backlog.entity.BacklogProjectMember;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogProjectMemberModel;
 import com.hust.baseweb.applications.backlog.repo.BacklogProjectMemberRepo;
 import com.hust.baseweb.applications.backlog.repo.BacklogProjectRepo;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class BacklogProjectMemberServiceImpl implements BacklogProjectMemberService {
 
-    @Autowired
     BacklogProjectRepo backlogProjectRepo;
-    @Autowired
     BacklogProjectMemberRepo backlogProjectMemberRepo;
 
     @Override

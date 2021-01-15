@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.backlog.service.task;
 import com.hust.baseweb.applications.backlog.entity.BacklogTaskAssignable;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogTaskAssignableInputModel;
 import com.hust.baseweb.applications.backlog.repo.BacklogTaskAssignableRepo;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +14,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class BacklogTaskAssignableServiceImpl implements BacklogTaskAssignableService {
-    @Autowired
+
     BacklogTaskAssignableRepo backlogTaskAssignableRepo;
 
     @Override
