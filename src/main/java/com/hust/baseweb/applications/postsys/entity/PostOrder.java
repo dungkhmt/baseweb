@@ -75,7 +75,7 @@ public class PostOrder {
     @Column(name="current_post_office_id")
     private String currentPostOfficeId;
 
-    @Column(name="created_stamp")
+    @Column(name="created_stamp", insertable = false, updatable = false)
     private Date createdStamp;
 
     public PostOrder() {

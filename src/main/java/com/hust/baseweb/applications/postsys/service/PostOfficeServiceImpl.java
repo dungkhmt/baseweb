@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Log4j2
@@ -122,7 +123,7 @@ public class PostOfficeServiceImpl implements PostOfficeService {
         Date tomorrow = new Date(endDate.getTime() + (1000 * 60 * 60 * 24));
         List<PostOrder> fromPostOrders = postOrderRepo.findByFromPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(postOfficeId, "POST_ORDER_ASSIGNED", startDate, tomorrow);
         List<PostOrder> toPostOrders = postOrderRepo.findByToPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(postOfficeId, "POST_ORDER_FINAL_TRIP", startDate, tomorrow);
-        log.info("Get office order detail: " +  startDate + " -> " + endDate + " found " + fromPostOrders.size() + " frompostOrders, " + toPostOrders.size() + " toPostOrders");
+        log.info("Get office pick order detail: " +  startDate + " -> " + endDate + " found " + fromPostOrders.size() + " frompostOrders, " + toPostOrders.size() + " toPostOrders");
         return new OfficeOrderDetailOutput(postOffice, fromPostOrders, toPostOrders);
     }
 }

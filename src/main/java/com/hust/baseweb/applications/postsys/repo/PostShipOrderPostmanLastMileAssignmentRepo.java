@@ -13,4 +13,6 @@ public interface PostShipOrderPostmanLastMileAssignmentRepo extends JpaRepositor
     List<PostShipOrderPostmanLastMileAssignment> findAllByCreatedStampGreaterThanEqualAndCreatedStampLessThan(Date date1, Date date2);
     List<PostShipOrderPostmanLastMileAssignment> findByCreatedStampGreaterThanEqualAndCreatedStampLessThanAndPostmanId(Date date1, Date date2, UUID postmanId);
     List<PostShipOrderPostmanLastMileAssignment> findByStatusId(String statusId);
+
+    List<PostShipOrderPostmanLastMileAssignment> findByPostShipOrderPostmanLastMileAssignmentIdIn(List<UUID> postShipOrderPostmanLastMileAssignmentIds);
 }

@@ -219,15 +219,6 @@ public class PostAPIController {
         return ResponseEntity.ok().body(null);
     }
 
-    @GetMapping("/get_office_order_detail/{postOfficeId}")
-    public ResponseEntity getOfficeOrderDetail(
-        @PathVariable String postOfficeId, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
-        Date fromDate,
-        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate
-    ) {
-        return ResponseEntity.ok().body(postOfficeService.getOfficeOrderDetailOutput(postOfficeId, fromDate, toDate));
-    }
-
     @GetMapping("/get-postman-list")
     public ResponseEntity getPostmanList() {
         return ResponseEntity.ok().body(postmanService.findAll());
@@ -285,6 +276,13 @@ public class PostAPIController {
         return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeId(postOfficeId));
     }
 
+    /**
+     * Lấy thông tin đơn hàng đã được gán cho postman thành công
+     * @param postOfficeId
+     * @param fromDate
+     * @param toDate
+     * @return
+     */
     @GetMapping("/get-postman-list-order-bydate/{postOfficeId}")
     public ResponseEntity getPostmanListAndOrderList(
         @PathVariable String postOfficeId,

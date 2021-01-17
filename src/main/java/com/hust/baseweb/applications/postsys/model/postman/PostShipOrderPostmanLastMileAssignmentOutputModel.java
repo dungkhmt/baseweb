@@ -16,10 +16,4 @@ public class PostShipOrderPostmanLastMileAssignmentOutputModel {
     List<PostShipOrderPostmanLastMileAssignment> shipAssignment;
     List<PostShipOrderPostmanLastMileAssignment> finishedAssignment;
 
-    public PostShipOrderPostmanLastMileAssignmentOutputModel(
-    ) {
-        setPickAssignment(new ArrayList<>());
-        setShipAssignment(new ArrayList<>());
-        setFinishedAssignment(new ArrayList<>());
-    }
 }

@@ -1,21 +1,22 @@
 package com.hust.baseweb.applications.postsys.controller;
 
-import com.hust.baseweb.applications.postsys.entity.PostDriverPostOfficeAssignment;
-import com.hust.baseweb.applications.postsys.model.postdriver.UpdatePostDriverPostOfficeAssignmentInputModel;
+import com.hust.baseweb.applications.postsys.model.postman.SolvePostmanPostOrderAssignmentTspInputModel;
 import com.hust.baseweb.applications.postsys.model.postman.UpdatePostmanPostOrderAssignmentInputModel;
-import com.hust.baseweb.applications.postsys.model.postshiporder.UpdatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.service.*;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @Log4j2(topic = "POST_LOG")
@@ -56,10 +57,24 @@ public class PostmanController {
 
     @ApiOperation(value = "Postman cập nhật trạng thái đơn hàng đã đưọc phân bổ")
     @PostMapping("/update-postman-post-order-assignment")
-    public ResponseEntity updatePostmanPostOrderAssignment(@RequestBody UpdatePostmanPostOrderAssignmentInputModel updatePostmanPostOrderAssignmentInputModel) {
-        return ResponseEntity.ok().body(postmanService.updatePostOrderAssignment(updatePostmanPostOrderAssignmentInputModel));
+    public ResponseEntity updatePostmanPostOrderAssignment(
+        @RequestBody UpdatePostmanPostOrderAssignmentInputModel updatePostmanPostOrderAssignmentInputModel
+    ) {
+        return ResponseEntity
+            .ok()
+            .body(postmanService.updatePostOrderAssignment(updatePostmanPostOrderAssignmentInputModel));
     }
 
-
+    @PostMapping("/solve-postman-post-order-assignment-tsp")
+    public ResponseEntity solvePostmanPostOrderAssignmentTsp(
+        @RequestBody
+            SolvePostmanPostOrderAssignmentTspInputModel solvePostmanPostOrderAssignmentTspInputModel,
+        @RequestParam("pick") Boolean pick,
+        @RequestParam("postOfficeId") String postOfficeId
+    ) {
+        return ResponseEntity
+            .ok()
+            .body(postmanService.solveAssignmentTsp(solvePostmanPostOrderAssignmentTspInputModel));
+    }
 
 }

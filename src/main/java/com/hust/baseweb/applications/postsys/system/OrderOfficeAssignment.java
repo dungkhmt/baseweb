@@ -152,18 +152,6 @@ public class OrderOfficeAssignment {
                                     postOffices.get(j).getPostalAddress());
                             String fromPostOffice = postOfficeTrip.getFromPostOfficeId();
                             String toPostOffice = postOfficeTrip.getToPostOfficeId();
-                            log.info(fromPostOffice +
-                                     "(" +
-                                     postOfficeIndex.get(fromPostOffice) +
-                                     ")" +
-                                     " -> " +
-                                     toPostOffice +
-                                     "(" +
-                                     postOfficeIndex.get(toPostOffice) +
-                                     "): " +
-                                     LatLngUtils.distance(
-                                         postOffices.get(i).getPostalAddress(),
-                                         postOffices.get(j).getPostalAddress()));
                         }
                     }
                 }
