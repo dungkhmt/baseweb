@@ -118,6 +118,10 @@ public class BacklogControllerAPI {
             });
             tasksWithAssignment.get(tasksWithAssignment.size() - 1).setAssignment(assignedUsers);
             tasksWithAssignment.get(tasksWithAssignment.size() - 1).setAssignable(assignableUsers);
+
+            UserLoginReduced createdUser = new UserLoginReduced(userService.findById(task.getCreatedByUserLoginId()));
+            createdUser.setPerson(personService.findByPartyId(createdUser.getPartyId()));
+            tasksWithAssignment.get(tasksWithAssignment.size() - 1).setCreatedByUser(createdUser);
         });
 
         return tasksWithAssignment;
@@ -211,7 +215,8 @@ public class BacklogControllerAPI {
         @RequestParam(required = false) String categoryName,
         @RequestParam(required = false) String statusName,
         @RequestParam(required = false) String priorityName,
-        @RequestParam(required = false) String assignment
+        @RequestParam(required = false) String assignment,
+        @RequestParam(required = false) String createdByUser
     ) {
         boolean isMember = isProjectMember(backlogProjectId, principal.getName());
         if(!isMember) {
@@ -219,7 +224,7 @@ public class BacklogControllerAPI {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new PageImpl<>(new ArrayList<>(), pageable, 0));
         }
 
-        ProjectFilterParamsModel filter = new ProjectFilterParamsModel(backlogTaskName, categoryName, statusName, priorityName, assignment);
+        ProjectFilterParamsModel filter = new ProjectFilterParamsModel(backlogTaskName, categoryName, statusName, priorityName, assignment, createdByUser);
         Page<BacklogTask> tasks = backlogTaskService.findByBacklogProjectId(backlogProjectId, pageable, filter);
         Page<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = new PageImpl<>(tasksToTaskWithAssigns(tasks.getContent()), pageable, tasks.getTotalElements());
 
@@ -236,7 +241,8 @@ public class BacklogControllerAPI {
         @RequestParam(required = false) String categoryName,
         @RequestParam(required = false) String statusName,
         @RequestParam(required = false) String priorityName,
-        @RequestParam(required = false) String assignment
+        @RequestParam(required = false) String assignment,
+        @RequestParam(required = false) String createdByUser
     ) {
         boolean isMember = isProjectMember(backlogProjectId, principal.getName());
         if(!isMember) {
@@ -247,7 +253,7 @@ public class BacklogControllerAPI {
         UserLogin userLogin = userService.findById(principal.getName());
         UUID userPartyId = userLogin.getParty().getPartyId();
 
-        ProjectFilterParamsModel filter = new ProjectFilterParamsModel(backlogTaskName, categoryName, statusName, priorityName, assignment);
+        ProjectFilterParamsModel filter = new ProjectFilterParamsModel(backlogTaskName, categoryName, statusName, priorityName, assignment, createdByUser);
         Page<BacklogTask> tasks = backlogTaskService.findByBacklogProjectIdAndPartyAssigned(backlogProjectId, userPartyId, filter, pageable);
         Page<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = new PageImpl<>(tasksToTaskWithAssigns(tasks.getContent()), pageable, tasks.getTotalElements());
 
@@ -264,7 +270,8 @@ public class BacklogControllerAPI {
         @RequestParam(required = false) String categoryName,
         @RequestParam(required = false) String statusName,
         @RequestParam(required = false) String priorityName,
-        @RequestParam(required = false) String assignment
+        @RequestParam(required = false) String assignment,
+        @RequestParam(required = false) String createdByUser
     ) {
         boolean isMember = isProjectMember(backlogProjectId, principal.getName());
         if(!isMember) {
@@ -272,7 +279,7 @@ public class BacklogControllerAPI {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new PageImpl<>(new ArrayList<>(), pageable, 0));
         }
 
-        ProjectFilterParamsModel filter = new ProjectFilterParamsModel(backlogTaskName, categoryName, statusName, priorityName, assignment);
+        ProjectFilterParamsModel filter = new ProjectFilterParamsModel(backlogTaskName, categoryName, statusName, priorityName, assignment, createdByUser);
         Page<BacklogTask> tasks = backlogTaskService.findOpeningTaskByCreatedUserLogin(backlogProjectId, principal.getName(), filter, pageable);
         Page<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = new PageImpl<>(tasksToTaskWithAssigns(tasks.getContent()), pageable, tasks.getTotalElements());
 

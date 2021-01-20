@@ -18,18 +18,21 @@ public class ProjectFilterParamsModel {
     private String statusName;
     private String priorityName;
     private String assignment;
+    private String createdByUser;
 
     public ProjectFilterParamsModel(
         String backlogTaskName,
         String categoryName,
         String statusName,
         String priorityName,
-        String assignment
+        String assignment,
+        String createdByUser
     ) {
         this.backlogTaskName = Objects.toString(backlogTaskName, "");
         this.categoryName = Objects.toString(categoryName, "");
         this.statusName = Objects.toString(statusName, "");
         this.priorityName = Objects.toString(priorityName, "");
         this.assignment = Objects.toString(assignment, "");
+        this.createdByUser = Objects.toString(createdByUser, "");
     }
 }
