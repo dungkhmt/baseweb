@@ -31,9 +31,6 @@ public class BacklogTask {
         dueDate = input.getDueDate();
         statusId = input.getStatusId();
         priorityId = input.getPriorityId();
-//        createdDate = input.getCreatedDate();
-//        lastUpdateStamp = input.getLastUpdateStamp();
-//        createdStamp = input.getCreatedStamp();
 
         Date now = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");

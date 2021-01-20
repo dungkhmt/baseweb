@@ -30,6 +30,6 @@ public class BacklogProject {
     @Column(name="backlog_project_code")
     private String backlogProjectCode;
 
-    @Column(name="backlog_project_name", insertable = false, updatable = false)
+    @Column(name="backlog_project_name")
     private String backlogProjectName;
 }

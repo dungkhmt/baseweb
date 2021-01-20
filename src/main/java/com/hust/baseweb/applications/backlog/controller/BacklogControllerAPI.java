@@ -1,14 +1,18 @@
 package com.hust.baseweb.applications.backlog.controller;
 
 import com.hust.baseweb.applications.backlog.entity.*;
+import com.hust.baseweb.applications.backlog.eumeration.BacklogEnum;
 import com.hust.baseweb.applications.backlog.model.*;
 import com.hust.baseweb.applications.backlog.service.Storage.BacklogFileStorageServiceImpl;
 import com.hust.baseweb.applications.backlog.service.project.BacklogProjectMemberService;
 import com.hust.baseweb.applications.backlog.service.project.BacklogProjectService;
 import com.hust.baseweb.applications.backlog.service.task.*;
+import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.entity.StatusItem;
 import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.model.ApproveRegistrationIM;
+import com.hust.baseweb.model.RegisterIM;
 import com.hust.baseweb.repo.StatusItemRepo;
 import com.hust.baseweb.service.PersonService;
 import com.hust.baseweb.service.UserService;
@@ -181,7 +185,7 @@ public class BacklogControllerAPI {
     }
 
     @GetMapping("backlog/get-project-detail/{backlogProjectId}")
-    public ResponseEntity<List<BacklogTaskWithAssignmentAndAssignable>> getProjectDetail(
+    public ResponseEntity<List<BacklogTask>> getProjectDetail(
         Principal principal,
         @PathVariable UUID backlogProjectId
     ) {
@@ -192,10 +196,10 @@ public class BacklogControllerAPI {
         }
 
         List<BacklogTask> tasks = backlogTaskService.findByBacklogProjectId(backlogProjectId);
-        List<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = tasksToTaskWithAssigns(tasks);
+//        List<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = tasksToTaskWithAssigns(tasks);
 
         log.info("get project detail, projectId = " + backlogProjectId);
-        return ResponseEntity.status(HttpStatus.OK).body(tasksWithAssignment);
+        return ResponseEntity.status(HttpStatus.OK).body(tasks);
     }
 
     @GetMapping("backlog/get-project-detail-by-page/{backlogProjectId}")
@@ -393,6 +397,7 @@ public class BacklogControllerAPI {
     @PostMapping("backlog/add-multi-task-assignments")
     public void addMultipleTaskAssignments(Principal principal, @RequestBody List<CreateBacklogTaskAssignmentInputModel> input) {
         for(CreateBacklogTaskAssignmentInputModel assignment: input) {
+            assignment.setStatusId(BacklogEnum.BACKLOG_TASK_STATUS_INPROGRESS.getValue());
             addAssignments(principal, assignment);
         }
     }
@@ -473,9 +478,10 @@ public class BacklogControllerAPI {
         }
 
         List<String> newMembersLoginId = input.getUsersLoginId();
-        for (String newMember : newMembersLoginId) {
-            UserLogin userLogin = userService.findById(newMember);
-            if (userLogin != null) {
+        for (String userLoginId : newMembersLoginId) {
+            UserLogin userLogin = userService.findById(userLoginId);
+            List <String> perms = userService.getGroupPermsByUserLoginId(userLoginId);
+            if (userLogin != null && perms.contains(BacklogEnum.BACKLOG_GROUP_PERMISSION.getValue())) {
                 UUID userPartyId = userLogin.getParty().getPartyId();
                 CreateBacklogProjectMemberModel createProjectMemberModel = new CreateBacklogProjectMemberModel(
                     input.getBacklogProjectId(),
@@ -484,7 +490,7 @@ public class BacklogControllerAPI {
                 backlogProjectMemberService.save(createProjectMemberModel);
             }
         }
-        log.info("add member to projectId = " + input.getBacklogProjectId() + "successful");
+        log.info("add member to projectId = " + input.getBacklogProjectId() + " successful");
         return ResponseEntity.ok(backlogProjectService.findByBacklogProjectId(input.getBacklogProjectId()));
     }
 
@@ -503,9 +509,25 @@ public class BacklogControllerAPI {
         return ResponseEntity.ok(backlogTaskPriorityService.findAll());
     }
 
+    @GetMapping("backlog/get-users-not-member/{projectId}")
+    public ResponseEntity<List<UserLoginReduced>> getNotMember(
+        Principal principal,
+        @PathVariable UUID projectId,
+        @RequestParam(required = false) String search,
+        Pageable pageable
+    ){
+        List<UserLogin> users = backlogProjectMemberService.findAllNotMember(projectId, search, pageable);
+        List<UserLoginReduced> usersLoginReduced = new ArrayList<>();
+        users.forEach(user -> {
+            Person person = personService.findByPartyId(user.getParty().getPartyId());
+            usersLoginReduced.add(new UserLoginReduced(user, person));
+        });
+        return ResponseEntity.ok(usersLoginReduced);
+    }
+
     @GetMapping("backlog/get-all-user")
     public ResponseEntity<List<UserLoginReduced>> getAllUserBacklog(Principal principal) {
-        List<UserLogin> users = userService.getAllUserLogins();
+        List<UserLogin> users = userService.getALlUserLoginsByGroupId(BacklogEnum.BACKLOG_GROUP_PERMISSION.getValue());
         List<UserLoginReduced> usersLoginReduced = new ArrayList<>();
         users.forEach(user -> {
             Person person = personService.findByPartyId(user.getParty().getPartyId());
@@ -640,5 +662,68 @@ public class BacklogControllerAPI {
         }
 
         return ResponseEntity.ok(suggestion);
+    }
+
+    // todo: delete from here
+    @GetMapping("backlog/create-data/{num}")
+    public ResponseEntity<?> createData(@PathVariable Integer num) {
+        for(int i = 0; i < num; i++) {
+            String firstName = RandomName.getFirstName();
+            String middleName = RandomName.getMiddleName();
+            String lastName = RandomName.getLastName();
+            String userName = RandomName.convertNameToUserName(firstName, middleName, lastName);
+            List<String> roles = new ArrayList<>(Collections.singletonList("ROLE_BACKLOG"));
+
+            RegisterIM tmp = new RegisterIM(userName, "1", firstName, middleName, lastName, RandomName.randomEmail(userName), roles);
+            userService.register(tmp);
+
+
+            userService.approve(new ApproveRegistrationIM(userName, roles));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("");
+    }
+
+    @GetMapping("backlog/create-data-task/{projectId}/{num1}/{num2}")
+    public ResponseEntity<?> createData(Principal principal, @PathVariable UUID projectId, @PathVariable Integer num1, @PathVariable Integer num2) {
+        Random rand = new Random();
+        List<BacklogProjectMember> backlogProjectMembers = backlogProjectMemberService.findAllByBacklogProjectId(projectId);
+        int n = backlogProjectMembers.size();
+        int maxMemberAssignable = 15;
+
+        for(int i = num1; i < num2; i++) {
+            CreateBacklogTaskInputModel task = TaskGenerator.taskGenerator(i, projectId);
+            BacklogTask taskCreated = backlogTaskService.create(task, principal.getName());
+
+            if(taskCreated.getStatusId().equals("TASK_OPEN")) {
+                // create assignable
+                int numOfMemberAssignable = rand.nextInt(Math.min(n, maxMemberAssignable));
+                CreateBacklogTaskAssignableInputModel input = new CreateBacklogTaskAssignableInputModel();
+                List<UUID> assignedToPartyIds = new ArrayList<>();
+
+                for(int j = 0; j < numOfMemberAssignable; j++) {
+                    BacklogProjectMember member = backlogProjectMembers.get(rand.nextInt(n));
+                    assignedToPartyIds.add(member.getMemberPartyId());
+                }
+
+                input.setAssignedToPartyId(assignedToPartyIds);
+                input.setBacklogTaskId(taskCreated.getBacklogTaskId());
+
+                System.out.println(input.getBacklogTaskId() + ", " + input.getAssignedToPartyId().size());
+                backlogTaskAssignableService.save(input);
+            } else {
+                // create assignment
+                CreateBacklogTaskAssignmentInputModel input = new CreateBacklogTaskAssignmentInputModel();
+                List<UUID> assignedToPartyIds = new ArrayList<>();
+                BacklogProjectMember member = backlogProjectMembers.get(rand.nextInt(n));
+                assignedToPartyIds.add(member.getMemberPartyId());
+                input.setAssignedToPartyId(assignedToPartyIds);
+                input.setBacklogTaskId(taskCreated.getBacklogTaskId());
+
+                System.out.println(input.getBacklogTaskId() + ", " + input.getAssignedToPartyId().size());
+
+                backlogTaskAssignmentService.create(input);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("");
     }
 }
