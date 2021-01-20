@@ -124,6 +124,7 @@ public class BacklogControllerAPI {
         Principal principal,
         @RequestBody CreateProjectInputModel input
     ) {
+        /*
         BacklogProject backlogProject = backlogProjectService.save(input);
 
         if(backlogProject == null) return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(null);
@@ -137,6 +138,23 @@ public class BacklogControllerAPI {
         backlogProjectMemberService.save(backlogProjectMemberInput);
 
         log.info("created project, projectId = " + backlogProject.getBacklogProjectId());
+        return ResponseEntity.ok(backlogProject);
+        */
+        System.out.println("createProject, projectCode " + input.getBacklogProjectCode() + " projectName = " + input.getBacklogProjectName());
+        log.info("createProject, projectCode " + input.getBacklogProjectCode() + " projectName = " + input.getBacklogProjectName());
+
+        List<BacklogProject> backlogProjects = backlogProjectService.findByProjectCode(input.getBacklogProjectCode());
+        if(backlogProjects != null && backlogProjects.size() > 0){
+            log.info("createProject, projectCode " + input.getBacklogProjectCode() + " EXISTS!");
+            return ResponseEntity.ok("projectCode " + input.getBacklogProjectCode() + " EXISTS!");
+        }
+        backlogProjects = backlogProjectService.findByProjectName(input.getBacklogProjectName());
+        if(backlogProjects != null && backlogProjects.size() > 0){
+            log.info("createProject, projectName " + input.getBacklogProjectName() + " EXISTS!");
+            return ResponseEntity.ok("projectName " + input.getBacklogProjectName() + " EXISTS!");
+        }
+        UserLogin userLogin = userService.findById(principal.getName());
+        BacklogProject backlogProject = backlogProjectService.save(userLogin,input);
         return ResponseEntity.ok(backlogProject);
     }
 
