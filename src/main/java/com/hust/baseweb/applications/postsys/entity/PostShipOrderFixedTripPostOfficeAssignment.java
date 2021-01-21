@@ -38,8 +38,6 @@ public class PostShipOrderFixedTripPostOfficeAssignment {
                 updatable = false)
     private PostShipOrderTripPostOfficeAssignment postShipOrderTripPostOfficeAssignment;
 
-
-
     @Column(name = "post_ship_order_trip_post_office_assignment_id")
     private UUID postShipOrderTripPostOfficeAssignmentId;
 }

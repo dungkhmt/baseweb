@@ -8,6 +8,7 @@ import com.hust.baseweb.applications.postsys.entity.PostOffice;
 import com.hust.baseweb.applications.postsys.entity.PostOrder;
 import com.hust.baseweb.applications.postsys.model.postoffice.CreatePostOfficeInputModel;
 import com.hust.baseweb.applications.postsys.model.postoffice.OfficeOrderDetailOutput;
+import com.hust.baseweb.applications.postsys.model.postoffice.PostOfficeOrderStatusOutputModel;
 import com.hust.baseweb.applications.postsys.repo.PostOfficeRepo;
 import com.hust.baseweb.applications.postsys.repo.PostOrderRepo;
 import com.hust.baseweb.repo.PartyRepo;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Log4j2
@@ -33,6 +33,7 @@ public class PostOfficeServiceImpl implements PostOfficeService {
     private GeoPointRepo geoPointRepo;
     private PostalAddressRepo postalAddressRepo;
     private PostOrderRepo postOrderRepo;
+
     @Override
     public PostOffice save(CreatePostOfficeInputModel input) {
         // TODO Auto-generated method stub
@@ -121,9 +122,50 @@ public class PostOfficeServiceImpl implements PostOfficeService {
     public OfficeOrderDetailOutput getOfficeOrderDetailOutput(String postOfficeId, Date startDate, Date endDate) {
         PostOffice postOffice = postOfficeRepo.findById(postOfficeId).get();
         Date tomorrow = new Date(endDate.getTime() + (1000 * 60 * 60 * 24));
-        List<PostOrder> fromPostOrders = postOrderRepo.findByFromPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(postOfficeId, "POST_ORDER_ASSIGNED", startDate, tomorrow);
-        List<PostOrder> toPostOrders = postOrderRepo.findByToPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(postOfficeId, "POST_ORDER_FINAL_TRIP", startDate, tomorrow);
-        log.info("Get office pick order detail: " +  startDate + " -> " + endDate + " found " + fromPostOrders.size() + " frompostOrders, " + toPostOrders.size() + " toPostOrders");
+        List<PostOrder> fromPostOrders = postOrderRepo.findByFromPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(
+            postOfficeId,
+            "POST_ORDER_ASSIGNED",
+            startDate,
+            tomorrow);
+        List<PostOrder> toPostOrders = postOrderRepo.findByToPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(
+            postOfficeId,
+            "POST_ORDER_FINAL_TRIP",
+            startDate,
+            tomorrow);
+        log.info("Get office pick order detail: " +
+                 startDate +
+                 " -> " +
+                 endDate +
+                 " found " +
+                 fromPostOrders.size() +
+                 " frompostOrders, " +
+                 toPostOrders.size() +
+                 " toPostOrders");
         return new OfficeOrderDetailOutput(postOffice, fromPostOrders, toPostOrders);
+    }
+
+    @Override
+    public List<PostOfficeOrderStatusOutputModel> getPostOfficeOrderStatus(Date fromDate, Date toDate, boolean from) {
+        List<PostOffice> postOffices = postOfficeRepo.findAll();
+        List<PostOfficeOrderStatusOutputModel> postOfficeOrderStatusOutputModels = new ArrayList<>();
+        for (PostOffice postOffice : postOffices) {
+            PostOfficeOrderStatusOutputModel postOfficeOrderStatusOutputModel = new PostOfficeOrderStatusOutputModel(
+                postOffice);
+            List<PostOrder> postOrders = new ArrayList<>();
+            if (from) {
+                postOrders = postOrderRepo.findByFromPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(
+                    postOffice.getPostOfficeId(), "POST_ORDER_ASSIGNED", fromDate, new Date(toDate.getTime() + (1000 * 60 * 60 * 24))
+                );
+            } else {
+                postOrders = postOrderRepo.findByToPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(
+                    postOffice.getPostOfficeId(), "POST_ORDER_FINAL_TRIP", fromDate, new Date(toDate.getTime() + (1000 * 60 * 60 * 24))
+                );
+            }
+            if (postOrders.size() > 0) {
+                postOfficeOrderStatusOutputModel.setStatus(true);
+            }
+            postOfficeOrderStatusOutputModels.add(postOfficeOrderStatusOutputModel);
+        }
+        return postOfficeOrderStatusOutputModels;
     }
 }

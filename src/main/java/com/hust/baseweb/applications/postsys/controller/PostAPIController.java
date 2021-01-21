@@ -8,6 +8,7 @@ import com.hust.baseweb.applications.postsys.model.postdriver.UpdatePostDriverPo
 import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignInput;
 import com.hust.baseweb.applications.postsys.model.postman.PostmanUpdateInputModel;
 import com.hust.baseweb.applications.postsys.model.postoffice.CreatePostOfficeInputModel;
+import com.hust.baseweb.applications.postsys.model.postoffice.PostOfficeOrderStatusOutputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderOutputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.UpdatePostShipOrderInputModel;
@@ -17,6 +18,7 @@ import com.hust.baseweb.applications.postsys.service.*;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
 import com.poiji.option.PoijiOptions;
+import localsearch.domainspecific.vehiclerouting.apps.sharedaride.Util.Request;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -62,6 +64,17 @@ public class PostAPIController {
         return ResponseEntity.ok().body(result);
     }
 
+    @GetMapping("/get-all-post-office-and-order-status")
+    public ResponseEntity<?> getPostOfficeOrderStatus(
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date fromDate,
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate,
+        @RequestParam boolean from
+    ) {
+        List<PostOfficeOrderStatusOutputModel> result = postOfficeService.getPostOfficeOrderStatus(fromDate, toDate, from);
+        log.info("getAllPostOffice, " + result.size() + " item(s) sent.");
+        return ResponseEntity.ok().body(result);
+    }
+
     @PostMapping("/upload-post-office-list")
     public ResponseEntity<?> uploadPostOfficeList(
         @RequestParam("file") MultipartFile multipartFile
@@ -98,12 +111,6 @@ public class PostAPIController {
     @PostMapping("/register-customer")
     public ResponseEntity saveCustomer(@RequestBody CreatePostCustomerModel createPostCustomerModel) {
         PostCustomer result = postCustomerService.saveCustomer(createPostCustomerModel);
-        return ResponseEntity.ok().body(result);
-    }
-
-    @GetMapping("/get-list-order")
-    public ResponseEntity getListOrder() {
-        List<PostOrder> result = postOrderService.findAllPostOrder();
         return ResponseEntity.ok().body(result);
     }
 
@@ -288,14 +295,15 @@ public class PostAPIController {
         @PathVariable String postOfficeId,
         @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
             Date fromDate,
-        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate
+        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate,
+        @RequestParam boolean from
     ) {
-        return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeIdAndDate(postOfficeId, fromDate, toDate));
+        return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeIdAndDate(postOfficeId, fromDate, toDate, from));
     }
 
     @PostMapping("/submit-postman-assign")
-    public ResponseEntity getPostmanListAndOrderList(@RequestBody List<PostmanAssignInput> postmanAssignInputs) {
-        return ResponseEntity.ok().body(postmanService.createAssignment(postmanAssignInputs));
+    public ResponseEntity pickPostmanAssign(@RequestBody List<PostmanAssignInput> postmanAssignInputs, @RequestParam boolean pick) {
+        return ResponseEntity.ok().body(postmanService.createAssignment(postmanAssignInputs, pick));
     }
 
     @GetMapping("/get-order-by-trip")

@@ -123,6 +123,7 @@ public class VrpSolver {
             main.defaultRoutingSearchParameters()
                 .toBuilder()
                 .setFirstSolutionStrategy(FirstSolutionStrategy.Value.PATH_CHEAPEST_ARC)
+//                .setLocalSearchMetaheuristic(LocalSearchMetaheuristic.Value.GUIDED_LOCAL_SEARCH)
                 .build();
 
 //        RoutingSearchParameters searchParameters =

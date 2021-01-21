@@ -55,7 +55,8 @@ public class PostmanService {
     public List<PostmanAssignmentByDate> findOrdersByPostOfficeIdAndDate(
         String postOfficeId,
         Date startDate,
-        Date endDate
+        Date endDate,
+        boolean from
     ) {
         List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = postShipOrderPostmanLastMileAssignmentRepo
             .findAllByCreatedStampGreaterThanEqualAndCreatedStampLessThan(
@@ -79,7 +80,23 @@ public class PostmanService {
             postmanAssignmentByDate.setPostOrders(new ArrayList<>());
             for (PostShipOrderPostmanLastMileAssignment postShipOrderPostmanLastMileAssignment : postShipOrderPostmanLastMileAssignments) {
                 if (postman.getPostmanId().equals(postShipOrderPostmanLastMileAssignment.getPostmanId())) {
-                    postmanAssignmentByDate.getPostOrders().add(postShipOrderPostmanLastMileAssignment.getPostOrder());
+                    if (from) {
+                        if (postShipOrderPostmanLastMileAssignment
+                            .getStatusId()
+                            .equals("POST_ORDER_ASSIGNMENT_PICKUP_WAITING")) {
+                            postmanAssignmentByDate
+                                .getPostOrders()
+                                .add(postShipOrderPostmanLastMileAssignment.getPostOrder());
+                        }
+                    } else {
+                        if (postShipOrderPostmanLastMileAssignment
+                            .getStatusId()
+                            .equals("POST_ORDER_ASSIGNMENT_SHIP_WAITING")) {
+                            postmanAssignmentByDate
+                                .getPostOrders()
+                                .add(postShipOrderPostmanLastMileAssignment.getPostOrder());
+                        }
+                    }
                 }
             }
             postmanAssignmentByDates.add(postmanAssignmentByDate);
@@ -132,6 +149,7 @@ public class PostmanService {
 
     /**
      * Sap xep assignment theo tsp
+     *
      * @param solvePostmanPostOrderAssignmentTspInputModel
      * @return
      */
@@ -139,19 +157,22 @@ public class PostmanService {
         SolvePostmanPostOrderAssignmentTspInputModel solvePostmanPostOrderAssignmentTspInputModel
     ) {
         List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = postShipOrderPostmanLastMileAssignmentRepo
-            .findByPostShipOrderPostmanLastMileAssignmentIdIn(solvePostmanPostOrderAssignmentTspInputModel.getPostShipOrderPostmanLastMileAssignmentIds()
-                            .stream()
-                            .map(postShipOrderPostmanLastMileAssignmentId -> UUID
-                                .fromString(postShipOrderPostmanLastMileAssignmentId))
-                            .collect(Collectors.toList()));
+            .findByPostShipOrderPostmanLastMileAssignmentIdIn(solvePostmanPostOrderAssignmentTspInputModel
+                                                                  .getPostShipOrderPostmanLastMileAssignmentIds()
+                                                                  .stream()
+                                                                  .map(postShipOrderPostmanLastMileAssignmentId -> UUID
+                                                                      .fromString(
+                                                                          postShipOrderPostmanLastMileAssignmentId))
+                                                                  .collect(Collectors.toList()));
         PostOffice postOffice = postOfficeRepo.findByPostOfficeId(solvePostmanPostOrderAssignmentTspInputModel.getPostOfficeId());
         List<GeoPoint> geoPoints = new ArrayList<>();
         geoPoints.add(postOffice.getPostalAddress().getGeoPoint());
         List<PostShipOrderPostmanLastMileAssignment> source = new ArrayList<>();
         List<PostShipOrderPostmanLastMileAssignment> result = new ArrayList<>();
         for (int i = 0; i < postShipOrderPostmanLastMileAssignments.size(); i++) {
-            if (solvePostmanPostOrderAssignmentTspInputModel.getPick() && postShipOrderPostmanLastMileAssignments.get(i).getStatusId()
-                                                               .equals("POST_ORDER_ASSIGNMENT_PICKUP_WAITING")) {
+            if (solvePostmanPostOrderAssignmentTspInputModel.getPick() &&
+                postShipOrderPostmanLastMileAssignments.get(i).getStatusId()
+                                                       .equals("POST_ORDER_ASSIGNMENT_PICKUP_WAITING")) {
                 source.add(postShipOrderPostmanLastMileAssignments.get(i));
                 geoPoints.add(postShipOrderPostmanLastMileAssignments
                                   .get(i)
@@ -159,8 +180,9 @@ public class PostmanService {
                                   .getFromCustomer()
                                   .getPostalAddress()
                                   .getGeoPoint());
-            } else if (!solvePostmanPostOrderAssignmentTspInputModel.getPick() && postShipOrderPostmanLastMileAssignments.get(i).getStatusId()
-                                                                       .equals("POST_ORDER_ASSIGNMENT_SHIP_WAITING")) {
+            } else if (!solvePostmanPostOrderAssignmentTspInputModel.getPick() &&
+                       postShipOrderPostmanLastMileAssignments.get(i).getStatusId()
+                                                              .equals("POST_ORDER_ASSIGNMENT_SHIP_WAITING")) {
                 geoPoints.add(postShipOrderPostmanLastMileAssignments
                                   .get(i)
                                   .getPostOrder()
@@ -181,19 +203,26 @@ public class PostmanService {
         return result;
     }
 
-    public ResponseSample createAssignment(List<PostmanAssignInput> postmanAssignInputs) {
+    public ResponseSample createAssignment(List<PostmanAssignInput> postmanAssignInputs, boolean pick) {
         List<PostShipOrderPostmanLastMileAssignment> postShipOrderPostmanLastMileAssignments = new ArrayList<>();
         List<PostOrder> postOrders = new ArrayList<>();
         for (PostmanAssignInput postmanAssignInput : postmanAssignInputs) {
             for (String postOrderId : postmanAssignInput.getPostOrderIds()) {
                 PostOrder postOrder = postOrderRepo.findById(UUID.fromString(postOrderId)).get();
-                postOrder.setStatusId("POST_ORDER_READY_PICKUP"); //san sang doi postman pickup
-                postOrders.add(postOrder);
                 PostShipOrderPostmanLastMileAssignment postShipOrderPostmanLastMileAssignment = new PostShipOrderPostmanLastMileAssignment();
+                if (pick) {
+                    postOrder.setStatusId("POST_ORDER_READY_PICKUP"); //san sang doi postman pickup
+                    postShipOrderPostmanLastMileAssignment.setStatusId("POST_ORDER_ASSIGNMENT_PICKUP_WAITING");
+                    postShipOrderPostmanLastMileAssignment.setPickupDelivery("p");
+                }
+                else{
+                    postOrder.setStatusId("POST_ORDER_READY_SHIP");
+                    postShipOrderPostmanLastMileAssignment.setStatusId("POST_ORDER_ASSIGNMENT_SHIP_WAITING");
+                    postShipOrderPostmanLastMileAssignment.setPickupDelivery("d");
+                }
+                postOrders.add(postOrder);
                 postShipOrderPostmanLastMileAssignment.setPostmanId(UUID.fromString(postmanAssignInput.getPostmanId()));
                 postShipOrderPostmanLastMileAssignment.setPostShipOrderId(UUID.fromString(postOrderId));
-                postShipOrderPostmanLastMileAssignment.setStatusId("POST_ORDER_ASSIGNMENT_PICKUP_WAITING");
-                postShipOrderPostmanLastMileAssignment.setPickupDelivery("p");
                 postShipOrderPostmanLastMileAssignments.add(postShipOrderPostmanLastMileAssignment);
             }
         }
@@ -231,9 +260,15 @@ public class PostmanService {
             .getStatus()
             .equals(postShipOrderPostmanLastMileAssignment.getStatusId())) {
             postShipOrderPostmanLastMileAssignment.setStatusId(updatePostmanPostOrderAssignmentInputModel.getStatus());
-            if (updatePostmanPostOrderAssignmentInputModel.getStatus().equals("POST_ORDER_ASSIGNMENT_PICKUP_SUCCESS")){
+            if (updatePostmanPostOrderAssignmentInputModel.getStatus().equals("POST_ORDER_ASSIGNMENT_PICKUP_SUCCESS")) {
                 PostOrder postOrder = postShipOrderPostmanLastMileAssignment.getPostOrder();
                 postOrder.setStatusId("POST_ORDER_READY_FIND_PATH");
+                postOrder.setCurrentPostOfficeId(postOrder.getFromPostOfficeId());
+                postOrderRepo.save(postOrder);
+            }
+            if (updatePostmanPostOrderAssignmentInputModel.getStatus().equals("POST_ORDER_ASSIGNMENT_SHIP_SUCCESS")) {
+                PostOrder postOrder = postShipOrderPostmanLastMileAssignment.getPostOrder();
+                postOrder.setStatusId("POST_ORDER_SUCCESS");
                 postOrder.setCurrentPostOfficeId(postOrder.getFromPostOfficeId());
                 postOrderRepo.save(postOrder);
             }

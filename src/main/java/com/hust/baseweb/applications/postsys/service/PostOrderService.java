@@ -6,18 +6,21 @@ import com.hust.baseweb.applications.geo.repo.GeoPointRepo;
 import com.hust.baseweb.applications.geo.repo.PostalAddressRepo;
 import com.hust.baseweb.applications.postsys.entity.PostCustomer;
 import com.hust.baseweb.applications.postsys.entity.PostOrder;
+import com.hust.baseweb.applications.postsys.entity.PostShipOrderFixedTripPostOfficeAssignment;
+import com.hust.baseweb.applications.postsys.entity.PostShipOrderTripPostOfficeAssignment;
 import com.hust.baseweb.applications.postsys.model.ResponseSample;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderInputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderOutputModel;
+import com.hust.baseweb.applications.postsys.model.postshiporder.PostOrderRouteOutputModel;
 import com.hust.baseweb.applications.postsys.model.postshiporder.UpdatePostShipOrderInputModel;
-import com.hust.baseweb.applications.postsys.repo.PostCustomerRepo;
-import com.hust.baseweb.applications.postsys.repo.PostOrderRepo;
+import com.hust.baseweb.applications.postsys.repo.*;
 import com.hust.baseweb.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -36,9 +39,20 @@ public class PostOrderService {
     GeoPointRepo geoPointRepo;
     @Autowired
     PostalAddressRepo postalAddressRepo;
+    @Autowired
+    private PostShipOrderTripPostOfficeAssignmentRepo postShipOrderTripPostOfficeAssignmentRepo;
+    @Autowired
+    private PostFixedTripRepo postFixedTripRepo;
+    @Autowired
+    private PostTripExecuteRepo postTripExecuteRepo;
+    @Autowired
+    private PostShipOrderFixedTripPostOfficeAssignmentRepo postShipOrderFixedTripPostOfficeAssignmentRepo;
 
-    public List<PostOrder> findAllPostOrder() {
-        List<PostOrder> orders = (List<PostOrder>) postOrderRepo.findAll();
+
+    public List<PostOrder> findAllPostOrder(Date fromDate, Date toDate) {
+        List<PostOrder> orders = (List<PostOrder>) postOrderRepo.findByCreatedStampGreaterThanEqualAndCreatedStampLessThanOrderByCreatedStampDesc(
+            fromDate,
+            new Date(toDate.getTime() + (1000 * 60 * 60 * 24)));
         return orders;
     }
 
@@ -99,11 +113,13 @@ public class PostOrderService {
         return result;
     }
 
+    @Transactional("jpa_transaction_manager")
     public ResponseSample CancelPostOrder(String postOrderId) {
         try {
             postOrderRepo.updatePostOrderStatus(UUID.fromString(postOrderId), "ORDER_CANCELLED");
             return new ResponseSample("SUCCESS", "Delete order success");
         } catch (Exception e) {
+            log.error(e);
             return new ResponseSample("ERROR", "");
         }
     }
@@ -137,7 +153,30 @@ public class PostOrderService {
 
     public List<PostOrder> findPostOrderbyDate(String statusId, Date fromDate, Date toDate) {
         Date tomorrow = new Date(toDate.getTime() + (1000 * 60 * 60 * 24));
-        return postOrderRepo.findByStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(statusId, fromDate, toDate);
+        return postOrderRepo.findByStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(
+            statusId,
+            fromDate,
+            toDate);
     }
 
+    public List<PostOrderRouteOutputModel> getPostOrderRoute(String postOrderId) {
+        List<PostOrderRouteOutputModel> postOrderRouteOutputModels = new ArrayList<>();
+        List<PostShipOrderTripPostOfficeAssignment> postShipOrderTripPostOfficeAssignments = postShipOrderTripPostOfficeAssignmentRepo
+            .findByPostOrder_PostShipOrderIdOrderByCreatedStampAsc(UUID.fromString(postOrderId));
+        for (PostShipOrderTripPostOfficeAssignment postShipOrderTripPostOfficeAssignment : postShipOrderTripPostOfficeAssignments) {
+            PostOrderRouteOutputModel postOrderRouteOutputModel = new PostOrderRouteOutputModel(
+                postShipOrderTripPostOfficeAssignment.getPostOfficeTrip().getFromPostOffice(),
+                postShipOrderTripPostOfficeAssignment.getPostOfficeTrip().getToPostOffice(),
+                null, null, null
+            );
+            PostShipOrderFixedTripPostOfficeAssignment postShipOrderFixedTripPostOfficeAssignment = postShipOrderFixedTripPostOfficeAssignmentRepo.findByPostShipOrderTripPostOfficeAssignmentId(postShipOrderTripPostOfficeAssignment.getPostShipOrderPostOfficeTripAssignmentId());
+            if (postShipOrderFixedTripPostOfficeAssignment != null) {
+                postOrderRouteOutputModel.setStatus(postShipOrderFixedTripPostOfficeAssignment.getPostOfficeFixedTripExecute().getStatus());
+                postOrderRouteOutputModel.setDepartureDateTime(postShipOrderFixedTripPostOfficeAssignment.getPostOfficeFixedTripExecute().getDepartureDateTime());
+                postOrderRouteOutputModel.setArrivedDateTime(postShipOrderFixedTripPostOfficeAssignment.getPostOfficeFixedTripExecute().getArrivedDateTime());
+            }
+            postOrderRouteOutputModels.add(postOrderRouteOutputModel);
+        }
+        return postOrderRouteOutputModels;
+    }
 }

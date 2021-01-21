@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.postsys.model.posttrip.PostShipOrderTripPos
 import com.hust.baseweb.applications.postsys.repo.*;
 import com.hust.baseweb.utils.LatLngUtils;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.math3.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -160,23 +161,35 @@ public class OrderOfficeAssignment {
             int dest = postOfficeIndex.get(postOrder.getToPostOfficeId());
             int[] dist = new int[postOffices.size()];
             int[] prev = new int[postOffices.size()];
-//        int[] ntrips = new int[postOffices.size()];
+            boolean[] visited = new boolean[postOffices.size()];
+            int size = postOffices.size();
+            PriorityQueue<Pair<Integer, Integer>> Q1 = new PriorityQueue<Pair<Integer, Integer>>((v1, v2) -> Integer.compare(
+                v1.getValue(), v2.getValue()
+            ));
             Queue<Integer> Q = new PriorityQueue<>((integer, t1) -> Integer.compare(
-                distanceMatrix[integer][source],
-                distanceMatrix[t1][source]));
+                dist[integer],
+                dist[t1]));
             for (PostOffice postOffice : postOffices) {
                 if (!postOffice.getPostOfficeId().equals(source)) {
                     dist[postOfficeIndex.get(postOffice.getPostOfficeId())] = Integer.MAX_VALUE;
                     prev[postOfficeIndex.get(postOffice.getPostOfficeId())] = -1;
+                    visited[postOfficeIndex.get(postOffice.getPostOfficeId())] = false;
                     Q.offer(postOfficeIndex.get(postOffice.getPostOfficeId()));
+                    Q1.offer(
+                        new Pair(
+                            postOfficeIndex.get(postOffice.getPostOfficeId()),
+                            dist[postOfficeIndex.get(postOffice.getPostOfficeId())]
+                        ));
                 }
             }
             dist[source] = 0;
-            while (!Q.isEmpty()) {
-                int u = Q.poll();
-//                if (u == dest) {
-//                    break;
-//                }
+            while (size > 0) {
+                int u = getMinDist(dist, postOffices.size(), visited);
+                size--;
+                visited[u] = true;
+                if (u == dest) {
+                    System.out.println(dest);
+                }
                 for (int v = 0; v < postOffices.size(); v++) {
                     if (distanceMatrix[u][v] != Integer.MAX_VALUE) {
                         int temp = dist[u] + distanceMatrix[u][v];
@@ -201,6 +214,21 @@ public class OrderOfficeAssignment {
             String pathLog = "Expected path order Id " + postOrder.getPostShipOrderId() + ": ";
             int cur = dest, nextOfficeIndex = -1;
             pathLog += postOffices.get(dest).getPostOfficeId();
+            if (prev[dest] == -1) {
+                log.info("Khong tim duoc duong di, Order Id: " +
+                         postOrder.getPostShipOrderId() +
+                         ", from post office: " +
+                         postOrder.getFromPostOffice().getPostOfficeName() +
+                         " (" +
+                         postOrder.getFromPostOfficeId() +
+                         ") " +
+                         ",post office: " +
+                         postOrder.getToPostOffice().getPostOfficeName() +
+                         " (" +
+                         postOrder.getToPostOfficeId() +
+                         ")");
+                return result;
+            }
             while (prev[cur] != -1) {
                 pathLog += " <- " + postOffices.get(prev[cur]).getPostOfficeId();
                 if (prev[cur] == source) {
@@ -239,6 +267,20 @@ public class OrderOfficeAssignment {
                      postShipOrderTripPostOfficeAssignment.getPostOfficeTripId() +
                      ", assignment id: " +
                      postShipOrderTripPostOfficeAssignment.getPostShipOrderPostOfficeTripAssignmentId());
+        }
+        return result;
+    }
+
+    public int getMinDist(int dist[], int size, boolean visited[]) {
+        int min = Integer.MAX_VALUE;
+        int result = 0;
+        for (int i = 0; i < size; i++) {
+            if (!visited[i]) {
+                if (dist[i] < min) {
+                    min = dist[i];
+                    result = i;
+                }
+            }
         }
         return result;
     }

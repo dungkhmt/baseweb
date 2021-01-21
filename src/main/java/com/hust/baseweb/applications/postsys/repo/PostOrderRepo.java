@@ -16,7 +16,10 @@ import java.util.UUID;
 @Repository
 public interface PostOrderRepo extends JpaRepository<PostOrder, UUID> {
 
-    List<PostOrder> findAll();
+    List<PostOrder> findByCreatedStampGreaterThanEqualAndCreatedStampLessThanOrderByCreatedStampDesc(
+        Date fromDate,
+        Date toDate
+    );
 
     List<PostOrder> findByStatusId(String statusId);
 

@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.postsys.controller;
 import com.hust.baseweb.applications.postsys.entity.PostDriverPostOfficeAssignment;
 import com.hust.baseweb.applications.postsys.entity.PostFixedTrip;
 import com.hust.baseweb.applications.postsys.model.postdriver.UpdatePostDriverPostOfficeAssignmentInputModel;
+import com.hust.baseweb.applications.postsys.model.posttrip.ExecuteTripInputModel;
 import com.hust.baseweb.applications.postsys.service.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +60,10 @@ public class PostTripController {
         return ResponseEntity
             .ok()
             .body(postDriverService.addPostDriverPostOfficeAssignment(updatePostDriverPostOfficeAssignmentInputModel));
+    }
+
+    @DeleteMapping("/delete-execute-trip")
+    public ResponseEntity deletePostTripExecute(@RequestBody ExecuteTripInputModel executeTripInputModel) {
+        return ResponseEntity.ok().body(postTripService.deletePostTripExecute(executeTripInputModel));
     }
 }

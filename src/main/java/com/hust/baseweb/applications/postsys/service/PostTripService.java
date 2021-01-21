@@ -162,6 +162,20 @@ public class PostTripService {
             postShipOrderFixedTripPostOfficeAssignments);
     }
 
+    public ResponseSample deletePostTripExecute(ExecuteTripInputModel executeTripInputModel) {
+        PostTripExecute postTripExecute = postTripExecuteRepo.findByPostOfficeFixedTripExecuteId(UUID.fromString(
+            executeTripInputModel.getPostOfficeFixedTripExecuteId()));
+        if (postTripExecute.getStatus().equals("WAITING")) {
+            postTripExecuteRepo.delete(postTripExecute);
+            postShipOrderFixedTripPostOfficeAssignmentRepo.deleteAll(postShipOrderFixedTripPostOfficeAssignmentRepo.findByPostOfficeFixedTripExecuteId(
+                postTripExecute.getPostOfficeFixedTripExecuteId()));
+            log.info("Delete execute trip success, execute trip id = " + postTripExecute.getPostOfficeFixedTripExecuteId());
+            return new ResponseSample("SUCCESS", "Delete Execute Trip Success");
+        } else {
+            return new ResponseSample("ERROR", "Trip already been executing");
+        }
+    }
+
     public ResponseSample updatePostTripExecute(ExecuteTripInputModel executeTripInputModel) {
         PostTripExecute postTripExecute = postTripExecuteRepo.findByPostOfficeFixedTripExecuteId(UUID.fromString(
             executeTripInputModel.getPostOfficeFixedTripExecuteId()));
@@ -189,6 +203,7 @@ public class PostTripService {
             postOrderRepo.saveAll(postOrders);
         }
         if (executeTripInputModel.getStatus().equals("ARRIVED")) {
+            postTripExecute.setArrivedDateTime(executeTripInputModel.getArrivedDateTime());
             List<PostOrder> postOrders = new ArrayList<>();
             for (PostShipOrderFixedTripPostOfficeAssignment postShipOrderFixedTripPostOfficeAssignment : postShipOrderFixedTripPostOfficeAssignments) {
                 PostOrder postOrder = postShipOrderFixedTripPostOfficeAssignment

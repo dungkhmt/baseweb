@@ -6,6 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+
+/**
+ * type = true => 'pick' else 'ship'
+ */
 @Getter
 @Setter
 @NoArgsConstructor

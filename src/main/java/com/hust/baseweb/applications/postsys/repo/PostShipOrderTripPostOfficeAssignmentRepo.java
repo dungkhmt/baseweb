@@ -38,4 +38,6 @@ public interface PostShipOrderTripPostOfficeAssignmentRepo
                         "group by psotpoa.post_ship_order_id " +
                    ") a on a.post_ship_order_id = psotpoa1.post_ship_order_id and a.delivery_order = psotpoa1.delivery_order", nativeQuery = true)
     List<PostShipOrderTripPostOfficeAssignment> findByMaxDeliveryOrderAndDate(Date fromDate, Date toDate, String statusId);
+
+    List<PostShipOrderTripPostOfficeAssignment> findByPostOrder_PostShipOrderIdOrderByCreatedStampAsc(UUID postOrderId);
 }
