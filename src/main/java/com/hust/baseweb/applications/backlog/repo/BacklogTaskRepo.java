@@ -29,6 +29,7 @@ public interface BacklogTaskRepo extends JpaRepository<BacklogTask, UUID> {
                 "and bt.status_id in (select status_id from status_item where status_type_id = 'BACKLOG_STATUS' and lower(description) like lower(concat( :#{#filter.statusName}, '%'))) " +
                 "and bt.priority_id in (select backlog_task_priority_id from backlog_task_priority where lower(backlog_task_priority_name) like lower(CONCAT( :#{#filter.priorityName},'%'))) " +
                 "and lower(bt.backlog_task_name) like lower(concat( :#{#filter.backlogTaskName},'%')) " +
+                "and lower(bt.created_by_user_login_id) like lower(concat( :#{#filter.createdByUser},'%')) " +
                 "and (case when :#{#filter.assignment} != '' then bta.assigned_to_party_id in (select party_id from user_login where lower(user_login_id) like lower(concat( :#{#filter.assignment},'%'))) else true end)",
            nativeQuery = true)
     Page<BacklogTask> findByBacklogProjectId(
