@@ -311,7 +311,7 @@ public class BacklogControllerAPI {
     public ResponseEntity<BacklogTask> editTask(Principal principal, @RequestBody CreateBacklogTaskInputModel input) {
         try {
             BacklogTask updatedTask = backlogTaskService.update(input);
-            log.info("edit task successful, taskId = " + updatedTask.getBacklogTaskId());
+            log.info("edit task successful, taskId = " + updatedTask.getBacklogTaskId() + " fromDate = " + input.getFromDate());
             return ResponseEntity.ok(updatedTask);
         } catch(Exception e) {
             log.error("edit task " + e);

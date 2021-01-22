@@ -98,6 +98,7 @@ public class BacklogTask {
         if(input.getCategoryId() != null) categoryId = input.getCategoryId();
         if(input.getBacklogDescription() != null) backlogDescription = input.getBacklogDescription();
         if(input.getDueDate() != null) dueDate = input.getDueDate();
+        if(input.getFromDate() != null) fromDate = input.getFromDate();
         if(input.getStatusId() != null) statusId = input.getStatusId();
         if(input.getPriorityId() != null) priorityId = input.getPriorityId();
         if(input.getLastUpdateStamp() != null) lastUpdateStamp = input.getLastUpdateStamp();
