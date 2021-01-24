@@ -35,6 +35,7 @@ import java.util.UUID;
 @RestController
 @Log4j2(topic = "POST_LOG")
 public class PostAPIController {
+
     @Autowired
     private PostOfficeService postOfficeService;
     @Autowired
@@ -70,7 +71,10 @@ public class PostAPIController {
         @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate,
         @RequestParam boolean from
     ) {
-        List<PostOfficeOrderStatusOutputModel> result = postOfficeService.getPostOfficeOrderStatus(fromDate, toDate, from);
+        List<PostOfficeOrderStatusOutputModel> result = postOfficeService.getPostOfficeOrderStatus(
+            fromDate,
+            toDate,
+            from);
         log.info("getAllPostOffice, " + result.size() + " item(s) sent.");
         return ResponseEntity.ok().body(result);
     }
@@ -98,7 +102,7 @@ public class PostAPIController {
     public ResponseEntity<?> deletePostOfficeById(Principal principal, @PathVariable String postOfficeId) {
         postOfficeService.deleteByPostOfficeId(postOfficeId);
         log.info("deletePostOfficeById = " + postOfficeId);
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body(new Object());
     }
 
     @GetMapping("/get-customer-list")
@@ -114,207 +118,19 @@ public class PostAPIController {
         return ResponseEntity.ok().body(result);
     }
 
-    @PostMapping("/create-post-ship-order")
-    public ResponseEntity createPostShipOrder(@RequestBody CreatePostShipOrderInputModel input) {
-        CreatePostShipOrderOutputModel result = postOrderService.createPostShipOrder(input);
-        return ResponseEntity.ok().body(result);
-    }
-
-
-    @PostMapping("/update-post-order-status")
-    public ResponseEntity updatePostOrderStatus(
-        @RequestBody UpdatePostShipOrderInputModel updatePostShipOrderInputModel
-    ) {
-        return ResponseEntity.ok().body(postOrderService.updatePostOrderStatus(updatePostShipOrderInputModel));
-    }
-
     @GetMapping("/find-customer-by-partyid")
     public ResponseEntity findCustomerByPartyId(Principal principal) {
         PostCustomer result = postCustomerService.findCustomerByPartyId(principal);
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping("/get-post-package-type")
-    public ResponseEntity getPostPackageType() {
-        List<PostPackageType> result = postPackageTypeService.getListPostPackageType();
-        return ResponseEntity.ok().body(result);
-    }
-
-    @DeleteMapping("/delete-post-ship-order/{postShipOrderID}")
-    public ResponseEntity deletePostShipOrder(@PathVariable(required = true) String postShipOrderID) {
-        ResponseSample response = postOrderService.CancelPostOrder(postShipOrderID);
-        return ResponseEntity.ok().body(response);
-    }
-
-    @GetMapping("/get-post-trip-list")
-    public ResponseEntity getPostTripList() {
-        List<PostFixedTrip> postFixedTrips = postTripService.findAllVehicle();
-        return ResponseEntity.ok().body(postFixedTrips);
-    }
-
-    @GetMapping("/get-post-execute-trip-list")
-    public ResponseEntity getPostTripExecuteList(
-        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
-            Date date
-    ) {
-        return ResponseEntity.ok().body(postTripService.getExecuteTripByDate(date));
-    }
-
-    @GetMapping("/get-post-trip-list-by-postman")
-    public ResponseEntity getPostTripListByPostman(Principal principal) {
-        List<PostFixedTrip> postFixedTrips = postTripService.findAllVehicleByPostman(principal);
-        return ResponseEntity.ok().body(postFixedTrips);
-    }
-
-    @GetMapping("/get-post-execute-trip-list-by-postman")
-    public ResponseEntity getPostTripExecuteListByPostman(
-        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
-            Date date,
-        Principal principal
-    ) {
-        return ResponseEntity.ok().body(postTripService.getExecuteTripByDateAndPostman(date, principal));
-    }
-
-    @GetMapping("/get-post-trip-list-by-post-driver")
-    public ResponseEntity getPostTripListByPostDriver(Principal principal) {
-        List<PostFixedTrip> postFixedTrips = postTripService.findAllTripByPostDriver(principal);
-        return ResponseEntity.ok().body(postFixedTrips);
-    }
-
-    @GetMapping("/get-post-trip-list-by-post-driver/{postDriverId}")
-    public ResponseEntity getPostTripListByPostDriver(@PathVariable String postDriverId) {
-        List<PostFixedTrip> postFixedTrips = postTripService.findAllTripByPostDriver(UUID.fromString(postDriverId));
-        return ResponseEntity.ok().body(postFixedTrips);
-    }
-
-    @GetMapping("/get-post-execute-trip-list-by-post-driver")
-    public ResponseEntity getPostTripExecuteListByDriver(
-        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
-            Date date,
-        Principal principal
-    ) {
-        return ResponseEntity.ok().body(postTripService.getExecuteTripByDateAndPostDriver(date, principal));
-    }
-
-    @GetMapping("/get-post-trip/{postTripId}")
-    public ResponseEntity getPostTrip(@PathVariable String postTripId) {
-        PostFixedTrip postFixedTrip = postTripService.findByPostOfficeFixedTripId(postTripId);
-        return ResponseEntity.ok().body(postFixedTrip);
-    }
-
-    @PostMapping("/create-post-trip")
-    public ResponseEntity createPostTrip(@RequestBody CreatePostTripModel creatPostTripModel) {
-        PostFixedTrip postFixedTrip = postTripService.createPostTrip(creatPostTripModel);
-        return ResponseEntity.ok().body(postFixedTrip);
-    }
-
-
-    @PostMapping("/create-post-trip-list")
-    public ResponseEntity createPostTripList(@RequestParam("file") MultipartFile multipartFile) throws IOException {
-        List<CreatePostOfficeInputModel> createPostOfficeInputModels
-            = Poiji.fromExcel(multipartFile.getInputStream(), PoijiExcelType.XLSX, CreatePostOfficeInputModel.class,
-                              PoijiOptions.PoijiOptionsBuilder.settings().sheetName("DanhSachBuuCuc").build());
-        List<PostOffice> postOffices = postOfficeService.save(createPostOfficeInputModels);
-        log.info("Uploaded " + postOffices.size() + " postoffice");
-        return ResponseEntity.ok().body(postOffices.size());
-    }
-
-    @DeleteMapping("/delete-post-trip/{postTripId}")
-    public ResponseEntity<?> deletePostTripById(@PathVariable String postTripId) {
-        postTripService.deleteByPostTripId(postTripId);
-        log.info("deletePostOfficeById = " + postTripId);
-        return ResponseEntity.ok().body(null);
-    }
-
-    @GetMapping("/get-postman-list")
-    public ResponseEntity getPostmanList() {
-        return ResponseEntity.ok().body(postmanService.findAll());
-    }
-
-    @GetMapping("/get-postman-list/{postOfficeId}")
-    public ResponseEntity getPostmanList(@PathVariable String postOfficeId) {
-        return ResponseEntity.ok().body(postmanService.findByPostOfficeId(postOfficeId));
-    }
-
-    @PostMapping("/update-postman")
-    public ResponseEntity updatePostman(@RequestBody PostmanUpdateInputModel postmanUpdateInputModel) {
-        return ResponseEntity.ok().body(postmanService.updatePostman(postmanUpdateInputModel));
-    }
-
-    @GetMapping("/get-post-driver-list")
-    public ResponseEntity getPostDriverList() {
-        return ResponseEntity.ok().body(postDriverService.findAll());
-    }
-
-    @PostMapping("/update-post-driver")
-    public ResponseEntity updatePostDriver(@RequestBody PostDriverUpdateInputModel postDriverUpdateInputModel) {
-        return ResponseEntity.ok().body(postDriverService.updatePostDriver(postDriverUpdateInputModel));
-    }
-
-    @PostMapping("/update-post-driver-post-office-assignment")
-    public ResponseEntity updatePostDriverPostOfficeAssignment(
-        @RequestBody
-            UpdatePostDriverPostOfficeAssignmentInputModel updatePostDriverPostOfficeAssignmentInputModel
-    ) {
-        return ResponseEntity
-            .ok()
-            .body(postDriverService.updatePostDriverPostOfficeAssignment(updatePostDriverPostOfficeAssignmentInputModel));
-    }
-
-    @PostMapping("/execute-trip")
-    public ResponseEntity executeTrip(@RequestBody ExecuteTripInputModel executeTripInputModel) {
-        return ResponseEntity.ok().body(postTripService.createPostTripExecute(executeTripInputModel));
-    }
-
-    @PostMapping("/update-execute-trip")
-    public ResponseEntity updateExecuteTrip(@RequestBody ExecuteTripInputModel executeTripInputModel) {
-        return ResponseEntity.ok().body(postTripService.updatePostTripExecute(executeTripInputModel));
-    }
-
-    @GetMapping("/get-order-by-day/{day}")
-    public ResponseEntity getPostOrderByDay(
-        @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date day
-    ) {
-        return ResponseEntity.ok().body(postOrderService.findAllOrderByDay(day));
-    }
-
-    @GetMapping("/get-postman-list-order/{postOfficeId}")
-    public ResponseEntity getPostmanListAndOrderList(@PathVariable String postOfficeId) {
-        return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeId(postOfficeId));
-    }
-
-    /**
-     * Lấy thông tin đơn hàng đã được gán cho postman thành công
-     * @param postOfficeId
-     * @param fromDate
-     * @param toDate
-     * @return
-     */
-    @GetMapping("/get-postman-list-order-bydate/{postOfficeId}")
-    public ResponseEntity getPostmanListAndOrderList(
-        @PathVariable String postOfficeId,
-        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
-            Date fromDate,
-        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate,
-        @RequestParam boolean from
-    ) {
-        return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeIdAndDate(postOfficeId, fromDate, toDate, from));
-    }
-
     @PostMapping("/submit-postman-assign")
-    public ResponseEntity pickPostmanAssign(@RequestBody List<PostmanAssignInput> postmanAssignInputs, @RequestParam boolean pick) {
+    public ResponseEntity postmanAssign(
+        @RequestBody List<PostmanAssignInput> postmanAssignInputs,
+        @RequestParam boolean pick
+    ) {
         return ResponseEntity.ok().body(postmanService.createAssignment(postmanAssignInputs, pick));
     }
 
-    @GetMapping("/get-order-by-trip")
-    public ResponseEntity getPostOrderByTrip(
-        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy")
-            Date fromDate,
-        @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate
-    ) {
-        List<PostShipOrderTripPostOfficeAssignment> postShipOrderTripPostOfficeAssignments = postTripService.getPostOrderByTrip(
-            fromDate,
-            toDate);
-        return ResponseEntity.ok().body(postShipOrderTripPostOfficeAssignments);
-    }
+
 }

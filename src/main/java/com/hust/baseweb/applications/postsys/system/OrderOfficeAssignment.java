@@ -163,23 +163,11 @@ public class OrderOfficeAssignment {
             int[] prev = new int[postOffices.size()];
             boolean[] visited = new boolean[postOffices.size()];
             int size = postOffices.size();
-            PriorityQueue<Pair<Integer, Integer>> Q1 = new PriorityQueue<Pair<Integer, Integer>>((v1, v2) -> Integer.compare(
-                v1.getValue(), v2.getValue()
-            ));
-            Queue<Integer> Q = new PriorityQueue<>((integer, t1) -> Integer.compare(
-                dist[integer],
-                dist[t1]));
             for (PostOffice postOffice : postOffices) {
                 if (!postOffice.getPostOfficeId().equals(source)) {
                     dist[postOfficeIndex.get(postOffice.getPostOfficeId())] = Integer.MAX_VALUE;
                     prev[postOfficeIndex.get(postOffice.getPostOfficeId())] = -1;
                     visited[postOfficeIndex.get(postOffice.getPostOfficeId())] = false;
-                    Q.offer(postOfficeIndex.get(postOffice.getPostOfficeId()));
-                    Q1.offer(
-                        new Pair(
-                            postOfficeIndex.get(postOffice.getPostOfficeId()),
-                            dist[postOfficeIndex.get(postOffice.getPostOfficeId())]
-                        ));
                 }
             }
             dist[source] = 0;

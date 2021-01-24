@@ -1,5 +1,8 @@
 package com.hust.baseweb.applications.postsys.controller;
 
+import com.hust.baseweb.applications.postsys.model.postdriver.PostDriverUpdateInputModel;
+import com.hust.baseweb.applications.postsys.model.postdriver.UpdatePostDriverPostOfficeAssignmentInputModel;
+import com.hust.baseweb.applications.postsys.model.postman.PostmanUpdateInputModel;
 import com.hust.baseweb.applications.postsys.model.postman.SolvePostmanPostOrderAssignmentTspInputModel;
 import com.hust.baseweb.applications.postsys.model.postman.UpdatePostmanPostOrderAssignmentInputModel;
 import com.hust.baseweb.applications.postsys.service.*;
@@ -9,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Date;
@@ -36,6 +36,42 @@ public class PostmanController {
     PostmanService postmanService;
     @Autowired
     private PostDriverService postDriverService;
+
+
+    @GetMapping("/get-postman-list")
+    public ResponseEntity getPostmanList() {
+        return ResponseEntity.ok().body(postmanService.findAll());
+    }
+
+    @GetMapping("/get-postman-list/{postOfficeId}")
+    public ResponseEntity getPostmanList(@PathVariable String postOfficeId) {
+        return ResponseEntity.ok().body(postmanService.findByPostOfficeId(postOfficeId));
+    }
+
+    @PostMapping("/update-postman")
+    public ResponseEntity updatePostman(@RequestBody PostmanUpdateInputModel postmanUpdateInputModel) {
+        return ResponseEntity.ok().body(postmanService.updatePostman(postmanUpdateInputModel));
+    }
+
+    @GetMapping("/get-post-driver-list")
+    public ResponseEntity getPostDriverList() {
+        return ResponseEntity.ok().body(postDriverService.findAll());
+    }
+
+    @PostMapping("/update-post-driver")
+    public ResponseEntity updatePostDriver(@RequestBody PostDriverUpdateInputModel postDriverUpdateInputModel) {
+        return ResponseEntity.ok().body(postDriverService.updatePostDriver(postDriverUpdateInputModel));
+    }
+
+    @PostMapping("/update-post-driver-post-office-assignment")
+    public ResponseEntity updatePostDriverPostOfficeAssignment(
+        @RequestBody
+            UpdatePostDriverPostOfficeAssignmentInputModel updatePostDriverPostOfficeAssignmentInputModel
+    ) {
+        return ResponseEntity
+            .ok()
+            .body(postDriverService.updatePostDriverPostOfficeAssignment(updatePostDriverPostOfficeAssignmentInputModel));
+    }
 
     @ApiOperation(value = "Lấy danh sách đơn hàng đã đưọc phân bổ cho postman")
     @GetMapping("/get-order-by-postman-and-date")
@@ -76,5 +112,11 @@ public class PostmanController {
             .ok()
             .body(postmanService.solveAssignmentTsp(solvePostmanPostOrderAssignmentTspInputModel));
     }
+
+    @GetMapping("/get-postman-list-order/{postOfficeId}")
+    public ResponseEntity getPostmanListAndOrderList(@PathVariable String postOfficeId) {
+        return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeId(postOfficeId));
+    }
+
 
 }

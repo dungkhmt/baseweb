@@ -43,7 +43,7 @@ public class PostOfficeServiceImpl implements PostOfficeService {
         // create and save a new geo point
         GeoPoint geoPoint = new GeoPoint();
         geoPoint.setLatitude(input.getLatitude());
-        geoPoint.setLongitude(input.getLongtitude());
+        geoPoint.setLongitude(input.getLongitude());
         geoPointRepo.save(geoPoint);
         log.info("save geo point, id=" + geoPoint.getGeoPointId());
 
@@ -96,7 +96,7 @@ public class PostOfficeServiceImpl implements PostOfficeService {
         inputs.forEach(input -> {
             GeoPoint geoPoint = new GeoPoint();
             geoPoint.setLatitude(input.getLatitude());
-            geoPoint.setLongitude(input.getLongtitude());
+            geoPoint.setLongitude(input.getLongitude());
             geoPoints.add(geoPoint);
 
             // create and save a new postal address
