@@ -24,6 +24,6 @@ public class CreatePostOfficeInputModel {
     private String address;
     @ExcelCellName("latitude")
     private Double latitude;
-    @ExcelCellName("longtitude")
-    private Double longtitude;
+    @ExcelCellName("longitude")
+    private Double longitude;
 }
