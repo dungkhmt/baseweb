@@ -82,4 +82,5 @@ logging:
   config: classpath:logback-dev.xml
 content-repo:
   url : http://${CONTENT_SERVICE_HOST}:${CONTENT_SERVICE_PORT}/ #'http://localhost:8081/'
-
+postsys:
+  post_assign_delay: 500000000
