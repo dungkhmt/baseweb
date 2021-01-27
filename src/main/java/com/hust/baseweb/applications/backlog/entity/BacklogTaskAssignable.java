@@ -53,6 +53,6 @@ public class BacklogTaskAssignable {
     @Column(name="last_updated_stamp")
     private Date lastUpdatedStamp;
 
-    @Column(name="created_stamp")
+    @Column(name="created_stamp", insertable = false, updatable = false)
     private Date createdStamp;
 }

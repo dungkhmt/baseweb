@@ -12,9 +12,9 @@ import java.util.UUID;
 public class CreateBacklogTaskInputModel {
     private UUID backlogTaskId;
     private String backlogTaskName;
-    private String backlogTaskCategoryId;
+    private String categoryId;
     private String backlogDescription;
-    private String backlogProjectId;
+    private UUID backlogProjectId;
     private Date createdDate;
     private String createdByUserLoginId;
     private Date fromDate;

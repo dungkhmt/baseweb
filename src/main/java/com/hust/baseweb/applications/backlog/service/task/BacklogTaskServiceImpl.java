@@ -2,26 +2,25 @@ package com.hust.baseweb.applications.backlog.service.task;
 
 import com.hust.baseweb.applications.backlog.entity.BacklogTask;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogTaskInputModel;
+import com.hust.baseweb.applications.backlog.model.ProjectFilterParamsModel;
 import com.hust.baseweb.applications.backlog.repo.BacklogTaskRepo;
 import com.hust.baseweb.applications.backlog.service.Storage.BacklogFileStorageServiceImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class BacklogTaskServiceImpl implements BacklogTaskService {
 
-    @Autowired
-    BacklogTaskRepo backlogTaskRepo;
-    @Autowired
+    private BacklogTaskRepo backlogTaskRepo;
     private BacklogFileStorageServiceImpl storageService;
 
     @Override
@@ -30,9 +29,35 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
     }
 
     @Override
-    public List<BacklogTask> findByBacklogProjectId(String backlogProjectId) {
+    public List<BacklogTask> findByBacklogProjectId(UUID backlogProjectId) {
         List<BacklogTask> taskList = backlogTaskRepo.findByBacklogProjectId(backlogProjectId);
         if(taskList == null) return  new ArrayList<>();
+        return taskList;
+    }
+
+    @Override
+    public Page<BacklogTask> findByBacklogProjectId(UUID backlogProjectId, Pageable pageable, ProjectFilterParamsModel filter) {
+        Page<BacklogTask> taskList = backlogTaskRepo.findByBacklogProjectId(backlogProjectId, pageable, filter);
+        if(taskList == null) return new PageImpl<>(new ArrayList<>(), pageable, 0);
+        return taskList;
+    }
+
+    @Override
+    public Page<BacklogTask> findByBacklogProjectIdAndPartyAssigned(UUID backlogProjectId, UUID assignedPartyId, ProjectFilterParamsModel filter, Pageable pageable) {
+        Page<BacklogTask> taskList = backlogTaskRepo.findByBacklogProjectIdAndPartyAssigned(backlogProjectId, assignedPartyId, filter, pageable);
+        if(taskList == null) return new PageImpl<>(new ArrayList<>(), pageable, 0);
+        return taskList;
+    }
+
+    @Override
+    public Page<BacklogTask> findOpeningTaskByCreatedUserLogin(
+        UUID backlogProjectId,
+        String userLoginId,
+        ProjectFilterParamsModel filter,
+        Pageable pageable
+    ) {
+        Page<BacklogTask> taskList = backlogTaskRepo.findOpeningTaskByCreatedUserLogin(backlogProjectId, userLoginId, filter, pageable);
+        if(taskList == null) return new PageImpl<>(new ArrayList<>(), pageable, 0);
         return taskList;
     }
 

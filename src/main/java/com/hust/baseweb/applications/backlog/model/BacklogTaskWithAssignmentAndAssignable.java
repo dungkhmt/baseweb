@@ -16,4 +16,5 @@ public class BacklogTaskWithAssignmentAndAssignable {
     BacklogTask backlogTask;
     List<UserLoginReduced> assignment;
     List<UserLoginReduced> assignable;
+    UserLoginReduced createdByUser;
 }

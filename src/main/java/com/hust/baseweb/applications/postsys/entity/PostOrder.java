@@ -48,11 +48,35 @@ public class PostOrder {
     private Date expectedDeliveryDate;
 
     @ManyToOne()
-    @JoinColumn(name = "status_id", referencedColumnName = "status_id",insertable=false, updatable=false)
+    @JoinColumn(name = "status_id", referencedColumnName = "status_id", insertable=false, updatable = false)
     private StatusItem statusItem;
 
     @Column(name="status_id")
-    private String status_id;
+    private String statusId;
+
+    @ManyToOne()
+    @JoinColumn(name="from_post_office_id", referencedColumnName = "post_office_id", insertable = false, updatable = false)
+    private PostOffice fromPostOffice;
+
+    @ManyToOne()
+    @JoinColumn(name="to_post_office_id", referencedColumnName = "post_office_id", insertable = false, updatable = false)
+    private PostOffice toPostOffice;
+
+    @ManyToOne()
+    @JoinColumn(name="current_post_office_id", referencedColumnName = "post_office_id", insertable = false, updatable = false)
+    private PostOffice currentPostOffice;
+
+    @Column(name="to_post_office_id")
+    private String toPostOfficeId;
+
+    @Column(name="from_post_office_id")
+    private String fromPostOfficeId;
+
+    @Column(name="current_post_office_id")
+    private String currentPostOfficeId;
+
+    @Column(name="created_stamp", insertable = false, updatable = false)
+    private Date createdStamp;
 
     public PostOrder() {
         fromCustomer = new PostCustomer();

@@ -369,4 +369,14 @@ public class UserServiceImpl implements UserService {
         //log.info("::updatePassword2, user_login " + u.getUserLoginId() + " encrypted password = "+ passWordOut);
         return u;
     }
+
+    @Override
+    public List<UserLogin> getALlUserLoginsByGroupId(String groupId) {
+        return userLoginRepo.findAllUserLoginsByGroupId(groupId);
+    }
+
+    @Override
+    public List<String> getGroupPermsByUserLoginId(String userLoginId){
+        return userLoginRepo.findGroupPermsByUserLoginId(userLoginId);
+    }
 }

@@ -6,10 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,13 +18,17 @@ import javax.persistence.Table;
 public class BacklogProject {
 
     public BacklogProject(CreateProjectInputModel input) {
-        backlogProjectId = input.getBacklogProjectId();
+        backlogProjectCode = input.getBacklogProjectCode();
         backlogProjectName = input.getBacklogProjectName();
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="backlog_project_id")
-    private String backlogProjectId;
+    private UUID backlogProjectId;
+
+    @Column(name="backlog_project_code")
+    private String backlogProjectCode;
 
     @Column(name="backlog_project_name")
     private String backlogProjectName;

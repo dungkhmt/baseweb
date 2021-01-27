@@ -54,4 +54,8 @@ public interface UserService {
     SimpleResponse approve(ApproveRegistrationIM im);
 	
 	UserLogin updatePassword2(String userLoginId, String password);
+
+	List<UserLogin> getALlUserLoginsByGroupId(String groupId);
+
+	List<String> getGroupPermsByUserLoginId(String userLoginId);
 }

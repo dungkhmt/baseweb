@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.backlog.service.task;
 import com.hust.baseweb.applications.backlog.entity.BacklogTaskAssignable;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogTaskAssignableInputModel;
 import com.hust.baseweb.applications.backlog.repo.BacklogTaskAssignableRepo;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +14,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class BacklogTaskAssignableServiceImpl implements BacklogTaskAssignableService {
-    @Autowired
+
     BacklogTaskAssignableRepo backlogTaskAssignableRepo;
 
     @Override
@@ -22,7 +24,8 @@ public class BacklogTaskAssignableServiceImpl implements BacklogTaskAssignableSe
         List<BacklogTaskAssignable> backlogTaskAssignments = new ArrayList<>();
 
         // add new assignment or modify existed assigment
-        input.getAssignedToPartyId().forEach((assignedPartyId) -> {
+        for(UUID assignedPartyId : input.getAssignedToPartyId()) {
+            if(assignedPartyId == null) break;
             BacklogTaskAssignable assignment = backlogTaskAssignableRepo.findByBacklogTaskIdAndAndAssignedToPartyId(input.getBacklogTaskId(), assignedPartyId);
             if(assignment == null) {
                 if(input.getStartDate() == null) input.setStartDate(new Date());
@@ -41,7 +44,7 @@ public class BacklogTaskAssignableServiceImpl implements BacklogTaskAssignableSe
 
                 backlogTaskAssignableRepo.save(assignment);
             }
-        });
+        };
 
         // set status "ASSIGNMENT_INACTIVE" for inactive assignment
         List<BacklogTaskAssignable> assignments = backlogTaskAssignableRepo.findAllByBacklogTaskId(input.getBacklogTaskId());

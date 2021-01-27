@@ -2,43 +2,64 @@ package com.hust.baseweb.applications.backlog.service.project;
 
 import com.hust.baseweb.applications.backlog.entity.BacklogProject;
 import com.hust.baseweb.applications.backlog.entity.BacklogProjectMember;
+import com.hust.baseweb.applications.backlog.model.CreateBacklogProjectMemberModel;
 import com.hust.baseweb.applications.backlog.model.CreateProjectInputModel;
 import com.hust.baseweb.applications.backlog.repo.BacklogProjectMemberRepo;
 import com.hust.baseweb.applications.backlog.repo.BacklogProjectRepo;
 
+import com.hust.baseweb.entity.UserLogin;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
+@Log4j2
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class BacklogProjectServiceImpl implements BacklogProjectService {
 
-    @Autowired
     BacklogProjectRepo backlogProjectRepo;
-    @Autowired
     BacklogProjectMemberRepo backlogProjectMemberRepo;
-
+    BacklogProjectMemberService backlogProjectMemberService;
+    @Transactional
     @Override
-    public BacklogProject save(CreateProjectInputModel input) {
-        BacklogProject backlogProject = backlogProjectRepo.findByBacklogProjectId(input.getBacklogProjectId());
-        if (backlogProject == null) {
-            return backlogProjectRepo.save(new BacklogProject(input));
-        }
-        return null;
+    public BacklogProject save(UserLogin userLogin, CreateProjectInputModel input) {
+        BacklogProject backlogProject  = backlogProjectRepo.save(new BacklogProject(input));
+        //if(backlogProject == null) return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(null);
+        log.info("save, SUCCESS save with projectId = " + backlogProject.getBacklogProjectId());
+
+        UUID userPartyId = userLogin.getParty().getPartyId();
+        CreateBacklogProjectMemberModel backlogProjectMemberInput = new CreateBacklogProjectMemberModel(
+            backlogProject.getBacklogProjectId(),
+            userPartyId
+        );
+        backlogProjectMemberService.save(backlogProjectMemberInput);
+
+        log.info("save, projectId = " + backlogProject.getBacklogProjectId());
+        return backlogProject;
     }
 
     @Override
     public List<BacklogProject> findAll() {
-        // TODO Auto-generated method stub
         return backlogProjectRepo.findAll();
     }
 
     @Override
-    public BacklogProject findByBacklogProjectId(String backlogProjectId) {
-        // TODO Auto-generated method stub
+    public List<BacklogProject> findByProjectCode(String projectCode) {
+        return backlogProjectRepo.findAllByBacklogProjectCode(projectCode);
+    }
+
+    @Override
+    public List<BacklogProject> findByProjectName(String projectName) {
+        return backlogProjectRepo.findAllByBacklogProjectName(projectName);
+    }
+
+    @Override
+    public BacklogProject findByBacklogProjectId(UUID backlogProjectId) {
         return backlogProjectRepo.findByBacklogProjectId(backlogProjectId);
     }
 
@@ -54,12 +75,11 @@ public class BacklogProjectServiceImpl implements BacklogProjectService {
 
     @Override
     public BacklogProject create(CreateProjectInputModel projectModel) {
-        if ((backlogProjectRepo.existsByBacklogProjectId(projectModel.getBacklogProjectId()))) {
-            return new BacklogProject();
-        }
         return backlogProjectRepo.save(new BacklogProject(
-            projectModel.getBacklogProjectId(),
-            projectModel.getBacklogProjectName()
+            new CreateProjectInputModel(
+                projectModel.getBacklogProjectCode(),
+                projectModel.getBacklogProjectName()
+            )
         ));
     }
 }
