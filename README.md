@@ -24,26 +24,27 @@ Khi đã sẵn sàng cho quá trình cài đặt project, thực hiện lần l�
 * Ở trường <b>Filename</b>, browse đến nơi tải xuống và chọn [file backup](https://drive.google.com/file/d/1GN1iLdSqfZSNO1LLeMpfl8q6PkXYmdFk/view?usp=sharing) (chú ý: chọn Format là <b>All Files</b> khi browse)
 * Ở trường <b>Role name</b>, chọn <b>postgres</b> (option nằm ở cuối), sau đó chọn <b>Restore</b>
 ### 1.2. Cấu hình Mongo Replica Set
+Với `{version}` là phiên bản MongoDB được cài đặt, ví dụ: 4.2, thực hiện lần lượt các bước sau:
 * Click chuột phải vào thanh <b>Taskbar</b> → chọn <b>Task Manager</b> → chọn <b>Services</b> → tìm và click chuột phải vào <b>MongoDB</b> → chọn <b>Stop</b>
 * Tạo thư mục: <b>C:\data\db</b> trong ổ C 
 * Trong thư mục <b>db</b> tạo lần lượt 3 thư mục con: <b>mongo27017</b>, <b>mongo27018</b>, <b>mongo27019</b>
 * Mở một Command Prompt (cmd), chạy lần lượt 2 lệnh: <br/>
-`cd C:\Program Files\MongoDB\Server\4.2\bin` <br/>
+`cd C:\Program Files\MongoDB\Server\{version}\bin` <br/>
 `mongod --port 27017 --dbpath C:\data\db\mongo27017 --replSet rs0`
 * Mở thêm một cmd mới, chạy lần lượt 2 lệnh: <br/>
-`cd C:\Program Files\MongoDB\Server\4.2\bin` <br/>
+`cd C:\Program Files\MongoDB\Server\{version}\bin` <br/>
 `mongod --port 27018 --dbpath C:\data\db\mongo27018 --replSet rs0`
 * Mở thêm một cmd mới, chạy lần lượt 2 lệnh: <br/>
-`cd C:\Program Files\MongoDB\Server\4.2\bin` <br/>
+`cd C:\Program Files\MongoDB\Server\{version}\bin` <br/>
 `mongod --port 27019 --dbpath C:\data\db\mongo27019 --replSet rs0`
 * Mở thêm một cmd mới, chạy lần lượt 5 lệnh: <br/>
-`cd C:\Program Files\MongoDB\Server\4.2\bin` <br/>
+`cd C:\Program Files\MongoDB\Server\{version}\bin` <br/>
 `mongo` <br/>
 `rs.initiate()` <br/>
 `rs.add(“localhost:27018”)` <br/>
 `rs.add(“localhost:27019”)` <br/>
 ### 2. Cấu hình project
-* Import project vào <b>IntelliJ IDEA</b> hoặc <b>Eclipse</b>
+* Import project vào <b>IntelliJ IDEA</b> hoặc <b>Eclipse</b> (optional, có thể không làm tại bước này)
 * Copy [file cấu hình](https://drive.google.com/file/d/1cxurrBoNn6cNgOx_Q9i22meYtMP02iJN/view?usp=sharing) vào thư mục: <b>src\main\resources</b>
 * Trong file cấu hình, điền mật khẩu và tên PostgreSQL Database được tạo ở 1.1 tương ứng cho các thuộc tính <b>SQL_DB_PASS</b> và <b>POSTGRES_DB</b>
 ### 3. Build project
@@ -52,7 +53,7 @@ Khi đã sẵn sàng cho quá trình cài đặt project, thực hiện lần l�
 * Chờ đến khi quá trình build thành công và xuất hiện thông báo <b>BUILD_SUCCESS</b>
 ### 4. Chạy project
 * Chạy file <b>redis-server.exe</b> trong thư mục [redis-2.4.5](https://drive.google.com/drive/folders/1WilP451UfPN33uM1RSUreCX9rJmVVbMK?usp=sharing)<b>\64bit</b> để khởi động redis
-* Chạy file [sscm.bat](https://drive.google.com/file/d/1D5ZRsY0S8-hAPjEZX6x2DwDrjZs7NqLQ/view?usp=sharing) để khởi động mongo replica set
+* Chạy file [sscm.bat](https://drive.google.com/file/d/1D5ZRsY0S8-hAPjEZX6x2DwDrjZs7NqLQ/view?usp=sharing) để khởi động mongo replica set (lưu ý: nếu phiên bản MongoDB được cài đặt khác 4.2 thì cần thay thế tất cả 4.2 trong nội dung file thành phiên bản đươc cài, ví dụ: 4.4)
 * Trong thư mục: <b>src\main\java\com\hust\baseweb</b>, chạy file <b>BasewebApplication.java</b>
 
 Sau lần chạy thành công đầu tiên, ở các lần chạy sau chỉ cần thực hiện bước 4
