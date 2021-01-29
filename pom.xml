@@ -228,6 +228,16 @@
             <groupId>com.google.ortools</groupId>
             <artifactId>ortools-java</artifactId>
             <version>8.0.8283</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/ortools-java-8.0.8283.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.ortools</groupId>
+            <artifactId>ortools-win32-x86-64-8.0.8283</artifactId>
+            <version>8.0.8283</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/ortools-win32-x86-64-8.0.8283.jar</systemPath>
         </dependency>
     </dependencies>
 
