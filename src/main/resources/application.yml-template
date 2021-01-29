@@ -9,7 +9,7 @@ SQL_DB_PASS: ${POSTGRES_PASSWORD} #e.g. baseweb@123
 server:
   servlet:
     context-path: '/api'
-  compression:
+  compression: # optional, can omit lines from 12 to 13 (included)
     enabled: true
 
 google:
@@ -48,7 +48,7 @@ spring:
     url: jdbc:postgresql://${SQL_DB_HOST}:${SQL_DB_PORT}/${POSTGRES_DB}
     username: ${SQL_DB_USER}
     password: ${SQL_DB_PASS}
-  jpa: # optional, can ommit lines from 51 to 57
+  jpa: # optional, can ommit lines from 51 to 57 (included)
       properties:
         hibernate:
           format_sql: true
@@ -82,7 +82,7 @@ logging:
         baseweb : DEBUG
     org:
       springframework: INFO
-      hibernate: # optional, can ommit lines from 85 to 90
+      hibernate: # optional, can ommit lines from 85 to 90 (included)
               SQL: DEBUG
               type:
                 descriptor:
