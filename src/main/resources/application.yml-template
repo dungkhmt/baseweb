@@ -1,44 +1,41 @@
 # POSTGRES_DB: baseweb_dms config database name if in local
 SERVICE_HOST: localhost
 SERVICE_PORT: 8080
-SQL_DB_HOST: ${POSTGRES_HOST} #localhost #config db host to localhost if in local
-SQL_DB_PORT: ${POSTGRES_PORT} #5432
-SQL_DB_USER: ${POSTGRES_USER} #postgres
-SQL_DB_PASS: ${POSTGRES_PASSWORD} #baseweb@123
+SQL_DB_HOST: ${POSTGRES_HOST} #e.g. localhost (note: config db host to localhost if in local)
+SQL_DB_PORT: ${POSTGRES_PORT} #e.g. 5432
+SQL_DB_USER: ${POSTGRES_USER} #e.g. postgres
+SQL_DB_PASS: ${POSTGRES_PASSWORD} #e.g. baseweb@123
+
 server:
   servlet:
     context-path: '/api'
-  compression:
+  compression: # optional, can omit lines from 12 to 13 (included)
     enabled: true
+
 google:
   api_key: ${GOOGLE_MAP_API_KEY} #push google map api key here
-upload:
-  rootPath: path/to/baseweb/
-  backlogDataPath: src/main/java/com/hust/baseweb/applications/backlog/data/
+
 spring:
   redis:
-    host : ${REDIS_HOST} #localhost
-    port : ${REDIS_PORT} #6379
+    host : ${REDIS_HOST} #e.g. localhost
+    port : ${REDIS_PORT} #e.g. 6379
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS : false
   servlet:
     multipart:
-
-     max-file-size: 100MB
-     max-request-size: 100MB
-
+    max-file-size: #e.g. 100MB
+    max-request-size: #e.g. 100MB
+    mvc:
+        throw-exception-if-no-handler-found: true
   data:
     rest:
-      #base-path: /rest
+      #base-path, e.g. /rest
       detection-strategy:  ANNOTATED
-
     mongodb:
-      uri: mongodb://${MONGO_URI}
-      #host: ${MONGO_HOST} #localhost 
-      #port: ${MONGO_PORT} #27017
-      database: ${MONGO_DB_NAME} #baseweb
-
+      uri: mongodb://${MONGO_URI} #e.g. uri: mongodb://localhost:27017,localhost:27018,localhost:27019
+      replicaSet: #e.g. rs0
+      database: ${MONGO_DB_NAME} #e.g. baseweb
   datasource:
     driver-class-name: org.postgresql.Driver
     hikari:
@@ -49,9 +46,15 @@ spring:
       connectionTimeout: 300000
       leakDetectionThreshold: 300000
     url: jdbc:postgresql://${SQL_DB_HOST}:${SQL_DB_PORT}/${POSTGRES_DB}
-
     username: ${SQL_DB_USER}
     password: ${SQL_DB_PASS}
+  jpa: # optional, can ommit lines from 51 to 57 (included)
+      properties:
+        hibernate:
+          format_sql: true
+          order_inserts: true
+          jdbc:
+            batch_size: #e.g. 50
 
   mail:
       host: smtp.gmail.com
@@ -65,8 +68,8 @@ spring:
               enable: true
             timeout: 5000
             writetimeout: 5000
-      username: // email
-      password: // email password
+      username:
+      password:
 
 logging:
   file:
@@ -79,8 +82,21 @@ logging:
         baseweb : DEBUG
     org:
       springframework: INFO
+      hibernate: # optional, can ommit lines from 85 to 90 (included)
+              SQL: DEBUG
+              type:
+                descriptor:
+                  sql:
+                    BasicBinder: TRACE
   config: classpath:logback-dev.xml
+
+upload:
+    rootPath: path/to/baseweb/ #e.g. D:/sscm/basewe/
+    class-management-data-path: src/main/java/com/hust/baseweb/applications/education/classmanagement/data/
+    backlogDataPath: src/main/java/com/hust/baseweb/applications/backlog/data/
+
 content-repo:
-  url : http://${CONTENT_SERVICE_HOST}:${CONTENT_SERVICE_PORT}/ #'http://localhost:8081/'
+  url: http://${CONTENT_SERVICE_HOST}:${CONTENT_SERVICE_PORT}/ #e.g. 'http://localhost:8081/'
+
 postsys:
   post_assign_delay: 500000000
