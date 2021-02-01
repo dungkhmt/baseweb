@@ -78,7 +78,7 @@ rs.add(“localhost:27019”)
 * Mở Git Bash tại thư mục project - <b>baseweb</b> (hoặc mở Git Bash tại thư mục khác và `cd` đến thư mục project)
 * Chạy lệnh: `mvn clean`
 * Mở Git Bash tại thư mục <b>libs\ortools\Windows</b> (hoặc mở Git Bash tại thư mục khác và `cd` đến thư mục này)
-* Chạy 2 lệnh: <br/>
+* Chạy lần lượt 2 lệnh: <br/>
 ```
 mvn install:install-file -Dfile=ortools-win32-x86-64-8.0.8283.jar -DpomFile=pom-runtime.xml
 ```
