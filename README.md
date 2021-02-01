@@ -29,20 +29,42 @@ Với `{version}` là phiên bản MongoDB được cài đặt, ví dụ: 4.2, 
 * Tạo thư mục: <b>C:\data\db</b> trong ổ C 
 * Trong thư mục <b>db</b> tạo lần lượt 3 thư mục con: <b>mongo27017</b>, <b>mongo27018</b>, <b>mongo27019</b>
 * Mở một Command Prompt (cmd), chạy lần lượt 2 lệnh: <br/>
-`cd C:\Program Files\MongoDB\Server\{version}\bin` <br/>
-`mongod --port 27017 --dbpath C:\data\db\mongo27017 --replSet rs0`
+```
+cd C:\Program Files\MongoDB\Server\{version}\bin
+```
+```
+mongod --port 27017 --dbpath C:\data\db\mongo27017 --replSet rs0
+```
 * Mở thêm một cmd mới, chạy lần lượt 2 lệnh: <br/>
-`cd C:\Program Files\MongoDB\Server\{version}\bin` <br/>
-`mongod --port 27018 --dbpath C:\data\db\mongo27018 --replSet rs0`
+```
+cd C:\Program Files\MongoDB\Server\{version}\bin
+```
+```
+mongod --port 27018 --dbpath C:\data\db\mongo27018 --replSet rs0
+```
 * Mở thêm một cmd mới, chạy lần lượt 2 lệnh: <br/>
-`cd C:\Program Files\MongoDB\Server\{version}\bin` <br/>
-`mongod --port 27019 --dbpath C:\data\db\mongo27019 --replSet rs0`
+```
+cd C:\Program Files\MongoDB\Server\{version}\bin
+```
+```
+mongod --port 27019 --dbpath C:\data\db\mongo27019 --replSet rs0
+```
 * Mở thêm một cmd mới, chạy lần lượt 5 lệnh: <br/>
-`cd C:\Program Files\MongoDB\Server\{version}\bin` <br/>
-`mongo --port 27017` <br/>
-`rs.initiate()` <br/>
-`rs.add(“localhost:27018”)` <br/>
-`rs.add(“localhost:27019”)` <br/>
+```
+cd C:\Program Files\MongoDB\Server\{version}\bin
+```
+```
+mongo --port 27017
+```
+```
+rs.initiate()
+```
+```
+rs.add(“localhost:27018”)
+```
+```
+rs.add(“localhost:27019”)
+```
 ### 2. Cấu hình project
 * Import project vào <b>IntelliJ IDEA</b> hoặc <b>Eclipse</b> (optional, có thể không làm tại bước này)
 * Copy [file cấu hình](https://drive.google.com/file/d/1cxurrBoNn6cNgOx_Q9i22meYtMP02iJN/view?usp=sharing) vào thư mục: <b>src\main\resources</b>
@@ -53,11 +75,16 @@ Với `{version}` là phiên bản MongoDB được cài đặt, ví dụ: 4.2, 
 * Chạy file [sscm.bat](https://drive.google.com/file/d/1D5ZRsY0S8-hAPjEZX6x2DwDrjZs7NqLQ/view?usp=sharing) để khởi động mongo replica set (lưu ý: nếu phiên bản MongoDB được cài đặt khác 4.2 thì cần thay thế tất cả 4.2 trong nội dung file này thành phiên bản đươc cài, ví dụ: 4.4)
 ### 3.2. Cài đặt Google-ORTools
 Đối với hệ điều hành Windows:
+* Mở Git Bash tại thư mục project - <b>baseweb</b> (hoặc mở Git Bash tại thư mục khác và `cd` đến thư mục project)
+* Chạy lệnh: `mvn clean`
 * Mở Git Bash tại thư mục <b>libs\ortools\Windows</b> (hoặc mở Git Bash tại thư mục khác và `cd` đến thư mục này)
-* Chạy lần lượt 3 lệnh: <br/>
-`mvn clean` <br/>
-`mvn install:install-file -Dfile=ortools-java-8.0.8283.jar -DgroupId=com.google.ortools -DartifactId=ortools-java-8.0.8283 -Dversion=8.0.8283 -Dpackaging=jar` <br/>
-`mvn install:install-file -Dfile=ortools-win32-x86-64-8.0.8283.jar -DgroupId=com.google.ortools -DartifactId=ortools-win32-x86-64-8.0.8283 -Dversion=8.0.8283 -Dpackaging=jar` <br/>
+* Chạy 2 lệnh: <br/>
+```
+mvn install:install-file -Dfile=ortools-win32-x86-64-8.0.8283.jar -DpomFile=pom-runtime.xml
+```
+```
+mvn install:install-file -Dfile=ortools-java-8.0.8283.jar -DpomFile=pom-local.xml
+```
 ### 3.3. Build
 * Mở Git Bash tại thư mục project - <b>baseweb</b> (hoặc mở Git Bash tại thư mục khác và `cd` đến thư mục project)
 * Chạy lệnh: `mvn package`
