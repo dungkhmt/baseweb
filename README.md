@@ -39,7 +39,7 @@ Với `{version}` là phiên bản MongoDB được cài đặt, ví dụ: 4.2, 
 `mongod --port 27019 --dbpath C:\data\db\mongo27019 --replSet rs0`
 * Mở thêm một cmd mới, chạy lần lượt 5 lệnh: <br/>
 `cd C:\Program Files\MongoDB\Server\{version}\bin` <br/>
-`mongo` <br/>
+`mongo --port 27017` <br/>
 `rs.initiate()` <br/>
 `rs.add(“localhost:27018”)` <br/>
 `rs.add(“localhost:27019”)` <br/>
@@ -50,23 +50,21 @@ Với `{version}` là phiên bản MongoDB được cài đặt, ví dụ: 4.2, 
 ### 3. Build project
 ### 3.1. Khởi động các dịch vụ (redis, mongo replica set)
 * Chạy file <b>redis-server.exe</b> trong thư mục [redis-2.4.5](https://drive.google.com/drive/folders/1WilP451UfPN33uM1RSUreCX9rJmVVbMK?usp=sharing)<b>\64bit</b> để khởi động redis
-* Chạy file [sscm.bat](https://drive.google.com/file/d/1D5ZRsY0S8-hAPjEZX6x2DwDrjZs7NqLQ/view?usp=sharing) để khởi động mongo replica set (lưu ý: nếu phiên bản MongoDB được cài đặt khác 4.2 thì cần thay thế tất cả 4.2 trong nội dung file thành phiên bản đươc cài, ví dụ: 4.4)
-### 3.2. Build
-* Mở Git Bash và `cd` đến thư mục project
-* Chạy lệnh: `mvn clean package`
+* Chạy file [sscm.bat](https://drive.google.com/file/d/1D5ZRsY0S8-hAPjEZX6x2DwDrjZs7NqLQ/view?usp=sharing) để khởi động mongo replica set (lưu ý: nếu phiên bản MongoDB được cài đặt khác 4.2 thì cần thay thế tất cả 4.2 trong nội dung file này thành phiên bản đươc cài, ví dụ: 4.4)
+### 3.2. Cài đặt Google-ORTools
+Đối với hệ điều hành Windows:
+* Mở Git Bash tại thư mục <b>libs\ortools\Windows</b> (hoặc mở Git Bash tại thư mục khác và `cd` đến thư mục này)
+* Chạy lần lượt 3 lệnh: <br/>
+`mvn clean` <br/>
+`mvn install:install-file -Dfile=ortools-java-8.0.8283.jar -DgroupId=com.google.ortools -DartifactId=ortools-java-8.0.8283 -Dversion=8.0.8283 -Dpackaging=jar` <br/>
+`mvn install:install-file -Dfile=ortools-win32-x86-64-8.0.8283.jar -DgroupId=com.google.ortools -DartifactId=ortools-win32-x86-64-8.0.8283 -Dversion=8.0.8283 -Dpackaging=jar` <br/>
+### 3.3. Build
+* Mở Git Bash tại thư mục project - <b>baseweb</b> (hoặc mở Git Bash tại thư mục khác và `cd` đến thư mục project)
+* Chạy lệnh: `mvn package`
 * Chờ đến khi quá trình build thành công và xuất hiện thông báo <b>BUILD_SUCCESS</b>
 ### 4. Chạy project
 * Trong thư mục: <b>src\main\java\com\hust\baseweb</b>, chạy file <b>BasewebApplication.java</b>
 
 Sau lần chạy thành công đầu tiên, ở các lần chạy sau chỉ cần thực hiện lần lượt bước 3.1 và 4
-### 5. Cài đặt OR-Tools
-* Tải về cài đặt bộ cài: windows: [https://github.com/google/or-tools/releases/download/v8.0/or-tools_VisualStudio2019-64bit_v8.0.8283.zip] và giải nén
-* Vào thư mục đã giải nén chạy các lệnh sau (yêu cầu đã có Apache Maven):
-```
-mvn install:install-file -Dfile=ortools-win32-x86-64-8.0.8283.jar -DpomFile=pom-runtime.xml
-mvn install:install-file -Dfile=ortools-java-8.0.8283.jar -DpomFile=pom-local.xml
-```
-
-Sau lần chạy thành công đầu tiên, ở các lần chạy sau chỉ cần thực hiện lần lượt bước 3.1 và 4
-### 6. Tài nguyên
+### 5. Tài nguyên
 * [Installers](https://drive.google.com/drive/folders/1r4VCwCz2JZGg9-LxQFPNw1aTZJl9gYp3?usp=sharing)
