@@ -52,7 +52,7 @@ public class OrderOfficeAssignment {
         this.postTripRepo = postTripRepo;
     }
 
-    @Scheduled(fixedDelayString = "${postsys.post_assign_delay}")
+    @Scheduled(fixedDelayString = "${postsys.post_assign_delay:500000000}")
     @Transactional("jpa_transaction_manager")
     public void orderOfficeAssign() {
         // select all post office
@@ -94,7 +94,7 @@ public class OrderOfficeAssignment {
         }
     }
 
-    @Scheduled(fixedDelayString = "${postsys.post_assign_delay}")
+    @Scheduled(fixedDelayString = "${postsys.post_assign_delay:500000000}")
     @Transactional("jpa_transaction_manager")
     public void orderTripAssignment() {
         List<PostOrder> postOrders = postOrderRepo.findByStatusId("POST_ORDER_READY_FIND_PATH");

@@ -59,5 +59,14 @@ Với `{version}` là phiên bản MongoDB được cài đặt, ví dụ: 4.2, 
 * Trong thư mục: <b>src\main\java\com\hust\baseweb</b>, chạy file <b>BasewebApplication.java</b>
 
 Sau lần chạy thành công đầu tiên, ở các lần chạy sau chỉ cần thực hiện lần lượt bước 3.1 và 4
-### 5. Tài nguyên
+### 5. Cài đặt OR-Tools
+* Tải về cài đặt bộ cài: windows: [https://github.com/google/or-tools/releases/download/v8.0/or-tools_VisualStudio2019-64bit_v8.0.8283.zip] và giải nén
+* Vào thư mục đã giải nén chạy các lệnh sau (yêu cầu đã có Apache Maven):
+```
+mvn install:install-file -Dfile=ortools-win32-x86-64-8.0.8283.jar -DpomFile=pom-runtime.xml
+mvn install:install-file -Dfile=ortools-java-8.0.8283.jar -DpomFile=pom-local.xml
+```
+
+Sau lần chạy thành công đầu tiên, ở các lần chạy sau chỉ cần thực hiện lần lượt bước 3.1 và 4
+### 6. Tài nguyên
 * [Installers](https://drive.google.com/drive/folders/1r4VCwCz2JZGg9-LxQFPNw1aTZJl9gYp3?usp=sharing)
