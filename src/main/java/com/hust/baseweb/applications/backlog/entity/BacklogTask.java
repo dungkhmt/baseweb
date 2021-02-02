@@ -31,19 +31,7 @@ public class BacklogTask {
         dueDate = input.getDueDate();
         statusId = input.getStatusId();
         priorityId = input.getPriorityId();
-
-        Date now = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        String prefixFileName = formatter.format(now);
-        StringBuilder attachmentPaths = new StringBuilder();
-
-        for(int i = 0; i < input.getAttachmentPaths().length; i++) {
-            attachmentPaths.append(prefixFileName).append("-").append(input.getAttachmentPaths()[i]);
-            if(i < input.getAttachmentPaths().length - 1) {
-                attachmentPaths.append(";");
-            }
-        }
-        this.attachmentPaths = attachmentPaths.toString();
+        attachmentPaths = String.join(";", input.getAttachmentPaths());
     }
 
     @Id
@@ -90,7 +78,7 @@ public class BacklogTask {
     @Column(name = "attachment_paths")
     private String attachmentPaths;
 
-    public ArrayList<String> update(CreateBacklogTaskInputModel input) {
+    public BacklogTask update(CreateBacklogTaskInputModel input) {
         if(input.getBacklogTaskName() != null) backlogTaskName = input.getBacklogTaskName();
         if(input.getCategoryId() != null) categoryId = input.getCategoryId();
         if(input.getBacklogDescription() != null) backlogDescription = input.getBacklogDescription();
@@ -99,46 +87,8 @@ public class BacklogTask {
         if(input.getStatusId() != null) statusId = input.getStatusId();
         if(input.getPriorityId() != null) priorityId = input.getPriorityId();
         if(input.getLastUpdateStamp() != null) lastUpdateStamp = input.getLastUpdateStamp();
+        if(input.getAttachmentPaths() != null) attachmentPaths = String.join(";", input.getAttachmentPaths());
 
-        // update attachmentPaths
-        String[] savedNames = this.attachmentPaths.split(";");
-        Date now = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        String prefixFileName = formatter.format(now);
-        StringBuilder newAttachmentPaths = new StringBuilder();
-        ArrayList<String> needToDelete = new ArrayList<>();
-
-        for(int i = 0; i < input.getAttachmentPaths().length; i++) {
-            boolean isFileExisted = Arrays.asList(savedNames).contains(input.getAttachmentPaths()[i]);
-
-            switch(input.getAttachmentStatus()[i]) {
-                case "deleted":
-                    if(isFileExisted) {
-                        needToDelete.add(input.getAttachmentPaths()[i]);
-                    }
-                    break;
-                case "new":
-                    newAttachmentPaths.append(prefixFileName).append("-").append(input.getAttachmentPaths()[i]);
-                    newAttachmentPaths.append(";");
-                    break;
-                case "uploaded":
-                    newAttachmentPaths.append(input.getAttachmentPaths()[i]);
-                    newAttachmentPaths.append(";");
-                    break;
-                default:
-                    break;
-            }
-        }
-        if(newAttachmentPaths.length() > 0) {
-            if(newAttachmentPaths.charAt(0) == ';') {
-                newAttachmentPaths.deleteCharAt(0);
-            }
-            if(newAttachmentPaths.length() > 0 && newAttachmentPaths.charAt(newAttachmentPaths.length() - 1) == ';') {
-                newAttachmentPaths.deleteCharAt(newAttachmentPaths.length() - 1);
-            }
-        }
-        this.attachmentPaths = newAttachmentPaths.toString();
-
-        return needToDelete;
+        return this;
     }
 }

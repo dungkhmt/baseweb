@@ -22,7 +22,9 @@ public class BacklogTaskAssignableServiceImpl implements BacklogTaskAssignableSe
     @Override
     public List<BacklogTaskAssignable> save(CreateBacklogTaskAssignableInputModel input) {
         List<BacklogTaskAssignable> backlogTaskAssignments = new ArrayList<>();
-
+        if(input.getAssignedToPartyId() == null) {
+            input.setAssignedToPartyId(new ArrayList<>());
+        }
         // add new assignment or modify existed assigment
         for(UUID assignedPartyId : input.getAssignedToPartyId()) {
             if(assignedPartyId == null) break;
