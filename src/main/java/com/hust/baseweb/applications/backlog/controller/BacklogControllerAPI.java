@@ -173,6 +173,24 @@ public class BacklogControllerAPI {
         }
     }
 
+    @GetMapping("backlog/get-project-detail/{backlogProjectId}")
+    public ResponseEntity<List<BacklogTask>> getProjectDetail(
+        Principal principal,
+        @PathVariable UUID backlogProjectId
+    ) {
+        boolean isMember = isProjectMember(backlogProjectId, principal.getName());
+        if(!isMember) {
+            log.warn("get project detail failed, userLoginId = " + principal.getName() + " doesn't have permission");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ArrayList<>());
+        }
+
+        List<BacklogTask> tasks = backlogTaskService.findByBacklogProjectId(backlogProjectId);
+//        List<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = tasksToTaskWithAssigns(tasks);
+
+        log.info("get project detail, projectId = " + backlogProjectId);
+        return ResponseEntity.status(HttpStatus.OK).body(tasks);
+    }
+
     @GetMapping("backlog/get-project-detail-by-page/{backlogProjectId}")
     public ResponseEntity<Page<BacklogTaskWithAssignmentAndAssignable>> getProjectDetail(
         Principal principal,
