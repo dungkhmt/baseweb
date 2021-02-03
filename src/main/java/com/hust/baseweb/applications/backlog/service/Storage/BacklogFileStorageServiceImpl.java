@@ -37,7 +37,7 @@ public class BacklogFileStorageServiceImpl implements StorageService {
         } catch (IOException e) {
             log.info("ERROR in method init()");
             e.printStackTrace();
-            throw new StorageException("Could not initialize storage", e);
+            throw new StorageException("Could not initialize storage ", e);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.backlog.controller;
 
+import com.google.gson.Gson;
 import com.hust.baseweb.applications.backlog.entity.*;
 import com.hust.baseweb.applications.backlog.eumeration.BacklogEnum;
 import com.hust.baseweb.applications.backlog.model.*;
@@ -39,6 +40,7 @@ import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.google.gson.Gson;
 @Controller
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -132,23 +134,6 @@ public class BacklogControllerAPI {
         Principal principal,
         @RequestBody CreateProjectInputModel input
     ) {
-        /*
-        BacklogProject backlogProject = backlogProjectService.save(input);
-
-        if(backlogProject == null) return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(null);
-
-        UserLogin userLogin = userService.findById(principal.getName());
-        UUID userPartyId = userLogin.getParty().getPartyId();
-        CreateBacklogProjectMemberModel backlogProjectMemberInput = new CreateBacklogProjectMemberModel(
-            backlogProject.getBacklogProjectId(),
-            userPartyId
-        );
-        backlogProjectMemberService.save(backlogProjectMemberInput);
-
-        log.info("created project, projectId = " + backlogProject.getBacklogProjectId());
-        return ResponseEntity.ok(backlogProject);
-        */
-        System.out.println("createProject, projectCode " + input.getBacklogProjectCode() + " projectName = " + input.getBacklogProjectName());
         log.info("createProject, projectCode " + input.getBacklogProjectCode() + " projectName = " + input.getBacklogProjectName());
 
         List<BacklogProject> backlogProjects = backlogProjectService.findByProjectCode(input.getBacklogProjectCode());
@@ -188,24 +173,6 @@ public class BacklogControllerAPI {
         }
     }
 
-    @GetMapping("backlog/get-project-detail/{backlogProjectId}")
-    public ResponseEntity<List<BacklogTask>> getProjectDetail(
-        Principal principal,
-        @PathVariable UUID backlogProjectId
-    ) {
-        boolean isMember = isProjectMember(backlogProjectId, principal.getName());
-        if(!isMember) {
-            log.warn("get project detail failed, userLoginId = " + principal.getName() + " doesn't have permission");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ArrayList<>());
-        }
-
-        List<BacklogTask> tasks = backlogTaskService.findByBacklogProjectId(backlogProjectId);
-//        List<BacklogTaskWithAssignmentAndAssignable> tasksWithAssignment = tasksToTaskWithAssigns(tasks);
-
-        log.info("get project detail, projectId = " + backlogProjectId);
-        return ResponseEntity.status(HttpStatus.OK).body(tasks);
-    }
-
     @GetMapping("backlog/get-project-detail-by-page/{backlogProjectId}")
     public ResponseEntity<Page<BacklogTaskWithAssignmentAndAssignable>> getProjectDetail(
         Principal principal,
@@ -220,7 +187,7 @@ public class BacklogControllerAPI {
     ) {
         boolean isMember = isProjectMember(backlogProjectId, principal.getName());
         if(!isMember) {
-            log.warn("get project detail failed, userLoginId = " + principal.getName() + " doesn't have permission");
+            log.warn("get project detail failed, userLoginId = " + principal.getName() + " does not have permission");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new PageImpl<>(new ArrayList<>(), pageable, 0));
         }
 
@@ -246,7 +213,7 @@ public class BacklogControllerAPI {
     ) {
         boolean isMember = isProjectMember(backlogProjectId, principal.getName());
         if(!isMember) {
-            log.warn("get my tasks failed, userLoginId = " + principal.getName() + " doesn't have permission");
+            log.warn("get my tasks failed, userLoginId = " + principal.getName() + " does not have permission");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new PageImpl<>(new ArrayList<>(), pageable, 0));
         }
 
@@ -275,7 +242,7 @@ public class BacklogControllerAPI {
     ) {
         boolean isMember = isProjectMember(backlogProjectId, principal.getName());
         if(!isMember) {
-            log.warn("get opening task failed, userLoginId = " + principal.getName() + " doesn't have permission");
+            log.warn("get opening task failed, userLoginId = " + principal.getName() + " does not have permission");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new PageImpl<>(new ArrayList<>(), pageable, 0));
         }
 
@@ -295,7 +262,7 @@ public class BacklogControllerAPI {
         BacklogTask task = backlogTaskService.findByBacklogTaskId(backlogTaskId);
         boolean isMember = isProjectMember(task.getBacklogProjectId(), principal.getName());
         if(!isMember) {
-            log.info("get task detail, taskId = " + backlogTaskId + ", userLoginId = " + principal.getName() + " don't have permission");
+            log.info("get task detail, taskId = " + backlogTaskId + ", userLoginId = " + principal.getName() + " does not have permission");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
 
@@ -311,22 +278,62 @@ public class BacklogControllerAPI {
         return ResponseEntity.ok(backlogTaskWithAssignmentAndAssignable);
     }
 
-    @PostMapping("backlog/add-task")
-    public ResponseEntity<BacklogTask> addTask(Principal principal, @RequestBody CreateBacklogTaskInputModel input) {
-        BacklogTask task = backlogTaskService.create(input, principal.getName());
-        log.info("created task, taskId = " + task.getBacklogTaskId() + " by userLoginId = " + principal.getName());
-        return ResponseEntity.ok(task);
+    @PostMapping("backlog/create-task")
+    public ResponseEntity<?> createTask(
+        Principal principal,
+          @RequestParam("inputJson") String json,
+          @RequestParam("files") MultipartFile[] files
+    ) {
+        Gson g = new Gson();
+        CreateTaskInputModel input = g.fromJson(json, CreateTaskInputModel.class);
+        CreateBacklogTaskInputModel taskInput = input.getTaskInput();
+        CreateBacklogTaskAssignmentInputModel assignmentInput = input.getAssignmentInput();
+        CreateBacklogTaskAssignableInputModel assignableInput = input.getAssignableInput();
+
+        boolean isProjectMember = isProjectMember(taskInput.getBacklogProjectId(), principal.getName());
+        if(!isProjectMember) {
+            log.warn("created task failed, user does not have permission, userLoginId = " + principal.getName() + ", projectId = " + taskInput.getBacklogProjectId());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"msg\": \"Failed\"}");
+        }
+        try {
+            BacklogTask task = backlogTaskService.create(taskInput, assignmentInput, assignableInput, files, principal.getName());
+            if(task.getBacklogTaskId() == null) {
+                log.info("created task failed, by userLoginId = " + principal.getName());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"msg\": \"Failed\"}");
+            } else {
+                log.info("created task successful, taskId = " + task.getBacklogTaskId() + " by userLoginId = " + principal.getName());
+                return ResponseEntity.ok("Successful");
+            }
+        } catch(Exception e) {
+            log.error("create task " + e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"msg\": \"Failed\"}");
+        }
     }
 
     @PostMapping("backlog/edit-task")
-    public ResponseEntity<BacklogTask> editTask(Principal principal, @RequestBody CreateBacklogTaskInputModel input) {
+    public ResponseEntity<?> editTask(
+        Principal principal,
+        @RequestParam("inputJson") String json,
+        @RequestParam("files") MultipartFile[] files
+    ) {
+        Gson g = new Gson();
+        CreateTaskInputModel input = g.fromJson(json, CreateTaskInputModel.class);
+        CreateBacklogTaskInputModel taskInput = input.getTaskInput();
+        CreateBacklogTaskAssignmentInputModel assignmentInput = input.getAssignmentInput();
+        CreateBacklogTaskAssignableInputModel assignableInput = input.getAssignableInput();
+
         try {
-            BacklogTask updatedTask = backlogTaskService.update(input);
-            log.info("edit task successful, taskId = " + updatedTask.getBacklogTaskId() + " fromDate = " + input.getFromDate());
-            return ResponseEntity.ok(updatedTask);
+            BacklogTask task = backlogTaskService.update(taskInput, assignmentInput, assignableInput, files, principal.getName());
+            if(task.getBacklogTaskId() == null) {
+                log.info("edit task failed, by userLoginId = " + principal.getName());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"msg\": \"Failed\"}");
+            } else {
+                log.info("edit task successful, taskId = " + task.getBacklogTaskId() + " by userLoginId = " + principal.getName());
+                return ResponseEntity.status(HttpStatus.OK).body("{\"msg\": \"Successful\"}");
+            }
         } catch(Exception e) {
             log.error("edit task " + e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"msg\": \"Failed\"}");
         }
     }
 
@@ -341,85 +348,40 @@ public class BacklogControllerAPI {
                 principal.getName().equals(task.getCreatedByUserLoginId()) ||
                (assignments.size() > 0 && assignments.stream().filter(e -> principalPartyId.equals(e.getAssignedToPartyId())).findAny().orElse(null) != null)
             )) {
-                log.warn("update status task failed, userLoginId = " + principal.getName() + " doesn't have permission on taskId = " + taskId);
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+                log.warn("update status task failed, userLoginId = " + principal.getName() + " does not have permission on taskId = " + taskId);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"msg\": \"Failed\"}");
             }
-            if(!newStatus.equals(task.getStatusId())) {
-                for (BacklogTaskAssignment assignment : assignments) {
-                    // change compare value if import other status in database
-                    switch (newStatus) {
-                        case "TASK_RESOLVED":
-                        case "TASK_CLOSED":
-                            Date finishedDate = new Date();
-                            assignment.setFinishedDate(finishedDate);
-                            backlogTaskAssignmentService.save(assignment);
-                            break;
-                        case "TASK_OPEN":
-                            break;
-                        case "TASK_INPROGRESS":
-                            Date startDate = new Date();
-                            assignment.setStartDate(startDate);
-                            backlogTaskAssignmentService.save(assignment);
-                            break;
-                    }
-                }
-            }
-            task.setStatusId(newStatus);
-            BacklogTask updatedTask = backlogTaskService.save(task);
+            backlogTaskService.updateTaskStatus(taskId, newStatus, assignments);
+
             log.info("update status task successful, " + taskId + " to " + newStatus);
-            return ResponseEntity.status(HttpStatus.OK).body("Update successful");
+            return ResponseEntity.status(HttpStatus.OK).body("{\"msg\": \"Successful\"}");
         } else {
             log.info("update status task failed. Task id not found. TaskId = " + taskId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("taskId not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"msg\": \"Failed\"}");
         }
-    }
-
-    @PostMapping("backlog/add-assignments")
-    public ResponseEntity<List<BacklogTaskAssignment>> addAssignments(Principal principal, @RequestBody CreateBacklogTaskAssignmentInputModel input) {
-        String userCreatedTask = backlogTaskService.findByBacklogTaskId(input.getBacklogTaskId()).getCreatedByUserLoginId();
-        if(!userCreatedTask.equals(principal.getName())) {
-            log.warn("add assignment failed, userLoginId = " + principal.getName() + " doesn't have permission");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        }
-
-        // change case value if import other status in database
-        switch (input.getStatusId()) {
-            case "TASK_RESOLVED":
-            case "TASK_CLOSED":
-                Date finished = new Date();
-                input.setFinishedDate(finished);
-                break;
-            case "TASK_OPEN":
-                break;
-            case "TASK_INPROGRESS":
-                Date start = new Date();
-                input.setStartDate(start);
-                break;
-        }
-        List<BacklogTaskAssignment> assignments = backlogTaskAssignmentService.create(input);
-        log.info("add assignment, taskId = " + input.getBacklogTaskId() +", partyId = " + input.getAssignedToPartyId());
-        return ResponseEntity.ok(assignments);
     }
 
     @PostMapping("backlog/add-multi-task-assignments")
-    public void addMultipleTaskAssignments(Principal principal, @RequestBody List<CreateBacklogTaskAssignmentInputModel> input) {
+    public ResponseEntity<?> addMultipleTaskAssignments(Principal principal, @RequestBody List<CreateBacklogTaskAssignmentInputModel> input) {
         for(CreateBacklogTaskAssignmentInputModel assignment: input) {
-            assignment.setStatusId(BacklogEnum.BACKLOG_TASK_STATUS_INPROGRESS.getValue());
-            addAssignments(principal, assignment);
-        }
-    }
+            String userCreatedTask = backlogTaskService.findByBacklogTaskId(assignment.getBacklogTaskId()).getCreatedByUserLoginId();
 
-    @PostMapping("backlog/add-assignable")
-    public ResponseEntity<List<BacklogTaskAssignable>> addAssignable(Principal principal, @RequestBody CreateBacklogTaskAssignableInputModel input) {
-        String userCreatedTask = backlogTaskService.findByBacklogTaskId(input.getBacklogTaskId()).getCreatedByUserLoginId();
-        if(!userCreatedTask.equals(principal.getName())) {
-            log.warn("add assignables failed, userLoginId = " + principal.getName() + " doesn't have permission");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            if(!userCreatedTask.equals(principal.getName())) {
+                log.warn("add assignment failed, userLoginId = " + principal.getName() + " does not have permission");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"msg\": \"Failed\"}");
+            }
         }
-
-        List<BacklogTaskAssignable> assignables = backlogTaskAssignableService.save(input);
-        log.info("add assignables, taskId = " + input.getBacklogTaskId());
-        return ResponseEntity.ok(assignables);
+        String msg = backlogTaskAssignmentService.createMultipleAssignment(input, principal.getName());
+        switch (msg) {
+            case "SUCCESSFUL":
+                for(CreateBacklogTaskAssignmentInputModel assignment: input) {
+                    log.info("add assignment, taskId = " + assignment.getBacklogTaskId() +", partyId = " + assignment.getAssignedToPartyId());
+                }
+                return ResponseEntity.status(HttpStatus.OK).body("{\"msg\": \"Successful\"}");
+            default:
+                log.error("assign multi assignment get error, " + msg);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"msg\": \"Failed\"}");
+        }
     }
 
     @GetMapping("backlog/get-members-of-project/{backlogProjectId}")
@@ -431,8 +393,8 @@ public class BacklogControllerAPI {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         List<BacklogProjectMember> backlogProjectMembers = backlogProjectMemberService.findAllByBacklogProjectId(backlogProjectId);
-        List<UserLoginReduced> member = new ArrayList<>();
 
+        List<UserLoginReduced> member = new ArrayList<>();
         backlogProjectMembers.forEach((backlogProjectMember) -> {
             UserLogin user = userService.findUserLoginByPartyId(backlogProjectMember.getMemberPartyId());
             Person person = personService.findByPartyId(user.getParty().getPartyId());
@@ -448,7 +410,7 @@ public class BacklogControllerAPI {
         UUID projectId = backlogTaskService.findByBacklogTaskId(backlogTaskId).getBacklogProjectId();
         boolean isMember = isProjectMember(projectId, principal.getName());
         if(!isMember) {
-            log.warn("get assigned user by taskId failed, userLoginId = " + principal.getName() + " doesn't have permission");
+            log.warn("get assigned user by taskId failed, userLoginId = " + principal.getName() + " does not have permission");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         List<UserLoginReduced> assignedUsers = getAssignedUserByTaskId(backlogTaskId);
@@ -461,7 +423,7 @@ public class BacklogControllerAPI {
         UUID projectId = backlogTaskService.findByBacklogTaskId(backlogTaskId).getBacklogProjectId();
         boolean isMember = isProjectMember(projectId, principal.getName());
         if(!isMember) {
-            log.warn("get assignables user by taskId failed, userLoginId = " + principal.getName() + " doesn't have permission");
+            log.warn("get assignables user by taskId failed, userLoginId = " + principal.getName() + " does not have permission");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
 
@@ -477,28 +439,28 @@ public class BacklogControllerAPI {
     }
 
     @PostMapping("backlog/add-member")
-    public ResponseEntity<BacklogProject> addMember(Principal principal, @RequestBody AddBacklogProjectMemberInputModel input) {
+    public ResponseEntity<?> addMember(Principal principal, @RequestBody AddBacklogProjectMemberInputModel input) {
         boolean isMember = isProjectMember(input.getBacklogProjectId(), principal.getName());
         if(!isMember) {
-            log.warn("add member to projectId = " + input.getBacklogProjectId() + " failed. User " + principal.getName() + " doesn't have permission");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            log.warn("add member to projectId = " + input.getBacklogProjectId() + " failed. User " + principal.getName() + " does not have permission");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"msg\": \"Failed\"}");
         }
-
-        List<String> newMembersLoginId = input.getUsersLoginId();
-        for (String userLoginId : newMembersLoginId) {
-            UserLogin userLogin = userService.findById(userLoginId);
-            List <String> perms = userService.getGroupPermsByUserLoginId(userLoginId);
-            if (userLogin != null && perms.contains(BacklogEnum.BACKLOG_GROUP_PERMISSION.getValue())) {
-                UUID userPartyId = userLogin.getParty().getPartyId();
-                CreateBacklogProjectMemberModel createProjectMemberModel = new CreateBacklogProjectMemberModel(
-                    input.getBacklogProjectId(),
-                    userPartyId
-                );
-                backlogProjectMemberService.save(createProjectMemberModel);
+        try {
+            String msg = backlogProjectMemberService.addMember(input);
+            switch (msg) {
+                case "SUCCESSFUL":
+                    for(String memberLoginId : input.getUsersLoginId()) {
+                        log.info("add member userLoginId = " + memberLoginId + " to projectId = " + input.getBacklogProjectId() + " successful");
+                    }
+                    return ResponseEntity.status(HttpStatus.OK).body("{\"msg\": \"Successful\"}");
+                default:
+                    log.info("add member to projectId = " + input.getBacklogProjectId() + " failed");
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"msg\": \"Failed\"}");
             }
+        } catch (Exception e) {
+            log.info("add member to projectId = " + input.getBacklogProjectId() + " failed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"msg\": \"Failed\"}");
         }
-        log.info("add member to projectId = " + input.getBacklogProjectId() + " successful");
-        return ResponseEntity.ok(backlogProjectService.findByBacklogProjectId(input.getBacklogProjectId()));
     }
 
     @GetMapping("backlog/get-backlog-task-category")
@@ -541,50 +503,6 @@ public class BacklogControllerAPI {
             usersLoginReduced.add(new UserLoginReduced(user, person));
         });
         return ResponseEntity.ok(usersLoginReduced);
-    }
-
-    @PostMapping("backlog/upload-task-attachment-files/{taskId}")
-    public ResponseEntity<String> uploadTaskAttachment(Principal principal, @PathVariable UUID taskId, @RequestParam("file") MultipartFile[] files) {
-        UUID projectId = backlogTaskService.findByBacklogTaskId(taskId).getBacklogProjectId();
-        boolean isMember = isProjectMember(projectId, principal.getName());
-        if(!isMember) {
-            log.warn("upload attachment files failed, userLoginId = " + principal.getName() + "doesn't have permission");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        }
-
-        String message = "";
-        try {
-            List<String> fileNames = new ArrayList<>();
-
-            // get prefix for file name same as prefix in backlog_task table
-            BacklogTask task = backlogTaskService.findByBacklogTaskId(taskId);
-            String[] savedNames = task.getAttachmentPaths().split(";");
-
-            Arrays.asList(files).forEach(file -> {
-                try {
-                    StringBuilder prefix = new StringBuilder();
-                    for(String savedName : savedNames){
-                        if(savedName.substring(savedName.indexOf("-") + 1).equals(file.getOriginalFilename())) {
-                            prefix.append(savedName, 0, savedName.indexOf("-"));
-                            break;
-                        }
-                    }
-                    if(prefix.length() > 0) {
-                        storageService.store(file, "", prefix + "-" + file.getOriginalFilename());
-                        fileNames.add(file.getOriginalFilename());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-
-            message = "Uploaded the files successfully: " + fileNames;
-            return ResponseEntity.status(HttpStatus.OK).body(message);
-        } catch (Exception e) {
-            message = "Fail to upload files!";
-            log.error( "Fail to upload files!", e);
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
-        }
     }
 
     @GetMapping("backlog/download-attachment-files/{filename:.+}")
@@ -670,4 +588,5 @@ public class BacklogControllerAPI {
 
         return ResponseEntity.ok(suggestion);
     }
+
 }

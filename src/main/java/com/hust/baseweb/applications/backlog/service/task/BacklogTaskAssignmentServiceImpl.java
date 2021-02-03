@@ -1,11 +1,13 @@
 package com.hust.baseweb.applications.backlog.service.task;
 
 import com.hust.baseweb.applications.backlog.entity.BacklogTaskAssignment;
+import com.hust.baseweb.applications.backlog.eumeration.BacklogEnum;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogTaskAssignmentInputModel;
 import com.hust.baseweb.applications.backlog.repo.BacklogTaskAssignmentRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +28,25 @@ public class BacklogTaskAssignmentServiceImpl implements BacklogTaskAssignmentSe
 
     @Override
     public List<BacklogTaskAssignment> create(CreateBacklogTaskAssignmentInputModel input) {
+        if(input.getAssignedToPartyId() == null) {
+            input.setAssignedToPartyId(new ArrayList<>());
+        }
+        switch (input.getStatusId()) {
+            case "TASK_RESOLVED":
+            case "TASK_CLOSED":
+                Date finished = new Date();
+                input.setFinishedDate(finished);
+                break;
+            case "TASK_OPEN":
+                break;
+            case "TASK_INPROGRESS":
+                Date start = new Date();
+                input.setStartDate(start);
+                break;
+            default:
+                break;
+        }
+
         List<BacklogTaskAssignment> backlogTaskAssignments = new ArrayList<>();
 
         // add new assignment or modify existed assigment
@@ -80,5 +101,20 @@ public class BacklogTaskAssignmentServiceImpl implements BacklogTaskAssignmentSe
     @Override
     public List<BacklogTaskAssignment> findAllActiveByBacklogTaskId(UUID backlogTaskId) {
         return backlogTaskAssignmentRepo.findAllByBacklogTaskIdAndStatusIdEquals(backlogTaskId, "ASSIGNMENT_ACTIVE");
+    }
+
+    @Override
+    @Transactional
+    public String createMultipleAssignment(List<CreateBacklogTaskAssignmentInputModel> input, String userLoginId) {
+        for(CreateBacklogTaskAssignmentInputModel assignment: input) {
+            assignment.setStatusId(BacklogEnum.BACKLOG_TASK_STATUS_INPROGRESS.getValue());
+
+            try {
+                this.create(assignment);
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+        }
+        return "SUCCESSFUL";
     }
 }
