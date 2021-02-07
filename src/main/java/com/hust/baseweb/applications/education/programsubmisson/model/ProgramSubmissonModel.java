@@ -10,6 +10,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProgramSubmissonModel {
+
     private String programminglanguage;
+
     private String program;
 }
