@@ -71,7 +71,7 @@ public class ProgramSubmissionController {
                                         @RequestParam("file") MultipartFile file) {
     //public ResponseEntity<?> updateFile(Principal principal, @RequestParam("files") MultipartFile[] files) {
         //UploadConfigProperties uploadProp = new UploadConfigProperties();
-        System.out.println("::submit a program, inputJson = " + inputJson + " config dir  = " + uploadConfigProperties.getProgramSubmissionDataPath());
+        System.out.println("::updateFile a program, inputJson = " + inputJson + " config dir  = " + uploadConfigProperties.getProgramSubmissionDataPath());
         String returnMsg = "";
         int grade = 0;
         boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
@@ -84,6 +84,7 @@ public class ProgramSubmissionController {
             while (in.hasNext()) {
                 content = content + in.nextLine() + '\n';
             }
+            System.out.println("::updateFile, content = " + content);
 
             // Modify this path, please note that on window's command prompt (cmd), \ is accepted but not /
             //String dir = "D:\\projects\\baseweb\\sscm\\baseweb\\src\\main\\java\\com\\hust\\baseweb\\applications\\education\\programsubmisson\\data\\";
@@ -93,7 +94,7 @@ public class ProgramSubmissionController {
 
             out.print(content);
             out.close();
-            //System.out.println("::uploadFile  " + filename + ", content = " + content);
+            System.out.println("::uploadFile  " + filename + " save to " + dir + filename + " OK, content = " + content);
 
             ProcessBuilder processBuilder = new ProcessBuilder();
             String copyCMD = "copy";
