@@ -94,7 +94,8 @@ upload:
     rootPath: path/to/baseweb/ #e.g. D:/sscm/basewe/
     class-management-data-path: src/main/java/com/hust/baseweb/applications/education/classmanagement/data/
     backlogDataPath: src/main/java/com/hust/baseweb/applications/backlog/data/
-
+    programSubmissionDataPath: D:\projects\baseweb\data\
+  
 content-repo:
   url: http://${CONTENT_SERVICE_HOST}:${CONTENT_SERVICE_PORT}/ #e.g. 'http://localhost:8081/'
 
