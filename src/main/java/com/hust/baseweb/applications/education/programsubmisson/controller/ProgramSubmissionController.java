@@ -99,18 +99,20 @@ public class ProgramSubmissionController {
             ProcessBuilder processBuilder = new ProcessBuilder();
             String copyCMD = "copy";
             String bashCMD = "cmd.exe";
+            String optionCMD = "/c";
             if (isWindows) {
 
             }else{
                 copyCMD = "cp";
                 bashCMD = "sh";
+                optionCMD = "-c";
             }
             int nbTests = 3;
             for (int i = 1; i <= nbTests; i++) {
                 String firstCommand = copyCMD + " /Y " + i + ".inp " + "input.txt";
                 String secondCommand = copyCMD + " /Y " + i + ".out " + "output.txt";
                 String thirdCommand = "python " + filename;
-                processBuilder.command(bashCMD, "/c", firstCommand + " && " + secondCommand + " && " + thirdCommand);
+                processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand + " && " + thirdCommand);
                 /*processBuilder.command("cmd.exe", "/c", "python " + filename);*/
 
                 //String dir = System.getProperty("user.home");
