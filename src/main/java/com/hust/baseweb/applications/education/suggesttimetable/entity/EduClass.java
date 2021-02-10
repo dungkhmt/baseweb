@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigInteger;
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -108,7 +109,22 @@ public class EduClass {
 
     private List<Integer> convertWeeksToList() {
         // TODO by: datpd
-        return null;
+        List<Integer> a = new ArrayList<>();
+        String b = this.weeks.replaceAll("\\s+", "");
+        String[] c = b.split("[,.]");
+        for (String d : c) {
+            if (!d.contains("-")) {
+                a.add(Integer.parseInt(d));
+            }else {
+                String[] e = d.split("-");
+                int f = Integer.parseInt(e[0]);
+                int g = Integer.parseInt(e[1]);
+                for(int h = f; h <=g; h++) {
+                    a.add(h);
+                }
+            }
+        }
+        return a;
     }
 
     public List<Integer> getWeeksList() {
@@ -140,6 +156,20 @@ public class EduClass {
             return false;
         } else {
             // Check common elements of 2 list of weeks
+            List<Integer> a = this.convertWeeksToList();
+            List<Integer> b = eduClass.convertWeeksToList();
+            int m = 0;
+            for(int i : a){
+                for (int k = m; k < b.size(); k++) {
+                    if(b.get(k) == i) {
+                        return true;
+                    }
+                    if (b.get(k) > i) {
+                        m = k;
+                        break;
+                    }
+                }
+            }
         }
 
         return false;
