@@ -88,7 +88,7 @@ public class ProgramSubmissionController {
 
             // Modify this path, please note that on window's command prompt (cmd), \ is accepted but not /
             //String dir = "D:\\projects\\baseweb\\sscm\\baseweb\\src\\main\\java\\com\\hust\\baseweb\\applications\\education\\programsubmisson\\data\\";
-            String dir = uploadConfigProperties.getProgramSubmissionDataPath();
+            String dir = uploadConfigProperties.getRootPath() + uploadConfigProperties.getProgramSubmissionDataPath();
 
             PrintWriter out = new PrintWriter(dir + filename);
 
