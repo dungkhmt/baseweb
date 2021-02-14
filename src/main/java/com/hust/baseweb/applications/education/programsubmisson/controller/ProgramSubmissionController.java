@@ -115,13 +115,25 @@ public class ProgramSubmissionController {
                 String secondCommand = copyCMD + optionCOPY + i + ".out " + "output.txt";
                 String thirdCommand = "python " + filename;
                 //processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand + " && " + thirdCommand);
-                processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand);
-                if(isWindows)
-                    processBuilder.command(bashCMD, optionCMD,thirdCommand);
-                else
-                    processBuilder.command(thirdCommand);
+
+                //processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand);
+                //if(isWindows)
+                //    processBuilder.command(bashCMD, optionCMD,thirdCommand);
+                //else
+                //    processBuilder.command(thirdCommand);
                 
                 /*processBuilder.command("cmd.exe", "/c", "python " + filename);*/
+                processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand + " && " + thirdCommand);
+                //processBuilder.command("python",filename);
+		//processBuilder.command("./python_exec", filename);	
+
+		//processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand);
+                //if(isWindows)
+                //    processBuilder.command(bashCMD, optionCMD,thirdCommand);
+                //else
+                //    processBuilder.command(thirdCommand);
+                
+		/*processBuilder.command("cmd.exe", "/c", "python " + filename);*/
 
                 //String dir = System.getProperty("user.home");
                 //System.out.println("System.getProperty(\"user.home\") = " + System.getProperty("user.home"));
