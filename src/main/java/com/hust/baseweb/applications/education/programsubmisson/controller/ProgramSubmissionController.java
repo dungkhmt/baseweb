@@ -111,11 +111,13 @@ public class ProgramSubmissionController {
             }
             int nbTests = 3;
             for (int i = 1; i <= nbTests; i++) {
-                //String firstCommand = copyCMD + optionCOPY + i + ".inp " + "input.txt";
-                //String secondCommand = copyCMD + optionCOPY + i + ".out " + "output.txt";
-                //String thirdCommand = "python_exec " + filename;
-                //processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand + " && " + thirdCommand);
-                processBuilder.command("python",filename);
+                String firstCommand = copyCMD + optionCOPY + i + ".inp " + "input.txt";
+                String secondCommand = copyCMD + optionCOPY + i + ".out " + "output.txt";
+                String thirdCommand = "python " + filename;
+                processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand + " && " + thirdCommand);
+                //processBuilder.command("python",filename);
+		//processBuilder.command("./python_exec", filename);	
+
 		//processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand);
                 //if(isWindows)
                 //    processBuilder.command(bashCMD, optionCMD,thirdCommand);
