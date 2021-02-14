@@ -120,6 +120,7 @@ public class ProgramSubmissionController {
                     processBuilder.command(bashCMD, optionCMD,thirdCommand);
                 else
                     processBuilder.command(thirdCommand);
+                
                 /*processBuilder.command("cmd.exe", "/c", "python " + filename);*/
 
                 //String dir = System.getProperty("user.home");
