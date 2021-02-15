@@ -9,9 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProgramSubmissonModel {
-
-    //private String programminglanguage;
-    //private String program;
+public class CreateContestProblemTestInputModel {
     private String problemId;
+    private String testName;
+    private String testPoint;
 }

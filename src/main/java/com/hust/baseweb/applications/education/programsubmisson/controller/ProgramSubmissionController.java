@@ -1,21 +1,29 @@
 package com.hust.baseweb.applications.education.programsubmisson.controller;
 
-import com.hust.baseweb.applications.education.programsubmisson.model.ProgramSubmissonModel;
+import com.google.gson.Gson;
+import com.hust.baseweb.applications.education.programsubmisson.entity.ContestProblem;
+import com.hust.baseweb.applications.education.programsubmisson.entity.ContestProblemTest;
+import com.hust.baseweb.applications.education.programsubmisson.model.*;
+import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProblemRepo;
+import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProblemTestRepo;
+import com.hust.baseweb.applications.education.programsubmisson.service.ContestProblemService;
 import com.hust.baseweb.framework.properties.UploadConfigProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.Files;
+
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 @Log4j2
@@ -24,12 +32,21 @@ import java.util.function.Consumer;
 @AllArgsConstructor(onConstructor_ = @Autowired)
 @CrossOrigin
 public class ProgramSubmissionController {
+    public static final String userSubmissionDir = "usersubmissions";
+    public static final String problemDir = "problems";
+
     @Autowired
     UploadConfigProperties uploadConfigProperties;
+    @Autowired
+    private ContestProblemService contestProblemService;
+    @Autowired
+    private ContestProblemTestRepo contestProblemTestRepo;
+    @Autowired
+    private ContestProblemRepo contestProblemRepo;
 
     @PostMapping("/submit")
     public ResponseEntity<?> submit(Principal principal, @RequestBody ProgramSubmissonModel input) {
-        System.out.println(input.getProgram());
+        //System.out.println(input.getProgram());
         return ResponseEntity.ok().body("OK");
     }
 
@@ -65,9 +82,34 @@ public class ProgramSubmissionController {
             }
         }
     }
+    @PostMapping("/create-contest-problem-test")
+    public ResponseEntity<?> createContestProblemTest(Principal principal, @RequestParam("inputJson") String inputJson,
+                                                      @RequestParam("files") MultipartFile[] files){
+        Gson gson = new Gson();
+        CreateContestProblemTestInputModel createContestProblemTestInputModel = gson.fromJson(inputJson, CreateContestProblemTestInputModel.class);
+        //String rootDir = uploadConfigProperties.getRootPath() + uploadConfigProperties.getProgramSubmissionDataPath();
+        //String problemDir = rootDir +
+        log.info("createContestProblemTest, inputJson = " + inputJson);
+
+        ContestProblemTest contestProblemTest = contestProblemService.createContestProblemTest(createContestProblemTestInputModel, files);
+
+        return ResponseEntity.ok().body(contestProblemTest);
+    }
+
+    @PostMapping("/create-contest-problem")
+    public ResponseEntity<?> createContestProblem(Principal principal, @RequestBody ContestProblemInputModel input){
+        ContestProblem contestProblem = contestProblemService.save(input);
+        return ResponseEntity.ok().body(contestProblem);
+    }
+    @GetMapping("contest-problem-list")
+    public ResponseEntity<?> getAllContestProblems(Principal principal){
+        log.info("getAllContestProblems....user = " + principal.getName());
+        List<ContestProblem> contestProblems = contestProblemService.findAll();
+        return ResponseEntity.ok().body(contestProblems);
+    }
 
     @PostMapping("/upload-program")
-    public ResponseEntity<?> updateFile(Principal principal, @RequestParam("inputJson") String inputJson,
+    public ResponseEntity<?> uploadProgram(Principal principal, @RequestParam("inputJson") String inputJson,
                                         @RequestParam("file") MultipartFile file) {
     //public ResponseEntity<?> updateFile(Principal principal, @RequestParam("files") MultipartFile[] files) {
         //UploadConfigProperties uploadProp = new UploadConfigProperties();
@@ -75,6 +117,25 @@ public class ProgramSubmissionController {
         String returnMsg = "";
         int grade = 0;
         boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
+        List<ProgramSubmissionItemOutput> programSubmissionItemOutputList = new ArrayList();
+        Gson gson = new Gson();
+        ProgramSubmissonModel programSubmissonModel = gson.fromJson(inputJson,ProgramSubmissonModel.class);
+        List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemId(programSubmissonModel.getProblemId());
+
+        int nbTests = contestProblemTests.size();
+        String rootDir = uploadConfigProperties.getRootPath() + "/" + uploadConfigProperties.getProgramSubmissionDataPath();
+        String submissionDir = rootDir + "/" + userSubmissionDir;
+        File dir = new File(submissionDir);
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+
+        String rootUserSubmissionDir = submissionDir + "/" + principal.getName();
+        dir = new File(rootUserSubmissionDir);
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+
         try {
             InputStream inputStream = file.getInputStream();
             String filename = file.getOriginalFilename();
@@ -88,19 +149,22 @@ public class ProgramSubmissionController {
 
             // Modify this path, please note that on window's command prompt (cmd), \ is accepted but not /
             //String dir = "D:\\projects\\baseweb\\sscm\\baseweb\\src\\main\\java\\com\\hust\\baseweb\\applications\\education\\programsubmisson\\data\\";
-            String dir = uploadConfigProperties.getRootPath() + uploadConfigProperties.getProgramSubmissionDataPath();
+            //dir = uploadConfigProperties.getRootPath() + uploadConfigProperties.getProgramSubmissionDataPath();
 
-            PrintWriter out = new PrintWriter(dir + filename);
-
+            //PrintWriter out = new PrintWriter(dir + filename);
+            String submissionFilename = rootUserSubmissionDir + "/" + filename;
+            PrintWriter out = new PrintWriter(submissionFilename);
             out.print(content);
             out.close();
-            System.out.println("::uploadFile  " + filename + " save to " + dir + filename + " OK, content = " + content);
+
+            System.out.println("::uploadFile  " + filename + " save to " + submissionFilename + " OK, content = " + content);
 
             ProcessBuilder processBuilder = new ProcessBuilder();
             String copyCMD = "copy";
             String bashCMD = "cmd.exe";
             String optionCMD = "/c";
             String optionCOPY = " /Y ";
+            String deleteCMD = "del";
             if (isWindows) {
 
             }else{
@@ -108,11 +172,41 @@ public class ProgramSubmissionController {
                 bashCMD = "sh";
                 optionCMD = "-c";
                 optionCOPY = " ";
+                deleteCMD = "rm";
             }
-            int nbTests = 3;
-            for (int i = 1; i <= nbTests; i++) {
-                String firstCommand = copyCMD + optionCOPY + i + ".inp " + "input.txt";
-                String secondCommand = copyCMD + optionCOPY + i + ".out " + "output.txt";
+
+            //for (int i = 1; i <= nbTests; i++) {
+            for(ContestProblemTest contestProblemTest: contestProblemTests){
+                File fi = new File(rootUserSubmissionDir + "/input.txt");
+                if(fi.exists()){
+                    fi.delete();
+                }
+                File fo = new File(rootUserSubmissionDir + "/output.txt");
+                if(fo.exists()){
+                    fo.delete();
+                }
+                File fr = new File(rootUserSubmissionDir + "/result.txt");
+                if(fr.exists()){
+                    fr.delete();
+                }
+
+
+
+                String inpF = rootDir + "/" + problemDir + "/" + programSubmissonModel.getProblemId() + "/" + contestProblemTest.getProblemTestFilename() + ".inp";
+                String outF = rootDir + "/" + problemDir + "/" + programSubmissonModel.getProblemId() + "/" + contestProblemTest.getProblemTestFilename() + ".out";
+
+                String initCommand = deleteCMD + " input.txt output.txt result.txt";
+
+                //String firstCommand = copyCMD + optionCOPY + i + ".inp " + "input.txt";
+                String firstCommand = copyCMD + optionCOPY + " " + inpF + " " + rootUserSubmissionDir + "/input.txt";
+                log.info("uploadProgram, firstCommand = " + firstCommand);
+                //String secondCommand = copyCMD + optionCOPY + i + ".out " + "output.txt";
+                String secondCommand = copyCMD + optionCOPY + " " + outF + " " + rootUserSubmissionDir + "/output.txt";
+                log.info("uploadProgram, secondCommand = " + secondCommand);
+
+                Files.copy((new File(inpF)).toPath(), (new File(rootUserSubmissionDir + "/input.txt").toPath()));
+                Files.copy((new File(outF)).toPath(), (new File(rootUserSubmissionDir + "/output.txt").toPath()));
+
                 String thirdCommand = "python " + filename;
                 //processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand + " && " + thirdCommand);
 
@@ -123,7 +217,12 @@ public class ProgramSubmissionController {
                 //    processBuilder.command(thirdCommand);
                 
                 /*processBuilder.command("cmd.exe", "/c", "python " + filename);*/
-                processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand + " && " + thirdCommand);
+
+                //processBuilder.command(bashCMD, optionCMD, initCommand + " && " + firstCommand +
+                //                                           " && " + secondCommand + " && " + thirdCommand);
+
+                processBuilder.command(bashCMD, optionCMD, thirdCommand);
+
                 //processBuilder.command("python",filename);
 		//processBuilder.command("./python_exec", filename);	
 
@@ -139,7 +238,7 @@ public class ProgramSubmissionController {
                 //System.out.println("System.getProperty(\"user.home\") = " + System.getProperty("user.home"));
 
                 processBuilder.redirectErrorStream(true);
-                processBuilder.directory(new File(dir));
+                processBuilder.directory(new File(rootUserSubmissionDir));
 
                 Process process = processBuilder.start();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -154,34 +253,49 @@ public class ProgramSubmissionController {
 
                 reader.close();
 
-                int exitCode = process.waitFor();
-                System.out.println("process start OK and return exit code = " + exitCode);
+                process.waitFor(1, TimeUnit.SECONDS);
+                //process.waitFor(5, TimeUnit.SECONDS);  // let the process run for 5 seconds
+                process.destroy();                     // tell the process to stop
+                process.waitFor(2, TimeUnit.SECONDS); // give it a chance to stop
+                process.destroyForcibly();             // tell the OS to kill the process
+                process.waitFor();
 
-                // compare standard solution and submitted solution
+                System.out.println("Process Ended after timelimit");
+                                               //System.out.println("process start OK and return exit code = " + exitCode);
+                                               //process.wait(1000);
+
+                                               // compare standard solution and submitted solution
+                ProgramSubmissionItemOutput programSubmissionItemOutput = new ProgramSubmissionItemOutput();
+                programSubmissionItemOutput.setTest("Test #" + contestProblemTest.getProblemTestFilename());
                 try{
-                    Scanner stdOut = new Scanner(new File(dir + "output.txt"));
-                    Scanner rs = new Scanner(new File(dir + "result.txt"));
+                    Scanner stdOut = new Scanner(new File(dir + "/output.txt"));
+                    Scanner rs = new Scanner(new File(dir + "/result.txt"));
                     int stdAns = stdOut.nextInt();
                     int submittedAns = rs.nextInt();
 
                     if(stdAns == submittedAns){
-                        grade += 10;
+                        grade += contestProblemTest.getProblemTestPoint();
+                        programSubmissionItemOutput.setOutput(contestProblemTest.getProblemTestPoint() + "");
                     }else{
-                        returnMsg += "Test #" + i + ": expected "  + stdAns + " while found " + submittedAns + "\n";
+                        returnMsg += "Test #" + contestProblemTest.getProblemTestFilename() + ": expected "  + stdAns + " while found " + submittedAns + "\n";
+                        programSubmissionItemOutput.setOutput("Test #" + contestProblemTest.getProblemTestFilename() + ": expected "  + stdAns + " while found " + submittedAns);
                     }
                     System.out.println("stdAns = " + stdAns + " submittedAns = " + submittedAns + " grade = " + grade);
                     stdOut.close();
                     rs.close();
                 }catch(Exception e){
                     e.printStackTrace();
+                    programSubmissionItemOutput.setOutput("Test #" + contestProblemTest.getProblemTestFilename() + " not found output");
                 }
+                programSubmissionItemOutputList.add(programSubmissionItemOutput);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        returnMsg += " Points = " + grade;
-        return ResponseEntity.ok().body(returnMsg);
+        returnMsg += " Points = " + grade + "/" + (nbTests*10);
+        ProgramSubmissionOutput programSubmissionOutput = new ProgramSubmissionOutput(programSubmissionItemOutputList,returnMsg);
+        return ResponseEntity.ok().body(programSubmissionOutput);
     }
 
 
@@ -292,8 +406,11 @@ public class ProgramSubmissionController {
 
                     reader.close();
 
-                    int exitCode = process.waitFor();
-                    System.out.println("process start OK and return exit code = " + exitCode);
+                    //int exitCode = process.waitFor();
+                    long timeOut = 1000;
+                    process.wait(timeOut);
+
+                    //System.out.println("process start OK and return exit code = " + exitCode);
 
                     // compare standard solution and submitted solution
                     try{

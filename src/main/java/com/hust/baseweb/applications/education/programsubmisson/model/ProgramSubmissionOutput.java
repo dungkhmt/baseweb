@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProgramSubmissonModel {
-
-    //private String programminglanguage;
-    //private String program;
-    private String problemId;
+public class ProgramSubmissionOutput {
+    private List<ProgramSubmissionItemOutput> items;
+    private String msg;
 }

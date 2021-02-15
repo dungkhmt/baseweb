@@ -9,9 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProgramSubmissonModel {
-
-    //private String programminglanguage;
-    //private String program;
-    private String problemId;
+public class ProgramSubmissionItemOutput {
+    private String test;
+    private String output;
 }
