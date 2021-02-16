@@ -1,5 +1,8 @@
 package com.hust.baseweb.applications.education.suggesttimetable.repo;
 
-public interface IClassRepo {
 
+import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
+
+public interface IClassRepo {
+    EduClass save(EduClass eduClass);
 }
