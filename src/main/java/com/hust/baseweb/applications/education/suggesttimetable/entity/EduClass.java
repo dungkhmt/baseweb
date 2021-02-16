@@ -116,11 +116,11 @@ public class EduClass {
         for (String w : weeks) {
             if (!w.contains("-")) {
                 weeksList.add(Integer.parseInt(w));
-            }else {
+            } else {
                 String[] we = w.split("-");
                 int start = Integer.parseInt(we[0]);
                 int end = Integer.parseInt(we[1]);
-                for(int i = start; i <= end; i++) {
+                for (int i = start; i <= end; i++) {
                     weeksList.add(i);
                 }
             }
@@ -151,9 +151,10 @@ public class EduClass {
         if (this == eduClass) {
             return true;
         }
-        if(this.endTime == null || this.startTime == null ||
-           eduClass.getStartTime() == null || eduClass.getEndTime() == null)
+        if (this.endTime == null || this.startTime == null ||
+            eduClass.getStartTime() == null || eduClass.getEndTime() == null) {
             return false;
+        }
 
         if (this.endTime < eduClass.getStartTime() ||
             this.startTime > eduClass.getEndTime()) { // Time does not overlap.
@@ -163,9 +164,9 @@ public class EduClass {
             List<Integer> a = this.getWeeksList();
             List<Integer> b = eduClass.getWeeksList();
             int m = 0;
-            for(int i : a){
+            for (int i : a) {
                 for (int k = m; k < b.size(); k++) {
-                    if(b.get(k) == i) {
+                    if (b.get(k) == i) {
                         return true;
                     }
                     if (b.get(k) > i) {
