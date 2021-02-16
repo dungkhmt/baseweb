@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 public interface ContestProblemService {
+    ContestProblem findByProblemId(String problemId);
     ContestProblem save(ContestProblemInputModel input);
     List<ContestProblem> findAll();
 

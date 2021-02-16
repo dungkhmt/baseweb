@@ -29,6 +29,12 @@ public class ContestProblemServiceImpl implements ContestProblemService {
     UploadConfigProperties uploadConfigProperties;
 
     @Override
+    public ContestProblem findByProblemId(String problemId) {
+        ContestProblem contestProblem = contestProblemRepo.findByProblemId(problemId);
+        return contestProblem;
+    }
+
+    @Override
     public ContestProblem save(ContestProblemInputModel input) {
         String rootDir = uploadConfigProperties.getRootPath() + uploadConfigProperties.getProgramSubmissionDataPath();
         log.info("save, problemId = " + input.getProblemId() + " problemName = " + input.getProblemName()

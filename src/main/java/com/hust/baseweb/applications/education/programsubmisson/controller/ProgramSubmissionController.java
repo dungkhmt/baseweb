@@ -102,6 +102,12 @@ public class ProgramSubmissionController {
         ContestProblem contestProblem = contestProblemService.save(input);
         return ResponseEntity.ok().body(contestProblem);
     }
+    @GetMapping("get-contest-problem/{problemId}")
+    public ResponseEntity<?> getContestProblem(Principal principal, @PathVariable String problemId){
+        log.info("getContestProblem, problemId = " + problemId);
+        ContestProblem contestProblem = contestProblemService.findByProblemId(problemId);
+        return ResponseEntity.ok().body(contestProblem);
+    }
     @GetMapping("contest-problem-list")
     public ResponseEntity<?> getAllContestProblems(Principal principal){
         log.info("getAllContestProblems....user = " + principal.getName());
