@@ -20,7 +20,9 @@ public class SuggestTimetableController {
 
     @PostMapping
     public ResponseEntity<?> uploadTimetable(@RequestParam("file") MultipartFile file) {
-        SimpleResponse response = timeTableService.uploadTimetable(file);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        // TO BE FIXED
+        //SimpleResponse response = timeTableService.uploadTimetable(file);
+        //return ResponseEntity.status(response.getStatus()).body(response);
+        return null;
     }
 }
