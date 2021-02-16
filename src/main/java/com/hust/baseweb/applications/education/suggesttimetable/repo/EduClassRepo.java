@@ -1,5 +1,7 @@
 package com.hust.baseweb.applications.education.suggesttimetable.repo;
 
+
+import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Delegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,4 +13,5 @@ public class EduClassRepo implements IClassRepo {
 
     @Delegate
     private IClassMongoRepo classRepo;
+
 }
