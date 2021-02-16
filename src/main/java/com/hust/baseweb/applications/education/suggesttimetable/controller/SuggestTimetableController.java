@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @Controller
 @RequestMapping("/suggest-timetable")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -20,7 +22,12 @@ public class SuggestTimetableController {
 
     @PostMapping
     public ResponseEntity<?> uploadTimetable(@RequestParam("file") MultipartFile file) {
-        SimpleResponse response = timeTableService.uploadTimetable(file);
+        SimpleResponse response = null;
+        try {
+            response = timeTableService.uploadTimetable(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 }
