@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +114,7 @@ public class ProgramSubmissionController {
                                         @RequestParam("file") MultipartFile file) {
     //public ResponseEntity<?> updateFile(Principal principal, @RequestParam("files") MultipartFile[] files) {
         //UploadConfigProperties uploadProp = new UploadConfigProperties();
-        System.out.println("::updateFile a program, inputJson = " + inputJson + " config dir  = " + uploadConfigProperties.getProgramSubmissionDataPath());
+        System.out.println("::uploadProgram a program, inputJson = " + inputJson + " config dir  = " + uploadConfigProperties.getProgramSubmissionDataPath());
         String returnMsg = "";
         int grade = 0;
         boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
@@ -145,7 +146,7 @@ public class ProgramSubmissionController {
             while (in.hasNext()) {
                 content = content + in.nextLine() + '\n';
             }
-            System.out.println("::updateFile, content = " + content);
+            System.out.println("::uploadProgram, content = " + content);
 
             // Modify this path, please note that on window's command prompt (cmd), \ is accepted but not /
             //String dir = "D:\\projects\\baseweb\\sscm\\baseweb\\src\\main\\java\\com\\hust\\baseweb\\applications\\education\\programsubmisson\\data\\";
@@ -157,7 +158,7 @@ public class ProgramSubmissionController {
             out.print(content);
             out.close();
 
-            System.out.println("::uploadFile  " + filename + " save to " + submissionFilename + " OK, content = " + content);
+            System.out.println("::uploadProgram  " + filename + " save to " + submissionFilename + " OK, content = " + content);
 
             ProcessBuilder processBuilder = new ProcessBuilder();
             String copyCMD = "copy";
@@ -179,15 +180,24 @@ public class ProgramSubmissionController {
             for(ContestProblemTest contestProblemTest: contestProblemTests){
                 File fi = new File(rootUserSubmissionDir + "/input.txt");
                 if(fi.exists()){
-                    fi.delete();
+                    if(fi.delete())
+                        log.info("uploadProgram, deleted " + rootUserSubmissionDir + "/input.txt");
+                    else
+                        log.info("uploadProgram, NOT deleted " + rootUserSubmissionDir + "/input.txt");
                 }
                 File fo = new File(rootUserSubmissionDir + "/output.txt");
                 if(fo.exists()){
-                    fo.delete();
+                    if(fo.delete())
+                        log.info("uploadProgram, deleted " + rootUserSubmissionDir + "/output.txt");
+                    else
+                        log.info("uploadProgram, NOT deleted " + rootUserSubmissionDir + "/output.txt");
                 }
                 File fr = new File(rootUserSubmissionDir + "/result.txt");
                 if(fr.exists()){
-                    fr.delete();
+                    if(fr.delete())
+                        log.info("uploadProgram, deleted " + rootUserSubmissionDir + "/result.txt");
+                    else
+                        log.info("uploadProgram, NOT deleted " + rootUserSubmissionDir + "/result.txt");
                 }
 
 
@@ -205,7 +215,8 @@ public class ProgramSubmissionController {
                 log.info("uploadProgram, secondCommand = " + secondCommand);
 
                 Files.copy((new File(inpF)).toPath(), (new File(rootUserSubmissionDir + "/input.txt").toPath()));
-                Files.copy((new File(outF)).toPath(), (new File(rootUserSubmissionDir + "/output.txt").toPath()));
+                Files.copy((new File(outF)).toPath(), (new File(rootUserSubmissionDir + "/output.txt").toPath()),
+                           StandardCopyOption.REPLACE_EXISTING);
 
                 String thirdCommand = "python " + filename;
                 //processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand + " && " + thirdCommand);
@@ -267,8 +278,9 @@ public class ProgramSubmissionController {
                                                // compare standard solution and submitted solution
                 ProgramSubmissionItemOutput programSubmissionItemOutput = new ProgramSubmissionItemOutput();
                 programSubmissionItemOutput.setTest("Test #" + contestProblemTest.getProblemTestFilename());
+                Scanner stdOut = null;
                 try{
-                    Scanner stdOut = new Scanner(new File(dir + "/output.txt"));
+                    stdOut = new Scanner(new File(dir + "/output.txt"));
                     Scanner rs = new Scanner(new File(dir + "/result.txt"));
                     int stdAns = stdOut.nextInt();
                     int submittedAns = rs.nextInt();
@@ -286,6 +298,9 @@ public class ProgramSubmissionController {
                 }catch(Exception e){
                     e.printStackTrace();
                     programSubmissionItemOutput.setOutput("Test #" + contestProblemTest.getProblemTestFilename() + " not found output");
+                    if(stdOut != null){
+                        stdOut.close();
+                    }
                 }
                 programSubmissionItemOutputList.add(programSubmissionItemOutput);
             }
