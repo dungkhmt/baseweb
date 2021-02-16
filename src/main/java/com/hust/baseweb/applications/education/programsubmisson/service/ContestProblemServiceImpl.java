@@ -81,21 +81,26 @@ public class ContestProblemServiceImpl implements ContestProblemService {
             dir.mkdir();
             log.info("createContestProblemTest, dir " + problemRootDir + " not exists -> mkdir OK");
         }
+        //String stdTestName = input.getProblemId() + "-" + input.getTestName();
+        String stdTestName = input.getTestName();
+        //List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemTestFilename(input.getTestName());
+        List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemTestFilenameAndProblemId(stdTestName,input.getProblemId());
 
-        List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemTestFilename(input.getTestName());
         if(contestProblemTests != null && contestProblemTests.size() > 0){
             log.info("createContestProblemTest, testName " + input.getTestName() + " exists -> RETURN");
             return null;
         }
 
         // copy input and output files to the corresponding directory
-        File inputF = new File(problemRootDir + "/" + input.getTestName() + ".inp");
+        //File inputF = new File(problemRootDir + "/" + input.getTestName() + ".inp");
+        File inputF = new File(problemRootDir + "/" + stdTestName + ".inp");
         try {
             files[0].transferTo(inputF);
         }catch(Exception e){
             e.printStackTrace();
         }
-        File outputF = new File(problemRootDir + "/" + input.getTestName() + ".out");
+        //File outputF = new File(problemRootDir + "/" + input.getTestName() + ".out");
+        File outputF = new File(problemRootDir + "/" + stdTestName + ".out");
         try{
             files[1].transferTo(outputF);
         }catch(Exception e){
@@ -104,7 +109,9 @@ public class ContestProblemServiceImpl implements ContestProblemService {
 
         ContestProblemTest contestProblemTest = new ContestProblemTest();
         contestProblemTest.setProblemId(input.getProblemId());
-        contestProblemTest.setProblemTestFilename(input.getTestName());
+        contestProblemTest.setProblemTestFilename(stdTestName);
+        //contestProblemTest.setProblemTestFilename(input.getTestName());
+
         int testPoint = 0;
         try{
             testPoint = Integer.valueOf(input.getTestPoint());
