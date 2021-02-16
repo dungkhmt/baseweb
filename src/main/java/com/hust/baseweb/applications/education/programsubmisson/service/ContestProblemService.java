@@ -14,6 +14,6 @@ public interface ContestProblemService {
     ContestProblem findByProblemId(String problemId);
     ContestProblem save(ContestProblemInputModel input);
     List<ContestProblem> findAll();
-
+    List<ContestProblemTest> findAllContestProblemTestByProblemId(String problemId);
     ContestProblemTest createContestProblemTest(CreateContestProblemTestInputModel input, MultipartFile[] files);
 }

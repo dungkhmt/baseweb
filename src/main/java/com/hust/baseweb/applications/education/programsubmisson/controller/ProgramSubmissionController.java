@@ -83,6 +83,13 @@ public class ProgramSubmissionController {
             }
         }
     }
+
+    @GetMapping("get-contest-problem-test-list/{problemId}")
+    public ResponseEntity<?> getContestProblemTestList(Principal principal, @PathVariable String problemId){
+        List<ContestProblemTest> contestProblemTests = contestProblemService.findAllContestProblemTestByProblemId(problemId);
+        log.info("getContestProblemTestList, GOT " + contestProblemTests.size() + " items");
+        return ResponseEntity.ok().body(contestProblemTests);
+    }
     @PostMapping("/create-contest-problem-test")
     public ResponseEntity<?> createContestProblemTest(Principal principal, @RequestParam("inputJson") String inputJson,
                                                       @RequestParam("files") MultipartFile[] files){
