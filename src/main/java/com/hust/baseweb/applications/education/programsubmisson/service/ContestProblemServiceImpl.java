@@ -62,6 +62,11 @@ public class ContestProblemServiceImpl implements ContestProblemService {
     }
 
     @Override
+    public List<ContestProblemTest> findAllContestProblemTestByProblemId(String problemId) {
+        return contestProblemTestRepo.findAllByProblemId(problemId);
+    }
+
+    @Override
     public ContestProblemTest createContestProblemTest(
         CreateContestProblemTestInputModel input,
         MultipartFile[] files

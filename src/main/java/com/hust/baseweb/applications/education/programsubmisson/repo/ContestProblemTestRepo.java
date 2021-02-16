@@ -11,4 +11,5 @@ public interface ContestProblemTestRepo extends JpaRepository<ContestProblemTest
     List<ContestProblemTest> findAllByProblemId(String problemId);
     List<ContestProblemTest> findAllByProblemTestFilename(String problemTestFilename);
     List<ContestProblemTest> findAllByProblemTestFilenameAndProblemId(String problemTestFilename, String problemId);
+
 }
