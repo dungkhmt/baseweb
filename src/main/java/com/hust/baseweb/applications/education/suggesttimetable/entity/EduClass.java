@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.education.suggesttimetable.entity;
 
 import com.hust.baseweb.applications.education.suggesttimetable.enums.EShift;
+import com.hust.baseweb.applications.education.suggesttimetable.service.Normalizer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -182,12 +183,17 @@ public class EduClass {
         return false;
     }
 
-    public static Comparable normalize(Cell c, String status){
+    public static Comparable normalize(Normalizer normalizer, String s) {
+        return normalizer.normalize(s);
+    }
+
+    public static Comparable normalize(Cell c, String status) {
         String s = c.getStringCellValue();
         String input = StringUtils.deleteWhitespace(s);
-        if(StringUtils.equalsIgnoreCase("NULL",input) || StringUtils.equalsIgnoreCase("",input)) {
-            if (StringUtils.equals("CẦN_TN",status))
+        if (StringUtils.equalsIgnoreCase("NULL", input) || StringUtils.equalsIgnoreCase("", input)) {
+            if (StringUtils.equals("CẦN_TN", status)) {
                 return false;
+            }
 
             return null;
         }
