@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -29,4 +30,6 @@ public class ContestProgramSubmission {
     @Column(name="full_link_file")
     private String fullLinkFile;
 
+    @Column(name="created_stamp")
+    private Date createdStamp;
 }

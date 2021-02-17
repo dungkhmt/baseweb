@@ -26,10 +26,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -336,6 +333,7 @@ public class ProgramSubmissionController {
             contestProgramSubmission.setContestId(contestId);
             contestProgramSubmission.setProblemId(problemId);
             contestProgramSubmission.setSubmittedByUserLoginId(userLoginId);
+            contestProgramSubmission.setCreatedStamp(new Date());
 
             contestProgramSubmission = contestProgramSubmissionRepo.save(contestProgramSubmission);
 
