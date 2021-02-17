@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.education.suggesttimetable.enums.EShift;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -17,8 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -31,7 +34,10 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
 
     @Override
     public SimpleResponse uploadTimetable(MultipartFile file) throws IOException {
-        HashMap<String, Integer> input = new HashMap<>();
+        HashMap<String,Integer> input = new HashMap<>();
+        HashMap<String, Comparable> listInput = new HashMap<>();
+        List<EduClass> listEduClass = new ArrayList<>();
+
         FileInputStream inputStream = (FileInputStream) file.getInputStream();
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         XSSFSheet sheet = workbook.getSheetAt(0);
@@ -44,57 +50,56 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
         while (cellIterator.hasNext()) {
             Cell cell = cellIterator.next();
             String s = cell.getStringCellValue();
+
+            s = StringUtils.deleteWhitespace(s);
+            s = StringUtils.upperCase(s);
             input.put(s, i);
             i = i + 1;
         }
+        input.put("BẮT_ĐẦU", input.get("THỜI_GIAN"));
+        input.put("KẾT_THÚC", input.get("THỜI_GIAN"));
+        input.remove("KỲ");
+        input.remove("THỜI_GIAN");
+        input.remove("KHOA_VIỆN");
+        input.remove("TÊN_HP");
+        input.remove("TÊN_HP_TIẾNG_ANH");
+        input.remove("BUỔI_SỐ");
+        input.remove("KT");
+        input.remove("BĐ");
+        input.remove("BĐ");
+        input.remove("ĐỢT_MỞ");
+
 
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-            Integer classId = (Integer) Convert.covertInt(row.getCell(input.get("Mã_lớp")).getStringCellValue());
-            Integer attachedClassId = (Integer) Convert.covertInt(row
-                                                                      .getCell(input.get("Mã_lớp_kèm"))
-                                                                      .getStringCellValue());
-            String courseId = Convert.convertString(row.getCell(input.get("Mã_HP")).getStringCellValue());
-            Integer credit = (Integer) Convert.convertCredit(row.getCell(input.get("Khối_lượng")).getStringCellValue());
-            String note = Convert.convertString(row.getCell(input.get("Ghi_chú")).getStringCellValue());
-            DayOfWeek dayOfWeek = Convert.covertDayOfWeek(row.getCell(input.get("Thứ")).getStringCellValue());
-            Integer startTime = (Integer) Convert.covertStartTime(row
-                                                                      .getCell(input.get("Thời_gian"))
-                                                                      .getStringCellValue());
-
-            Integer endTime = (Integer) Convert.covertEndTime(row.getCell(input.get("Thời_gian")).getStringCellValue());
-            EShift Shift = Convert.convertShift(row.getCell(input.get("Kíp")).getStringCellValue());
-            String weeks = Convert.convertWeeks(row.getCell(input.get("Tuần")).getStringCellValue());
-            String room = Convert.convertString(row.getCell(input.get("Phòng")).getStringCellValue());
-            boolean needExperiment = Convert.covertExperiment(row.getCell(input.get("Cần_TN")).getStringCellValue());
-            Integer numRegistration = (Integer) Convert.covertInt(row.getCell(input.get("SLĐK")).getStringCellValue());
-            Integer maxQuantity = (Integer) Convert.covertInt(row.getCell(input.get("SL_Max")).getStringCellValue());
-            String status = Convert.convertString(row.getCell(input.get("Trạng_thái")).getStringCellValue());
-            String classType = Convert.convertString(row.getCell(input.get("Loại_lớp")).getStringCellValue());
-            String managementId = Convert.convertString(row.getCell(input.get("Mã_QL")).getStringCellValue());
-
+            for (String s : input.keySet()) {
+                listInput.put(s, EduClass.normalize(row.getCell(input.get(s)), s));
+            }
             EduClass eduClass = new EduClass(
-                classId,
-                attachedClassId,
-                courseId,
-                credit,
-                note,
-                dayOfWeek,
-                startTime,
-                endTime,
-                Shift,
-                weeks,
-                room,
-                needExperiment,
-                numRegistration,
-                maxQuantity,
-                status,
-                classType,
-                managementId);
+                (Integer) listInput.get("MÃ_LỚP"),
+                (Integer) listInput.get("MÃ_LỚP_KÈM"),
+                (String) listInput.get("MÃ_HP"),
+                (Integer) listInput.get("KHỐI_LƯỢNG"),
+                (String) listInput.get("GHI_CHÚ"),
+                (DayOfWeek) listInput.get("THỨ"),
+                (Integer) listInput.get("BẮT_ĐẦU"),
+                (Integer) listInput.get("KẾT_THÚC"),
+                (EShift) listInput.get("KÍP"),
+                (String) listInput.get("TUẦN"),
+                (String) listInput.get("PHÒNG"),
+                (boolean) listInput.get("CẦN_TN"),
+                (Integer) listInput.get("SLĐK"),
+                (Integer) listInput.get("SL_MAX"),
+                (String) listInput.get("TRẠNG_THÁI"),
+                (String) listInput.get("LOẠI_LỚP"),
+                (String) listInput.get("MÃ_QL")
+            );
+            listEduClass.add(eduClass);
 
-            classRepo.save(eduClass);
+
+
         }
-        System.out.println("--------------- FindAll -----------------");
+        classRepo.saveAll(listEduClass);
         return null;
 
     }
