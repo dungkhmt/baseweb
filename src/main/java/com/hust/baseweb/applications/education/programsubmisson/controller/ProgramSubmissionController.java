@@ -13,12 +13,15 @@ import com.hust.baseweb.applications.education.programsubmisson.service.ContestP
 import com.hust.baseweb.framework.properties.UploadConfigProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -94,6 +97,7 @@ public class ProgramSubmissionController {
             }
         }
     }
+    /*
     @GetMapping("get-detail-contest-program-submission/{contestProgramSubmissionId}")
     public ResponseEntity<?> getDetailContestProgramSubmission(Principal principal,
                                                                @PathVariable String contestProgramSubmissionId){
@@ -106,6 +110,7 @@ public class ProgramSubmissionController {
             //                                                                                  contestProgramSubmission.getSubmittedByUserLoginId(),
             //                                                                                  contestProgramSubmission.getProblemId());
 
+
             String filename = contestProgramSubmission.getFullLinkFile();
             Scanner in = new Scanner(new File(filename));
             while(in.hasNext()){
@@ -114,12 +119,62 @@ public class ProgramSubmissionController {
             in.close();
             log.info("getDetailContestProgramSubmission, programCode = " + programCode);
 
+            //InputStream is = new FileInputStream(filename);
+            //IOUtils.copyLarge(is, response.getOutputStream());
+            //response.flushBuffer();
+
         }catch(Exception e){
             e.printStackTrace();
         }
         SubmittedProgramDetailModel submittedProgramDetailModel = new SubmittedProgramDetailModel();
         submittedProgramDetailModel.setProgramCode(programCode);
+
         return ResponseEntity.ok().body(submittedProgramDetailModel);
+
+
+    }
+    */
+
+    @GetMapping("get-detail-contest-program-submission/{contestProgramSubmissionId}")
+    @ResponseBody
+    public void getDetailContestProgramSubmission(Principal principal,
+                                                               @PathVariable String contestProgramSubmissionId,
+                                                               HttpServletResponse response){
+        response.setHeader("Content-Transfer-Encoding", "binary");
+        response.setHeader(
+            HttpHeaders.CONTENT_DISPOSITION,
+            "attachment; filename=\"" + "program.py" + "\"");
+        response.setContentType("application/octet-stream");
+
+        UUID uuidContestProgramSubmissionId = UUID.fromString(contestProgramSubmissionId);
+        ContestProgramSubmission contestProgramSubmission = contestProgramSubmissionRepo.findByContestProgramSubmissionId(uuidContestProgramSubmissionId);
+        String programCode = "";
+        try{
+            //String submissionContestUserProblemDir = establishSubmissionContestUserProblemDir(contestProgramSubmission.getContestId(),
+            //                                                                                  contestProgramSubmission.getSubmittedByUserLoginId(),
+            //                                                                                  contestProgramSubmission.getProblemId());
+
+
+            String filename = contestProgramSubmission.getFullLinkFile();
+            Scanner in = new Scanner(new File(filename));
+            while(in.hasNext()){
+                programCode = programCode + in.nextLine() + '\n';
+            }
+            in.close();
+            log.info("getDetailContestProgramSubmission, programCode = " + programCode);
+
+            InputStream is = new FileInputStream(filename);
+            //IOUtils.copyLarge(is, response.getOutputStream());
+            IOUtils.copy(is, response.getOutputStream());
+            response.flushBuffer();
+            log.info("getDetailContestProgramSubmission, response.flushBuffer with filename = " + filename);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        SubmittedProgramDetailModel submittedProgramDetailModel = new SubmittedProgramDetailModel();
+        submittedProgramDetailModel.setProgramCode(programCode);
+
+        //return ResponseEntity.ok().body(submittedProgramDetailModel);
 
 
     }
