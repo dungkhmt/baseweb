@@ -3,6 +3,8 @@ package com.hust.baseweb.applications.education.suggesttimetable.repo;
 
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 
+import java.util.List;
+
 public interface IClassRepo {
-    EduClass save(EduClass eduClass);
+    void saveAll(List<EduClass> eduClass);
 }

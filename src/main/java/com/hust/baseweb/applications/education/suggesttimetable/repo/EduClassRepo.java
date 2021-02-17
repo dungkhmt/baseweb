@@ -7,6 +7,8 @@ import lombok.experimental.Delegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class EduClassRepo implements IClassRepo {
@@ -14,4 +16,8 @@ public class EduClassRepo implements IClassRepo {
     @Delegate
     private IClassMongoRepo classRepo;
 
+    @Override
+    public void saveAll(List<EduClass> eduClass) {
+        classRepo.saveAll(eduClass);
+    }
 }
