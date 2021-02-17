@@ -201,6 +201,8 @@ public class ProgramSubmissionController {
             String optionCMD = "/c";
             String optionCOPY = " /Y ";
             String deleteCMD = "del";
+            //String pythonPath = "python.exe";
+            String pythonPath = "python";
             if (isWindows) {
 
             } else {
@@ -209,6 +211,7 @@ public class ProgramSubmissionController {
                 optionCMD = "-c";
                 optionCOPY = " ";
                 deleteCMD = "rm";
+                pythonPath = "python";
             }
 
             //for (int i = 1; i <= nbTests; i++) {
@@ -229,14 +232,14 @@ public class ProgramSubmissionController {
                         log.info("uploadProgram, NOT deleted " + rootUserSubmissionDir + "/output.txt");
                     }
                 }
-                /*File fr = new File(rootUserSubmissionDir + "/result.txt");
+                File fr = new File(rootUserSubmissionDir + "/result.txt");
                 if (fr.exists()) {
                     if (fr.delete()) {
                         log.info("uploadProgram, deleted " + rootUserSubmissionDir + "/result.txt");
                     } else {
                         log.info("uploadProgram, NOT deleted " + rootUserSubmissionDir + "/result.txt");
                     }
-                }*/
+                }
 
 
                 String inpF = rootDir +
@@ -284,7 +287,8 @@ public class ProgramSubmissionController {
                 //                                           " && " + secondCommand + " && " + thirdCommand);
 
                 /*processBuilder.command(bashCMD, optionCMD, thirdCommand); // Not use this line when run python file.*/
-                String pythonPath = "C:/Users/Asus/AppData/Local/Programs/Python/Python39/python.exe";
+                //String pythonPath = "C:/Users/Asus/AppData/Local/Programs/Python/Python39/python.exe";
+
                 processBuilder = new ProcessBuilder(pythonPath, dir + "/" + filename);
                 //processBuilder.command("python",filename);
                 //processBuilder.command("./python_exec", filename);
