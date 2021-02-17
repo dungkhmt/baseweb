@@ -17,7 +17,7 @@ public class EduClassRepo implements IClassRepo {
     private IClassMongoRepo classRepo;
 
     @Override
-    public void saveAll(List<EduClass> eduClass) {
-        classRepo.saveAll(eduClass);
+    public List<EduClass> saveAll(List<EduClass> eduClasses) {
+        return classRepo.saveAll(eduClasses);
     }
 }

@@ -120,8 +120,8 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
             );
             listClassMongo.add(eduClass);
 
-            for (String s: listInputCourse.keySet()){
-                listCourse.put(s, EduCourse.normalize(row.getCell(listInputCourse.get(s)),s));
+            for (String s : listInputCourse.keySet()) {
+                listCourse.put(s, EduCourse.normalize(row.getCell(listInputCourse.get(s)), s));
             }
 
             EduCourse eduCourse = new EduCourse(
@@ -134,6 +134,7 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
 
 
         }
+
         classRepo.saveAll(listClassMongo);
         courseRepo.saveAll(listCourseMongo);
 
