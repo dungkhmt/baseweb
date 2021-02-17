@@ -3,10 +3,13 @@ package com.hust.baseweb.applications.education.programsubmisson.controller;
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.education.programsubmisson.entity.ContestProblem;
 import com.hust.baseweb.applications.education.programsubmisson.entity.ContestProblemTest;
+import com.hust.baseweb.applications.education.programsubmisson.entity.ContestProgramSubmission;
 import com.hust.baseweb.applications.education.programsubmisson.model.*;
 import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProblemRepo;
 import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProblemTestRepo;
+import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProgramSubmissionRepo;
 import com.hust.baseweb.applications.education.programsubmisson.service.ContestProblemService;
+import com.hust.baseweb.applications.education.programsubmisson.service.ContestProgramSubmissionService;
 import com.hust.baseweb.framework.properties.UploadConfigProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +26,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -35,6 +39,9 @@ public class ProgramSubmissionController {
 
     public static final String userSubmissionDir = "usersubmissions";
     public static final String problemDir = "problems";
+    public static final String contestDir = "contests";
+    public static final String defaultContest = "DEFAULT_CONTEST";
+
 
     @Autowired
     UploadConfigProperties uploadConfigProperties;
@@ -44,6 +51,10 @@ public class ProgramSubmissionController {
     private ContestProblemTestRepo contestProblemTestRepo;
     @Autowired
     private ContestProblemRepo contestProblemRepo;
+    @Autowired
+    private ContestProgramSubmissionRepo contestProgramSubmissionRepo;
+    @Autowired
+    private ContestProgramSubmissionService contestProgramSubmissionService;
 
     @PostMapping("/submit")
     public ResponseEntity<?> submit(Principal principal, @RequestBody ProgramSubmissonModel input) {
@@ -83,7 +94,40 @@ public class ProgramSubmissionController {
             }
         }
     }
+    @GetMapping("get-detail-contest-program-submission/{contestProgramSubmissionId}")
+    public ResponseEntity<?> getDetailContestProgramSubmission(Principal principal,
+                                                               @PathVariable String contestProgramSubmissionId){
 
+        UUID uuidContestProgramSubmissionId = UUID.fromString(contestProgramSubmissionId);
+        ContestProgramSubmission contestProgramSubmission = contestProgramSubmissionRepo.findByContestProgramSubmissionId(uuidContestProgramSubmissionId);
+        String programCode = "";
+        try{
+            //String submissionContestUserProblemDir = establishSubmissionContestUserProblemDir(contestProgramSubmission.getContestId(),
+            //                                                                                  contestProgramSubmission.getSubmittedByUserLoginId(),
+            //                                                                                  contestProgramSubmission.getProblemId());
+
+            String filename = contestProgramSubmission.getFullLinkFile();
+            Scanner in = new Scanner(new File(filename));
+            while(in.hasNext()){
+                programCode = programCode + in.nextLine() + '\n';
+            }
+            in.close();
+            log.info("getDetailContestProgramSubmission, programCode = " + programCode);
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        SubmittedProgramDetailModel submittedProgramDetailModel = new SubmittedProgramDetailModel();
+        submittedProgramDetailModel.setProgramCode(programCode);
+        return ResponseEntity.ok().body(submittedProgramDetailModel);
+
+
+    }
+
+    @GetMapping("get-all-contest-program-submissions")
+    public ResponseEntity<?> getAllContestProgramSubmissions(Principal principal){
+        return ResponseEntity.ok().body(contestProgramSubmissionService.findAll());
+    }
     @GetMapping("get-contest-problem-test-list/{problemId}")
     public ResponseEntity<?> getContestProblemTestList(Principal principal, @PathVariable String problemId) {
         List<ContestProblemTest> contestProblemTests = contestProblemService.findAllContestProblemTestByProblemId(
@@ -132,11 +176,54 @@ public class ProgramSubmissionController {
         return ResponseEntity.ok().body(contestProblems);
     }
 
+    private String establishSubmissionContestUserProblemDir(String contestId, String userLoginId, String problemId){
+        String rootDir = uploadConfigProperties.getRootPath() + "/" + uploadConfigProperties.getProgramSubmissionDataPath();
+        String contestRootDir = rootDir + "/" + contestDir;
+        File dir = new File(contestRootDir);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        contestRootDir = contestRootDir + "/" + contestId;
+        dir = new File(contestRootDir);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        //String submissionDir = rootDir + "/" + userSubmissionDir;
+        String submissionDir = contestRootDir + "/" + userSubmissionDir;
+        dir = new File(submissionDir);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        String rootUserSubmissionDir = submissionDir + "/" + userLoginId;//principal.getName();
+        dir = new File(rootUserSubmissionDir);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        String submissionProblemDir = rootUserSubmissionDir + "/" + problemId;
+
+        dir = new File(submissionProblemDir);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        return submissionProblemDir;
+    }
+    private String establishSubmissionFullFilename(String submissionContestUserProblemDir,
+                                                   String idTable, String filename){
+        String submissionFilename = submissionContestUserProblemDir + "/" +
+                                    idTable + "-" + filename;
+        return submissionFilename;
+    }
     @PostMapping("/upload-program")
     public ResponseEntity<?> uploadProgram(
         Principal principal, @RequestParam("inputJson") String inputJson,
         @RequestParam("file") MultipartFile file
     ) {
+        String userLoginId = principal.getName();
+        String contestId = defaultContest;// this should be replaced by considered contest
+
         //public ResponseEntity<?> updateFile(Principal principal, @RequestParam("files") MultipartFile[] files) {
         //UploadConfigProperties uploadProp = new UploadConfigProperties();
         System.out.println("::uploadProgram a program, inputJson = " +
@@ -149,25 +236,54 @@ public class ProgramSubmissionController {
         List<ProgramSubmissionItemOutput> programSubmissionItemOutputList = new ArrayList();
         Gson gson = new Gson();
         ProgramSubmissonModel programSubmissonModel = gson.fromJson(inputJson, ProgramSubmissonModel.class);
-        List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemId(programSubmissonModel.getProblemId());
+        String problemId = programSubmissonModel.getProblemId();
+        List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemId(problemId);
 
         int nbTests = contestProblemTests.size();
         String rootDir = uploadConfigProperties.getRootPath() +
                          "/" +
                          uploadConfigProperties.getProgramSubmissionDataPath();
-        String submissionDir = rootDir + "/" + userSubmissionDir;
-        File dir = new File(submissionDir);
+        /*
+        String contestRootDir = rootDir + "/" + contestDir;
+        File dir = new File(contestRootDir);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        contestRootDir = contestRootDir + "/" + contestId;
         if (!dir.exists()) {
             dir.mkdir();
         }
 
-        String rootUserSubmissionDir = submissionDir + "/" + principal.getName();
+        //String submissionDir = rootDir + "/" + userSubmissionDir;
+        String submissionDir = contestRootDir + "/" + userSubmissionDir;
+        dir = new File(submissionDir);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        String rootUserSubmissionDir = submissionDir + "/" + userLoginId;//principal.getName();
         dir = new File(rootUserSubmissionDir);
         if (!dir.exists()) {
             dir.mkdir();
         }
 
+        String submissionProblemDir = rootUserSubmissionDir + "/" + problemId;
+
+        dir = new File(submissionProblemDir);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        */
+        String submissionContestUserProblemDir = establishSubmissionContestUserProblemDir(contestId,userLoginId,problemId);
+        int totalmaxPoint = 0;
         try {
+            ContestProgramSubmission contestProgramSubmission = new ContestProgramSubmission();
+            contestProgramSubmission.setContestId(contestId);
+            contestProgramSubmission.setProblemId(problemId);
+            contestProgramSubmission.setSubmittedByUserLoginId(userLoginId);
+
+            contestProgramSubmission = contestProgramSubmissionRepo.save(contestProgramSubmission);
+
             InputStream inputStream = file.getInputStream();
             String filename = file.getOriginalFilename();
             Scanner in = new Scanner(inputStream);
@@ -183,10 +299,19 @@ public class ProgramSubmissionController {
             //dir = uploadConfigProperties.getRootPath() + uploadConfigProperties.getProgramSubmissionDataPath();
 
             //PrintWriter out = new PrintWriter(dir + filename);
-            String submissionFilename = rootUserSubmissionDir + "/" + filename;
+
+            /*
+            String submissionFilename = submissionProblemDir + "/" +
+                                        contestProgramSubmission.getContestProgramSubmissionId().toString() + "-" + filename;
+            */
+            String submissionFilename = establishSubmissionFullFilename(submissionContestUserProblemDir,
+                                                                        contestProgramSubmission.getContestProgramSubmissionId().toString(),filename);
             PrintWriter out = new PrintWriter(submissionFilename);
             out.print(content);
             out.close();
+
+            contestProgramSubmission.setFullLinkFile(submissionFilename);
+            contestProgramSubmission = contestProgramSubmissionRepo.save(contestProgramSubmission);
 
             System.out.println("::uploadProgram  " +
                                filename +
@@ -216,28 +341,28 @@ public class ProgramSubmissionController {
 
             //for (int i = 1; i <= nbTests; i++) {
             for (ContestProblemTest contestProblemTest : contestProblemTests) {
-                File fi = new File(rootUserSubmissionDir + "/input.txt");
+                File fi = new File(submissionContestUserProblemDir + "/input.txt");
                 if (fi.exists()) {
                     if (fi.delete()) {
-                        log.info("uploadProgram, deleted " + rootUserSubmissionDir + "/input.txt");
+                        log.info("uploadProgram, deleted " + submissionContestUserProblemDir + "/input.txt");
                     } else {
-                        log.info("uploadProgram, NOT deleted " + rootUserSubmissionDir + "/input.txt");
+                        log.info("uploadProgram, NOT deleted " + submissionContestUserProblemDir + "/input.txt");
                     }
                 }
-                File fo = new File(rootUserSubmissionDir + "/output.txt");
+                File fo = new File(submissionContestUserProblemDir + "/output.txt");
                 if (fo.exists()) {
                     if (fo.delete()) {
-                        log.info("uploadProgram, deleted " + rootUserSubmissionDir + "/output.txt");
+                        log.info("uploadProgram, deleted " + submissionContestUserProblemDir + "/output.txt");
                     } else {
-                        log.info("uploadProgram, NOT deleted " + rootUserSubmissionDir + "/output.txt");
+                        log.info("uploadProgram, NOT deleted " + submissionContestUserProblemDir + "/output.txt");
                     }
                 }
-                File fr = new File(rootUserSubmissionDir + "/result.txt");
+                File fr = new File(submissionContestUserProblemDir + "/result.txt");
                 if (fr.exists()) {
                     if (fr.delete()) {
-                        log.info("uploadProgram, deleted " + rootUserSubmissionDir + "/result.txt");
+                        log.info("uploadProgram, deleted " + submissionContestUserProblemDir + "/result.txt");
                     } else {
-                        log.info("uploadProgram, NOT deleted " + rootUserSubmissionDir + "/result.txt");
+                        log.info("uploadProgram, NOT deleted " + submissionContestUserProblemDir + "/result.txt");
                     }
                 }
 
@@ -262,17 +387,17 @@ public class ProgramSubmissionController {
                 String initCommand = deleteCMD + " input.txt output.txt result.txt";
 
                 //String firstCommand = copyCMD + optionCOPY + i + ".inp " + "input.txt";
-                String firstCommand = copyCMD + optionCOPY + " " + inpF + " " + rootUserSubmissionDir + "/input.txt";
-                log.info("uploadProgram, firstCommand = " + firstCommand);
+                //String firstCommand = copyCMD + optionCOPY + " " + inpF + " " + submissionContestUserProblemDir + "/input.txt";
+                //log.info("uploadProgram, firstCommand = " + firstCommand);
                 //String secondCommand = copyCMD + optionCOPY + i + ".out " + "output.txt";
-                String secondCommand = copyCMD + optionCOPY + " " + outF + " " + rootUserSubmissionDir + "/output.txt";
-                log.info("uploadProgram, secondCommand = " + secondCommand);
+                //String secondCommand = copyCMD + optionCOPY + " " + outF + " " + submissionContestUserProblemDir + "/output.txt";
+                //log.info("uploadProgram, secondCommand = " + secondCommand);
 
-                Files.copy((new File(inpF)).toPath(), (new File(rootUserSubmissionDir + "/input.txt").toPath()));
-                Files.copy((new File(outF)).toPath(), (new File(rootUserSubmissionDir + "/output.txt").toPath()),
+                Files.copy((new File(inpF)).toPath(), (new File(submissionContestUserProblemDir + "/input.txt").toPath()));
+                Files.copy((new File(outF)).toPath(), (new File(submissionContestUserProblemDir + "/output.txt").toPath()),
                            StandardCopyOption.REPLACE_EXISTING);
 
-                String thirdCommand = "py " + filename;
+                //String thirdCommand = "py " + filename;
                 //processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand + " && " + thirdCommand);
 
                 //processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand);
@@ -289,7 +414,8 @@ public class ProgramSubmissionController {
                 /*processBuilder.command(bashCMD, optionCMD, thirdCommand); // Not use this line when run python file.*/
                 //String pythonPath = "C:/Users/Asus/AppData/Local/Programs/Python/Python39/python.exe";
 
-                processBuilder = new ProcessBuilder(pythonPath, dir + "/" + filename);
+                //processBuilder = new ProcessBuilder(pythonPath, dir + "/" + filename);
+                processBuilder = new ProcessBuilder(pythonPath, submissionFilename);
                 //processBuilder.command("python",filename);
                 //processBuilder.command("./python_exec", filename);
 
@@ -305,9 +431,10 @@ public class ProgramSubmissionController {
                 //System.out.println("System.getProperty(\"user.home\") = " + System.getProperty("user.home"));
 
                 processBuilder.redirectErrorStream(true);
-                processBuilder.directory(new File(rootUserSubmissionDir));
+                processBuilder.directory(new File(submissionContestUserProblemDir));
 
-                File outputFile = new File(dir + "/out.txt");
+                //File outputFile = new File(dir + "/out.txt");
+                File outputFile = new File(submissionContestUserProblemDir + "/out.txt");
                 processBuilder.redirectOutput(outputFile); // Redirect stdout to file.
 
                 Process process = processBuilder.start();
@@ -336,13 +463,16 @@ public class ProgramSubmissionController {
                 programSubmissionItemOutput.setTest("Test #" + contestProblemTest.getProblemTestFilename());
                 Scanner stdOut = null;
                 try {
-                    stdOut = new Scanner(new File(dir + "/output.txt"));
-                    Scanner rs = new Scanner(new File(dir + "/result.txt"));
+                    //stdOut = new Scanner(new File(dir + "/output.txt"));
+                    stdOut = new Scanner(new File(submissionContestUserProblemDir + "/output.txt"));
+                    //Scanner rs = new Scanner(new File(dir + "/result.txt"));
+                    Scanner rs = new Scanner(new File(submissionContestUserProblemDir + "/result.txt"));
                     int stdAns = stdOut.nextInt();
                     int submittedAns = rs.nextInt();
-
+                    totalmaxPoint += contestProblemTest.getProblemTestPoint();
                     if (stdAns == submittedAns) {
                         grade += contestProblemTest.getProblemTestPoint();
+
                         programSubmissionItemOutput.setOutput(contestProblemTest.getProblemTestPoint() + "");
                     } else {
                         returnMsg += "Test #" +
@@ -382,7 +512,7 @@ public class ProgramSubmissionController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        returnMsg += " Points = " + grade + "/" + (nbTests * 10);
+        returnMsg += " Points = " + grade + "/" + totalmaxPoint;
         ProgramSubmissionOutput programSubmissionOutput = new ProgramSubmissionOutput(
             programSubmissionItemOutputList,
             returnMsg);
