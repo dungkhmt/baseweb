@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
 import com.hust.baseweb.applications.education.suggesttimetable.enums.EDepartment;
 import com.hust.baseweb.applications.education.suggesttimetable.enums.EShift;
+import com.hust.baseweb.applications.education.suggesttimetable.repo.EduClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,9 +36,6 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
 
     @Override
     public SimpleResponse uploadTimetable(MultipartFile file) throws IOException {
-        HashMap<String, Comparable> listCourse = new HashMap<>();
-        HashMap<String, Comparable> listClass = new HashMap<>();
-
         HashMap<String, Integer> listInputClass = new HashMap<>();
         HashMap<String, Integer> listInputCourse = new HashMap<>();
 
@@ -55,7 +52,6 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
         Iterator<Cell> cellIterator = row1.cellIterator();
 
         int i = 0;
-//        System.out.println("ok");
         while (cellIterator.hasNext()) {
             Cell cell = cellIterator.next();
             String s = cell.getStringCellValue();
@@ -74,71 +70,47 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
             }
             i = i + 1;
         }
-        listInputClass.put("BẮT_ĐẦU", listInputClass.get("THỜI_GIAN"));
-        listInputClass.put("KẾT_THÚC", listInputClass.get("THỜI_GIAN"));
-        listInputClass.remove("BUỔI_SỐ");
-        listInputClass.remove("KT");
-        listInputClass.remove("BĐ");
-        listInputClass.remove("BĐ");
-        listInputClass.remove("ĐỢT_MỞ");
-        listInputClass.remove("KỲ");
-
-//        System.out.println("ok");
-        for (String s : listInputClass.keySet()) {
-            System.out.println(s + listInputClass.get(s));
-        }
-        System.out.println("------------");
-
-        for (String s : listInputCourse.keySet()) {
-            System.out.println(s + listInputCourse.get(s));
-        }
 
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-            for (String s : listInputClass.keySet()) {
-                listClass.put(s, EduClass.normalize(row.getCell(listInputClass.get(s)), s));
-            }
 
             EduClass eduClass = new EduClass(
-                (Integer) listClass.get("MÃ_LỚP"),
-                (Integer) listClass.get("MÃ_LỚP_KÈM"),
-                (String) listClass.get("MÃ_HP"),
-                (Integer) listClass.get("KHỐI_LƯỢNG"),
-                (String) listClass.get("GHI_CHÚ"),
-                (DayOfWeek) listClass.get("THỨ"),
-                (Integer) listClass.get("BẮT_ĐẦU"),
-                (Integer) listClass.get("KẾT_THÚC"),
-                (EShift) listClass.get("KÍP"),
-                (String) listClass.get("TUẦN"),
-                (String) listClass.get("PHÒNG"),
-                (boolean) listClass.get("CẦN_TN"),
-                (Integer) listClass.get("SLĐK"),
-                (Integer) listClass.get("SL_MAX"),
-                (String) listClass.get("TRẠNG_THÁI"),
-                (String) listClass.get("LOẠI_LỚP"),
-                (String) listClass.get("MÃ_QL")
+                EduClass.normalizeInteger(row.getCell(listInputClass.get("MÃ_LỚP"))),
+                EduClass.normalizeInteger(row.getCell(listInputClass.get("MÃ_LỚP_KÈM"))),
+                EduClass.normalizeString(row.getCell(listInputClass.get("MÃ_HP"))),
+                EduClass.normalizeFisrt(row.getCell(listInputClass.get("KHỐI_LƯỢNG"))),
+                EduClass.normalizeString(row.getCell(listInputClass.get("GHI_CHÚ"))),
+                EduClass.normalizeDayOfWeek(row.getCell(listInputClass.get("THỨ"))),
+                EduClass.normalizeBeforeTime(row.getCell(listInputClass.get("THỜI_GIAN"))),
+                EduClass.normalizeAfterTime(row.getCell(listInputClass.get("THỜI_GIAN"))),
+                EduClass.normalizeShift(row.getCell(listInputClass.get("KÍP"))),
+                EduClass.normalizeString(row.getCell(listInputClass.get("TUẦN"))),
+                EduClass.normalizeString(row.getCell(listInputClass.get("PHÒNG"))),
+                EduClass.normalizeBoolean(row.getCell(listInputClass.get("CẦN_TN"))),
+                EduClass.normalizeInteger(row.getCell(listInputClass.get("SLĐK"))),
+                EduClass.normalizeInteger(row.getCell(listInputClass.get("SL_MAX"))),
+                EduClass.normalizeString(row.getCell(listInputClass.get("TRẠNG_THÁI"))),
+                EduClass.normalizeString(row.getCell(listInputClass.get("LOẠI_LỚP"))),
+                EduClass.normalizeString(row.getCell(listInputClass.get("MÃ_QL")))
             );
             listClassMongo.add(eduClass);
-
-            for (String s : listInputCourse.keySet()) {
-                listCourse.put(s, EduCourse.normalize(row.getCell(listInputCourse.get(s)), s));
+            if(listClassMongo.size() == 100){
+                classRepo.saveAll(listClassMongo);
+                listClassMongo = new ArrayList<>();
             }
-
             EduCourse eduCourse = new EduCourse(
-                (String) listCourse.get("MÃ_HP"),
-                (String) listCourse.get("TÊN_HP"),
-                (String) listCourse.get("TÊN_HP_TIẾNG_ANH"),
-                (EDepartment) listCourse.get("KHOA_VIỆN")
+                EduCourse.normalizeString(row.getCell(listInputCourse.get("MÃ_HP"))),
+                EduCourse.normalizeString(row.getCell(listInputCourse.get("TÊN_HP"))),
+                EduCourse.normalizeString(row.getCell(listInputCourse.get("TÊN_HP_TIẾNG_ANH"))),
+                EduCourse.normalizeDepartment(row.getCell(listInputCourse.get("KHOA_VIỆN")))
             );
             listCourseMongo.add(eduCourse);
-
 
         }
 
         classRepo.saveAll(listClassMongo);
         courseRepo.saveAll(listCourseMongo);
 
-        System.out.println("--------------- FindAll -----------------");
         return null;
     }
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -68,23 +69,44 @@ public class EduCourse {
         return id == null ? 0 : id.hashCode();
     }
 
-    public static Comparable normalize(Cell cell, String status) {
-        String s = cell.getStringCellValue();
-        String input = StringUtils.deleteWhitespace(s);
-        if (StringUtils.equalsIgnoreCase("NULL",input) || StringUtils.equalsIgnoreCase("",input)){
-            return null;
-        } else {
-            switch (status){
-                case "MÃ_HP":
-                    return EduClass.normalize(cell,status);
-                case "TÊN_HP":
-                case "TÊN_HP_TIẾNG_ANH":
-                    return input;
-                case "KHOA_VIỆN":
-                    return EDepartment.of(input);
-            }
-        }
-        return null;
+//    public static Comparable normalize(Cell cell, String status) {
+//        String s = cell.getStringCellValue();
+//        String input = StringUtils.deleteWhitespace(s);
+//        if (StringUtils.equalsIgnoreCase("NULL",input) || StringUtils.equalsIgnoreCase("",input)){
+//            return null;
+//        } else {
+//            switch (status){
+//                case "MÃ_HP":
+//                    return EduClass.normalize(cell,status);
+//                case "TÊN_HP":
+//                case "TÊN_HP_TIẾNG_ANH":
+//                    return input;
+//                case "KHOA_VIỆN":
+//                    return EDepartment.of(input);
+//            }
+//        }
+//        return null;
+//
+//    }
 
+    private static String formatCell(Cell cell) {
+        DataFormatter formatter = new DataFormatter();
+        String s = formatter.formatCellValue(cell);
+        s = StringUtils.deleteWhitespace(s);
+        if (StringUtils.equalsIgnoreCase("NULL",s)||StringUtils.equalsIgnoreCase("",s))
+            return null;
+        return s;
+    }
+
+    public static String normalizeString(Cell cell) {
+        return EduCourse.formatCell(cell);
+    }
+
+    public static EDepartment normalizeDepartment(Cell cell){
+        String input = EduCourse.formatCell(cell);
+        if (input == null) {
+            return null;
+        }
+        return EDepartment.of(input);
     }
 }
