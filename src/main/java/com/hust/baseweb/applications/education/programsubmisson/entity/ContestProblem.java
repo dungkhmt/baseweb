@@ -22,4 +22,8 @@ public class ContestProblem {
 
     @Column(name="problem_statement")
     private String problemStatement;
+
+    @Column(name="time_limit")
+    private int timeLimit;
+
 }

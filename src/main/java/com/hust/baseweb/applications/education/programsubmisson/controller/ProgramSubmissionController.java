@@ -290,7 +290,7 @@ public class ProgramSubmissionController {
         ProgramSubmissonModel programSubmissonModel = gson.fromJson(inputJson, ProgramSubmissonModel.class);
         String problemId = programSubmissonModel.getProblemId();
         List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemId(problemId);
-
+        ContestProblem contestProblem = contestProblemService.findByProblemId(problemId);
         int nbTests = contestProblemTests.size();
         String rootDir = uploadConfigProperties.getRootPath() +
                          "/" +
@@ -491,7 +491,9 @@ public class ProgramSubmissionController {
                 processBuilder.redirectOutput(outputFile); // Redirect stdout to file.
 
                 Process process = processBuilder.start();
-                boolean success = process.waitFor(2, TimeUnit.SECONDS);
+                //boolean success = process.waitFor(2, TimeUnit.SECONDS);
+                log.info("uploadProgram, time limit = " + contestProblem.getTimeLimit());
+                boolean success = process.waitFor(contestProblem.getTimeLimit(), TimeUnit.MILLISECONDS);
 
                 if (success == false) {
                     System.err.println("TIME LIMIT EXCEEDED");
