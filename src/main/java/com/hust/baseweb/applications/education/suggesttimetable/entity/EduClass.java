@@ -1,12 +1,11 @@
 package com.hust.baseweb.applications.education.suggesttimetable.entity;
 
 import com.hust.baseweb.applications.education.suggesttimetable.enums.EShift;
-import com.hust.baseweb.applications.education.suggesttimetable.service.Normalizer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.Id;
@@ -22,56 +21,40 @@ import java.util.List;
 @Document(collection = "class")
 public class EduClass {
 
-    @Id
-    private BigInteger id;
-
     @NotNull
     private final Integer classId;
-
     @Nullable
     private final Integer attachedClassId;
-
     @NotNull
     private final String courseId;
-
     @NotNull
     private final Integer credit;
-
     @Nullable
     private final String note;
-
     @Nullable
     private final DayOfWeek dayOfWeek;
-
     @Nullable
     private final Integer startTime;
-
     @Nullable
     private final Integer endTime;
-
     @NotNull
     private final EShift shift;
-
     @Nullable
     private final String weeks;
-
+    @Nullable
+    private final String room;
+    private final boolean needExperiment;
+    @Nullable
+    private final Integer numRegistration;
+    @Nullable
+    private final Integer maxQuantity;
+    @NotNull
+    private final String status, classType, managementId;
+    @Id
+    private BigInteger id;
     @Transient
     @Getter(value = AccessLevel.NONE)
     private List<Integer> weeksList = null;
-
-    @Nullable
-    private final String room;
-
-    private final boolean needExperiment;
-
-    @Nullable
-    private final Integer numRegistration;
-
-    @Nullable
-    private final Integer maxQuantity;
-
-    @NotNull
-    private final String status, classType, managementId;
 
     public EduClass(
         @NotNull Integer classId,
@@ -109,6 +92,74 @@ public class EduClass {
         this.status = status;
         this.classType = classType;
         this.managementId = managementId;
+    }
+
+    private static String formatCell(Cell cell) {
+        DataFormatter formatter = new DataFormatter();
+        String s = formatter.formatCellValue(cell);
+        s = StringUtils.deleteWhitespace(s);
+        if (StringUtils.equalsIgnoreCase("NULL",s)||StringUtils.equalsIgnoreCase("",s))
+            return null;
+        return s;
+    }
+
+    public static Integer normalizeInteger(Cell cell) {
+        String input = EduClass.formatCell(cell);
+        if (input == null) {
+            return null;
+        }
+        return Integer.parseInt(input);
+    }
+
+    public static String normalizeString(Cell cell) {
+        return EduClass.formatCell(cell);
+    }
+
+    public static EShift normalizeShift(Cell cell) {
+        String input = EduClass.formatCell(cell);
+        if (input == null) {
+            return null;
+        }
+        return EShift.of(input);
+    }
+
+    public static DayOfWeek normalizeDayOfWeek(Cell cell) {
+        String input = EduClass.formatCell(cell);
+        if (input == null) {
+            return null;
+        }
+        return DayOfWeek.of(Integer.parseInt(input));
+    }
+
+    public static Integer normalizeFisrt(Cell cell) {
+        String input = EduClass.formatCell(cell);
+        if (input == null) {
+            return null;
+        }
+        return Integer.parseInt(StringUtils.substring(input, 0, 1));
+    }
+
+    public static Integer normalizeAfterTime(Cell cell) {
+        String input = EduClass.formatCell(cell);
+        if (input == null) {
+            return null;
+        }
+        return Integer.parseInt(StringUtils.substringAfter(input, "-"));
+    }
+
+    public static Integer normalizeBeforeTime(Cell cell) {
+        String input = EduClass.formatCell(cell);
+        if (input == null) {
+            return null;
+        }
+        return Integer.parseInt(StringUtils.substringBefore(input, "-"));
+    }
+
+    public static Boolean normalizeBoolean(Cell cell) {
+        String input = EduClass.formatCell(cell);
+        if(input == null)
+            return null;
+        return StringUtils.endsWithIgnoreCase("TN", input);
     }
 
     private List<Integer> convertWeeksToList() {
@@ -181,73 +232,5 @@ public class EduClass {
         }
 
         return false;
-    }
-
-    public static Comparable normalize(Normalizer normalizer, String s) {
-        return normalizer.normalize(s);
-    }
-
-    public static Comparable normalize(Cell c, String status) {
-        String s = c.getStringCellValue();
-        String input = StringUtils.deleteWhitespace(s);
-        if (StringUtils.equalsIgnoreCase("NULL", input) || StringUtils.equalsIgnoreCase("", input)) {
-            if (StringUtils.equals("CẦN_TN", status)) {
-                return false;
-            }
-
-            return null;
-        }
-        else {
-            //int: MÃ_LỚP, MÃ_LỚP_KÈM,SLĐK,SL_MAX
-            //string: MÃ_HP, GHI_CHÚ, TUẦN, PHÒNG, TRẠNG_THÁI, LOẠI_LỚP, MÃ_QL, KÍP
-            //boolean: CẦN_TN
-            //EShift: KÍP
-            //DayOfWeek: THỨ
-            //split:KHỐI_LƯỢNG
-            //special:THỜI_GIAN
-            switch (status){
-                case "MÃ_LỚP":
-                case "MÃ_LỚP_KÈM":
-                case "SLĐK":
-                case "SL_MAX":
-                    return NumberUtils.toInt(input);
-
-                case "MÃ_HP":
-                case "GHI_CHÚ":
-                case "TUẦN":
-                case "PHÒNG":
-                case "TRẠNG_THÁI":
-                case "LOẠI_LỚP":
-                case "MÃ_QL":
-                    return input;
-
-                case "CẦN_TN":
-                    return true;
-
-                case "KHỐI_LƯỢNG":
-                    return Integer.parseInt(StringUtils.substring(input,0,1));
-
-//                case "THỜI_GIAN":
-//                    if (StringUtils.contains(input,"-")) {
-//                        c.setCellValue(StringUtils.substringAfter(input,"-"));
-//                        return Integer.parseInt(StringUtils.substringBefore(input, "-"));
-//                    }
-//                    else {
-//                        return Integer.parseInt(input);
-//                    }
-                case "BẮT_ĐẦU":
-                    return Integer.parseInt(StringUtils.substringBefore(input, "-"));
-                case "KẾT_THÚC":
-                    return Integer.parseInt(StringUtils.substringAfter(input, "-"));
-
-                case "KÍP":
-                    return EShift.of(input);
-
-                case "THỨ":
-                    return DayOfWeek.of(Integer.parseInt(input)-1);
-
-            }
-        }
-        return null;
     }
 }
