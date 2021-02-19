@@ -67,6 +67,7 @@ public class ProgramSubmissionController {
 
     @GetMapping("get-all-programming-contest-list")
     public ResponseEntity<?> getAllProgrammingContetList(Principal principal){
+        log.info("getAllProgrammingContetList START");
         UserLogin userLogin = userService.findById(principal.getName());
         List<ProgrammingContest> programmingContestList = programmingContestService.findAll();
         log.info("getAllProgrammingContetList, GOT sz = " + programmingContestList.size());
