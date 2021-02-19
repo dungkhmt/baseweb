@@ -13,6 +13,7 @@ import java.util.List;
 public interface ContestProblemService {
     ContestProblem findByProblemId(String problemId);
     ContestProblem save(ContestProblemInputModel input);
+    ContestProblem update(ContestProblemInputModel input);
     List<ContestProblem> findAll();
     List<ContestProblemTest> findAllContestProblemTestByProblemId(String problemId);
     ContestProblemTest createContestProblemTest(CreateContestProblemTestInputModel input, MultipartFile[] files);

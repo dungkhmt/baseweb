@@ -57,6 +57,19 @@ public class ContestProblemServiceImpl implements ContestProblemService {
     }
 
     @Override
+    public ContestProblem update(ContestProblemInputModel input) {
+        ContestProblem contestProblem = contestProblemRepo.findByProblemId(input.getProblemId());
+        if(contestProblem == null){
+            log.info("update cannot find problem " + input.getProblemId());
+            return null;
+        }
+        contestProblem.setProblemName(input.getProblemName());
+        contestProblem.setTimeLimit(input.getTimeLimit());
+        contestProblemRepo.save(contestProblem);
+        return contestProblem;
+    }
+
+    @Override
     public List<ContestProblem> findAll() {
         return contestProblemRepo.findAll();
     }

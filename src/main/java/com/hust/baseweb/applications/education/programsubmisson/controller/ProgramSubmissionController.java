@@ -1,16 +1,18 @@
 package com.hust.baseweb.applications.education.programsubmisson.controller;
 
 import com.google.gson.Gson;
-import com.hust.baseweb.applications.education.programsubmisson.entity.ContestProblem;
-import com.hust.baseweb.applications.education.programsubmisson.entity.ContestProblemTest;
-import com.hust.baseweb.applications.education.programsubmisson.entity.ContestProgramSubmission;
+import com.hust.baseweb.applications.education.programsubmisson.entity.*;
 import com.hust.baseweb.applications.education.programsubmisson.model.*;
 import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProblemRepo;
 import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProblemTestRepo;
 import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProgramSubmissionRepo;
+import com.hust.baseweb.applications.education.programsubmisson.repo.ProgrammingContestUserRegistrationProblemRepo;
 import com.hust.baseweb.applications.education.programsubmisson.service.ContestProblemService;
 import com.hust.baseweb.applications.education.programsubmisson.service.ContestProgramSubmissionService;
+import com.hust.baseweb.applications.education.programsubmisson.service.ProgrammingContestService;
+import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.framework.properties.UploadConfigProperties;
+import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
@@ -55,6 +57,30 @@ public class ProgramSubmissionController {
     private ContestProgramSubmissionRepo contestProgramSubmissionRepo;
     @Autowired
     private ContestProgramSubmissionService contestProgramSubmissionService;
+
+    @Autowired
+    private ProgrammingContestUserRegistrationProblemRepo programmingContestUserRegistrationProblemRepo;
+    @Autowired
+    private ProgrammingContestService programmingContestService;
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("get-all-programming-contest-list")
+    public ResponseEntity<?> getAllProgrammingContetList(Principal principal){
+        UserLogin userLogin = userService.findById(principal.getName());
+        List<ProgrammingContest> programmingContestList = programmingContestService.findAll();
+        log.info("getAllProgrammingContetList, GOT sz = " + programmingContestList.size());
+        return ResponseEntity.ok().body(programmingContestList);
+    }
+
+    @PostMapping("create-programming-contest")
+    public ResponseEntity<?> createProgrammingContest(Principal principal, @RequestBody
+        CreateProgrammingContestInputModel input
+    ){
+        UserLogin userLogin = userService.findById(principal.getName());
+        ProgrammingContest programmingContest = programmingContestService.save(userLogin,input);
+        return ResponseEntity.ok().body(programmingContest);
+    }
 
     @PostMapping("/submit")
     public ResponseEntity<?> submit(Principal principal, @RequestBody ProgramSubmissonModel input) {
@@ -213,6 +239,16 @@ public class ProgramSubmissionController {
         ContestProblem contestProblem = contestProblemService.save(input);
         return ResponseEntity.ok().body(contestProblem);
     }
+    @PostMapping("/update-contest-problem")
+    public ResponseEntity<?> updateContestProblem(Principal principal, @RequestParam("inputJson") String inputJson,
+                                                  @RequestParam("files") MultipartFile[] files) {
+        Gson gson = new Gson();
+        ContestProblemInputModel contestProblemInputModel = gson.fromJson(inputJson,ContestProblemInputModel.class);
+        ContestProblem contestProblem = contestProblemService.update(contestProblemInputModel);
+
+        return ResponseEntity.ok().body(contestProblem);
+    }
+
 
     @GetMapping("get-contest-problem/{problemId}")
     public ResponseEntity<?> getContestProblem(Principal principal, @PathVariable String problemId) {
@@ -226,6 +262,12 @@ public class ProgramSubmissionController {
         log.info("getAllContestProblems....user = " + principal.getName());
         List<ContestProblem> contestProblems = contestProblemService.findAll();
         return ResponseEntity.ok().body(contestProblems);
+    }
+    @GetMapping("get-contest-user-problem-list")
+    public ResponseEntity<?> getContestUserProblems(Principal principal){
+        log.info("getContestUserProblems");
+        List<ProgrammingContestUserRegistrationProblem> programmingContestUserRegistrationProblems = programmingContestUserRegistrationProblemRepo.findAll();
+        return ResponseEntity.ok().body(programmingContestUserRegistrationProblems);
     }
 
     private String establishSubmissionContestUserProblemDir(String contestId, String userLoginId, String problemId){
@@ -326,6 +368,19 @@ public class ProgramSubmissionController {
             dir.mkdir();
         }
         */
+
+        ProgrammingContestUserRegistrationProblem programmingContestUserRegistrationProblem = programmingContestUserRegistrationProblemRepo
+            .findByContestIdAndUserLoginIdAndProblemId(contestId, userLoginId,problemId);
+        if(programmingContestUserRegistrationProblem == null){
+            programmingContestUserRegistrationProblem = new ProgrammingContestUserRegistrationProblem();
+            programmingContestUserRegistrationProblem.setContestId(contestId);
+            programmingContestUserRegistrationProblem.setUserLoginId(userLoginId);
+            programmingContestUserRegistrationProblem.setProblemId(problemId);
+            programmingContestUserRegistrationProblem.setPoints(0);
+            programmingContestUserRegistrationProblem = programmingContestUserRegistrationProblemRepo.save(programmingContestUserRegistrationProblem);
+        }
+
+
         String submissionContestUserProblemDir = establishSubmissionContestUserProblemDir(contestId,userLoginId,problemId);
         int totalmaxPoint = 0;
         try {
@@ -563,10 +618,19 @@ public class ProgramSubmissionController {
                 }
                 programSubmissionItemOutputList.add(programSubmissionItemOutput);
             }
+            contestProgramSubmission.setPoints(grade);
+            contestProgramSubmission = contestProgramSubmissionRepo.save(contestProgramSubmission);
+
+            if(grade > programmingContestUserRegistrationProblem.getPoints()){
+                programmingContestUserRegistrationProblem.setPoints(grade);
+            }
+            programmingContestUserRegistrationProblem.setLastPoints(grade);
+            programmingContestUserRegistrationProblem = programmingContestUserRegistrationProblemRepo.save(programmingContestUserRegistrationProblem);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         returnMsg += " Points = " + grade + "/" + totalmaxPoint;
         ProgramSubmissionOutput programSubmissionOutput = new ProgramSubmissionOutput(
             programSubmissionItemOutputList,

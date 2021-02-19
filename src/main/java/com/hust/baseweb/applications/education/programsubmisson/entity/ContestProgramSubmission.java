@@ -27,8 +27,12 @@ public class ContestProgramSubmission {
     @Column(name="submitted_by_user_login_id")
     private String submittedByUserLoginId;
 
+    @Column(name = "points")
+    private int points;
+
     @Column(name="full_link_file")
     private String fullLinkFile;
+
 
     @Column(name="created_stamp")
     private Date createdStamp;

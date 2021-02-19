@@ -1,0 +1,10 @@
+package com.hust.baseweb.applications.education.programsubmisson.repo;
+
+import com.hust.baseweb.applications.education.programsubmisson.entity.CompositeProgrammingContestUserRegistrationId;
+import com.hust.baseweb.applications.education.programsubmisson.entity.ProgrammingContestUserRegistration;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProgrammingContestUserRegistrationRepo extends JpaRepository<ProgrammingContestUserRegistration, CompositeProgrammingContestUserRegistrationId> {
+    ProgrammingContestUserRegistration save(ProgrammingContestUserRegistration programmingContestUserRegistration);
+
+}
