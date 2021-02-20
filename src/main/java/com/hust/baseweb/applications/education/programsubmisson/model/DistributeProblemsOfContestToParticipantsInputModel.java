@@ -9,11 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContestProblemInputModel {
-    private String problemId;
-    private String problemName;
-    private int timeLimit;
-    private String problemStatement;
-    private String levelId;
-    private String categoryId;
+public class DistributeProblemsOfContestToParticipantsInputModel {
+    private String contestId;
 }

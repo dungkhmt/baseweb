@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.education.programsubmisson.service;
 
+import com.hust.baseweb.applications.education.programsubmisson.entity.ContestProblem;
 import com.hust.baseweb.applications.education.programsubmisson.entity.ProgrammingContest;
 import com.hust.baseweb.applications.education.programsubmisson.model.CreateProgrammingContestInputModel;
 import com.hust.baseweb.entity.UserLogin;
@@ -11,4 +12,10 @@ import java.util.List;
 public interface ProgrammingContestService {
     ProgrammingContest save(UserLogin userLogin, CreateProgrammingContestInputModel input);
     List<ProgrammingContest> findAll();
+    ProgrammingContest findByContestId(String contestId);
+
+
+    List<ContestProblem> getProblemsOfContest(String contestId);
+
+    boolean distributeProblemsOfContestToParticipants(String contestId);
 }

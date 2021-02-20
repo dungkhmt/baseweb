@@ -43,6 +43,10 @@ public class ContestProblemServiceImpl implements ContestProblemService {
         contestProblem.setProblemId(input.getProblemId());
         contestProblem.setProblemName(input.getProblemName());
         contestProblem.setProblemStatement(input.getProblemStatement());
+        contestProblem.setTimeLimit(input.getTimeLimit());
+        contestProblem.setLevelId(input.getLevelId());
+        contestProblem.setCategoryId(input.getCategoryId());
+
         contestProblem = contestProblemRepo.save(contestProblem);
         File dir = new File(rootDir + "/" + ProgramSubmissionController.problemDir);
         if(!dir.exists()){
@@ -65,6 +69,8 @@ public class ContestProblemServiceImpl implements ContestProblemService {
         }
         contestProblem.setProblemName(input.getProblemName());
         contestProblem.setTimeLimit(input.getTimeLimit());
+        contestProblem.setLevelId(input.getLevelId());
+        contestProblem.setCategoryId(input.getCategoryId());
         contestProblemRepo.save(contestProblem);
         return contestProblem;
     }

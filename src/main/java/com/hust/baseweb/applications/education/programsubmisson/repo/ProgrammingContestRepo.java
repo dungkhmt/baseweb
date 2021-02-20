@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ProgrammingContestRepo extends JpaRepository<ProgrammingContest, String> {
     ProgrammingContest save(ProgrammingContest programmingContest);
-
+    ProgrammingContest findByContestId(String contestId);
 }

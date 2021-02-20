@@ -9,11 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContestProblemInputModel {
+public class CreateProgrammingContestProblemInputModel {
+    private String contestId;
     private String problemId;
-    private String problemName;
-    private int timeLimit;
-    private String problemStatement;
-    private String levelId;
-    private String categoryId;
 }
