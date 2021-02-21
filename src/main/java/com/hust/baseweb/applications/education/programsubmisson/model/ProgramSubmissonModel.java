@@ -13,5 +13,6 @@ public class ProgramSubmissonModel {
 
     //private String programminglanguage;
     //private String program;
+    private String contestId;
     private String problemId;
 }

@@ -275,6 +275,7 @@ public class ProgramSubmissionController {
         List<ProgramSubmissionItemOutput> programSubmissionItemOutputList = new ArrayList();
         Gson gson = new Gson();
         ProgramSubmissonModel programSubmissonModel = gson.fromJson(inputJson, ProgramSubmissonModel.class);
+        contestId = programSubmissonModel.getContestId();
         String problemId = programSubmissonModel.getProblemId();
         List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemId(problemId);
         ContestProblem contestProblem = contestProblemService.findByProblemId(problemId);
