@@ -10,6 +10,7 @@ import com.hust.baseweb.applications.education.programsubmisson.repo.Programming
 import com.hust.baseweb.applications.education.programsubmisson.service.ContestProblemService;
 import com.hust.baseweb.applications.education.programsubmisson.service.ContestProgramSubmissionService;
 import com.hust.baseweb.applications.education.programsubmisson.service.ProgrammingContestService;
+import com.hust.baseweb.applications.education.programsubmisson.utils.ContestResultChecker;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.framework.properties.UploadConfigProperties;
 import com.hust.baseweb.service.UserService;
@@ -162,8 +163,8 @@ public class ProgramSubmissionController {
     @GetMapping("get-detail-contest-program-submission/{contestProgramSubmissionId}")
     @ResponseBody
     public void getDetailContestProgramSubmission(Principal principal,
-                                                               @PathVariable String contestProgramSubmissionId,
-                                                               HttpServletResponse response){
+                                                  @PathVariable String contestProgramSubmissionId,
+                                                  HttpServletResponse response){
         response.setHeader("Content-Transfer-Encoding", "binary");
         response.setHeader(
             HttpHeaders.CONTENT_DISPOSITION,
@@ -492,11 +493,13 @@ public class ProgramSubmissionController {
                 Process process = processBuilder.start();
                 //boolean success = process.waitFor(2, TimeUnit.SECONDS);
                 log.info("uploadProgram, time limit = " + contestProblem.getTimeLimit());
+
                 boolean success = process.waitFor(contestProblem.getTimeLimit(), TimeUnit.MILLISECONDS);
 
+                boolean timeExpired = false;
                 if (success == false) {
                     System.err.println("TIME LIMIT EXCEEDED");
-
+                    timeExpired = true;
                     // Kills process.
                     process.destroy();
                     if (process.isAlive()) {
@@ -515,6 +518,8 @@ public class ProgramSubmissionController {
                 // compare standard solution and submitted solution
                 ProgramSubmissionItemOutput programSubmissionItemOutput = new ProgramSubmissionItemOutput();
                 programSubmissionItemOutput.setTest("Test #" + contestProblemTest.getProblemTestFilename());
+
+                /*
                 Scanner stdOut = null;
                 try {
                     //stdOut = new Scanner(new File(dir + "/output.txt"));
@@ -558,6 +563,27 @@ public class ProgramSubmissionController {
                                                           " not found output");
                     if (stdOut != null) {
                         stdOut.close();
+                    }
+                }
+                */
+
+                if(timeExpired){
+                    programSubmissionItemOutput.setOutput("Test #" +
+                                                          contestProblemTest.getProblemTestFilename() + ": time limit exceed");
+
+                }else {
+                    ContestResultChecker checker = new ContestResultChecker(
+                        submissionContestUserProblemDir + "/result.txt",
+                        submissionContestUserProblemDir + "/output.txt");
+                    boolean ok = checker.check();
+                    if (ok) {
+                        grade += contestProblemTest.getProblemTestPoint();
+                        programSubmissionItemOutput.setOutput(contestProblemTest.getProblemTestPoint() + "");
+                    } else {
+                        programSubmissionItemOutput.setOutput("Test #" +
+                                                              contestProblemTest.getProblemTestFilename() +
+                                                              ": " +
+                                                              checker.msg);
                     }
                 }
                 programSubmissionItemOutputList.add(programSubmissionItemOutput);
