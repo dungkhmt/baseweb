@@ -97,4 +97,4 @@ Sau lần chạy thành công đầu tiên, ở các lần chạy sau chỉ cầ
 * [Installers](https://drive.google.com/drive/folders/1r4VCwCz2JZGg9-LxQFPNw1aTZJl9gYp3?usp=sharing)
 ### 6. Một số lỗi thường gặp
 ### 6.1. You need to run build with JDK or have tools.jar on the classpath
-* Copy file <b>tools.jar</b> from <b>C:\Program Files\Java\jdk1.8.0_251\lib</b> to <b>C:\Program Files\Java\jre1.8.0_251\lib</b>
+* Copy file <b>tools.jar</b> ở thư mục <b>C:\Program Files\Java\jdk1.8.0_251\lib</b> vào thư mục <b>C:\Program Files\Java\jre1.8.0_251\lib</b>
