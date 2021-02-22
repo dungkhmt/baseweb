@@ -3,9 +3,6 @@ package com.hust.baseweb.applications.education.suggesttimetable.service;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
-import com.hust.baseweb.applications.education.suggesttimetable.enums.EDepartment;
-import com.hust.baseweb.applications.education.suggesttimetable.enums.EShift;
-import com.hust.baseweb.applications.education.suggesttimetable.repo.EduClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo;
 import lombok.AllArgsConstructor;
@@ -18,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,86 +30,108 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
 
     private IClassRepo classRepo;
 
-
     @Override
     public SimpleResponse uploadTimetable(MultipartFile file) throws IOException {
-        HashMap<String, Integer> listInputClass = new HashMap<>();
-        HashMap<String, Integer> listInputCourse = new HashMap<>();
+        HashMap<String, Short> mapClassColumn = new HashMap<>();
+        HashMap<String, Short> mapCourseColumn = new HashMap<>();
 
-        List<EduClass> listClassMongo = new ArrayList<>();
-        List<EduCourse> listCourseMongo = new ArrayList<>();
+        List<EduClass> classes = new ArrayList<>();
+        List<EduCourse> courses = new ArrayList<>();
 
-
-        FileInputStream inputStream = (FileInputStream) file.getInputStream();
+        InputStream inputStream = file.getInputStream();
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         XSSFSheet sheet = workbook.getSheetAt(0);
+
         sheet.removeRow(sheet.getRow(0));
         Iterator<Row> rowIterator = sheet.iterator();
-        Row row1 = rowIterator.next();
-        Iterator<Cell> cellIterator = row1.cellIterator();
+        Row headerRow = rowIterator.next();
+        Iterator<Cell> headerCell = headerRow.cellIterator();
 
-        int i = 0;
-        while (cellIterator.hasNext()) {
-            Cell cell = cellIterator.next();
-            String s = cell.getStringCellValue();
-            s = StringUtils.deleteWhitespace(s);
-            s = StringUtils.upperCase(s);
-            switch (s) {
+        // Extract header.
+        short i = 0;
+        while (headerCell.hasNext()) {
+            Cell cell = headerCell.next();
+            String columnName = StringUtils.upperCase(StringUtils.deleteWhitespace(cell.getStringCellValue()));
+
+            switch (columnName) {
                 case "MÃ_HP":
-                    listInputClass.put(s, i);
-                    listInputCourse.put(s, i);
+                    mapClassColumn.put(columnName, i);
+                    mapCourseColumn.put(columnName, i);
                 case "TÊN_HP":
                 case "TÊN_HP_TIẾNG_ANH":
                 case "KHOA_VIỆN":
-                    listInputCourse.put(s, i);
+                    mapCourseColumn.put(columnName, i);
                 default:
-                    listInputClass.put(s, i);
+                    mapClassColumn.put(columnName, i);
             }
-            i = i + 1;
+
+            i++;
         }
 
+        // Extract data.
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
 
+            // Extract class.
             EduClass eduClass = new EduClass(
-                EduClass.normalizeInteger(row.getCell(listInputClass.get("MÃ_LỚP"))),
-                EduClass.normalizeInteger(row.getCell(listInputClass.get("MÃ_LỚP_KÈM"))),
-                EduClass.normalizeString(row.getCell(listInputClass.get("MÃ_HP"))),
-                EduClass.normalizeFisrt(row.getCell(listInputClass.get("KHỐI_LƯỢNG"))),
-                EduClass.normalizeString(row.getCell(listInputClass.get("GHI_CHÚ"))),
-                EduClass.normalizeDayOfWeek(row.getCell(listInputClass.get("THỨ"))),
-                EduClass.normalizeBeforeTime(row.getCell(listInputClass.get("THỜI_GIAN"))),
-                EduClass.normalizeAfterTime(row.getCell(listInputClass.get("THỜI_GIAN"))),
-                EduClass.normalizeShift(row.getCell(listInputClass.get("KÍP"))),
-                EduClass.normalizeString(row.getCell(listInputClass.get("TUẦN"))),
-                EduClass.normalizeString(row.getCell(listInputClass.get("PHÒNG"))),
-                EduClass.normalizeBoolean(row.getCell(listInputClass.get("CẦN_TN"))),
-                EduClass.normalizeInteger(row.getCell(listInputClass.get("SLĐK"))),
-                EduClass.normalizeInteger(row.getCell(listInputClass.get("SL_MAX"))),
-                EduClass.normalizeString(row.getCell(listInputClass.get("TRẠNG_THÁI"))),
-                EduClass.normalizeString(row.getCell(listInputClass.get("LOẠI_LỚP"))),
-                EduClass.normalizeString(row.getCell(listInputClass.get("MÃ_QL")))
+                EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP"))),
+                EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP_KÈM"))),
+                EduClass.normalizeStr(row.getCell(mapClassColumn.get("MÃ_HP"))),
+                EduClass.normalizeFisrt(row.getCell(mapClassColumn.get("KHỐI_LƯỢNG"))),
+                EduClass.normalizeStr(row.getCell(mapClassColumn.get("GHI_CHÚ"))),
+                EduClass.normalizeDayOfWeek(row.getCell(mapClassColumn.get("THỨ"))),
+                EduClass.normalizeBeforeTime(row.getCell(mapClassColumn.get("THỜI_GIAN"))),
+                EduClass.normalizeAfterTime(row.getCell(mapClassColumn.get("THỜI_GIAN"))),
+                EduClass.normalizeShift(row.getCell(mapClassColumn.get("KÍP"))),
+                EduClass.normalizeStr(row.getCell(mapClassColumn.get("TUẦN"))),
+                EduClass.normalizeStr(row.getCell(mapClassColumn.get("PHÒNG"))),
+                EduClass.normalizeBool(row.getCell(mapClassColumn.get("CẦN_TN"))),
+                EduClass.normalizeInt(row.getCell(mapClassColumn.get("SLĐK"))),
+                EduClass.normalizeInt(row.getCell(mapClassColumn.get("SL_MAX"))),
+                EduClass.normalizeStr(row.getCell(mapClassColumn.get("TRẠNG_THÁI"))),
+                EduClass.normalizeStr(row.getCell(mapClassColumn.get("LOẠI_LỚP"))),
+                EduClass.normalizeStr(row.getCell(mapClassColumn.get("MÃ_QL")))
             );
-            listClassMongo.add(eduClass);
-            if(listClassMongo.size() == 100){
-                classRepo.saveAll(listClassMongo);
-                listClassMongo = new ArrayList<>();
-            }
-            EduCourse eduCourse = new EduCourse(
-                EduCourse.normalizeString(row.getCell(listInputCourse.get("MÃ_HP"))),
-                EduCourse.normalizeString(row.getCell(listInputCourse.get("TÊN_HP"))),
-                EduCourse.normalizeString(row.getCell(listInputCourse.get("TÊN_HP_TIẾNG_ANH"))),
-                EduCourse.normalizeDepartment(row.getCell(listInputCourse.get("KHOA_VIỆN")))
-            );
-            listCourseMongo.add(eduCourse);
 
+            classes.add(eduClass);
+
+            /*if (classes.size() == 100) {
+                classRepo.saveAll(classes);
+                classes = new ArrayList<>();
+            }*/
+
+            // Extract course.
+            EduCourse eduCourse = new EduCourse(
+                EduCourse.normalizeString(row.getCell(mapCourseColumn.get("MÃ_HP"))),
+                EduCourse.normalizeString(row.getCell(mapCourseColumn.get("TÊN_HP"))),
+                EduCourse.normalizeString(row.getCell(mapCourseColumn.get("TÊN_HP_TIẾNG_ANH"))),
+                EduCourse.normalizeDept(row.getCell(mapCourseColumn.get("KHOA_VIỆN")))
+            );
+
+            // FIXME: handle duplicate courses
+            courses.add(eduCourse);
         }
 
-        classRepo.saveAll(listClassMongo);
-        courseRepo.saveAll(listCourseMongo);
+        // Save in batches.
+        saveClassesInBatch(classes);
+        saveCoursesInBatch(courses);
 
-        return null;
+        return new SimpleResponse(200, null, null);
     }
 
+    /**
+     * Upsert
+     *
+     * @param classes
+     */
+    private void saveClassesInBatch(List<EduClass> classes) {
+        // TODO: use bulk operation with mongo template to complete this method.
+    }
 
+    /**
+     * @param courses
+     */
+    private void saveCoursesInBatch(List<EduCourse> courses) {
+        // TODO: use bulk operation with mongo template to complete this method.
+    }
 }

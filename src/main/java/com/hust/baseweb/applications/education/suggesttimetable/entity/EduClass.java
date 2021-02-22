@@ -21,37 +21,53 @@ import java.util.List;
 @Document(collection = "class")
 public class EduClass {
 
-    @NotNull
-    private final Integer classId;
-    @Nullable
-    private final Integer attachedClassId;
-    @NotNull
-    private final String courseId;
-    @NotNull
-    private final Integer credit;
-    @Nullable
-    private final String note;
-    @Nullable
-    private final DayOfWeek dayOfWeek;
-    @Nullable
-    private final Integer startTime;
-    @Nullable
-    private final Integer endTime;
-    @NotNull
-    private final EShift shift;
-    @Nullable
-    private final String weeks;
-    @Nullable
-    private final String room;
-    private final boolean needExperiment;
-    @Nullable
-    private final Integer numRegistration;
-    @Nullable
-    private final Integer maxQuantity;
-    @NotNull
-    private final String status, classType, managementId;
     @Id
     private BigInteger id;
+
+    @NotNull
+    private final Integer classId;
+
+    @Nullable
+    private final Integer attachedClassId;
+
+    @NotNull
+    private final String courseId;
+
+    @NotNull
+    private final Integer credit;
+
+    @Nullable
+    private final String note;
+
+    @Nullable
+    private final DayOfWeek dayOfWeek;
+
+    @Nullable
+    private final Integer startTime;
+
+    @Nullable
+    private final Integer endTime;
+
+    @NotNull
+    private final EShift shift;
+
+    @Nullable
+    private final String weeks;
+
+    @Nullable
+    private final String room;
+
+    private final boolean needExperiment;
+
+    @Nullable
+    private final Integer numRegistration;
+
+    @Nullable
+    private final Integer maxQuantity;
+
+    @NotNull
+    private final String status, classType, managementId;
+
     @Transient
     @Getter(value = AccessLevel.NONE)
     private List<Integer> weeksList = null;
@@ -96,70 +112,52 @@ public class EduClass {
 
     private static String formatCell(Cell cell) {
         DataFormatter formatter = new DataFormatter();
-        String s = formatter.formatCellValue(cell);
-        s = StringUtils.deleteWhitespace(s);
-        if (StringUtils.equalsIgnoreCase("NULL",s)||StringUtils.equalsIgnoreCase("",s))
-            return null;
-        return s;
-    }
+        String value = StringUtils.deleteWhitespace(formatter.formatCellValue(cell));
 
-    public static Integer normalizeInteger(Cell cell) {
-        String input = EduClass.formatCell(cell);
-        if (input == null) {
+        if (StringUtils.equalsIgnoreCase("NULL", value) || StringUtils.equalsIgnoreCase("", value)) {
             return null;
         }
-        return Integer.parseInt(input);
+
+        return value;
     }
 
-    public static String normalizeString(Cell cell) {
+    public static Integer normalizeInt(Cell cell) {
+        String value = EduClass.formatCell(cell);
+        return value == null ? null : Integer.parseInt(value);
+    }
+
+    public static String normalizeStr(Cell cell) {
         return EduClass.formatCell(cell);
     }
 
     public static EShift normalizeShift(Cell cell) {
-        String input = EduClass.formatCell(cell);
-        if (input == null) {
-            return null;
-        }
-        return EShift.of(input);
+        String value = EduClass.formatCell(cell);
+        return value == null ? null : EShift.of(value);
     }
 
     public static DayOfWeek normalizeDayOfWeek(Cell cell) {
-        String input = EduClass.formatCell(cell);
-        if (input == null) {
-            return null;
-        }
-        return DayOfWeek.of(Integer.parseInt(input));
+        String value = EduClass.formatCell(cell);
+        return value == null ? null : DayOfWeek.of(Integer.parseInt(value));
     }
 
     public static Integer normalizeFisrt(Cell cell) {
-        String input = EduClass.formatCell(cell);
-        if (input == null) {
-            return null;
-        }
-        return Integer.parseInt(StringUtils.substring(input, 0, 1));
+        String value = EduClass.formatCell(cell);
+        return null == value ? null : Integer.parseInt(StringUtils.substring(value, 0, 1));
     }
 
     public static Integer normalizeAfterTime(Cell cell) {
-        String input = EduClass.formatCell(cell);
-        if (input == null) {
-            return null;
-        }
-        return Integer.parseInt(StringUtils.substringAfter(input, "-"));
+        String value = EduClass.formatCell(cell);
+        return value == null ? null : Integer.parseInt(StringUtils.substringAfter(value, "-"));
     }
 
     public static Integer normalizeBeforeTime(Cell cell) {
-        String input = EduClass.formatCell(cell);
-        if (input == null) {
-            return null;
-        }
-        return Integer.parseInt(StringUtils.substringBefore(input, "-"));
+        String value = EduClass.formatCell(cell);
+        return value == null ? null : Integer.parseInt(StringUtils.substringBefore(value, "-"));
     }
 
-    public static Boolean normalizeBoolean(Cell cell) {
+    public static Boolean normalizeBool(Cell cell) {
         String input = EduClass.formatCell(cell);
-        if(input == null)
-            return null;
-        return StringUtils.endsWithIgnoreCase("TN", input);
+        return input == null ? null : StringUtils.endsWithIgnoreCase("TN", input);
     }
 
     private List<Integer> convertWeeksToList() {

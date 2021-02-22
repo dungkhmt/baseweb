@@ -8,14 +8,12 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Getter
 @ToString
 @Document(collection = "course")
 public class EduCourse {
 
-    //@MongoId, khi test tren project thi khong luu duoc
     @Id
     private final String id; // MÃ_HP
 
@@ -31,9 +29,7 @@ public class EduCourse {
      * @param eName      must not be {@code null} or empty
      * @param department must not be {@code null} or empty
      */
-    public EduCourse(
-        String id, String name, String eName, EDepartment department
-    ) {
+    public EduCourse(String id, String name, String eName, EDepartment department) {
         this.id = id;
         this.name = name;
         this.eName = eName;
@@ -69,32 +65,13 @@ public class EduCourse {
         return id == null ? 0 : id.hashCode();
     }
 
-//    public static Comparable normalize(Cell cell, String status) {
-//        String s = cell.getStringCellValue();
-//        String input = StringUtils.deleteWhitespace(s);
-//        if (StringUtils.equalsIgnoreCase("NULL",input) || StringUtils.equalsIgnoreCase("",input)){
-//            return null;
-//        } else {
-//            switch (status){
-//                case "MÃ_HP":
-//                    return EduClass.normalize(cell,status);
-//                case "TÊN_HP":
-//                case "TÊN_HP_TIẾNG_ANH":
-//                    return input;
-//                case "KHOA_VIỆN":
-//                    return EDepartment.of(input);
-//            }
-//        }
-//        return null;
-//
-//    }
-
     private static String formatCell(Cell cell) {
         DataFormatter formatter = new DataFormatter();
         String s = formatter.formatCellValue(cell);
         s = StringUtils.deleteWhitespace(s);
-        if (StringUtils.equalsIgnoreCase("NULL",s)||StringUtils.equalsIgnoreCase("",s))
+        if (StringUtils.equalsIgnoreCase("NULL", s) || StringUtils.equalsIgnoreCase("", s)) {
             return null;
+        }
         return s;
     }
 
@@ -102,11 +79,8 @@ public class EduCourse {
         return EduCourse.formatCell(cell);
     }
 
-    public static EDepartment normalizeDepartment(Cell cell){
-        String input = EduCourse.formatCell(cell);
-        if (input == null) {
-            return null;
-        }
-        return EDepartment.of(input);
+    public static EDepartment normalizeDept(Cell cell) {
+        String value = EduCourse.formatCell(cell);
+        return value == null ? null : EDepartment.of(value);
     }
 }
