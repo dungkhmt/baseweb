@@ -67,7 +67,7 @@ public class ProgramSubmissionController {
     private UserService userService;
 
     @GetMapping("get-all-programming-contest-list")
-    public ResponseEntity<?> getAllProgrammingContetList(Principal principal){
+    public ResponseEntity<?> getAllProgrammingContetList(Principal principal) {
         log.info("getAllProgrammingContetList START");
         UserLogin userLogin = userService.findById(principal.getName());
         List<ProgrammingContest> programmingContestList = programmingContestService.findAll();
@@ -76,11 +76,12 @@ public class ProgramSubmissionController {
     }
 
     @PostMapping("create-programming-contest")
-    public ResponseEntity<?> createProgrammingContest(Principal principal, @RequestBody
+    public ResponseEntity<?> createProgrammingContest(
+        Principal principal, @RequestBody
         CreateProgrammingContestInputModel input
-    ){
+    ) {
         UserLogin userLogin = userService.findById(principal.getName());
-        ProgrammingContest programmingContest = programmingContestService.save(userLogin,input);
+        ProgrammingContest programmingContest = programmingContestService.save(userLogin, input);
         return ResponseEntity.ok().body(programmingContest);
     }
 
@@ -162,19 +163,23 @@ public class ProgramSubmissionController {
 
     @GetMapping("get-detail-contest-program-submission/{contestProgramSubmissionId}")
     @ResponseBody
-    public void getDetailContestProgramSubmission(Principal principal,
-                                                  @PathVariable String contestProgramSubmissionId,
-                                                  HttpServletResponse response){
+    public void getDetailContestProgramSubmission(
+        Principal principal,
+        @PathVariable String contestProgramSubmissionId,
+        HttpServletResponse response
+    ) {
         response.setHeader("Content-Transfer-Encoding", "binary");
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
         response.setHeader(
             HttpHeaders.CONTENT_DISPOSITION,
             "attachment; filename=\"" + "program.py" + "\"");
         response.setContentType("application/octet-stream");
 
         UUID uuidContestProgramSubmissionId = UUID.fromString(contestProgramSubmissionId);
-        ContestProgramSubmission contestProgramSubmission = contestProgramSubmissionRepo.findByContestProgramSubmissionId(uuidContestProgramSubmissionId);
+        ContestProgramSubmission contestProgramSubmission = contestProgramSubmissionRepo.findByContestProgramSubmissionId(
+            uuidContestProgramSubmissionId);
         String programCode = "";
-        try{
+        try {
             //String submissionContestUserProblemDir = establishSubmissionContestUserProblemDir(contestProgramSubmission.getContestId(),
             //                                                                                  contestProgramSubmission.getSubmittedByUserLoginId(),
             //                                                                                  contestProgramSubmission.getProblemId());
@@ -182,7 +187,7 @@ public class ProgramSubmissionController {
 
             String filename = contestProgramSubmission.getFullLinkFile();
             Scanner in = new Scanner(new File(filename));
-            while(in.hasNext()){
+            while (in.hasNext()) {
                 programCode = programCode + in.nextLine() + '\n';
             }
             in.close();
@@ -193,7 +198,7 @@ public class ProgramSubmissionController {
             IOUtils.copy(is, response.getOutputStream());
             response.flushBuffer();
             log.info("getDetailContestProgramSubmission, response.flushBuffer with filename = " + filename);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         SubmittedProgramDetailModel submittedProgramDetailModel = new SubmittedProgramDetailModel();
@@ -205,18 +210,22 @@ public class ProgramSubmissionController {
     }
 
     @GetMapping("get-all-contest-program-submissions")
-    public ResponseEntity<?> getAllContestProgramSubmissions(Principal principal){
+    public ResponseEntity<?> getAllContestProgramSubmissions(Principal principal) {
         return ResponseEntity.ok().body(contestProgramSubmissionService.findAll());
     }
+
     @GetMapping("get-contest-user-problem-list")
-    public ResponseEntity<?> getContestUserProblems(Principal principal){
+    public ResponseEntity<?> getContestUserProblems(Principal principal) {
         log.info("getContestUserProblems");
-        List<ProgrammingContestUserRegistrationProblem> programmingContestUserRegistrationProblems = programmingContestUserRegistrationProblemRepo.findAll();
+        List<ProgrammingContestUserRegistrationProblem> programmingContestUserRegistrationProblems = programmingContestUserRegistrationProblemRepo
+            .findAll();
         return ResponseEntity.ok().body(programmingContestUserRegistrationProblems);
     }
 
-    private String establishSubmissionContestUserProblemDir(String contestId, String userLoginId, String problemId){
-        String rootDir = uploadConfigProperties.getRootPath() + "/" + uploadConfigProperties.getProgramSubmissionDataPath();
+    private String establishSubmissionContestUserProblemDir(String contestId, String userLoginId, String problemId) {
+        String rootDir = uploadConfigProperties.getRootPath() +
+                         "/" +
+                         uploadConfigProperties.getProgramSubmissionDataPath();
         String contestRootDir = rootDir + "/" + contestDir;
         File dir = new File(contestRootDir);
         if (!dir.exists()) {
@@ -249,12 +258,16 @@ public class ProgramSubmissionController {
         }
         return submissionProblemDir;
     }
-    private String establishSubmissionFullFilename(String submissionContestUserProblemDir,
-                                                   String idTable, String filename){
+
+    private String establishSubmissionFullFilename(
+        String submissionContestUserProblemDir,
+        String idTable, String filename
+    ) {
         String submissionFilename = submissionContestUserProblemDir + "/" +
                                     idTable + "-" + filename;
         return submissionFilename;
     }
+
     @PostMapping("/upload-program")
     public ResponseEntity<?> uploadProgram(
         Principal principal, @RequestParam("inputJson") String inputJson,
@@ -316,18 +329,22 @@ public class ProgramSubmissionController {
         */
 
         ProgrammingContestUserRegistrationProblem programmingContestUserRegistrationProblem = programmingContestUserRegistrationProblemRepo
-            .findByContestIdAndUserLoginIdAndProblemId(contestId, userLoginId,problemId);
-        if(programmingContestUserRegistrationProblem == null){
+            .findByContestIdAndUserLoginIdAndProblemId(contestId, userLoginId, problemId);
+        if (programmingContestUserRegistrationProblem == null) {
             programmingContestUserRegistrationProblem = new ProgrammingContestUserRegistrationProblem();
             programmingContestUserRegistrationProblem.setContestId(contestId);
             programmingContestUserRegistrationProblem.setUserLoginId(userLoginId);
             programmingContestUserRegistrationProblem.setProblemId(problemId);
             programmingContestUserRegistrationProblem.setPoints(0);
-            programmingContestUserRegistrationProblem = programmingContestUserRegistrationProblemRepo.save(programmingContestUserRegistrationProblem);
+            programmingContestUserRegistrationProblem = programmingContestUserRegistrationProblemRepo.save(
+                programmingContestUserRegistrationProblem);
         }
 
 
-        String submissionContestUserProblemDir = establishSubmissionContestUserProblemDir(contestId,userLoginId,problemId);
+        String submissionContestUserProblemDir = establishSubmissionContestUserProblemDir(
+            contestId,
+            userLoginId,
+            problemId);
         int totalmaxPoint = 0;
         try {
             ContestProgramSubmission contestProgramSubmission = new ContestProgramSubmission();
@@ -359,7 +376,9 @@ public class ProgramSubmissionController {
                                         contestProgramSubmission.getContestProgramSubmissionId().toString() + "-" + filename;
             */
             String submissionFilename = establishSubmissionFullFilename(submissionContestUserProblemDir,
-                                                                        contestProgramSubmission.getContestProgramSubmissionId().toString(),filename);
+                                                                        contestProgramSubmission
+                                                                            .getContestProgramSubmissionId()
+                                                                            .toString(), filename);
             PrintWriter out = new PrintWriter(submissionFilename);
             out.print(content);
             out.close();
@@ -447,9 +466,13 @@ public class ProgramSubmissionController {
                 //String secondCommand = copyCMD + optionCOPY + " " + outF + " " + submissionContestUserProblemDir + "/output.txt";
                 //log.info("uploadProgram, secondCommand = " + secondCommand);
 
-                Files.copy((new File(inpF)).toPath(), (new File(submissionContestUserProblemDir + "/input.txt").toPath()));
-                Files.copy((new File(outF)).toPath(), (new File(submissionContestUserProblemDir + "/output.txt").toPath()),
-                           StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(
+                    (new File(inpF)).toPath(),
+                    (new File(submissionContestUserProblemDir + "/input.txt").toPath()));
+                Files.copy(
+                    (new File(outF)).toPath(),
+                    (new File(submissionContestUserProblemDir + "/output.txt").toPath()),
+                    StandardCopyOption.REPLACE_EXISTING);
 
                 //String thirdCommand = "py " + filename;
                 //processBuilder.command(bashCMD, optionCMD, firstCommand + " && " + secondCommand + " && " + thirdCommand);
@@ -568,11 +591,12 @@ public class ProgramSubmissionController {
                 }
                 */
 
-                if(timeExpired){
+                if (timeExpired) {
                     programSubmissionItemOutput.setOutput("Test #" +
-                                                          contestProblemTest.getProblemTestFilename() + ": time limit exceed");
+                                                          contestProblemTest.getProblemTestFilename() +
+                                                          ": time limit exceed");
 
-                }else {
+                } else {
                     ContestResultChecker checker = new ContestResultChecker(
                         submissionContestUserProblemDir + "/result.txt",
                         submissionContestUserProblemDir + "/output.txt");
@@ -592,11 +616,12 @@ public class ProgramSubmissionController {
             contestProgramSubmission.setPoints(grade);
             contestProgramSubmission = contestProgramSubmissionRepo.save(contestProgramSubmission);
 
-            if(grade > programmingContestUserRegistrationProblem.getPoints()){
+            if (grade > programmingContestUserRegistrationProblem.getPoints()) {
                 programmingContestUserRegistrationProblem.setPoints(grade);
             }
             programmingContestUserRegistrationProblem.setLastPoints(grade);
-            programmingContestUserRegistrationProblem = programmingContestUserRegistrationProblemRepo.save(programmingContestUserRegistrationProblem);
+            programmingContestUserRegistrationProblem = programmingContestUserRegistrationProblemRepo.save(
+                programmingContestUserRegistrationProblem);
 
         } catch (Exception e) {
             e.printStackTrace();
