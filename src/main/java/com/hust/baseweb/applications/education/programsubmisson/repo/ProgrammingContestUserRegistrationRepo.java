@@ -15,6 +15,10 @@ public interface ProgrammingContestUserRegistrationRepo extends JpaRepository<Pr
     ProgrammingContestUserRegistration save(ProgrammingContestUserRegistration programmingContestUserRegistration);
     List<ProgrammingContestUserRegistration> findByUserLoginIdAndStatusId(String userLoginId, String statusId);
     List<ProgrammingContestUserRegistration> findByContestIdAndStatusId(String contestId, String statusId);
+    List<ProgrammingContestUserRegistration> findByUserLoginId(String userLoginId);
+    List<ProgrammingContestUserRegistration> findByContestId(String contestId);
+    List<ProgrammingContestUserRegistration> findByStatusId(String statusId);
+
     ProgrammingContestUserRegistration findByContestIdAndUserLoginId(String contestId, String userLoginId);
 
     @Transactional

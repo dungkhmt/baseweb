@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.education.programsubmisson.entity.Programmi
 import com.hust.baseweb.applications.education.programsubmisson.entity.ProgrammingContestUserRegistration;
 import com.hust.baseweb.applications.education.programsubmisson.entity.ProgrammingContestUserRegistrationProblem;
 import com.hust.baseweb.applications.education.programsubmisson.model.CreateProgrammingContestUserRegistrationInputModel;
+import com.hust.baseweb.applications.education.programsubmisson.model.SearchProgrammingContestUserRegistrationInputModel;
 import com.hust.baseweb.applications.education.programsubmisson.repo.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -73,6 +74,26 @@ public class ProgrammingContestUserRegistrationServiceImpl implements Programmin
     public List<ProgrammingContestUserRegistration> findByUserLoginIdAndStatusId(String userLoginId, String statusId) {
         log.info("findByUserLoginIdAndStatusId, userLoginId  = " + userLoginId + ", statudId = " + statusId);
         return programmingContestUserRegistrationRepo.findByUserLoginIdAndStatusId(userLoginId,statusId);
+    }
+
+    @Override
+    public List<ProgrammingContestUserRegistration> findByUserLoginId(String userLoginId) {
+        return programmingContestUserRegistrationRepo.findByUserLoginId(userLoginId);
+    }
+
+    @Override
+    public List<ProgrammingContestUserRegistration> search(SearchProgrammingContestUserRegistrationInputModel input) {
+        log.info("search, contestId = " + input.getContestId() + " userLoginId = " + input.getUserLoginId() +
+                 " statusId = " + input.getStatusId());
+
+        if(input.getContestId() == null && input.getStatusId() == null && input.getUserLoginId() != null) {
+            return programmingContestUserRegistrationRepo.findByUserLoginId(input.getUserLoginId());
+        }else if(input.getUserLoginId() == null && input.getContestId() != null && input.getStatusId() != null){
+            return programmingContestUserRegistrationRepo.findByContestIdAndStatusId(input.getContestId(),input.getStatusId());
+        }else{
+            return programmingContestUserRegistrationRepo.findAll();
+        }
+        //return null;
     }
 
     @Override

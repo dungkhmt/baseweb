@@ -20,6 +20,9 @@ public class CommonUtils {
     public static Logger LOG = LoggerFactory.getLogger(CommonUtils.class);
     public static int SEQ_ID_LEN = 6;
 
+    public static boolean nullString(String s){
+        return s == null || s.equals("");
+    }
     @SuppressWarnings("unchecked")
     public static Map<String, Object> json2MapObject(String json) {
         Gson gson = new Gson();

@@ -1,7 +1,9 @@
 package com.hust.baseweb.applications.education.programsubmisson.controller;
 
+import com.google.maps.ImageResult;
 import com.hust.baseweb.applications.education.programsubmisson.entity.ProgrammingContestUserRegistration;
 import com.hust.baseweb.applications.education.programsubmisson.model.CreateProgrammingContestUserRegistrationInputModel;
+import com.hust.baseweb.applications.education.programsubmisson.model.SearchProgrammingContestUserRegistrationInputModel;
 import com.hust.baseweb.applications.education.programsubmisson.service.ProgrammingContestUserRegistrationService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
@@ -24,6 +26,14 @@ public class ProgrammingContestUserRegistrationController {
 
     private ProgrammingContestUserRegistrationService programmingContestUserRegistrationService;
     private UserService userService;
+
+    @PostMapping("search-programming-contest-user-registration")
+    public ResponseEntity<?> searchProgrammingContestUserRegistration(Principal principal, @RequestBody
+                                                                      SearchProgrammingContestUserRegistrationInputModel input
+                                                                      ){
+        List<ProgrammingContestUserRegistration> programmingContestUserRegistrations = programmingContestUserRegistrationService.search(input);
+        return ResponseEntity.ok().body(programmingContestUserRegistrations);
+    }
     @PostMapping("register-programming-contest")
     public ResponseEntity<?> registerProgrammingContest(Principal principal, @RequestBody
                                                         CreateProgrammingContestUserRegistrationInputModel input){

@@ -66,6 +66,11 @@ public class ProgramSubmissionController {
     @Autowired
     private UserService userService;
 
+    @PostMapping("search-program-submission")
+    ResponseEntity<?> searchProgramSubmission(Principal principal, @RequestBody SearchProgramSubmissionInputModel input){
+        List<ContestProgramSubmission> contestProgramSubmissions = contestProgramSubmissionService.search(input);
+        return ResponseEntity.ok().body(contestProgramSubmissions);
+    }
     @GetMapping("get-all-programming-contest-list")
     public ResponseEntity<?> getAllProgrammingContetList(Principal principal) {
         log.info("getAllProgrammingContetList START");
