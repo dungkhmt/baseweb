@@ -2,12 +2,9 @@ package com.hust.baseweb.applications.education.classmanagement.service.storage;
 
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageFileNotFoundException;
-import com.hust.baseweb.applications.education.classmanagement.utils.ZipOutputStreamUtils;
 import com.hust.baseweb.applications.education.repo.AssignmentSubmissionRepo;
+import com.hust.baseweb.config.FileSystemStorageProperties;
 import lombok.extern.log4j.Log4j2;
-import net.lingala.zip4j.model.enums.AesKeyStrength;
-import net.lingala.zip4j.model.enums.CompressionMethod;
-import net.lingala.zip4j.model.enums.EncryptionMethod;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -18,12 +15,10 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.*;
-import java.util.List;
 
 @Log4j2
 @Service
@@ -35,7 +30,7 @@ public class FileSystemStorageServiceImpl implements StorageService {
     AssignmentSubmissionRepo submissionRepo;
 
     @Autowired
-    public FileSystemStorageServiceImpl(StorageProperties properties) {
+    public FileSystemStorageServiceImpl(FileSystemStorageProperties properties) {
         rootPath = properties.getRootPath() + properties.getClassManagementDataPath();
         /*init(Paths.get(rootPath));*/
     }
@@ -148,18 +143,5 @@ public class FileSystemStorageServiceImpl implements StorageService {
         }
 
         return fileExtension;
-    }
-
-    public void zipFiles(File outputZipFile, List<File> filesToAdd) throws IOException {
-        ZipOutputStreamUtils utils = new ZipOutputStreamUtils();
-
-        utils.zipOutputStream(
-            outputZipFile,
-            filesToAdd,
-            "admin:123".toCharArray(),
-            CompressionMethod.DEFLATE,
-            false,
-            EncryptionMethod.AES,
-            AesKeyStrength.KEY_STRENGTH_256);
     }
 }
