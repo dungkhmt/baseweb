@@ -96,4 +96,16 @@ public interface AssignmentRepo extends JpaRepository<Assignment, UUID> {
     Date getCloseTime(UUID assignmentId);
 
     Assignment findByIdAndDeletedFalse(UUID id);
+
+    @Query(value = "select\n" +
+                   "\tcount(1)\n" +
+                   "from\n" +
+                   "\tedu_assignment ea\n" +
+                   "inner join edu_class ec on\n" +
+                   "\tea.class_id = ec.id\n" +
+                   "where\n" +
+                   "\tea.id = ?2\n" +
+                   "\tand ec.teacher_id = ?1",
+           nativeQuery = true)
+    int hasDownloadingPermission(String teacherId, UUID assignmentId);
 }
