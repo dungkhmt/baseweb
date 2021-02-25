@@ -1,8 +1,8 @@
 package com.hust.baseweb.applications.education.classmanagement.service;
 
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
-import com.hust.baseweb.applications.education.classmanagement.service.storage.StorageProperties;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
+import com.hust.baseweb.applications.education.classmanagement.utils.ZipOutputStreamUtils;
 import com.hust.baseweb.applications.education.entity.Assignment;
 import com.hust.baseweb.applications.education.entity.AssignmentSubmission;
 import com.hust.baseweb.applications.education.entity.EduClass;
@@ -16,39 +16,102 @@ import com.hust.baseweb.applications.education.model.getassignmentdetail4teacher
 import com.hust.baseweb.applications.education.repo.AssignmentRepo;
 import com.hust.baseweb.applications.education.repo.AssignmentSubmissionRepo;
 import com.hust.baseweb.applications.education.repo.ClassRepo;
+import com.hust.baseweb.config.FileSystemStorageProperties;
 import com.hust.baseweb.entity.UserLogin;
 import lombok.extern.log4j.Log4j2;
+import net.lingala.zip4j.model.enums.AesKeyStrength;
+import net.lingala.zip4j.model.enums.CompressionMethod;
+import net.lingala.zip4j.model.enums.EncryptionMethod;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 @Log4j2
 @Service
 public class AssignmentServiceImpl implements AssignmentService {
 
-    @Autowired
     private AssignmentRepo assignRepo;
 
-    @Autowired
     private AssignmentSubmissionRepo submissionRepo;
 
-    @Autowired
     private ClassRepo classRepo;
 
-    @Autowired
     private FileSystemStorageServiceImpl storageService;
 
-    private final String rootPath;
+    private final String dataPath;
+
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public AssignmentServiceImpl(StorageProperties properties) {
-        rootPath = properties.getRootPath() + properties.getClassManagementDataPath();
+    public AssignmentServiceImpl(
+        AssignmentRepo assignRepo,
+        AssignmentSubmissionRepo submissionRepo,
+        ClassRepo classRepo,
+        FileSystemStorageServiceImpl storageService,
+        FileSystemStorageProperties properties,
+        RedisTemplate<String, Object> redisTemplate
+    ) {
+        this.assignRepo = assignRepo;
+        this.submissionRepo = submissionRepo;
+        this.classRepo = classRepo;
+        this.storageService = storageService;
+        this.dataPath = properties.getRootPath() + properties.getClassManagementDataPath();
+        this.redisTemplate = redisTemplate;
+    }
+
+    private String getUserNameOfAuthUserWithRole(String token, String role) {
+        if (null == token) {
+            return null;
+        }
+
+        HashOperations<String, String, SecurityContextImpl> hashOperations = redisTemplate.opsForHash();
+        SecurityContextImpl context = hashOperations.get(
+            "spring:session:sessions:" + token,
+            "sessionAttr:SPRING_SECURITY_CONTEXT");
+
+        if (null == context) {
+            return null;
+        } else {
+            Authentication authentication = context.getAuthentication();
+
+            if (authentication.isAuthenticated()) {
+                User user = (User) authentication.getPrincipal();
+
+                if (user.getAuthorities().contains(new SimpleGrantedAuthority(role))) {
+                    return user.getUsername();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String verifyDownloadPermission(UUID assignId, String token) {
+        String username = getUserNameOfAuthUserWithRole(token, "ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER");
+
+        if (null != username) {
+            if (0 == assignRepo.hasDownloadingPermission(username, assignId)) {
+                return "Require downloading permission";
+            }
+
+            return null;
+        } else {
+            return "Invalid token";
+        }
     }
 
     @Override
@@ -81,30 +144,32 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public String getSubmissionsOf(String assignmentId, List<String> studentIds) {
+    public void downloadSubmmissions(
+        String assignmentId,
+        List<String> studentIds,
+        OutputStream outputStream
+    ) throws IOException {
+        List<File> fileToAdd = new ArrayList<>();
         List<GetSubmissionsOM> submissions = assignRepo.getSubmissionsOf(
             UUID.fromString(assignmentId),
             new HashSet<>(studentIds));
 
-        try {
-            storageService.deleteIfExists(assignmentId, assignmentId + ".zip");
-
-            File outputZipFile = new File(rootPath + assignmentId + "/" + assignmentId + ".zip");
-            List<File> fileToAdd = new ArrayList<>();
-
-            for (GetSubmissionsOM submission : submissions) {
-                fileToAdd.add(new File(rootPath +
-                                       assignmentId +
-                                       "/" +
-                                       submission.getStudentId() +
-                                       storageService.getFileExtension(submission.getOriginalFileName())));
-            }
-
-            storageService.zipFiles(outputZipFile, fileToAdd);
-            return assignmentId + ".zip";
-        } catch (IOException e) {
-            return null;
+        for (GetSubmissionsOM submission : submissions) {
+            fileToAdd.add(new File(dataPath +
+                                   assignmentId +
+                                   "/" +
+                                   submission.getStudentId() +
+                                   storageService.getFileExtension(submission.getOriginalFileName())));
         }
+
+        // Zip files.
+        ZipOutputStreamUtils.zip(
+            outputStream,
+            fileToAdd,
+            CompressionMethod.DEFLATE,
+            null,
+            EncryptionMethod.AES,
+            AesKeyStrength.KEY_STRENGTH_256);
     }
 
     @Override
