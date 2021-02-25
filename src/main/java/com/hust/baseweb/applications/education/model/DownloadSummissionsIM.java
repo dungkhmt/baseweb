@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class GetFilesIM {
+public class DownloadSummissionsIM {
 
     @NotNull(message = "Được yêu cầu")
     @Size(min = 1, message = "Phải chứa ít nhất một phần tử")
