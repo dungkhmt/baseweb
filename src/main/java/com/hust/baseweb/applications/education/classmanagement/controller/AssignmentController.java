@@ -1,30 +1,29 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
-import com.hust.baseweb.applications.backlog.service.Storage.BacklogFileStorageServiceImpl;
-import com.hust.baseweb.applications.education.classmanagement.service.AssignmentServiceImpl;
+import com.hust.baseweb.applications.education.classmanagement.service.AssignmentService;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
 import com.hust.baseweb.applications.education.exception.ResponseFirstType;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.CreateAssignmentIM;
-import com.hust.baseweb.applications.education.model.GetFilesIM;
+import com.hust.baseweb.applications.education.model.DownloadSummissionsIM;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.validation.constraints.NotBlank;
+import javax.websocket.server.PathParam;
 import java.security.Principal;
 import java.util.UUID;
 
@@ -33,11 +32,14 @@ import java.util.UUID;
 @RequestMapping("/edu/assignment")
 @AllArgsConstructor(onConstructor_ = @Autowired)
 @CrossOrigin
+/**
+ * @author Le Anh Tuan
+ */
 public class AssignmentController {
 
     private FileSystemStorageServiceImpl storageService;
 
-    private AssignmentServiceImpl assignService;
+    private AssignmentService assignService;
 
     @PostMapping("/{id}/submission")
     public ResponseEntity<?> submitAssign(
@@ -67,7 +69,7 @@ public class AssignmentController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/{id}/download-file/{filename:.+}")
+    /*@GetMapping("/{id}/download-file/{filename:.+}")
     @ResponseBody
     public void downloadFile(@PathVariable UUID id, @PathVariable String filename, HttpServletResponse response) {
         response.setHeader("Content-Transfer-Encoding", "binary");
@@ -82,19 +84,39 @@ public class AssignmentController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
+    /**
+     * Teacher download student's submissions.
+     *
+     * @param id    {@code id} of assignment
+     * @param token X-Auth-Token
+     * @param im
+     */
     @PostMapping("/{id}/submissions")
-    public ResponseEntity<String> getSubmissionsOf(
-        Principal principal,
-        @PathVariable UUID id,
-        @Valid @RequestBody GetFilesIM getFilesIM
+    public ResponseEntity<StreamingResponseBody> downloadSubmissions(
+        @PathVariable @NotBlank UUID id,
+        @PathParam("token") @NotBlank String token,
+        @Valid @RequestBody DownloadSummissionsIM im
     ) {
-        String response = assignService.getSubmissionsOf(id.toString(), getFilesIM.getStudentIds());
+        String verifyResult = assignService.verifyDownloadPermission(id, token);
 
-        return null == response ? ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body("File đang trong quá trình nén") : ResponseEntity.ok().body(response);
+        if (null == verifyResult) {
+            StreamingResponseBody stream = outputStream -> {
+                assignService.downloadSubmmissions(id.toString(), im.getStudentIds(), outputStream);
+            };
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=result.zip");
+
+            return ResponseEntity.ok().headers(headers).body(stream);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body(outputStream -> {
+                                     outputStream.write(verifyResult.getBytes());
+                                 });
+        }
     }
 
     @GetMapping("/{id}/student")
