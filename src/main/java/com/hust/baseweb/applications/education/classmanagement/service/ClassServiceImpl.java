@@ -8,7 +8,6 @@ import com.hust.baseweb.applications.education.model.getclasslist.ClassOM;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
 import com.hust.baseweb.applications.education.repo.*;
 import com.hust.baseweb.entity.UserLogin;
-import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -28,12 +27,14 @@ import java.util.stream.Stream;
 public class ClassServiceImpl implements ClassService {
 
     private ClassRepo classRepo;
+
     private EduCourseRepo courseRepo;
+
     private SemesterRepo semesterRepo;
 
     private ClassRegistrationRepo registRepo;
+
     private EduDepartmentRepo eduDepartmentRepo;
-    private UserService userService;
 
     @Override
     @Transactional
