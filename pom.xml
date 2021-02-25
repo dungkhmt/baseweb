@@ -21,12 +21,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>4.0.0-alpha02</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
@@ -43,17 +37,27 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
+        <!-- send email -->
         <dependency>
-            <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-data-redis</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+
         <!--		<dependency>-->
         <!--			<groupId>org.springframework.boot</groupId>-->
         <!--			<artifactId>spring-boot-starter-data-rest</artifactId>-->
         <!--		</dependency>-->
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.0.0-alpha02</version>
+        </dependency>
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -74,12 +78,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
@@ -88,12 +86,6 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-rest-hal-browser</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-	    <!--  <version>3.8.0</version> -->
         </dependency>
 
         <dependency>
@@ -130,9 +122,16 @@
             <version>0.9.3</version>
         </dependency>
 
+        <!--MongoDB - 2 dependencies-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <!--  <version>3.8.0</version> -->
         </dependency>
 
         <dependency>
@@ -177,12 +176,6 @@
             <version>2.3.7</version>
         </dependency>
 
-        <!-- send email -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-
         <!-- zip file-->
         <dependency>
             <groupId>net.lingala.zip4j</groupId>
@@ -196,40 +189,40 @@
             <version>3.11</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>3.3.0</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform -->
-        <dependency>
-            <groupId>net.java.dev.jna</groupId>
-            <artifactId>jna-platform</artifactId>
-            <version>5.6.0</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.sun.jna/jna -->
-        <dependency>
-            <groupId>com.sun.jna</groupId>
-            <artifactId>jna</artifactId>
-            <version>3.0.9</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>3.14.0</version>
-        </dependency>
-
         <dependency>
             <groupId>com.google.ortools</groupId>
             <artifactId>ortools-java</artifactId>
             <version>8.0.8283</version>
         </dependency>
 
+        <!--redis - 5 dependencies-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.msgpack</groupId>
+            <artifactId>msgpack-core</artifactId>
+            <version>0.8.20</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.msgpack</groupId>
+            <artifactId>jackson-dataformat-msgpack</artifactId>
+            <version>0.8.20</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+            <version>1.1.7.3</version>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -246,47 +239,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
-            <!--<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
-                <executions>
-                    <execution>
-                        <id>install-ortools-java-8.0.8283</id>
-                        <phase>clean</phase>
-                        <configuration>
-                            <file>${project.basedir}/libs/ortools-java-8.0.8283.jar</file>
-                            <repositoryLayout>default</repositoryLayout>
-                            <groupId>com.google.ortools</groupId>
-                            <artifactId>ortools-java-8.0.8283</artifactId>
-                            <version>8.0.8283</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                    </execution>
-
-                    <execution>
-                        <id>install-ortools-win32-x86-64-8.0.8283</id>
-                        <phase>clean</phase>
-                        <configuration>
-                            <file>${project.basedir}/libs/ortools-win32-x86-64-8.0.8283.jar</file>
-                            <repositoryLayout>default</repositoryLayout>
-                            <groupId>com.google.ortools</groupId>
-                            <artifactId>ortools-win32-x86-64-8.0.8283</artifactId>
-                            <version>8.0.8283</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>-->
 
             <plugin>
                 <groupId>com.mysema.maven</groupId>
