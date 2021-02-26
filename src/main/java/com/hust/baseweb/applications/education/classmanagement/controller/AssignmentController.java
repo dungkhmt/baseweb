@@ -93,11 +93,11 @@ public class AssignmentController {
      * @param token X-Auth-Token
      * @param im
      */
-    @PostMapping("/{id}/submissions")
+    @PostMapping(value = "/{id}/submissions", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public ResponseEntity<StreamingResponseBody> downloadSubmissions(
         @PathVariable @NotBlank UUID id,
         @PathParam("token") @NotBlank String token,
-        @Valid @RequestBody DownloadSummissionsIM im
+        @Valid DownloadSummissionsIM im
     ) {
         String verifyResult = assignService.verifyDownloadPermission(id, token);
 
