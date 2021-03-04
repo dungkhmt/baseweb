@@ -12,6 +12,7 @@ import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.savedrequest.NullRequestCache;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -34,10 +35,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()
-            .antMatchers("/roles").permitAll()
-            .antMatchers("/edu/assignment/*/submissions")
+            .antMatchers("/roles")
             .permitAll()
-            .antMatchers("/edu/assignment/*/download-file/*")
+            .antMatchers("/edu/assignment/*/submissions")
             .permitAll()
             .antMatchers("/edu/class/**")
             .hasAnyRole("EDUCATION_TEACHING_MANAGEMENT_TEACHER", "EDUCATION_LEARNING_MANAGEMENT_STUDENT")
@@ -52,6 +52,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest()
             .authenticated()
             .and()
+            .requestCache()
+            .requestCache(new NullRequestCache())
+            .and() // Not cache request because of having frontend
             .httpBasic()
             .authenticationEntryPoint(basicAuthenticationEndPoint)
             .and()
