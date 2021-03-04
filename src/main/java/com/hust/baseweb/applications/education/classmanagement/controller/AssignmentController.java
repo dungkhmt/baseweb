@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
 import com.hust.baseweb.applications.education.classmanagement.service.AssignmentService;
-import com.hust.baseweb.applications.education.classmanagement.service.storage.FileSystemStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
 import com.hust.baseweb.applications.education.exception.ResponseFirstType;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
@@ -16,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,25 +32,29 @@ import java.util.UUID;
 @RequestMapping("/edu/assignment")
 @AllArgsConstructor(onConstructor_ = @Autowired)
 @CrossOrigin
-/**
- * @author Le Anh Tuan
- */
 public class AssignmentController {
 
-    private FileSystemStorageServiceImpl storageService;
+    private final AssignmentService assignService;
 
-    private AssignmentService assignService;
-
+    /**
+     * Student submits assignment.
+     *
+     * @param name {@code id} of student (userId)
+     * @param id   {@code id} of assignment
+     * @param file
+     * @return
+     */
     @PostMapping("/{id}/submission")
-    public ResponseEntity<?> submitAssign(
-        Principal principal,
+    public ResponseEntity<?> submitAssignment(
+        @CurrentSecurityContext(expression = "authentication.name") String name,
         @PathVariable UUID id,
         @RequestParam("file") MultipartFile file
     ) {
         SimpleResponse res;
 
+        // FIXME: upgrade this method.
         try {
-            res = assignService.saveSubmission(principal.getName(), id, file);
+            res = assignService.saveSubmission(name, id, file);
         } catch (JpaSystemException e) {
             if ("fk_assignment_submission_assignment"
                 .equals(e.getRootCause().getMessage().substring(94, 129))) {
@@ -102,9 +106,10 @@ public class AssignmentController {
         String verifyResult = assignService.verifyDownloadPermission(id, token);
 
         if (null == verifyResult) {
-            StreamingResponseBody stream = outputStream -> {
-                assignService.downloadSubmmissions(id.toString(), im.getStudentIds(), outputStream);
-            };
+            StreamingResponseBody stream = outputStream -> assignService.downloadSubmmissions(
+                id.toString(),
+                im.getStudentIds(),
+                outputStream);
 
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
@@ -113,9 +118,7 @@ public class AssignmentController {
             return ResponseEntity.ok().headers(headers).body(stream);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .body(outputStream -> {
-                                     outputStream.write(verifyResult.getBytes());
-                                 });
+                                 .body(outputStream -> outputStream.write(verifyResult.getBytes()));
         }
     }
 
