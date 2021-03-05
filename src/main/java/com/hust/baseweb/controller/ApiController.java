@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -32,14 +33,14 @@ public class ApiController {
     private SecurityGroupService securityGroupService;
 
     @GetMapping("/")
-    public ResponseEntity<Map> home(Principal principal) {
-        UserLogin userLogin = userService.findById(principal.getName());
+    public ResponseEntity<Map> home(@CurrentSecurityContext(expression = "authentication.name") String name) {
         Map<String, String> response = new HashMap<>();
+        HttpHeaders headers = new HttpHeaders();
 
-        response.put("user", principal.getName());
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Access-Control-Expose-Headers", "X-Auth-Token");
-        return ResponseEntity.ok().headers(responseHeaders).body(response);
+        response.put("user", name);
+        headers.set("Access-Control-Expose-Headers", "X-Auth-Token");
+
+        return ResponseEntity.ok().headers(headers).body(response);
     }
 
     @GetMapping("/check-authority")
