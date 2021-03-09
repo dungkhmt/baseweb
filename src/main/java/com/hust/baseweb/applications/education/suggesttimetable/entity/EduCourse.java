@@ -65,22 +65,13 @@ public class EduCourse {
         return id == null ? 0 : id.hashCode();
     }
 
-    private static String formatCell(Cell cell) {
-        DataFormatter formatter = new DataFormatter();
-        String s = formatter.formatCellValue(cell);
-        s = StringUtils.deleteWhitespace(s);
-        if (StringUtils.equalsIgnoreCase("NULL", s) || StringUtils.equalsIgnoreCase("", s)) {
-            return null;
-        }
-        return s;
-    }
 
     public static String normalizeString(Cell cell) {
-        return EduCourse.formatCell(cell);
+        return Normalize.formatCell(cell);
     }
 
     public static EDepartment normalizeDept(Cell cell) {
-        String value = EduCourse.formatCell(cell);
+        String value = Normalize.formatCell(cell);
         return value == null ? null : EDepartment.of(value);
     }
 }

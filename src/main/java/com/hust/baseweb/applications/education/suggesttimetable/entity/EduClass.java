@@ -109,54 +109,44 @@ public class EduClass {
         this.classType = classType;
         this.managementId = managementId;
     }
-
-    private static String formatCell(Cell cell) {
-        DataFormatter formatter = new DataFormatter();
-        String value = StringUtils.deleteWhitespace(formatter.formatCellValue(cell));
-
-        if (StringUtils.equalsIgnoreCase("NULL", value) || StringUtils.equalsIgnoreCase("", value)) {
-            return null;
-        }
-
-        return value;
-    }
-
     public static Integer normalizeInt(Cell cell) {
-        String value = EduClass.formatCell(cell);
-        return value == null ? null : Integer.parseInt(value);
+        return Normalize.normalizeInt(cell);
     }
 
     public static String normalizeStr(Cell cell) {
-        return EduClass.formatCell(cell);
+        return Normalize.formatCell(cell);
     }
 
     public static EShift normalizeShift(Cell cell) {
-        String value = EduClass.formatCell(cell);
+        String value = Normalize.formatCell(cell);
         return value == null ? null : EShift.of(value);
     }
 
+
+
+
     public static DayOfWeek normalizeDayOfWeek(Cell cell) {
-        String value = EduClass.formatCell(cell);
+        String value = Normalize.formatCell(cell);
         return value == null ? null : DayOfWeek.of(Integer.parseInt(value));
     }
 
     public static Integer normalizeFisrt(Cell cell) {
-        String value = EduClass.formatCell(cell);
+        String value = Normalize.formatCell(cell);
         return null == value ? null : Integer.parseInt(StringUtils.substring(value, 0, 1));
     }
 
     public static Integer normalizeAfterTime(Cell cell) {
-        String value = EduClass.formatCell(cell);
+        String value = Normalize.formatCell(cell);
         return value == null ? null : Integer.parseInt(StringUtils.substringAfter(value, "-"));
     }
 
     public static Integer normalizeBeforeTime(Cell cell) {
-        String value = EduClass.formatCell(cell);
+        String value = Normalize.formatCell(cell);
         return value == null ? null : Integer.parseInt(StringUtils.substringBefore(value, "-"));
     }
 
     public static Boolean normalizeBool(Cell cell) {
-        String input = EduClass.formatCell(cell);
+        String input = Normalize.formatCell(cell);
         return input == null ? null : StringUtils.endsWithIgnoreCase("TN", input);
     }
 
