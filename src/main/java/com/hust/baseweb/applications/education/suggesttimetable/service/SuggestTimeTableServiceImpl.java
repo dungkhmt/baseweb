@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo;
+import com.hust.baseweb.config.MongoConfig;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -12,15 +13,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -36,7 +37,7 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
         HashMap<String, Short> mapCourseColumn = new HashMap<>();
 
         List<EduClass> classes = new ArrayList<>();
-        List<EduCourse> courses = new ArrayList<>();
+        HashSet<EduCourse> courses = new HashSet<>();
 
         InputStream inputStream = file.getInputStream();
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
@@ -107,14 +108,13 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
                 EduCourse.normalizeString(row.getCell(mapCourseColumn.get("TÊN_HP_TIẾNG_ANH"))),
                 EduCourse.normalizeDept(row.getCell(mapCourseColumn.get("KHOA_VIỆN")))
             );
-
-            // FIXME: handle duplicate courses
             courses.add(eduCourse);
         }
 
         // Save in batches.
         saveClassesInBatch(classes);
-        saveCoursesInBatch(courses);
+        List<EduCourse> eduCourses = new ArrayList<>(courses);
+        saveCoursesInBatch(eduCourses);
 
         return new SimpleResponse(200, null, null);
     }
@@ -125,13 +125,25 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
      * @param classes
      */
     private void saveClassesInBatch(List<EduClass> classes) {
-        // TODO: use bulk operation with mongo template to complete this method.
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.register(MongoConfig.class);
+        ctx.refresh();
+        MongoTemplate mongoTemplate = ctx.getBean(MongoTemplate.class);
+        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "class");
+        bulkOperations.insert(classes);
+        bulkOperations.execute();
     }
 
     /**
      * @param courses
      */
     private void saveCoursesInBatch(List<EduCourse> courses) {
-        // TODO: use bulk operation with mongo template to complete this method.
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.register(MongoConfig.class);
+        ctx.refresh();
+        MongoTemplate mongoTemplate = ctx.getBean(MongoTemplate.class);
+        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "courses");
+        bulkOperations.insert(courses);
+        bulkOperations.execute();
     }
 }
