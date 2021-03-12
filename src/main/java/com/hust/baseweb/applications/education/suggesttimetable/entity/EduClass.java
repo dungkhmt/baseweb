@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.Id;
@@ -109,44 +108,42 @@ public class EduClass {
         this.classType = classType;
         this.managementId = managementId;
     }
+
     public static Integer normalizeInt(Cell cell) {
-        return Normalize.normalizeInt(cell);
+        return Normalizer.normalizeInt(cell);
     }
 
     public static String normalizeStr(Cell cell) {
-        return Normalize.formatCell(cell);
+        return Normalizer.normalizeStr(cell);
     }
 
     public static EShift normalizeShift(Cell cell) {
-        String value = Normalize.formatCell(cell);
-        return value == null ? null : EShift.of(value);
+        String value = Normalizer.normalizeStr(cell);
+        return null == value ? null : EShift.of(value);
     }
 
-
-
-
     public static DayOfWeek normalizeDayOfWeek(Cell cell) {
-        String value = Normalize.formatCell(cell);
+        String value = Normalizer.normalizeStr(cell);
         return value == null ? null : DayOfWeek.of(Integer.parseInt(value));
     }
 
     public static Integer normalizeFisrt(Cell cell) {
-        String value = Normalize.formatCell(cell);
+        String value = Normalizer.normalizeStr(cell);
         return null == value ? null : Integer.parseInt(StringUtils.substring(value, 0, 1));
     }
 
     public static Integer normalizeAfterTime(Cell cell) {
-        String value = Normalize.formatCell(cell);
+        String value = Normalizer.normalizeStr(cell);
         return value == null ? null : Integer.parseInt(StringUtils.substringAfter(value, "-"));
     }
 
     public static Integer normalizeBeforeTime(Cell cell) {
-        String value = Normalize.formatCell(cell);
+        String value = Normalizer.normalizeStr(cell);
         return value == null ? null : Integer.parseInt(StringUtils.substringBefore(value, "-"));
     }
 
     public static Boolean normalizeBool(Cell cell) {
-        String input = Normalize.formatCell(cell);
+        String input = Normalizer.normalizeStr(cell);
         return input == null ? null : StringUtils.endsWithIgnoreCase("TN", input);
     }
 

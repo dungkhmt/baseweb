@@ -3,9 +3,7 @@ package com.hust.baseweb.applications.education.suggesttimetable.entity;
 import com.hust.baseweb.applications.education.suggesttimetable.enums.EDepartment;
 import lombok.Getter;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -65,13 +63,12 @@ public class EduCourse {
         return id == null ? 0 : id.hashCode();
     }
 
-
     public static String normalizeString(Cell cell) {
-        return Normalize.formatCell(cell);
+        return Normalizer.normalizeStr(cell);
     }
 
     public static EDepartment normalizeDept(Cell cell) {
-        String value = Normalize.formatCell(cell);
+        String value = Normalizer.normalizeStr(cell);
         return value == null ? null : EDepartment.of(value);
     }
 }
