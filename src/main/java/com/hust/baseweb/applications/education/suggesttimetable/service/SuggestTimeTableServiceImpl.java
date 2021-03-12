@@ -120,31 +120,41 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
     }
 
     /**
-     * Upsert
+     * Insert
      *
      * @param classes
      */
     private void saveClassesInBatch(List<EduClass> classes) {
-        /*AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-        ctx.register(MongoConfig.class);
-        ctx.refresh();
-        MongoTemplate mongoTemplate = ctx.getBean(MongoTemplate.class);*/
+        short batchSize = 500;
 
-        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "class");
-        bulkOperations.insert(classes);
-        bulkOperations.execute();
+        // First Approach.
+        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "class");
+        for (short i = 0, size = (short) classes.size(); i < size; i++) {
+            bulkOperations.insert(classes.get(i));
+
+            if (i % batchSize == 0) {
+                bulkOperations.execute();
+                bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "class");
+            }
+        }
+
+        // Second Approach.
+        ArrayList<EduClass> eduClasses = new ArrayList<>();
+        for (short i = 0, size = (short) classes.size(); i < size; i++) {
+            eduClasses.add(classes.get(i));
+
+            if (i % batchSize == 0) {
+                mongoTemplate.insert(eduClasses);
+                eduClasses = new ArrayList<>();
+            }
+        }
     }
 
     /**
      * @param courses
      */
     private void saveCoursesInBatch(List<EduCourse> courses) {
-        /*AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-        ctx.register(MongoConfig.class);
-        ctx.refresh();
-        MongoTemplate mongoTemplate = ctx.getBean(MongoTemplate.class);*/
-
-        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "courses");
+        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "courses");
         bulkOperations.insert(courses);
         bulkOperations.execute();
     }
