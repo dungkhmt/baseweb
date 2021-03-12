@@ -5,7 +5,6 @@ import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo;
-import com.hust.baseweb.config.MongoConfig;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -13,7 +12,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -30,6 +28,8 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
     private ICourseRepo courseRepo;
 
     private IClassRepo classRepo;
+
+    private MongoTemplate mongoTemplate;
 
     @Override
     public SimpleResponse uploadTimetable(MultipartFile file) throws IOException {
@@ -125,10 +125,11 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
      * @param classes
      */
     private void saveClassesInBatch(List<EduClass> classes) {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        /*AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
         ctx.register(MongoConfig.class);
         ctx.refresh();
-        MongoTemplate mongoTemplate = ctx.getBean(MongoTemplate.class);
+        MongoTemplate mongoTemplate = ctx.getBean(MongoTemplate.class);*/
+
         BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "class");
         bulkOperations.insert(classes);
         bulkOperations.execute();
@@ -138,10 +139,11 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
      * @param courses
      */
     private void saveCoursesInBatch(List<EduCourse> courses) {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        /*AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
         ctx.register(MongoConfig.class);
         ctx.refresh();
-        MongoTemplate mongoTemplate = ctx.getBean(MongoTemplate.class);
+        MongoTemplate mongoTemplate = ctx.getBean(MongoTemplate.class);*/
+
         BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "courses");
         bulkOperations.insert(courses);
         bulkOperations.execute();
