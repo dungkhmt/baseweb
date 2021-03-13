@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.education.suggesttimetable.enums.EShift;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,53 +21,37 @@ import java.util.List;
 @Document(collection = "class")
 public class EduClass {
 
-    @Id
-    private BigInteger id;
-
     @NotNull
     private final Integer classId;
-
     @Nullable
     private final Integer attachedClassId;
-
     @NotNull
     private final String courseId;
-
     @NotNull
     private final Integer credit;
-
     @Nullable
     private final String note;
-
     @Nullable
     private final DayOfWeek dayOfWeek;
-
     @Nullable
     private final Integer startTime;
-
     @Nullable
     private final Integer endTime;
-
     @NotNull
     private final EShift shift;
-
     @Nullable
     private final String weeks;
-
     @Nullable
     private final String room;
-
     private final boolean needExperiment;
-
     @Nullable
     private final Integer numRegistration;
-
     @Nullable
     private final Integer maxQuantity;
-
     @NotNull
     private final String status, classType, managementId;
-
+    @Id
+    private BigInteger id;
     @Transient
     @Getter(value = AccessLevel.NONE)
     private List<Integer> weeksList = null;
@@ -124,12 +109,12 @@ public class EduClass {
 
     public static DayOfWeek normalizeDayOfWeek(Cell cell) {
         String value = Normalizer.normalizeStr(cell);
-        return value == null ? null : DayOfWeek.of(Integer.parseInt(value));
+        return value == null ? null : DayOfWeek.of(Integer.parseInt(value)-1);
     }
 
     public static Integer normalizeFisrt(Cell cell) {
         String value = Normalizer.normalizeStr(cell);
-        return null == value ? null : Integer.parseInt(StringUtils.substring(value, 0, 1));
+        return NumberUtils.toInt(StringUtils.substring(value, 0, 1));
     }
 
     public static Integer normalizeAfterTime(Cell cell) {
@@ -143,8 +128,7 @@ public class EduClass {
     }
 
     public static Boolean normalizeBool(Cell cell) {
-        String input = Normalizer.normalizeStr(cell);
-        return input == null ? null : StringUtils.endsWithIgnoreCase("TN", input);
+        return StringUtils.endsWithIgnoreCase("TN", Normalizer.normalizeStr(cell));
     }
 
     private List<Integer> convertWeeksToList() {

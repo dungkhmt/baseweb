@@ -8,6 +8,7 @@ import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -50,6 +51,11 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
 
         // Extract header.
         short i = 0;
+        CellType cellType = headerCell.next().getCellType();
+        if (cellType == CellType.BLANK || cellType == CellType._NONE){
+            headerRow = rowIterator.next();
+            headerCell = headerRow.cellIterator();
+        }
         while (headerCell.hasNext()) {
             Cell cell = headerCell.next();
             String columnName = StringUtils.upperCase(StringUtils.deleteWhitespace(cell.getStringCellValue()));
@@ -72,44 +78,49 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
         // Extract data.
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
+//            CellType cellType = row.getCell(mapClassColumn.get("MÃ_LỚP")).getCellType();
+            Iterator<Cell> cellIterator = row.cellIterator();
+            if (cellIterator.next().getCellTypeEnum() != CellType.BLANK && cellIterator.next().getCellTypeEnum() !=CellType._NONE) {
+                EduClass eduClass = new EduClass(
+                    EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP"))),
+                    EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP_KÈM"))),
+                    EduClass.normalizeStr(row.getCell(mapClassColumn.get("MÃ_HP"))),
+                    EduClass.normalizeFisrt(row.getCell(mapClassColumn.get("KHỐI_LƯỢNG"))),
+                    EduClass.normalizeStr(row.getCell(mapClassColumn.get("GHI_CHÚ"))),
+                    EduClass.normalizeDayOfWeek(row.getCell(mapClassColumn.get("THỨ"))),
+                    EduClass.normalizeBeforeTime(row.getCell(mapClassColumn.get("THỜI_GIAN"))),
+                    EduClass.normalizeAfterTime(row.getCell(mapClassColumn.get("THỜI_GIAN"))),
+                    EduClass.normalizeShift(row.getCell(mapClassColumn.get("KÍP"))),
+                    EduClass.normalizeStr(row.getCell(mapClassColumn.get("TUẦN"))),
+                    EduClass.normalizeStr(row.getCell(mapClassColumn.get("PHÒNG"))),
+                    EduClass.normalizeBool(row.getCell(mapClassColumn.get("CẦN_TN"))),
+                    EduClass.normalizeInt(row.getCell(mapClassColumn.get("SLĐK"))),
+                    EduClass.normalizeInt(row.getCell(mapClassColumn.get("SL_MAX"))),
+                    EduClass.normalizeStr(row.getCell(mapClassColumn.get("TRẠNG_THÁI"))),
+                    EduClass.normalizeStr(row.getCell(mapClassColumn.get("LOẠI_LỚP"))),
+                    EduClass.normalizeStr(row.getCell(mapClassColumn.get("MÃ_QL")))
+                );
+                classes.add(eduClass);
 
-            // Extract class.
-            EduClass eduClass = new EduClass(
-                EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP"))),
-                EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP_KÈM"))),
-                EduClass.normalizeStr(row.getCell(mapClassColumn.get("MÃ_HP"))),
-                EduClass.normalizeFisrt(row.getCell(mapClassColumn.get("KHỐI_LƯỢNG"))),
-                EduClass.normalizeStr(row.getCell(mapClassColumn.get("GHI_CHÚ"))),
-                EduClass.normalizeDayOfWeek(row.getCell(mapClassColumn.get("THỨ"))),
-                EduClass.normalizeBeforeTime(row.getCell(mapClassColumn.get("THỜI_GIAN"))),
-                EduClass.normalizeAfterTime(row.getCell(mapClassColumn.get("THỜI_GIAN"))),
-                EduClass.normalizeShift(row.getCell(mapClassColumn.get("KÍP"))),
-                EduClass.normalizeStr(row.getCell(mapClassColumn.get("TUẦN"))),
-                EduClass.normalizeStr(row.getCell(mapClassColumn.get("PHÒNG"))),
-                EduClass.normalizeBool(row.getCell(mapClassColumn.get("CẦN_TN"))),
-                EduClass.normalizeInt(row.getCell(mapClassColumn.get("SLĐK"))),
-                EduClass.normalizeInt(row.getCell(mapClassColumn.get("SL_MAX"))),
-                EduClass.normalizeStr(row.getCell(mapClassColumn.get("TRẠNG_THÁI"))),
-                EduClass.normalizeStr(row.getCell(mapClassColumn.get("LOẠI_LỚP"))),
-                EduClass.normalizeStr(row.getCell(mapClassColumn.get("MÃ_QL")))
-            );
 
-            classes.add(eduClass);
+
 
             /*if (classes.size() == 100) {
                 classRepo.saveAll(classes);
                 classes = new ArrayList<>();
             }*/
 
-            // Extract course.
-            EduCourse eduCourse = new EduCourse(
-                EduCourse.normalizeString(row.getCell(mapCourseColumn.get("MÃ_HP"))),
-                EduCourse.normalizeString(row.getCell(mapCourseColumn.get("TÊN_HP"))),
-                EduCourse.normalizeString(row.getCell(mapCourseColumn.get("TÊN_HP_TIẾNG_ANH"))),
-                EduCourse.normalizeDept(row.getCell(mapCourseColumn.get("KHOA_VIỆN")))
-            );
-            courses.add(eduCourse);
+                // Extract course.
+                EduCourse eduCourse = new EduCourse(
+                    EduCourse.normalizeString(row.getCell(mapCourseColumn.get("MÃ_HP"))),
+                    EduCourse.normalizeString(row.getCell(mapCourseColumn.get("TÊN_HP"))),
+                    EduCourse.normalizeString(row.getCell(mapCourseColumn.get("TÊN_HP_TIẾNG_ANH"))),
+                    EduCourse.normalizeDept(row.getCell(mapCourseColumn.get("KHOA_VIỆN")))
+                );
+                courses.add(eduCourse);
+            }
         }
+        System.out.println("Size of course = "+ courses.size());
 
         // Save in batches.
         saveClassesInBatch(classes);
@@ -125,36 +136,18 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
      * @param classes
      */
     private void saveClassesInBatch(List<EduClass> classes) {
-        short batchSize = 500;
-
-        // First Approach.
-        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "class");
-        for (short i = 0, size = (short) classes.size(); i < size; i++) {
-            bulkOperations.insert(classes.get(i));
-
-            if (i % batchSize == 0) {
-                bulkOperations.execute();
-                bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "class");
-            }
-        }
-
-        // Second Approach.
-        ArrayList<EduClass> eduClasses = new ArrayList<>();
-        for (short i = 0, size = (short) classes.size(); i < size; i++) {
-            eduClasses.add(classes.get(i));
-
-            if (i % batchSize == 0) {
-                mongoTemplate.insert(eduClasses);
-                eduClasses = new ArrayList<>();
-            }
-        }
+        mongoTemplate.dropCollection("class");
+        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "class");
+        bulkOperations.insert(classes);
+        bulkOperations.execute();
     }
 
     /**
      * @param courses
      */
     private void saveCoursesInBatch(List<EduCourse> courses) {
-        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "courses");
+        mongoTemplate.dropCollection("courses");
+        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "courses");
         bulkOperations.insert(courses);
         bulkOperations.execute();
     }
