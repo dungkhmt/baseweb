@@ -3,18 +3,18 @@ package com.hust.baseweb.applications.education.suggesttimetable.enums;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-public enum EShift {
+public enum Shift {
     MORNING("SÁNG"),
     AFTERNOON("CHIỀU"),
     EVENING("TỐI");
 
     private final String description;
 
-    EShift(String description) {
+    Shift(String description) {
         this.description = description;
     }
 
-    public static EShift of(@NotNull String shift) {
+    public static Shift of(@NotNull String shift) {
         if (null == shift) {
             throw new IllegalArgumentException(
                 "No shift with description \"null\" found, shifts can only be \"SÁNG\", \"CHIỀU\", \"TỐI\"");

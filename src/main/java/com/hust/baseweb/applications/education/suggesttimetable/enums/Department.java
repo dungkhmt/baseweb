@@ -3,7 +3,7 @@ package com.hust.baseweb.applications.education.suggesttimetable.enums;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-public enum EDepartment {
+public enum Department {
     BGDTC("Khoa Giáo dục Thể chất"),
     KCK("Khoa cơ khí"),
     KCNDMVTT("Viện Dệt may - Da giầy và Thời trang"),
@@ -28,11 +28,11 @@ public enum EDepartment {
 
     private final String name;
 
-    EDepartment(@NotNull String name) {
+    Department(@NotNull String name) {
         this.name = name;
     }
 
-    public static EDepartment of(@NotNull String id) {
+    public static Department of(@NotNull String id) {
         if (null == id) {
             throw new IllegalArgumentException("No constant with text \"null\" found");
         }
