@@ -95,7 +95,7 @@ public class EduClass {
     }
 
     public static Integer normalizeInt(Cell cell) {
-        return Normalizer.normalizeInt(cell);
+        return Normalizer.normalizeInt(cell).orElse(null);
     }
 
     public static String normalizeStr(Cell cell) {

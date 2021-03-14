@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.education.suggesttimetable.entity;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 
@@ -23,9 +22,8 @@ public class Normalizer {
         return Optional.ofNullable(value);
     }
 
-    public static Integer normalizeInt(Cell cell) {
-        String value = formatCell(cell).orElse(null);
-        return NumberUtils.toInt(value);
+    public static Optional<Integer> normalizeInt(Cell cell) {
+        return formatCell(cell).map(Integer::parseInt);
     }
 
     public static String normalizeStr(Cell cell) {
