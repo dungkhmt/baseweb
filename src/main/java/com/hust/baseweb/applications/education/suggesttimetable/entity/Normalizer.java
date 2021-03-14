@@ -23,7 +23,11 @@ public class Normalizer {
     }
 
     public static Optional<Integer> normalizeInt(Cell cell) {
-        return formatCell(cell).map(Integer::parseInt);
+        try {
+            return formatCell(cell).map(Integer::parseInt);
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
     }
 
     public static String normalizeStr(Cell cell) {
