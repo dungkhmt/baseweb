@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.education.suggesttimetable.entity;
 
-import com.hust.baseweb.applications.education.suggesttimetable.enums.EShift;
+import com.hust.baseweb.applications.education.suggesttimetable.enums.Shift;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +38,7 @@ public class EduClass {
     @Nullable
     private final Integer endTime;
     @NotNull
-    private final EShift shift;
+    private final Shift shift;
     @Nullable
     private final String weeks;
     @Nullable
@@ -65,7 +65,7 @@ public class EduClass {
         @Nullable DayOfWeek dayOfWeek,
         @Nullable Integer startTime,
         @Nullable Integer endTime,
-        @Nullable EShift shift,
+        @Nullable Shift shift,
         @Nullable String weeks,
         @Nullable String room,
         boolean needExperiment,
@@ -102,9 +102,9 @@ public class EduClass {
         return Normalizer.normalizeStr(cell);
     }
 
-    public static EShift normalizeShift(Cell cell) {
+    public static Shift normalizeShift(Cell cell) {
         String value = Normalizer.normalizeStr(cell);
-        return null == value ? null : EShift.of(value);
+        return null == value ? null : Shift.of(value);
     }
 
     public static DayOfWeek normalizeDayOfWeek(Cell cell) {

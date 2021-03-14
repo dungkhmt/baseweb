@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.education.suggesttimetable.entity;
 
-import com.hust.baseweb.applications.education.suggesttimetable.enums.EDepartment;
+import com.hust.baseweb.applications.education.suggesttimetable.enums.Department;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.poi.ss.usermodel.Cell;
@@ -17,7 +17,7 @@ public class EduCourse {
 
     private final String name, eName; //TÊN_HP, TÊN_HP_TIẾNG_ANH
 
-    private final EDepartment department; // KHOA_VIỆN
+    private final Department department; // KHOA_VIỆN
 
     /**
      * Creates a new {@link EduCourse} from the given id, name, eName and department.
@@ -27,7 +27,7 @@ public class EduCourse {
      * @param eName      must not be {@code null} or empty
      * @param department must not be {@code null} or empty
      */
-    public EduCourse(String id, String name, String eName, EDepartment department) {
+    public EduCourse(String id, String name, String eName, Department department) {
         this.id = id;
         this.name = name;
         this.eName = eName;
@@ -67,8 +67,8 @@ public class EduCourse {
         return Normalizer.normalizeStr(cell);
     }
 
-    public static EDepartment normalizeDept(Cell cell) {
+    public static Department normalizeDept(Cell cell) {
         String value = Normalizer.normalizeStr(cell);
-        return value == null ? null : EDepartment.of(value);
+        return value == null ? null : Department.of(value);
     }
 }
