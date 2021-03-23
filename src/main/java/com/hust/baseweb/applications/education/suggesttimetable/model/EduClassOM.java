@@ -13,7 +13,7 @@ import java.time.DayOfWeek;
 @Getter
 @Setter
 @AllArgsConstructor
-public class TimetableOM {
+public class EduClassOM {
 
     private final Integer classId;
 
