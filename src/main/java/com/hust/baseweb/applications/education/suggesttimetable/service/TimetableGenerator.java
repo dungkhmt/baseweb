@@ -22,8 +22,6 @@ public class TimetableGenerator {
 
     static class SolutionExtractor extends CpSolverSolutionCallback {
 
-        private int solutionCount;
-
         private final IntVar[] vars;
 
         private final List<long[]> solutions = new ArrayList<>();
@@ -33,7 +31,7 @@ public class TimetableGenerator {
         }
 
         private void printSolution() {
-            System.out.printf("Solution #%d: time = %.02f s%n", solutionCount, wallTime());
+            System.out.printf("Solution #%d: time = %.02f s%n", solutions.size(), wallTime());
 
             for (IntVar v : vars) {
                 System.out.printf("  %s = %d%n", v.getName(), value(v));
@@ -52,13 +50,8 @@ public class TimetableGenerator {
 
         @Override
         public void onSolutionCallback() {
-            solutionCount++;
             printSolution();
             extractSolution();
-        }
-
-        public int getSolutionCount() {
-            return solutionCount;
         }
     }
 
@@ -108,7 +101,7 @@ public class TimetableGenerator {
         SolutionExtractor extractor = new SolutionExtractor(x);
         solver.searchAllSolutions(model, extractor);
 
-        System.out.println(extractor.getSolutionCount() + " solutions found.");
+        System.out.println(extractor.solutions.size() + " solutions found.");
         return convertSolution(extractor.solutions);
     }
 
