@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class Normalizer {
@@ -29,5 +30,15 @@ public class Normalizer {
 
     public static String normalizeStr(Cell cell) {
         return formatCell(cell).orElse(null);
+    }
+
+    public static Optional<String> defaultString (Cell cell) {
+        DataFormatter formatter = new DataFormatter();
+        String value = formatter.formatCellValue(cell);
+        if (StringUtils.equalsIgnoreCase("NULL", value) || StringUtils.equals("", value)) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(value);
     }
 }

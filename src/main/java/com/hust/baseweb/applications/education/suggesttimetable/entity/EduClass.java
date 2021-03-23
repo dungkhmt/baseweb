@@ -1,12 +1,13 @@
 package com.hust.baseweb.applications.education.suggesttimetable.entity;
 
+import com.hust.baseweb.applications.education.exception.CustomException;
+import com.hust.baseweb.applications.education.suggesttimetable.enums.Error;
 import com.hust.baseweb.applications.education.suggesttimetable.enums.Shift;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -21,34 +22,35 @@ import java.util.List;
 @Document(collection = "class")
 public class EduClass {
 
-    @NotNull
+    public List<Error> errorList = new ArrayList<>();
+
     private final Integer classId;
-    @Nullable
+
     private final Integer attachedClassId;
-    @NotNull
+
     private final String courseId;
-    @NotNull
+
     private final Integer credit;
-    @Nullable
+
     private final String note;
-    @Nullable
+
     private final DayOfWeek dayOfWeek;
-    @Nullable
+
     private final Integer startTime;
-    @Nullable
+
     private final Integer endTime;
-    @NotNull
+
     private final Shift shift;
-    @Nullable
+
     private final String weeks;
-    @Nullable
+
     private final String room;
     private final boolean needExperiment;
-    @Nullable
+
     private final Integer numRegistration;
-    @Nullable
+
     private final Integer maxQuantity;
-    @NotNull
+
     private final String status, classType, managementId;
     @Id
     private BigInteger id;
@@ -57,24 +59,31 @@ public class EduClass {
     private List<Integer> weeksList = null;
 
     public EduClass(
-        @NotNull Integer classId,
-        @Nullable Integer attachedClassId,
-        @NotNull String courseId,
-        @NotNull Integer credit,
-        @Nullable String note,
-        @Nullable DayOfWeek dayOfWeek,
-        @Nullable Integer startTime,
-        @Nullable Integer endTime,
-        @Nullable Shift shift,
-        @Nullable String weeks,
-        @Nullable String room,
+        Integer classId,
+        Integer attachedClassId,
+        String courseId,
+        Integer credit,
+        String note,
+        DayOfWeek dayOfWeek,
+        Integer startTime,
+        Integer endTime,
+        Shift shift,
+        String weeks,
+        String room,
         boolean needExperiment,
-        @Nullable Integer numRegistration,
-        @Nullable Integer maxQuantity,
-        @NotNull String status,
-        @NotNull String classType,
-        @NotNull String managementId
-    ) {
+        Integer numRegistration,
+        Integer maxQuantity,
+        String status,
+        String classType,
+        String managementId
+    ) throws CustomException {
+        if (classId == null) {
+            errorList.add(Error.classId_error);
+        }
+        if (courseId == null) {
+            errorList.add(Error.courseId_error);
+        }
+        if (errorList.size() > 0) throw new CustomException(errorList);
         this.classId = classId;
         this.attachedClassId = attachedClassId;
         this.courseId = courseId;
@@ -107,9 +116,13 @@ public class EduClass {
         return null == value ? null : Shift.of(value);
     }
 
+    public static String normalizeDefault(Cell cell) {
+        return Normalizer.defaultString(cell).orElse(null);
+    }
+
     public static DayOfWeek normalizeDayOfWeek(Cell cell) {
         String value = Normalizer.normalizeStr(cell);
-        return value == null ? null : DayOfWeek.of(Integer.parseInt(value)-1);
+        return value == null ? null : DayOfWeek.of(Integer.parseInt(value) - 1);
     }
 
     public static Integer normalizeFisrt(Cell cell) {
