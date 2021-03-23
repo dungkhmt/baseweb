@@ -16,7 +16,7 @@ public class Normalizer {
         DataFormatter formatter = new DataFormatter();
         String value = StringUtils.deleteWhitespace(formatter.formatCellValue(cell));
 
-        if (StringUtils.equalsIgnoreCase("NULL", value) || StringUtils.equalsIgnoreCase("", value)) {
+        if (StringUtils.equalsIgnoreCase("NULL", value) || StringUtils.equals("", value)) {
             return Optional.empty();
         }
 
