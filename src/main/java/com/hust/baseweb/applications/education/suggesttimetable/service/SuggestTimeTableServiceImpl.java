@@ -4,9 +4,11 @@ import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
 import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGroupClassesOM;
+import com.hust.baseweb.applications.education.suggesttimetable.model.TimetableOM;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -136,7 +138,29 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
         return new SimpleResponse(200, null, null);
     }
 
-    public List<FindAndGroupClassesOM> getAllClassesOfCourses(Set<String> courseIds) {
+    @Override
+    public List<TimetableOM[]> getAllTimetablesOfCourses(final Set<String> courseIds) {
+        List<FindAndGroupClassesOM> groups = getAllClassesOfCourses(courseIds);
+        // TODO by DATPD: index classes, use bidiMap of Apache-Commons-Collections
+        ArrayList<int[]> conflictSet = genSetOfConflictClassPairs(groups);
+        return generateTimetables(groups, null, conflictSet);
+    }
+
+    private List<TimetableOM[]> generateTimetables(
+        final List<FindAndGroupClassesOM> classGroups,
+        BidiMap<Integer, Integer> classIndexMap,
+        ArrayList<int[]> conflictSet
+    ) {
+        // TODO: solve, implement by TUANLA
+        return null;
+    }
+
+    private ArrayList<int[]> genSetOfConflictClassPairs(final List<FindAndGroupClassesOM> classGroups) {
+        // TODO: by DATPD
+        return null;
+    }
+
+    private List<FindAndGroupClassesOM> getAllClassesOfCourses(Set<String> courseIds) {
         MatchOperation match = Aggregation.match(new Criteria("courseId").in(courseIds));
         GroupOperation group = Aggregation.group("courseId", "classType").push(Aggregation.ROOT).as("classes");
         Aggregation aggregation = Aggregation.newAggregation(match, group);
@@ -150,7 +174,7 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
     }
 
     /**
-     * Insert
+     * Insert classes in batch.
      *
      * @param classes
      */
@@ -162,6 +186,8 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
     }
 
     /**
+     * Insert courses in batch.
+     *
      * @param courses
      */
     private void saveCoursesInBatch(List<EduCourse> courses) {
