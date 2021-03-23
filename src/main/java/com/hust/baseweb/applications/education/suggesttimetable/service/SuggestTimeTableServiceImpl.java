@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.education.suggesttimetable.service;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
+import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGroupClassesOM;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,14 +28,14 @@ import java.io.InputStream;
 import java.util.*;
 
 @Service
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
 
-    private ICourseRepo courseRepo;
+    private final ICourseRepo courseRepo;
 
-    private IClassRepo classRepo;
+    private final IClassRepo classRepo;
 
-    private MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     @Override
     public SimpleResponse uploadTimetable(MultipartFile file) throws IOException {
@@ -52,7 +57,7 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
         // Extract header.
         short i = 0;
         CellType cellType = headerCell.next().getCellType();
-        if (cellType == CellType.BLANK || cellType == CellType._NONE){
+        if (cellType == CellType.BLANK || cellType == CellType._NONE) {
             headerRow = rowIterator.next();
             headerCell = headerRow.cellIterator();
         }
@@ -80,7 +85,8 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
             Row row = rowIterator.next();
 //            CellType cellType = row.getCell(mapClassColumn.get("MÃ_LỚP")).getCellType();
             Iterator<Cell> cellIterator = row.cellIterator();
-            if (cellIterator.next().getCellTypeEnum() != CellType.BLANK && cellIterator.next().getCellTypeEnum() !=CellType._NONE) {
+            if (cellIterator.next().getCellTypeEnum() != CellType.BLANK &&
+                cellIterator.next().getCellTypeEnum() != CellType._NONE) {
                 EduClass eduClass = new EduClass(
                     EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP"))),
                     EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP_KÈM"))),
@@ -120,7 +126,7 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
                 courses.add(eduCourse);
             }
         }
-        System.out.println("Size of course = "+ courses.size());
+        System.out.println("Size of course = " + courses.size());
 
         // Save in batches.
         saveClassesInBatch(classes);
@@ -128,6 +134,19 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
         saveCoursesInBatch(eduCourses);
 
         return new SimpleResponse(200, null, null);
+    }
+
+    public List<FindAndGroupClassesOM> getAllClassesOfCourses(Set<String> courseIds) {
+        MatchOperation match = Aggregation.match(new Criteria("courseId").in(courseIds));
+        GroupOperation group = Aggregation.group("courseId", "classType").push(Aggregation.ROOT).as("classes");
+        Aggregation aggregation = Aggregation.newAggregation(match, group);
+
+        List<FindAndGroupClassesOM> output = mongoTemplate.aggregate(
+            aggregation,
+            "class",
+            FindAndGroupClassesOM.class).getMappedResults();
+
+        return output;
     }
 
     /**
