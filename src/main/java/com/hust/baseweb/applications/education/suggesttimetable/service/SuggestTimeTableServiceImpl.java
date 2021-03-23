@@ -141,7 +141,8 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
         List<FindAndGroupClassesOM> groups = getAllClassesOfCourses(courseIds);
         // TODO by DATPD: index classes, use bidiMap of Apache-Commons-Collections
         ArrayList<short[]> conflictSet = genSetOfConflictClassPairs(groups);
-        TimetableGenerator generator = new TimetableGenerator(groups, null, conflictSet);
+        List<EduCourse> courses = courseRepo.findByIdIn(courseIds);
+        TimetableGenerator generator = new TimetableGenerator(groups, null, conflictSet, courses);
 
         return generator.generate();
     }

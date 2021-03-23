@@ -3,12 +3,14 @@ package com.hust.baseweb.applications.education.suggesttimetable.service;
 import com.google.ortools.Loader;
 import com.google.ortools.sat.*;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
+import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
 import com.hust.baseweb.applications.education.suggesttimetable.model.EduClassOM;
 import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGroupClassesOM;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.BidiMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +68,8 @@ public class TimetableGenerator {
 
     private final ArrayList<short[]> conflictSet;
 
+    private final List<EduCourse> courses;
+
     public List<List<EduClassOM>> generate() {
         Loader.loadNativeLibraries();
         // Create the model.
@@ -111,7 +115,13 @@ public class TimetableGenerator {
     private List<List<EduClassOM>> convertSolution(final List<long[]> solutions) {
         List<List<EduClassOM>> timetables = new ArrayList<>();
         short numGroups = (short) classGroups.size();
+        HashMap<String, String> courseName = new HashMap();
 
+        for (EduCourse course : courses) {
+            courseName.put(course.getId(), course.getName());
+        }
+
+        // Extract.
         for (long[] solution : solutions) {
             List<EduClassOM> timetable = new ArrayList<>();
 
@@ -141,7 +151,7 @@ public class TimetableGenerator {
                             clazz.getWeeks(),
                             clazz.getRoom(),
                             clazz.getClassType(),
-                            null))
+                            courseName.get(clazz.getCourseId())))
                         .collect(Collectors.toList());
 
                     timetable.addAll(classes);
