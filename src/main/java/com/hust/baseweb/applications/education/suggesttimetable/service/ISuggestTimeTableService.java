@@ -1,7 +1,7 @@
 package com.hust.baseweb.applications.education.suggesttimetable.service;
 
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
-import com.hust.baseweb.applications.education.suggesttimetable.model.TimetableOM;
+import com.hust.baseweb.applications.education.suggesttimetable.model.EduClassOM;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -12,5 +12,5 @@ public interface ISuggestTimeTableService {
 
     SimpleResponse uploadTimetable(MultipartFile file) throws IOException;
 
-    List<TimetableOM[]> getAllTimetablesOfCourses(final Set<String> courseIds);
+    List<List<EduClassOM>> getAllTimetablesOfCourses(final Set<String> courseIds);
 }

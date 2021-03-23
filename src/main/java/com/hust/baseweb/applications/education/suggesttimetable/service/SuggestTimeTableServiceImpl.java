@@ -3,12 +3,11 @@ package com.hust.baseweb.applications.education.suggesttimetable.service;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
+import com.hust.baseweb.applications.education.suggesttimetable.model.EduClassOM;
 import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGroupClassesOM;
-import com.hust.baseweb.applications.education.suggesttimetable.model.TimetableOM;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo;
 import lombok.AllArgsConstructor;
-import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -139,23 +138,16 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
     }
 
     @Override
-    public List<TimetableOM[]> getAllTimetablesOfCourses(final Set<String> courseIds) {
+    public List<List<EduClassOM>> getAllTimetablesOfCourses(final Set<String> courseIds) {
         List<FindAndGroupClassesOM> groups = getAllClassesOfCourses(courseIds);
         // TODO by DATPD: index classes, use bidiMap of Apache-Commons-Collections
-        ArrayList<int[]> conflictSet = genSetOfConflictClassPairs(groups);
-        return generateTimetables(groups, null, conflictSet);
+        ArrayList<short[]> conflictSet = genSetOfConflictClassPairs(groups);
+        TimetableGenerator generator = new TimetableGenerator(groups, null, conflictSet);
+
+        return generator.generate();
     }
 
-    private List<TimetableOM[]> generateTimetables(
-        final List<FindAndGroupClassesOM> classGroups,
-        BidiMap<Integer, Integer> classIndexMap,
-        ArrayList<int[]> conflictSet
-    ) {
-        // TODO: solve, implement by TUANLA
-        return null;
-    }
-
-    private ArrayList<int[]> genSetOfConflictClassPairs(final List<FindAndGroupClassesOM> classGroups) {
+    private ArrayList<short[]> genSetOfConflictClassPairs(final List<FindAndGroupClassesOM> classGroups) {
         // TODO: by DATPD
         return null;
     }
