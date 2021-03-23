@@ -1,8 +1,10 @@
 package com.hust.baseweb.applications.education.suggesttimetable.service;
 
+import com.hust.baseweb.applications.education.exception.CustomException;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
+import com.hust.baseweb.applications.education.suggesttimetable.enums.Error;
 import com.hust.baseweb.applications.education.suggesttimetable.model.EduClassOM;
 import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGroupClassesOM;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
@@ -31,6 +33,8 @@ import java.util.*;
 @Service
 @AllArgsConstructor(onConstructor_ = @Autowired)
 public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
+
+    public static LinkedHashMap<CustomException, Integer> errorLists = new LinkedHashMap<>();
 
     private final ICourseRepo courseRepo;
 
@@ -82,18 +86,18 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
         }
 
         // Extract data.
+        int j = 3;
         while (rowIterator.hasNext()) {
+            j = j + 1;
             Row row = rowIterator.next();
-//            CellType cellType = row.getCell(mapClassColumn.get("MÃ_LỚP")).getCellType();
-            Iterator<Cell> cellIterator = row.cellIterator();
-            if (cellIterator.next().getCellTypeEnum() != CellType.BLANK &&
-                cellIterator.next().getCellTypeEnum() != CellType._NONE) {
+            try {
+
                 EduClass eduClass = new EduClass(
                     EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP"))),
                     EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP_KÈM"))),
                     EduClass.normalizeStr(row.getCell(mapClassColumn.get("MÃ_HP"))),
                     EduClass.normalizeFisrt(row.getCell(mapClassColumn.get("KHỐI_LƯỢNG"))),
-                    EduClass.normalizeStr(row.getCell(mapClassColumn.get("GHI_CHÚ"))),
+                    EduClass.normalizeDefault(row.getCell(mapClassColumn.get("GHI_CHÚ"))),
                     EduClass.normalizeDayOfWeek(row.getCell(mapClassColumn.get("THỨ"))),
                     EduClass.normalizeBeforeTime(row.getCell(mapClassColumn.get("THỜI_GIAN"))),
                     EduClass.normalizeAfterTime(row.getCell(mapClassColumn.get("THỜI_GIAN"))),
@@ -103,38 +107,33 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
                     EduClass.normalizeBool(row.getCell(mapClassColumn.get("CẦN_TN"))),
                     EduClass.normalizeInt(row.getCell(mapClassColumn.get("SLĐK"))),
                     EduClass.normalizeInt(row.getCell(mapClassColumn.get("SL_MAX"))),
-                    EduClass.normalizeStr(row.getCell(mapClassColumn.get("TRẠNG_THÁI"))),
-                    EduClass.normalizeStr(row.getCell(mapClassColumn.get("LOẠI_LỚP"))),
-                    EduClass.normalizeStr(row.getCell(mapClassColumn.get("MÃ_QL")))
+                    EduClass.normalizeDefault(row.getCell(mapClassColumn.get("TRẠNG_THÁI"))),
+                    EduClass.normalizeDefault(row.getCell(mapClassColumn.get("LOẠI_LỚP"))),
+                    EduClass.normalizeDefault(row.getCell(mapClassColumn.get("MÃ_QL")))
                 );
                 classes.add(eduClass);
-
-
-
-
-            /*if (classes.size() == 100) {
-                classRepo.saveAll(classes);
-                classes = new ArrayList<>();
-            }*/
 
                 // Extract course.
                 EduCourse eduCourse = new EduCourse(
                     EduCourse.normalizeString(row.getCell(mapCourseColumn.get("MÃ_HP"))),
-                    EduCourse.normalizeString(row.getCell(mapCourseColumn.get("TÊN_HP"))),
-                    EduCourse.normalizeString(row.getCell(mapCourseColumn.get("TÊN_HP_TIẾNG_ANH"))),
-                    EduCourse.normalizeDept(row.getCell(mapCourseColumn.get("KHOA_VIỆN")))
-                );
+                    EduCourse.normalizeDefault(row.getCell(mapCourseColumn.get("TÊN_HP"))),
+                    EduCourse.normalizeDefault(row.getCell(mapCourseColumn.get("TÊN_HP_TIẾNG_ANH"))),
+                    EduCourse.normalizeDept(row.getCell(mapCourseColumn.get("KHOA_VIỆN"))));
                 courses.add(eduCourse);
+            } catch (CustomException e) {
+                errorLists.put(e, j);
             }
         }
-        System.out.println("Size of course = " + courses.size());
 
-        // Save in batches.
-        saveClassesInBatch(classes);
-        List<EduCourse> eduCourses = new ArrayList<>(courses);
-        saveCoursesInBatch(eduCourses);
-
-        return new SimpleResponse(200, null, null);
+        if (errorLists.size() > 0) {
+            return new SimpleResponse(200, null, Error.handleError(errorLists));
+        } else {
+            // Save in batches.
+            saveClassesInBatch(classes);
+            List<EduCourse> eduCourses = new ArrayList<>(courses);
+            saveCoursesInBatch(eduCourses);
+            return new SimpleResponse(200, null, null);
+        }
     }
 
     @Override

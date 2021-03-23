@@ -30,4 +30,14 @@ public class Normalizer {
     public static String normalizeStr(Cell cell) {
         return formatCell(cell).orElse(null);
     }
+
+    public static Optional<String> defaultString(Cell cell) {
+        DataFormatter formatter = new DataFormatter();
+        String value = formatter.formatCellValue(cell);
+        if (StringUtils.equalsIgnoreCase("NULL", value) || StringUtils.equals("", value)) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(value);
+    }
 }

@@ -71,4 +71,8 @@ public class EduCourse {
         String value = Normalizer.normalizeStr(cell);
         return value == null ? null : Department.of(value);
     }
+
+    public static String normalizeDefault(Cell cell) {
+        return Normalizer.defaultString(cell).orElse(null);
+    }
 }
