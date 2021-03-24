@@ -72,7 +72,7 @@ rs.add(“localhost:27019”)
 ### 3. Build project
 ### 3.1. Khởi động các dịch vụ (redis, mongo replica set)
 * Chạy file <b>redis-server.exe</b> trong thư mục [redis-2.4.5](https://drive.google.com/drive/folders/1WilP451UfPN33uM1RSUreCX9rJmVVbMK?usp=sharing)<b>\64bit</b> để khởi động redis
-* Chạy file [sscm.bat](https://drive.google.com/file/d/1D5ZRsY0S8-hAPjEZX6x2DwDrjZs7NqLQ/view?usp=sharing) để khởi động mongo replica set (lưu ý: nếu phiên bản MongoDB được cài đặt khác 4.2 thì cần thay thế tất cả 4.2 trong nội dung file này thành phiên bản đươc cài, ví dụ: 4.4)
+* Chạy file [openerp.bat](https://drive.google.com/file/d/1D5ZRsY0S8-hAPjEZX6x2DwDrjZs7NqLQ/view?usp=sharing) để khởi động mongo replica set (lưu ý: nếu phiên bản MongoDB được cài đặt khác 4.2 thì cần thay thế tất cả 4.2 trong nội dung file này thành phiên bản đươc cài, ví dụ: 4.4)
 ### 3.2. Cài đặt Google-ORTools
 Đối với hệ điều hành Windows:
 * Mở Git Bash tại thư mục project - <b>baseweb</b> (hoặc mở Git Bash tại thư mục khác và `cd` đến thư mục project)
