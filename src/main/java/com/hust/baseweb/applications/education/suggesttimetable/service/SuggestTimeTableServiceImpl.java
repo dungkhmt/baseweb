@@ -29,7 +29,7 @@ import java.util.*;
 @AllArgsConstructor
 public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
 
-    private LinkedHashMap<CustomExceptionExcel, Integer> errorLists = new LinkedHashMap<>();
+    private LinkedHashMap<CustomExceptionExcel, Integer> errorLists;
 
     private final ICourseRepo courseRepo;
 
@@ -119,7 +119,7 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
         }
 
         if (errorLists.size() > 0) {
-            LinkedHashMap<CustomExceptionExcel,Integer> copy = errorLists;
+            LinkedHashMap<CustomExceptionExcel, Integer> copy = errorLists;
             errorLists = new LinkedHashMap<>();
             return new SimpleResponse(200, null, ErrorExcel.handleError(copy));
         } else {
