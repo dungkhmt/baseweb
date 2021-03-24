@@ -1,23 +1,23 @@
 package com.hust.baseweb.applications.education.exception;
 
-import com.hust.baseweb.applications.education.suggesttimetable.enums.Error;
+import com.hust.baseweb.applications.education.suggesttimetable.enums.ErrorExcel;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomException extends Exception {
+public class CustomExceptionExcel extends Exception {
 
-    List<Error> listError = new ArrayList<>();
+    List<ErrorExcel> listError = new ArrayList<>();
 
-    public CustomException(List<Error> listError) {
+    public CustomExceptionExcel(List<ErrorExcel> listError) {
         this.listError = listError;
     }
 
     @Override
     public String getMessage() {
         String str = "";
-        for (Error exception : listError) {
+        for (ErrorExcel exception : listError) {
             str += exception.getDescription() + "\n";
         }
         str = StringUtils.chop(str);
@@ -25,7 +25,7 @@ public class CustomException extends Exception {
     }
 
 
-    public List<Error> getListError() {
+    public List<ErrorExcel> getListError() {
         return listError;
     }
 }

@@ -1,10 +1,10 @@
 package com.hust.baseweb.applications.education.suggesttimetable.service;
 
-import com.hust.baseweb.applications.education.exception.CustomException;
+import com.hust.baseweb.applications.education.exception.CustomExceptionExcel;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
-import com.hust.baseweb.applications.education.suggesttimetable.enums.Error;
+import com.hust.baseweb.applications.education.suggesttimetable.enums.ErrorExcel;
 import com.hust.baseweb.applications.education.suggesttimetable.model.EduClassOM;
 import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGroupClassesOM;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
@@ -34,13 +34,15 @@ import java.util.*;
 @AllArgsConstructor(onConstructor_ = @Autowired)
 public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
 
-    public static LinkedHashMap<CustomException, Integer> errorLists = new LinkedHashMap<>();
+    private LinkedHashMap<CustomExceptionExcel, Integer> errorLists = new LinkedHashMap<>();
 
     private final ICourseRepo courseRepo;
 
     private final IClassRepo classRepo;
 
     private final MongoTemplate mongoTemplate;
+
+
 
     @Override
     public SimpleResponse uploadTimetable(MultipartFile file) throws IOException {
@@ -96,7 +98,7 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
                     EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP"))),
                     EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP_KÈM"))),
                     EduClass.normalizeStr(row.getCell(mapClassColumn.get("MÃ_HP"))),
-                    EduClass.normalizeFisrt(row.getCell(mapClassColumn.get("KHỐI_LƯỢNG"))),
+                    EduClass.normalizeFist(row.getCell(mapClassColumn.get("KHỐI_LƯỢNG"))),
                     EduClass.normalizeDefault(row.getCell(mapClassColumn.get("GHI_CHÚ"))),
                     EduClass.normalizeDayOfWeek(row.getCell(mapClassColumn.get("THỨ"))),
                     EduClass.normalizeBeforeTime(row.getCell(mapClassColumn.get("THỜI_GIAN"))),
@@ -120,13 +122,15 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
                     EduCourse.normalizeDefault(row.getCell(mapCourseColumn.get("TÊN_HP_TIẾNG_ANH"))),
                     EduCourse.normalizeDept(row.getCell(mapCourseColumn.get("KHOA_VIỆN"))));
                 courses.add(eduCourse);
-            } catch (CustomException e) {
+            } catch (CustomExceptionExcel e) {
                 errorLists.put(e, j);
             }
         }
 
         if (errorLists.size() > 0) {
-            return new SimpleResponse(200, null, Error.handleError(errorLists));
+            LinkedHashMap<CustomExceptionExcel,Integer> copy = errorLists;
+            errorLists = new LinkedHashMap<>();
+            return new SimpleResponse(200, null, ErrorExcel.handleError(copy));
         } else {
             // Save in batches.
             saveClassesInBatch(classes);

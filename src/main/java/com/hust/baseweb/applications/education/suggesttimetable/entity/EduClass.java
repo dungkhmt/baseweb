@@ -1,7 +1,7 @@
 package com.hust.baseweb.applications.education.suggesttimetable.entity;
 
-import com.hust.baseweb.applications.education.exception.CustomException;
-import com.hust.baseweb.applications.education.suggesttimetable.enums.Error;
+import com.hust.baseweb.applications.education.exception.CustomExceptionExcel;
+import com.hust.baseweb.applications.education.suggesttimetable.enums.ErrorExcel;
 import com.hust.baseweb.applications.education.suggesttimetable.enums.Shift;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,7 +22,7 @@ import java.util.List;
 @Document(collection = "class")
 public class EduClass {
 
-    public List<Error> errorList = new ArrayList<>();
+    public List<ErrorExcel> errorList = new ArrayList<>();
 
     private final Integer classId;
 
@@ -76,15 +76,15 @@ public class EduClass {
         String status,
         String classType,
         String managementId
-    ) throws CustomException {
+    ) throws CustomExceptionExcel {
         if (classId == null) {
-            errorList.add(Error.classId_error);
+            errorList.add(ErrorExcel.classId_error);
         }
         if (courseId == null) {
-            errorList.add(Error.courseId_error);
+            errorList.add(ErrorExcel.courseId_error);
         }
         if (errorList.size() > 0) {
-            throw new CustomException(errorList);
+            throw new CustomExceptionExcel(errorList);
         }
         this.classId = classId;
         this.attachedClassId = attachedClassId;
@@ -124,10 +124,11 @@ public class EduClass {
 
     public static DayOfWeek normalizeDayOfWeek(Cell cell) {
         String value = Normalizer.normalizeStr(cell);
-        return value == null ? null : DayOfWeek.of(Integer.parseInt(value) - 1);
+        return value == null ? (Integer.parseInt(value) > 9 || Integer.parseInt(value) < 1)
+            ? null:DayOfWeek.of(Integer.parseInt(value) - 1): DayOfWeek.of(Integer.parseInt(value) - 1);
     }
 
-    public static Integer normalizeFisrt(Cell cell) {
+    public static Integer normalizeFist(Cell cell) {
         String value = Normalizer.normalizeStr(cell);
         return NumberUtils.toInt(StringUtils.substring(value, 0, 1));
     }
