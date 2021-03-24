@@ -16,13 +16,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.BulkOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.GroupOperation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +25,8 @@ import java.io.InputStream;
 import java.util.*;
 
 @Service
-@AllArgsConstructor(onConstructor_ = @Autowired)
+@Lazy
+@AllArgsConstructor
 public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
 
     public static LinkedHashMap<CustomException, Integer> errorLists = new LinkedHashMap<>();
@@ -39,8 +34,6 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
     private final ICourseRepo courseRepo;
 
     private final IClassRepo classRepo;
-
-    private final MongoTemplate mongoTemplate;
 
     @Override
     public SimpleResponse uploadTimetable(MultipartFile file) throws IOException {
@@ -129,16 +122,16 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
             return new SimpleResponse(200, null, Error.handleError(errorLists));
         } else {
             // Save in batches.
-            saveClassesInBatch(classes);
+            classRepo.insertClassesInBatch(classes);
             List<EduCourse> eduCourses = new ArrayList<>(courses);
-            saveCoursesInBatch(eduCourses);
+            courseRepo.insertCoursesInBatch(eduCourses);
             return new SimpleResponse(200, null, null);
         }
     }
 
     @Override
     public List<List<EduClassOM>> getAllTimetablesOfCourses(final Set<String> courseIds) {
-        List<FindAndGroupClassesOM> groups = getAllClassesOfCourses(courseIds);
+        List<FindAndGroupClassesOM> groups = classRepo.getAllClassesOfCourses(courseIds);
         // TODO by DATPD: index classes, use bidiMap of Apache-Commons-Collections
         ArrayList<short[]> conflictSet = genSetOfConflictClassPairs(groups);
         List<EduCourse> courses = courseRepo.findByIdIn(courseIds);
@@ -150,42 +143,5 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
     private ArrayList<short[]> genSetOfConflictClassPairs(final List<FindAndGroupClassesOM> classGroups) {
         // TODO: by DATPD
         return null;
-    }
-
-    private List<FindAndGroupClassesOM> getAllClassesOfCourses(Set<String> courseIds) {
-        MatchOperation match = Aggregation.match(new Criteria("courseId").in(courseIds));
-        GroupOperation group = Aggregation.group("courseId", "classType").push(Aggregation.ROOT).as("classes");
-        Aggregation aggregation = Aggregation.newAggregation(match, group);
-
-        List<FindAndGroupClassesOM> output = mongoTemplate.aggregate(
-            aggregation,
-            "class",
-            FindAndGroupClassesOM.class).getMappedResults();
-
-        return output;
-    }
-
-    /**
-     * Insert classes in batch.
-     *
-     * @param classes
-     */
-    private void saveClassesInBatch(List<EduClass> classes) {
-        mongoTemplate.dropCollection("class");
-        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "class");
-        bulkOperations.insert(classes);
-        bulkOperations.execute();
-    }
-
-    /**
-     * Insert courses in batch.
-     *
-     * @param courses
-     */
-    private void saveCoursesInBatch(List<EduCourse> courses) {
-        mongoTemplate.dropCollection("courses");
-        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "courses");
-        bulkOperations.insert(courses);
-        bulkOperations.execute();
     }
 }
