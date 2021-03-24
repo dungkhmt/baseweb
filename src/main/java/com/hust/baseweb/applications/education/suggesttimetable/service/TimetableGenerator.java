@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @author Le Anh Tuan
  */
 @AllArgsConstructor
-public class TimetableGenerator {
+final class TimetableGenerator {
 
     static class SolutionExtractor extends CpSolverSolutionCallback {
 
@@ -33,8 +33,8 @@ public class TimetableGenerator {
         private void printSolution() {
             System.out.printf("Solution #%d: time = %.02f s%n", solutions.size(), wallTime());
 
-            for (IntVar v : vars) {
-                System.out.printf("  %s = %d%n", v.getName(), value(v));
+            for (IntVar var : vars) {
+                System.out.printf("  %s = %d%n", var.getName(), value(var));
             }
         }
 
@@ -114,7 +114,7 @@ public class TimetableGenerator {
             courseName.put(course.getId(), course.getName());
         }
 
-        // Extract.
+        // Convert.
         for (long[] solution : solutions) {
             List<EduClassOM> timetable = new ArrayList<>();
 
