@@ -10,6 +10,8 @@ import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGro
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -135,14 +137,23 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
     public List<List<EduClassOM>> getAllTimetablesOfCourses(final Set<String> courseIds) {
         List<FindAndGroupClassesOM> groups = classRepo.getAllClassesOfCourses(courseIds);
         // TODO by DATPD: index classes, use bidiMap of Apache-Commons-Collections
-        ArrayList<short[]> conflictSet = genSetOfConflictClassPairs(groups);
+        BidiMap<Integer, Integer> classIndexMap = new DualHashBidiMap<>();
+        int i = 0;
+        for (FindAndGroupClassesOM group : groups) {
+            for (EduClass e : group.getClasses()) {
+                classIndexMap.put(e.getClassId(),i);
+                i++;
+            }
+        }
+        ArrayList<short[]> conflictSet = genSetOfConflictClassPairs(groups, classIndexMap);
         List<EduCourse> courses = courseRepo.findByIdIn(courseIds);
         TimetableGenerator generator = new TimetableGenerator(groups, null, conflictSet, courses);
 
         return generator.generate();
     }
 
-    private ArrayList<short[]> genSetOfConflictClassPairs(final List<FindAndGroupClassesOM> classGroups) {
+    private ArrayList<short[]> genSetOfConflictClassPairs(final List<FindAndGroupClassesOM> classGroups,
+                                                          BidiMap<Integer, Integer> classIndexMap) {
         // TODO: by DATPD
         return null;
     }
