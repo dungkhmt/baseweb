@@ -37,8 +37,9 @@ public class EduClassRepo implements IClassRepo {
      */
     @Override
     public void insertClassesInBatch(List<EduClass> classes) {
-        mongoTemplate.dropCollection("class");
-        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "class");
+        String collectionName = "class";
+        mongoTemplate.dropCollection(collectionName);
+        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, collectionName);
         bulkOperations.insert(classes);
         bulkOperations.execute();
     }
