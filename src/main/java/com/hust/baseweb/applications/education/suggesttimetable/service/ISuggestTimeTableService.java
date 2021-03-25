@@ -12,5 +12,5 @@ public interface ISuggestTimeTableService {
 
     SimpleResponse uploadTimetable(MultipartFile file) throws IOException;
 
-    List<List<EduClassOM>> getAllTimetablesOfCourses(final Set<String> courseIds);
+    List<List<EduClassOM>> getAllTimetablesOfCourses(final Set<String> courseIds) throws Exception;
 }

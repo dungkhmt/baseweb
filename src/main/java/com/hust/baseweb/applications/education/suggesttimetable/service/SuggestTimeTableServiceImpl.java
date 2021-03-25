@@ -10,8 +10,6 @@ import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGro
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo;
 import lombok.AllArgsConstructor;
-import org.apache.commons.collections4.BidiMap;
-import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -87,7 +85,7 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
             Row row = rowIterator.next();
             try {
 
-                EduClass eduClass = new EduClass(
+                EduClass clazz = new EduClass(
                     EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP"))),
                     EduClass.normalizeInt(row.getCell(mapClassColumn.get("MÃ_LỚP_KÈM"))),
                     EduClass.normalizeStr(row.getCell(mapClassColumn.get("MÃ_HP"))),
@@ -106,7 +104,8 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
                     EduClass.normalizeDefault(row.getCell(mapClassColumn.get("LOẠI_LỚP"))),
                     EduClass.normalizeDefault(row.getCell(mapClassColumn.get("MÃ_QL")))
                 );
-                classes.add(eduClass);
+
+                classes.add(clazz);
 
                 // Extract course.
                 EduCourse eduCourse = new EduCourse(
@@ -134,27 +133,26 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
     }
 
     @Override
-    public List<List<EduClassOM>> getAllTimetablesOfCourses(final Set<String> courseIds) {
-        List<FindAndGroupClassesOM> groups = classRepo.getAllClassesOfCourses(courseIds);
-        // TODO by DATPD: index classes, use bidiMap of Apache-Commons-Collections
-        BidiMap<Integer, Integer> classIndexMap = new DualHashBidiMap<>();
-        int i = 0;
-        for (FindAndGroupClassesOM group : groups) {
-            for (EduClass e : group.getClasses()) {
-                classIndexMap.put(e.getClassId(),i);
-                i++;
+    public List<List<EduClassOM>> getAllTimetablesOfCourses(final Set<String> courseIds) throws Exception {
+        List<FindAndGroupClassesOM> classGroups = classRepo.getAllClassesOfCourses(courseIds);
+
+        if (classGroups.size() < courseIds.size()) {
+            for (FindAndGroupClassesOM group : classGroups) {
+                String courseId = group.getCourseId();
+
+                if (courseIds.contains(courseId)) {
+                    courseIds.remove(courseId);
+                }
             }
+
+            throw new Exception("Học phần " +
+                                courseIds.toString() +
+                                " không được mở trong kỳ này hoặc thời khoá biểu chưa được cập nhật");
         }
-        ArrayList<short[]> conflictSet = genSetOfConflictClassPairs(groups, classIndexMap);
-        List<EduCourse> courses = courseRepo.findByIdIn(courseIds);
-        TimetableGenerator generator = new TimetableGenerator(groups, null, conflictSet, courses);
+
+        List<EduCourse> courses = courseRepo.findAllById(courseIds);
+        TimetableGenerator generator = new TimetableGenerator(classGroups, courses);
 
         return generator.generate();
-    }
-
-    private ArrayList<short[]> genSetOfConflictClassPairs(final List<FindAndGroupClassesOM> classGroups,
-                                                          BidiMap<Integer, Integer> classIndexMap) {
-        // TODO: by DATPD
-        return null;
     }
 }
