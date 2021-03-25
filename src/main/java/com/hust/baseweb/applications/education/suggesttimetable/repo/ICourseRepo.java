@@ -9,7 +9,7 @@ public interface ICourseRepo {
 
     void saveAll(List<EduCourse> eduCourses);
 
-    List<EduCourse> findByIdIn(Set<String> courseIds);
+    List<EduCourse> findAllById(Set<String> courseIds);
 
     void insertCoursesInBatch(List<EduCourse> courses);
 }

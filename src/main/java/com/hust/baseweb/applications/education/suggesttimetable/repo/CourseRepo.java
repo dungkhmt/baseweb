@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @AllArgsConstructor
@@ -23,14 +24,20 @@ public class CourseRepo implements ICourseRepo {
         courseRepo.saveAll(eduCourses);
     }
 
+    @Override
+    public List<EduCourse> findAllById(Set<String> courseIds) {
+        return (List<EduCourse>) courseRepo.findAllById(courseIds);
+    }
+
     /**
      * Drop collection and insert courses in batch.
      *
      * @param courses
      */
     public void insertCoursesInBatch(List<EduCourse> courses) {
-        mongoTemplate.dropCollection("courses");
-        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, "courses");
+        String collectionName = "course";
+        mongoTemplate.dropCollection(collectionName);
+        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, collectionName);
         bulkOperations.insert(courses);
         bulkOperations.execute();
     }
