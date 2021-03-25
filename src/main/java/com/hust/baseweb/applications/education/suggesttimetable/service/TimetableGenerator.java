@@ -6,18 +6,15 @@ import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
 import com.hust.baseweb.applications.education.suggesttimetable.model.EduClassOM;
 import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGroupClassesOM;
-import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * @author Le Anh Tuan
  */
-@AllArgsConstructor
 final class TimetableGenerator {
 
     static class SolutionExtractor extends CpSolverSolutionCallback {
@@ -50,65 +47,89 @@ final class TimetableGenerator {
 
         @Override
         public void onSolutionCallback() {
-            printSolution();
+//            printSolution();
             extractSolution();
         }
     }
 
     private final List<FindAndGroupClassesOM> classGroups;
 
-    private final BidiMap<Integer, Integer> classIndexMap;
-
-    private final ArrayList<short[]> conflictSet;
-
     private final List<EduCourse> courses;
 
-    public List<List<EduClassOM>> generate() {
-        Loader.loadNativeLibraries();
-        // Create the model.
-        CpModel model = new CpModel();
+    private BidiMap<Integer, Short> classDVarMap; // Map class id with index of decision var.
 
-        // Create the variables.
-        int numClasses = classIndexMap.size();
-        IntVar[] x = new IntVar[numClasses];
+    private short[] numClassOfGroup;
 
-        // Init.
-        for (short i = 0; i < numClasses; i++) {
-            x[i] = model.newIntVar(0, 1, "class " + i);
-        }
+    private ArrayList<short[]> conflictSet;
 
-        // Create the constraints.
-        // Constraint 1: Pick only one class in a group.
-        for (FindAndGroupClassesOM group : classGroups) {
-            List<EduClass> groupClasses = group.getClasses();
-            int size = groupClasses.size();
-            IntVar[] classes = new IntVar[size];
+    private boolean notGenerated = true;
 
-            for (short i = 0; i < size; i++) {
-                classes[i] = x[classIndexMap.get(groupClasses.get(i).getClassId())];
-            }
+    private List<List<EduClassOM>> timetables; // Solutions.
 
-            model.addEquality(LinearExpr.sum(classes), 1);
-        }
-
-        // Constraint 2: Overlapping classes.
-        for (short[] pair : conflictSet) {
-            model.addLessThan(LinearExpr.sum(new IntVar[]{x[pair[0]], x[pair[1]]}), 2);
-        }
-
-        // Create a solver and solve the model.
-        CpSolver solver = new CpSolver();
-        SolutionExtractor extractor = new SolutionExtractor(x);
-        solver.searchAllSolutions(model, extractor);
-
-        System.out.println(extractor.solutions.size() + " solutions found.");
-        return convertSolution(extractor.solutions);
+    public TimetableGenerator(List<FindAndGroupClassesOM> classGroups, List<EduCourse> courses) {
+        this.classGroups = classGroups;
+        this.courses = courses;
     }
 
-    private List<List<EduClassOM>> convertSolution(final List<long[]> solutions) {
-        List<List<EduClassOM>> timetables = new ArrayList<>();
-        short numGroups = (short) classGroups.size();
-        HashMap<String, String> courseName = new HashMap();
+    public List<List<EduClassOM>> generate() {
+        if (notGenerated) {
+            genSetOfConflictClassPairs();
+
+            // Modeling.
+            Loader.loadNativeLibraries();
+            // Create the model.
+            CpModel model = new CpModel();
+
+            // Create the variables.
+            int numClasses = classDVarMap.size();
+            IntVar[] x = new IntVar[numClasses];
+
+            // Init.
+            for (short i = 0; i < numClasses; i++) {
+                x[i] = model.newIntVar(0, 1, "class " + i);
+            }
+
+            // Create the constraints.
+            // Constraint 1: Pick only one class in a group.
+            short idx = 0;
+            for (short numClass : numClassOfGroup) {
+                if (numClass == 1) {
+                    model.addEquality(x[idx], 1);
+                    idx++;
+                } else {
+                    IntVar[] classes = new IntVar[numClass];
+
+                    for (short i = 0; i < numClass; i++) {
+                        classes[i] = x[idx];
+                        idx++;
+                    }
+
+                    model.addEquality(LinearExpr.sum(classes), 1);
+                }
+            }
+
+            // Constraint 2: Overlapping classes.
+            for (short[] pair : conflictSet) {
+                model.addLessThan(LinearExpr.sum(new IntVar[]{x[pair[0]], x[pair[1]]}), 2);
+            }
+
+            // Create a solver and solve the model.
+            CpSolver solver = new CpSolver();
+            SolutionExtractor extractor = new SolutionExtractor(x);
+            solver.searchAllSolutions(model, extractor);
+
+//            System.out.println(extractor.solutions.size() + " solutions found.");
+            convertSolution(extractor.solutions);
+            notGenerated = false;
+        }
+
+        return timetables;
+    }
+
+    private void convertSolution(final List<long[]> solutions) {
+        timetables = new ArrayList<>();
+        int numGroups = classGroups.size();
+        Map<String, String> courseName = new HashMap();
 
         for (EduCourse course : courses) {
             courseName.put(course.getId(), course.getName());
@@ -125,7 +146,7 @@ final class TimetableGenerator {
                 }
 
                 if (1 == solution[i]) {
-                    Integer classId = classIndexMap.getKey(i);
+                    Integer classId = classDVarMap.getKey(i);
 
                     List<EduClassOM> classes = classGroups
                         .get(currGroup)
@@ -154,7 +175,62 @@ final class TimetableGenerator {
 
             timetables.add(timetable);
         }
+    }
 
-        return timetables;
+    private void buildMap() {
+        classDVarMap = new DualHashBidiMap<>();
+        int size = classGroups.size();
+        numClassOfGroup = new short[size];
+        short idx = 0;
+
+        for (short i = 0; i < size; i++) {
+            HashSet<Integer> classIds = new HashSet<>();
+
+            for (EduClass clazz : classGroups.get(i).getClasses()) {
+                Integer classId = clazz.getClassId();
+
+                if (!classIds.contains(classId)) {
+                    classDVarMap.put(classId, idx);
+                    classIds.add(classId);
+                    idx++;
+                }
+            }
+
+            numClassOfGroup[i] = (short) classIds.size();
+        }
+
+//        System.out.println(classDVarMap.toString());
+    }
+
+    private void genSetOfConflictClassPairs() {
+        buildMap();
+
+        conflictSet = new ArrayList<>();
+        int numGroup = classGroups.size();
+
+        for (short i = 0; i < numGroup; i++) {
+            List<EduClass> firstGroupClasses = classGroups.get(i).getClasses();
+
+            for (int j = i + 1; j < numGroup; j++) {
+                List<EduClass> secondGroupClasses = classGroups.get(j).getClasses();
+
+                for (EduClass firstClass : firstGroupClasses) {
+                    for (EduClass secondClass : secondGroupClasses) {
+                        if (firstClass.overlap(secondClass)) {
+                            conflictSet.add(new short[]{
+                                classDVarMap.get(firstClass.getClassId()),
+                                classDVarMap.get(secondClass.getClassId())});
+                        }
+                    }
+                }
+            }
+        }
+
+//        for (short[] pair : conflictSet) {
+//            System.out.println();
+//            for (short clazz : pair) {
+//                System.out.print(clazz + ", ");
+//            }
+//        }
     }
 }
