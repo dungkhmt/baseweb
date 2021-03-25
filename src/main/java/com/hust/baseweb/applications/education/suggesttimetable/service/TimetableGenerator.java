@@ -5,7 +5,7 @@ import com.google.ortools.sat.*;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
 import com.hust.baseweb.applications.education.suggesttimetable.model.EduClassOM;
-import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGroupClassesOM;
+import com.hust.baseweb.applications.education.suggesttimetable.model.GroupClassesOM;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
@@ -52,7 +52,7 @@ final class TimetableGenerator {
         }
     }
 
-    private final List<FindAndGroupClassesOM> classGroups;
+    private final List<GroupClassesOM> classGroups;
 
     private final List<EduCourse> courses;
 
@@ -66,7 +66,7 @@ final class TimetableGenerator {
 
     private List<List<EduClassOM>> timetables; // Solutions.
 
-    public TimetableGenerator(List<FindAndGroupClassesOM> classGroups, List<EduCourse> courses) {
+    public TimetableGenerator(List<GroupClassesOM> classGroups, List<EduCourse> courses) {
         this.classGroups = classGroups;
         this.courses = courses;
     }

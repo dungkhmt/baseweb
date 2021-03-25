@@ -2,7 +2,7 @@ package com.hust.baseweb.applications.education.suggesttimetable.repo;
 
 
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
-import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGroupClassesOM;
+import com.hust.baseweb.applications.education.suggesttimetable.model.GroupClassesOM;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Delegate;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -45,11 +45,11 @@ public class EduClassRepo implements IClassRepo {
     }
 
     @Override
-    public List<FindAndGroupClassesOM> getAllClassesOfCourses(Set<String> courseIds) {
+    public List<GroupClassesOM> getAllClassesOfCourses(Set<String> courseIds) {
         MatchOperation match = Aggregation.match(new Criteria("courseId").in(courseIds));
         GroupOperation group = Aggregation.group("courseId", "classType").push(Aggregation.ROOT).as("classes");
         Aggregation aggregation = Aggregation.newAggregation(match, group);
 
-        return mongoTemplate.aggregate(aggregation, "class", FindAndGroupClassesOM.class).getMappedResults();
+        return mongoTemplate.aggregate(aggregation, "class", GroupClassesOM.class).getMappedResults();
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Getter
 @AllArgsConstructor
-public class FindAndGroupClassesOM {
+public class GroupClassesOM {
 
     private final String courseId;
 

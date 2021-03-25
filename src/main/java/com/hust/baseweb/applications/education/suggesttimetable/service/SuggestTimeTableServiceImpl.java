@@ -6,7 +6,7 @@ import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.applications.education.suggesttimetable.entity.EduCourse;
 import com.hust.baseweb.applications.education.suggesttimetable.enums.ErrorExcel;
 import com.hust.baseweb.applications.education.suggesttimetable.model.EduClassOM;
-import com.hust.baseweb.applications.education.suggesttimetable.model.FindAndGroupClassesOM;
+import com.hust.baseweb.applications.education.suggesttimetable.model.GroupClassesOM;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.IClassRepo;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.ICourseRepo;
 import lombok.AllArgsConstructor;
@@ -134,10 +134,10 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
 
     @Override
     public List<List<EduClassOM>> getAllTimetablesOfCourses(final Set<String> courseIds) throws Exception {
-        List<FindAndGroupClassesOM> classGroups = classRepo.getAllClassesOfCourses(courseIds);
+        List<GroupClassesOM> classGroups = classRepo.getAllClassesOfCourses(courseIds);
 
         if (classGroups.size() < courseIds.size()) {
-            for (FindAndGroupClassesOM group : classGroups) {
+            for (GroupClassesOM group : classGroups) {
                 String courseId = group.getCourseId();
 
                 if (courseIds.contains(courseId)) {
