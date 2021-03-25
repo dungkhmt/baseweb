@@ -25,7 +25,11 @@ public class SuggestTimetableController {
      */
     @GetMapping
     public ResponseEntity<?> getTimetables(@RequestParam Set<String> courseIds) {
-        return ResponseEntity.ok().body(timeTableService.getAllTimetablesOfCourses(courseIds));
+        try {
+            return ResponseEntity.ok().body(timeTableService.getAllTimetablesOfCourses(courseIds));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     /**
