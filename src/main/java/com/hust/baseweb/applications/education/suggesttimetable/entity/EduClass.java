@@ -14,6 +14,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigInteger;
+import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
 @Document(collection = "class")
 public class EduClass {
 
+    @Transient
     public List<ErrorExcel> errorList = new ArrayList<>();
 
     private final Integer classId;
@@ -45,6 +47,7 @@ public class EduClass {
     private final String weeks;
 
     private final String room;
+
     private final boolean needExperiment;
 
     private final Integer numRegistration;
@@ -52,8 +55,10 @@ public class EduClass {
     private final Integer maxQuantity;
 
     private final String status, classType, managementId;
+
     @Id
     private BigInteger id;
+
     @Transient
     @Getter(value = AccessLevel.NONE)
     private List<Integer> weeksList = null;
@@ -124,8 +129,12 @@ public class EduClass {
 
     public static DayOfWeek normalizeDayOfWeek(Cell cell) {
         String value = Normalizer.normalizeStr(cell);
-        return value == null ? (Integer.parseInt(value) > 9 || Integer.parseInt(value) < 1)
-            ? null:DayOfWeek.of(Integer.parseInt(value) - 1): DayOfWeek.of(Integer.parseInt(value) - 1);
+
+        try {
+            return DayOfWeek.of(Integer.parseInt(value) - 1);
+        } catch (NumberFormatException | DateTimeException e) {
+            return null;
+        }
     }
 
     public static Integer normalizeFist(Cell cell) {
@@ -148,22 +157,29 @@ public class EduClass {
     }
 
     private List<Integer> convertWeeksToList() {
-        // TODO by: datpd
+        String weeksStr = StringUtils.deleteWhitespace(this.weeks);
+
+        if (null == weeksStr) {
+            return null;
+        }
+
         List<Integer> weeksList = new ArrayList<>();
-        String s = StringUtils.deleteWhitespace(this.weeks);
-        String[] weeks = s.split("[,.]");
-        for (String w : weeks) {
-            if (!w.contains("-")) {
-                weeksList.add(Integer.parseInt(w));
-            } else {
-                String[] we = w.split("-");
-                int start = Integer.parseInt(we[0]);
-                int end = Integer.parseInt(we[1]);
-                for (int i = start; i <= end; i++) {
+        String[] weeks = weeksStr.split("[,.]");
+
+        for (String week : weeks) {
+            if (week.contains("-")) {
+                String[] range = week.split("-");
+                int fromWeek = Integer.parseInt(range[0]);
+                int toWeek = Integer.parseInt(range[1]);
+
+                for (int i = fromWeek; i <= toWeek; i++) {
                     weeksList.add(i);
                 }
+            } else {
+                weeksList.add(Integer.parseInt(week));
             }
         }
+
         return weeksList;
     }
 
@@ -176,41 +192,39 @@ public class EduClass {
     }
 
     /**
-     * Check the time overlap of 2 classes
+     * Check the overlapping of 2 classes.
      *
-     * @param eduClass
+     * @param clazz
      * @return {@code true} if 2 classes overlap, {@code false} if otherwise
      */
-    public boolean overlap(@Nullable EduClass eduClass) {
-        // TODO by: datpd
-        if (null == eduClass) {
-            return false;
-        }
-
-        if (this == eduClass) {
+    public boolean overlap(@Nullable EduClass clazz) {
+        if (this == clazz) {
             return true;
         }
-        if (this.endTime == null || this.startTime == null ||
-            eduClass.getStartTime() == null || eduClass.getEndTime() == null) {
+
+        if (clazz == null ||
+            this.startTime == null || clazz.getStartTime() == null ||
+            this.endTime == null || clazz.getEndTime() == null ||
+            this.getWeeksList() == null || clazz.getWeeksList() == null) {
+
             return false;
         }
 
-        if (this.endTime < eduClass.getStartTime() ||
-            this.startTime > eduClass.getEndTime()) { // Time does not overlap.
-            return false;
-        } else {
-            // Check common elements of 2 list of weeks
-            List<Integer> a = this.getWeeksList();
-            List<Integer> b = eduClass.getWeeksList();
-            int m = 0;
-            for (int i : a) {
-                for (int k = m; k < b.size(); k++) {
-                    if (b.get(k) == i) {
+        if (clazz.getStartTime() <= this.endTime && this.startTime <= clazz.getEndTime()) {
+            // Time overlaps, so consider day of week.
+            if (this.dayOfWeek.equals(clazz.dayOfWeek)) {
+                // Time and day of week overlap, so consider week by checking common elements of 2 list of weeks.
+                List<Integer> smallerWeeksList = this.getWeeksList();
+                List<Integer> biggerWeeksList = clazz.getWeeksList();
+
+                if (smallerWeeksList.size() > biggerWeeksList.size()) {
+                    smallerWeeksList = clazz.getWeeksList();
+                    biggerWeeksList = this.getWeeksList();
+                }
+
+                for (Integer week : biggerWeeksList) {
+                    if (smallerWeeksList.contains(week)) {
                         return true;
-                    }
-                    if (b.get(k) > i) {
-                        m = k;
-                        break;
                     }
                 }
             }
