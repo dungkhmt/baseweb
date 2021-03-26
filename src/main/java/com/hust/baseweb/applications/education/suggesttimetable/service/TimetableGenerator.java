@@ -21,10 +21,13 @@ final class TimetableGenerator {
 
         private final IntVar[] vars;
 
+        private final short solutionLimit;
+
         private final List<long[]> solutions = new ArrayList<>();
 
-        public SolutionExtractor(IntVar[] vars) {
+        public SolutionExtractor(IntVar[] vars, short limit) {
             this.vars = vars;
+            this.solutionLimit = limit;
         }
 
         private void printSolution() {
@@ -49,12 +52,18 @@ final class TimetableGenerator {
         public void onSolutionCallback() {
 //            printSolution();
             extractSolution();
+            if (solutions.size() >= solutionLimit) {
+//                System.out.printf("Stop search after %d solutions%n", solutionLimit);
+                stopSearch();
+            }
         }
     }
 
     private final List<GroupClassesOM> classGroups;
 
     private final List<EduCourse> courses;
+
+    private final short solutionLimit;
 
     private BidiMap<Integer, Short> classDVarMap; // Map class id with index of decision var.
 
@@ -66,9 +75,10 @@ final class TimetableGenerator {
 
     private List<List<EduClassOM>> timetables; // Solutions.
 
-    public TimetableGenerator(List<GroupClassesOM> classGroups, List<EduCourse> courses) {
+    public TimetableGenerator(List<GroupClassesOM> classGroups, List<EduCourse> courses, short solutionLimit) {
         this.classGroups = classGroups;
         this.courses = courses;
+        this.solutionLimit = solutionLimit;
     }
 
     public List<List<EduClassOM>> generate() {
@@ -115,10 +125,14 @@ final class TimetableGenerator {
 
             // Create a solver and solve the model.
             CpSolver solver = new CpSolver();
-            SolutionExtractor extractor = new SolutionExtractor(x);
+            SolutionExtractor extractor = new SolutionExtractor(x, solutionLimit);
             solver.searchAllSolutions(model, extractor);
 
 //            System.out.println(extractor.solutions.size() + " solutions found.");
+//            if (extractor.solutions.size() != this.solutionLimit) {
+//                throw new RuntimeException("Did not stop the search correctly.");
+//            }
+
             convertSolution(extractor.solutions);
             notGenerated = false;
         }
