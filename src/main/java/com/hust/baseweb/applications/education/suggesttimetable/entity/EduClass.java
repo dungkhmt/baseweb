@@ -63,6 +63,10 @@ public class EduClass {
     @Getter(value = AccessLevel.NONE)
     private List<Integer> weeksList = null;
 
+    @Transient
+    @Getter(value = AccessLevel.NONE)
+    private boolean anyMissTime = false;
+
     public EduClass(
         Integer classId,
         Integer attachedClassId,
@@ -108,6 +112,10 @@ public class EduClass {
         this.status = status;
         this.classType = classType;
         this.managementId = managementId;
+
+        if (this.startTime == null || this.endTime == null || this.dayOfWeek == null) {
+            this.anyMissTime = true;
+        }
     }
 
     public static Integer normalizeInt(Cell cell) {
@@ -202,11 +210,7 @@ public class EduClass {
             return true;
         }
 
-        if (clazz == null ||
-            this.startTime == null || clazz.getStartTime() == null ||
-            this.endTime == null || clazz.getEndTime() == null ||
-            this.getWeeksList() == null || clazz.getWeeksList() == null) {
-
+        if (clazz == null || this.anyMissTime == true || clazz.anyMissTime == true) {
             return false;
         }
 
@@ -217,14 +221,18 @@ public class EduClass {
                 List<Integer> smallerWeeksList = this.getWeeksList();
                 List<Integer> biggerWeeksList = clazz.getWeeksList();
 
-                if (smallerWeeksList.size() > biggerWeeksList.size()) {
-                    smallerWeeksList = clazz.getWeeksList();
-                    biggerWeeksList = this.getWeeksList();
-                }
+                if (smallerWeeksList == null || biggerWeeksList == null) {
+                    return false;
+                } else {
+                    if (smallerWeeksList.size() > biggerWeeksList.size()) {
+                        smallerWeeksList = clazz.getWeeksList();
+                        biggerWeeksList = this.getWeeksList();
+                    }
 
-                for (Integer week : biggerWeeksList) {
-                    if (smallerWeeksList.contains(week)) {
-                        return true;
+                    for (Integer week : biggerWeeksList) {
+                        if (smallerWeeksList.contains(week)) {
+                            return true;
+                        }
                     }
                 }
             }
