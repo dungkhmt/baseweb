@@ -2,7 +2,6 @@ package com.hust.baseweb.applications.education.classmanagement.service.storage;
 
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageFileNotFoundException;
-import com.hust.baseweb.applications.education.repo.AssignmentSubmissionRepo;
 import com.hust.baseweb.config.FileSystemStorageProperties;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
@@ -27,11 +26,8 @@ public class FileSystemStorageServiceImpl implements StorageService {
     private final String rootPath;
 
     @Autowired
-    AssignmentSubmissionRepo submissionRepo;
-
-    @Autowired
     public FileSystemStorageServiceImpl(FileSystemStorageProperties properties) {
-        rootPath = properties.getRootPath() + properties.getClassManagementDataPath();
+        rootPath = properties.getFilesystemRoot() + properties.getClassManagementDataPath();
         /*init(Paths.get(rootPath));*/
     }
 
