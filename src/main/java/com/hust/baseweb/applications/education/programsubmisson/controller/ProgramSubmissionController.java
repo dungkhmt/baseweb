@@ -3,7 +3,6 @@ package com.hust.baseweb.applications.education.programsubmisson.controller;
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.education.programsubmisson.entity.*;
 import com.hust.baseweb.applications.education.programsubmisson.model.*;
-import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProblemRepo;
 import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProblemTestRepo;
 import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProgramSubmissionRepo;
 import com.hust.baseweb.applications.education.programsubmisson.repo.ProgrammingContestUserRegistrationProblemRepo;
@@ -11,8 +10,8 @@ import com.hust.baseweb.applications.education.programsubmisson.service.ContestP
 import com.hust.baseweb.applications.education.programsubmisson.service.ContestProgramSubmissionService;
 import com.hust.baseweb.applications.education.programsubmisson.service.ProgrammingContestService;
 import com.hust.baseweb.applications.education.programsubmisson.utils.ContestResultChecker;
+import com.hust.baseweb.config.FileSystemStorageProperties;
 import com.hust.baseweb.entity.UserLogin;
-import com.hust.baseweb.framework.properties.UploadConfigProperties;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -45,15 +44,12 @@ public class ProgramSubmissionController {
     public static final String contestDir = "contests";
     public static final String defaultContest = "DEFAULT_CONTEST";
 
-
     @Autowired
-    UploadConfigProperties uploadConfigProperties;
+    FileSystemStorageProperties uploadConfigProperties;
     @Autowired
     private ContestProblemService contestProblemService;
     @Autowired
     private ContestProblemTestRepo contestProblemTestRepo;
-    @Autowired
-    private ContestProblemRepo contestProblemRepo;
     @Autowired
     private ContestProgramSubmissionRepo contestProgramSubmissionRepo;
     @Autowired
@@ -67,10 +63,14 @@ public class ProgramSubmissionController {
     private UserService userService;
 
     @PostMapping("search-program-submission")
-    ResponseEntity<?> searchProgramSubmission(Principal principal, @RequestBody SearchProgramSubmissionInputModel input){
+    ResponseEntity<?> searchProgramSubmission(
+        Principal principal,
+        @RequestBody SearchProgramSubmissionInputModel input
+    ) {
         List<ContestProgramSubmission> contestProgramSubmissions = contestProgramSubmissionService.search(input);
         return ResponseEntity.ok().body(contestProgramSubmissions);
     }
+
     @GetMapping("get-all-programming-contest-list")
     public ResponseEntity<?> getAllProgrammingContetList(Principal principal) {
         log.info("getAllProgrammingContetList START");
@@ -228,7 +228,7 @@ public class ProgramSubmissionController {
     }
 
     private String establishSubmissionContestUserProblemDir(String contestId, String userLoginId, String problemId) {
-        String rootDir = uploadConfigProperties.getRootPath() +
+        String rootDir = uploadConfigProperties.getFilesystemRoot() +
                          "/" +
                          uploadConfigProperties.getProgramSubmissionDataPath();
         String contestRootDir = rootDir + "/" + contestDir;
@@ -282,7 +282,6 @@ public class ProgramSubmissionController {
         String contestId = defaultContest;// this should be replaced by considered contest
 
         //public ResponseEntity<?> updateFile(Principal principal, @RequestParam("files") MultipartFile[] files) {
-        //UploadConfigProperties uploadProp = new UploadConfigProperties();
         System.out.println("::uploadProgram a program, inputJson = " +
                            inputJson +
                            " config dir  = " +
@@ -298,7 +297,7 @@ public class ProgramSubmissionController {
         List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemId(problemId);
         ContestProblem contestProblem = contestProblemService.findByProblemId(problemId);
         int nbTests = contestProblemTests.size();
-        String rootDir = uploadConfigProperties.getRootPath() +
+        String rootDir = uploadConfigProperties.getFilesystemRoot() +
                          "/" +
                          uploadConfigProperties.getProgramSubmissionDataPath();
         /*
@@ -645,7 +644,6 @@ public class ProgramSubmissionController {
         @RequestParam("file") MultipartFile file
     ) {
         //public ResponseEntity<?> updateFile(Principal principal, @RequestParam("files") MultipartFile[] files) {
-        //UploadConfigProperties uploadProp = new UploadConfigProperties();
         System.out.println("::submit a program, inputJson = " +
                            inputJson +
                            " config dir  = " +

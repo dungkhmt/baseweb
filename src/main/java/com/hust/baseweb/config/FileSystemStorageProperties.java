@@ -28,4 +28,7 @@ public class FileSystemStorageProperties {
 
     @NotBlank
     private String programSubmissionDataPath;
+
+    @NotBlank
+    private String backlogDataPath;
 }

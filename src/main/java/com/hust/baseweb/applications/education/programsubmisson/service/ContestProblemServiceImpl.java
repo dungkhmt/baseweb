@@ -7,7 +7,7 @@ import com.hust.baseweb.applications.education.programsubmisson.model.ContestPro
 import com.hust.baseweb.applications.education.programsubmisson.model.CreateContestProblemTestInputModel;
 import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProblemRepo;
 import com.hust.baseweb.applications.education.programsubmisson.repo.ContestProblemTestRepo;
-import com.hust.baseweb.framework.properties.UploadConfigProperties;
+import com.hust.baseweb.config.FileSystemStorageProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class ContestProblemServiceImpl implements ContestProblemService {
     private ContestProblemRepo contestProblemRepo;
     private ContestProblemTestRepo contestProblemTestRepo;
 
-    UploadConfigProperties uploadConfigProperties;
+    FileSystemStorageProperties uploadConfigProperties;
 
     @Override
     public ContestProblem findByProblemId(String problemId) {
@@ -36,7 +36,8 @@ public class ContestProblemServiceImpl implements ContestProblemService {
 
     @Override
     public ContestProblem save(ContestProblemInputModel input) {
-        String rootDir = uploadConfigProperties.getRootPath() + uploadConfigProperties.getProgramSubmissionDataPath();
+        String rootDir = uploadConfigProperties.getFilesystemRoot() +
+                         uploadConfigProperties.getProgramSubmissionDataPath();
         log.info("save, problemId = " + input.getProblemId() + " problemName = " + input.getProblemName()
         + " problem statement = " + input.getProblemStatement()) ;
         ContestProblem contestProblem = new ContestProblem();
@@ -91,8 +92,12 @@ public class ContestProblemServiceImpl implements ContestProblemService {
         MultipartFile[] files
     ) {
 
-        String rootDir = uploadConfigProperties.getRootPath() + "/" + uploadConfigProperties.getProgramSubmissionDataPath()
-                            +  "/" +   ProgramSubmissionController.problemDir;
+        String rootDir = uploadConfigProperties.getFilesystemRoot() +
+                         "/" +
+                         uploadConfigProperties.getProgramSubmissionDataPath()
+                         +
+                         "/" +
+                         ProgramSubmissionController.problemDir;
         File dir = new File(rootDir);
         if(!dir.exists()){
             dir.mkdir();
