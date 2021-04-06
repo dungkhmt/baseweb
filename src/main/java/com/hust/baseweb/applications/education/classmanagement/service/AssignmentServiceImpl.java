@@ -68,7 +68,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         this.submissionRepo = submissionRepo;
         this.classRepo = classRepo;
         this.storageService = storageService;
-        this.dataPath = properties.getRootPath() + properties.getClassManagementDataPath();
+        this.dataPath = properties.getFilesystemRoot() + properties.getClassManagementDataPath();
         this.redisTemplate = redisTemplate;
     }
 
