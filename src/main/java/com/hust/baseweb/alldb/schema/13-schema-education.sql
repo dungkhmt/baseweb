@@ -75,7 +75,28 @@ create TABLE public.edu_course (
 	CONSTRAINT pk_edu_course PRIMARY KEY (id)
 );
 
+create table public.edu_course_chapter(
+    chapter_id uuid not null default uuid_generate_v1(),
+    course_id varchar(10) not null,
+    chapter_name varchar(200) not null,
+	last_updated_stamp timestamp NULL,
+	created_stamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    constraint edu_course_chapter_pk primary key(chapter_id),
+    constraint edu_course_chapter_course_id foreign key(course_id) references edu_course(id)
+);
 
+create table public.edu_course_chapter_material(
+    edu_course_material_id uuid not null default uuid_generate_v1(),
+    chapter_id uuid not null,
+    edu_course_material_name varchar(200),
+    edu_course_material_type varchar(200),
+    source_id uuid ,
+	last_updated_stamp timestamp NULL,
+	created_stamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_edu_course_chapter_material primary key(edu_course_material_id),
+    constraint fk_edu_course_material_id_chapter_id foreign key(chapter_id) references edu_course_chapter(chapter_id)
+
+);
 
 -- Drop table
 
@@ -252,4 +273,16 @@ create table comments_edu_assignment(
      constraint pk_comment_id primary key(comment_id),
      constraint fk_comment_author_by_user_login_id foreign key(author_by_user_login_id) references user_login(user_login_id)
 
+);
+
+CREATE TABLE public.video (
+	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	original_name varchar(255) NULL,
+	created_date timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+	content_length int8 NOT NULL,
+	mime_type varchar(40) NULL,
+	last_modified_date timestamp(0) NULL,
+	"extension" varchar(20) NULL,
+	deleted bool NOT NULL DEFAULT false,
+	CONSTRAINT pk_video PRIMARY KEY (id)
 );

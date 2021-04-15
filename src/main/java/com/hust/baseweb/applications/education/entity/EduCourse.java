@@ -22,6 +22,7 @@ public class EduCourse {
     @Column(name="course_name")
     private String name;
 
+    @Column(name="credit")
     private short credit;
 
     @LastModifiedDate
