@@ -42,6 +42,13 @@ public class SessionConfig {
         return new RedisSessionRepository(redisTemplate);
     }
 
+    /**
+     * Customize Spring Session’s HttpSession integration to use HTTP headers X-Auth-Token
+     * to convey the current session information instead of cookies,
+     * <a href="https://docs.spring.io/spring-session/docs/current/reference/html5/guides/java-rest.html">reference</a>
+     *
+     * @return
+     */
     @Bean
     public HttpSessionIdResolver httpSessionIdResolver() {
         return HeaderHttpSessionIdResolver.xAuthToken();

@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.backlog.service.Storage;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.StorageService;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageFileNotFoundException;
+import com.hust.baseweb.config.FileSystemStorageProperties;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,8 @@ public class BacklogFileStorageServiceImpl implements StorageService {
     private final String rootPath;
 
     @Autowired
-    public BacklogFileStorageServiceImpl(BacklogStorageProperties properties) {
-        rootPath = properties.getRootPath() + properties.getBacklogDataPath();
+    public BacklogFileStorageServiceImpl(FileSystemStorageProperties properties) {
+        rootPath = properties.getFilesystemRoot() + properties.getBacklogDataPath();
     }
 
     @Override
@@ -59,7 +60,7 @@ public class BacklogFileStorageServiceImpl implements StorageService {
         }
 
         // Can throw IOExeption, e.g NoSuchFileException.
-        Files.copy(file.getInputStream(), path.resolve(savedName),StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(file.getInputStream(), path.resolve(savedName), StandardCopyOption.REPLACE_EXISTING);
     }
 
     @Override

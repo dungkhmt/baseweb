@@ -23,6 +23,9 @@ Khi đã sẵn sàng cho quá trình cài đặt project, thực hiện lần l�
 * Sau khi tạo xong Database, click chuột phải vào Database vừa tạo, chọn <b>restore</b>, một hộp thoại sẽ mở ra
 * Ở trường <b>Filename</b>, browse đến nơi tải xuống và chọn [file backup](https://drive.google.com/file/d/1GN1iLdSqfZSNO1LLeMpfl8q6PkXYmdFk/view?usp=sharing) (chú ý: chọn Format là <b>All Files</b> khi browse)
 * Ở trường <b>Role name</b>, chọn <b>postgres</b> (option nằm ở cuối), sau đó chọn <b>Restore</b>
+* Có thể backup và restore DB postgres bằng command line: 
+*       Backup: pg_dump.exe -U postgres -W -F p baseweb > D:\projects\baseweb\db\baseweb20210413
+*       Restore: psql.exe -U postgres -d baseweb -f D:\projects\baseweb\db\baseweb20210413
 ### 1.2. Cấu hình Mongo Replica Set
 Với `{version}` là phiên bản MongoDB được cài đặt, ví dụ: 4.2, thực hiện lần lượt các bước sau:
 * Click chuột phải vào thanh <b>Taskbar</b> → chọn <b>Task Manager</b> → chọn <b>Services</b> → tìm và click chuột phải vào <b>MongoDB</b> → chọn <b>Stop</b>
