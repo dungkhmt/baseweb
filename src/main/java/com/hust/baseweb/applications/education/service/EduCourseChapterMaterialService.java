@@ -10,5 +10,6 @@ import java.util.UUID;
 public interface EduCourseChapterMaterialService {
     public EduCourseChapterMaterial save(EduCourseChapterMaterialModelCreate eduCourseChapterMaterialModelCreate, Video video);
     public List<EduCourseChapterMaterial> findAll();
+    public List<EduCourseChapterMaterial> findAllByChapterId(UUID chapterId);
     public EduCourseChapterMaterial findById(UUID eduCourseChapterMaterialId);
 }

@@ -195,9 +195,10 @@ public class ClassController {
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
-    @GetMapping("/get-chapter-materials-of-course")
-    public ResponseEntity<?> getChapterMaterialsOfCourse(Principal principal){
-        List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialService.findAll();
+    @GetMapping("/get-chapter-materials-of-course/{chapterId}")
+    public ResponseEntity<?> getChapterMaterialsOfCourse(Principal principal, @PathVariable UUID chapterId){
+        //List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialService.findAll();
+        List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialService.findAllByChapterId(chapterId);
         return ResponseEntity.ok().body(eduCourseChapterMaterials);
     }
 

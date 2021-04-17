@@ -40,6 +40,14 @@ public class EduCourseChapterMaterialServiceImpl implements EduCourseChapterMate
     }
 
     @Override
+    public List<EduCourseChapterMaterial> findAllByChapterId(UUID chapterId) {
+        log.info("findAllByChapterId, chapterId = " + chapterId);
+        EduCourseChapter eduCourseChapter = eduCourseChapterRepo.findById(chapterId).orElse(null);
+        List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialRepo.findAllByEduCourseChapter(eduCourseChapter);
+        return eduCourseChapterMaterials;
+    }
+
+    @Override
     public EduCourseChapterMaterial findById(UUID eduCourseChapterMaterialId) {
         EduCourseChapterMaterial eduCourseChapterMaterial = eduCourseChapterMaterialRepo.findById(eduCourseChapterMaterialId).orElse(null);
         log.info("findById, sourceId = " + eduCourseChapterMaterial.getSourceId());
