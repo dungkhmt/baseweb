@@ -151,7 +151,7 @@ public class SuggestTimeTableServiceImpl implements ISuggestTimeTableService {
         }
 
         List<EduCourse> courses = courseRepo.findAllById(courseIds);
-        TimetableGenerator generator = new TimetableGenerator(classGroups, courses);
+        TimetableGenerator generator = new TimetableGenerator(classGroups, courses, (short) 1000);
 
         return generator.generate();
     }

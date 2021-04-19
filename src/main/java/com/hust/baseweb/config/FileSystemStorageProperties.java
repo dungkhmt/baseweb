@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @AllArgsConstructor
 @ConstructorBinding
-@ConfigurationProperties(prefix = "upload")
+@ConfigurationProperties(prefix = "content.fs")
 /**
  * Properties of this class are immutable.
  * @author Le Anh Tuan
@@ -18,11 +18,17 @@ import javax.validation.constraints.NotBlank;
 public class FileSystemStorageProperties {
 
     @NotBlank
-    private String rootPath;
+    private String filesystemRoot;
+
+    @NotBlank
+    private String videoPath;
 
     @NotBlank
     private String classManagementDataPath;
 
     @NotBlank
     private String programSubmissionDataPath;
+
+    @NotBlank
+    private String backlogDataPath;
 }

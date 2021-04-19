@@ -1,15 +1,13 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
+import com.google.gson.Gson;
 import com.hust.baseweb.applications.education.classmanagement.service.ClassServiceImpl;
-import com.hust.baseweb.applications.education.entity.EduClass;
-import com.hust.baseweb.applications.education.entity.EduCourse;
-import com.hust.baseweb.applications.education.entity.EduDepartment;
-import com.hust.baseweb.applications.education.entity.Semester;
+import com.hust.baseweb.applications.education.content.Video;
+import com.hust.baseweb.applications.education.content.VideoService;
+import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
-import com.hust.baseweb.applications.education.service.CourseService;
-import com.hust.baseweb.applications.education.service.EduDepartmentService;
-import com.hust.baseweb.applications.education.service.SemesterService;
+import com.hust.baseweb.applications.education.service.*;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
@@ -21,10 +19,13 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.xml.ws.Response;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,6 +41,9 @@ public class ClassController {
     private SemesterService semesterService;
     private UserService userService;
     private EduDepartmentService eduDepartmentService;
+    private EduCourseChapterService eduCourseChapterService;
+    private EduCourseChapterMaterialService eduCourseChapterMaterialService;
+    private VideoService videoService;
 
     @PostMapping
     public ResponseEntity<?> getClassesOfCurrSemester(
@@ -134,6 +138,70 @@ public class ClassController {
         log.info("getAllCourses, GOT " + courses.size());
         return ResponseEntity.ok().body(courses);
     }
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-chapters-of-course")
+    public ResponseEntity<?> getChaptersOfCourse(Principal principal){
+        log.info("getChaptersOfCourse start...");
+        List<EduCourseChapter> eduCourseChapters = eduCourseChapterService.findAll();
+        log.info("getChaptersOfCourse, GOT " + eduCourseChapters.size());
+        return ResponseEntity.ok().body(eduCourseChapters);
+    }
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/create-chapter-of-course")
+    public ResponseEntity<?> createChapterOfCourse(Principal principal, @RequestBody EduCourseChapterModelCreate eduCourseChapterModelCreate){
+        log.info("createChapterOfCourse, courseId = " + eduCourseChapterModelCreate.getCourseId() + " chapterName = " +
+                 eduCourseChapterModelCreate.getChapterName());
+        EduCourseChapter eduCourseChapter = eduCourseChapterService.save(eduCourseChapterModelCreate);
+        return ResponseEntity.ok().body(eduCourseChapter);
+    }
+    @GetMapping("/get-course-chapter-material-type-list")
+    public ResponseEntity<?> getCourseChapterMaterialTypeList(Principal principal){
+        log.info("getCourseChapterMaterialTypeList");
+        List<String> types = new ArrayList<>();
+        types.add(EduCourseChapterMaterial.EDU_COURSE_MATERIAL_TYPE_SLIDE);
+        types.add(EduCourseChapterMaterial.EDU_COURSE_MATERIAL_TYPE_VIDEO);
+        return ResponseEntity.ok().body(types);
+    }
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/create-chapter-material-of-course")
+    //public ResponseEntity<?> createChapterMaterialOfCourse(Principal principal, @RequestBody
+      //  EduCourseChapterMaterialModelCreate eduCourseChapterMaterialModelCreate){
+        public ResponseEntity<?> createChapterMaterialOfCourse(Principal principal, @RequestParam("inputJson") String inputJson,
+                                                               @RequestParam("files") MultipartFile[] files){
+        Gson gson = new Gson();
+        EduCourseChapterMaterialModelCreate eduCourseChapterMaterialModelCreate = gson.fromJson(inputJson, EduCourseChapterMaterialModelCreate.class);
+
+            log.info("createChapterMaterialOfCourse, chapterId = " + eduCourseChapterMaterialModelCreate.getChapterId()
+        + " materialName = " + eduCourseChapterMaterialModelCreate.getMaterialName() + " materialType = " +
+                 eduCourseChapterMaterialModelCreate.getMaterialType());
+        EduCourseChapterMaterial eduCourseChapterMaterial = null;
+            try {
+            Video video = videoService.create(files[0]);
+            log.info("createChapterMaterialOfCourse, videoId = " + video.getId());
+            eduCourseChapterMaterial = eduCourseChapterMaterialService.save(eduCourseChapterMaterialModelCreate,video);
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.ok().body(eduCourseChapterMaterial);
+    }
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-course-chapter-material-detail/{id}")
+    public ResponseEntity<?> getCourseChapterMaterialDetail(Principal principal, @PathVariable UUID id){
+        log.info("getCourseChapterMaterialDetail, id = " + id);
+        EduCourseChapterMaterial eduCourseChapterMaterial = eduCourseChapterMaterialService.findById(id);
+        return ResponseEntity.ok().body(eduCourseChapterMaterial);
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-chapter-materials-of-course/{chapterId}")
+    public ResponseEntity<?> getChapterMaterialsOfCourse(Principal principal, @PathVariable UUID chapterId){
+        //List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialService.findAll();
+        List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialService.findAllByChapterId(chapterId);
+        return ResponseEntity.ok().body(eduCourseChapterMaterials);
+    }
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-all-semesters")
     public ResponseEntity<?> getAllSemesters(Principal principal){

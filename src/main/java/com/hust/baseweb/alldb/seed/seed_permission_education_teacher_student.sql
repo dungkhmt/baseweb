@@ -40,6 +40,11 @@ VALUES ('MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER', 'MENU', NULL, 'EDUCATION_T
 
 insert into public.application
 (application_id, application_type_id, module_id, permission_id, description)
+VALUES ('MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER_VIEW_LIST_COURSE', 'MENU', 'MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER', 'EDUCATION_TEACHING_MANAGEMENT_TEACHER',
+'Menu teaching management for teachers: view list courses');
+
+insert into public.application
+(application_id, application_type_id, module_id, permission_id, description)
 VALUES ('MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER_VIEW_LIST_CLASS', 'MENU', 'MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER', 'EDUCATION_TEACHING_MANAGEMENT_TEACHER',
 'Menu teaching management for teachers: view list class');
 
