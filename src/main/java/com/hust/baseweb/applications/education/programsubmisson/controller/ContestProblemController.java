@@ -92,7 +92,6 @@ public class ContestProblemController {
         Gson gson = new Gson();
         ContestProblemInputModel contestProblemInputModel = gson.fromJson(inputJson,ContestProblemInputModel.class);
         ContestProblem contestProblem = contestProblemService.update(contestProblemInputModel);
-
         return ResponseEntity.ok().body(contestProblem);
     }
 
