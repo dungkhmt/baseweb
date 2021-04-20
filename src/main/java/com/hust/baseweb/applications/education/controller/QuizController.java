@@ -1,8 +1,11 @@
 package com.hust.baseweb.applications.education.controller;
 
+import com.hust.baseweb.applications.education.classmanagement.service.ClassServiceImpl;
+import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
 import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
+import com.hust.baseweb.applications.education.model.GetClassDetailOM;
 import com.hust.baseweb.applications.education.model.quiz.QuizChoiceAnswerCreateInputModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizChooseAnswerInputModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionCreateInputModel;
@@ -36,6 +39,8 @@ public class QuizController {
     private QuizChoiceAnswerService quizChoiceAnswerService;
     private QuizCourseTopicService quizCourseTopicService;
     private UserService userService;
+    private ClassServiceImpl classService;
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-all-quiz-course-topics")
     public ResponseEntity<?> getAllQuizCourseTopics(Principal principal){
@@ -73,6 +78,19 @@ public class QuizController {
         log.info("getAllQuizQuestions");
         List<QuizQuestion> quizQuestionList = quizQuestionService.findAll();
         return ResponseEntity.ok().body(quizQuestionList);
+    }
+    @GetMapping("/get-quiz-of-class/{classId}")
+    public ResponseEntity<?> getQuizOfClass(Principal principal, @PathVariable UUID classId){
+        GetClassDetailOM eduClass =  classService.getClassDetail(classId);
+        String courseId = eduClass.getCourseId();
+        log.info("getQuizOfClass, classId = " + classId + ", courseId = " + courseId);
+        List<QuizQuestion> quizQuestions = quizQuestionService.findQuizOfCourse(courseId);
+        List<QuizQuestionDetailModel> quizQuestionDetailModels = new ArrayList<>();
+        for(QuizQuestion q : quizQuestions){
+            QuizQuestionDetailModel quizQuestionDetailModel = quizQuestionService.findQuizDetail(q.getQuestionId());
+            quizQuestionDetailModels.add(quizQuestionDetailModel);
+        }
+        return ResponseEntity.ok().body(quizQuestionDetailModels);
     }
     @GetMapping("/get-quiz-of-course/{courseId}")
     public ResponseEntity<?> getQuizOfCourse(Principal principal, @PathVariable String courseId){
