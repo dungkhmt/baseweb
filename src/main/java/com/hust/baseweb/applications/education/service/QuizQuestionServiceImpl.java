@@ -64,6 +64,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         quizQuestionDetailModel.setLevelId(quizQuestion.getLevelId());
         quizQuestionDetailModel.setStatement(quizQuestion.getQuestionContent());
         quizQuestionDetailModel.setQuizCourseTopic(quizQuestion.getQuizCourseTopic());
+        quizQuestionDetailModel.setQuestionId(quizQuestion.getQuestionId());
 
         List<QuizChoiceAnswer> quizChoiceAnswers = quizChoiceAnswerRepo.findAllByQuizQuestion(quizQuestion);
         log.info("findQuizDetail, questionId = " + questionId + ", GOT quizChoideAnswers.sz = " + quizChoiceAnswers.size());
