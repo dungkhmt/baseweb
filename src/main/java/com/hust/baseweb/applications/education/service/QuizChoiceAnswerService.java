@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface QuizChoiceAnswerService {
-    public List<QuizChoiceAnswer> findAll();
-    public QuizChoiceAnswer save(QuizChoiceAnswerCreateInputModel input);
-    public List<QuizChoiceAnswer> findAllByQuizQuestionId(UUID quizQuestionId);
+
+    List<QuizChoiceAnswer> findAll();
+
+    QuizChoiceAnswer save(QuizChoiceAnswerCreateInputModel input);
+
+    List<QuizChoiceAnswer> findAllByQuizQuestionId(UUID quizQuestionId);
 }
