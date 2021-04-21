@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.education.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.util.UUID;
 
 @Getter
@@ -29,6 +30,4 @@ public class QuizQuestion {
 
     @Column(name = "question_content")
     private String questionContent;
-
-
 }
