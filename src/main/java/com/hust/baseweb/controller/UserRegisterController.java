@@ -2,6 +2,7 @@ package com.hust.baseweb.controller;
 
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.model.ApproveRegistrationIM;
+//import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.model.RegisterIM;
 import com.hust.baseweb.service.UserService;
 import org.springframework.http.ResponseEntity;
