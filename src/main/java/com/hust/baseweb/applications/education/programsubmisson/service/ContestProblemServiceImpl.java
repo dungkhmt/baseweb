@@ -72,6 +72,7 @@ public class ContestProblemServiceImpl implements ContestProblemService {
         contestProblem.setTimeLimit(input.getTimeLimit());
         contestProblem.setLevelId(input.getLevelId());
         contestProblem.setCategoryId(input.getCategoryId());
+        contestProblem.setProblemStatement(input.getProblemStatement());
         contestProblemRepo.save(contestProblem);
         return contestProblem;
     }

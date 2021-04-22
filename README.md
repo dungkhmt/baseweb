@@ -24,8 +24,12 @@ Khi đã sẵn sàng cho quá trình cài đặt project, thực hiện lần l�
 * Ở trường <b>Filename</b>, browse đến nơi tải xuống và chọn [file backup](https://drive.google.com/file/d/1GN1iLdSqfZSNO1LLeMpfl8q6PkXYmdFk/view?usp=sharing) (chú ý: chọn Format là <b>All Files</b> khi browse)
 * Ở trường <b>Role name</b>, chọn <b>postgres</b> (option nằm ở cuối), sau đó chọn <b>Restore</b>
 * Có thể backup và restore DB postgres bằng command line: 
-*       Backup: pg_dump.exe -U postgres -W -F p baseweb > D:\projects\baseweb\db\baseweb20210413
-*       Restore: psql.exe -U postgres -d baseweb -f D:\projects\baseweb\db\baseweb20210413
+```
+Backup: pg_dump.exe -U postgres -W -F p baseweb > "D:\projects\baseweb\db\baseweb20210413"
+```
+```
+Restore: psql.exe -U postgres -d baseweb -f "D:\projects\baseweb\db\baseweb20210413"
+```
 ### 1.2. Cấu hình Mongo Replica Set
 Với `{version}` là phiên bản MongoDB được cài đặt, ví dụ: 4.2, thực hiện lần lượt các bước sau:
 * Click chuột phải vào thanh <b>Taskbar</b> → chọn <b>Task Manager</b> → chọn <b>Services</b> → tìm và click chuột phải vào <b>MongoDB</b> → chọn <b>Stop</b>
@@ -71,7 +75,7 @@ rs.add(“localhost:27019”)
 ### 2. Cấu hình project
 * Import project vào <b>IntelliJ IDEA</b> hoặc <b>Eclipse</b> (optional, có thể không làm tại bước này)
 * Copy [file cấu hình](https://drive.google.com/file/d/1cxurrBoNn6cNgOx_Q9i22meYtMP02iJN/view?usp=sharing) vào thư mục: <b>src\main\resources</b>
-* Trong file cấu hình, điền mật khẩu và tên PostgreSQL Database được tạo ở 1.1 tương ứng cho các thuộc tính <b>SQL_DB_PASS</b> và <b>POSTGRES_DB</b>
+* Trong file cấu hình, điền mật khẩu và tên PostgreSQL Database được tạo ở 1.1 tương ứng cho các thuộc tính <b>SQL_DB_PASS</b> và <b>POSTGRES_DB</b>, điền đường dẫn đến thư mục project <b>baseweb</b> cho thuộc tính <b>filesystemRoot</b> (ví dụ: D:/openerp/baseweb/)
 ### 3. Build project
 ### 3.1. Khởi động các dịch vụ (redis, mongo replica set)
 * Chạy file <b>redis-server.exe</b> trong thư mục [redis-2.4.5](https://drive.google.com/drive/folders/1WilP451UfPN33uM1RSUreCX9rJmVVbMK?usp=sharing)<b>\64bit</b> để khởi động redis

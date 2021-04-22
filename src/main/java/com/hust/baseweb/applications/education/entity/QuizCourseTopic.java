@@ -10,15 +10,15 @@ import javax.persistence.*;
 @Entity
 @Table(name = "quiz_course_topic")
 public class QuizCourseTopic {
+
     @Id
-    @Column(name="quiz_course_topic_id")
+    @Column(name = "quiz_course_topic_id")
     private String quizCourseTopicId;
 
-    @Column(name="quiz_course_topic_name")
+    @Column(name = "quiz_course_topic_name")
     private String quizCourseTopicName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="course_id", referencedColumnName = "id")
+    @JoinColumn(name = "course_id", referencedColumnName = "id")
     private EduCourse eduCourse;
-
 }
