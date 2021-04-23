@@ -39,6 +39,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/roles")
             .permitAll()
             .antMatchers(HttpMethod.GET, "/videos/videos/*").permitAll()
+
+            //permission to access all static resources
+            .antMatchers("/resources/**").permitAll()
+            .antMatchers("/css/**").permitAll()
+            .antMatchers("/image/**").permitAll()
+            .antMatchers("/js/**").permitAll()
+
             .antMatchers("/edu/assignment/*/submissions")
             .permitAll()
             .antMatchers("/edu/class/**")

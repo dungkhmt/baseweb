@@ -24,6 +24,7 @@ public class QuizCourseTopicServiceImpl implements QuizCourseTopicService {
     public List<QuizCourseTopic> findAll() {
         return quizCourseTopicRepo.findAll();
     }
+
     public List<QuizCourseTopic> findByEduCourse_Id(String courseId) {
         return quizCourseTopicRepo.findByEduCourse_Id(courseId);
     }
@@ -34,13 +35,21 @@ public class QuizCourseTopicServiceImpl implements QuizCourseTopicService {
         quizCourseTopic.setQuizCourseTopicName(input.getQuizCourseTopicName());
         EduCourse eduCourse = eduCourseRepo.findById(input.getCourseId()).orElse(null);
         quizCourseTopic.setEduCourse(eduCourse);
-        QuizCourseTopic quizCourseTopicDuplicate = quizCourseTopicRepo.findById(quizCourseTopic.getQuizCourseTopicId()).orElse(null);
+        QuizCourseTopic quizCourseTopicDuplicate = quizCourseTopicRepo
+            .findById(quizCourseTopic.getQuizCourseTopicId())
+            .orElse(null);
         if (quizCourseTopicDuplicate == null) {
-            quizCourseTopic  = quizCourseTopicRepo.save(quizCourseTopic);
-        } else{
+            quizCourseTopic = quizCourseTopicRepo.save(quizCourseTopic);
+        } else {
             quizCourseTopic.setMessage("duplicate");
         }
 
         return quizCourseTopic;
+    }
+    
+    @Override
+    public List<QuizCourseTopic> findAllByEduCourse(String courseId) {
+        EduCourse eduCourse = eduCourseRepo.findById(courseId).orElse(null);
+        return quizCourseTopicRepo.findAllByEduCourse(eduCourse);
     }
 }

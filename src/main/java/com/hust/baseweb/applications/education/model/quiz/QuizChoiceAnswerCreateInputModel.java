@@ -8,7 +8,10 @@ import java.util.UUID;
 @Getter
 @Setter
 public class QuizChoiceAnswerCreateInputModel {
+
     private String choiceAnswerContent;
+
     private char isCorrectAnswer;
+
     private UUID quizQuestionId;
 }
