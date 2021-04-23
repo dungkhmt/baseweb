@@ -21,4 +21,7 @@ public class QuizCourseTopic {
     @JoinColumn(name="course_id", referencedColumnName = "id")
     private EduCourse eduCourse;
 
+    @Transient
+    private String message = "";
+
 }

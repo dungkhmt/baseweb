@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
 import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.model.quiz.QuizChoiceAnswerCreateInputModel;
+import com.hust.baseweb.applications.education.model.quiz.QuizCourseTopicCreateInputModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionCreateInputModel;
 import com.hust.baseweb.applications.education.service.QuizChoiceAnswerService;
 import com.hust.baseweb.applications.education.service.QuizCourseTopicService;
@@ -39,6 +40,24 @@ public class QuizController {
         List<QuizCourseTopic> quizCourseTopics = quizCourseTopicService.findAll();
         return ResponseEntity.ok().body(quizCourseTopics);
     }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-quiz-course-topics-of-course/{courseId}")
+    public ResponseEntity<?> getQuizCourseTopicsOfCourse(Principal principal, @PathVariable String courseId){
+        log.info("getQuizCourseTopicsOfCourse, courseId = " + courseId);
+        List<QuizCourseTopic> quizCourseTopics = quizCourseTopicService.findByEduCourse_Id(courseId);
+        return ResponseEntity.ok().body(quizCourseTopics);
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/create-quiz-course-topic")
+    public ResponseEntity<?> createQuizCourseTopic(Principal principal, @RequestBody
+        QuizCourseTopicCreateInputModel input){
+        log.info("createQuizCourseTopic, topicId = " + input.getQuizCourseTopicId());
+        QuizCourseTopic quizCourseTopic = quizCourseTopicService.save(input);
+        return ResponseEntity.ok().body(quizCourseTopic);
+    }
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-quiz-levels")
     public ResponseEntity<?> getQuizLevelList(Principal principal){
