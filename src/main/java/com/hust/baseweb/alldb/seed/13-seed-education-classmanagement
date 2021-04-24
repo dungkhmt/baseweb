@@ -59,6 +59,46 @@ insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name
 insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
 ('IT3011_HASHING','Bảng băm','IT3011');
 
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT4663_OVERVIEW','Tổng quan tối ưu tổ hợp','IT4663');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT4663_LINEAR_PROGRAMMING','Quy hoạch tuyến tính','IT4663');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT4663_CONSTRAINT_PROGRAMMING','Quy hoạch ràng buộc','IT4663');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT4663_HEURISTICS','Phương pháp heuristics','IT4663');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT4663_CBLS','Tìm kiếm cục bộ dựa trên ràng buộc','IT4663');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT4663_MODELLING','Mô hình hóa','IT4663');
+
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_OVERVIEW','Tổng quan TTUD','IT3170');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_LIBRARY','Thư viện','IT3170');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_DIVIDE_AND_CONQUER','Chia để trị','IT3170');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_GREEDY','Tham lam','IT3170');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_DYNAMIC_PROGRAMMING','Quy hoạch động','IT3170');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_GRAPH','Đồ thị','IT3170');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_DFS','Tìm kiếm theo chiều sâu','IT3170');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_BFS','Tìm kiếm theo chiều rộng','IT3170');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_STACK','Ngăn xếp','IT3170');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_QUEUE','Hàng đợi','IT3170');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_PRIORITY_QUEUE','Hàng đợi ưu tiên','IT3170');
+insert into public.quiz_course_topic(quiz_course_topic_id,quiz_course_topic_name,course_id) values
+('IT3170_DISJOINT_SET','Cấu trúc Disjoint Set','IT3170');
+
+
+
 
 -- public.edu_class
 INSERT INTO public.edu_class (id,code,semester_id,course_id,class_type,department_id,teacher_id,last_updated_stamp,created_stamp) VALUES
