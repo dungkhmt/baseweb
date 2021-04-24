@@ -21,4 +21,7 @@ public class QuizCourseTopic {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     private EduCourse eduCourse;
+
+    @Transient
+    private String message = "";
 }
