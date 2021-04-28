@@ -30,4 +30,7 @@ public class QuizQuestion {
 
     @Column(name = "question_content")
     private String questionContent;
+
+    @Column(name = "attachment")
+    private String attachment;
 }

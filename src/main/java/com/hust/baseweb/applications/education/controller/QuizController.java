@@ -1,5 +1,7 @@
 package com.hust.baseweb.applications.education.controller;
 
+import com.google.gson.Gson;
+import com.hust.baseweb.applications.backlog.service.Storage.BacklogFileStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.ClassService;
 import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
 import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -78,9 +82,19 @@ public class QuizController {
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping("/create-quiz-question")
-    public ResponseEntity<?> createQuizQuestion(Principal principal, @RequestBody QuizQuestionCreateInputModel input) {
+    public ResponseEntity<?> createQuizQuestion(
+        Principal principal, 
+        //@RequestBody QuizQuestionCreateInputModel input,
+        @RequestParam("QuizQuestionCreateInputModel") String json,
+        @RequestParam("files") MultipartFile[] files
+        ) {
+
+        Gson g = new Gson();
+        QuizQuestionCreateInputModel input = g.fromJson(json, QuizQuestionCreateInputModel.class);
+        
+        System.out.println("hehehehehehehe");
         log.info("createQuizQuestion, topicId = " + input.getQuizCourseTopicId());
-        QuizQuestion quizQuestion = quizQuestionService.save(input);
+        QuizQuestion quizQuestion = quizQuestionService.save(input, files);
         return ResponseEntity.ok().body(quizQuestion);
     }
 

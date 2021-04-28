@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.education.service;
 
+import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
 import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
 import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
@@ -8,11 +9,24 @@ import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailMode
 import com.hust.baseweb.applications.education.repo.QuizChoiceAnswerRepo;
 import com.hust.baseweb.applications.education.repo.QuizCourseTopicRepo;
 import com.hust.baseweb.applications.education.repo.QuizQuestionRepo;
+import com.hust.baseweb.config.FileSystemStorageProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,6 +40,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     private QuizCourseTopicService quizCourseTopicService;
     private QuizChoiceAnswerRepo quizChoiceAnswerRepo;
 
+    private FileSystemStorageProperties properties;
+
     @Override
     public QuizQuestion save(QuizQuestionCreateInputModel input) {
         QuizQuestion quizQuestion = new QuizQuestion();
@@ -34,6 +50,52 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         QuizCourseTopic quizCourseTopic = quizCourseTopicRepo.findById(input.getQuizCourseTopicId()).orElse(null);
 
         quizQuestion.setQuizCourseTopic(quizCourseTopic);
+
+        quizQuestion = quizQuestionRepo.save(quizQuestion);
+
+        return quizQuestion;
+    }
+
+    @Override
+    public QuizQuestion save(QuizQuestionCreateInputModel input, MultipartFile[] files) {
+        
+        //Do save file
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String prefixFileName = formatter.format(now);
+        ArrayList<String> attachmentPaths = new ArrayList<>();
+        Arrays.asList(files).forEach(file -> {
+            try {
+                Path path = Paths.get(properties.getFilesystemRoot() + properties.getClassManagementDataPath());
+                String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+                if (file.isEmpty()) {
+                    throw new StorageException("Failed to store empty file " + originalFileName);
+                }
+
+                if (originalFileName.contains("..")) {
+                    // This is a security check
+                    throw new StorageException(
+                        "Cannot store file with relative path outside current directory "
+                        + originalFileName);
+                }
+
+                // Can throw IOExeption, e.g NoSuchFileException.
+                Files.copy(file.getInputStream(), path.resolve(prefixFileName + "-" + originalFileName), StandardCopyOption.REPLACE_EXISTING);
+                attachmentPaths.add(prefixFileName + "-" + file.getOriginalFilename());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        //taskInput.setAttachmentPaths(attachmentPaths.toArray(new String[0]));
+        QuizQuestion quizQuestion = new QuizQuestion();
+        quizQuestion.setLevelId(input.getLevelId());
+        quizQuestion.setQuestionContent(input.getQuestionContent());
+        QuizCourseTopic quizCourseTopic = quizCourseTopicRepo.findById(input.getQuizCourseTopicId()).orElse(null);
+
+        quizQuestion.setQuizCourseTopic(quizCourseTopic);
+
+        quizQuestion.setAttachment(String.join(";", attachmentPaths.toArray(new String[0])));
 
         quizQuestion = quizQuestionRepo.save(quizQuestion);
 
