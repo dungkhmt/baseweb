@@ -20,5 +20,7 @@ public class QuizQuestionDetailModel {
 
     private String levelId;
 
+    private String statusId;
+
     List<QuizChoiceAnswer> quizChoiceAnswerList;
 }

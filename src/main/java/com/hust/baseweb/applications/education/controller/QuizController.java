@@ -8,6 +8,7 @@ import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.model.GetClassDetailOM;
 import com.hust.baseweb.applications.education.model.quiz.QuizChoiceAnswerCreateInputModel;
+import com.hust.baseweb.applications.education.model.quiz.QuizCourseTopicCreateInputModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizChooseAnswerInputModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionCreateInputModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
@@ -62,6 +63,23 @@ public class QuizController {
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-quiz-course-topics-of-course/{courseId}")
+    public ResponseEntity<?> getQuizCourseTopicsOfCourse(Principal principal, @PathVariable String courseId){
+        log.info("getQuizCourseTopicsOfCourse, courseId = " + courseId);
+        List<QuizCourseTopic> quizCourseTopics = quizCourseTopicService.findByEduCourse_Id(courseId);
+        return ResponseEntity.ok().body(quizCourseTopics);
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/create-quiz-course-topic")
+    public ResponseEntity<?> createQuizCourseTopic(Principal principal, @RequestBody
+        QuizCourseTopicCreateInputModel input){
+        log.info("createQuizCourseTopic, topicId = " + input.getQuizCourseTopicId());
+        QuizCourseTopic quizCourseTopic = quizCourseTopicService.save(input);
+        return ResponseEntity.ok().body(quizCourseTopic);
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-quiz-levels")
     public ResponseEntity<?> getQuizLevelList(Principal principal) {
         List<String> levels = new ArrayList<>();
@@ -104,7 +122,11 @@ public class QuizController {
         List<QuizQuestion> quizQuestionList = quizQuestionService.findAll();
         return ResponseEntity.ok().body(quizQuestionList);
     }
-
+    @GetMapping("/change-quiz-open-close-status/{questionId}")
+    public ResponseEntity<?> changeQuizOpenCloseStatus(Principal principal, @PathVariable UUID questionId){
+        QuizQuestion quizQuestion = quizQuestionService.changeOpenCloseStatus(questionId);
+        return ResponseEntity.ok().body(quizQuestion);
+    }
     @GetMapping("/get-quiz-of-class/{classId}")
     public ResponseEntity<?> getQuizOfClass(Principal principal, @PathVariable UUID classId) {
         GetClassDetailOM eduClass = classService.getClassDetail(classId);
@@ -118,12 +140,29 @@ public class QuizController {
         }
         return ResponseEntity.ok().body(quizQuestionDetailModels);
     }
+    @GetMapping("/get-published-quiz-of-class/{classId}")
+    public ResponseEntity<?> getPublishedQuizOfClass(Principal principal, @PathVariable UUID classId) {
+        GetClassDetailOM eduClass = classService.getClassDetail(classId);
+        String courseId = eduClass.getCourseId();
+        log.info("getPublishedQuizOfClass, classId = " + classId + ", courseId = " + courseId);
+        List<QuizQuestion> quizQuestions = quizQuestionService.findQuizOfCourse(courseId);
+        List<QuizQuestionDetailModel> quizQuestionDetailModels = new ArrayList<>();
+        for (QuizQuestion q : quizQuestions) {
+            if(q.getStatusId().equals(QuizQuestion.STATUS_PRIVATE)) continue;
+            QuizQuestionDetailModel quizQuestionDetailModel = quizQuestionService.findQuizDetail(q.getQuestionId());
+            quizQuestionDetailModels.add(quizQuestionDetailModel);
+        }
+        log.info("getPublishedQuizOfClass, classId = " + classId + ", courseId = " + courseId
+        + " RETURN list.sz = " + quizQuestionDetailModels.size());
+
+        return ResponseEntity.ok().body(quizQuestionDetailModels);
+    }
 
     @GetMapping("/get-quiz-of-course/{courseId}")
     public ResponseEntity<?> getQuizOfCourse(Principal principal, @PathVariable String courseId) {
         log.info("getQuizOfCourse, courseId = " + courseId);
-        //List<QuizQuestion> quizQuestions = quizQuestionService.findQuizOfCourse(courseId);
-        List<QuizQuestion> quizQuestions = quizQuestionService.findAll();
+        List<QuizQuestion> quizQuestions = quizQuestionService.findQuizOfCourse(courseId);
+        //List<QuizQuestion> quizQuestions = quizQuestionService.findAll();
         List<QuizQuestionDetailModel> quizQuestionDetailModels = new ArrayList<>();
         for (QuizQuestion quizQuestion : quizQuestions) {
             QuizQuestionDetailModel quizQuestionDetailModel = quizQuestionService.findQuizDetail(quizQuestion.getQuestionId());
@@ -171,19 +210,7 @@ public class QuizController {
         UserLogin userLogin = userService.findById(principal.getName());
         log.info("quizChooseAnswer, userLoginId = " + userLogin.getUserLoginId());
 
-        QuizQuestionDetailModel quizQuestionDetail = quizQuestionService.findQuizDetail(input.getQuestionId());
-        boolean ans = true;
-
-        List<UUID> correctAns = quizQuestionDetail
-            .getQuizChoiceAnswerList()
-            .stream()
-            .filter(answer -> answer.getIsCorrectAnswer() == 'Y')
-            .map(QuizChoiceAnswer::getChoiceAnswerId)
-            .collect(Collectors.toList());
-
-        if (!correctAns.containsAll(input.getChooseAnsIds())) {
-            ans = false;
-        }
+        boolean ans = quizQuestionService.checkAnswer(userLogin, input);
 
         return ResponseEntity.ok().body(ans);
     }
