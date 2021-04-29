@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Log4j2
 @Service
@@ -31,5 +32,23 @@ public class EduCourseChapterServiceImpl implements  EduCourseChapterService{
     @Override
     public List<EduCourseChapter> findAll() {
         return eduCourseChapterRepo.findAll();
+    }
+
+    @Override
+    public List<EduCourseChapter> findAllByCourseId(String courseId) {
+        EduCourse eduCourse = eduCourseRepo.findById(courseId).orElse(null);
+        return eduCourseChapterRepo.findAllByEduCourse(eduCourse);
+    }
+
+    @Override
+    public String changeOpenCloseChapterStatus(UUID chapterId) {
+        EduCourseChapter eduCourseChapter = eduCourseChapterRepo.findById(chapterId).orElse(null);
+        if(eduCourseChapter.getStatusId().equals(EduCourseChapter.STATUS_PRIVATE)){
+            eduCourseChapter.setStatusId(EduCourseChapter.STATUS_PUBLIC);
+        }else{
+            eduCourseChapter.setStatusId(EduCourseChapter.STATUS_PRIVATE);
+        }
+        eduCourseChapter = eduCourseChapterRepo.save(eduCourseChapter);
+        return eduCourseChapter.getStatusId();
     }
 }

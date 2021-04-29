@@ -79,6 +79,7 @@ create table public.edu_course_chapter(
     chapter_id uuid not null default uuid_generate_v1(),
     course_id varchar(10) not null,
     chapter_name varchar(200) not null,
+    status_id varchar(30),
 	last_updated_stamp timestamp NULL,
 	created_stamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     constraint edu_course_chapter_pk primary key(chapter_id),

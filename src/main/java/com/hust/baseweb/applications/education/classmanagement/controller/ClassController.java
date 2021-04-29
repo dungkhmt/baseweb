@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.education.content.VideoService;
 import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
+import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.service.*;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
@@ -43,6 +44,7 @@ public class ClassController {
     private EduDepartmentService eduDepartmentService;
     private EduCourseChapterService eduCourseChapterService;
     private EduCourseChapterMaterialService eduCourseChapterMaterialService;
+    private LogUserLoginCourseChapterMaterialService logUserLoginCourseChapterMaterialService;
     private VideoService videoService;
 
     @PostMapping
@@ -151,13 +153,26 @@ public class ClassController {
         return ResponseEntity.ok().body(courses);
     }
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
-    @GetMapping("/get-chapters-of-course")
-    public ResponseEntity<?> getChaptersOfCourse(Principal principal){
-        log.info("getChaptersOfCourse start...");
-        List<EduCourseChapter> eduCourseChapters = eduCourseChapterService.findAll();
+    @GetMapping("/get-chapters-of-course/{courseId}")
+    public ResponseEntity<?> getChaptersOfCourse(Principal principal, @PathVariable String courseId){
+        log.info("getChaptersOfCourse start... courseId = " + courseId);
+        //List<EduCourseChapter> eduCourseChapters = eduCourseChapterService.findAll();
+        List<EduCourseChapter> eduCourseChapters = eduCourseChapterService.findAllByCourseId(courseId);
         log.info("getChaptersOfCourse, GOT " + eduCourseChapters.size());
         return ResponseEntity.ok().body(eduCourseChapters);
     }
+    @GetMapping("/get-chapters-of-class/{classId}")
+    public ResponseEntity<?> getChaptersOfClass(Principal principal, @PathVariable UUID classId) {
+        GetClassDetailOM eduClass = classService.getClassDetail(classId);
+        String courseId = eduClass.getCourseId();
+
+        List<EduCourseChapter> eduCourseChapters = eduCourseChapterService.findAllByCourseId(courseId);
+        log.info("getChaptersOfClass, classId = " + classId + ", courseId = " + courseId
+        + " RETURN list.sz = " + eduCourseChapters.size());
+
+        return ResponseEntity.ok().body(eduCourseChapters);
+    }
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping("/create-chapter-of-course")
     public ResponseEntity<?> createChapterOfCourse(Principal principal, @RequestBody EduCourseChapterModelCreate eduCourseChapterModelCreate){
@@ -166,6 +181,13 @@ public class ClassController {
         EduCourseChapter eduCourseChapter = eduCourseChapterService.save(eduCourseChapterModelCreate);
         return ResponseEntity.ok().body(eduCourseChapter);
     }
+    @GetMapping("/change-chapter-status/{chapterId}")
+    public ResponseEntity<?> changeChapterStatus(Principal principal, @PathVariable UUID chapterId){
+        log.info("changeChapterStatus, chapterId = " + chapterId);
+        String statusId = eduCourseChapterService.changeOpenCloseChapterStatus(chapterId);
+        return ResponseEntity.ok().body(statusId);
+    }
+
     @GetMapping("/get-course-chapter-material-type-list")
     public ResponseEntity<?> getCourseChapterMaterialTypeList(Principal principal){
         log.info("getCourseChapterMaterialTypeList");
@@ -201,6 +223,9 @@ public class ClassController {
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-course-chapter-material-detail/{id}")
     public ResponseEntity<?> getCourseChapterMaterialDetail(Principal principal, @PathVariable UUID id){
+        log.info("getCourseChapterMaterialDetail, id = " + id);
+        UserLogin userLogin = userService.findById(principal.getName());
+        logUserLoginCourseChapterMaterialService.logUserLoginMaterial(userLogin,id);
         log.info("getCourseChapterMaterialDetail, id = " + id);
         EduCourseChapterMaterial eduCourseChapterMaterial = eduCourseChapterMaterialService.findById(id);
         return ResponseEntity.ok().body(eduCourseChapterMaterial);
