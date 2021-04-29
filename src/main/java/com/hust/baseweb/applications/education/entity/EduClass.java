@@ -47,4 +47,7 @@ public class EduClass {
 
     @CreatedDate
     private Date createdStamp;
+
+    @Transient
+    private String message = "";
 }

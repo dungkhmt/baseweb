@@ -45,6 +45,11 @@ public class ClassServiceImpl implements ClassService {
                  addClassModel.getClassCode());
 
         EduClass aClass = new EduClass();
+        EduClass dupClass = classRepo.findFirstByCode(Integer.valueOf(addClassModel.getClassCode())).orElse(null);
+        if (dupClass != null){
+            aClass.setMessage("duplicate");
+            return aClass;
+        }
         Semester semester = semesterRepo.findById(Short.valueOf(addClassModel.getSemesterId()));
 
         log.info("save, got semester " + semester.getName() + ", id = " + semester.getId());
@@ -224,6 +229,36 @@ public class ClassServiceImpl implements ClassService {
     @Transactional(readOnly = true)
     public List<GetAssigns4TeacherOM> getAssign4Teacher(UUID classId) {
         return classRepo.getAssignments4Teacher(classId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetAllStuAssignDetail4Teacher> getAllStuAssign4Teacher(UUID classId) {
+        List<GetAllStuAssignDetail4Teacher> getAllStuAssignDetail4TeacherList = new ArrayList<>();
+        List<GetAllStuAssigns4TeacherOM> getAllStuAssigns4TeacherList =  classRepo.getAllStudentAssignments4Teacher(classId);
+        String tempStudentId = "";
+        String tempAssignmentId = "";
+        for (GetAllStuAssigns4TeacherOM getAllStuAssigns4TeacherOM: getAllStuAssigns4TeacherList){
+            if (getAllStuAssigns4TeacherOM.getId().equals(tempStudentId)){
+                if (getAllStuAssigns4TeacherOM.getAssignmentId().equals(tempAssignmentId)){
+                }else{
+                    tempAssignmentId = getAllStuAssigns4TeacherOM.getAssignmentId();
+                    getAllStuAssignDetail4TeacherList.get(getAllStuAssignDetail4TeacherList.size()-1).addAssignment(getAllStuAssigns4TeacherOM);
+                }
+            }else{
+                tempStudentId = getAllStuAssigns4TeacherOM.getId();
+                tempAssignmentId = getAllStuAssigns4TeacherOM.getAssignmentId();
+                GetAllStuAssignDetail4Teacher getAllStuAssignDetail4Teacher = new GetAllStuAssignDetail4Teacher(getAllStuAssigns4TeacherOM);
+                getAllStuAssignDetail4TeacherList.add(getAllStuAssignDetail4Teacher);
+            }
+        }
+        return getAllStuAssignDetail4TeacherList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AssignmentSubmission> getAssignSubmit4Teacher(UUID classId) {
+        return classRepo.getAssignmentsSubmission4Teacher(classId);
     }
 
     @Override

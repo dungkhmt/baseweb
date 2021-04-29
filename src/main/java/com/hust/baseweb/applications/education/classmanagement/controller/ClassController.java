@@ -117,6 +117,18 @@ public class ClassController {
         return ResponseEntity.ok().body(classService.getAssign4Teacher(id));
     }
 
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/{id}/all-student-assignments/teacher")
+    public ResponseEntity<?> getAllStuAssignOfClass4Teacher(@PathVariable UUID id) {
+        return ResponseEntity.ok().body(classService.getAllStuAssign4Teacher(id));
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/{id}/assignmentsSubmission/teacher")
+    public ResponseEntity<?> getAssignSubmitOfClass4Teacher(@PathVariable UUID id) {
+        return ResponseEntity.ok().body(classService.getAssignSubmit4Teacher(id));
+    }
+
     @GetMapping("/{id}/assignments/student")
     public ResponseEntity<?> getAssignOfClass4Student(@PathVariable UUID id) {
         return ResponseEntity.ok().body(classService.getAssign4Student(id));
