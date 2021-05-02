@@ -101,7 +101,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         QuizCourseTopic quizCourseTopic = quizCourseTopicRepo.findById(input.getQuizCourseTopicId()).orElse(null);
 
         quizQuestion.setQuizCourseTopic(quizCourseTopic);
-
+        quizQuestion.setStatusId(QuizQuestion.STATUS_PRIVATE);
         quizQuestion.setAttachment(String.join(";", attachmentPaths.toArray(new String[0])));
 
         quizQuestion = quizQuestionRepo.save(quizQuestion);
@@ -139,6 +139,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         quizQuestionDetailModel.setQuizCourseTopic(quizQuestion.getQuizCourseTopic());
         quizQuestionDetailModel.setQuestionId(quizQuestion.getQuestionId());
         quizQuestionDetailModel.setStatusId(quizQuestion.getStatusId());
+        quizQuestionDetailModel.setCreatedStamp(quizQuestion.getCreatedStamp());
         List<QuizChoiceAnswer> quizChoiceAnswers = quizChoiceAnswerRepo.findAllByQuizQuestion(quizQuestion);
         log.info("findQuizDetail, questionId = " + questionId + ", GOT quizChoideAnswers.sz = " + quizChoiceAnswers.size());
 

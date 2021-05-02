@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -38,4 +39,7 @@ public class QuizQuestion {
     private String attachment;
     @Column(name = "status_id")
     private String statusId;
+
+    @Column(name= "created_stamp")
+    private Date createdStamp;
 }

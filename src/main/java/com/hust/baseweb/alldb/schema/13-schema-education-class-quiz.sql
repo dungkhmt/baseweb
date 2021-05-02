@@ -14,6 +14,7 @@ create table quiz_question(
     course_topic_id varchar(60),
     level_id varchar(50),
     question_content text,
+    attachment varchar(500),
     status_id varchar(30),
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

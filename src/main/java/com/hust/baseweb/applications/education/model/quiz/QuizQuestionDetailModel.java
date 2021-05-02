@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +22,8 @@ public class QuizQuestionDetailModel {
     private String levelId;
 
     private String statusId;
+
+    private Date createdStamp;
 
     List<QuizChoiceAnswer> quizChoiceAnswerList;
 }
