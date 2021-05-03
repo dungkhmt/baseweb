@@ -103,7 +103,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         quizQuestion.setQuizCourseTopic(quizCourseTopic);
         quizQuestion.setStatusId(QuizQuestion.STATUS_PRIVATE);
         quizQuestion.setAttachment(String.join(";", attachmentPaths.toArray(new String[0])));
-
+        quizQuestion.setCreatedStamp(new Date());
         quizQuestion = quizQuestionRepo.save(quizQuestion);
 
         return quizQuestion;
