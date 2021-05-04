@@ -55,10 +55,17 @@ create table log_user_login_quiz_question(
     constraint fk_log_user_login_quiz_question_question_id foreign key(question_id) references quiz_question(question_id)
 );
 
-create table edu_test(
+create table edu_quiz_test(
     test_id varchar(60),
-    test_name varchar(200)
-
+    test_name varchar(200),
+    schedule_datetime timestamp,
+    duration int,
+    course_id varchar(10),
+    status_id varchar(30),
+    created_by_user_login_id varchar(60),
+    constraint pk_edu_quiz_test_id primary key(test_id),
+    constraint fk_edu_quiz_test_created_by_user_login_id foreign key(created_by_user_login_id) references user_login(user_login_id),
+    constraint fk_edu_quiz_test_course_id foreign key(course_id) references edu_course(id)
 );
 
 create table edu_test_question(
