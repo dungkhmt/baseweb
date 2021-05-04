@@ -19,6 +19,7 @@ public class QuizQuestion {
 
     public static final String STATUS_PRIVATE = "STATUS_PRIVATE";
     public static final String STATUS_PUBLIC = "STATUS_PUBLIC";
+    public static final String STATUS_DELETE = "STATUS_DELETE";
 
     @Id
     @Column(name = "question_id")
