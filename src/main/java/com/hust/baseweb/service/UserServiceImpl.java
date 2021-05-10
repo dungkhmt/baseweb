@@ -379,4 +379,18 @@ public class UserServiceImpl implements UserService {
     public List<String> getGroupPermsByUserLoginId(String userLoginId){
         return userLoginRepo.findGroupPermsByUserLoginId(userLoginId);
     }
+
+    @Override
+    public PersonModel findPersonByUserLoginId(String userLoginId) {
+        UserLogin userLogin = userLoginRepo.findByUserLoginId(userLoginId);
+        Person person = personRepo.findByPartyId(userLogin.getParty().getPartyId());
+
+        PersonModel personModel = new PersonModel();
+        personModel.setFirstName(person.getFirstName());
+        personModel.setMiddleName(person.getMiddleName());
+        personModel.setLastName(person.getLastName());
+
+        return personModel;
+    }
+
 }
