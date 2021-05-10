@@ -5,9 +5,7 @@ import com.hust.baseweb.applications.education.entity.LogUserLoginQuizQuestion;
 import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
 import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
-import com.hust.baseweb.applications.education.model.quiz.QuizChooseAnswerInputModel;
-import com.hust.baseweb.applications.education.model.quiz.QuizQuestionCreateInputModel;
-import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
+import com.hust.baseweb.applications.education.model.quiz.*;
 import com.hust.baseweb.applications.education.repo.LogUserLoginQuizQuestionRepo;
 import com.hust.baseweb.applications.education.repo.QuizChoiceAnswerRepo;
 import com.hust.baseweb.applications.education.repo.QuizCourseTopicRepo;
@@ -18,6 +16,7 @@ import com.hust.baseweb.entity.UserLogin;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,7 +72,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         ArrayList<String> attachmentPaths = new ArrayList<>();
         Arrays.asList(files).forEach(file -> {
             try {
-                Path path = Paths.get(properties.getFilesystemRoot() + properties.getClassManagementDataPath());
+                Path path = Paths.get(properties.getFilesystemRoot()+"\\" + properties.getClassManagementDataPath());
                 String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
                 if (file.isEmpty()) {
@@ -183,5 +182,60 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             ans = false;
         }
         return ans;
+    }
+
+    @Override
+    public QuizQuestion findById(UUID questionId) {
+        return quizQuestionRepo.findById(questionId).orElse(null);
+    }
+
+    @Override
+    public QuizQuestion update(UUID questionId, QuizQuestionUpdateInputModel input, MultipartFile[] files){
+//        Date now = new Date();
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+//        String prefixFileName = formatter.format(now);
+//        ArrayList<String> attachmentPaths = new ArrayList<>();
+//        Arrays.asList(files).forEach(file -> {
+//            try {
+//                Path path = Paths.get(properties.getFilesystemRoot() +"\\"+ properties.getClassManagementDataPath());
+//                String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+//
+//                if (file.isEmpty()) {
+//                    throw new StorageException("Failed to store empty file " + originalFileName);
+//                }
+//
+//                if (originalFileName.contains("..")) {
+//                    // This is a security check
+//                    throw new StorageException(
+//                        "Cannot store file with relative path outside current directory "
+//                        + originalFileName);
+//                }
+//
+//                // Can throw IOExeption, e.g NoSuchFileException.
+//                Files.copy(file.getInputStream(), path.resolve(prefixFileName + "-" + originalFileName), StandardCopyOption.REPLACE_EXISTING);
+//                attachmentPaths.add(prefixFileName + "-" + file.getOriginalFilename());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+        //taskInput.setAttachmentPaths(attachmentPaths.toArray(new String[0]));
+        QuizQuestion quizQuestionTemp = quizQuestionRepo.findById(questionId).orElse(null);
+        if (quizQuestionTemp == null)
+            return null;
+        QuizQuestion quizQuestion = new QuizQuestion();
+        quizQuestion.setQuestionId(questionId);
+        quizQuestion.setLevelId(input.getLevelId());
+        quizQuestion.setQuestionContent(input.getQuestionContent());
+        QuizCourseTopic quizCourseTopic = quizCourseTopicRepo.findById(input.getQuizCourseTopicId()).orElse(null);
+        if (quizCourseTopic == null)
+            return null;
+        quizQuestion.setQuizCourseTopic(quizCourseTopic);
+//        quizQuestion.setAttachment(String.join(";", attachmentPaths.toArray(new String[0])));
+        quizQuestion.setLastUpdatedStamp(new Date());
+        quizQuestion.setCreatedStamp(quizQuestionTemp.getCreatedStamp());
+        quizQuestion.setStatusId(quizQuestionTemp.getStatusId());
+        quizQuestion = quizQuestionRepo.save(quizQuestion);
+
+        return quizQuestion;
     }
 }

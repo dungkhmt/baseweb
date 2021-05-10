@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,11 +39,48 @@ public class QuizChoiceAnswerServiceImpl implements QuizChoiceAnswerService {
     }
 
     @Override
+    public QuizChoiceAnswer update(UUID choiceAnswerId, QuizChoiceAnswerCreateInputModel input) {
+        QuizChoiceAnswer quizChoiceAnswerTemp = quizChoiceAnswerRepo.findById(choiceAnswerId).orElse(null);
+        if (quizChoiceAnswerTemp == null)
+            return null;
+        QuizChoiceAnswer quizChoiceAnswer = new QuizChoiceAnswer();
+        quizChoiceAnswer.setChoiceAnswerId(choiceAnswerId);
+        quizChoiceAnswer.setChoiceAnswerContent(input.getChoiceAnswerContent());
+        quizChoiceAnswer.setIsCorrectAnswer(input.getIsCorrectAnswer());
+        quizChoiceAnswer.setLastUpdatedStamp(new Date());
+        quizChoiceAnswer.setCreatedStamp(quizChoiceAnswerTemp.getCreatedStamp());
+        QuizQuestion quizQuestion = quizQuestionRepo.findById(input.getQuizQuestionId()).orElse(null);
+        if (quizQuestion == null)
+            return null;
+        quizChoiceAnswer.setQuizQuestion(quizQuestion);
+
+        quizChoiceAnswer  = quizChoiceAnswerRepo.save(quizChoiceAnswer);
+
+        return quizChoiceAnswer;
+    }
+
+    @Override
     public List<QuizChoiceAnswer> findAllByQuizQuestionId(UUID quizQuestionId) {
         log.info("findAllByQuizQuestionId, quizQuestionId = " + quizQuestionId);
 
         QuizQuestion quizQuestion = quizQuestionRepo.findById(quizQuestionId).orElse(null);
         List<QuizChoiceAnswer> quizChoiceAnswers = quizChoiceAnswerRepo.findAllByQuizQuestion(quizQuestion);
         return quizChoiceAnswers;
+    }
+
+    @Override
+    public QuizChoiceAnswer findById(UUID choiceAnswerid) {
+        log.info("findChoiceAnswerId, choiceAnswerId = " + choiceAnswerid);
+
+        QuizChoiceAnswer quizChoiceAnswer = quizChoiceAnswerRepo.findById(choiceAnswerid).orElse(null);
+        return quizChoiceAnswer;
+    }
+
+    @Override
+    public QuizChoiceAnswer delete(UUID choiceAnswerid) {
+        log.info("deleteChoiceAnswerId, choiceAnswerId = " + choiceAnswerid);
+        QuizChoiceAnswer quizChoiceAnswer = quizChoiceAnswerRepo.findById(choiceAnswerid).orElse(null);
+        quizChoiceAnswerRepo.deleteById(choiceAnswerid);
+        return quizChoiceAnswer;
     }
 }

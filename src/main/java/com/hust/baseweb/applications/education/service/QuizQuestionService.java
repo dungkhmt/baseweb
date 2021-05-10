@@ -1,9 +1,7 @@
 package com.hust.baseweb.applications.education.service;
 
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
-import com.hust.baseweb.applications.education.model.quiz.QuizChooseAnswerInputModel;
-import com.hust.baseweb.applications.education.model.quiz.QuizQuestionCreateInputModel;
-import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
+import com.hust.baseweb.applications.education.model.quiz.*;
 import com.hust.baseweb.entity.UserLogin;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -21,4 +19,8 @@ public interface QuizQuestionService {
     public QuizQuestion changeOpenCloseStatus(UUID questionId);
 
     public boolean checkAnswer(UserLogin userLogin, QuizChooseAnswerInputModel quizChooseAnswerInputModel);
+
+    public QuizQuestion findById(UUID questionId);
+
+    public QuizQuestion update(UUID questionId, QuizQuestionUpdateInputModel input, MultipartFile[] files);
 }

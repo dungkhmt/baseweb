@@ -1,17 +1,12 @@
 package com.hust.baseweb.applications.education.controller;
 
 import com.google.gson.Gson;
-import com.hust.baseweb.applications.backlog.service.Storage.BacklogFileStorageServiceImpl;
 import com.hust.baseweb.applications.education.classmanagement.service.ClassService;
 import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
 import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.model.GetClassDetailOM;
-import com.hust.baseweb.applications.education.model.quiz.QuizChoiceAnswerCreateInputModel;
-import com.hust.baseweb.applications.education.model.quiz.QuizCourseTopicCreateInputModel;
-import com.hust.baseweb.applications.education.model.quiz.QuizChooseAnswerInputModel;
-import com.hust.baseweb.applications.education.model.quiz.QuizQuestionCreateInputModel;
-import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
+import com.hust.baseweb.applications.education.model.quiz.*;
 import com.hust.baseweb.applications.education.service.QuizChoiceAnswerService;
 import com.hust.baseweb.applications.education.service.QuizCourseTopicService;
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
@@ -20,22 +15,18 @@ import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Log4j2
 @Controller
@@ -60,6 +51,31 @@ public class QuizController {
         log.info("getAllQuizCourseTopics");
         List<QuizCourseTopic> quizCourseTopics = quizCourseTopicService.findAll();
         return ResponseEntity.ok().body(quizCourseTopics);
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/edu/teacher/course/quiz/detail/{questionId}")
+    public ResponseEntity<?> getAllQuizCourseTopics(Principal principal, @PathVariable UUID questionId) {
+        log.info("getQuizQuestion"+ questionId);
+        QuizQuestion quizQuestion = quizQuestionService.findById(questionId);
+        return ResponseEntity.ok().body(quizQuestion);
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/update-quiz-question/{questionId}")
+    public ResponseEntity<?> updateQuizQuestion(
+        Principal principal,
+        //@RequestBody QuizQuestionCreateInputModel input,
+        @PathVariable UUID questionId,
+        @RequestParam("QuizQuestionUpdateInputModel") String json,
+        @RequestParam("files") MultipartFile[] files
+    ) {
+
+        Gson g = new Gson();
+        QuizQuestionUpdateInputModel input = g.fromJson(json, QuizQuestionUpdateInputModel.class);
+        log.info("updateQuizQuestion, topicId = " + input.getQuizCourseTopicId());
+        QuizQuestion quizQuestion = quizQuestionService.update(questionId, input, files);
+        return ResponseEntity.ok().body(quizQuestion);
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
@@ -182,6 +198,40 @@ public class QuizController {
                  " content = " +
                  input.getChoiceAnswerContent());
         QuizChoiceAnswer quizChoiceAnswer = quizChoiceAnswerService.save(input);
+        return ResponseEntity.ok().body(quizChoiceAnswer);
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/update-quiz-choice-answer/{choiceAnswerId}")
+    public ResponseEntity<?> createQuizChoiceAnswer(
+        Principal principal,
+        @PathVariable UUID choiceAnswerId,
+        @RequestBody QuizChoiceAnswerCreateInputModel input
+    ) {
+        log.info("updateQuizChoiceAnswer " + choiceAnswerId);
+        QuizChoiceAnswer quizChoiceAnswer = quizChoiceAnswerService.update(choiceAnswerId, input);
+        return ResponseEntity.ok().body(quizChoiceAnswer);
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @DeleteMapping("/delete-quiz-choice-answer/{choiceAnswerId}")
+    public ResponseEntity<?> deleteQuizChoiceAnswer(
+        Principal principal,
+        @PathVariable UUID choiceAnswerId
+    ) {
+        log.info("deleteQuizChoiceAnswer " + choiceAnswerId);
+        QuizChoiceAnswer quizChoiceAnswer = quizChoiceAnswerService.delete(choiceAnswerId);
+        return ResponseEntity.ok().body(quizChoiceAnswer);
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-quiz-choice-answer-detail/{choiceAnswerId}")
+    public ResponseEntity<?> createQuizChoiceAnswer(
+        Principal principal,
+        @PathVariable UUID choiceAnswerId
+    ) {
+        log.info("get quiz choice answer detail " + choiceAnswerId);
+        QuizChoiceAnswer quizChoiceAnswer = quizChoiceAnswerService.findById(choiceAnswerId);
         return ResponseEntity.ok().body(quizChoiceAnswer);
     }
 

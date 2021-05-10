@@ -13,4 +13,10 @@ public interface QuizChoiceAnswerService {
     QuizChoiceAnswer save(QuizChoiceAnswerCreateInputModel input);
 
     List<QuizChoiceAnswer> findAllByQuizQuestionId(UUID quizQuestionId);
+
+    QuizChoiceAnswer findById(UUID choiceAnswerId);
+
+    QuizChoiceAnswer update(UUID choiceAnswerId, QuizChoiceAnswerCreateInputModel input);
+
+    QuizChoiceAnswer delete(UUID choiceAnswerId);
 }
