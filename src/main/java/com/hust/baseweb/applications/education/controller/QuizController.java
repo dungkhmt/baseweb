@@ -23,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +81,7 @@ public class QuizController {
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-quiz-course-topics-of-course/{courseId}")
-    public ResponseEntity<?> getQuizCourseTopicsOfCourse(Principal principal, @PathVariable String courseId){
+    public ResponseEntity<?> getQuizCourseTopicsOfCourse(Principal principal, @PathVariable String courseId) {
         log.info("getQuizCourseTopicsOfCourse, courseId = " + courseId);
         List<QuizCourseTopic> quizCourseTopics = quizCourseTopicService.findByEduCourse_Id(courseId);
         return ResponseEntity.ok().body(quizCourseTopics);
@@ -88,8 +89,10 @@ public class QuizController {
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping("/create-quiz-course-topic")
-    public ResponseEntity<?> createQuizCourseTopic(Principal principal, @RequestBody
-        QuizCourseTopicCreateInputModel input){
+    public ResponseEntity<?> createQuizCourseTopic(
+        Principal principal, @RequestBody
+        QuizCourseTopicCreateInputModel input
+    ) {
         log.info("createQuizCourseTopic, topicId = " + input.getQuizCourseTopicId());
         QuizCourseTopic quizCourseTopic = quizCourseTopicService.save(input);
         return ResponseEntity.ok().body(quizCourseTopic);
@@ -117,15 +120,15 @@ public class QuizController {
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping("/create-quiz-question")
     public ResponseEntity<?> createQuizQuestion(
-        Principal principal, 
+        Principal principal,
         //@RequestBody QuizQuestionCreateInputModel input,
         @RequestParam("QuizQuestionCreateInputModel") String json,
         @RequestParam("files") MultipartFile[] files
-        ) {
+    ) {
 
         Gson g = new Gson();
         QuizQuestionCreateInputModel input = g.fromJson(json, QuizQuestionCreateInputModel.class);
-        
+
         System.out.println("hehehehehehehe");
         log.info("createQuizQuestion, topicId = " + input.getQuizCourseTopicId());
         QuizQuestion quizQuestion = quizQuestionService.save(input, files);
@@ -138,11 +141,13 @@ public class QuizController {
         List<QuizQuestion> quizQuestionList = quizQuestionService.findAll();
         return ResponseEntity.ok().body(quizQuestionList);
     }
+
     @GetMapping("/change-quiz-open-close-status/{questionId}")
-    public ResponseEntity<?> changeQuizOpenCloseStatus(Principal principal, @PathVariable UUID questionId){
+    public ResponseEntity<?> changeQuizOpenCloseStatus(Principal principal, @PathVariable UUID questionId) {
         QuizQuestion quizQuestion = quizQuestionService.changeOpenCloseStatus(questionId);
         return ResponseEntity.ok().body(quizQuestion);
     }
+
     @GetMapping("/get-quiz-of-class/{classId}")
     public ResponseEntity<?> getQuizOfClass(Principal principal, @PathVariable UUID classId) {
         GetClassDetailOM eduClass = classService.getClassDetail(classId);
@@ -156,6 +161,7 @@ public class QuizController {
         }
         return ResponseEntity.ok().body(quizQuestionDetailModels);
     }
+
     @GetMapping("/get-published-quiz-of-class/{classId}")
     public ResponseEntity<?> getPublishedQuizOfClass(Principal principal, @PathVariable UUID classId) {
         GetClassDetailOM eduClass = classService.getClassDetail(classId);
@@ -164,12 +170,14 @@ public class QuizController {
         List<QuizQuestion> quizQuestions = quizQuestionService.findQuizOfCourse(courseId);
         List<QuizQuestionDetailModel> quizQuestionDetailModels = new ArrayList<>();
         for (QuizQuestion q : quizQuestions) {
-            if(q.getStatusId().equals(QuizQuestion.STATUS_PRIVATE)) continue;
+            if (q.getStatusId().equals(QuizQuestion.STATUS_PRIVATE)) {
+                continue;
+            }
             QuizQuestionDetailModel quizQuestionDetailModel = quizQuestionService.findQuizDetail(q.getQuestionId());
             quizQuestionDetailModels.add(quizQuestionDetailModel);
         }
         log.info("getPublishedQuizOfClass, classId = " + classId + ", courseId = " + courseId
-        + " RETURN list.sz = " + quizQuestionDetailModels.size());
+                 + " RETURN list.sz = " + quizQuestionDetailModels.size());
 
         return ResponseEntity.ok().body(quizQuestionDetailModels);
     }
@@ -256,7 +264,10 @@ public class QuizController {
     }
 
     @PostMapping("/quiz-choose_answer")
-    public ResponseEntity<?> quizChooseAnswer(Principal principal, @RequestBody QuizChooseAnswerInputModel input) {
+    public ResponseEntity<?> quizChooseAnswer(
+        Principal principal,
+        @RequestBody @Valid QuizChooseAnswerInputModel input
+    ) {
         UserLogin userLogin = userService.findById(principal.getName());
         log.info("quizChooseAnswer, userLoginId = " + userLogin.getUserLoginId());
 

@@ -11,7 +11,6 @@ import com.hust.baseweb.applications.education.repo.QuizChoiceAnswerRepo;
 import com.hust.baseweb.applications.education.repo.QuizCourseTopicRepo;
 import com.hust.baseweb.applications.education.repo.QuizQuestionRepo;
 import com.hust.baseweb.config.FileSystemStorageProperties;
-
 import com.hust.baseweb.entity.UserLogin;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,21 +26,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j2
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class QuizQuestionServiceImpl implements QuizQuestionService {
+
     private QuizQuestionRepo quizQuestionRepo;
+
     private QuizCourseTopicRepo quizCourseTopicRepo;
+
     private QuizCourseTopicService quizCourseTopicService;
+
     private QuizChoiceAnswerRepo quizChoiceAnswerRepo;
+
     private LogUserLoginQuizQuestionRepo logUserLoginQuizQuestionRepo;
 
     private FileSystemStorageProperties properties;
@@ -64,7 +64,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
     @Override
     public QuizQuestion save(QuizQuestionCreateInputModel input, MultipartFile[] files) {
-        
+
         //Do save file
         Date now = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -87,7 +87,10 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
                 }
 
                 // Can throw IOExeption, e.g NoSuchFileException.
-                Files.copy(file.getInputStream(), path.resolve(prefixFileName + "-" + originalFileName), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(
+                    file.getInputStream(),
+                    path.resolve(prefixFileName + "-" + originalFileName),
+                    StandardCopyOption.REPLACE_EXISTING);
                 attachmentPaths.add(prefixFileName + "-" + file.getOriginalFilename());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -119,8 +122,15 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         //List<String> quizCourseTopicIds = quizCourseTopics.stream()
         //                                                  .map(quizCourseTopic -> quizCourseTopic.getQuizCourseTopicId()).collect(
         //    Collectors.toList());
-        for(QuizCourseTopic q: quizCourseTopics){
-            log.info("findQuizOfCourse, courseId = " + courseId + ", topic = " + q.getQuizCourseTopicId() + ", " + q.getQuizCourseTopicName() + ", courseId = " + q.getEduCourse().getId());
+        for (QuizCourseTopic q : quizCourseTopics) {
+            log.info("findQuizOfCourse, courseId = " +
+                     courseId +
+                     ", topic = " +
+                     q.getQuizCourseTopicId() +
+                     ", " +
+                     q.getQuizCourseTopicName() +
+                     ", courseId = " +
+                     q.getEduCourse().getId());
 
         }
         List<QuizQuestion> quizQuestions = quizQuestionRepo.findAllByQuizCourseTopicIn(quizCourseTopics);
@@ -131,7 +141,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
     @Override
     public QuizQuestionDetailModel findQuizDetail(UUID questionId) {
-        QuizQuestion quizQuestion  = quizQuestionRepo.findById(questionId).orElse(null);
+        QuizQuestion quizQuestion = quizQuestionRepo.findById(questionId).orElse(null);
         QuizQuestionDetailModel quizQuestionDetailModel = new QuizQuestionDetailModel();
         quizQuestionDetailModel.setLevelId(quizQuestion.getLevelId());
         quizQuestionDetailModel.setStatement(quizQuestion.getQuestionContent());
@@ -140,7 +150,10 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         quizQuestionDetailModel.setStatusId(quizQuestion.getStatusId());
         quizQuestionDetailModel.setCreatedStamp(quizQuestion.getCreatedStamp());
         List<QuizChoiceAnswer> quizChoiceAnswers = quizChoiceAnswerRepo.findAllByQuizQuestion(quizQuestion);
-        log.info("findQuizDetail, questionId = " + questionId + ", GOT quizChoideAnswers.sz = " + quizChoiceAnswers.size());
+        log.info("findQuizDetail, questionId = " +
+                 questionId +
+                 ", GOT quizChoideAnswers.sz = " +
+                 quizChoiceAnswers.size());
 
         quizQuestionDetailModel.setQuizChoiceAnswerList(quizChoiceAnswers);
 
@@ -150,9 +163,9 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     @Override
     public QuizQuestion changeOpenCloseStatus(UUID questionId) {
         QuizQuestion quizQuestion = quizQuestionRepo.findById(questionId).orElse(null);
-        if(quizQuestion.getStatusId().equals(QuizQuestion.STATUS_PRIVATE)){
+        if (quizQuestion.getStatusId().equals(QuizQuestion.STATUS_PRIVATE)) {
             quizQuestion.setStatusId(QuizQuestion.STATUS_PUBLIC);
-        }else{
+        } else {
             quizQuestion.setStatusId(QuizQuestion.STATUS_PRIVATE);
         }
         quizQuestion = quizQuestionRepo.save(quizQuestion);
@@ -181,6 +194,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         if (!correctAns.containsAll(quizChooseAnswerInputModel.getChooseAnsIds())) {
             ans = false;
         }
+
         return ans;
     }
 

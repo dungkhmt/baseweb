@@ -58,4 +58,6 @@ public interface UserService {
 	List<UserLogin> getALlUserLoginsByGroupId(String groupId);
 
 	List<String> getGroupPermsByUserLoginId(String userLoginId);
+
+	PersonModel findPersonByUserLoginId(String userLoginId);
 }

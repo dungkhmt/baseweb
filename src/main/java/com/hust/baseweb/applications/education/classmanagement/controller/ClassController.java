@@ -8,6 +8,7 @@ import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
+import com.hust.baseweb.applications.education.report.model.courseparticipation.StudentCourseParticipationModel;
 import com.hust.baseweb.applications.education.service.*;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
@@ -86,7 +87,9 @@ public class ClassController {
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/{id}/registered-students")
     public ResponseEntity<List<GetStudentsOfClassOM>> getRegistStudentsOfClass(@PathVariable UUID id) {
-        return ResponseEntity.ok().body(classService.getRegistStudentsOfClass(id));
+        List<GetStudentsOfClassOM> lst = classService.getRegistStudentsOfClass(id);
+        log.info("getRegistStudentsOfClass, lst.sz = " + lst.size());
+        return ResponseEntity.ok().body(lst);
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
@@ -254,5 +257,15 @@ public class ClassController {
         log.info("getAllEduDepartments, GOT sz = " + eduDepartments.size());
         return ResponseEntity.ok().body(eduDepartments);
     }
-    
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-log-user-course-chapter-material/{classId}")
+    public ResponseEntity<?> getLogUserCourseChapterMaterial(Principal principal, @PathVariable UUID classId){
+        log.info("getLogUserCourseChapterMaterial, classId = " + classId);
+        UserLogin userLogin = userService.findById(principal.getName());
+
+        List<StudentCourseParticipationModel> studentCourseParticipationModels =
+            logUserLoginCourseChapterMaterialService.findAllByClassId(classId);
+        return ResponseEntity.ok().body(studentCourseParticipationModels);
+    }
+
 }

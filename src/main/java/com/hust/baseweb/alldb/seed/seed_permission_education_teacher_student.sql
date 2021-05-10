@@ -48,10 +48,18 @@ insert into public.application
 VALUES ('MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER_VIEW_LIST_CLASS', 'MENU', 'MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER', 'EDUCATION_TEACHING_MANAGEMENT_TEACHER',
 'Menu teaching management for teachers: view list class');
 
+
+
 insert into public.application
 (application_id, application_type_id, module_id, permission_id, description)
 VALUES ('MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER_CREATE_CLASS', 'MENU', 'MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER', 'EDUCATION_TEACHING_MANAGEMENT_TEACHER',
 'Menu teaching management for teachers: create new class');
+
+insert into public.application
+(application_id, application_type_id, module_id, permission_id, description)
+VALUES ('MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER_QUIZ_TEST_LIST', 'MENU', 'MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER', 'EDUCATION_TEACHING_MANAGEMENT_TEACHER',
+'Menu teaching management for teachers: view list quiz test');
+
 
 -- group permission
 insert into public.security_group_permission
