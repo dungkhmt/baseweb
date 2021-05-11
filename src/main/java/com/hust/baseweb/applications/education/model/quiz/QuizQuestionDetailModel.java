@@ -23,7 +23,7 @@ public class QuizQuestionDetailModel {
 
     private String statusId;
 
-    private Date createdStamp;
+    private String createdStamp;
 
     List<QuizChoiceAnswer> quizChoiceAnswerList;
 }

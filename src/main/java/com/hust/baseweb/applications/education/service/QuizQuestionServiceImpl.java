@@ -148,7 +148,14 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         quizQuestionDetailModel.setQuizCourseTopic(quizQuestion.getQuizCourseTopic());
         quizQuestionDetailModel.setQuestionId(quizQuestion.getQuestionId());
         quizQuestionDetailModel.setStatusId(quizQuestion.getStatusId());
-        quizQuestionDetailModel.setCreatedStamp(quizQuestion.getCreatedStamp());
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            String tempDate = formatter.format(quizQuestion.getCreatedStamp());
+            quizQuestionDetailModel.setCreatedStamp(tempDate);
+        }
+        catch(Exception e) {
+            //  Block of code to handle errors
+        }
         List<QuizChoiceAnswer> quizChoiceAnswers = quizChoiceAnswerRepo.findAllByQuizQuestion(quizQuestion);
         log.info("findQuizDetail, questionId = " +
                  questionId +
