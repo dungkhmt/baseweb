@@ -9,6 +9,7 @@ import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.report.model.courseparticipation.StudentCourseParticipationModel;
+import com.hust.baseweb.applications.education.report.model.quizparticipation.StudentQuizParticipationModel;
 import com.hust.baseweb.applications.education.service.*;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
@@ -46,6 +47,7 @@ public class ClassController {
     private EduCourseChapterService eduCourseChapterService;
     private EduCourseChapterMaterialService eduCourseChapterMaterialService;
     private LogUserLoginCourseChapterMaterialService logUserLoginCourseChapterMaterialService;
+    private LogUserLoginQuizQuestionService logUserLoginQuizQuestionService;
     private VideoService videoService;
 
     @PostMapping
@@ -267,5 +269,14 @@ public class ClassController {
             logUserLoginCourseChapterMaterialService.findAllByClassId(classId);
         return ResponseEntity.ok().body(studentCourseParticipationModels);
     }
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-log-user-quiz/{classId}")
+    public ResponseEntity<?> getLogUserQuiz(Principal principal, @PathVariable UUID classId) {
+        log.info("getLogUserQuiz, classId = " + classId);
+        UserLogin userLogin = userService.findById(principal.getName());
+        List<StudentQuizParticipationModel> studentQuizParticipationModels =
+            logUserLoginQuizQuestionService.findAllByClassId(classId);
 
+        return ResponseEntity.ok().body(studentQuizParticipationModels);
+    }
 }
