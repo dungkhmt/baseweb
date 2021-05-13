@@ -1,5 +1,11 @@
 package com.hust.baseweb.applications.education.quiztest.repo;
 
-public interface EduQuizTestGroupRepo {
+import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+import java.util.UUID;
+
+public interface EduQuizTestGroupRepo extends JpaRepository<EduTestQuizGroup, UUID> {
+    List<EduTestQuizGroup> findByTestId(String testId);
 }

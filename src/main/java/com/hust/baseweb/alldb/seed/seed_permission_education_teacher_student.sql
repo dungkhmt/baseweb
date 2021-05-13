@@ -60,6 +60,10 @@ insert into public.application
 VALUES ('MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER_QUIZ_TEST_LIST', 'MENU', 'MENU_EDUCATION_TEACHING_MANAGEMENT_TEACHER', 'EDUCATION_TEACHING_MANAGEMENT_TEACHER',
 'Menu teaching management for teachers: view list quiz test');
 
+insert into public.application
+(application_id, application_type_id, module_id, permission_id, description)
+VALUES ('MENU_EDUCATION_TEACHING_MANAGEMENT_STUDENT_QUIZ_TEST_LIST', 'MENU', 'MENU_EDUCATION_LEARNING_MANAGEMENT_STUDENT', 'EDUCATION_LEARNING_MANAGEMENT_STUDENT',
+'Menu teaching management for students: view list quiz test');
 
 -- group permission
 insert into public.security_group_permission
