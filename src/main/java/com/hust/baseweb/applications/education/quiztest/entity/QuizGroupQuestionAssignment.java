@@ -14,11 +14,14 @@ import java.util.UUID;
 @IdClass(CompositeQuizGroupQuestionAssignmentId.class)
 public class QuizGroupQuestionAssignment {
     @Id
-    @Column(name="question_id uuid")
+    @Column(name="question_id")
     private UUID questionId;
 
     @Id
-    @Column(name="quiz_group_id uuid")
+    @Column(name="quiz_group_id")
     private UUID quizGroupId;
+
+    @Column(name ="status_id")
+    private String statusID;
 
 }

@@ -70,7 +70,6 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
         groupId = eduTestQuizGroupParticipationAssignmentRepo.findEduTestQuizGroupParticipationAssignmentsByParticipationUserLoginId(principal.getName()).get(0).getQuizGroupId();
         System.out.println("here0 ");
         List<QuizGroupQuestionAssignment> tmpl = quizGroupQuestionAssignmentRepo.findQuizGroupQuestionAssignmentsByQuizGroupId(groupId);
-        System.out.println("here324 ");
         tmpl.forEach( asign -> {
             System.out.println("here ");
             QuizQuestionDetailModel quizQuestion = quizQuestionService.findQuizDetail(asign.getQuestionId());
@@ -83,6 +82,7 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
         testDetail.setListQuestion(listQuestions);
         testDetail.setQuizGroupId(groupId.toString());
         testDetail.setGroupCode(groupCode);
+        testDetail.setCourseName(courseName);
         testDetail.setTestName(test.getTestName());
         testDetail.setDuration(test.getDuration());
         testDetail.setScheduleDatetime(test.getScheduleDatetime());
