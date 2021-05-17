@@ -1,9 +1,9 @@
 package com.hust.baseweb.applications.education.quiztest.controller;
 
-import com.hust.baseweb.applications.education.model.quiz.QuizChooseAnswerInputModel;
-import com.hust.baseweb.applications.education.service.QuizChoiceAnswerService;
+import com.hust.baseweb.applications.education.quiztest.entity.QuizGroupQuestionParticipationExecutionChoice;
+import com.hust.baseweb.applications.education.quiztest.model.QuizGroupQuestionParticipationExecutionChoiceInputModel;
+import com.hust.baseweb.applications.education.quiztest.repo.QuizGroupQuestionParticipationExecutionChoiceRepo;
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
-import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
+import java.util.UUID;
 
 @Log4j2
 @Controller
@@ -25,26 +27,29 @@ import java.security.Principal;
 @CrossOrigin
 
 public class QuizGroupQuestionParticipationExecutionChoiceController {
-    private QuizQuestionService quizQuestionService;
 
-    private QuizChoiceAnswerService quizChoiceAnswerService;
-
-    private UserService userService;
-
-
+    QuizGroupQuestionParticipationExecutionChoiceRepo quizGroupQuestionParticipationExecutionChoiceRepo;
 
 
 
     @PostMapping("/quiz-test-choose_answer-by-user")
     public ResponseEntity<?> quizChooseAnswer(
         Principal principal,
-        @RequestBody @Valid QuizChooseAnswerInputModel input
+        @RequestBody @Valid QuizGroupQuestionParticipationExecutionChoiceInputModel input
     ) {
-        UserLogin userLogin = userService.findById(principal.getName());
-        log.info("quizChooseAnswer, userLoginId = " + userLogin.getUserLoginId());
-
-        boolean ans = quizQuestionService.checkAnswer(userLogin, input);
-
-        return ResponseEntity.ok().body(ans);
+        UUID questionId = input.getQuestionId();
+        UUID groupId = input.getQuizGroupId();
+        String userId = principal.getName();
+        List<UUID> chooseAnsIds = input.getChooseAnsIds();
+        for (UUID choiceId:
+             chooseAnsIds) {
+            QuizGroupQuestionParticipationExecutionChoice tmp = new QuizGroupQuestionParticipationExecutionChoice();
+            tmp.setQuestionId(questionId);
+            tmp.setQuizGroupId(groupId);
+            tmp.setParticipationUserLoginId(userId);
+            tmp.setChoiceAnswerId(choiceId);
+            quizGroupQuestionParticipationExecutionChoiceRepo.save(tmp);
+        }
+        return ResponseEntity.ok().body(chooseAnsIds);
     }
 }

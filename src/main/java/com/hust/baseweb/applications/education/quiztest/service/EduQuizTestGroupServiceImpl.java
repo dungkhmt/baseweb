@@ -5,12 +5,10 @@ import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailMode
 import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
 import com.hust.baseweb.applications.education.quiztest.entity.QuizGroupQuestionAssignment;
+import com.hust.baseweb.applications.education.quiztest.entity.QuizGroupQuestionParticipationExecutionChoice;
 import com.hust.baseweb.applications.education.quiztest.model.QuizGroupTestDetailModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.GenerateQuizTestGroupInputModel;
-import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestGroupRepo;
-import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestRepo;
-import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizGroupParticipationAssignmentRepo;
-import com.hust.baseweb.applications.education.quiztest.repo.QuizGroupQuestionAssignmentRepo;
+import com.hust.baseweb.applications.education.quiztest.repo.*;
 import com.hust.baseweb.applications.education.repo.EduCourseRepo;
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
 import com.hust.baseweb.applications.education.suggesttimetable.repo.CourseRepo;
@@ -22,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -38,7 +33,7 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
     private EduCourseRepo eduCourseRepo;
     private QuizGroupQuestionAssignmentRepo quizGroupQuestionAssignmentRepo;
     private EduTestQuizGroupParticipationAssignmentRepo eduTestQuizGroupParticipationAssignmentRepo;
-
+    private QuizGroupQuestionParticipationExecutionChoiceRepo quizGroupQuestionParticipationExecutionChoiceRepo;
     @Override
     public List<EduTestQuizGroup> generateQuizTestGroups(GenerateQuizTestGroupInputModel input) {
         List<EduTestQuizGroup> eduTestQuizGroups = eduQuizTestGroupRepo.findByTestId(input.getQuizTestId());
@@ -77,6 +72,21 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
             listQuestions.add(quizQuestion);
         });
         String groupCode =  eduQuizTestGroupRepo.findEduTestQuizGroupByTestIdAndQuizGroupId(testID,groupId).getGroupCode();
+
+        List<QuizGroupQuestionParticipationExecutionChoice> listChoice =   quizGroupQuestionParticipationExecutionChoiceRepo.findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupId(
+            principal.getName(), groupId);
+        Map<String , List<UUID>> participationExecutionChoice = new HashMap<>();
+        listChoice.forEach( ele -> {
+            String quesId = ele.getQuestionId().toString();
+            if(participationExecutionChoice.containsKey(quesId)){
+                participationExecutionChoice.get(quesId).add(ele.getChoiceAnswerId());
+            }else {
+                List<UUID> tmp = new ArrayList<>();
+                tmp.add(ele.getChoiceAnswerId());
+                participationExecutionChoice.put(quesId, tmp);
+            }
+        });
+
         QuizGroupTestDetailModel testDetail = new QuizGroupTestDetailModel();
         testDetail.setTestId(testID);
         testDetail.setListQuestion(listQuestions);
@@ -86,6 +96,7 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
         testDetail.setTestName(test.getTestName());
         testDetail.setDuration(test.getDuration());
         testDetail.setScheduleDatetime(test.getScheduleDatetime());
+        testDetail.setParticipationExecutionChoice(participationExecutionChoice);
         return testDetail;
     }
 }

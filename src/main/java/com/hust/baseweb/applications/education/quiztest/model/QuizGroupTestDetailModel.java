@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -26,6 +28,8 @@ public class QuizGroupTestDetailModel {
 
 
     private List<QuizQuestionDetailModel> listQuestion;
+
+    private Map<String , List<UUID>> participationExecutionChoice; //question id, list<choiceAnswerId>
 
 
 }
