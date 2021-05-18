@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CommonUtils {
 
@@ -118,5 +115,51 @@ public class CommonUtils {
             stringBuilder.insert(0, "0");
         }
         return stringBuilder.toString();
+    }
+
+    public static int convertStr2Int(String s){
+        try{
+            //s.replaceAll("0"," ");
+            System.out.println("convertStr2Int, s = " + s);
+
+            s= s.trim();
+            int num = Integer.valueOf(s);
+            return num;
+        }catch(Exception e){
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    public static String[] generateNextSeqId(String[] seqIds, int sz){
+        String[] res = new String[sz];
+        int[] idx = new int[seqIds.length];
+        try{
+            int minValue = 0;
+            HashSet<Integer> S = new HashSet<Integer>();
+            for(int i = 0; i < seqIds.length; i++){
+
+                idx[i] = convertStr2Int(seqIds[i]);
+                System.out.println("generateNextSeqId, convert get " + idx[i]);
+                if(idx[i] < 0) return null;
+                if(i == 0) minValue = idx[i];
+                else {
+                    if(minValue > idx[i]) minValue= idx[i];
+                }
+                S.add(idx[i]);
+            }
+            for(int i = 0; i < sz; i++){
+                int n = minValue;
+                do{
+                    n = n + 1;
+                }while(S.contains(n));
+                S.add(n);
+                res[i] = buildSeqId(n);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        return res;
     }
 }

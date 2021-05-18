@@ -61,23 +61,90 @@ create table edu_quiz_test(
     schedule_datetime timestamp,
     duration int,
     course_id varchar(10),
+    class_id uuid,
     status_id varchar(30),
     created_by_user_login_id varchar(60),
+
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
     constraint pk_edu_quiz_test_id primary key(test_id),
     constraint fk_edu_quiz_test_created_by_user_login_id foreign key(created_by_user_login_id) references user_login(user_login_id),
-    constraint fk_edu_quiz_test_course_id foreign key(course_id) references edu_course(id)
+    constraint fk_edu_quiz_test_course_id foreign key(course_id) references edu_course(id),
+    constraint fk_edu_quiz_test_class_id foreign key(class_id) references edu_class(id)
 );
 
-create table edu_test_question(
-    question_id varchar(60),
+create table edu_test_quiz_group(
+    quiz_group_id uuid not null default uuid_generate_v1(),
     test_id varchar(60),
+    group_code varchar(60),
+    note varchar(500),
+	status_id varchar(60),
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_edu_test_quiz_group primary key(quiz_group_id),
+    constraint fk_edu_test_quiz_group foreign key(test_id) references edu_quiz_test(test_id)
 );
-create table edu_test_participant(
+
+create table edu_test_quiz_group_participation_assignment(
+    quiz_group_id uuid,
+    participation_user_login_id varchar(60),
+    status_id varchar(50),
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_edu_test_quiz_group_participation_assignment primary key(quiz_group_id,participation_user_login_id),
+    constraint fk_edu_test_quiz_group_participation_assignment_user_login_id foreign key(participation_user_login_id) references user_login(user_login_id)
+);
+
+create table quiz_group_question_assignment(
+    question_id uuid,
+    quiz_group_id uuid,
+    status_id varchar(50),
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_quiz_group_question_assignment primary key(quiz_group_id, question_id),
+    constraint fk_quiz_group_question_assignment foreign key(question_id) references quiz_question(question_id)
+);
+
+create table quiz_group_question_participation_execution(
+    question_id uuid,
+    quiz_group_id uuid,
+    participation_user_login_id varchar(60),
+    grade int,
+    result char,
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_quiz_group_question_participation_execution primary key(participation_user_login_id, quiz_group_id, question_id),
+    constraint fk_quiz_group_question_participation_execution_user_login foreign key(participation_user_login_id) references user_login(user_login_id),
+    constraint fk_quiz_group_question_participation_execution_quiz_group foreign key(quiz_group_id) references edu_test_quiz_group(quiz_group_id),
+    constraint fk_quiz_group_question_participation_execution_question foreign key(question_id) references quiz_question(question_id)
+);
+
+create table quiz_group_question_participation_execution_choice(
+    question_id uuid,
+    quiz_group_id uuid,
+    participation_user_login_id varchar(60),
+    choice_answer_id uuid,
+    constraint pk_quiz_group_question_participation_execution_choice primary key(participation_user_login_id, quiz_group_id, question_id, choice_answer_id),
+    constraint fk_quiz_group_question_participation_execution_choice_user_login foreign key(participation_user_login_id) references user_login(user_login_id),
+    constraint fk_quiz_group_question_participation_execution_choice_quiz_group foreign key(quiz_group_id) references edu_test_quiz_group(quiz_group_id),
+    constraint fk_quiz_group_question_participation_execution_choice_question foreign key(question_id) references quiz_question(question_id),
+    constraint fk_quiz_group_question_participation_execution_choice_answer foreign key(choice_answer_id) references quiz_choice_answer(choice_answer_id)
+);
+
+create table edu_test_quiz_participant(
     test_id varchar(60),
     participant_user_login_id varchar(60),
+    status_id varchar(60),
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    constraint pk_edu_test_participation primary key(test_id, participant_user_login_id),
+    constraint fk_edu_test_participation_test_id foreign key(test_id) references edu_quiz_test(test_id),
+    constraint fk_edu_test_participation_participation_user_login_id foreign key(participant_user_login_id)
+                                            references user_login(user_login_id)
+
+
 );
 
-create table edu_test_participant_answer(
-    
-);
 

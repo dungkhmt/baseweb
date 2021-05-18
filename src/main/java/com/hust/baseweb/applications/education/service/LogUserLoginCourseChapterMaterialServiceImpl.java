@@ -1,7 +1,10 @@
 package com.hust.baseweb.applications.education.service;
 
+import com.hust.baseweb.applications.education.classmanagement.service.ClassService;
+import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.entity.EduCourseChapterMaterial;
 import com.hust.baseweb.applications.education.entity.LogUserLoginCourseChapterMaterial;
+import com.hust.baseweb.applications.education.repo.ClassRepo;
 import com.hust.baseweb.applications.education.repo.EduCourseChapterMaterialRepo;
 import com.hust.baseweb.applications.education.repo.LogUserLoginCourseChapterMaterialRepo;
 import com.hust.baseweb.applications.education.report.model.courseparticipation.StudentCourseParticipationModel;
@@ -22,7 +25,7 @@ public class LogUserLoginCourseChapterMaterialServiceImpl implements  LogUserLog
     private LogUserLoginCourseChapterMaterialRepo logUserLoginCourseChapterMaterialRepo;
     private EduCourseChapterMaterialRepo eduCourseChapterMaterialRepo;
     private UserService userService;
-
+    private ClassRepo classRepo;
     @Override
     public void logUserLoginMaterial(UserLogin userLogin, UUID eduCourseChapterMaterialId) {
         LogUserLoginCourseChapterMaterial logUserLoginCourseChapterMaterial = new LogUserLoginCourseChapterMaterial();
@@ -41,6 +44,16 @@ public class LogUserLoginCourseChapterMaterialServiceImpl implements  LogUserLog
             mId2Name.put(m.getEduCourseMaterialId(),m.getEduCourseMaterialName());
         }
 
+        EduClass eduClass = classRepo.findById(classId).orElse(null);
+        int classCode = 0;
+        String courseId = "";
+        String courseName = "";
+        if(eduClass != null){
+            classCode = eduClass.getCode();
+            courseId = eduClass.getEduCourse().getId();
+            courseName = eduClass.getEduCourse().getName();
+        }
+
         List<LogUserLoginCourseChapterMaterial> lst = logUserLoginCourseChapterMaterialRepo.findAll();
         List<StudentCourseParticipationModel> studentClassParticipationOutputModels = new ArrayList();
         for(LogUserLoginCourseChapterMaterial e: lst){
@@ -48,6 +61,9 @@ public class LogUserLoginCourseChapterMaterialServiceImpl implements  LogUserLog
             studentClassParticipationOutputModels.add(new StudentCourseParticipationModel(
                 e.getUserLoginId(),
                 personModel.getLastName() + " " + personModel.getMiddleName() + " " + personModel.getFirstName(),
+                classCode + "",
+                courseId,
+                courseName,
                 mId2Name.get(e.getEduCourseMaterialId()), e.getCreateStamp()));
         }
         return studentClassParticipationOutputModels;
