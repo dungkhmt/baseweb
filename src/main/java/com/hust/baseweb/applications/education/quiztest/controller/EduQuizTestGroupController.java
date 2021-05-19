@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizParticipant;
 import com.hust.baseweb.applications.education.quiztest.model.QuizGroupTestDetailModel;
+import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.EduTestQuizParticipationCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.GenerateQuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizParticipantRepo;
 import com.hust.baseweb.applications.education.quiztest.service.EduQuizTestGroupService;
@@ -16,14 +17,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Log4j2
 @Controller
@@ -44,10 +43,9 @@ public class EduQuizTestGroupController {
         return ResponseEntity.ok().body(eduTestQuizGroups);
     }
 
-    @GetMapping("/get-quiz-test-participation-group-question")
-    public ResponseEntity<?> getTestGroupQuestionByUser(Principal principal, @RequestBody(required = true) String testID ) {
+    @GetMapping("/get-quiz-test-participation-group-question/{testID}")
+    public ResponseEntity<?> getTestGroupQuestionByUser(Principal principal, @PathVariable String testID ) {
 
-        System.out.println(testID);
         EduTestQuizParticipant testParticipant = eduTestQuizParticipationRepo.findEduTestQuizParticipantByParticipantUserLoginIdAndAndTestId(principal.getName(), testID);
 
         if( testParticipant == null || (!testParticipant.getStatusId().equals(EduTestQuizParticipant.STATUS_APPROVED)))

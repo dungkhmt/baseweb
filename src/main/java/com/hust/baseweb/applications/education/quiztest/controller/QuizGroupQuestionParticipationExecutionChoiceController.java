@@ -41,6 +41,10 @@ public class QuizGroupQuestionParticipationExecutionChoiceController {
         UUID groupId = input.getQuizGroupId();
         String userId = principal.getName();
         List<UUID> chooseAnsIds = input.getChooseAnsIds();
+        List<QuizGroupQuestionParticipationExecutionChoice> a =  quizGroupQuestionParticipationExecutionChoiceRepo.findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupIdAndQuestionId(userId,groupId,questionId);
+        a.forEach(quizGroupQuestionParticipationExecutionChoice -> {
+            quizGroupQuestionParticipationExecutionChoiceRepo.delete(quizGroupQuestionParticipationExecutionChoice);
+        });
         for (UUID choiceId:
              chooseAnsIds) {
             QuizGroupQuestionParticipationExecutionChoice tmp = new QuizGroupQuestionParticipationExecutionChoice();
