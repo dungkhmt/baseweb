@@ -3,6 +3,8 @@ package com.hust.baseweb.applications.education.quiztest.service;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizParticipant;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizParticipantRepo;
+import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestRepo.StudentInfo;
+
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
@@ -12,8 +14,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
-import com.hust.baseweb.applications.education.quiztest.entity.StudentInTestQueryReturn;
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
+import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestRepo;
 import com.hust.baseweb.entity.UserLogin;
 
@@ -42,7 +44,6 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
 
         return repo.save(newRecord);
     }
-<<<<<<< HEAD
 
     @Override
     public List<EduQuizTest> getAllTestByCreateUser(String userLoginId) {
@@ -50,9 +51,23 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
     }
 
     @Override
-    public List<StudentInTestQueryReturn> getAllStudentInTest(String testId) {
-        return repo.findAllStudentInTest(testId);
-=======
+    public List<StudentInTestQueryReturnModel> getAllStudentInTest(String testId) {
+        List<StudentInfo> list = repo.findAllStudentInTest(testId);
+
+        List<StudentInTestQueryReturnModel> re = new ArrayList<>();
+
+        for (StudentInfo studentInfo : list) {
+            StudentInTestQueryReturnModel temp = new StudentInTestQueryReturnModel();
+            temp.setFullName(studentInfo.getFull_name());
+            temp.setTestId(studentInfo.getTest_id());
+            temp.setEmail(studentInfo.getEmail());
+            temp.setUserLoginId(studentInfo.getUser_login_id());
+            re.add(temp);
+        }
+
+        return re;
+    }
+
     @Override
     public List<EduQuizTestModel> getListQuizByUserId(String userLoginId){
 
@@ -79,6 +94,5 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
             listModel.add(eduModel);
         }
         return listModel;
->>>>>>> a56f48209404c79c44dc8e5f318fb4ed9a317474
     }
 }

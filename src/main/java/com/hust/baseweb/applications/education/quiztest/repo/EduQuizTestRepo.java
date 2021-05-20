@@ -3,7 +3,7 @@ package com.hust.baseweb.applications.education.quiztest.repo;
 import java.util.List;
 
 import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
-import com.hust.baseweb.applications.education.quiztest.entity.StudentInTestQueryReturn;
+import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +14,23 @@ public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
         value = "select * from edu_quiz_test where created_by_user_login_id = ?1"
     )
     public List<EduQuizTest> findByCreateUser(String userLoginId);
+
+
+    public static interface StudentInfo {
+
+        String getTest_id();
+
+        String getUser_login_id();
+
+        String getFull_name();
+
+        String getGender();
+
+        String getBirth_date();
+
+        String getEmail();
+   
+    }
 
     @Query(
         nativeQuery = true,
@@ -34,5 +51,5 @@ public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
             "on user_register.user_login_id = user_login.user_login_id \n" + 
             "where S1.test_id = ?1"
     )
-    public List<StudentInTestQueryReturn> findAllStudentInTest(String testId);
+    public List<StudentInfo> findAllStudentInTest(String testId);
 }
