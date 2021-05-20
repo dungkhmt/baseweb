@@ -8,4 +8,8 @@ import java.util.UUID;
 
 public interface EduQuizTestGroupRepo extends JpaRepository<EduTestQuizGroup, UUID> {
     List<EduTestQuizGroup> findByTestId(String testId);
+    EduTestQuizGroup findEduTestQuizGroupByTestIdAndQuizGroupId(
+        String testId,
+        UUID quizGroupId
+    );
 }

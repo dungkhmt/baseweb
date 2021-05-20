@@ -2,11 +2,16 @@ package com.hust.baseweb.applications.education.quiztest.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
 import com.hust.baseweb.applications.education.quiztest.entity.StudentInTestQueryReturn;
+import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizParticipant;
+import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.GenerateQuizTestGroupInputModel;
+import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizParticipantRepo;
 import com.hust.baseweb.applications.education.quiztest.service.EduQuizTestGroupService;
+import com.hust.baseweb.applications.education.quiztest.service.EduTestQuizParticipantService;
 import com.hust.baseweb.applications.education.quiztest.service.QuizTestService;
 import com.hust.baseweb.service.UserService;
 import com.hust.baseweb.entity.UserLogin;
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -35,6 +41,7 @@ import java.util.List;
 public class QuizTestController {
     private QuizTestService quizTestService;
     private UserService userService;
+    private EduTestQuizParticipantRepo eduTestQuizParticipationRepo;
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping("/create-quiz-test")
@@ -51,13 +58,13 @@ public class QuizTestController {
         return ResponseEntity.ok().body(quizTestService.save(input, user));
     }
 
-    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    /* @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-all-quiz-test-by-user")
     public ResponseEntity<?> getAllQuizTestByUser(
         Principal principal
     ) {
         return ResponseEntity.ok().body(quizTestService.getAllTestByCreateUser(principal.getName()));
-    }
+    } */
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-all-student-in-test")
@@ -72,6 +79,16 @@ public class QuizTestController {
         }
         if(list.isEmpty()) return ResponseEntity.ok().body("Error");
         return ResponseEntity.ok().body(list);
+
+    }
+
+    @GetMapping("/get-all-quiz-test-user")
+    public ResponseEntity<?> getAllQuizTestByUser(
+        Principal principal
+    ) {
+        UserLogin user = userService.findById(principal.getName());
+        List<EduQuizTestModel> listQuizTest = quizTestService.getListQuizByUserId(user.getUserLoginId());
+        return ResponseEntity.ok().body(listQuizTest);
     }
 
 }
