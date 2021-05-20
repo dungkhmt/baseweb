@@ -66,6 +66,15 @@ public class QuizTestController {
         return ResponseEntity.ok().body(quizTestService.getAllTestByCreateUser(principal.getName()));
     }
 
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-quiz-test")
+    public ResponseEntity<?> getQuizTestByTestId(
+        Principal principal,
+        @RequestParam(required = false, name = "testId") String testId
+    ) {
+        return ResponseEntity.ok().body(quizTestService.getQuizTestById(testId));
+    }
+
     @GetMapping("/get-all-quiz-test-user")
     public ResponseEntity<?> getAllQuizTestByUser(
         Principal principal
@@ -81,15 +90,26 @@ public class QuizTestController {
         Principal principal, @RequestParam(required = false, name = "testId") String testId
     ) {
         testId = testId.replaceAll("\'", "");
-        System.out.println("============================================================================================================");
-        System.out.println(testId);
+        /* System.out.println("============================================================================================================");
+        System.out.println(testId); */
         List<StudentInTestQueryReturnModel> list = quizTestService.getAllStudentInTest(testId);
-        for (StudentInTestQueryReturnModel studentInTestQueryReturn : list) {
+        /* for (StudentInTestQueryReturnModel studentInTestQueryReturn : list) {
             System.out.println(studentInTestQueryReturn);
-        }
+        } */
         if(list.isEmpty()) return ResponseEntity.ok().body("Error");
         return ResponseEntity.ok().body(list);
 
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/reject-students-in-test")
+    public ResponseEntity<?> rejectStudentInTest(
+        Principal principal, 
+        @RequestParam(required=false, name="testId") String testId,
+        @RequestParam(required=false, name="studentList") String studentList
+    ) {
+        String[] students = studentList.split(";");
+        return ResponseEntity.ok().body(quizTestService.rejectStudentsInTest(testId, students));
     }
 
 }

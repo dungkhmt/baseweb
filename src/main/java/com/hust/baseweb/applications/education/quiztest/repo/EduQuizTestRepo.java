@@ -6,7 +6,9 @@ import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
     @Query(
@@ -52,4 +54,15 @@ public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
             "where S1.test_id = ?1"
     )
     public List<StudentInfo> findAllStudentInTest(String testId);
+
+    @Transactional
+    @Modifying
+    @Query(
+        nativeQuery = true,
+        value = 
+        "delete from edu_test_quiz_participant " +
+        "where test_id = ?1 and participant_user_login_id = ?2"
+    )
+    public Integer rejectStudentInTest(String testId, String userLoginId);
+
 }

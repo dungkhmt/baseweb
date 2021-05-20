@@ -16,4 +16,7 @@ public interface QuizTestService {
     public List<EduQuizTest> getAllTestByCreateUser(String userLoginId);
     public List<StudentInTestQueryReturnModel> getAllStudentInTest(String testId);
     public List<EduQuizTestModel> getListQuizByUserId(String userLoginId);
+
+    public Integer rejectStudentsInTest(String testId, String[] userLoginId);
+    public EduQuizTest getQuizTestById(String testId);
 }
