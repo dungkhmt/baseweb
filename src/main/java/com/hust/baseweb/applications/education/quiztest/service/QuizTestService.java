@@ -19,4 +19,6 @@ public interface QuizTestService {
 
     public Integer rejectStudentsInTest(String testId, String[] userLoginId);
     public EduQuizTest getQuizTestById(String testId);
+
+    public Integer acceptStudentsInTest(String testId, String[] userLoginId);
 }

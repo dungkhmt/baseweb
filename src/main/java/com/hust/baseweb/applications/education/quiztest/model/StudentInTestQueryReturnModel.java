@@ -13,6 +13,7 @@ public class StudentInTestQueryReturnModel implements Serializable{
     String testId;
     String fullName;
     String email;
+    String statusId;
 
     @Override
     public String toString() {

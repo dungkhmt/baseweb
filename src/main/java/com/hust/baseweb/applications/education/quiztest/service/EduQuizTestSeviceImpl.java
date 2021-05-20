@@ -63,6 +63,7 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
             temp.setTestId(studentInfo.getTest_id());
             temp.setEmail(studentInfo.getEmail());
             temp.setUserLoginId(studentInfo.getUser_login_id());
+            temp.setStatusId(studentInfo.getStatus_id());
             re.add(temp);
         }
 
@@ -113,6 +114,15 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
 
         if(re.isPresent()) return re.get();
         else return null;
+    }
+
+    @Override
+    public Integer acceptStudentsInTest(String testId, String[] userLoginId) {
+        Integer re = 0;
+        for (String student : userLoginId) {
+            re += repo.acceptStudentInTest(testId, student);
+        }
+        return re;
     }
 
 }

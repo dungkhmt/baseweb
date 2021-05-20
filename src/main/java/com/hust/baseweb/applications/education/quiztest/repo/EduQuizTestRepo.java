@@ -31,6 +31,8 @@ public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
         String getBirth_date();
 
         String getEmail();
+
+        String getStatus_id();
    
     }
 
@@ -43,7 +45,8 @@ public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
             "person.first_name || ' ' || person.middle_name || ' ' || person.last_name as full_name, \n" + 
             "person.gender, \n" + 
             "person.birth_date, \n" + 
-            "user_register.email \n" + 
+            "user_register.email, \n" + 
+            "S1.status_id \n"+
             "from edu_test_quiz_participant S1 \n" + 
             "inner join user_login \n" + 
             "on S1.participant_user_login_id = user_login.user_login_id \n" + 
@@ -64,5 +67,16 @@ public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
         "where test_id = ?1 and participant_user_login_id = ?2"
     )
     public Integer rejectStudentInTest(String testId, String userLoginId);
+
+    @Transactional
+    @Modifying
+    @Query(
+        nativeQuery = true,
+        value = 
+        "update edu_test_quiz_participant \n" +
+        "set status_id = 'STATUS_APPROVED' \n"+
+        "where test_id = ?1 and participant_user_login_id = ?2 and status_id = 'STATUS_REGISTERED'"
+    )
+    public Integer acceptStudentInTest(String testId, String userLoginId);
 
 }

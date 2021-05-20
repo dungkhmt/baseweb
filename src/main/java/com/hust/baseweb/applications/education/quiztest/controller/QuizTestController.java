@@ -112,4 +112,15 @@ public class QuizTestController {
         return ResponseEntity.ok().body(quizTestService.rejectStudentsInTest(testId, students));
     }
 
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/accept-students-in-test")
+    public ResponseEntity<?> acceptStudentInTest(
+        Principal principal, 
+        @RequestParam(required=false, name="testId") String testId,
+        @RequestParam(required=false, name="studentList") String studentList
+    ) {
+        String[] students = studentList.split(";");
+        return ResponseEntity.ok().body(quizTestService.acceptStudentsInTest(testId, students));
+    }
+
 }
