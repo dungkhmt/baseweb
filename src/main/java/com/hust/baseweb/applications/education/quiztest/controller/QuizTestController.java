@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.education.quiztest.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
+import com.hust.baseweb.applications.education.quiztest.entity.StudentInTestQueryReturn;
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.GenerateQuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.service.EduQuizTestGroupService;
@@ -18,6 +19,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,5 +51,27 @@ public class QuizTestController {
         return ResponseEntity.ok().body(quizTestService.save(input, user));
     }
 
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-all-quiz-test-by-user")
+    public ResponseEntity<?> getAllQuizTestByUser(
+        Principal principal
+    ) {
+        return ResponseEntity.ok().body(quizTestService.getAllTestByCreateUser(principal.getName()));
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-all-student-in-test")
+    public ResponseEntity<?> getAllStudentInTest(
+        Principal principal, @RequestParam(required = false, name = "testId") String testId
+    ) {
+        testId = testId.replaceAll("\'", "");
+        System.out.println(testId);
+        List<StudentInTestQueryReturn> list = quizTestService.getAllStudentInTest(testId);
+        for (StudentInTestQueryReturn studentInTestQueryReturn : list) {
+            System.out.println(studentInTestQueryReturn.getFullName());
+        }
+        if(list.isEmpty()) return ResponseEntity.ok().body("Error");
+        return ResponseEntity.ok().body(list);
+    }
 
 }

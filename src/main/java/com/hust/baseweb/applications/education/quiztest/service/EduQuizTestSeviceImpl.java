@@ -5,14 +5,15 @@ import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
+import com.hust.baseweb.applications.education.quiztest.entity.StudentInTestQueryReturn;
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestRepo;
 import com.hust.baseweb.entity.UserLogin;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -36,5 +37,15 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
         newRecord.setLastUpdatedStamp(new Date());
 
         return repo.save(newRecord);
+    }
+
+    @Override
+    public List<EduQuizTest> getAllTestByCreateUser(String userLoginId) {
+        return repo.findByCreateUser(userLoginId);
+    }
+
+    @Override
+    public List<StudentInTestQueryReturn> getAllStudentInTest(String testId) {
+        return repo.findAllStudentInTest(testId);
     }
 }
