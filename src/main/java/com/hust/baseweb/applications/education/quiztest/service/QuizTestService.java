@@ -6,6 +6,8 @@ import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
+import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
+import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
 import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.entity.UserLogin;
 
@@ -16,4 +18,8 @@ public interface QuizTestService {
     public List<EduQuizTest> getAllTestByCreateUser(String userLoginId);
     public List<StudentInTestQueryReturnModel> getAllStudentInTest(String testId);
     public List<EduQuizTestModel> getListQuizByUserId(String userLoginId);
+
+    public boolean autoAssignParticipants2QuizTestGroup(AutoAssignParticipants2QuizTestGroupInputModel input);
+
+    public boolean autoAssignQuestion2QuizTestGroup(AutoAssignQuestion2QuizTestGroupInputModel input);
 }

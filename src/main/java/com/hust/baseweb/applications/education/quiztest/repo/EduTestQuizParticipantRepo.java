@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface EduTestQuizParticipantRepo extends JpaRepository<EduTestQuizParticipant, CompositeTestQuizParticipationId> {
     List<EduTestQuizParticipant> findByTestIdAndParticipantUserLoginId(String testId, String participantUserLoginId);
+    List<EduTestQuizParticipant> findByTestIdAndStatusId(String testId, String statusId);
     EduTestQuizParticipant findEduTestQuizParticipantByParticipantUserLoginIdAndAndTestId(String userId , String testId);
 }

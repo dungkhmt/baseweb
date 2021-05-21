@@ -37,6 +37,12 @@ public class ClassServiceImpl implements ClassService {
     private EduDepartmentRepo eduDepartmentRepo;
 
     @Override
+    public EduClass findById(UUID id) {
+        EduClass eduClass = classRepo.findById(id).orElse(null);
+        return eduClass;
+    }
+
+    @Override
     @Transactional
     public EduClass save(UserLogin userLogin, AddClassModel addClassModel) {
         log.info("save start courseCode = " +

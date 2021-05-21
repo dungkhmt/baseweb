@@ -16,6 +16,8 @@ import java.util.UUID;
 
 public interface ClassService {
 
+    EduClass findById(UUID id);
+
     EduClass save(UserLogin userLogin, AddClassModel addClassModel);
 
     GetClassListOM getClassesOfCurrentSemester(String studentId, GetClassesIM filterParams, Pageable pageable);

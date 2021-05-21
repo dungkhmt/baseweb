@@ -8,6 +8,8 @@ import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizPartic
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
+import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
+import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.GenerateQuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizParticipantRepo;
 import com.hust.baseweb.applications.education.quiztest.service.EduQuizTestGroupService;
@@ -90,6 +92,25 @@ public class QuizTestController {
         if(list.isEmpty()) return ResponseEntity.ok().body("Error");
         return ResponseEntity.ok().body(list);
 
+    }
+
+    @PostMapping("/auto-assign-participants-2-quiz-test-group")
+    public ResponseEntity<?> autoAssignParticipants2QuizTestGroup(Principal principal, @RequestBody
+        AutoAssignParticipants2QuizTestGroupInputModel input
+    ){
+        boolean ok = quizTestService.autoAssignParticipants2QuizTestGroup(input);
+
+        return ResponseEntity.ok().body(ok);
+    }
+
+    @PostMapping("auto-assign-question-2-quiz-group")
+    public ResponseEntity<?> autoAssignQuestion2QuizTestGroup(Principal principal, @RequestBody
+        AutoAssignQuestion2QuizTestGroupInputModel input){
+
+        boolean ok = quizTestService.autoAssignQuestion2QuizTestGroup(input);
+
+        return ResponseEntity.ok().body(ok);
+        
     }
 
 }

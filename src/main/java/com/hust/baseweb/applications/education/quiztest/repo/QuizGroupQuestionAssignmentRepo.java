@@ -10,4 +10,9 @@ import java.util.UUID;
 public interface QuizGroupQuestionAssignmentRepo extends JpaRepository<QuizGroupQuestionAssignment, CompositeQuizGroupQuestionAssignmentId> {
 
     List<QuizGroupQuestionAssignment> findQuizGroupQuestionAssignmentsByQuizGroupId(UUID groupId);
+
+    QuizGroupQuestionAssignment findByQuestionIdAndQuizGroupId(UUID questionId, UUID quizGroupId);
+
+    QuizGroupQuestionAssignment save(QuizGroupQuestionAssignment quizGroupQuestionAssignment);
+
 }

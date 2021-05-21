@@ -1,10 +1,17 @@
 package com.hust.baseweb.applications.education.quiztest.service;
 
-import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizParticipant;
+import com.hust.baseweb.applications.education.classmanagement.service.ClassService;
+import com.hust.baseweb.applications.education.entity.EduClass;
+import com.hust.baseweb.applications.education.entity.QuizQuestion;
+import com.hust.baseweb.applications.education.quiztest.entity.*;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
-import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizParticipantRepo;
+import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
+import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
+import com.hust.baseweb.applications.education.quiztest.repo.*;
 import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestRepo.StudentInfo;
 
+import com.hust.baseweb.applications.education.service.QuizQuestionService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
@@ -12,21 +19,28 @@ import lombok.AllArgsConstructor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
-import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
-import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestRepo;
 import com.hust.baseweb.entity.UserLogin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
+
+@Log4j2
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class EduQuizTestSeviceImpl implements QuizTestService{
 
     EduQuizTestRepo repo;
     EduTestQuizParticipantRepo eduTestQuizParticipantRepo;
+    EduQuizTestGroupRepo eduQuizTestGroupRepo;
+    EduTestQuizGroupParticipationAssignmentRepo eduTestQuizGroupParticipationAssignmentRepo;
+    QuizQuestionService quizQuestionService;
+    ClassService classService;
+    QuizGroupQuestionAssignmentRepo quizGroupQuestionAssignmentRepo;
     @Override
     public EduQuizTest save(QuizTestCreateInputModel input, UserLogin user) {
         EduQuizTest newRecord = new EduQuizTest();
@@ -94,5 +108,65 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
             listModel.add(eduModel);
         }
         return listModel;
+    }
+
+    @Transactional
+    @Override
+    public boolean autoAssignParticipants2QuizTestGroup(AutoAssignParticipants2QuizTestGroupInputModel input) {
+        List<EduTestQuizGroup>  eduTestQuizGroups = eduQuizTestGroupRepo.findByTestId(input.getQuizTestId());
+        if(eduTestQuizGroups.size() <= 0) return false;
+
+        List<EduTestQuizParticipant> eduTestQuizParticipants = eduTestQuizParticipantRepo
+            .findByTestIdAndStatusId(input.getQuizTestId(),EduTestQuizParticipant.STATUS_APPROVED);
+
+        Random R = new Random();
+
+        for(EduTestQuizParticipant p: eduTestQuizParticipants){
+            int idx  = R.nextInt(eduTestQuizGroups.size());
+            EduTestQuizGroup g = eduTestQuizGroups.get(idx);
+            EduTestQuizGroupParticipationAssignment a = eduTestQuizGroupParticipationAssignmentRepo
+                .findByQuizGroupIdAndParticipationUserLoginId(g.getQuizGroupId(), p.getParticipantUserLoginId());
+            if(a == null) {
+                log.info("autoAssignParticipants2QuizTestGroup, assignment " + g.getQuizGroupId() + "," + p.getParticipantUserLoginId() + " not exists -> insert new");
+                a = new EduTestQuizGroupParticipationAssignment();
+                a.setQuizGroupId(g.getQuizGroupId());
+                a.setParticipationUserLoginId(p.getParticipantUserLoginId());
+                a = eduTestQuizGroupParticipationAssignmentRepo.save(a);
+            }
+        }
+
+        return true;
+    }
+
+    @Transactional
+    @Override
+    public boolean autoAssignQuestion2QuizTestGroup(AutoAssignQuestion2QuizTestGroupInputModel input) {
+        List<EduTestQuizGroup>  eduTestQuizGroups = eduQuizTestGroupRepo.findByTestId(input.getQuizTestId());
+        if(eduTestQuizGroups.size() <= 0) return false;
+        EduClass eduClass = classService.findById(input.getClassId());
+        if(eduClass == null){
+            log.info("autoAssignQuestion2QuizTestGroup, cannot find class " + input.getClassId());
+            return false;
+        }
+
+        String courseId = eduClass.getEduCourse().getId();
+        List<QuizQuestion> quizQuestions = quizQuestionService.findQuizOfCourse(courseId);
+
+        Random R = new Random();
+        for(QuizQuestion q: quizQuestions){
+            int idx = R.nextInt(eduTestQuizGroups.size());
+            EduTestQuizGroup g = eduTestQuizGroups.get(idx);
+            QuizGroupQuestionAssignment qq = quizGroupQuestionAssignmentRepo
+                .findByQuestionIdAndQuizGroupId(q.getQuestionId(),g.getQuizGroupId());
+
+            if(qq == null){
+                log.info("autoAssignQuestion2QuizTestGroup, record " + q.getQuestionId() + "," + g.getQuizGroupId() + " not exists -> insert new");
+                qq = new QuizGroupQuestionAssignment();
+                qq.setQuestionId(q.getQuestionId());
+                qq.setQuizGroupId(g.getQuizGroupId());
+                qq = quizGroupQuestionAssignmentRepo.save(qq);
+            }
+        }
+        return true;
     }
 }
