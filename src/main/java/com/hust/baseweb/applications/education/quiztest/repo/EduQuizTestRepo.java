@@ -6,7 +6,9 @@ import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
     @Query(
@@ -29,6 +31,8 @@ public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
         String getBirth_date();
 
         String getEmail();
+
+        String getStatus_id();
    
     }
 
@@ -41,7 +45,8 @@ public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
             "person.first_name || ' ' || person.middle_name || ' ' || person.last_name as full_name, \n" + 
             "person.gender, \n" + 
             "person.birth_date, \n" + 
-            "user_register.email \n" + 
+            "user_register.email, \n" + 
+            "S1.status_id \n"+
             "from edu_test_quiz_participant S1 \n" + 
             "inner join user_login \n" + 
             "on S1.participant_user_login_id = user_login.user_login_id \n" + 
@@ -52,4 +57,26 @@ public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
             "where S1.test_id = ?1"
     )
     public List<StudentInfo> findAllStudentInTest(String testId);
+
+    @Transactional
+    @Modifying
+    @Query(
+        nativeQuery = true,
+        value = 
+        "delete from edu_test_quiz_participant " +
+        "where test_id = ?1 and participant_user_login_id = ?2"
+    )
+    public Integer rejectStudentInTest(String testId, String userLoginId);
+
+    @Transactional
+    @Modifying
+    @Query(
+        nativeQuery = true,
+        value = 
+        "update edu_test_quiz_participant \n" +
+        "set status_id = 'STATUS_APPROVED' \n"+
+        "where test_id = ?1 and participant_user_login_id = ?2 and status_id = 'STATUS_REGISTERED'"
+    )
+    public Integer acceptStudentInTest(String testId, String userLoginId);
+
 }

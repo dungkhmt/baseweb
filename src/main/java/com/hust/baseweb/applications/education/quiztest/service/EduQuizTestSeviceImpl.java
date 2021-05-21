@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Optional;
 
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
@@ -76,6 +77,7 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
             temp.setTestId(studentInfo.getTest_id());
             temp.setEmail(studentInfo.getEmail());
             temp.setUserLoginId(studentInfo.getUser_login_id());
+            temp.setStatusId(studentInfo.getStatus_id());
             re.add(temp);
         }
 
@@ -168,5 +170,31 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
             }
         }
         return true;
+    }
+
+    @Override
+    public Integer rejectStudentsInTest(String testId, String[] userLoginId) {
+        Integer re = 0;
+        for (String student : userLoginId) {
+            re += repo.rejectStudentInTest(testId, student);
+        }
+        return re;
+    }
+
+    @Override
+    public EduQuizTest getQuizTestById(String testId) {
+        Optional<EduQuizTest> re = repo.findById(testId);
+
+        if(re.isPresent()) return re.get();
+        else return null;
+    }
+
+    @Override
+    public Integer acceptStudentsInTest(String testId, String[] userLoginId) {
+        Integer re = 0;
+        for (String student : userLoginId) {
+            re += repo.acceptStudentInTest(testId, student);
+        }
+        return re;
     }
 }

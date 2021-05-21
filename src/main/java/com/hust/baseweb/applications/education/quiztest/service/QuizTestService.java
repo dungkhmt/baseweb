@@ -22,4 +22,8 @@ public interface QuizTestService {
     public boolean autoAssignParticipants2QuizTestGroup(AutoAssignParticipants2QuizTestGroupInputModel input);
 
     public boolean autoAssignQuestion2QuizTestGroup(AutoAssignQuestion2QuizTestGroupInputModel input);
+    public Integer rejectStudentsInTest(String testId, String[] userLoginId);
+    public EduQuizTest getQuizTestById(String testId);
+
+    public Integer acceptStudentsInTest(String testId, String[] userLoginId);
 }
