@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -87,6 +88,7 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
     @Override
     public List<EduQuizTestModel> getListQuizByUserId(String userLoginId){
 
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/M/yyyy hh:mm:ss");
         List<EduQuizTestModel> listModel = new ArrayList<>();
         // or find by user id??
         List<EduQuizTest> listEdu = repo.findAll();
@@ -96,7 +98,9 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
             eduModel.setTestId(eduEntity.getTestId());
             eduModel.setTestName(eduEntity.getTestName());
             eduModel.setCourseId(eduEntity.getCourseId());
-            eduModel.setScheduleDatetime(eduEntity.getScheduleDatetime());
+
+            String strDate = formatter.format(eduEntity.getScheduleDatetime());
+            eduModel.setScheduleDatetime(strDate);
             //eduModel.setStatusId(eduEntity.getStatusId());
             List<EduTestQuizParticipant> eduTestQuizParticipants = eduTestQuizParticipantRepo
                 .findByTestIdAndParticipantUserLoginId(eduEntity.getTestId(), userLoginId);

@@ -12,6 +12,9 @@ import java.util.UUID;
 @Setter
 public class QuizGroupQuestionParticipationExecutionChoiceInputModel {
     @NotNull(message = "Được yêu cầu")
+    private String testId;
+
+    @NotNull(message = "Được yêu cầu")
     private UUID questionId;
 
     @NotNull(message = "Được yêu cầu")

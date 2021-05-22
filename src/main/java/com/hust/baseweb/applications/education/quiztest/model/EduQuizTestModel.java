@@ -17,7 +17,7 @@ public class EduQuizTestModel {
 
     private String testName;
 
-    private Date scheduleDatetime;
+    private String scheduleDatetime;
 
     private String courseId;
 
