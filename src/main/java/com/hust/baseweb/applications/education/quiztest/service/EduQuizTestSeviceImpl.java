@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.quiztest.entity.*;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
+import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.QuizTestParticipationExecutionResultOutputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.QuizTestGroupInfoModel;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -90,6 +92,7 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
     @Override
     public List<EduQuizTestModel> getListQuizByUserId(String userLoginId){
 
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/M/yyyy hh:mm:ss");
         List<EduQuizTestModel> listModel = new ArrayList<>();
         // or find by user id??
         List<EduQuizTest> listEdu = repo.findAll();
@@ -99,7 +102,9 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
             eduModel.setTestId(eduEntity.getTestId());
             eduModel.setTestName(eduEntity.getTestName());
             eduModel.setCourseId(eduEntity.getCourseId());
-            eduModel.setScheduleDatetime(eduEntity.getScheduleDatetime());
+
+            String strDate = formatter.format(eduEntity.getScheduleDatetime());
+            eduModel.setScheduleDatetime(strDate);
             //eduModel.setStatusId(eduEntity.getStatusId());
             List<EduTestQuizParticipant> eduTestQuizParticipants = eduTestQuizParticipantRepo
                 .findByTestIdAndParticipantUserLoginId(eduEntity.getTestId(), userLoginId);
@@ -228,4 +233,9 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
         return re;
     }
 
+    public List<QuizTestParticipationExecutionResultOutputModel> getQuizTestParticipationExecutionResult(String testId) {
+        //TODO by HUY HUY
+
+        return null;
+    }
 }

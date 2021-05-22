@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
+import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.QuizTestParticipationExecutionResultOutputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.QuizTestGroupInfoModel;
@@ -31,4 +32,6 @@ public interface QuizTestService {
     public List<QuizTestGroupInfoModel> getQuizTestGroupsInfoByTestId(String testId);
     public Integer deleteQuizTestGroups(String testId, String[] listQuizTestGroupId);
 
+
+    public List<QuizTestParticipationExecutionResultOutputModel> getQuizTestParticipationExecutionResult(String testId);
 }

@@ -2,10 +2,7 @@ package com.hust.baseweb.applications.education.quiztest.service;
 
 import com.hust.baseweb.applications.education.entity.EduCourse;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
-import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
-import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
-import com.hust.baseweb.applications.education.quiztest.entity.QuizGroupQuestionAssignment;
-import com.hust.baseweb.applications.education.quiztest.entity.QuizGroupQuestionParticipationExecutionChoice;
+import com.hust.baseweb.applications.education.quiztest.entity.*;
 import com.hust.baseweb.applications.education.quiztest.model.QuizGroupTestDetailModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.GenerateQuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.*;
@@ -20,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Log4j2
@@ -57,21 +55,56 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
         return eduTestQuizGroupList;
     }
     public QuizGroupTestDetailModel getTestGroupQuestionDetail(Principal principal, String testID){
+
         EduQuizTest test = eduQuizTestRepo.findById(testID).get();
         String courseName = eduCourseRepo.findById(test.getCourseId()).get().getName();
         List<QuizQuestionDetailModel> listQuestions = new ArrayList<>();
 
-        UUID groupId;
-        groupId = eduTestQuizGroupParticipationAssignmentRepo.findEduTestQuizGroupParticipationAssignmentsByParticipationUserLoginId(principal.getName()).get(0).getQuizGroupId();
-        System.out.println("here0 ");
+        QuizGroupTestDetailModel testDetail = new QuizGroupTestDetailModel();
+        testDetail.setTestId(testID);
+        testDetail.setTestName(test.getTestName());
+        testDetail.setDuration(test.getDuration());
+        SimpleDateFormat  formatter = new SimpleDateFormat("dd/M/yyyy hh:mm:ss");
+        String strDate = formatter.format(test.getScheduleDatetime());
+        testDetail.setScheduleDatetime(strDate);
+        testDetail.setCourseName(courseName);
+
+
+
+        List<EduTestQuizGroupParticipationAssignment> listGroupAsignment   = eduTestQuizGroupParticipationAssignmentRepo.findEduTestQuizGroupParticipationAssignmentsByParticipationUserLoginId(principal.getName());
+        System.out.println(listGroupAsignment.size());
+        EduTestQuizGroup eduTestQuizGroup = new EduTestQuizGroup();
+        for (EduTestQuizGroupParticipationAssignment ele: listGroupAsignment) {
+            eduTestQuizGroup = eduQuizTestGroupRepo.findEduTestQuizGroupByTestIdAndQuizGroupId(testID,ele.getQuizGroupId());
+            if (eduTestQuizGroup != null) {
+                break;
+            }
+        }
+        if (eduTestQuizGroup == null){
+            testDetail.setListQuestion(null);
+            testDetail.setQuizGroupId(null);
+            testDetail.setGroupCode(null);
+            testDetail.setParticipationExecutionChoice(null);
+            return testDetail;
+        }
+        UUID groupId = eduTestQuizGroup.getQuizGroupId();
+        String groupCode = eduTestQuizGroup.getGroupCode();
         List<QuizGroupQuestionAssignment> tmpl = quizGroupQuestionAssignmentRepo.findQuizGroupQuestionAssignmentsByQuizGroupId(groupId);
+        System.out.println(tmpl.size());
+        if(tmpl.size() == 0 ){
+            testDetail.setListQuestion(null);
+            testDetail.setQuizGroupId(groupId.toString());
+            testDetail.setGroupCode(null);
+            testDetail.setParticipationExecutionChoice(null);
+            return testDetail;
+        }
         tmpl.forEach( asign -> {
             System.out.println("here ");
             QuizQuestionDetailModel quizQuestion = quizQuestionService.findQuizDetail(asign.getQuestionId());
             System.out.println("ok ");
             listQuestions.add(quizQuestion);
         });
-        String groupCode =  eduQuizTestGroupRepo.findEduTestQuizGroupByTestIdAndQuizGroupId(testID,groupId).getGroupCode();
+
 
         List<QuizGroupQuestionParticipationExecutionChoice> listChoice =   quizGroupQuestionParticipationExecutionChoiceRepo.findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupId(
             principal.getName(), groupId);
@@ -87,15 +120,11 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
             }
         });
 
-        QuizGroupTestDetailModel testDetail = new QuizGroupTestDetailModel();
-        testDetail.setTestId(testID);
+
+
         testDetail.setListQuestion(listQuestions);
         testDetail.setQuizGroupId(groupId.toString());
         testDetail.setGroupCode(groupCode);
-        testDetail.setCourseName(courseName);
-        testDetail.setTestName(test.getTestName());
-        testDetail.setDuration(test.getDuration());
-        testDetail.setScheduleDatetime(test.getScheduleDatetime());
         testDetail.setParticipationExecutionChoice(participationExecutionChoice);
         return testDetail;
     }

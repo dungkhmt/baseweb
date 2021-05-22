@@ -8,6 +8,8 @@ import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizPartic
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
+import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.GetQuizTestParticipationExecutionResultInputModel;
+import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.QuizTestParticipationExecutionResultOutputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.GenerateQuizTestGroupInputModel;
@@ -163,4 +165,14 @@ public class QuizTestController {
         return ResponseEntity.ok().body(quizTestService.deleteQuizTestGroups(testId, list));
     }
 
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/get-quiz-test-participation-execution-result")
+    public ResponseEntity<?> getQuizTestParticipationExecutionResult(Principal principal, @RequestBody
+                                                                     GetQuizTestParticipationExecutionResultInputModel input
+                                                                     ){
+        List<QuizTestParticipationExecutionResultOutputModel> quizTestParticipationExecutionResultOutputModels =
+            quizTestService.getQuizTestParticipationExecutionResult(input.getTestId());
+
+        return ResponseEntity.ok().body(quizTestParticipationExecutionResultOutputModels);
+    }
 }
