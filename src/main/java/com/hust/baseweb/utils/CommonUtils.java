@@ -162,4 +162,25 @@ public class CommonUtils {
         }
         return res;
     }
+    public static int[] genRandom(int a, int n, Random R){
+        // return a random elements from 0,...,n-1
+        if(a > n) return null;
+        int[] idx = new int[n];
+        for(int j = 0; j < n; j++) idx[j] = j;
+        int[] ans = new int[a];
+        for(int j = 0; j < a; j++){
+            int k = R.nextInt(n);
+            ans[j] = idx[k];
+            // remove the kth element by swapping idx[k] with idx[n-1]
+            int tmp = idx[k]; idx[k] = idx[n-1]; idx[n-1] = tmp;
+            n = n - 1;
+        }
+        return ans;
+    }
+    public static void main(String[] args){
+        Random R = new Random();
+        int[] a = genRandom(4,10, R);
+        for(int i = 0; i < a.length; i++)
+            System.out.print(a[i] + " ");
+    }
 }

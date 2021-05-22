@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AutoAssignQuestion2QuizTestGroupInputModel {
-    private UUID classId;
+    //private UUID classId;
     private String quizTestId;
-
+    private int numberQuestions;
 }

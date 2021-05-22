@@ -39,6 +39,7 @@ public class EduQuizTestGroupController {
     @PostMapping("/generate-quiz-test-group")
     public ResponseEntity<?> generateQuizTestGroup(Principal principal, @RequestBody
         GenerateQuizTestGroupInputModel input){
+
         List<EduTestQuizGroup> eduTestQuizGroups = eduQuizTestGroupService.generateQuizTestGroups(input);
 
         return ResponseEntity.ok().body(eduTestQuizGroups);
