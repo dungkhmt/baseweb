@@ -7,7 +7,9 @@ import com.hust.baseweb.applications.education.quiztest.entity.*;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
+import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.QuizTestGroupInfoModel;
 import com.hust.baseweb.applications.education.quiztest.repo.*;
+import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestGroupRepo.QuizTestGroupInfo;
 import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestRepo.StudentInfo;
 
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.Optional;
 
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
@@ -197,4 +200,32 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
         }
         return re;
     }
+
+    @Override
+    public List<QuizTestGroupInfoModel> getQuizTestGroupsInfoByTestId(String testId) {
+        List<QuizTestGroupInfo> info = eduQuizTestGroupRepo.findQuizTestGroupsInfo(testId);
+
+        List<QuizTestGroupInfoModel> re = new ArrayList<>();
+
+        for (QuizTestGroupInfo quizTestGroupInfo : info) {
+            QuizTestGroupInfoModel temp = new QuizTestGroupInfoModel();
+            temp.setQuizGroupId(quizTestGroupInfo.getQuiz_group_id());
+            temp.setGroupCode(quizTestGroupInfo.getGroup_code());
+            temp.setNote(quizTestGroupInfo.getNote());
+            temp.setNumQuestion(quizTestGroupInfo.getNum_question());
+            temp.setNumStudent(quizTestGroupInfo.getNum_student());
+            re.add(temp);
+        }
+
+        return re;
+    }
+
+    public Integer deleteQuizTestGroups(String testId, String[] listQuizTestGroupId) {
+        Integer re = 0;
+        for (String id : listQuizTestGroupId) {
+            re += eduQuizTestGroupRepo.deleteQuizTestGroup(testId, UUID.fromString(id));
+        }
+        return re;
+    }
+
 }

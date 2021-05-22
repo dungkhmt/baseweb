@@ -143,4 +143,24 @@ public class QuizTestController {
         return ResponseEntity.ok().body(quizTestService.acceptStudentsInTest(testId, students));
     }
 
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/get-test-groups-info")
+    public ResponseEntity<?> getTestGroups(
+        Principal principal, 
+        @RequestParam(required=false, name="testId") String testId
+    ) {
+        return ResponseEntity.ok().body(quizTestService.getQuizTestGroupsInfoByTestId(testId));
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/delete-quiz-test-groups")
+    public ResponseEntity<?> deleteQuizTestGroups(
+        Principal principal, 
+        @RequestParam(required=false, name="testId") String testId,
+        @RequestParam(required=false, name="quizTestGroupList") String quizTestGroupList
+    ) {
+        String[] list = quizTestGroupList.split(";");
+        return ResponseEntity.ok().body(quizTestService.deleteQuizTestGroups(testId, list));
+    }
+
 }
