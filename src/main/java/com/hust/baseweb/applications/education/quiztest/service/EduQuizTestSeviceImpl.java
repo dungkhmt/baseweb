@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.quiztest.entity.*;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
+import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.QuizTestParticipationExecutionResultOutputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.*;
@@ -200,5 +201,12 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
             re += repo.acceptStudentInTest(testId, student);
         }
         return re;
+    }
+
+    @Override
+    public List<QuizTestParticipationExecutionResultOutputModel> getQuizTestParticipationExecutionResult(String testId) {
+        //TODO by HUY HUY
+
+        return null;
     }
 }
