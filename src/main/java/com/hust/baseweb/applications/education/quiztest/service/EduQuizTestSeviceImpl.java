@@ -2,8 +2,11 @@ package com.hust.baseweb.applications.education.quiztest.service;
 
 import com.hust.baseweb.applications.education.classmanagement.service.ClassService;
 import com.hust.baseweb.applications.education.entity.EduClass;
+import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
+import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.quiztest.entity.*;
+import com.hust.baseweb.applications.education.quiztest.entity.compositeid.CompositeEduTestQuizGroupParticipationAssignmentId;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
 import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.QuizTestParticipationExecutionResultOutputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
@@ -14,6 +17,8 @@ import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestGroupRep
 import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestRepo.StudentInfo;
 
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
+import com.hust.baseweb.repo.UserLoginRepo;
+import com.hust.baseweb.repo.UserRegisterRepo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +31,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
@@ -40,6 +47,8 @@ import javax.transaction.Transactional;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class EduQuizTestSeviceImpl implements QuizTestService{
 
+    UserLoginRepo userLoginRepo;
+    UserRegisterRepo userRegisterRepo;
     EduQuizTestRepo repo;
     EduTestQuizParticipantRepo eduTestQuizParticipantRepo;
     EduQuizTestGroupRepo eduQuizTestGroupRepo;
@@ -47,6 +56,8 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
     QuizQuestionService quizQuestionService;
     ClassService classService;
     QuizGroupQuestionAssignmentRepo quizGroupQuestionAssignmentRepo;
+    QuizGroupQuestionParticipationExecutionChoiceRepo quizGroupQuestionParticipationExecutionChoiceRepo;
+
     @Override
     public EduQuizTest save(QuizTestCreateInputModel input, UserLogin user) {
         EduQuizTest newRecord = new EduQuizTest();
@@ -236,6 +247,69 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
     public List<QuizTestParticipationExecutionResultOutputModel> getQuizTestParticipationExecutionResult(String testId) {
         //TODO by HUY HUY
 
-        return null;
+        //create list
+        List<QuizTestParticipationExecutionResultOutputModel> listResult = new ArrayList<>();
+
+
+        //find user + group id
+        List<EduTestQuizParticipant> eduTestQuizParticipants = eduTestQuizParticipantRepo.findByTestIdAndStatusId(testId,"STATUS_APPROVED");
+        List<EduTestQuizGroup> eduTestQuizGroups = eduQuizTestGroupRepo.findByTestId(testId);
+
+        for (EduTestQuizParticipant eduTestQuizParticipant : eduTestQuizParticipants){
+
+            
+
+            for (EduTestQuizGroup eduTestQuizGroup : eduTestQuizGroups) {
+
+                if(eduTestQuizGroupParticipationAssignmentRepo.existsById(new CompositeEduTestQuizGroupParticipationAssignmentId(eduTestQuizGroup.getQuizGroupId(),eduTestQuizParticipant.getParticipantUserLoginId()))){
+                    List<QuizGroupQuestionAssignment> quizGroupQuestionAssignments = quizGroupQuestionAssignmentRepo.findQuizGroupQuestionAssignmentsByQuizGroupId(eduTestQuizGroup.getQuizGroupId());
+                    quizGroupQuestionAssignments.forEach( question -> {
+
+                        //create model
+                        QuizTestParticipationExecutionResultOutputModel quizTestParticipationExecutionResultOutputModel = new QuizTestParticipationExecutionResultOutputModel();
+
+                        // get list choice
+                        List<UUID> chooseAnsIds = new ArrayList<>();
+                        List<QuizGroupQuestionParticipationExecutionChoice> quizGroupQuestionParticipationExecutionChoices = quizGroupQuestionParticipationExecutionChoiceRepo.findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupIdAndQuestionId(
+                            eduTestQuizParticipant.getParticipantUserLoginId(),eduTestQuizGroup.getQuizGroupId(),question.getQuestionId());
+                        quizGroupQuestionParticipationExecutionChoices.forEach(choice ->{
+                            chooseAnsIds.add(choice.getChoiceAnswerId());
+                        });
+
+
+                        //get question
+                        QuizQuestionDetailModel quizQuestionDetail = quizQuestionService.findQuizDetail(question.getQuestionId());
+
+
+                        //check choice in question
+
+                        boolean ques_ans = true;
+                        List<UUID> correctAns = quizQuestionDetail
+                            .getQuizChoiceAnswerList()
+                            .stream()
+                            .filter(answer -> answer.getIsCorrectAnswer() == 'Y')
+                            .map(QuizChoiceAnswer::getChoiceAnswerId)
+                            .collect(Collectors.toList());
+
+                        if (!correctAns.containsAll(chooseAnsIds)) {
+                            ques_ans = false;
+                        }
+                        char result = ques_ans ? 'Y' : 'N';
+                        int grade = ques_ans ? 1 : 0;
+                        quizTestParticipationExecutionResultOutputModel.setParticipationUserLoginId(eduTestQuizParticipant.getParticipantUserLoginId());
+                        quizTestParticipationExecutionResultOutputModel.setTestId(testId);
+                        quizTestParticipationExecutionResultOutputModel.setQuizGroupId(eduTestQuizGroup.getQuizGroupId());
+                        quizTestParticipationExecutionResultOutputModel.setQuestionId(question.getQuestionId());
+                        quizTestParticipationExecutionResultOutputModel.setResult(result);
+                        quizTestParticipationExecutionResultOutputModel.setGrade(grade);
+                        quizTestParticipationExecutionResultOutputModel.setParticipationFullName(eduTestQuizParticipant.getParticipantUserLoginId());
+                        listResult.add(quizTestParticipationExecutionResultOutputModel);
+                    });
+                }
+
+            }
+        }
+
+        return listResult;
     }
 }
