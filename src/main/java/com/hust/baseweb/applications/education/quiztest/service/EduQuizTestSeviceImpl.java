@@ -253,15 +253,18 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
 
         //find user + group id
         List<EduTestQuizParticipant> eduTestQuizParticipants = eduTestQuizParticipantRepo.findByTestIdAndStatusId(testId,"STATUS_APPROVED");
+
+        List<StudentInfo> list = repo.findAllStudentInTest(testId);
+
         List<EduTestQuizGroup> eduTestQuizGroups = eduQuizTestGroupRepo.findByTestId(testId);
 
-        for (EduTestQuizParticipant eduTestQuizParticipant : eduTestQuizParticipants){
+        for (StudentInfo studentInfo  : list){
 
             
 
             for (EduTestQuizGroup eduTestQuizGroup : eduTestQuizGroups) {
 
-                if(eduTestQuizGroupParticipationAssignmentRepo.existsById(new CompositeEduTestQuizGroupParticipationAssignmentId(eduTestQuizGroup.getQuizGroupId(),eduTestQuizParticipant.getParticipantUserLoginId()))){
+                if(eduTestQuizGroupParticipationAssignmentRepo.existsById(new CompositeEduTestQuizGroupParticipationAssignmentId(eduTestQuizGroup.getQuizGroupId(),studentInfo.getUser_login_id()))){
                     List<QuizGroupQuestionAssignment> quizGroupQuestionAssignments = quizGroupQuestionAssignmentRepo.findQuizGroupQuestionAssignmentsByQuizGroupId(eduTestQuizGroup.getQuizGroupId());
                     quizGroupQuestionAssignments.forEach( question -> {
 
@@ -271,7 +274,7 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
                         // get list choice
                         List<UUID> chooseAnsIds = new ArrayList<>();
                         List<QuizGroupQuestionParticipationExecutionChoice> quizGroupQuestionParticipationExecutionChoices = quizGroupQuestionParticipationExecutionChoiceRepo.findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupIdAndQuestionId(
-                            eduTestQuizParticipant.getParticipantUserLoginId(),eduTestQuizGroup.getQuizGroupId(),question.getQuestionId());
+                            studentInfo.getUser_login_id(),eduTestQuizGroup.getQuizGroupId(),question.getQuestionId());
                         quizGroupQuestionParticipationExecutionChoices.forEach(choice ->{
                             chooseAnsIds.add(choice.getChoiceAnswerId());
                         });
@@ -296,13 +299,13 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
                         }
                         char result = ques_ans ? 'Y' : 'N';
                         int grade = ques_ans ? 1 : 0;
-                        quizTestParticipationExecutionResultOutputModel.setParticipationUserLoginId(eduTestQuizParticipant.getParticipantUserLoginId());
+                        quizTestParticipationExecutionResultOutputModel.setParticipationUserLoginId(studentInfo.getUser_login_id());
                         quizTestParticipationExecutionResultOutputModel.setTestId(testId);
                         quizTestParticipationExecutionResultOutputModel.setQuizGroupId(eduTestQuizGroup.getQuizGroupId());
                         quizTestParticipationExecutionResultOutputModel.setQuestionId(question.getQuestionId());
                         quizTestParticipationExecutionResultOutputModel.setResult(result);
                         quizTestParticipationExecutionResultOutputModel.setGrade(grade);
-                        quizTestParticipationExecutionResultOutputModel.setParticipationFullName(eduTestQuizParticipant.getParticipantUserLoginId());
+                        quizTestParticipationExecutionResultOutputModel.setParticipationFullName(studentInfo.getFull_name());
                         listResult.add(quizTestParticipationExecutionResultOutputModel);
                     });
                 }
