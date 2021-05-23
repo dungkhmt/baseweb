@@ -13,6 +13,8 @@ public interface EduTestQuizGroupParticipationAssignmentRepo extends JpaReposito
 
     EduTestQuizGroupParticipationAssignment findByQuizGroupIdAndParticipationUserLoginId(UUID quizGroupId, String participationUserLoginId);
 
+    @Override
+    boolean existsById(CompositeEduTestQuizGroupParticipationAssignmentId compositeEduTestQuizGroupParticipationAssignmentId);
 
     EduTestQuizGroupParticipationAssignment save(EduTestQuizGroupParticipationAssignment eduTestQuizGroupParticipationAssignment);
 
