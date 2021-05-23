@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
+import com.hust.baseweb.applications.education.quiztest.model.EditQuizTestInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
@@ -18,6 +19,8 @@ import java.util.List;
 
 public interface QuizTestService {
     public EduQuizTest save(QuizTestCreateInputModel input, UserLogin user);
+    public EduQuizTest update(EditQuizTestInputModel input);
+
     public List<EduQuizTest> getAllTestByCreateUser(String userLoginId);
     public List<StudentInTestQueryReturnModel> getAllStudentInTest(String testId);
     public List<EduQuizTestModel> getListQuizByUserId(String userLoginId);

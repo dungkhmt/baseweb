@@ -12,4 +12,5 @@ import lombok.Setter;
 public class GetQuizParticipationStatisticInputModel {
     private String fromDate;
     private String thruDate;
+    private int length;
 }

@@ -8,8 +8,11 @@ import com.hust.baseweb.applications.education.quiztest.model.QuizGroupTestDetai
 import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.EduTestQuizParticipationCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.GenerateQuizTestGroupInputModel;
+import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.QuizTestGroupParticipantAssignmentOutputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizParticipantRepo;
 import com.hust.baseweb.applications.education.quiztest.service.EduQuizTestGroupService;
+import com.hust.baseweb.applications.education.quiztest.service.EduTestQuizGroupParticipationAssignmentService;
+import com.hust.baseweb.applications.education.quiztest.service.QuizTestService;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +39,8 @@ public class EduQuizTestGroupController {
     private EduQuizTestGroupService eduQuizTestGroupService;
     private UserService userService;
     private EduTestQuizParticipantRepo eduTestQuizParticipationRepo;
-
+    private EduTestQuizGroupParticipationAssignmentService eduTestQuizGroupParticipationAssignmentService;
+    private QuizTestService quizTestService;
     @PostMapping("/generate-quiz-test-group")
     public ResponseEntity<?> generateQuizTestGroup(Principal principal, @RequestBody
         GenerateQuizTestGroupInputModel input){
@@ -47,6 +52,16 @@ public class EduQuizTestGroupController {
 
     @GetMapping("/get-quiz-test-participation-group-question/{testID}")
     public ResponseEntity<?> getTestGroupQuestionByUser(Principal principal, @PathVariable String testID ) {
+        EduQuizTest eduQuizTest = quizTestService.getQuizTestById(testID);
+        Date startDateTime = eduQuizTest.getScheduleDatetime();
+        Date currentDate = new Date();
+        int timeTest = ((int) (currentDate.getTime() - startDateTime.getTime()))/(60*1000); //minutes
+        log.info("getTestGroupQuestionByUser, current = " + currentDate.toString() +
+                 " scheduleDate = " + startDateTime.toString() + " timeTest = " + timeTest);
+        
+        if(timeTest > eduQuizTest.getDuration() || timeTest < 0) {// out-of-allowed date-time
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
 
         EduTestQuizParticipant testParticipant = eduTestQuizParticipationRepo.findEduTestQuizParticipantByParticipantUserLoginIdAndAndTestId(principal.getName(), testID);
 
@@ -58,5 +73,12 @@ public class EduQuizTestGroupController {
         return ResponseEntity.ok().body(eduQuizTestGroupService.getTestGroupQuestionDetail(principal, testID));
     }
 
+    @GetMapping("/get-all-quiz-test-group-participants/{testId}")
+    public ResponseEntity<?> getQuizTestGroupParticipants(Principal principal, @PathVariable String testId){
+        log.info("getQuizTestGroupParticipants, testId = " + testId);
+        List<QuizTestGroupParticipantAssignmentOutputModel> quizTestGroupParticipantAssignmentOutputModels
+            = eduTestQuizGroupParticipationAssignmentService.getQuizTestGroupParticipant(testId);
+        return ResponseEntity.ok().body(quizTestGroupParticipantAssignmentOutputModels);
+    }
 
 }

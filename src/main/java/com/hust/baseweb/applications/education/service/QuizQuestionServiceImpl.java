@@ -157,10 +157,10 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             //  Block of code to handle errors
         }
         List<QuizChoiceAnswer> quizChoiceAnswers = quizChoiceAnswerRepo.findAllByQuizQuestion(quizQuestion);
-        log.info("findQuizDetail, questionId = " +
-                 questionId +
-                 ", GOT quizChoideAnswers.sz = " +
-                 quizChoiceAnswers.size());
+        //log.info("findQuizDetail, questionId = " +
+        //         questionId +
+        //         ", GOT quizChoideAnswers.sz = " +
+        //         quizChoiceAnswers.size());
 
         quizQuestionDetailModel.setQuizChoiceAnswerList(quizChoiceAnswers);
 

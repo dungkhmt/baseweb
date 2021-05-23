@@ -45,13 +45,13 @@ public class QuizGroupQuestionParticipationExecutionChoiceController {
         Date currentDate = new Date();
         Date testStartDate = test.getScheduleDatetime();
         int timeTest = ((int) (currentDate.getTime() - testStartDate.getTime()))/(60*1000); //minutes
-        System.out.println(currentDate);
-        System.out.println(testStartDate);
-        System.out.println(timeTest);
-        System.out.println(test.getDuration());
+        //System.out.println(currentDate);
+        //System.out.println(testStartDate);
+        //System.out.println(timeTest);
+        //System.out.println(test.getDuration());
 
         if(timeTest > test.getDuration()){
-            System.out.println("out time~!");
+            //System.out.println("out time~!");
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
         }
         UUID questionId = input.getQuestionId();

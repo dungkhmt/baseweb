@@ -8,4 +8,5 @@ import lombok.Setter;
 public class GetClassParticipationStatisticInputModel {
     private String fromDate;
     private String thruDate;
+    private int length;
 }

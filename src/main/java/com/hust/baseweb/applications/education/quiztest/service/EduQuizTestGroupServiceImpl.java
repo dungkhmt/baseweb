@@ -72,8 +72,8 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
 
 
         List<EduTestQuizGroupParticipationAssignment> listGroupAsignment   = eduTestQuizGroupParticipationAssignmentRepo.findEduTestQuizGroupParticipationAssignmentsByParticipationUserLoginId(principal.getName());
-        System.out.println(listGroupAsignment.size());
-        EduTestQuizGroup eduTestQuizGroup = new EduTestQuizGroup();
+        //System.out.println(listGroupAsignment.size());
+        EduTestQuizGroup eduTestQuizGroup = null;//new EduTestQuizGroup();
         for (EduTestQuizGroupParticipationAssignment ele: listGroupAsignment) {
             eduTestQuizGroup = eduQuizTestGroupRepo.findEduTestQuizGroupByTestIdAndQuizGroupId(testID,ele.getQuizGroupId());
             if (eduTestQuizGroup != null) {
@@ -90,7 +90,7 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
         UUID groupId = eduTestQuizGroup.getQuizGroupId();
         String groupCode = eduTestQuizGroup.getGroupCode();
         List<QuizGroupQuestionAssignment> tmpl = quizGroupQuestionAssignmentRepo.findQuizGroupQuestionAssignmentsByQuizGroupId(groupId);
-        System.out.println(tmpl.size());
+        //System.out.println(tmpl.size());
         if(tmpl.size() == 0 ){
             testDetail.setListQuestion(null);
             testDetail.setQuizGroupId(groupId.toString());
@@ -99,9 +99,9 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
             return testDetail;
         }
         tmpl.forEach( asign -> {
-            System.out.println("here ");
+            //System.out.println("here ");
             QuizQuestionDetailModel quizQuestion = quizQuestionService.findQuizDetail(asign.getQuestionId());
-            System.out.println("ok ");
+            //System.out.println("ok ");
             listQuestions.add(quizQuestion);
         });
 

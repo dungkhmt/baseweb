@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizParticipant;
+import com.hust.baseweb.applications.education.quiztest.model.EditQuizTestInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
 import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
@@ -61,6 +62,13 @@ public class QuizTestController {
         System.out.println(input);
         return ResponseEntity.ok().body(quizTestService.save(input, user));
     }
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/update-quiz-test")
+    public ResponseEntity<?> updateQuizTest(Principal principal, @RequestBody EditQuizTestInputModel input){
+        EduQuizTest eduQuizTest = quizTestService.update(input);
+        return ResponseEntity.ok().body(eduQuizTest);
+    }
+
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-all-quiz-test-by-user")

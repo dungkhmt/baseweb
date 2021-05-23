@@ -11,6 +11,8 @@ public interface EduTestQuizGroupParticipationAssignmentRepo extends JpaReposito
 
     List<EduTestQuizGroupParticipationAssignment> findEduTestQuizGroupParticipationAssignmentsByParticipationUserLoginId(String userId);
 
+    List<EduTestQuizGroupParticipationAssignment> findAllByQuizGroupIdIn(List<UUID> quizGroupIds);
+
     EduTestQuizGroupParticipationAssignment findByQuizGroupIdAndParticipationUserLoginId(UUID quizGroupId, String participationUserLoginId);
 
     @Override

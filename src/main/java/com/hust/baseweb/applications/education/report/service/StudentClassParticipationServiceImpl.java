@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.education.report.service;
 
 import com.hust.baseweb.applications.education.entity.LogUserLoginCourseChapterMaterial;
 import com.hust.baseweb.applications.education.repo.LogUserLoginCourseChapterMaterialRepo;
+import com.hust.baseweb.applications.education.report.model.GetClassParticipationStatisticInputModel;
 import com.hust.baseweb.applications.education.report.model.StudentClassParticipationOutputModel;
 import com.hust.baseweb.utils.DateTimeUtils;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,14 @@ public class StudentClassParticipationServiceImpl implements StudentClassPartici
 
 
     @Override
-    public List<StudentClassParticipationOutputModel> getStudentClassParticipationStatistic() {
+    public List<StudentClassParticipationOutputModel> getStudentClassParticipationStatistic(
+        GetClassParticipationStatisticInputModel input) {
+        /*
+            TO BE IMPROVED
+         */
+        int len = 10;
+        if(input.getLength() != 0)
+            len = input.getLength();
 
         List<LogUserLoginCourseChapterMaterial> logUserLoginCourseChapterMaterials = logUserLoginCourseChapterMaterialRepo.findAll();
 
@@ -42,16 +50,33 @@ public class StudentClassParticipationServiceImpl implements StudentClassPartici
                 log.info("getStudentClassParticipationStatistic, date = NULL " + i.getEduCourseMaterialId());
                 continue;
             }
-            log.info("getStudentClassParticipationStatistic, date = " + date.toString());
+            //log.info("getStudentClassParticipationStatistic, date = " + date.toString());
             String s_date = DateTimeUtils.date2YYYYMMDD(date);
             if(mDate2Count.get(s_date) == null)
                 mDate2Count.put(s_date,1);
             else
                 mDate2Count.put(s_date,mDate2Count.get(s_date)+1);
         }
-        for(String sd: mDate2Count.keySet()){
+        String[] s = new String[mDate2Count.keySet().size()];
+        int idx = -1;
+        for(String k: mDate2Count.keySet()){
+            idx++;
+            s[idx] = k;
+        }
+        for(int i  = 0; i < s.length; i++){
+            for(int j = i+1; j < s.length; j++){
+                if(s[i].compareTo(s[j]) < 0){
+                    String tmp = s[i]; s[i] = s[j]; s[j] = tmp;
+                }
+            }
+        }
+        if(len > s.length) len = s.length;
+
+        for(int i = 0; i < len; i++){
+        //for(String sd: mDate2Count.keySet()){
+            String sd = s[i];
             studentClassParticipationOutputModels.add(new StudentClassParticipationOutputModel(sd,mDate2Count.get(sd)));
-            log.info("getStudentClassParticipationStatistic, date " + sd + " -> " + mDate2Count.get(sd));
+            //log.info("getStudentClassParticipationStatistic, date " + sd + " -> " + mDate2Count.get(sd));
         }
         return studentClassParticipationOutputModels;
     }

@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.quiztest.entity.*;
 import com.hust.baseweb.applications.education.quiztest.entity.compositeid.CompositeEduTestQuizGroupParticipationAssignmentId;
+import com.hust.baseweb.applications.education.quiztest.model.EditQuizTestInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
 import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.QuizTestParticipationExecutionResultOutputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
@@ -76,6 +77,21 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
         newRecord.setLastUpdatedStamp(new Date());
 
         return repo.save(newRecord);
+    }
+
+    @Override
+    public EduQuizTest update(EditQuizTestInputModel input) {
+        log.info("update, testId = " + input.getTestId() + ", duration = " + input.getDuration() + " date = " + input.getScheduleDate());
+
+        EduQuizTest eduQuizTest = repo.findById(input.getTestId()).orElse(null);
+
+        if(eduQuizTest != null){
+            eduQuizTest.setDuration(input.getDuration());
+            eduQuizTest.setScheduleDatetime(input.getScheduleDate());
+            eduQuizTest = repo.save(eduQuizTest);
+            log.info("update, testId = " + input.getTestId() + ", duration = " + input.getDuration() + " date = " + input.getScheduleDate() + " OK updated");
+        }
+        return null;
     }
 
     @Override
@@ -392,9 +408,19 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
                             .map(QuizChoiceAnswer::getChoiceAnswerId)
                             .collect(Collectors.toList());
 
-                        if (!correctAns.containsAll(chooseAnsIds)) {
-                            ques_ans = false;
-                        }
+                        // TRUE if and only if correctAns = chooseAnsIds
+                        //if (!correctAns.containsAll(chooseAnsIds)) {
+                        //    ques_ans = false;
+                        //}
+                        ques_ans = correctAns.containsAll(chooseAnsIds) && chooseAnsIds.containsAll(correctAns)
+                                   && chooseAnsIds.size() > 0;
+
+                        log.info("getQuizTestParticipationExecutionResult, correctAns = ");
+                        for(UUID u: correctAns) log.info("getQuizTestParticipationExecutionResult, correctAns = " + u);
+                        for(UUID u: chooseAnsIds)log.info("getQuizTestParticipationExecutionResult, chooseAns = " + u);
+                        log.info("getQuizTestParticipationExecutionResult, user " + studentInfo.getUser_login_id() +
+                                 " quiz " + question.getQuestionId() + " -> ques_ans = " + ques_ans);
+
                         char result = ques_ans ? 'Y' : 'N';
                         int grade = ques_ans ? 1 : 0;
                         quizTestParticipationExecutionResultOutputModel.setParticipationUserLoginId(studentInfo.getUser_login_id());

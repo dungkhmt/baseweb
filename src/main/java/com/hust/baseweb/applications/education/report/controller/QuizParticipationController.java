@@ -25,7 +25,7 @@ public class QuizParticipationController {
     @PostMapping("/get-quiz-participation-statistic")
     public ResponseEntity<?> getQuizParticipationStatistic(Principal principal, @RequestBody GetQuizParticipationStatisticInputModel input){
         List<QuizParticipationStatisticOutputModel> quizParticipationStatisticOutputModelList  =
-            quizParticipationStatisticService.getQuizParticipationStatistic();
+            quizParticipationStatisticService.getQuizParticipationStatistic(input);
 
         return ResponseEntity.ok().body(quizParticipationStatisticOutputModelList);
     }

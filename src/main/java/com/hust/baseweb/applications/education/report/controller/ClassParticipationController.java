@@ -24,7 +24,7 @@ public class ClassParticipationController {
     @PostMapping("/get-class-participation-statistic")
     public ResponseEntity<?> getClassParticipationStatistic(Principal principal, GetClassParticipationStatisticInputModel input){
         List<StudentClassParticipationOutputModel> studentClassParticipationOutputModels =
-            studentClassParticipationService.getStudentClassParticipationStatistic();
+            studentClassParticipationService.getStudentClassParticipationStatistic(input);
 
         return ResponseEntity.ok().body(studentClassParticipationOutputModels);
     }
