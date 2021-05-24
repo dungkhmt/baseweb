@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.mail.service;
 import com.hust.baseweb.config.MailProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class MailServiceImpl implements MailService {
 
     private MailProperties properties;
 
-    public void sendSimpleMail(String[] to, String[] cc, String[] bcc, String subject, String body) {
+    public SimpleMailMessage createSimpleMail(String[] to, String[] cc, String[] bcc, String subject, String body) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
         mailMessage.setFrom(properties.getUsername());
@@ -32,10 +33,23 @@ public class MailServiceImpl implements MailService {
         mailMessage.setSentDate(new Date());
 //        mailMessage.setReplyTo(properties.getUsername());
 
-        mailSender.send(mailMessage);
+        return mailMessage;
+    }
+
+    public SimpleMailMessage createSimpleMail(String[] to, String subject, String body) {
+        return createSimpleMail(to, null, null, subject, body);
+    }
+
+    public void sendSimpleMail(String[] to, String[] cc, String[] bcc, String subject, String body) {
+        mailSender.send(createSimpleMail(to, cc, bcc, subject, body));
     }
 
     public void sendSimpleMail(String[] to, String subject, String body) {
         sendSimpleMail(to, null, null, subject, body);
+    }
+
+    @Override
+    public void sendMultipleSimpleMail(SimpleMailMessage... simpleMessages) throws MailException {
+        mailSender.send(simpleMessages);
     }
 }
