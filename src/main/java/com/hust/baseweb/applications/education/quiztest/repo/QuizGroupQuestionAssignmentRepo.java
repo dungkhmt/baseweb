@@ -11,6 +11,8 @@ public interface QuizGroupQuestionAssignmentRepo extends JpaRepository<QuizGroup
 
     List<QuizGroupQuestionAssignment> findQuizGroupQuestionAssignmentsByQuizGroupId(UUID groupId);
 
+    List<QuizGroupQuestionAssignment> findAllByQuizGroupIdIn(List<UUID> quizGroupIds);
+
     QuizGroupQuestionAssignment findByQuestionIdAndQuizGroupId(UUID questionId, UUID quizGroupId);
 
     QuizGroupQuestionAssignment save(QuizGroupQuestionAssignment quizGroupQuestionAssignment);

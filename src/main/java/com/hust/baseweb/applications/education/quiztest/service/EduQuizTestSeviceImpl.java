@@ -132,7 +132,10 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
             eduModel.setTestName(eduEntity.getTestName());
             eduModel.setCourseId(eduEntity.getCourseId());
 
-            String strDate = formatter.format(eduEntity.getScheduleDatetime());
+            String strDate = null;
+            if(eduEntity.getScheduleDatetime() != null)
+                strDate = formatter.format(eduEntity.getScheduleDatetime());
+
             eduModel.setScheduleDatetime(strDate);
             //eduModel.setStatusId(eduEntity.getStatusId());
             List<EduTestQuizParticipant> eduTestQuizParticipants = eduTestQuizParticipantRepo
