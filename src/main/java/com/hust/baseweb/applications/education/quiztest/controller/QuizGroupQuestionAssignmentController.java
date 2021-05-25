@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.education.quiztest.controller;
 
 import com.hust.baseweb.applications.education.quiztest.entity.QuizGroupQuestionAssignment;
+import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.QuizGroupQuestionDetailOutputModel;
 import com.hust.baseweb.applications.education.quiztest.service.QuizGroupQuestionAssignmentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,7 +27,7 @@ public class QuizGroupQuestionAssignmentController {
     private QuizGroupQuestionAssignmentService quizGroupQuestionAssignmentService;
     @GetMapping("/get-quiz-group-question-assignment-of-test/{testId}")
     public ResponseEntity<?> getQuizGroupQuestionAssignments(Principal principal, @PathVariable String testId){
-        List<QuizGroupQuestionAssignment> quizGroupQuestionAssignments =
+        List<QuizGroupQuestionDetailOutputModel> quizGroupQuestionAssignments =
             quizGroupQuestionAssignmentService.findAllQuizGroupQuestionAssignmentOfTest(testId);
 
         return ResponseEntity.ok().body(quizGroupQuestionAssignments);
