@@ -201,7 +201,7 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
 
         HashMap<String, List<QuizQuestion>> mapTopicId2QUestion = new HashMap();
         for(QuizQuestion q: quizQuestions){
-            if(q.getStatusId() == QuizQuestion.STATUS_PUBLIC) continue;
+            if(q.getStatusId().equals(QuizQuestion.STATUS_PUBLIC)) continue;
 
             String topicId = q.getQuizCourseTopic().getQuizCourseTopicId();
             if(mapTopicId2QUestion.get(topicId) == null)

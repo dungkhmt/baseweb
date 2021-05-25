@@ -39,7 +39,8 @@ INSERT INTO public.edu_department (id,department_name) VALUES
 
 -- public.edu_course
 INSERT INTO public.edu_course (id,course_name,credit,last_updated_stamp,created_stamp) VALUES
-('IT4663','Tối ưu lập kế hoạch',3,NULL,'2020-09-23 14:15:21.651')
+('IT3020','Toán rời rạc',3,NULL,'2020-09-23 14:36:48.207')
+,('IT4663','Tối ưu lập kế hoạch',3,NULL,'2020-09-23 14:15:21.651')
 ,('IT3052E','Fundamentals of optimization',3,NULL,'2020-09-23 14:33:28.628')
 ,('IT3011','Cấu trúc dữ liệu và thuật toán',2,NULL,'2020-09-23 14:34:35.265')
 ,('IT3170','Thuật toán ứng dụng',2,NULL,'2020-09-23 14:35:24.529')
