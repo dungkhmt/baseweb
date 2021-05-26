@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
 /**
@@ -31,7 +34,6 @@ public class MailServiceImpl implements MailService {
         mailMessage.setSubject(subject);
         mailMessage.setText(body);
         mailMessage.setSentDate(new Date());
-//        mailMessage.setReplyTo(properties.getUsername());
 
         return mailMessage;
     }
@@ -51,5 +53,54 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendMultipleSimpleMail(SimpleMailMessage... simpleMessages) throws MailException {
         mailSender.send(simpleMessages);
+    }
+
+
+    @Override
+    public MimeMessage createMimeMessage(
+        String[] to,
+        String[] cc,
+        String[] bcc,
+        String subject,
+        String body,
+        String replyTo,
+        MultipartFile[] files
+    ) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper messageHelper =
+                new MimeMessageHelper(message, true);
+
+            messageHelper.setFrom(properties.getUsername());
+            messageHelper.setTo("phamducdat2402@gmail.com");
+//            messageHelper.setCc("mail@gmail.com");
+//            messageHelper.setBcc("mail@gmail.com");
+            messageHelper.setText("Test");
+            for (MultipartFile file : files) {
+                if(file != null) {
+                    messageHelper.addAttachment(file.getOriginalFilename(), file, file.getContentType());
+                }
+            }
+            return message;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public void sendMailWithMultipleFile(
+        String[] to,
+        String[] cc,
+        String[] bcc,
+        String subject,
+        String body,
+        String replyTo,
+        MultipartFile[] files
+    ) {
+        MimeMessage mimeMessage = createMimeMessage(to, cc, bcc, subject, body, replyTo, files);
+        if (mimeMessage != null) {
+            mailSender.send(mimeMessage);
+        }
     }
 }

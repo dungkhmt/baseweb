@@ -1,6 +1,9 @@
 package com.hust.baseweb.applications.mail.service;
 
 import org.springframework.mail.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.mail.internet.MimeMessage;
 
 /**
  * @author Le Anh Tuan
@@ -64,4 +67,10 @@ public interface MailService {
      * @throws MailSendException           in case of failure when sending a message
      */
     void sendMultipleSimpleMail(SimpleMailMessage... simpleMessages) throws MailException;
+
+    MimeMessage createMimeMessage(String[] to, String[] cc,
+                           String[] bcc, String subject, String body, String replyTo, MultipartFile[] files);
+
+    void sendMailWithMultipleFile(String[] to, String[] cc,
+                                  String[] bcc, String subject, String body, String replyTo, MultipartFile[] files);
 }
