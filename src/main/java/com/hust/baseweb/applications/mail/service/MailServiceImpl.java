@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
@@ -24,7 +25,14 @@ public class MailServiceImpl implements MailService {
 
     private MailProperties properties;
 
-    public SimpleMailMessage createSimpleMail(String[] to, String[] cc, String[] bcc, String subject, String body) {
+    public SimpleMailMessage createSimpleMail(
+        String[] to,
+        String[] cc,
+        String[] bcc,
+        String subject,
+        String body,
+        String replyTo
+    ) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
         mailMessage.setFrom(properties.getUsername());
@@ -34,27 +42,27 @@ public class MailServiceImpl implements MailService {
         mailMessage.setSubject(subject);
         mailMessage.setText(body);
         mailMessage.setSentDate(new Date());
+        mailMessage.setReplyTo(replyTo);
 
         return mailMessage;
     }
 
-    public SimpleMailMessage createSimpleMail(String[] to, String subject, String body) {
-        return createSimpleMail(to, null, null, subject, body);
+    public SimpleMailMessage createSimpleMail(String[] to, String subject, String body, String replyTo) {
+        return createSimpleMail(to, null, null, subject, body, replyTo);
     }
 
-    public void sendSimpleMail(String[] to, String[] cc, String[] bcc, String subject, String body) {
-        mailSender.send(createSimpleMail(to, cc, bcc, subject, body));
+    public void sendSimpleMail(String[] to, String[] cc, String[] bcc, String subject, String body, String replyTo) {
+        mailSender.send(createSimpleMail(to, cc, bcc, subject, body, replyTo));
     }
 
-    public void sendSimpleMail(String[] to, String subject, String body) {
-        sendSimpleMail(to, null, null, subject, body);
+    public void sendSimpleMail(String[] to, String subject, String body, String replyTo) {
+        sendSimpleMail(to, null, null, subject, body, replyTo);
     }
 
     @Override
     public void sendMultipleSimpleMail(SimpleMailMessage... simpleMessages) throws MailException {
         mailSender.send(simpleMessages);
     }
-
 
     @Override
     public MimeMessage createMimeMessage(
@@ -64,43 +72,59 @@ public class MailServiceImpl implements MailService {
         String subject,
         String body,
         String replyTo,
-        MultipartFile[] files
-    ) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper messageHelper =
-                new MimeMessageHelper(message, true);
+        MultipartFile[] attachments
+    ) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
 
-            messageHelper.setFrom(properties.getUsername());
-            messageHelper.setTo("phamducdat2402@gmail.com");
-//            messageHelper.setCc("mail@gmail.com");
-//            messageHelper.setBcc("mail@gmail.com");
-            messageHelper.setText("Test");
-            for (MultipartFile file : files) {
-                if(file != null) {
-                    messageHelper.addAttachment(file.getOriginalFilename(), file, file.getContentType());
-                }
-            }
-            return message;
-        } catch (Exception e) {
-            e.printStackTrace();
+        messageHelper.setFrom(properties.getUsername());
+        messageHelper.setTo(to);
+
+        if (null != cc && cc.length > 0) {
+            messageHelper.setCc(cc);
         }
-        return null;
+
+        if (null != bcc && bcc.length > 0) {
+            messageHelper.setBcc(bcc);
+        }
+
+        messageHelper.setSubject(subject);
+        messageHelper.setText(body); // TODO: research 2 overloading methods
+        messageHelper.setReplyTo(replyTo);
+        messageHelper.setSentDate(new Date());
+
+//        Research 5 following methods
+//        messageHelper.setFrom(properties.getUsername(), "personal");
+//        messageHelper.setPriority();
+//        messageHelper.setFileTypeMap()
+//        messageHelper.setValidateAddresses();
+//        messageHelper.setReplyTo(replyTo, "personal");
+
+        // FIXME: Exception when no file has been chosen in the multipart form.
+        for (MultipartFile attachment : attachments) {
+            if (null != attachment) {
+                messageHelper.addAttachment(attachment.getOriginalFilename(), attachment, attachment.getContentType());
+            }
+        }
+
+        return message;
     }
 
     @Override
-    public void sendMailWithMultipleFile(
+    public void sendMailWithAttachments(
         String[] to,
         String[] cc,
         String[] bcc,
         String subject,
         String body,
         String replyTo,
-        MultipartFile[] files
+        MultipartFile[] attachments
     ) {
-        MimeMessage mimeMessage = createMimeMessage(to, cc, bcc, subject, body, replyTo, files);
-        if (mimeMessage != null) {
+        try {
+            MimeMessage mimeMessage = createMimeMessage(to, cc, bcc, subject, body, replyTo, attachments);
             mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
     }
 }
