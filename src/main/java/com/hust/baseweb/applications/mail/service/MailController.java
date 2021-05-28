@@ -23,6 +23,6 @@ public class MailController {
     public void sendMailWithMultipleFiles(@RequestParam("files") MultipartFile[] files) {
         String[] to = {"inflict0126104@gmail.com"};
         String body = "body";
-        mailService.sendMailWithAttachments(to, null, null, "subject", body, false, null, null, null);
+        mailService.sendMailWithAttachments(to, null, null, "subject", body, false, null, null, files);
     }
 }

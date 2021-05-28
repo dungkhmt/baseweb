@@ -1,10 +1,10 @@
 package com.hust.baseweb.applications.mail.service;
 
 import org.springframework.mail.*;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 /**
  * @author Le Anh Tuan
@@ -88,7 +88,7 @@ public interface MailService {
      * @throws MessagingException
      * @see #sendMailWithAttachments(String[], String[], String[], String, String, boolean, String, String, MultipartFile[])
      */
-    MimeMessage createMimeMessage(
+    MimeMessageHelper createMimeMessage(
         String[] to,
         String[] cc,
         String[] bcc,
@@ -107,7 +107,7 @@ public interface MailService {
      * @throws MessagingException
      * @see #createMimeMessage(String[], String[], String[], String, String, boolean, String, String, MultipartFile[])
      */
-    MimeMessage createMimeMessage(
+    MimeMessageHelper createMimeMessage(
         String[] to,
         String subject,
         String body,
@@ -122,7 +122,7 @@ public interface MailService {
      * @throws MessagingException
      * @see #sendMailWithAttachments(String[], String[], String[], String, String, String, String, String, MultipartFile[])
      */
-    MimeMessage createMimeMessage(
+    MimeMessageHelper createMimeMessage(
         String[] to,
         String[] cc,
         String[] bcc,
@@ -143,7 +143,7 @@ public interface MailService {
      * @throws MessagingException
      * @see #createMimeMessage(String[], String[], String[], String, String, String, String, String, MultipartFile[])
      */
-    MimeMessage createMimeMessage(
+    MimeMessageHelper createMimeMessage(
         String[] to,
         String subject,
         String plainText,

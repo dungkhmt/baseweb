@@ -67,7 +67,7 @@ public class MailServiceImpl implements MailService {
         mailSender.send(simpleMessages);
     }
 
-    public MimeMessage createMimeMessage(
+    public MimeMessageHelper createMimeMessage(
         String[] to,
         String[] cc,
         String[] bcc,
@@ -88,7 +88,7 @@ public class MailServiceImpl implements MailService {
             attachments);
 
         messageHelper.setText(body, isHtml);
-        return messageHelper.getMimeMessage();
+        return messageHelper;
 
 //        Research 3 following methods
 //        messageHelper.setPriority();
@@ -96,7 +96,7 @@ public class MailServiceImpl implements MailService {
 //        messageHelper.setValidateAddresses();
     }
 
-    public MimeMessage createMimeMessage(
+    public MimeMessageHelper createMimeMessage(
         String[] to,
         String subject,
         String body,
@@ -106,7 +106,7 @@ public class MailServiceImpl implements MailService {
         return createMimeMessage(to, null, null, subject, body, isHtml, null, null, attachments);
     }
 
-    public MimeMessage createMimeMessage(
+    public MimeMessageHelper createMimeMessage(
         String[] to,
         String[] cc,
         String[] bcc,
@@ -127,10 +127,10 @@ public class MailServiceImpl implements MailService {
             attachments);
 
         messageHelper.setText(plainText, htmlText);
-        return messageHelper.getMimeMessage();
+        return messageHelper;
     }
 
-    public MimeMessage createMimeMessage(
+    public MimeMessageHelper createMimeMessage(
         String[] to,
         String subject,
         String plainText,
@@ -152,7 +152,7 @@ public class MailServiceImpl implements MailService {
         MultipartFile[] attachments
     ) {
         try {
-            MimeMessage mimeMessage = createMimeMessage(
+            MimeMessageHelper mimeMessage = createMimeMessage(
                 to,
                 cc,
                 bcc,
@@ -163,7 +163,7 @@ public class MailServiceImpl implements MailService {
                 replyPersonal,
                 attachments);
 
-            mailSender.send(mimeMessage);
+            mailSender.send(mimeMessage.getMimeMessage());
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -191,7 +191,7 @@ public class MailServiceImpl implements MailService {
         MultipartFile[] attachments
     ) {
         try {
-            MimeMessage mimeMessage = createMimeMessage(
+            MimeMessageHelper mimeMessage = createMimeMessage(
                 to,
                 cc,
                 bcc,
@@ -202,7 +202,7 @@ public class MailServiceImpl implements MailService {
                 replyPersonal,
                 attachments);
 
-            mailSender.send(mimeMessage);
+            mailSender.send(mimeMessage.getMimeMessage());
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -289,12 +289,12 @@ public class MailServiceImpl implements MailService {
     ) throws MessagingException {
         MimeMessageHelper messageHelper = initMimeMessage(to, cc, bcc, subject, replyTo, replyPersonal);
 
-        // FIXME: Exception when no file has been chosen in the multipart form.
         if (null != attachments) {
             for (MultipartFile attachment : attachments) {
-                if (null != attachment) {
+                if (null != attachment && null != attachment.getContentType()) {
+                    // Note: name or content type == null cause exception.
                     messageHelper.addAttachment(
-                        attachment.getOriginalFilename(),
+                        null != attachment.getOriginalFilename() ? attachment.getOriginalFilename() : "file",
                         attachment,
                         attachment.getContentType());
                 }
