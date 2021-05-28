@@ -181,6 +181,24 @@ public class QuizController {
 
         return ResponseEntity.ok().body(quizQuestionDetailModels);
     }
+    @GetMapping("/get-unpublished-quiz-of-course/{courseId}")
+    public ResponseEntity<?> getUnPublishedQuizOfCourse(Principal principal, @PathVariable String courseId) {
+
+        log.info("getUnPublishedQuizOfCourse, courseId = " + courseId);
+        List<QuizQuestion> quizQuestions = quizQuestionService.findQuizOfCourse(courseId);
+        List<QuizQuestionDetailModel> quizQuestionDetailModels = new ArrayList<>();
+        for (QuizQuestion q : quizQuestions) {
+            if (q.getStatusId().equals(QuizQuestion.STATUS_PUBLIC)) {
+                continue;
+            }
+            QuizQuestionDetailModel quizQuestionDetailModel = quizQuestionService.findQuizDetail(q.getQuestionId());
+            quizQuestionDetailModels.add(quizQuestionDetailModel);
+        }
+        log.info("getUnPublishedQuizOfCourse, courseId = " + courseId
+                 + " RETURN list.sz = " + quizQuestionDetailModels.size());
+
+        return ResponseEntity.ok().body(quizQuestionDetailModels);
+    }
 
     @GetMapping("/get-quiz-of-course/{courseId}")
     public ResponseEntity<?> getQuizOfCourse(Principal principal, @PathVariable String courseId) {
