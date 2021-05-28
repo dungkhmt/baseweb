@@ -12,7 +12,7 @@ import javax.mail.internet.MimeMessage;
 public interface MailService {
 
     /**
-     * Create simple mail message.
+     * Create simple mail message. You just need this method when you want to send multiple mails.
      *
      * @param to      receivers' mail address, should not be empty
      * @param cc      nullable
@@ -21,6 +21,7 @@ public interface MailService {
      * @param body    nullable
      * @param replyTo nullable
      * @return
+     * @see #sendSimpleMail(String[], String[], String[], String, String, String)
      */
     SimpleMailMessage createSimpleMail(
         String[] to,
@@ -32,25 +33,21 @@ public interface MailService {
     );
 
     /**
-     * Create simple mail message.
+     * Create simple mail message. You just need this method when you want to send multiple mails.
      *
-     * @param to      receivers' mail address, should not be empty
-     * @param subject nullable
-     * @param body    nullable
-     * @param replyTo nullable
      * @return
+     * @see #sendSimpleMail(String[], String, String, String)
      */
     SimpleMailMessage createSimpleMail(String[] to, String subject, String body, String replyTo);
 
     /**
-     * Send simple mail message.
+     * Send simple mail message. All mail address must be valid RFC-5321 address.
      *
-     * @param to      receivers' mail address, should not be empty
-     * @param cc      nullable
+     * @param to      The mail address of recipients , must not be null or empty array.
+     * @param cc      nullable array of valid RFC-5321 addresses.
      * @param bcc     nullable
      * @param subject nullable
-     * @param body    nullable
-     * @param replyTo nullable
+     * @param replyTo may be null. When somebody hits Reply, the To field of their “reply” email will be set to the {@code replyTo} address you set in your account, rather than your From Address.
      * @throws MailParseException          in case of failure when parsing the message
      * @throws MailAuthenticationException in case of authentication failure
      * @throws MailSendException           in case of failure when sending the message
@@ -58,12 +55,11 @@ public interface MailService {
     void sendSimpleMail(String[] to, String[] cc, String[] bcc, String subject, String body, String replyTo);
 
     /**
-     * Send simple mail message.
+     * Send simple mail message. All mail address must be valid RFC-5321 address.
      *
-     * @param to      receivers' mail address, should not be empty
+     * @param to      The mail address of recipients , must not be null or empty array.
      * @param subject nullable
-     * @param body    nullable
-     * @param replyTo nullable
+     * @param replyTo may be null. When somebody hits Reply, the To field of their “reply” email will be set to the {@code replyTo} address you set in your account, rather than your From Address.
      * @throws MailParseException          in case of failure when parsing the message
      * @throws MailAuthenticationException in case of authentication failure
      * @throws MailSendException           in case of failure when sending the message
@@ -80,36 +76,170 @@ public interface MailService {
      */
     void sendMultipleSimpleMail(SimpleMailMessage... simpleMessages) throws MailException;
 
+    /*
+     -------------------------------------------------------------------------------------
+     -------------------------------------------------------------------------------------
+    */
+
     /**
-     * Create mime message.
+     * Create mime message. You just need this method when you want to send multiple mails.
      *
-     * @param to      receivers' mail address, should not be empty
-     * @param cc      nullable
-     * @param bcc     nullable
-     * @param subject nullable
-     * @param body    nullable
-     * @param replyTo nullable
-     * @param attachments
      * @return
+     * @throws MessagingException
+     * @see #sendMailWithAttachments(String[], String[], String[], String, String, boolean, String, String, MultipartFile[])
      */
     MimeMessage createMimeMessage(
-        String[] to, String[] cc, String[] bcc, String subject, String body, String replyTo, MultipartFile[] attachments
+        String[] to,
+        String[] cc,
+        String[] bcc,
+        String subject,
+        String body,
+        boolean isHtml,
+        String replyTo,
+        String replyPersonal,
+        MultipartFile[] attachments
     ) throws MessagingException;
 
     /**
-     * Send a JavaMail MIME message.
+     * Create mime message. You just need this method when you want to send multiple mails.
      *
-     * @param to
-     * @param cc
-     * @param bcc
-     * @param subject
-     * @param body
-     * @param replyTo
-     * @param attachments
+     * @return
+     * @throws MessagingException
+     * @see #createMimeMessage(String[], String[], String[], String, String, boolean, String, String, MultipartFile[])
+     */
+    MimeMessage createMimeMessage(
+        String[] to,
+        String subject,
+        String body,
+        boolean isHtml,
+        MultipartFile[] attachments
+    ) throws MessagingException;
+
+    /**
+     * Create mime message. You just need this method when you want to send multiple mails.
+     *
+     * @return
+     * @throws MessagingException
+     * @see #sendMailWithAttachments(String[], String[], String[], String, String, String, String, String, MultipartFile[])
+     */
+    MimeMessage createMimeMessage(
+        String[] to,
+        String[] cc,
+        String[] bcc,
+        String subject,
+        String plainText,
+        String htmlText,
+        String replyTo,
+        String replyPersonal,
+        MultipartFile[] attachments
+    ) throws MessagingException;
+
+    // FIXME: add javadoc for: plainText, htmlText
+
+    /**
+     * Create mime message. You just need this method when you want to send multiple mails.
+     *
+     * @return
+     * @throws MessagingException
+     * @see #createMimeMessage(String[], String[], String[], String, String, String, String, String, MultipartFile[])
+     */
+    MimeMessage createMimeMessage(
+        String[] to,
+        String subject,
+        String plainText,
+        String htmlText,
+        MultipartFile[] attachments
+    ) throws MessagingException;
+
+    /**
+     * Send a JavaMail MIME message. All mail address must be valid RFC-5321 address.
+     *
+     * @param to            The mail address of recipients , must not be null or empty array.
+     * @param cc            nullable array of valid RFC-5321 addresses.
+     * @param bcc           nullable
+     * @param subject       nullable
+     * @param body          nullable
+     * @param isHtml        whether to apply content type "text/html" for an HTML mail, using default content type ("text/plain") else
+     * @param replyTo       may be null. When somebody hits Reply, the To field of their “reply” email will be set to the {@code replyTo} address you set in your account, rather than your From Address.
+     * @param replyPersonal personal names that accompany mail addresses, may be null
+     * @param attachments   nullable
      * @throws org.springframework.mail.MailAuthenticationException in case of authentication failure
      * @throws org.springframework.mail.MailSendException           in case of failure when sending the message
      */
     void sendMailWithAttachments(
-        String[] to, String[] cc, String[] bcc, String subject, String body, String replyTo, MultipartFile[] attachments
+        String[] to,
+        String[] cc,
+        String[] bcc,
+        String subject,
+        String body,
+        boolean isHtml,
+        String replyTo,
+        String replyPersonal,
+        MultipartFile[] attachments
+    );
+
+    /**
+     * Send a JavaMail MIME message. All mail address must be valid RFC-5321 address.
+     *
+     * @param to          The mail address of recipients , must not be null or empty array.
+     * @param subject     nullable
+     * @param body        nullable
+     * @param isHtml      whether to apply content type "text/html" for an HTML mail, using default content type ("text/plain") else
+     * @param attachments nullable
+     * @throws org.springframework.mail.MailAuthenticationException in case of authentication failure
+     * @throws org.springframework.mail.MailSendException           in case of failure when sending the message
+     */
+    void sendMailWithAttachments(
+        String[] to,
+        String subject,
+        String body,
+        boolean isHtml,
+        MultipartFile[] attachments
+    );
+
+    /**
+     * Send a JavaMail MIME message. All mail address must be valid RFC-5321 address.
+     *
+     * @param to            The mail address of recipients , must not be null or empty array.
+     * @param cc            nullable array of valid RFC-5321 addresses.
+     * @param bcc           nullable
+     * @param subject       nullable
+     * @param plainText     the plain text for the message, may be {@code null}
+     * @param htmlText      the HTML text for the message, may be {@code null}
+     * @param replyTo       may be null. When somebody hits Reply, the To field of their “reply” email will be set to the {@code replyTo} address you set in your account, rather than your From Address.
+     * @param replyPersonal personal names that accompany mail addresses, may be {@code null}
+     * @param attachments   nullable
+     * @throws org.springframework.mail.MailAuthenticationException in case of authentication failure
+     * @throws org.springframework.mail.MailSendException           in case of failure when sending the message
+     */
+    void sendMailWithAttachments(
+        String[] to,
+        String[] cc,
+        String[] bcc,
+        String subject,
+        String plainText,
+        String htmlText,
+        String replyTo,
+        String replyPersonal,
+        MultipartFile[] attachments
+    );
+
+    /**
+     * Send a JavaMail MIME message. All mail address must be valid RFC-5321 address.
+     *
+     * @param to          The mail address of recipients , must not be null or empty array.
+     * @param subject     nullable
+     * @param plainText   the plain text for the message, may be {@code null}
+     * @param htmlText    the HTML text for the message, may be {@code null}
+     * @param attachments nullable
+     * @throws org.springframework.mail.MailAuthenticationException in case of authentication failure
+     * @throws org.springframework.mail.MailSendException           in case of failure when sending the message
+     */
+    void sendMailWithAttachments(
+        String[] to,
+        String subject,
+        String plainText,
+        String htmlText,
+        MultipartFile[] attachments
     );
 }
