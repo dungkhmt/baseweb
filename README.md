@@ -21,7 +21,7 @@ Khi đã sẵn sàng cho quá trình cài đặt project, thực hiện lần l�
 * Từ <b>Searchbar</b> trên thanh <b>Taskbar</b>, gõ <b>pgAdmin4</b> để tìm kiếm, chọn <b>pgAdmin4</b> từ danh sách kết quả để khởi động <b>pgAdmin</b>
 * Trong <b>pgAdmin</b>, tạo mới một Database với tên tuỳ ý
 * Sau khi tạo xong Database, click chuột phải vào Database vừa tạo, chọn <b>restore</b>, một hộp thoại sẽ mở ra
-* Ở trường <b>Filename</b>, browse đến nơi tải xuống và chọn [file backup](https://drive.google.com/file/d/1GN1iLdSqfZSNO1LLeMpfl8q6PkXYmdFk/view?usp=sharing) (chú ý: chọn Format là <b>All Files</b> khi browse)
+* Ở trường <b>Filename</b>, browse đến nơi tải xuống và chọn [file backup](https://drive.google.com/drive/u/0/folders/1_F9I-ctSx0Wj1m5vcz-MnWXJBApbqBbO) (chú ý: chọn Format là <b>All Files</b> khi browse)
 * Ở trường <b>Role name</b>, chọn <b>postgres</b> (option nằm ở cuối), sau đó chọn <b>Restore</b>
 * Có thể backup và restore DB postgres bằng command line: 
 ```
