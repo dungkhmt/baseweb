@@ -158,14 +158,46 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
         List<EduTestQuizGroup>  eduTestQuizGroups = eduQuizTestGroupRepo.findByTestId(input.getQuizTestId());
         if(eduTestQuizGroups.size() <= 0) return false;
 
+        // remove existing records related to eduTestQizGroups
+        List<UUID> quizGroupIds = new ArrayList();
+        for(EduTestQuizGroup g: eduTestQuizGroups){
+            quizGroupIds.add(g.getQuizGroupId());
+        }
+        List<EduTestQuizGroupParticipationAssignment> eduTestQuizGroupParticipationAssignments =
+            eduTestQuizGroupParticipationAssignmentRepo.findAllByQuizGroupIdIn(quizGroupIds);
+
+        for(EduTestQuizGroupParticipationAssignment a: eduTestQuizGroupParticipationAssignments){
+            eduTestQuizGroupParticipationAssignmentRepo.delete(a);
+        }
+
+        // balanced and random assignment algorithms
         List<EduTestQuizParticipant> eduTestQuizParticipants = eduTestQuizParticipantRepo
             .findByTestIdAndStatusId(input.getQuizTestId(),EduTestQuizParticipant.STATUS_APPROVED);
 
         Random R = new Random();
 
+        HashMap<EduTestQuizGroup, Integer> mGroup2Qty = new HashMap();
+        for(EduTestQuizGroup g: eduTestQuizGroups){
+            mGroup2Qty.put(g,0);
+        }
+        List<EduTestQuizGroup> cand = new ArrayList();
+
         for(EduTestQuizParticipant p: eduTestQuizParticipants){
-            int idx  = R.nextInt(eduTestQuizGroups.size());
-            EduTestQuizGroup g = eduTestQuizGroups.get(idx);
+            int minQty = Integer.MAX_VALUE;
+            for(EduTestQuizGroup g: eduTestQuizGroups){
+                if(minQty > mGroup2Qty.get(g)) minQty = mGroup2Qty.get(g);
+            }
+            cand.clear();
+            for(EduTestQuizGroup g: eduTestQuizGroups){
+                if(mGroup2Qty.get(g) ==  minQty)
+                    cand.add(g);
+            }
+
+            //int idx  = R.nextInt(eduTestQuizGroups.size());
+            //EduTestQuizGroup g = eduTestQuizGroups.get(idx);
+            int idx = R.nextInt(cand.size());
+            EduTestQuizGroup g = cand.get(idx);
+
             EduTestQuizGroupParticipationAssignment a = eduTestQuizGroupParticipationAssignmentRepo
                 .findByQuizGroupIdAndParticipationUserLoginId(g.getQuizGroupId(), p.getParticipantUserLoginId());
             if(a == null) {

@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.model.GetClassDetailOM;
 import com.hust.baseweb.applications.education.model.quiz.*;
+import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.service.QuizChoiceAnswerService;
 import com.hust.baseweb.applications.education.service.QuizCourseTopicService;
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
@@ -302,5 +303,10 @@ public class QuizController {
         boolean ans = quizQuestionService.checkAnswer(userLogin, input);
 
         return ResponseEntity.ok().body(ans);
+    }
+    @PostMapping("/remove-choice-answer-of-quiz")
+    public ResponseEntity<?> removeChoiceAnswerOfQuiz(Principal principal, @RequestBody RemoveChoiceAnswerInputModel input){
+        QuizChoiceAnswer quizChoiceAnswer = quizChoiceAnswerService.delete(input.getChoiceAnswerId());
+        return ResponseEntity.ok().body(quizChoiceAnswer);
     }
 }

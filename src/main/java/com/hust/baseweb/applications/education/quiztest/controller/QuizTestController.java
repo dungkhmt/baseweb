@@ -2,6 +2,10 @@ package com.hust.baseweb.applications.education.quiztest.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.hust.baseweb.applications.education.classmanagement.service.ClassService;
+import com.hust.baseweb.applications.education.entity.EduClass;
+import com.hust.baseweb.applications.education.entity.QuizQuestion;
+import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizParticipant;
@@ -18,6 +22,7 @@ import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizParticip
 import com.hust.baseweb.applications.education.quiztest.service.EduQuizTestGroupService;
 import com.hust.baseweb.applications.education.quiztest.service.EduTestQuizParticipantService;
 import com.hust.baseweb.applications.education.quiztest.service.QuizTestService;
+import com.hust.baseweb.applications.education.service.QuizQuestionService;
 import com.hust.baseweb.service.UserService;
 import com.hust.baseweb.entity.UserLogin;
 
@@ -36,7 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
+import java.util.*;
 
 @Log4j2
 @Controller
@@ -47,7 +52,8 @@ public class QuizTestController {
     private QuizTestService quizTestService;
     private UserService userService;
     private EduTestQuizParticipantRepo eduTestQuizParticipationRepo;
-
+    private QuizQuestionService quizQuestionService;
+    private ClassService classService;
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping("/create-quiz-test")
     public ResponseEntity<?> createQuizCourseTopic(
@@ -129,6 +135,46 @@ public class QuizTestController {
         boolean ok = quizTestService.autoAssignQuestion2QuizTestGroup(input);
 
         return ResponseEntity.ok().body(ok);
+    }
+    @GetMapping("/get-list-quiz-for-assignment-of-test/{testId}")
+    public ResponseEntity<?> getListQuizForAssignmentOfTest(Principal principal, @PathVariable String testId){
+        EduQuizTest eduQuizTest = quizTestService.getQuizTestById(testId);
+        if(eduQuizTest == null){
+            return ResponseEntity.ok().body(new ArrayList());
+        }
+        UUID classId = eduQuizTest.getClassId();
+        EduClass eduClass = classService.findById(classId);
+
+        String courseId = null;
+        if(eduClass != null) courseId = eduClass.getEduCourse().getId();
+
+        log.info("getListQuizForAssignmentOfTest, testId = " + testId + " courseId = " + courseId);
+        List<QuizQuestion> quizQuestions = quizQuestionService.findQuizOfCourse(courseId);
+        List<QuizQuestionDetailModel> quizQuestionDetailModels = new ArrayList<>();
+        for (QuizQuestion q : quizQuestions) {
+            if (q.getStatusId().equals(QuizQuestion.STATUS_PUBLIC)) {
+                continue;
+            }
+            QuizQuestionDetailModel quizQuestionDetailModel = quizQuestionService.findQuizDetail(q.getQuestionId());
+            quizQuestionDetailModels.add(quizQuestionDetailModel);
+        }
+        Collections.sort(quizQuestionDetailModels, new Comparator<QuizQuestionDetailModel>() {
+            @Override
+            public int compare(QuizQuestionDetailModel o1, QuizQuestionDetailModel o2) {
+                String topic1 = o1.getQuizCourseTopic().getQuizCourseTopicId();
+                String topic2 = o2.getQuizCourseTopic().getQuizCourseTopicId();
+                String level1 = o1.getLevelId();
+                String level2 = o2.getLevelId();
+                int c1 = topic1.compareTo(topic2);
+                if(c1 == 0) return level1.compareTo(level2);
+                else return c1;
+            }
+        });
+        log.info("getListQuizForAssignmentOfTest, testId = " + testId + " courseId = " + courseId
+                 + " RETURN list.sz = " + quizQuestionDetailModels.size());
+
+        return ResponseEntity.ok().body(quizQuestionDetailModels);
+
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})

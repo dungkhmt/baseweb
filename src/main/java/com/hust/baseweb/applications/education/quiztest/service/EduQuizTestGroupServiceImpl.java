@@ -32,6 +32,7 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
     private QuizGroupQuestionAssignmentRepo quizGroupQuestionAssignmentRepo;
     private EduTestQuizGroupParticipationAssignmentRepo eduTestQuizGroupParticipationAssignmentRepo;
     private QuizGroupQuestionParticipationExecutionChoiceRepo quizGroupQuestionParticipationExecutionChoiceRepo;
+    private static Random R = new Random();
     @Override
     public List<EduTestQuizGroup> generateQuizTestGroups(GenerateQuizTestGroupInputModel input) {
         List<EduTestQuizGroup> eduTestQuizGroups = eduQuizTestGroupRepo.findByTestId(input.getQuizTestId());
@@ -121,6 +122,19 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
         });
 
 
+        // swap randomly listQUestions
+        QuizQuestionDetailModel[] arr = new QuizQuestionDetailModel[listQuestions.size()];
+        for(int i = 0; i < arr.length; i++){
+            arr[i] = listQuestions.get(i);
+        }
+        for(int k = 0; k < arr.length; k++){
+            int i = R.nextInt(arr.length);
+            int j = R.nextInt(arr.length);
+            QuizQuestionDetailModel tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+        }
+        listQuestions.clear();
+        for(int i = 0; i < arr.length; i++)
+            listQuestions.add(arr[i]);
 
         testDetail.setListQuestion(listQuestions);
         testDetail.setQuizGroupId(groupId.toString());
