@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Date;
@@ -54,6 +55,12 @@ public class MailServiceImpl implements MailService {
         return createSimpleMail(to, null, null, subject, body, replyTo);
     }
 
+    /*
+     -------------------------------------------------------------------------------------
+     -------------------------------------------------------------------------------------
+    */
+
+    // TODO: test
     public void sendSimpleMail(String[] to, String[] cc, String[] bcc, String subject, String body, String replyTo) {
         mailSender.send(createSimpleMail(to, cc, bcc, subject, body, replyTo));
     }
@@ -62,10 +69,16 @@ public class MailServiceImpl implements MailService {
         sendSimpleMail(to, null, null, subject, body, replyTo);
     }
 
+    // TODO: test
     @Override
     public void sendMultipleSimpleMail(SimpleMailMessage... simpleMessages) throws MailException {
         mailSender.send(simpleMessages);
     }
+
+    /*
+     -------------------------------------------------------------------------------------
+     -------------------------------------------------------------------------------------
+    */
 
     public MimeMessageHelper createMimeMessage(
         String[] to,
@@ -75,17 +88,9 @@ public class MailServiceImpl implements MailService {
         String body,
         boolean isHtml,
         String replyTo,
-        String replyPersonal,
-        MultipartFile[] attachments
+        String replyPersonal
     ) throws MessagingException {
-        MimeMessageHelper messageHelper = initMimeMessageWithAttachments(
-            to,
-            cc,
-            bcc,
-            subject,
-            replyTo,
-            replyPersonal,
-            attachments);
+        MimeMessageHelper messageHelper = initMimeMessage(to, cc, bcc, subject, replyTo, replyPersonal);
 
         messageHelper.setText(body, isHtml);
         return messageHelper;
@@ -100,11 +105,15 @@ public class MailServiceImpl implements MailService {
         String[] to,
         String subject,
         String body,
-        boolean isHtml,
-        MultipartFile[] attachments
+        boolean isHtml
     ) throws MessagingException {
-        return createMimeMessage(to, null, null, subject, body, isHtml, null, null, attachments);
+        return createMimeMessage(to, null, null, subject, body, isHtml, null, null);
     }
+
+    /*
+     -------------------------------------------------------------------------------------
+     -------------------------------------------------------------------------------------
+    */
 
     public MimeMessageHelper createMimeMessage(
         String[] to,
@@ -114,17 +123,9 @@ public class MailServiceImpl implements MailService {
         String plainText,
         String htmlText,
         String replyTo,
-        String replyPersonal,
-        MultipartFile[] attachments
+        String replyPersonal
     ) throws MessagingException {
-        MimeMessageHelper messageHelper = initMimeMessageWithAttachments(
-            to,
-            cc,
-            bcc,
-            subject,
-            replyTo,
-            replyPersonal,
-            attachments);
+        MimeMessageHelper messageHelper = initMimeMessage(to, cc, bcc, subject, replyTo, replyPersonal);
 
         messageHelper.setText(plainText, htmlText);
         return messageHelper;
@@ -134,88 +135,40 @@ public class MailServiceImpl implements MailService {
         String[] to,
         String subject,
         String plainText,
-        String htmlText,
-        MultipartFile[] attachments
+        String htmlText
     ) throws MessagingException {
-        return createMimeMessage(to, null, null, subject, plainText, htmlText, null, null, attachments);
+        return createMimeMessage(to, null, null, subject, plainText, htmlText, null, null);
     }
 
-    public void sendMailWithAttachments(
-        String[] to,
-        String[] cc,
-        String[] bcc,
-        String subject,
-        String body,
-        boolean isHtml,
-        String replyTo,
-        String replyPersonal,
-        MultipartFile[] attachments
-    ) {
-        try {
-            MimeMessageHelper mimeMessage = createMimeMessage(
-                to,
-                cc,
-                bcc,
-                subject,
-                body,
-                isHtml,
-                replyTo,
-                replyPersonal,
-                attachments);
+    /*
+     -------------------------------------------------------------------------------------
+     -------------------------------------------------------------------------------------
+    */
 
-            mailSender.send(mimeMessage.getMimeMessage());
-        } catch (MessagingException e) {
-            e.printStackTrace();
+    public void addAttachments(MimeMessageHelper messageHelper, MultipartFile[] attachments) throws MessagingException {
+        if (null != attachments) {
+            for (MultipartFile attachment : attachments) {
+                if (null != attachment && null != attachment.getContentType()) {
+                    // Note: name or content type == null will cause exception.
+                    messageHelper.addAttachment(
+                        null != attachment.getOriginalFilename() ? attachment.getOriginalFilename() : "file",
+                        attachment,
+                        attachment.getContentType());
+                }
+            }
         }
     }
 
-    public void sendMailWithAttachments(
-        String[] to,
-        String subject,
-        String body,
-        boolean isHtml,
-        MultipartFile[] attachments
-    ) {
-        sendMailWithAttachments(to, null, null, subject, body, isHtml, null, null, attachments);
-    }
-
-    public void sendMailWithAttachments(
-        String[] to,
-        String[] cc,
-        String[] bcc,
-        String subject,
-        String plainText,
-        String htmlText,
-        String replyTo,
-        String replyPersonal,
-        MultipartFile[] attachments
-    ) {
-        try {
-            MimeMessageHelper mimeMessage = createMimeMessage(
-                to,
-                cc,
-                bcc,
-                subject,
-                plainText,
-                htmlText,
-                replyTo,
-                replyPersonal,
-                attachments);
-
-            mailSender.send(mimeMessage.getMimeMessage());
-        } catch (MessagingException e) {
-            e.printStackTrace();
+    public void addAttachments(MimeMessageHelper messageHelper, File[] attachments) throws MessagingException {
+        if (null != attachments) {
+            for (File attachment : attachments) {
+                if (null != attachment) {
+                    messageHelper.addAttachment(
+                        attachment.getName().equals("") ? "file" : attachment.getName(),
+                        attachment);
+                }
+            }
         }
-    }
-
-    public void sendMailWithAttachments(
-        String[] to,
-        String subject,
-        String plainText,
-        String htmlText,
-        MultipartFile[] attachments
-    ) {
-        sendMailWithAttachments(to, null, null, subject, plainText, htmlText, null, null, attachments);
     }
 
     /**
@@ -271,36 +224,177 @@ public class MailServiceImpl implements MailService {
         return messageHelper;
     }
 
-    /**
-     * Init MimeMessage with attachments.
-     *
-     * @return
-     * @throws MessagingException
-     * @see #initMimeMessage(String[] to, String[] cc, String[] bcc, String subject, String replyTo, String replyPersonal)
-     */
-    private MimeMessageHelper initMimeMessageWithAttachments(
+    /*
+     -------------------------------------------------------------------------------------
+     -------------------------------------------------------------------------------------
+    */
+
+    // TODO: test
+    public void sendMailWithAttachments(
         String[] to,
         String[] cc,
         String[] bcc,
         String subject,
+        String body,
+        boolean isHtml,
         String replyTo,
         String replyPersonal,
         MultipartFile[] attachments
-    ) throws MessagingException {
-        MimeMessageHelper messageHelper = initMimeMessage(to, cc, bcc, subject, replyTo, replyPersonal);
+    ) {
+        try {
+            MimeMessageHelper messageHelper = createMimeMessage(
+                to,
+                cc,
+                bcc,
+                subject,
+                body,
+                isHtml,
+                replyTo,
+                replyPersonal);
 
-        if (null != attachments) {
-            for (MultipartFile attachment : attachments) {
-                if (null != attachment && null != attachment.getContentType()) {
-                    // Note: name or content type == null cause exception.
-                    messageHelper.addAttachment(
-                        null != attachment.getOriginalFilename() ? attachment.getOriginalFilename() : "file",
-                        attachment,
-                        attachment.getContentType());
-                }
-            }
+            addAttachments(messageHelper, attachments);
+            mailSender.send(messageHelper.getMimeMessage());
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
+    }
 
-        return messageHelper;
+    public void sendMailWithAttachments(
+        String[] to,
+        String subject,
+        String body,
+        boolean isHtml,
+        MultipartFile[] attachments
+    ) {
+        sendMailWithAttachments(to, null, null, subject, body, isHtml, null, null, attachments);
+    }
+
+    /*
+     -------------------------------------------------------------------------------------
+     -------------------------------------------------------------------------------------
+    */
+
+    // TODO: test
+    public void sendMailWithAttachments(
+        String[] to,
+        String[] cc,
+        String[] bcc,
+        String subject,
+        String plainText,
+        String htmlText,
+        String replyTo,
+        String replyPersonal,
+        MultipartFile[] attachments
+    ) {
+        try {
+            MimeMessageHelper messageHelper = createMimeMessage(
+                to,
+                cc,
+                bcc,
+                subject,
+                plainText,
+                htmlText,
+                replyTo,
+                replyPersonal);
+
+            addAttachments(messageHelper, attachments);
+            mailSender.send(messageHelper.getMimeMessage());
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMailWithAttachments(
+        String[] to,
+        String subject,
+        String plainText,
+        String htmlText,
+        MultipartFile[] attachments
+    ) {
+        sendMailWithAttachments(to, null, null, subject, plainText, htmlText, null, null, attachments);
+    }
+
+    /*
+     -------------------------------------------------------------------------------------
+     -------------------------------------------------------------------------------------
+    */
+
+    // TODO: test
+    public void sendMailWithAttachments(
+        String[] to,
+        String[] cc,
+        String[] bcc,
+        String subject,
+        String body,
+        boolean isHtml,
+        String replyTo,
+        String replyPersonal,
+        File[] attachments
+    ) {
+        try {
+            MimeMessageHelper messageHelper = createMimeMessage(
+                to,
+                cc,
+                bcc,
+                subject,
+                body,
+                isHtml,
+                replyTo,
+                replyPersonal);
+
+            addAttachments(messageHelper, attachments);
+            mailSender.send(messageHelper.getMimeMessage());
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMailWithAttachments(String[] to, String subject, String body, boolean isHtml, File[] attachments) {
+        sendMailWithAttachments(to, null, null, subject, body, isHtml, null, null, attachments);
+    }
+
+    /*
+     -------------------------------------------------------------------------------------
+     -------------------------------------------------------------------------------------
+    */
+
+    // TODO: test
+    public void sendMailWithAttachments(
+        String[] to,
+        String[] cc,
+        String[] bcc,
+        String subject,
+        String plainText,
+        String htmlText,
+        String replyTo,
+        String replyPersonal,
+        File[] attachments
+    ) {
+        try {
+            MimeMessageHelper messageHelper = createMimeMessage(
+                to,
+                cc,
+                bcc,
+                subject,
+                plainText,
+                htmlText,
+                replyTo,
+                replyPersonal);
+
+            addAttachments(messageHelper, attachments);
+            mailSender.send(messageHelper.getMimeMessage());
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMailWithAttachments(
+        String[] to,
+        String subject,
+        String plainText,
+        String htmlText,
+        File[] attachments
+    ) {
+        sendMailWithAttachments(to, null, null, subject, plainText, htmlText, null, null, attachments);
     }
 }
