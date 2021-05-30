@@ -1,12 +1,8 @@
 package com.hust.baseweb.applications.education.quiztest.controller;
 
-import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizParticipant;
-import com.hust.baseweb.applications.education.quiztest.model.QuizGroupTestDetailModel;
-import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.EduTestQuizParticipationCreateInputModel;
-import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.GenerateQuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.QuizTestGroupParticipantAssignmentOutputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizParticipantRepo;
@@ -24,10 +20,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Log4j2
 @Controller
@@ -41,9 +35,12 @@ public class EduQuizTestGroupController {
     private EduTestQuizParticipantRepo eduTestQuizParticipationRepo;
     private EduTestQuizGroupParticipationAssignmentService eduTestQuizGroupParticipationAssignmentService;
     private QuizTestService quizTestService;
+
     @PostMapping("/generate-quiz-test-group")
-    public ResponseEntity<?> generateQuizTestGroup(Principal principal, @RequestBody
-        GenerateQuizTestGroupInputModel input){
+    public ResponseEntity<?> generateQuizTestGroup(
+        Principal principal, @RequestBody
+        GenerateQuizTestGroupInputModel input
+    ) {
 
         List<EduTestQuizGroup> eduTestQuizGroups = eduQuizTestGroupService.generateQuizTestGroups(input);
 
@@ -51,22 +48,24 @@ public class EduQuizTestGroupController {
     }
 
     @GetMapping("/get-quiz-test-participation-group-question/{testID}")
-    public ResponseEntity<?> getTestGroupQuestionByUser(Principal principal, @PathVariable String testID ) {
+    public ResponseEntity<?> getTestGroupQuestionByUser(Principal principal, @PathVariable String testID) {
         EduQuizTest eduQuizTest = quizTestService.getQuizTestById(testID);
         Date startDateTime = eduQuizTest.getScheduleDatetime();
         Date currentDate = new Date();
-        int timeTest = ((int) (currentDate.getTime() - startDateTime.getTime()))/(60*1000); //minutes
+        int timeTest = ((int) (currentDate.getTime() - startDateTime.getTime())) / (60 * 1000); //minutes
         log.info("getTestGroupQuestionByUser, current = " + currentDate.toString() +
                  " scheduleDate = " + startDateTime.toString() + " timeTest = " + timeTest);
-        
-        if(timeTest > eduQuizTest.getDuration() || timeTest < 0) {// out-of-allowed date-time
+
+        if (timeTest > eduQuizTest.getDuration() || timeTest < 0) {// out-of-allowed date-time
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
 
-        EduTestQuizParticipant testParticipant = eduTestQuizParticipationRepo.findEduTestQuizParticipantByParticipantUserLoginIdAndAndTestId(principal.getName(), testID);
+        EduTestQuizParticipant testParticipant = eduTestQuizParticipationRepo.findEduTestQuizParticipantByParticipantUserLoginIdAndAndTestId(
+            principal.getName(),
+            testID);
 
-        if( testParticipant == null || (!testParticipant.getStatusId().equals(EduTestQuizParticipant.STATUS_APPROVED)))
-        {
+        if (testParticipant == null ||
+            (!testParticipant.getStatusId().equals(EduTestQuizParticipant.STATUS_APPROVED))) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
 
@@ -74,7 +73,7 @@ public class EduQuizTestGroupController {
     }
 
     @GetMapping("/get-all-quiz-test-group-participants/{testId}")
-    public ResponseEntity<?> getQuizTestGroupParticipants(Principal principal, @PathVariable String testId){
+    public ResponseEntity<?> getQuizTestGroupParticipants(Principal principal, @PathVariable String testId) {
         log.info("getQuizTestGroupParticipants, testId = " + testId);
         List<QuizTestGroupParticipantAssignmentOutputModel> quizTestGroupParticipantAssignmentOutputModels
             = eduTestQuizGroupParticipationAssignmentService.getQuizTestGroupParticipant(testId);

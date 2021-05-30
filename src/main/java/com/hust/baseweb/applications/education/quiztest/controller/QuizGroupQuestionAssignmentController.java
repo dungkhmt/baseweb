@@ -23,26 +23,30 @@ import java.util.List;
 @CrossOrigin
 
 public class QuizGroupQuestionAssignmentController {
+
     private QuizGroupQuestionAssignmentService quizGroupQuestionAssignmentService;
+
     @GetMapping("/get-quiz-group-question-assignment-of-test/{testId}")
-    public ResponseEntity<?> getQuizGroupQuestionAssignments(Principal principal, @PathVariable String testId){
+    public ResponseEntity<?> getQuizGroupQuestionAssignments(Principal principal, @PathVariable String testId) {
         List<QuizGroupQuestionDetailOutputModel> quizGroupQuestionAssignments =
             quizGroupQuestionAssignmentService.findAllQuizGroupQuestionAssignmentOfTest(testId);
 
         return ResponseEntity.ok().body(quizGroupQuestionAssignments);
     }
+
     @PostMapping("/remove-quizgroup-question-assignment")
-    public ResponseEntity<?> removeQuizGroupQuestionAssignment(Principal principal, @RequestBody
-                                                               RemoveQuizGroupQuestionInputModel input
-                                                               ){
+    public ResponseEntity<?> removeQuizGroupQuestionAssignment(
+        Principal principal, @RequestBody
+        RemoveQuizGroupQuestionInputModel input
+    ) {
         quizGroupQuestionAssignmentService.removeQuizGroupQuestionAssignment(input);
         return ResponseEntity.ok().body("OK");
     }
 
     @PostMapping("/add-quizgroup-question-assignment")
-    public ResponseEntity<?> addQuizGroupQuestionAssignment(Principal principal, @RequestBody
-                                                            AddQuizGroupQuestionInputModel input
-                                                            ){
+    public ResponseEntity<?> addQuizGroupQuestionAssignment(
+        @RequestBody AddQuizGroupQuestionInputModel input
+    ) {
         QuizGroupQuestionAssignment gq = quizGroupQuestionAssignmentService.addQuizGroupQuestionAssignment(input);
         return ResponseEntity.ok().body(gq);
     }
