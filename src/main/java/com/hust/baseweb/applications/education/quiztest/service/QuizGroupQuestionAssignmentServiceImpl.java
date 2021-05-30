@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,6 +60,12 @@ public class QuizGroupQuestionAssignmentServiceImpl implements QuizGroupQuestion
             quizGroupQuestionDetailOutputModel.setQuestionStatement(q.getQuestionContent());
             quizGroupQuestionDetailOutputModels.add(quizGroupQuestionDetailOutputModel);
         }
+        Collections.sort(quizGroupQuestionDetailOutputModels, new Comparator<QuizGroupQuestionDetailOutputModel>() {
+            @Override
+            public int compare(QuizGroupQuestionDetailOutputModel o1, QuizGroupQuestionDetailOutputModel o2) {
+                return o1.getGroupCode().compareTo(o2.getGroupCode());
+            }
+        });
         return quizGroupQuestionDetailOutputModels;
     }
 

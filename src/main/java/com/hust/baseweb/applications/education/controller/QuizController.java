@@ -221,6 +221,18 @@ public class QuizController {
             QuizQuestionDetailModel quizQuestionDetailModel = quizQuestionService.findQuizDetail(quizQuestion.getQuestionId());
             quizQuestionDetailModels.add(quizQuestionDetailModel);
         }
+        Collections.sort(quizQuestionDetailModels, new Comparator<QuizQuestionDetailModel>() {
+            @Override
+            public int compare(QuizQuestionDetailModel o1, QuizQuestionDetailModel o2) {
+                String topic1 = o1.getQuizCourseTopic().getQuizCourseTopicId();
+                String topic2 = o2.getQuizCourseTopic().getQuizCourseTopicId();
+                String level1 = o1.getLevelId();
+                String level2 = o2.getLevelId();
+                int c1 = topic1.compareTo(topic2);
+                if(c1 == 0) return level1.compareTo(level2);
+                else return c1;
+            }
+        });
         return ResponseEntity.ok().body(quizQuestionDetailModels);
     }
 
