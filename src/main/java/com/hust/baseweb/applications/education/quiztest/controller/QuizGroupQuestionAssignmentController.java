@@ -1,7 +1,9 @@
 package com.hust.baseweb.applications.education.quiztest.controller;
 
 import com.hust.baseweb.applications.education.quiztest.entity.QuizGroupQuestionAssignment;
+import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AddQuizGroupQuestionInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.QuizGroupQuestionDetailOutputModel;
+import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.RemoveQuizGroupQuestionInputModel;
 import com.hust.baseweb.applications.education.quiztest.service.QuizGroupQuestionAssignmentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -9,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -31,5 +30,20 @@ public class QuizGroupQuestionAssignmentController {
             quizGroupQuestionAssignmentService.findAllQuizGroupQuestionAssignmentOfTest(testId);
 
         return ResponseEntity.ok().body(quizGroupQuestionAssignments);
+    }
+    @PostMapping("/remove-quizgroup-question-assignment")
+    public ResponseEntity<?> removeQuizGroupQuestionAssignment(Principal principal, @RequestBody
+                                                               RemoveQuizGroupQuestionInputModel input
+                                                               ){
+        quizGroupQuestionAssignmentService.removeQuizGroupQuestionAssignment(input);
+        return ResponseEntity.ok().body("OK");
+    }
+
+    @PostMapping("/add-quizgroup-question-assignment")
+    public ResponseEntity<?> addQuizGroupQuestionAssignment(Principal principal, @RequestBody
+                                                            AddQuizGroupQuestionInputModel input
+                                                            ){
+        QuizGroupQuestionAssignment gq = quizGroupQuestionAssignmentService.addQuizGroupQuestionAssignment(input);
+        return ResponseEntity.ok().body(gq);
     }
 }

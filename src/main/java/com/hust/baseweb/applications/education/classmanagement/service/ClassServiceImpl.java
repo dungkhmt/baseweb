@@ -51,11 +51,13 @@ public class ClassServiceImpl implements ClassService {
                  addClassModel.getClassCode());
 
         EduClass aClass = new EduClass();
-        EduClass dupClass = classRepo.findFirstByCode(Integer.valueOf(addClassModel.getClassCode())).orElse(null);
-        if (dupClass != null){
+        //EduClass dupClass = classRepo.findFirstByCode(Integer.valueOf(addClassModel.getClassCode())).orElse(null);
+        List<EduClass> dupClass = classRepo.findByClassCode(addClassModel.getClassCode());
+        if (dupClass != null && dupClass.size() > 0){
             aClass.setMessage("duplicate");
             return aClass;
         }
+
         Semester semester = semesterRepo.findById(Short.valueOf(addClassModel.getSemesterId()));
 
         log.info("save, got semester " + semester.getName() + ", id = " + semester.getId());
@@ -67,7 +69,10 @@ public class ClassServiceImpl implements ClassService {
         EduCourse course = courseRepo.findById(addClassModel.getCourseId()).orElse(null);
         log.info("save got course " + course.getName());
 
-        aClass.setCode(Integer.valueOf(addClassModel.getClassCode()));
+        //aClass.setCode(Integer.valueOf(addClassModel.getClassCode()));
+        aClass.setCode(0);
+        aClass.setClassCode(addClassModel.getClassCode());
+
         log.info("save, finished setCode");
 
         aClass.setEduDepartment(department);
@@ -101,11 +106,14 @@ public class ClassServiceImpl implements ClassService {
             filterParams.getClassType(),
             filterParams.getDepartmentId())
                   .allMatch(attr -> StringUtils.isBlank(attr)) && null == filterParams.getCode()) {
+            log.info("getClassesOfCurrentSemester -> call classRepo.findBySemester");
             classes = classRepo.findBySemester(semester.getId(), pageable);
         } else {
+            log.info("getClassesOfCurrentSemester -> call classRepo.classRepo.findBySemesterWithFilters");
             classes = classRepo.findBySemesterWithFilters(
                 semester.getId(),
                 null == filterParams.getCode() ? "" : filterParams.getCode().toString(),
+                    null == filterParams.getClassCode() ? "" : filterParams.getClassCode().toString(),
                 null == filterParams.getCourseId() ? "" : StringUtils.deleteWhitespace(filterParams.getCourseId()),
                 null == filterParams.getCourseName() ? "" : StringUtils.normalizeSpace(filterParams.getCourseName()),
                 null == filterParams.getClassType() ? "" : StringUtils.deleteWhitespace(filterParams.getClassType()),

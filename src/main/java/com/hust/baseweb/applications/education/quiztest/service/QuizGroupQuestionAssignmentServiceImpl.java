@@ -3,7 +3,9 @@ package com.hust.baseweb.applications.education.quiztest.service;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizGroup;
 import com.hust.baseweb.applications.education.quiztest.entity.QuizGroupQuestionAssignment;
+import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AddQuizGroupQuestionInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.QuizGroupQuestionDetailOutputModel;
+import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.RemoveQuizGroupQuestionInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestGroupRepo;
 import com.hust.baseweb.applications.education.quiztest.repo.QuizGroupQuestionAssignmentRepo;
 import com.hust.baseweb.applications.education.repo.QuizQuestionRepo;
@@ -11,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,5 +64,36 @@ public class QuizGroupQuestionAssignmentServiceImpl implements QuizGroupQuestion
             quizGroupQuestionDetailOutputModels.add(quizGroupQuestionDetailOutputModel);
         }
         return quizGroupQuestionDetailOutputModels;
+    }
+
+    @Transactional
+    @Override
+    public boolean removeQuizGroupQuestionAssignment(RemoveQuizGroupQuestionInputModel input) {
+        log.info("removeQuizGroupQuestionAssignment, quizGroup " + input.getQuizGroupId() + " questionId " + input.getQuestionId());
+        QuizGroupQuestionAssignment gq = quizGroupQuestionAssignmentRepo.findByQuestionIdAndQuizGroupId(input.getQuestionId(), input.getQuizGroupId());
+        if(gq == null){
+            log.info("removeQuizGroupQuestionAssignment, quizGroup " + input.getQuizGroupId() + " questionId " + input.getQuestionId()
+            + " NOT EXIST!!");
+            return false;
+        }
+        quizGroupQuestionAssignmentRepo.delete(gq);
+        return true;
+    }
+
+    @Override
+    public QuizGroupQuestionAssignment addQuizGroupQuestionAssignment(AddQuizGroupQuestionInputModel input) {
+        log.info("addQuizGroupQuestionAssignment, quizGroup " + input.getQuizGroupId() + " questionId " + input.getQuestionId());
+        QuizGroupQuestionAssignment gq = quizGroupQuestionAssignmentRepo.findByQuestionIdAndQuizGroupId(input.getQuestionId(), input.getQuizGroupId());
+        if(gq != null){
+            log.info("addQuizGroupQuestionAssignment, quizGroup " + input.getQuizGroupId() + " questionId " + input.getQuestionId()
+                     + " ALREADY EXIST!!");
+
+            return gq;
+        }
+        gq = new QuizGroupQuestionAssignment();
+        gq.setQuestionId(input.getQuestionId());
+        gq.setQuizGroupId(input.getQuizGroupId());
+        gq = quizGroupQuestionAssignmentRepo.save(gq);
+        return gq;
     }
 }

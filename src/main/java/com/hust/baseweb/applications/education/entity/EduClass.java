@@ -24,6 +24,9 @@ public class EduClass {
 
     private Integer code;
 
+    @Column(name="class_code")
+    private String classCode;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "semester_id", referencedColumnName = "id")
     private Semester semester;

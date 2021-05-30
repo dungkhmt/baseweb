@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface ClassRepo extends JpaRepository<EduClass, UUID> {
+    List<EduClass> findAll();
+    List<EduClass> findByClassCode(String classCode);
 
     /*Class save(Class aClass);
 
@@ -37,6 +39,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
     @Query(value = "select\n" +
                    "\tcast(cl.id as varchar) id,\n" +
                    "\tcode,\n" +
+                   "\tclass_code classCode,\n" +
                    "\tco.id courseId,\n" +
                    "\tco.course_name courseName,\n" +
                    "\tcl.class_type classType,\n" +
@@ -67,6 +70,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
     @Query(value = "select\n" +
                    "\tcast(cl.id as varchar) id,\n" +
                    "\tcode,\n" +
+                   "\tclass_code classCode,\n" +
                    "\tco.id courseId,\n" +
                    "\tco.course_name courseName,\n" +
                    "\tcl.class_type classType,\n" +
@@ -103,6 +107,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
     Page<ClassOM> findBySemesterWithFilters(
         short semesterId,
         String code,
+        String classCode,
         String courseId,
         String name,
         String type,
@@ -119,6 +124,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
 
     @Query(value = "select cast(ecl.id as varchar) id,\n" +
                    "\tecl.code code,\n" +
+                   "\tecl.class_code classCode,\n" +
                    "\tec.id courseId,\n" +
                    "\tec.course_name \"name\",\n" +
                    "\tecl.class_type classType,\n" +
@@ -144,6 +150,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
     @Query(value = "select\n" +
                    "\tcast(ecl.id as varchar) id,\n" +
                    "\tecl.code code,\n" +
+                   "\tecl.class_code classCode,\n" +
                    "\tec.id courseId,\n" +
                    "\tec.course_name \"name\",\n" +
                    "\tecl.class_type classType,\n" +

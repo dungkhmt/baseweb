@@ -9,6 +9,8 @@ public class GetClassesIM {
 
     private Integer code;
 
+    private String classCode;
+
     private String courseId;
 
     private String courseName;

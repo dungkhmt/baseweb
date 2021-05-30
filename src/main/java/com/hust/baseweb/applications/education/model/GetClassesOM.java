@@ -6,6 +6,8 @@ public interface GetClassesOM {
 
     String getCode();
 
+    String getClassCode();
+
     String getCourseId();
 
     String getName();

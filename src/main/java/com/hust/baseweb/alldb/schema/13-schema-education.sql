@@ -124,6 +124,7 @@ create TABLE public.edu_semester (
 create TABLE edu_class (
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
 	code int4 NOT NULL,
+	class_code varchar(60),
 	semester_id int2 NOT NULL,
 	course_id varchar(10) NOT NULL,
 	class_type varchar(10) NOT NULL,

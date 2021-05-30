@@ -43,4 +43,6 @@ public interface ClassService {
     List<GetStudentsOfClassOM> getStudentsOfClass(UUID id);
 
     List<GetStudentsOfClassOM> getRegistStudentsOfClass(UUID id);
+
+
 }
