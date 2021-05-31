@@ -332,6 +332,8 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
         if(amount > cnt){
             amount = cnt;
         }
+        amount = sortedTopicLevel.length;// TEMPORARY USED: each category pick a quiz
+
         int sel_idx = 0;
         while(amount > 0){
             int a = mTopicId2Num.get(sortedTopicLevel[sel_idx]);
