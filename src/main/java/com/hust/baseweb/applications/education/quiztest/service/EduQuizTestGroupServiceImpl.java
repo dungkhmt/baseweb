@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.education.quiztest.service;
 
 import com.hust.baseweb.applications.education.entity.EduCourse;
+import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.quiztest.entity.*;
 import com.hust.baseweb.applications.education.quiztest.model.QuizGroupTestDetailModel;
@@ -133,8 +134,12 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
             QuizQuestionDetailModel tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
         }
         listQuestions.clear();
-        for(int i = 0; i < arr.length; i++)
+        for(int i = 0; i < arr.length; i++) {
             listQuestions.add(arr[i]);
+            for(QuizChoiceAnswer a: arr[i].getQuizChoiceAnswerList()){
+                a.setIsCorrectAnswer('-');
+            }
+        }
 
         testDetail.setListQuestion(listQuestions);
         testDetail.setQuizGroupId(groupId.toString());
