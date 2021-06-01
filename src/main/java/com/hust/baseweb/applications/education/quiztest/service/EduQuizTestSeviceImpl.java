@@ -61,6 +61,7 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
     QuizGroupQuestionAssignmentRepo quizGroupQuestionAssignmentRepo;
     QuizGroupQuestionParticipationExecutionChoiceRepo quizGroupQuestionParticipationExecutionChoiceRepo;
 
+
     @Override
     public EduQuizTest save(QuizTestCreateInputModel input, UserLogin user) {
         EduQuizTest newRecord = new EduQuizTest();
@@ -102,6 +103,20 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
     @Override
     public List<StudentInTestQueryReturnModel> getAllStudentInTest(String testId) {
         List<StudentInfo> list = repo.findAllStudentInTest(testId);
+        List<EduTestQuizGroup> eduTestQuizGroups = eduQuizTestGroupRepo.findByTestId(testId);
+        List<UUID> groupIds = new ArrayList<UUID>();
+        HashMap<UUID, EduTestQuizGroup> mId2Group = new HashMap();
+        for(EduTestQuizGroup g: eduTestQuizGroups){
+            groupIds.add(g.getQuizGroupId());
+            mId2Group.put(g.getQuizGroupId(),g);
+        }
+        List<EduTestQuizGroupParticipationAssignment> eduTestQuizGroupParticipationAssignments =
+            eduTestQuizGroupParticipationAssignmentRepo.findAllByQuizGroupIdIn(groupIds);
+
+        HashMap<String, EduTestQuizGroupParticipationAssignment> mUserLoginId2Assignment = new HashMap();
+        for(EduTestQuizGroupParticipationAssignment a: eduTestQuizGroupParticipationAssignments){
+            mUserLoginId2Assignment.put(a.getParticipationUserLoginId(),a);
+        }
 
         List<StudentInTestQueryReturnModel> re = new ArrayList<>();
 
@@ -112,6 +127,15 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
             temp.setEmail(studentInfo.getEmail());
             temp.setUserLoginId(studentInfo.getUser_login_id());
             temp.setStatusId(studentInfo.getStatus_id());
+
+            EduTestQuizGroupParticipationAssignment a= mUserLoginId2Assignment.get(studentInfo.getUser_login_id());
+            temp.setTestGroupCode("-");
+            if(a != null){
+                EduTestQuizGroup g = mId2Group.get(a.getQuizGroupId());
+                if(g != null){
+                    temp.setTestGroupCode(g.getGroupCode());
+                }
+            }
             re.add(temp);
         }
 

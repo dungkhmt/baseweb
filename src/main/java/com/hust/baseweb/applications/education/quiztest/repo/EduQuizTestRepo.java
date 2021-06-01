@@ -18,6 +18,7 @@ public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
     public List<EduQuizTest> findByCreateUser(String userLoginId);
 
 
+
     public static interface StudentInfo {
 
         String getTest_id();
