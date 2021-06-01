@@ -13,12 +13,13 @@ import java.util.UUID;
 @Table(name = "edu_test_quiz_group_participation_assignment")
 @IdClass(CompositeEduTestQuizGroupParticipationAssignmentId.class)
 public class EduTestQuizGroupParticipationAssignment {
+
     @Id
-    @Column(name="quiz_group_id")
-         private UUID quizGroupId;
+    @Column(name = "quiz_group_id")
+    private UUID quizGroupId;
 
-         @Id
-         @Column(name="participation_user_login_id")
-         private String participationUserLoginId;
+    @Id
+    @Column(name = "participation_user_login_id")
+    private String participationUserLoginId;
 
-         }
+}

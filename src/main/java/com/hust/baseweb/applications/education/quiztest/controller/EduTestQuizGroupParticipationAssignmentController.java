@@ -8,29 +8,30 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
 @Log4j2
-@Controller
+@RestController
 @Validated
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-//@CrossOrigin
-
-
 public class EduTestQuizGroupParticipationAssignmentController {
+
     private EduTestQuizGroupParticipationAssignmentService eduTestQuizGroupParticipationAssignmentService;
 
     @PostMapping("/add-participant-to-quiz-test-group")
-    public ResponseEntity<?> addParticipantToQuizTestGroup(Principal principal, @RequestBody
-                                                           AddParticipantToQuizTestGroupInputModel input
-                                                           ){
-        log.info("addParticipantToQuizTestGroup, groupId = " + input.getQuizTestGroupId() + " participantId = " + input.getParticipantUserLoginId());
+    public ResponseEntity<?> addParticipantToQuizTestGroup(
+        Principal principal, @RequestBody
+        AddParticipantToQuizTestGroupInputModel input
+    ) {
+        log.info("addParticipantToQuizTestGroup, groupId = " +
+                 input.getQuizTestGroupId() +
+                 " participantId = " +
+                 input.getParticipantUserLoginId());
 
         // them ban ghi vao bang EduTestQuizGroupParticipationAssignment
         EduTestQuizGroupParticipationAssignment eduTestQuizGroupParticipationAssignment
@@ -39,10 +40,14 @@ public class EduTestQuizGroupParticipationAssignmentController {
     }
 
     @PostMapping("/remove-participant-from-quiz-test-group")
-    public ResponseEntity<?> removeParticipantFromQuizTestGroup(Principal principal, @RequestBody
+    public ResponseEntity<?> removeParticipantFromQuizTestGroup(
+        Principal principal, @RequestBody
         RemoveParticipantToQuizTestGroupInputModel input
-    ){
-        log.info("removeParticipantFromQuizTestGroup, groupId = " + input.getQuizTestGroupId() + " participantId = " + input.getParticipantUserLoginId());
+    ) {
+        log.info("removeParticipantFromQuizTestGroup, groupId = " +
+                 input.getQuizTestGroupId() +
+                 " participantId = " +
+                 input.getParticipantUserLoginId());
 
         // them ban ghi vao bang EduTestQuizGroupParticipationAssignment
         boolean ok

@@ -12,6 +12,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddParticipantToQuizTestGroupInputModel {
+
     private String participantUserLoginId;
+
     private UUID quizTestGroupId;
 }
