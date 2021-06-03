@@ -10,8 +10,6 @@ import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestRepo;
 import com.hust.baseweb.applications.education.quiztest.repo.HistoryLogQuizGroupQuestionParticipationExecutionChoiceRepo;
 import com.hust.baseweb.applications.education.quiztest.repo.QuizGroupQuestionParticipationExecutionChoiceRepo;
 import com.hust.baseweb.applications.education.service.CourseService;
-import com.hust.baseweb.applications.education.service.QuizQuestionService;
-import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import com.hust.baseweb.service.PersonService;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
@@ -19,7 +17,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +25,10 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Log4j2
 @Controller

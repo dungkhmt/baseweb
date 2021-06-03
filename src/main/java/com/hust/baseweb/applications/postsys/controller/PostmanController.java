@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Date;
-import java.util.List;
 
 @Controller
 @Log4j2(topic = "POST_LOG")

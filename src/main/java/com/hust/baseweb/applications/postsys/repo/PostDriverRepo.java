@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.postsys.repo;
 
 import com.hust.baseweb.applications.postsys.entity.PostDriver;
-import com.hust.baseweb.applications.postsys.entity.Postman;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

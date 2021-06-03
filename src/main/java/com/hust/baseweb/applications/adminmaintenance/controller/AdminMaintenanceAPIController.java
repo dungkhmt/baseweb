@@ -4,7 +4,6 @@ import com.hust.baseweb.applications.adminmaintenance.model.deliveryplan.DeleteA
 import com.hust.baseweb.applications.adminmaintenance.model.salesroutes.DeleteSalesRoutesDetailInputModel;
 import com.hust.baseweb.applications.adminmaintenance.service.salesroutes.SalesRouteDetailMaintenanceService;
 import com.hust.baseweb.applications.adminmaintenance.service.tms.DeliveryPlanMaintenanceService;
-import com.hust.baseweb.applications.education.classmanagement.service.ClassService;
 import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.repo.ClassRepo;
 import com.hust.baseweb.applications.logistics.service.AdminMaintenanceService;

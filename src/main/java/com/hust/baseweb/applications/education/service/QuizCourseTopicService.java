@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.education.service;
 
-import com.hust.baseweb.applications.education.entity.EduCourse;
 import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.model.quiz.QuizCourseTopicCreateInputModel;
 

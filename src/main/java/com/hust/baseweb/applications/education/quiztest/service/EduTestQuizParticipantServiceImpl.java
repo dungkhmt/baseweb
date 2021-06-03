@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.education.quiztest.service;
 
 import com.hust.baseweb.applications.education.quiztest.entity.EduTestQuizParticipant;
-import com.hust.baseweb.applications.education.quiztest.entity.compositeid.CompositeTestQuizParticipationId;
 import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.EduTestQuizParticipationCreateInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizParticipantRepo;
 import com.hust.baseweb.entity.UserLogin;

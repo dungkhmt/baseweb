@@ -1,11 +1,11 @@
 package com.hust.baseweb.applications.education.quiztest.model;
 
 
-import java.util.Date;
-import java.util.UUID;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
+import java.util.UUID;
 
 @Getter
 @Setter

@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.controller;
 
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.LogisticService;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.MongoProductService;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.SalesService;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;

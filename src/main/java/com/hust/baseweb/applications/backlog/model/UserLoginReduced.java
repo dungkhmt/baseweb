@@ -1,6 +1,9 @@
 package com.hust.baseweb.applications.backlog.model;
 
-import com.hust.baseweb.entity.*;
+import com.hust.baseweb.entity.Party;
+import com.hust.baseweb.entity.PartyType;
+import com.hust.baseweb.entity.Person;
+import com.hust.baseweb.entity.UserLogin;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

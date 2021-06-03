@@ -1,10 +1,9 @@
 package com.hust.baseweb.applications.education.repo;
 
-import java.util.List;
-
+import com.hust.baseweb.applications.education.entity.Semester;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.hust.baseweb.applications.education.entity.Semester;
+import java.util.List;
 
 public interface SemesterRepo extends JpaRepository<Semester, Integer> {
 	Semester save(Semester semester);

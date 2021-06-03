@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.backlog.entity;
 
-import com.hust.baseweb.applications.backlog.model.CreateBacklogTaskAssignmentInputModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

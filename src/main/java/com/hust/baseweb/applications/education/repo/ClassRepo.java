@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.education.repo;
 
-import com.hust.baseweb.applications.education.entity.Assignment;
 import com.hust.baseweb.applications.education.entity.AssignmentSubmission;
 import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.model.*;

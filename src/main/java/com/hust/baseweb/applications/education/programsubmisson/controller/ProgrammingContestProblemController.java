@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.education.programsubmisson.controller;
 
 import com.hust.baseweb.applications.education.programsubmisson.entity.ContestProblem;
-import com.hust.baseweb.applications.education.programsubmisson.entity.ProgrammingContest;
 import com.hust.baseweb.applications.education.programsubmisson.entity.ProgrammingContestProblem;
 import com.hust.baseweb.applications.education.programsubmisson.model.CreateProgrammingContestProblemInputModel;
 import com.hust.baseweb.applications.education.programsubmisson.service.ContestProblemService;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller

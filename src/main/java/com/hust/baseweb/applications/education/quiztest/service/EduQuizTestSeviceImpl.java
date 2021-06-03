@@ -9,6 +9,8 @@ import com.hust.baseweb.applications.education.quiztest.entity.*;
 import com.hust.baseweb.applications.education.quiztest.entity.compositeid.CompositeEduTestQuizGroupParticipationAssignmentId;
 import com.hust.baseweb.applications.education.quiztest.model.EditQuizTestInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.EduQuizTestModel;
+import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
+import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
 import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.QuizTestParticipationExecutionResultOutputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
@@ -16,34 +18,20 @@ import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.Quiz
 import com.hust.baseweb.applications.education.quiztest.repo.*;
 import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestGroupRepo.QuizTestGroupInfo;
 import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestRepo.StudentInfo;
-
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
-import com.hust.baseweb.utils.CommonUtils;
+import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.UserLoginRepo;
 import com.hust.baseweb.repo.UserRegisterRepo;
+import com.hust.baseweb.utils.CommonUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
-
+import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.Optional;
-import java.util.*;
 import java.util.stream.Collectors;
-
-import com.hust.baseweb.applications.education.quiztest.model.QuizTestCreateInputModel;
-import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
-import com.hust.baseweb.entity.UserLogin;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.transaction.Transactional;
 
 @Log4j2
 @Service

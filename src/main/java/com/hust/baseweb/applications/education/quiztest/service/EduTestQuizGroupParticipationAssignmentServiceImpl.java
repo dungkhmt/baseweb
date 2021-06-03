@@ -7,7 +7,6 @@ import com.hust.baseweb.applications.education.quiztest.model.quiztestgroupparti
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroupparticipant.RemoveParticipantToQuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestGroupRepo;
 import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizGroupParticipationAssignmentRepo;
-import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;

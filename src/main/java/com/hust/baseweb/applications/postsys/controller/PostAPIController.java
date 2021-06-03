@@ -1,24 +1,15 @@
 package com.hust.baseweb.applications.postsys.controller;
 
-import com.hust.baseweb.applications.postsys.entity.*;
-import com.hust.baseweb.applications.postsys.model.ResponseSample;
+import com.hust.baseweb.applications.postsys.entity.PostCustomer;
+import com.hust.baseweb.applications.postsys.entity.PostOffice;
 import com.hust.baseweb.applications.postsys.model.postcustomer.CreatePostCustomerModel;
-import com.hust.baseweb.applications.postsys.model.postdriver.PostDriverUpdateInputModel;
-import com.hust.baseweb.applications.postsys.model.postdriver.UpdatePostDriverPostOfficeAssignmentInputModel;
 import com.hust.baseweb.applications.postsys.model.postman.PostmanAssignInput;
-import com.hust.baseweb.applications.postsys.model.postman.PostmanUpdateInputModel;
 import com.hust.baseweb.applications.postsys.model.postoffice.CreatePostOfficeInputModel;
 import com.hust.baseweb.applications.postsys.model.postoffice.PostOfficeOrderStatusOutputModel;
-import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderInputModel;
-import com.hust.baseweb.applications.postsys.model.postshiporder.CreatePostShipOrderOutputModel;
-import com.hust.baseweb.applications.postsys.model.postshiporder.UpdatePostShipOrderInputModel;
-import com.hust.baseweb.applications.postsys.model.posttrip.CreatePostTripModel;
-import com.hust.baseweb.applications.postsys.model.posttrip.ExecuteTripInputModel;
 import com.hust.baseweb.applications.postsys.service.*;
 import com.poiji.bind.Poiji;
 import com.poiji.exception.PoijiExcelType;
 import com.poiji.option.PoijiOptions;
-import localsearch.domainspecific.vehiclerouting.apps.sharedaride.Util.Request;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,7 +21,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @Log4j2(topic = "POST_LOG")

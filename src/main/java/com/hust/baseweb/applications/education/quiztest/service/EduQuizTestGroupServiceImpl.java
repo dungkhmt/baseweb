@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.education.quiztest.service;
 
-import com.hust.baseweb.applications.education.entity.EduCourse;
 import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.quiztest.entity.*;
@@ -9,7 +8,6 @@ import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.Gene
 import com.hust.baseweb.applications.education.quiztest.repo.*;
 import com.hust.baseweb.applications.education.repo.EduCourseRepo;
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
-import com.hust.baseweb.applications.education.suggesttimetable.repo.CourseRepo;
 import com.hust.baseweb.service.UserService;
 import com.hust.baseweb.utils.CommonUtils;
 import lombok.AllArgsConstructor;

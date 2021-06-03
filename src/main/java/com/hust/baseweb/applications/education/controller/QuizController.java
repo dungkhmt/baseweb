@@ -7,7 +7,6 @@ import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.model.GetClassDetailOM;
 import com.hust.baseweb.applications.education.model.quiz.*;
-import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.applications.education.service.QuizChoiceAnswerService;
 import com.hust.baseweb.applications.education.service.QuizCourseTopicService;
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
@@ -16,7 +15,6 @@ import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;

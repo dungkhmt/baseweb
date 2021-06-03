@@ -1,14 +1,12 @@
 package com.hust.baseweb.applications.education.quiztest.repo;
 
-import java.util.List;
-
 import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
-import com.hust.baseweb.applications.education.quiztest.model.StudentInTestQueryReturnModel;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String>{
     @Query(

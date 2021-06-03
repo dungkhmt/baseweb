@@ -1,6 +1,8 @@
 package com.hust.baseweb.applications.postsys.service;
 
-import com.hust.baseweb.applications.postsys.entity.*;
+import com.hust.baseweb.applications.postsys.entity.PostDriver;
+import com.hust.baseweb.applications.postsys.entity.PostDriverPostOfficeAssignment;
+import com.hust.baseweb.applications.postsys.entity.PostFixedTrip;
 import com.hust.baseweb.applications.postsys.model.ResponseSample;
 import com.hust.baseweb.applications.postsys.model.postdriver.PostDriverUpdateInputModel;
 import com.hust.baseweb.applications.postsys.model.postdriver.UpdatePostDriverPostOfficeAssignmentInputModel;
@@ -8,7 +10,6 @@ import com.hust.baseweb.applications.postsys.model.postdriver.UpdatePostDriverPo
 import com.hust.baseweb.applications.postsys.repo.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

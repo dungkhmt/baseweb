@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.education.service;
 
-import com.hust.baseweb.applications.education.entity.EduCourseChapterMaterial;
 import com.hust.baseweb.applications.education.report.model.courseparticipation.StudentCourseParticipationModel;
 import com.hust.baseweb.entity.UserLogin;
 

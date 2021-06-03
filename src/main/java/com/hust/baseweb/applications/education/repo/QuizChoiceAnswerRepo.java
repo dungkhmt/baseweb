@@ -5,7 +5,6 @@ import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface QuizChoiceAnswerRepo extends JpaRepository<QuizChoiceAnswer, UUID> {

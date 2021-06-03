@@ -4,8 +4,6 @@ import com.hust.baseweb.applications.education.programsubmisson.entity.ContestPr
 import com.hust.baseweb.applications.education.programsubmisson.entity.ProgrammingContestUserRegistration;
 import com.hust.baseweb.applications.education.programsubmisson.model.CreateProgrammingContestUserRegistrationInputModel;
 import com.hust.baseweb.applications.education.programsubmisson.model.SearchProgrammingContestUserRegistrationInputModel;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

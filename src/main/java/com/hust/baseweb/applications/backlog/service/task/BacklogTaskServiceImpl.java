@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.backlog.service.task;
 
 import com.hust.baseweb.applications.backlog.entity.BacklogTask;
-import com.hust.baseweb.applications.backlog.entity.BacklogTaskAssignable;
 import com.hust.baseweb.applications.backlog.entity.BacklogTaskAssignment;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogTaskAssignableInputModel;
 import com.hust.baseweb.applications.backlog.model.CreateBacklogTaskAssignmentInputModel;

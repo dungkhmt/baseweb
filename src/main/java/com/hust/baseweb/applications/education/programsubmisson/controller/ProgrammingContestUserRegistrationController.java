@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.education.programsubmisson.controller;
 
-import com.google.maps.ImageResult;
 import com.hust.baseweb.applications.education.programsubmisson.entity.ProgrammingContestUserRegistration;
 import com.hust.baseweb.applications.education.programsubmisson.model.CreateProgrammingContestUserRegistrationInputModel;
 import com.hust.baseweb.applications.education.programsubmisson.model.SearchProgrammingContestUserRegistrationInputModel;

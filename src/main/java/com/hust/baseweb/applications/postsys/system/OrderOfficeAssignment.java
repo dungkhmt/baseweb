@@ -1,17 +1,22 @@
 package com.hust.baseweb.applications.postsys.system;
 
-import com.hust.baseweb.applications.postsys.entity.*;
+import com.hust.baseweb.applications.postsys.entity.PostOffice;
+import com.hust.baseweb.applications.postsys.entity.PostOfficeTrip;
+import com.hust.baseweb.applications.postsys.entity.PostOrder;
+import com.hust.baseweb.applications.postsys.entity.PostShipOrderTripPostOfficeAssignment;
 import com.hust.baseweb.applications.postsys.model.posttrip.PostShipOrderTripPostOfficeAssignmentOM;
 import com.hust.baseweb.applications.postsys.repo.*;
 import com.hust.baseweb.utils.LatLngUtils;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.math3.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Component

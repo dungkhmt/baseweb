@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.education.service;
 
-import com.hust.baseweb.applications.education.classmanagement.service.ClassService;
 import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.entity.EduCourseChapterMaterial;
 import com.hust.baseweb.applications.education.entity.LogUserLoginCourseChapterMaterial;

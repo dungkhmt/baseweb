@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.service;
 
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Product;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.ProductModel;
 
 import java.util.List;

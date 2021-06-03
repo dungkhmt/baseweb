@@ -1,8 +1,6 @@
 package com.hust.baseweb.applications.education.service;
 
-import com.hust.baseweb.applications.education.classmanagement.service.ClassService;
 import com.hust.baseweb.applications.education.entity.EduClass;
-import com.hust.baseweb.applications.education.entity.EduCourse;
 import com.hust.baseweb.applications.education.entity.LogUserLoginQuizQuestion;
 import com.hust.baseweb.applications.education.repo.ClassRepo;
 import com.hust.baseweb.applications.education.repo.LogUserLoginQuizQuestionRepo;

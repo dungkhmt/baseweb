@@ -5,7 +5,6 @@ import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailMode
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;

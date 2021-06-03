@@ -2,9 +2,7 @@ package com.hust.baseweb.applications.education.quiztest.repo;
 
 import com.hust.baseweb.applications.education.quiztest.entity.QuizGroupQuestionParticipationExecutionChoice;
 import com.hust.baseweb.applications.education.quiztest.entity.compositeid.CompositeQuizGroupQuestionParticipationExecutionChoiceId;
-import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 import java.util.UUID;

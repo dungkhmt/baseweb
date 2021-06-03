@@ -2,7 +2,6 @@ package com.hust.baseweb.applications.backlog.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.UUID;

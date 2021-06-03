@@ -1,10 +1,8 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.controller;
 
-import com.hust.baseweb.applications.logistics.service.ProductService;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Facility;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Product;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.*;
-import com.hust.baseweb.applications.specialpurpose.saleslogmongo.repository.ProductRepository;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.service.LogisticService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;

@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.specialpurpose.saleslogmongo.controller;
 
-import com.hust.baseweb.applications.logistics.service.LogisticsService;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.document.Customer;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateCustomerInputModel;
 import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.CreateSalesOrderInputModel;

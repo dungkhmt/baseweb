@@ -8,12 +8,9 @@ import com.hust.baseweb.applications.backlog.service.Storage.BacklogFileStorageS
 import com.hust.baseweb.applications.backlog.service.project.BacklogProjectMemberService;
 import com.hust.baseweb.applications.backlog.service.project.BacklogProjectService;
 import com.hust.baseweb.applications.backlog.service.task.*;
-import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.entity.Person;
 import com.hust.baseweb.entity.StatusItem;
 import com.hust.baseweb.entity.UserLogin;
-import com.hust.baseweb.model.ApproveRegistrationIM;
-import com.hust.baseweb.model.RegisterIM;
 import com.hust.baseweb.repo.StatusItemRepo;
 import com.hust.baseweb.service.PersonService;
 import com.hust.baseweb.service.UserService;
@@ -23,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,16 +31,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.data.domain.Pageable;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.google.gson.Gson;
 
 @Controller
 //@CrossOrigin

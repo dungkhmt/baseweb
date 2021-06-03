@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.backlog.entity;
 
 import com.hust.baseweb.applications.backlog.model.CreateBacklogProjectMemberModel;
-import com.hust.baseweb.applications.order.entity.CompositeOrderRoleId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

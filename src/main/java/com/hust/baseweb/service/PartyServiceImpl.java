@@ -2,13 +2,12 @@ package com.hust.baseweb.service;
 
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.PartyType;
-import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.entity.Status.StatusEnum;
+import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.PartyRepo;
 import com.hust.baseweb.repo.PartyTypeRepo;
 import com.hust.baseweb.repo.StatusRepo;
 import com.hust.baseweb.repo.UserLoginRepo;
-
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
