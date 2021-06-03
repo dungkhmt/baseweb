@@ -2,7 +2,6 @@ package com.hust.baseweb.applications.education.programsubmisson.controller;
 
 import com.hust.baseweb.applications.education.programsubmisson.entity.ContestProblem;
 import com.hust.baseweb.applications.education.programsubmisson.entity.ProgrammingContest;
-import com.hust.baseweb.applications.education.programsubmisson.entity.ProgrammingContestUserRegistration;
 import com.hust.baseweb.applications.education.programsubmisson.model.DistributeProblemsOfContestToParticipantsInputModel;
 import com.hust.baseweb.applications.education.programsubmisson.service.ProgrammingContestService;
 import com.hust.baseweb.applications.education.programsubmisson.service.ProgrammingContestUserRegistrationService;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;

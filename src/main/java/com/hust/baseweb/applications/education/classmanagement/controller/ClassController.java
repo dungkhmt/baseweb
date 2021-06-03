@@ -7,7 +7,6 @@ import com.hust.baseweb.applications.education.content.VideoService;
 import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
-import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.report.model.courseparticipation.StudentCourseParticipationModel;
 import com.hust.baseweb.applications.education.report.model.quizparticipation.StudentQuizParticipationModel;
 import com.hust.baseweb.applications.education.service.*;
@@ -26,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.xml.ws.Response;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
