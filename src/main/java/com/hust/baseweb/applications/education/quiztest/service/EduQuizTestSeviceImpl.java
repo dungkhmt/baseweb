@@ -523,12 +523,12 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
                         quizGroupQuestionParticipationExecutionChoices.forEach(choice ->{
                             chooseAnsIds.add(choice.getChoiceAnswerId());
                         });
-
+                        quizTestParticipationExecutionResultOutputModel.setChooseAnsIds(chooseAnsIds);
 
                         //get question
                         QuizQuestionDetailModel quizQuestionDetail = quizQuestionService.findQuizDetail(question.getQuestionId());
-
-
+                        quizTestParticipationExecutionResultOutputModel.setQuizChoiceAnswerList(quizQuestionDetail.getQuizChoiceAnswerList());
+                        quizTestParticipationExecutionResultOutputModel.setQuestionContent(quizQuestionDetail.getStatement());
                         //check choice in question
 
                         boolean ques_ans = true;
@@ -554,6 +554,7 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
 
                         char result = ques_ans ? 'Y' : 'N';
                         int grade = ques_ans ? 1 : 0;
+
                         quizTestParticipationExecutionResultOutputModel.setParticipationUserLoginId(studentInfo.getUser_login_id());
                         quizTestParticipationExecutionResultOutputModel.setTestId(testId);
                         quizTestParticipationExecutionResultOutputModel.setQuizGroupId(eduTestQuizGroup.getQuizGroupId());

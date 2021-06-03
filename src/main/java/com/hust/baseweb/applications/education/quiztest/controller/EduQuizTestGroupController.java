@@ -15,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -57,7 +58,7 @@ public class EduQuizTestGroupController {
                  " scheduleDate = " + startDateTime.toString() + " timeTest = " + timeTest);
 
         if (timeTest > eduQuizTest.getDuration() || timeTest < 0) {// out-of-allowed date-time
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
         }
 
         EduTestQuizParticipant testParticipant = eduTestQuizParticipationRepo.findEduTestQuizParticipantByParticipantUserLoginIdAndAndTestId(
@@ -71,7 +72,6 @@ public class EduQuizTestGroupController {
 
         return ResponseEntity.ok().body(eduQuizTestGroupService.getTestGroupQuestionDetail(principal, testID));
     }
-
     @GetMapping("/get-all-quiz-test-group-participants/{testId}")
     public ResponseEntity<?> getQuizTestGroupParticipants(Principal principal, @PathVariable String testId) {
         log.info("getQuizTestGroupParticipants, testId = " + testId);
