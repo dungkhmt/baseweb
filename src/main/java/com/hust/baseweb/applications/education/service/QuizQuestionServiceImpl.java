@@ -65,7 +65,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
-    public QuizQuestion save(QuizQuestionCreateInputModel input, MultipartFile[] files) {
+    public QuizQuestion save(UserLogin u, QuizQuestionCreateInputModel input, MultipartFile[] files) {
 
         //Do save file
         Date now = new Date();
@@ -102,6 +102,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         QuizQuestion quizQuestion = new QuizQuestion();
         quizQuestion.setLevelId(input.getLevelId());
         quizQuestion.setQuestionContent(input.getQuestionContent());
+        //quizQuestion.setCreatedByUserLogin(u);
+        quizQuestion.setCreatedByUserLoginId(u.getUserLoginId());
         QuizCourseTopic quizCourseTopic = quizCourseTopicRepo.findById(input.getQuizCourseTopicId()).orElse(null);
 
         quizQuestion.setQuizCourseTopic(quizCourseTopic);

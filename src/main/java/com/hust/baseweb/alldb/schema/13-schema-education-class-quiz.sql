@@ -16,9 +16,11 @@ create table quiz_question(
     question_content text,
     attachment varchar(500),
     status_id varchar(30),
+    created_by_user_login_id varchar(60),
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_quiz_question_id primary key(question_id),
+    constraint fk_quiz_question_created_by_user_login_id foreign key(created_by_user_login_id) references user_login(user_login_id),
     constraint fk_quiz_question_course_id foreign key(course_topic_id) references quiz_course_topic(quiz_course_topic_id)
 );
 

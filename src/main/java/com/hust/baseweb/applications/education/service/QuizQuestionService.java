@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.education.model.quiz.QuizQuestionCreateInpu
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionUpdateInputModel;
 import com.hust.baseweb.entity.UserLogin;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface QuizQuestionService {
 
     QuizQuestion save(QuizQuestionCreateInputModel input);
 
-    QuizQuestion save(QuizQuestionCreateInputModel input, MultipartFile[] files);
+    QuizQuestion save(UserLogin u, QuizQuestionCreateInputModel input, MultipartFile[] files);
 
     List<QuizQuestion> findAll();
 

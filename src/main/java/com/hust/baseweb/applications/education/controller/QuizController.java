@@ -122,13 +122,14 @@ public class QuizController {
         @RequestParam("QuizQuestionCreateInputModel") String json,
         @RequestParam("files") MultipartFile[] files
     ) {
+        UserLogin u = userService.findById(principal.getName());
 
         Gson g = new Gson();
         QuizQuestionCreateInputModel input = g.fromJson(json, QuizQuestionCreateInputModel.class);
 
-        System.out.println("hehehehehehehe");
+        //System.out.println("hehehehehehehe");
         log.info("createQuizQuestion, topicId = " + input.getQuizCourseTopicId());
-        QuizQuestion quizQuestion = quizQuestionService.save(input, files);
+        QuizQuestion quizQuestion = quizQuestionService.save(u,input, files);
         return ResponseEntity.ok().body(quizQuestion);
     }
 

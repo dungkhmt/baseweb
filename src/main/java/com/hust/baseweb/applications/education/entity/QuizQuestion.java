@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.education.entity;
 
+import com.hust.baseweb.entity.UserLogin;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,6 +30,12 @@ public class QuizQuestion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_topic_id", referencedColumnName = "quiz_course_topic_id")
     private QuizCourseTopic quizCourseTopic;
+
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "created_by_user_login_id", referencedColumnName = "user_login_id")
+    //private UserLogin createdByUserLogin;
+    @Column(name="created_by_user_login_id")
+    private String createdByUserLoginId;
 
     @Column(name = "level_id")
     private String levelId;
