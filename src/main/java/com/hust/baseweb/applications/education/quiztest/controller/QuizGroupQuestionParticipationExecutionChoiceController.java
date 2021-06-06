@@ -68,9 +68,17 @@ public class QuizGroupQuestionParticipationExecutionChoiceController {
         UUID groupId = input.getQuizGroupId();
         String userId = principal.getName();
         List<UUID> chooseAnsIds = input.getChooseAnsIds();
+
+        if(chooseAnsIds == null){
+            log.info("quizChooseAnswer, chooseAnsIds = null");
+        }else {
+            log.info("quizChooseAnswer, chooseAnsIds = " + chooseAnsIds.size());
+        }
+
         List<QuizGroupQuestionParticipationExecutionChoice> a =  quizGroupQuestionParticipationExecutionChoiceRepo.findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupIdAndQuestionId(userId,groupId,questionId);
         a.forEach(quizGroupQuestionParticipationExecutionChoice -> {
             quizGroupQuestionParticipationExecutionChoiceRepo.delete(quizGroupQuestionParticipationExecutionChoice);
+            log.info("quizChooseAnswer, chooseAnsIds, delete previous choice answer for question " + questionId + " of groupId " + groupId + " of user " + userId);
         });
 
         Date createdStamp = new Date();
