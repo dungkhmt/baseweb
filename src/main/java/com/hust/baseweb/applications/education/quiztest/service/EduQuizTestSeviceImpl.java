@@ -164,6 +164,17 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
         return listModel;
     }
 
+    private boolean checkCanBeReassignQuizGroup(List<UUID> quizGroupIds){
+        // if there exist participants of one of this group doing quiz, then cannot CHANGE
+        List<QuizGroupQuestionParticipationExecutionChoice> quizGroupQuestionParticipationExecutionChoices
+            = quizGroupQuestionParticipationExecutionChoiceRepo.findByQuizGroupIdIn(quizGroupIds);
+
+        if(quizGroupQuestionParticipationExecutionChoices == null
+           || quizGroupQuestionParticipationExecutionChoices.size() == 0)
+            return true;
+        else
+            return false;
+    }
     @Transactional
     @Override
     public boolean autoAssignParticipants2QuizTestGroup(AutoAssignParticipants2QuizTestGroupInputModel input) {
@@ -175,6 +186,12 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
         for(EduTestQuizGroup g: eduTestQuizGroups){
             quizGroupIds.add(g.getQuizGroupId());
         }
+
+        if(checkCanBeReassignQuizGroup(quizGroupIds) == false){
+            log.info("autoAssignParticipants2QuizTestGroup, quiz groups are executed, cannot be CHANGED");
+            return false;
+        }
+
         List<EduTestQuizGroupParticipationAssignment> eduTestQuizGroupParticipationAssignments =
             eduTestQuizGroupParticipationAssignmentRepo.findAllByQuizGroupIdIn(quizGroupIds);
 
@@ -271,6 +288,19 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
             log.info("autoAssignQuestion2QuizTestGroup, cannot find quizTest " + input.getQuizTestId());
             return false;
         }
+
+        // remove existing records related to eduTestQizGroups
+        List<UUID> quizGroupIds = new ArrayList();
+        for(EduTestQuizGroup g: eduTestQuizGroups){
+            quizGroupIds.add(g.getQuizGroupId());
+        }
+
+        if(checkCanBeReassignQuizGroup(quizGroupIds) == false){
+            log.info("autoAssignQuestion2QuizTestGroup, quiz groups are executed, cannot be CHANGED");
+            return false;
+        }
+
+
         UUID classId = eduQuizTest.getClassId();
         EduClass eduClass = classService.findById(classId);
         if(eduClass == null){
@@ -469,10 +499,25 @@ public class EduQuizTestSeviceImpl implements QuizTestService{
         return re;
     }
 
+    private boolean checkQuizGroupCanbeDeleted(UUID quizGroupId){
+        List<QuizGroupQuestionParticipationExecutionChoice> lst = quizGroupQuestionParticipationExecutionChoiceRepo
+            .findByQuizGroupId(quizGroupId);
+        if(lst == null || lst.size() == 0) return true;
+        else return false;
+    }
     public Integer deleteQuizTestGroups(String testId, String[] listQuizTestGroupId) {
+        for (String id : listQuizTestGroupId) {
+            UUID quizGroupId = UUID.fromString(id);
+            if(checkQuizGroupCanbeDeleted(quizGroupId) == false){
+                log.info("deleteQuizTestGroups, quizGroup "+ quizGroupId + " being executed, cannot be deleted!");
+                return 0;
+            }
+        }
+
         Integer re = 0;
         for (String id : listQuizTestGroupId) {
-            re += eduQuizTestGroupRepo.deleteQuizTestGroup(testId, UUID.fromString(id));
+            UUID quizGroupId = UUID.fromString(id);
+            re += eduQuizTestGroupRepo.deleteQuizTestGroup(testId, quizGroupId);
         }
         return re;
     }

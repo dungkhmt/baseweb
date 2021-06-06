@@ -11,4 +11,7 @@ public interface QuizGroupQuestionParticipationExecutionChoiceRepo extends JpaRe
 
     List<QuizGroupQuestionParticipationExecutionChoice> findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupId(String userId, UUID groupId);
     List<QuizGroupQuestionParticipationExecutionChoice> findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupIdAndQuestionId(String userId,UUID quizgroupId, UUID questionId);
+    List<QuizGroupQuestionParticipationExecutionChoice> findByQuizGroupIdIn(List<UUID> quizGroupIds);
+    List<QuizGroupQuestionParticipationExecutionChoice> findByQuizGroupId(UUID quizGroupId);
+
 }
