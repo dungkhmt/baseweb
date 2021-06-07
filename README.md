@@ -15,6 +15,11 @@ Bạn cần có những thứ sau được cài đặt và cấu hình sẵn tr�
   * [Hướng dẫn cài đặt PostgreSQL](https://drive.google.com/file/d/1o15E-QNNgHeZK5F1N7h4FfxYpT3B9S92/view?usp=sharing)
   * [Hướng dẫn cài đặt MongoDB](https://drive.google.com/file/d/1pNgZmw8TBU3uSzaAwZiXiVW5dp6Pjw7i/view?usp=sharing)
 
+### Tài nguyên
+Ở thời điểm hiện tại, các công nghệ sử dụng đã phát hành các phiên bản mới với nhiều bổ sung, nâng cấp. Tuy nhiên, những nâng cấp đó không phải lúc nào cũng đảm bảo được tính
+tương thích ngược, dẫn đến việc cài đặt theo hướng dẫn này có thể gặp những lỗi phát sinh không cần thiết. Vì vậy, nên sử dụng các bộ cài đặt được cung cấp ở đây:
+* [Installers](https://drive.google.com/drive/folders/1r4VCwCz2JZGg9-LxQFPNw1aTZJl9gYp3?usp=sharing)
+
 Khi đã sẵn sàng cho quá trình cài đặt project, thực hiện lần lượt các bước 1 đến 4:
 ### 1. Cài đặt Database
 ### 1.1. PostgreSQL
@@ -100,12 +105,8 @@ mvn install:install-file -Dfile=ortools-java-8.0.8283.jar -DpomFile=pom-local.xm
 * Trong thư mục: <b>src\main\java\com\hust\baseweb</b>, chạy file <b>BasewebApplication.java</b>
 
 Sau lần chạy thành công đầu tiên, ở các lần chạy sau chỉ cần thực hiện lần lượt bước 3.1 và 4
-### 5. Tài nguyên
-Ở thời điểm hiện tại, các công nghệ sử dụng đã phát hành các phiên bản mới với nhiều bổ sung, nâng cấp. Tuy nhiên, những nâng cấp đó không phải lúc nào cũng đảm bảo được tính
-tương thích ngược, dẫn đến việc cài đặt theo hướng dẫn này có thể gặp những lỗi phát sinh không cần thiết. Vì vậy, nên sử dụng các bộ cài đặt được cung cấp ở đây:
-* [Installers](https://drive.google.com/drive/folders/1r4VCwCz2JZGg9-LxQFPNw1aTZJl9gYp3?usp=sharing)
-### 6. Một số lỗi thường gặp
-### 6.1. You need to run build with JDK or have tools.jar on the classpath
+### 5. Một số lỗi thường gặp
+### 5.1. You need to run build with JDK or have tools.jar on the classpath
 * Copy file <b>tools.jar</b> ở thư mục <b>C:\Program Files\Java\jdk1.8.0_251\lib</b> vào thư mục <b>C:\Program Files\Java\jre1.8.0_251\lib</b>
-### 7. Tips cấu hình IDEs
+### 6. Tips cấu hình IDEs
 * [Tips cấu hình IDEs](https://drive.google.com/file/d/1fKf7MTXCSlk1VpL6iACoHWCvqeE6Ldgc/view?usp=sharing)
