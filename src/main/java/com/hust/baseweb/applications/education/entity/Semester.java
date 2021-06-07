@@ -12,18 +12,18 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name="edu_semester")
+@Table(name = "edu_semester")
 @EntityListeners(AuditingEntityListener.class)
 public class Semester {
 
     @Id
-	private short id;
-	
-	@Column(name="semester_name")
-	private String name;
+    private short id;
 
-	@Column(name = "is_active")
-	private boolean active;
+    @Column(name = "semester_name")
+    private String name;
+
+    @Column(name = "is_active")
+    private boolean active;
 
     @LastModifiedDate
     private Date lastUpdatedStamp;

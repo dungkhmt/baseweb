@@ -81,13 +81,15 @@ public class ClassExtracter implements IExtracter {
             }
         }
     }
-    public HashMap getMapClass2PreassignedTeacher(){
+
+    public HashMap getMapClass2PreassignedTeacher() {
         return mClass2PreAssignedTeacher;
     }
 
-    public String getTeacherAssigned2Class(AlgoClassIM cls){
+    public String getTeacherAssigned2Class(AlgoClassIM cls) {
         return mClass2PreAssignedTeacher.get(cls);
     }
+
     @Override
     public void extract() {
         Row row;
@@ -108,7 +110,7 @@ public class ClassExtracter implements IExtracter {
         timetable.put(13, new Integer[]{1065, 1110});
         timetable.put(14, new Integer[]{1110, 1155});
 
-        mClass2PreAssignedTeacher = new HashMap<AlgoClassIM,String>();
+        mClass2PreAssignedTeacher = new HashMap<AlgoClassIM, String>();
         while (rowIterator.hasNext()) {
             row = rowIterator.next();
             AlgoClassIM classIM = new AlgoClassIM();
@@ -122,8 +124,9 @@ public class ClassExtracter implements IExtracter {
             classIM.setTimetable(row.getCell(indexOfColumn.get("timetable")).getStringCellValue());
 
             String teacherId = row.getCell(indexOfColumn.get("email")).getStringCellValue();
-            if(teacherId != null && !teacherId.equals(""))
-                mClass2PreAssignedTeacher.put(classIM,teacherId);
+            if (teacherId != null && !teacherId.equals("")) {
+                mClass2PreAssignedTeacher.put(classIM, teacherId);
+            }
 
             // Calculate hourLoad.
             String[] sessions = classIM.getTimetable().split(";");

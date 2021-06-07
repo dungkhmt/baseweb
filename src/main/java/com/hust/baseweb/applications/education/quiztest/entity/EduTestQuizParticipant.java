@@ -16,19 +16,20 @@ import javax.persistence.*;
 @Table(name = "edu_test_quiz_participant")
 @IdClass(CompositeTestQuizParticipationId.class)
 public class EduTestQuizParticipant {
+
     public static final String STATUS_REGISTERED = "STATUS_REGISTERED";
     public static final String STATUS_APPROVED = "STATUS_APPROVED";
     public static final String STATUS_REJECTED = "STATUS_REJECTED";
 
     @Id
-    @Column(name="test_id")
+    @Column(name = "test_id")
     private String testId;
 
     @Id
-    @Column(name="participant_user_login_id")
+    @Column(name = "participant_user_login_id")
     private String participantUserLoginId;
 
-    @Column(name="status_id")
+    @Column(name = "status_id")
     private String statusId;
 
 

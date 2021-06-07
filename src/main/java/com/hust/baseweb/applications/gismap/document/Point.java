@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @Document
 public class Point {
+
     private String pointId;
     private double lat;
     private double lng;

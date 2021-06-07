@@ -9,5 +9,6 @@ import java.util.List;
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 public interface OrganizationRepository extends MongoRepository<Organization, String> {
+
     List<Organization> findAllByOrganizationIdIn(List<String> organizationIds);
 }

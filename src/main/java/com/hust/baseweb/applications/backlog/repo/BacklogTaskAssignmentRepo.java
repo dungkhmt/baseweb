@@ -7,8 +7,12 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BacklogTaskAssignmentRepo extends JpaRepository<BacklogTaskAssignment, UUID> {
+
     BacklogTaskAssignment save(BacklogTaskAssignment backlogTaskAssignment);
+
     List<BacklogTaskAssignment> findAllByBacklogTaskId(UUID backlogTaskId);
+
     List<BacklogTaskAssignment> findAllByBacklogTaskIdAndStatusIdEquals(UUID backlogTaskId, String statusId);
+
     BacklogTaskAssignment findByBacklogTaskIdAndAndAssignedToPartyId(UUID backlogTaskId, UUID assignedToPartyId);
 }

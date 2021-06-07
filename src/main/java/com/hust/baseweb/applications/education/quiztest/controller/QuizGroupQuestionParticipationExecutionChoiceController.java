@@ -54,13 +54,13 @@ public class QuizGroupQuestionParticipationExecutionChoiceController {
         EduQuizTest test = eduQuizTestRepo.findById(input.getTestId()).get();
         Date currentDate = new Date();
         Date testStartDate = test.getScheduleDatetime();
-        int timeTest = ((int) (currentDate.getTime() - testStartDate.getTime()))/(60*1000); //minutes
+        int timeTest = ((int) (currentDate.getTime() - testStartDate.getTime())) / (60 * 1000); //minutes
         //System.out.println(currentDate);
         //System.out.println(testStartDate);
         //System.out.println(timeTest);
         //System.out.println(test.getDuration());
 
-        if(timeTest > test.getDuration()){
+        if (timeTest > test.getDuration()) {
             //System.out.println("out time~!");
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
         }
@@ -69,21 +69,29 @@ public class QuizGroupQuestionParticipationExecutionChoiceController {
         String userId = principal.getName();
         List<UUID> chooseAnsIds = input.getChooseAnsIds();
 
-        if(chooseAnsIds == null){
+        if (chooseAnsIds == null) {
             log.info("quizChooseAnswer, chooseAnsIds = null");
-        }else {
+        } else {
             log.info("quizChooseAnswer, chooseAnsIds = " + chooseAnsIds.size());
         }
 
-        List<QuizGroupQuestionParticipationExecutionChoice> a =  quizGroupQuestionParticipationExecutionChoiceRepo.findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupIdAndQuestionId(userId,groupId,questionId);
+        List<QuizGroupQuestionParticipationExecutionChoice> a = quizGroupQuestionParticipationExecutionChoiceRepo.findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupIdAndQuestionId(
+            userId,
+            groupId,
+            questionId);
         a.forEach(quizGroupQuestionParticipationExecutionChoice -> {
             quizGroupQuestionParticipationExecutionChoiceRepo.delete(quizGroupQuestionParticipationExecutionChoice);
-            log.info("quizChooseAnswer, chooseAnsIds, delete previous choice answer for question " + questionId + " of groupId " + groupId + " of user " + userId);
+            log.info("quizChooseAnswer, chooseAnsIds, delete previous choice answer for question " +
+                     questionId +
+                     " of groupId " +
+                     groupId +
+                     " of user " +
+                     userId);
         });
 
         Date createdStamp = new Date();
-        for (UUID choiceId:
-             chooseAnsIds) {
+        for (UUID choiceId :
+            chooseAnsIds) {
             QuizGroupQuestionParticipationExecutionChoice tmp = new QuizGroupQuestionParticipationExecutionChoice();
             tmp.setQuestionId(questionId);
             tmp.setQuizGroupId(groupId);
@@ -105,12 +113,14 @@ public class QuizGroupQuestionParticipationExecutionChoiceController {
         }
 
 
-
         return ResponseEntity.ok().body(chooseAnsIds);
     }
 
     @GetMapping("/get-history-log-quiz_group_question_participation_execution_choice/{testId}")
-    public ResponseEntity<?> getHistoryLogQuizGroupQuestionParticipationExecutionChoice(Principal principal, @PathVariable String testId){
+    public ResponseEntity<?> getHistoryLogQuizGroupQuestionParticipationExecutionChoice(
+        Principal principal,
+        @PathVariable String testId
+    ) {
         log.info("getHistoryLogQuizGroupQuestionParticipationExecutionChoice, testId = " + testId);
 
         List<HistoryLogQuizGroupQuestionParticipationExecutionChoice> list =
@@ -118,15 +128,15 @@ public class QuizGroupQuestionParticipationExecutionChoiceController {
         List<HistoryLogQuizGroupQuestionParticipationExecutionChoiceDetailModel> modelList
             = new ArrayList();
         DateFormat formetter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        for(HistoryLogQuizGroupQuestionParticipationExecutionChoice e: list){
+        for (HistoryLogQuizGroupQuestionParticipationExecutionChoice e : list) {
             HistoryLogQuizGroupQuestionParticipationExecutionChoiceDetailModel m =
                 new HistoryLogQuizGroupQuestionParticipationExecutionChoiceDetailModel();
             m.setChoiceAnswerId(e.getChoiceAnswerId());
             String sDate = "";
-            if(e.getCreatedStamp() != null){
-                try{
+            if (e.getCreatedStamp() != null) {
+                try {
                     sDate = formetter.format(e.getCreatedStamp());
-                }catch(Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }

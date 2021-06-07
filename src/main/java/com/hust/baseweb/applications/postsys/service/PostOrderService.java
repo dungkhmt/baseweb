@@ -169,11 +169,18 @@ public class PostOrderService {
                 postShipOrderTripPostOfficeAssignment.getPostOfficeTrip().getToPostOffice(),
                 null, null, null
             );
-            PostShipOrderFixedTripPostOfficeAssignment postShipOrderFixedTripPostOfficeAssignment = postShipOrderFixedTripPostOfficeAssignmentRepo.findByPostShipOrderTripPostOfficeAssignmentId(postShipOrderTripPostOfficeAssignment.getPostShipOrderPostOfficeTripAssignmentId());
+            PostShipOrderFixedTripPostOfficeAssignment postShipOrderFixedTripPostOfficeAssignment = postShipOrderFixedTripPostOfficeAssignmentRepo
+                .findByPostShipOrderTripPostOfficeAssignmentId(postShipOrderTripPostOfficeAssignment.getPostShipOrderPostOfficeTripAssignmentId());
             if (postShipOrderFixedTripPostOfficeAssignment != null) {
-                postOrderRouteOutputModel.setStatus(postShipOrderFixedTripPostOfficeAssignment.getPostOfficeFixedTripExecute().getStatus());
-                postOrderRouteOutputModel.setDepartureDateTime(postShipOrderFixedTripPostOfficeAssignment.getPostOfficeFixedTripExecute().getDepartureDateTime());
-                postOrderRouteOutputModel.setArrivedDateTime(postShipOrderFixedTripPostOfficeAssignment.getPostOfficeFixedTripExecute().getArrivedDateTime());
+                postOrderRouteOutputModel.setStatus(postShipOrderFixedTripPostOfficeAssignment
+                                                        .getPostOfficeFixedTripExecute()
+                                                        .getStatus());
+                postOrderRouteOutputModel.setDepartureDateTime(postShipOrderFixedTripPostOfficeAssignment
+                                                                   .getPostOfficeFixedTripExecute()
+                                                                   .getDepartureDateTime());
+                postOrderRouteOutputModel.setArrivedDateTime(postShipOrderFixedTripPostOfficeAssignment
+                                                                 .getPostOfficeFixedTripExecute()
+                                                                 .getArrivedDateTime());
             }
             postOrderRouteOutputModels.add(postOrderRouteOutputModel);
         }

@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreatePostShipOrderOutputModel {
+
     private String statusCode;
     private String detail;
     private PostOrder postOrder;

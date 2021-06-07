@@ -32,22 +32,22 @@ public class ContestProblem {
 
 
     @Id
-    @Column(name="problem_id")
+    @Column(name = "problem_id")
     private String problemId;
 
-    @Column(name="problem_name")
+    @Column(name = "problem_name")
     private String problemName;
 
-    @Column(name="problem_statement")
+    @Column(name = "problem_statement")
     private String problemStatement;
 
-    @Column(name="time_limit")
+    @Column(name = "time_limit")
     private int timeLimit;
 
-    @Column(name="level_id")
+    @Column(name = "level_id")
     private String levelId;
 
-    @Column(name="category_id")
+    @Column(name = "category_id")
     private String categoryId;
 
 }

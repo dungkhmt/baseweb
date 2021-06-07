@@ -12,13 +12,14 @@ import java.util.UUID;
 @Getter
 @Setter
 public class QuizGroupTestDetailModel {
+
     private String testId;
 
     private String testName;
 
     private String scheduleDatetime;
 
-    private String  courseName;
+    private String courseName;
 
     private Integer duration;
 
@@ -28,7 +29,7 @@ public class QuizGroupTestDetailModel {
 
     private List<QuizQuestionDetailModel> listQuestion;
 
-    private Map<String , List<UUID>> participationExecutionChoice; //question id, list<choiceAnswerId>
+    private Map<String, List<UUID>> participationExecutionChoice; //question id, list<choiceAnswerId>
 
 
 }

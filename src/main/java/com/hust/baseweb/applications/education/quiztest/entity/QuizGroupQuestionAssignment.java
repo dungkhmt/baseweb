@@ -13,15 +13,16 @@ import java.util.UUID;
 @Table(name = "quiz_group_question_assignment")
 @IdClass(CompositeQuizGroupQuestionAssignmentId.class)
 public class QuizGroupQuestionAssignment {
+
     @Id
-    @Column(name="question_id")
+    @Column(name = "question_id")
     private UUID questionId;
 
     @Id
-    @Column(name="quiz_group_id")
+    @Column(name = "quiz_group_id")
     private UUID quizGroupId;
 
-    @Column(name ="status_id")
+    @Column(name = "status_id")
     private String statusID;
 
 }

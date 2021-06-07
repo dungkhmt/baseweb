@@ -13,19 +13,20 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="postman")
+@Table(name = "postman")
 public class Postman {
+
     @Id
-    @Column(name="postman_id")
+    @Column(name = "postman_id")
     private UUID postmanId;
 
-    @Column(name="postman_name")
+    @Column(name = "postman_name")
     private String postmanName;
 
-    @Column(name="post_office_id")
+    @Column(name = "post_office_id")
     private String postOfficeId;
 
     @ManyToOne
-    @JoinColumn(name = "post_office_id", referencedColumnName = "post_office_id",insertable = false, updatable = false)
+    @JoinColumn(name = "post_office_id", referencedColumnName = "post_office_id", insertable = false, updatable = false)
     PostOffice postOffice;
 }

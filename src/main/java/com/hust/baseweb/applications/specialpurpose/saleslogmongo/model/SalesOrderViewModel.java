@@ -6,6 +6,7 @@ import com.hust.baseweb.entity.Person;
 import java.util.List;
 
 public class SalesOrderViewModel {
+
     private Organization customer;
     private FacilityModel fromFacility;
     private Person salesman;

@@ -19,13 +19,19 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class EduCourseChapterMaterialServiceImpl implements EduCourseChapterMaterialService {
+
     private EduCourseChapterMaterialRepo eduCourseChapterMaterialRepo;
     private EduCourseChapterRepo eduCourseChapterRepo;
 
     @Override
-    public EduCourseChapterMaterial save(EduCourseChapterMaterialModelCreate eduCourseChapterMaterialModelCreate, Video video) {
-        EduCourseChapterMaterial eduCourseChapterMaterial= new EduCourseChapterMaterial();
-        EduCourseChapter eduCourseChapter = eduCourseChapterRepo.findById(eduCourseChapterMaterialModelCreate.getChapterId()).orElse(null);
+    public EduCourseChapterMaterial save(
+        EduCourseChapterMaterialModelCreate eduCourseChapterMaterialModelCreate,
+        Video video
+    ) {
+        EduCourseChapterMaterial eduCourseChapterMaterial = new EduCourseChapterMaterial();
+        EduCourseChapter eduCourseChapter = eduCourseChapterRepo
+            .findById(eduCourseChapterMaterialModelCreate.getChapterId())
+            .orElse(null);
         eduCourseChapterMaterial.setEduCourseChapter(eduCourseChapter);
         eduCourseChapterMaterial.setEduCourseMaterialName(eduCourseChapterMaterialModelCreate.getMaterialName());
         eduCourseChapterMaterial.setEduCourseMaterialType(eduCourseChapterMaterialModelCreate.getMaterialType());
@@ -43,13 +49,16 @@ public class EduCourseChapterMaterialServiceImpl implements EduCourseChapterMate
     public List<EduCourseChapterMaterial> findAllByChapterId(UUID chapterId) {
         log.info("findAllByChapterId, chapterId = " + chapterId);
         EduCourseChapter eduCourseChapter = eduCourseChapterRepo.findById(chapterId).orElse(null);
-        List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialRepo.findAllByEduCourseChapter(eduCourseChapter);
+        List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialRepo.findAllByEduCourseChapter(
+            eduCourseChapter);
         return eduCourseChapterMaterials;
     }
 
     @Override
     public EduCourseChapterMaterial findById(UUID eduCourseChapterMaterialId) {
-        EduCourseChapterMaterial eduCourseChapterMaterial = eduCourseChapterMaterialRepo.findById(eduCourseChapterMaterialId).orElse(null);
+        EduCourseChapterMaterial eduCourseChapterMaterial = eduCourseChapterMaterialRepo
+            .findById(eduCourseChapterMaterialId)
+            .orElse(null);
         log.info("findById, sourceId = " + eduCourseChapterMaterial.getSourceId());
         return eduCourseChapterMaterial;
     }

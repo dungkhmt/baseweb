@@ -22,6 +22,7 @@ import java.util.Random;
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class LakeServiceImpl implements LakeService {
+
     private LakeRepo lakeRepo;
     private LakeRoleRepo lakeRoleRepo;
 
@@ -31,19 +32,21 @@ public class LakeServiceImpl implements LakeService {
     }
 
     @Override
-    public Lake edit(UserLogin userLogin, LakeModel lakeModel, String lakeId){
+    public Lake edit(UserLogin userLogin, LakeModel lakeModel, String lakeId) {
         Lake lake = lakeRepo.findByLakeId(lakeId);
 
         lake.setLakeName(lakeModel.getLakeName());
         try {
             String[] latlng = lakeModel.getPosition().split(",");
-            if (latlng[0].trim() != "")
-            lake.setLatitude(latlng[0].trim());
-            if (latlng[1].trim() != "")
+            if (latlng[0].trim() != "") {
                 lake.setLatitude(latlng[0].trim());
+            }
+            if (latlng[1].trim() != "") {
+                lake.setLatitude(latlng[0].trim());
+            }
             lake.setLongitude(latlng[1].trim());
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -73,11 +76,11 @@ public class LakeServiceImpl implements LakeService {
 
     @Override
     public List<Lake> getLakesOwnedByUserLogin(UserLogin userLogin) {
-        List<LakeRole> lakeRoles = lakeRoleRepo.findAllByUserLoginIdAndThruDate(userLogin.getUserLoginId(),null);
+        List<LakeRole> lakeRoles = lakeRoleRepo.findAllByUserLoginIdAndThruDate(userLogin.getUserLoginId(), null);
         log.info("getLakesOwnedByUserLogin, list.sz = " + lakeRoles.size());
 
         List<Lake> lakes = new ArrayList<Lake>();
-        for(LakeRole lakeRole: lakeRoles){
+        for (LakeRole lakeRole : lakeRoles) {
             Lake lake = lakeRole.getLake();
             lakes.add(lake);
         }
@@ -99,7 +102,7 @@ public class LakeServiceImpl implements LakeService {
 
         lake = lakeRepo.findByLakeId(lakeModel.getLakeId());
         log.info("save lake, findByLakeId, lake = " + lake);
-        if(lake != null){
+        if (lake != null) {
             log.info("save, lakeId " + lakeModel.getLakeId() + " EXISTS!!!");
             return null;
         }
@@ -121,7 +124,7 @@ public class LakeServiceImpl implements LakeService {
             log.info("save lake setLongitude OK");
             log.info("save lake, latitude = " + lake.getLatitude() + " longitude = " + lake.getLongitude());
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -141,16 +144,25 @@ public class LakeServiceImpl implements LakeService {
         lake.setLuuLuongXaLuKiemTra(lakeModel.getLuuLuongXaLuKiemTra());
         */
 
-        log.info("save lake, dienTichTuoi = " + lakeModel.getDienTichTuoi() + ", mucNuocChet = " + lakeModel.getMucNuocChet());
+        log.info("save lake, dienTichTuoi = " +
+                 lakeModel.getDienTichTuoi() +
+                 ", mucNuocChet = " +
+                 lakeModel.getMucNuocChet());
 
         lake = lakeRepo.save(lake);
         log.info("save, saved lake successfully");
-        List<LakeRole> lakeRoleList = lakeRoleRepo.findAllByUserLoginIdAndLakeAndThruDate(userLogin.getUserLoginId(), lake, null);
-        if(lakeRoleList != null && lakeRoleList.size() > 0){
-            log.info("save, lakeId " + lake.getLakeId() + " owned by userloginId " + userLogin.getUserLoginId() + " EXISTS!!!");
+        List<LakeRole> lakeRoleList = lakeRoleRepo.findAllByUserLoginIdAndLakeAndThruDate(
+            userLogin.getUserLoginId(),
+            lake,
+            null);
+        if (lakeRoleList != null && lakeRoleList.size() > 0) {
+            log.info("save, lakeId " +
+                     lake.getLakeId() +
+                     " owned by userloginId " +
+                     userLogin.getUserLoginId() +
+                     " EXISTS!!!");
             return null;
         }
-
 
 
         LakeRole lakeRole = new LakeRole();

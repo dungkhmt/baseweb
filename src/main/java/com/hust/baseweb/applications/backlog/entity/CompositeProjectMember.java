@@ -11,6 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class CompositeProjectMember implements Serializable {
+
     private UUID backlogProjectId;
     private UUID memberPartyId;
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 
 public class LakeModel {
+
     private String lakeId;
 
     private String lakeName;

@@ -149,21 +149,23 @@ public class ClassController {
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-all-courses")
-    public ResponseEntity<?> getAllCourses(Principal principal){
+    public ResponseEntity<?> getAllCourses(Principal principal) {
         log.info("getAllCourses start...");
-        List<EduCourse> courses= courseService.findAll();
+        List<EduCourse> courses = courseService.findAll();
         log.info("getAllCourses, GOT " + courses.size());
         return ResponseEntity.ok().body(courses);
     }
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-chapters-of-course/{courseId}")
-    public ResponseEntity<?> getChaptersOfCourse(Principal principal, @PathVariable String courseId){
+    public ResponseEntity<?> getChaptersOfCourse(Principal principal, @PathVariable String courseId) {
         log.info("getChaptersOfCourse start... courseId = " + courseId);
         //List<EduCourseChapter> eduCourseChapters = eduCourseChapterService.findAll();
         List<EduCourseChapter> eduCourseChapters = eduCourseChapterService.findAllByCourseId(courseId);
         log.info("getChaptersOfCourse, GOT " + eduCourseChapters.size());
         return ResponseEntity.ok().body(eduCourseChapters);
     }
+
     @GetMapping("/get-chapters-of-class/{classId}")
     public ResponseEntity<?> getChaptersOfClass(Principal principal, @PathVariable UUID classId) {
         GetClassDetailOM eduClass = classService.getClassDetail(classId);
@@ -171,64 +173,74 @@ public class ClassController {
 
         List<EduCourseChapter> eduCourseChapters = eduCourseChapterService.findAllByCourseId(courseId);
         log.info("getChaptersOfClass, classId = " + classId + ", courseId = " + courseId
-        + " RETURN list.sz = " + eduCourseChapters.size());
+                 + " RETURN list.sz = " + eduCourseChapters.size());
 
         return ResponseEntity.ok().body(eduCourseChapters);
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping("/create-chapter-of-course")
-    public ResponseEntity<?> createChapterOfCourse(Principal principal, @RequestBody EduCourseChapterModelCreate eduCourseChapterModelCreate){
+    public ResponseEntity<?> createChapterOfCourse(
+        Principal principal,
+        @RequestBody EduCourseChapterModelCreate eduCourseChapterModelCreate
+    ) {
         log.info("createChapterOfCourse, courseId = " + eduCourseChapterModelCreate.getCourseId() + " chapterName = " +
                  eduCourseChapterModelCreate.getChapterName());
         EduCourseChapter eduCourseChapter = eduCourseChapterService.save(eduCourseChapterModelCreate);
         return ResponseEntity.ok().body(eduCourseChapter);
     }
+
     @GetMapping("/change-chapter-status/{chapterId}")
-    public ResponseEntity<?> changeChapterStatus(Principal principal, @PathVariable UUID chapterId){
+    public ResponseEntity<?> changeChapterStatus(Principal principal, @PathVariable UUID chapterId) {
         log.info("changeChapterStatus, chapterId = " + chapterId);
         String statusId = eduCourseChapterService.changeOpenCloseChapterStatus(chapterId);
         return ResponseEntity.ok().body(statusId);
     }
 
     @GetMapping("/get-course-chapter-material-type-list")
-    public ResponseEntity<?> getCourseChapterMaterialTypeList(Principal principal){
+    public ResponseEntity<?> getCourseChapterMaterialTypeList(Principal principal) {
         log.info("getCourseChapterMaterialTypeList");
         List<String> types = new ArrayList<>();
         types.add(EduCourseChapterMaterial.EDU_COURSE_MATERIAL_TYPE_SLIDE);
         types.add(EduCourseChapterMaterial.EDU_COURSE_MATERIAL_TYPE_VIDEO);
         return ResponseEntity.ok().body(types);
     }
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping("/create-chapter-material-of-course")
     //public ResponseEntity<?> createChapterMaterialOfCourse(Principal principal, @RequestBody
-      //  EduCourseChapterMaterialModelCreate eduCourseChapterMaterialModelCreate){
-        public ResponseEntity<?> createChapterMaterialOfCourse(Principal principal, @RequestParam("inputJson") String inputJson,
-                                                               @RequestParam("files") MultipartFile[] files){
+    //  EduCourseChapterMaterialModelCreate eduCourseChapterMaterialModelCreate){
+    public ResponseEntity<?> createChapterMaterialOfCourse(
+        Principal principal, @RequestParam("inputJson") String inputJson,
+        @RequestParam("files") MultipartFile[] files
+    ) {
         Gson gson = new Gson();
-        EduCourseChapterMaterialModelCreate eduCourseChapterMaterialModelCreate = gson.fromJson(inputJson, EduCourseChapterMaterialModelCreate.class);
+        EduCourseChapterMaterialModelCreate eduCourseChapterMaterialModelCreate = gson.fromJson(
+            inputJson,
+            EduCourseChapterMaterialModelCreate.class);
 
-            log.info("createChapterMaterialOfCourse, chapterId = " + eduCourseChapterMaterialModelCreate.getChapterId()
-        + " materialName = " + eduCourseChapterMaterialModelCreate.getMaterialName() + " materialType = " +
+        log.info("createChapterMaterialOfCourse, chapterId = " + eduCourseChapterMaterialModelCreate.getChapterId()
+                 + " materialName = " + eduCourseChapterMaterialModelCreate.getMaterialName() + " materialType = " +
                  eduCourseChapterMaterialModelCreate.getMaterialType());
         EduCourseChapterMaterial eduCourseChapterMaterial = null;
-            try {
+        try {
             Video video = videoService.create(files[0]);
             log.info("createChapterMaterialOfCourse, videoId = " + video.getId());
-            eduCourseChapterMaterial = eduCourseChapterMaterialService.save(eduCourseChapterMaterialModelCreate,video);
+            eduCourseChapterMaterial = eduCourseChapterMaterialService.save(eduCourseChapterMaterialModelCreate, video);
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return ResponseEntity.ok().body(eduCourseChapterMaterial);
     }
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-course-chapter-material-detail/{id}")
-    public ResponseEntity<?> getCourseChapterMaterialDetail(Principal principal, @PathVariable UUID id){
+    public ResponseEntity<?> getCourseChapterMaterialDetail(Principal principal, @PathVariable UUID id) {
         log.info("getCourseChapterMaterialDetail, id = " + id);
         UserLogin userLogin = userService.findById(principal.getName());
-        logUserLoginCourseChapterMaterialService.logUserLoginMaterial(userLogin,id);
+        logUserLoginCourseChapterMaterialService.logUserLoginMaterial(userLogin, id);
         log.info("getCourseChapterMaterialDetail, id = " + id);
         EduCourseChapterMaterial eduCourseChapterMaterial = eduCourseChapterMaterialService.findById(id);
         return ResponseEntity.ok().body(eduCourseChapterMaterial);
@@ -236,30 +248,33 @@ public class ClassController {
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-chapter-materials-of-course/{chapterId}")
-    public ResponseEntity<?> getChapterMaterialsOfCourse(Principal principal, @PathVariable UUID chapterId){
+    public ResponseEntity<?> getChapterMaterialsOfCourse(Principal principal, @PathVariable UUID chapterId) {
         //List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialService.findAll();
-        List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialService.findAllByChapterId(chapterId);
+        List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialService.findAllByChapterId(
+            chapterId);
         return ResponseEntity.ok().body(eduCourseChapterMaterials);
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-all-semesters")
-    public ResponseEntity<?> getAllSemesters(Principal principal){
+    public ResponseEntity<?> getAllSemesters(Principal principal) {
         log.info("getAllSemester start...");
         List<Semester> semesters = semesterService.findAll();
         log.info("getAllSemester GOT " + semesters.size());
         return ResponseEntity.ok().body(semesters);
     }
+
     @GetMapping("/get-all-departments")
-    public ResponseEntity<?> getAllEduDepartments(Principal principal){
+    public ResponseEntity<?> getAllEduDepartments(Principal principal) {
 
         List<EduDepartment> eduDepartments = eduDepartmentService.findAll();
         log.info("getAllEduDepartments, GOT sz = " + eduDepartments.size());
         return ResponseEntity.ok().body(eduDepartments);
     }
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-log-user-course-chapter-material/{classId}")
-    public ResponseEntity<?> getLogUserCourseChapterMaterial(Principal principal, @PathVariable UUID classId){
+    public ResponseEntity<?> getLogUserCourseChapterMaterial(Principal principal, @PathVariable UUID classId) {
         log.info("getLogUserCourseChapterMaterial, classId = " + classId);
         UserLogin userLogin = userService.findById(principal.getName());
 
@@ -267,6 +282,7 @@ public class ClassController {
             logUserLoginCourseChapterMaterialService.findAllByClassId(classId);
         return ResponseEntity.ok().body(studentCourseParticipationModels);
     }
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-log-user-quiz/{classId}")
     public ResponseEntity<?> getLogUserQuiz(Principal principal, @PathVariable UUID classId) {

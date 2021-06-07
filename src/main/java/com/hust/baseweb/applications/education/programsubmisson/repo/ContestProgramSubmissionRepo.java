@@ -7,15 +7,27 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ContestProgramSubmissionRepo extends JpaRepository<ContestProgramSubmission, UUID> {
+
     ContestProgramSubmission save(ContestProgramSubmission contestProgramSubmission);
-    List<ContestProgramSubmission> findAllByContestIdAndProblemIdAndSubmittedByUserLoginId(String contestId, String problemId, String submittedByUserLoginId);
+
+    List<ContestProgramSubmission> findAllByContestIdAndProblemIdAndSubmittedByUserLoginId(
+        String contestId,
+        String problemId,
+        String submittedByUserLoginId
+    );
 
     List<ContestProgramSubmission> findAllBySubmittedByUserLoginId(String submittedByUserLoginId);
+
     List<ContestProgramSubmission> findAllByProblemId(String problemId);
+
     List<ContestProgramSubmission> findAllByContestId(String contestId);
 
     List<ContestProgramSubmission> findAllByContestIdAndProblemId(String contestId, String problemId);
-    List<ContestProgramSubmission> findAllBySubmittedByUserLoginIdAndProblemId(String submittedByUserLoginId, String problemId);
+
+    List<ContestProgramSubmission> findAllBySubmittedByUserLoginIdAndProblemId(
+        String submittedByUserLoginId,
+        String problemId
+    );
 
 
     ContestProgramSubmission findByContestProgramSubmissionId(UUID contestProgramSubmissionId);

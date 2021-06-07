@@ -14,6 +14,6 @@ import org.springframework.boot.context.properties.ConstructorBinding;
  */
 public class MailProperties {
 
-//    @NotBlank
+    //    @NotBlank
     private String username;
 }

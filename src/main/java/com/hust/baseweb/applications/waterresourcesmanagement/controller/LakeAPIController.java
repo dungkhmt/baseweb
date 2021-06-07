@@ -20,47 +20,54 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class LakeAPIController {
+
     private LakeService lakeService;
     private UserService userService;
 
     @PostMapping("/edit-lake/{lakeId}")
-    public ResponseEntity<?> editLake(Principal principal,@RequestBody LakeModel lakeModel,@PathVariable String lakeId){
+    public ResponseEntity<?> editLake(
+        Principal principal,
+        @RequestBody LakeModel lakeModel,
+        @PathVariable String lakeId
+    ) {
         UserLogin u = userService.findById(principal.getName());
-        Lake lake = lakeService.edit(u,lakeModel,lakeId);
+        Lake lake = lakeService.edit(u, lakeModel, lakeId);
         return ResponseEntity.ok().body(lake);
     }
 
     @PostMapping("/create-lake")
-    public ResponseEntity<?> createLake(Principal principal, @RequestBody LakeModel lakeModel){
+    public ResponseEntity<?> createLake(Principal principal, @RequestBody LakeModel lakeModel) {
         log.info("createLake, userLoginId = " + principal.getName());
         UserLogin u = userService.findById(principal.getName());
-        Lake lake = lakeService.save(u,lakeModel);
+        Lake lake = lakeService.save(u, lakeModel);
         return ResponseEntity.ok().body(lake);
     }
 
     @GetMapping("/get-lakes-owned-by-userlogin")
-    public ResponseEntity<?> getLakesOfOwnedByUserLogin(Principal principal){
+    public ResponseEntity<?> getLakesOfOwnedByUserLogin(Principal principal) {
         log.info("getLakesOwnedByUserLogin, userLoginId = " + principal.getName());
-        UserLogin u = userService.findById(principal.getName()) ;
+        UserLogin u = userService.findById(principal.getName());
         List<Lake> lakes = lakeService.getLakesOwnedByUserLogin(u);
         return ResponseEntity.ok().body(lakes);
     }
+
     @GetMapping("/get-all-lakes")
-    public ResponseEntity<?> getAllLakes(Principal principal){
+    public ResponseEntity<?> getAllLakes(Principal principal) {
         log.info("getAllLakes, userLoginId = " + principal.getName());
-        UserLogin u = userService.findById(principal.getName()) ;
+        UserLogin u = userService.findById(principal.getName());
         List<Lake> lakes = lakeService.findAll();
         return ResponseEntity.ok().body(lakes);
     }
 
     @GetMapping(path = "/lake/{lakeId}")
-    public ResponseEntity<?> getLakeDetail(@PathVariable String lakeId, Principal principal){
+    public ResponseEntity<?> getLakeDetail(@PathVariable String lakeId, Principal principal) {
         log.info("getLakeDetail, lakeId = " + lakeId);
         Lake lake = lakeService.findLakeById(lakeId);
         return ResponseEntity.ok().body(lake);
     }
+
     @GetMapping(path = "/lakeinfolive/{lakeId}")
-    public ResponseEntity<?> getLakeInfoLiveDetail(@PathVariable String lakeId, Principal principal){
+    public ResponseEntity<?> getLakeInfoLiveDetail(@PathVariable String lakeId, Principal principal) {
         log.info("getLakeInfoLiveDetail, lakeId = " + lakeId);
         //Lake lake = lakeService.getLiveInfoLake(lakeId);
         LakeLiveInfoModel lakeLiveInfoModel = lakeService.getLiveInfoLake(lakeId);

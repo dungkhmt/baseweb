@@ -16,13 +16,14 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="post_driver")
+@Table(name = "post_driver")
 public class PostDriver {
+
     @Id
-    @Column(name="post_driver_id")
+    @Column(name = "post_driver_id")
     private UUID postDriverId;
 
-    @Column(name="post_driver_name")
+    @Column(name = "post_driver_name")
     private String postDriverName;
 
 //    @OneToMany

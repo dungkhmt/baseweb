@@ -13,5 +13,9 @@ public interface InventoryItemRepository extends MongoRepository<InventoryItem, 
 
     List<InventoryItem> findAllByFacilityId(String facilityId);
 
-    List<InventoryItem> findAllByFacilityIdAndProductIdAndQuantityOnHandTotalGreaterThan(String facilityId, String productId, int quantityOnHand);
+    List<InventoryItem> findAllByFacilityIdAndProductIdAndQuantityOnHandTotalGreaterThan(
+        String facilityId,
+        String productId,
+        int quantityOnHand
+    );
 }

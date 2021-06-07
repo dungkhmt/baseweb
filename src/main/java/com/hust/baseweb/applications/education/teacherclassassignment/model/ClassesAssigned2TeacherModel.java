@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClassesAssigned2TeacherModel {
+
     private AlgoTeacherIM teacherIM;
     private List<AlgoClassIM> classes;
 }

@@ -22,7 +22,8 @@ import java.util.*;
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Service
-public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
+public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService {
+
     private EduQuizTestGroupRepo eduQuizTestGroupRepo;
     private UserService userService;
     private QuizQuestionService quizQuestionService;
@@ -32,17 +33,18 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
     private EduTestQuizGroupParticipationAssignmentRepo eduTestQuizGroupParticipationAssignmentRepo;
     private QuizGroupQuestionParticipationExecutionChoiceRepo quizGroupQuestionParticipationExecutionChoiceRepo;
     private static Random R = new Random();
+
     @Override
     public List<EduTestQuizGroup> generateQuizTestGroups(GenerateQuizTestGroupInputModel input) {
         List<EduTestQuizGroup> eduTestQuizGroups = eduQuizTestGroupRepo.findByTestId(input.getQuizTestId());
         List<EduTestQuizGroup> eduTestQuizGroupList = new ArrayList<EduTestQuizGroup>();
-        String[] codes  = new String[eduTestQuizGroups.size()];
-        for(int i = 0; i < eduTestQuizGroups.size(); i++){
+        String[] codes = new String[eduTestQuizGroups.size()];
+        for (int i = 0; i < eduTestQuizGroups.size(); i++) {
             codes[i] = eduTestQuizGroups.get(i).getGroupCode();
         }
         String[] newCodes = CommonUtils.generateNextSeqId(codes, input.getNumberOfQuizTestGroups());
 
-        for(int i = 0; i < newCodes.length; i++){
+        for (int i = 0; i < newCodes.length; i++) {
             log.info("generateQuizTestGroups, gen newCode " + newCodes[i]);
             EduTestQuizGroup eduTestQuizGroup = new EduTestQuizGroup();
             eduTestQuizGroup.setTestId(input.getQuizTestId());
@@ -54,7 +56,8 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
         }
         return eduTestQuizGroupList;
     }
-    public QuizGroupTestDetailModel getTestGroupQuestionDetail(Principal principal, String testID){
+
+    public QuizGroupTestDetailModel getTestGroupQuestionDetail(Principal principal, String testID) {
 
         EduQuizTest test = eduQuizTestRepo.findById(testID).get();
         String courseName = eduCourseRepo.findById(test.getCourseId()).get().getName();
@@ -64,23 +67,24 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
         testDetail.setTestId(testID);
         testDetail.setTestName(test.getTestName());
         testDetail.setDuration(test.getDuration());
-        SimpleDateFormat  formatter = new SimpleDateFormat("dd/M/yyyy hh:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/M/yyyy hh:mm:ss");
         String strDate = formatter.format(test.getScheduleDatetime());
         testDetail.setScheduleDatetime(strDate);
         testDetail.setCourseName(courseName);
 
 
-
-        List<EduTestQuizGroupParticipationAssignment> listGroupAsignment   = eduTestQuizGroupParticipationAssignmentRepo.findEduTestQuizGroupParticipationAssignmentsByParticipationUserLoginId(principal.getName());
+        List<EduTestQuizGroupParticipationAssignment> listGroupAsignment = eduTestQuizGroupParticipationAssignmentRepo.findEduTestQuizGroupParticipationAssignmentsByParticipationUserLoginId(
+            principal.getName());
         //System.out.println(listGroupAsignment.size());
         EduTestQuizGroup eduTestQuizGroup = null;//new EduTestQuizGroup();
-        for (EduTestQuizGroupParticipationAssignment ele: listGroupAsignment) {
-            eduTestQuizGroup = eduQuizTestGroupRepo.findEduTestQuizGroupByTestIdAndQuizGroupId(testID,ele.getQuizGroupId());
+        for (EduTestQuizGroupParticipationAssignment ele : listGroupAsignment) {
+            eduTestQuizGroup = eduQuizTestGroupRepo.findEduTestQuizGroupByTestIdAndQuizGroupId(testID,
+                                                                                               ele.getQuizGroupId());
             if (eduTestQuizGroup != null) {
                 break;
             }
         }
-        if (eduTestQuizGroup == null){
+        if (eduTestQuizGroup == null) {
             testDetail.setListQuestion(null);
             testDetail.setQuizGroupId(null);
             testDetail.setGroupCode(null);
@@ -89,16 +93,17 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
         }
         UUID groupId = eduTestQuizGroup.getQuizGroupId();
         String groupCode = eduTestQuizGroup.getGroupCode();
-        List<QuizGroupQuestionAssignment> tmpl = quizGroupQuestionAssignmentRepo.findQuizGroupQuestionAssignmentsByQuizGroupId(groupId);
+        List<QuizGroupQuestionAssignment> tmpl = quizGroupQuestionAssignmentRepo.findQuizGroupQuestionAssignmentsByQuizGroupId(
+            groupId);
         //System.out.println(tmpl.size());
-        if(tmpl.size() == 0 ){
+        if (tmpl.size() == 0) {
             testDetail.setListQuestion(null);
             testDetail.setQuizGroupId(groupId.toString());
             testDetail.setGroupCode(null);
             testDetail.setParticipationExecutionChoice(null);
             return testDetail;
         }
-        tmpl.forEach( asign -> {
+        tmpl.forEach(asign -> {
             //System.out.println("here ");
             QuizQuestionDetailModel quizQuestion = quizQuestionService.findQuizDetail(asign.getQuestionId());
             //System.out.println("ok ");
@@ -106,14 +111,15 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
         });
 
 
-        List<QuizGroupQuestionParticipationExecutionChoice> listChoice =   quizGroupQuestionParticipationExecutionChoiceRepo.findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupId(
-            principal.getName(), groupId);
-        Map<String , List<UUID>> participationExecutionChoice = new HashMap<>();
-        listChoice.forEach( ele -> {
+        List<QuizGroupQuestionParticipationExecutionChoice> listChoice = quizGroupQuestionParticipationExecutionChoiceRepo
+            .findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupId(
+                principal.getName(), groupId);
+        Map<String, List<UUID>> participationExecutionChoice = new HashMap<>();
+        listChoice.forEach(ele -> {
             String quesId = ele.getQuestionId().toString();
-            if(participationExecutionChoice.containsKey(quesId)){
+            if (participationExecutionChoice.containsKey(quesId)) {
                 participationExecutionChoice.get(quesId).add(ele.getChoiceAnswerId());
-            }else {
+            } else {
                 List<UUID> tmp = new ArrayList<>();
                 tmp.add(ele.getChoiceAnswerId());
                 participationExecutionChoice.put(quesId, tmp);
@@ -123,18 +129,20 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
 
         // swap randomly listQUestions
         QuizQuestionDetailModel[] arr = new QuizQuestionDetailModel[listQuestions.size()];
-        for(int i = 0; i < arr.length; i++){
+        for (int i = 0; i < arr.length; i++) {
             arr[i] = listQuestions.get(i);
         }
-        for(int k = 0; k < arr.length; k++){
+        for (int k = 0; k < arr.length; k++) {
             int i = R.nextInt(arr.length);
             int j = R.nextInt(arr.length);
-            QuizQuestionDetailModel tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+            QuizQuestionDetailModel tmp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = tmp;
         }
         listQuestions.clear();
-        for(int i = 0; i < arr.length; i++) {
+        for (int i = 0; i < arr.length; i++) {
             listQuestions.add(arr[i]);
-            for(QuizChoiceAnswer a: arr[i].getQuizChoiceAnswerList()){
+            for (QuizChoiceAnswer a : arr[i].getQuizChoiceAnswerList()) {
                 a.setIsCorrectAnswer('-');
             }
         }

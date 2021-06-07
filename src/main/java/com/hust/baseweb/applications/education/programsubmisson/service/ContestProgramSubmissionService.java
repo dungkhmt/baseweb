@@ -6,8 +6,11 @@ import com.hust.baseweb.applications.education.programsubmisson.model.SearchProg
 import java.util.List;
 
 public interface ContestProgramSubmissionService {
+
     List<ContestProgramSubmission> findAll();
+
     List<ContestProgramSubmission> findAllBySubmittedByUserLoginId(String submittedByUserLoginId);
+
     List<ContestProgramSubmission> findAllByProblemId(String problemId);
 
     List<ContestProgramSubmission> search(SearchProgramSubmissionInputModel input);

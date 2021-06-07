@@ -13,6 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostOrderRouteOutputModel {
+
     private PostOffice fromPostOffice;
     private PostOffice toPostOffice;
     private String status;

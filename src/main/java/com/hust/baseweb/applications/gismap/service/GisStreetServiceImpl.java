@@ -12,7 +12,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Transactional
-public class GisStreetServiceImpl implements  GisMapService{
+public class GisStreetServiceImpl implements GisMapService {
+
     private StreetRepo streetRepo;
 
     @Override

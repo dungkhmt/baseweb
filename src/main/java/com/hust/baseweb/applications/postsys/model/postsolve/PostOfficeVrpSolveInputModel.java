@@ -13,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostOfficeVrpSolveInputModel {
+
     private String postOfficeId;
     /**
      * type=pick/delivery

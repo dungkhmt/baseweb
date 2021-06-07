@@ -10,17 +10,18 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name="programming_contest_problem")
+@Table(name = "programming_contest_problem")
 @AllArgsConstructor
 @NoArgsConstructor
 @IdClass(CompositeProgrammingContestProblemId.class)
 public class ProgrammingContestProblem {
+
     @Id
-    @Column(name="contest_id")
+    @Column(name = "contest_id")
     private String contestId;
 
     @Id
-    @Column(name="problem_id")
+    @Column(name = "problem_id")
     private String problemId;
 
 }

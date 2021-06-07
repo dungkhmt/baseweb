@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContestProblemInputModel {
+
     private String problemId;
     private String problemName;
     private int timeLimit;

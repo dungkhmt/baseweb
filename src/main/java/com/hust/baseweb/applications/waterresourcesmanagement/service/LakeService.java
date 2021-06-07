@@ -10,10 +10,16 @@ import java.util.List;
 
 @Service
 public interface LakeService {
+
     public Lake findLakeById(String lakeId);
+
     public List<Lake> getLakesOwnedByUserLogin(UserLogin userLogin);
+
     public List<Lake> findAll();
+
     public Lake save(UserLogin userLogin, LakeModel lakeModel);
-    public LakeLiveInfoModel getLiveInfoLake(String  lakeId);
+
+    public LakeLiveInfoModel getLiveInfoLake(String lakeId);
+
     public Lake edit(UserLogin userLogin, LakeModel lakeModel, String lakeId);
 }

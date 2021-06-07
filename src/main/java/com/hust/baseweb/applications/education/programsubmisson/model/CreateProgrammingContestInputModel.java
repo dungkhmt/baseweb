@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateProgrammingContestInputModel {
+
     private String contestId;
     private String contestName;
     private String contestTypeId;

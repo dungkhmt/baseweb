@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderItemViewModel {
+
     private String productId;
     private String productName;
     private Uom uom;

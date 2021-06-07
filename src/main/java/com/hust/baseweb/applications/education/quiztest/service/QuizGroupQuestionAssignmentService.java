@@ -8,7 +8,10 @@ import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquesti
 import java.util.List;
 
 public interface QuizGroupQuestionAssignmentService {
+
     public List<QuizGroupQuestionDetailOutputModel> findAllQuizGroupQuestionAssignmentOfTest(String testId);
-    public boolean removeQuizGroupQuestionAssignment(RemoveQuizGroupQuestionInputModel input );
+
+    public boolean removeQuizGroupQuestionAssignment(RemoveQuizGroupQuestionInputModel input);
+
     public QuizGroupQuestionAssignment addQuizGroupQuestionAssignment(AddQuizGroupQuestionInputModel input);
 }

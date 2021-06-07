@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostmanAssignInput {
+
     String postmanId;
     List<String> postOrderIds;
 }

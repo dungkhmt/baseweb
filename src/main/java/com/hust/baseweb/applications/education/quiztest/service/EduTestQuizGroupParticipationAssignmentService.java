@@ -8,7 +8,12 @@ import com.hust.baseweb.applications.education.quiztest.model.quiztestgroupparti
 import java.util.List;
 
 public interface EduTestQuizGroupParticipationAssignmentService {
+
     public List<QuizTestGroupParticipantAssignmentOutputModel> getQuizTestGroupParticipant(String testId);
-    public EduTestQuizGroupParticipationAssignment assignParticipant2QuizTestGroup(AddParticipantToQuizTestGroupInputModel input);
+
+    public EduTestQuizGroupParticipationAssignment assignParticipant2QuizTestGroup(
+        AddParticipantToQuizTestGroupInputModel input
+    );
+
     public boolean removeParticipantFromQuizTestGroup(RemoveParticipantToQuizTestGroupInputModel input);
 }

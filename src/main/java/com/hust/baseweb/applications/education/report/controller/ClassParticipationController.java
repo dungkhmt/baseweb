@@ -19,10 +19,14 @@ import java.util.List;
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ClassParticipationController {
+
     private StudentClassParticipationService studentClassParticipationService;
 
     @PostMapping("/get-class-participation-statistic")
-    public ResponseEntity<?> getClassParticipationStatistic(Principal principal, GetClassParticipationStatisticInputModel input){
+    public ResponseEntity<?> getClassParticipationStatistic(
+        Principal principal,
+        GetClassParticipationStatisticInputModel input
+    ) {
         List<StudentClassParticipationOutputModel> studentClassParticipationOutputModels =
             studentClassParticipationService.getStudentClassParticipationStatistic(input);
 

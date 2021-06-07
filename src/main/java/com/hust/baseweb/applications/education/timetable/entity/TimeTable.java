@@ -10,8 +10,8 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
-public class TimeTable
-{
+public class TimeTable {
+
     @Id
     @Column(name = "cid")
     private int cid;
@@ -31,7 +31,7 @@ public class TimeTable
     @Column(name = "note")
     private String note;
 
-    @Column(name ="course_week")
+    @Column(name = "course_week")
     private String course_week;
 
     @Column(name = "day_of_week")
@@ -46,10 +46,10 @@ public class TimeTable
     @Column(name = "finish_section")
     private int finish_section;
 
-    @Column(name ="shift")
+    @Column(name = "shift")
     private String shift;
 
-    @Column(name ="room")
+    @Column(name = "room")
     private String room;
 
     @Column(name = "type_of_class")

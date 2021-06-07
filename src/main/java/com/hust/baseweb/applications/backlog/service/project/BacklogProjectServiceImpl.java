@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 @Log4j2
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -24,10 +25,11 @@ public class BacklogProjectServiceImpl implements BacklogProjectService {
     BacklogProjectRepo backlogProjectRepo;
     BacklogProjectMemberRepo backlogProjectMemberRepo;
     BacklogProjectMemberService backlogProjectMemberService;
+
     @Transactional
     @Override
     public BacklogProject save(UserLogin userLogin, CreateProjectInputModel input) {
-        BacklogProject backlogProject  = backlogProjectRepo.save(new BacklogProject(input));
+        BacklogProject backlogProject = backlogProjectRepo.save(new BacklogProject(input));
         //if(backlogProject == null) return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(null);
         log.info("save, SUCCESS save with projectId = " + backlogProject.getBacklogProjectId());
 
@@ -64,9 +66,9 @@ public class BacklogProjectServiceImpl implements BacklogProjectService {
 
     @Override
     public List<BacklogProject> findAllByMemberPartyId(UUID partyId) {
-        List <BacklogProjectMember> backlogProjectMembers = backlogProjectMemberRepo.findAllByMemberPartyId(partyId);
-        List <BacklogProject> projectsByMemberPartyId = new ArrayList<>();
-        for(BacklogProjectMember backlogProjectMember: backlogProjectMembers) {
+        List<BacklogProjectMember> backlogProjectMembers = backlogProjectMemberRepo.findAllByMemberPartyId(partyId);
+        List<BacklogProject> projectsByMemberPartyId = new ArrayList<>();
+        for (BacklogProjectMember backlogProjectMember : backlogProjectMembers) {
             projectsByMemberPartyId.add(backlogProjectRepo.findByBacklogProjectId(backlogProjectMember.getBacklogProjectId()));
         }
         return projectsByMemberPartyId;

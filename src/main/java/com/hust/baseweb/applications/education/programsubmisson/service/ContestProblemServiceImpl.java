@@ -39,7 +39,7 @@ public class ContestProblemServiceImpl implements ContestProblemService {
         String rootDir = uploadConfigProperties.getFilesystemRoot() +
                          uploadConfigProperties.getProgramSubmissionDataPath();
         log.info("save, problemId = " + input.getProblemId() + " problemName = " + input.getProblemName()
-        + " problem statement = " + input.getProblemStatement()) ;
+                 + " problem statement = " + input.getProblemStatement());
         ContestProblem contestProblem = new ContestProblem();
         contestProblem.setProblemId(input.getProblemId());
         contestProblem.setProblemName(input.getProblemName());
@@ -50,11 +50,11 @@ public class ContestProblemServiceImpl implements ContestProblemService {
 
         contestProblem = contestProblemRepo.save(contestProblem);
         File dir = new File(rootDir + "/" + ProgramSubmissionController.problemDir);
-        if(!dir.exists()){
+        if (!dir.exists()) {
             dir.mkdir();
         }
         dir = new File(rootDir + "/" + ProgramSubmissionController.problemDir + "/" + contestProblem.getProblemId());
-        if(!dir.exists()){
+        if (!dir.exists()) {
             dir.mkdir();
         }
 
@@ -64,7 +64,7 @@ public class ContestProblemServiceImpl implements ContestProblemService {
     @Override
     public ContestProblem update(ContestProblemInputModel input) {
         ContestProblem contestProblem = contestProblemRepo.findByProblemId(input.getProblemId());
-        if(contestProblem == null){
+        if (contestProblem == null) {
             log.info("update cannot find problem " + input.getProblemId());
             return null;
         }
@@ -100,13 +100,13 @@ public class ContestProblemServiceImpl implements ContestProblemService {
                          "/" +
                          ProgramSubmissionController.problemDir;
         File dir = new File(rootDir);
-        if(!dir.exists()){
+        if (!dir.exists()) {
             dir.mkdir();
         }
         String problemRootDir = rootDir + "/" + input.getProblemId();
 
         dir = new File(problemRootDir);
-        if(!dir.exists()){
+        if (!dir.exists()) {
             log.info("createContestProblemTest, dir " + problemRootDir + " not exists -> mkdir");
             dir.mkdir();
             log.info("createContestProblemTest, dir " + problemRootDir + " not exists -> mkdir OK");
@@ -114,9 +114,11 @@ public class ContestProblemServiceImpl implements ContestProblemService {
         //String stdTestName = input.getProblemId() + "-" + input.getTestName();
         String stdTestName = input.getTestName();
         //List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemTestFilename(input.getTestName());
-        List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemTestFilenameAndProblemId(stdTestName,input.getProblemId());
+        List<ContestProblemTest> contestProblemTests = contestProblemTestRepo.findAllByProblemTestFilenameAndProblemId(
+            stdTestName,
+            input.getProblemId());
 
-        if(contestProblemTests != null && contestProblemTests.size() > 0){
+        if (contestProblemTests != null && contestProblemTests.size() > 0) {
             log.info("createContestProblemTest, testName " + input.getTestName() + " exists -> RETURN");
             return null;
         }
@@ -126,14 +128,14 @@ public class ContestProblemServiceImpl implements ContestProblemService {
         File inputF = new File(problemRootDir + "/" + stdTestName + ".inp");
         try {
             files[0].transferTo(inputF);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //File outputF = new File(problemRootDir + "/" + input.getTestName() + ".out");
         File outputF = new File(problemRootDir + "/" + stdTestName + ".out");
-        try{
+        try {
             files[1].transferTo(outputF);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -143,9 +145,9 @@ public class ContestProblemServiceImpl implements ContestProblemService {
         //contestProblemTest.setProblemTestFilename(input.getTestName());
 
         int testPoint = 0;
-        try{
+        try {
             testPoint = Integer.valueOf(input.getTestPoint());
-        }catch(Exception e){
+        } catch (Exception e) {
 
             e.printStackTrace();
             return null;

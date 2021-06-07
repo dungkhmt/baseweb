@@ -7,9 +7,13 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ContestProblemTestRepo extends JpaRepository<ContestProblemTest, UUID> {
+
     ContestProblemTest save(ContestProblemTest contestProblemTest);
+
     List<ContestProblemTest> findAllByProblemId(String problemId);
+
     List<ContestProblemTest> findAllByProblemTestFilename(String problemTestFilename);
+
     List<ContestProblemTest> findAllByProblemTestFilenameAndProblemId(String problemTestFilename, String problemId);
 
 }

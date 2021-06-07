@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateBacklogProjectMemberInputModel {
+
     String backlogProjectId;
     String userLoginId;
 }

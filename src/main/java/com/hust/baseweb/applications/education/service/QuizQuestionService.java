@@ -6,7 +6,6 @@ import com.hust.baseweb.applications.education.model.quiz.QuizQuestionCreateInpu
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionUpdateInputModel;
 import com.hust.baseweb.entity.UserLogin;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

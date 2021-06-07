@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 @Document("customers")
-public class Customer{
+public class Customer {
 
     @Id
     private String customerId;// refers to organizationId of document Organization

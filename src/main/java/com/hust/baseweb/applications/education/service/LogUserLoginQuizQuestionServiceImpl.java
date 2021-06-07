@@ -21,11 +21,13 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 
-public class LogUserLoginQuizQuestionServiceImpl implements  LogUserLoginQuizQuestionService{
+public class LogUserLoginQuizQuestionServiceImpl implements LogUserLoginQuizQuestionService {
+
     private LogUserLoginQuizQuestionRepo logUserLoginQuizQuestionRepo;
     private UserService userService;
     private ClassRepo classRepo;
     private CourseRepo courseRepo;
+
     @Override
     public List<StudentQuizParticipationModel> findAllByClassId(UUID classId) {
         List<LogUserLoginQuizQuestion> logUserLoginQuizQuestions = logUserLoginQuizQuestionRepo.findAll();
@@ -33,18 +35,18 @@ public class LogUserLoginQuizQuestionServiceImpl implements  LogUserLoginQuizQue
         int classCode = 0;
         String courseId = "";
         String courseName = "";
-        if(eduClass != null) {
+        if (eduClass != null) {
             classCode = eduClass.getCode();
             courseId = eduClass.getEduCourse().getId();
             courseName = eduClass.getEduCourse().getName();
         }
 
         List<StudentQuizParticipationModel> studentQuizParticipationModels = new ArrayList();
-        for(LogUserLoginQuizQuestion e: logUserLoginQuizQuestions){
+        for (LogUserLoginQuizQuestion e : logUserLoginQuizQuestions) {
             PersonModel personModel = userService.findPersonByUserLoginId(e.getUserLoginId());
             studentQuizParticipationModels.add(new StudentQuizParticipationModel(
                 e.getUserLoginId(),
-                personModel.getLastName() + " " + personModel.getMiddleName()+ " " + personModel.getFirstName(),
+                personModel.getLastName() + " " + personModel.getMiddleName() + " " + personModel.getFirstName(),
                 classCode + "",
                 e.getQuestionId().toString(),
                 courseId,

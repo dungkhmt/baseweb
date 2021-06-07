@@ -29,7 +29,7 @@ public class BacklogProjectMemberServiceImpl implements BacklogProjectMemberServ
 
     @Override
     public BacklogProjectMember save(CreateBacklogProjectMemberModel input) {
-        if(backlogProjectMemberRepo.existsByBacklogProjectIdAndMemberPartyId(
+        if (backlogProjectMemberRepo.existsByBacklogProjectIdAndMemberPartyId(
             input.getBacklogProjectId(),
             input.getMemberPartyId()
         )) {
@@ -51,7 +51,11 @@ public class BacklogProjectMemberServiceImpl implements BacklogProjectMemberServ
 
     @Override
     public List<UserLogin> findAllNotMember(UUID projectId, String searchString, Pageable pageable) {
-        return backlogUserLoginRepo.findAllNotMember(projectId, BacklogEnum.BACKLOG_GROUP_PERMISSION.getValue(), searchString, pageable);
+        return backlogUserLoginRepo.findAllNotMember(
+            projectId,
+            BacklogEnum.BACKLOG_GROUP_PERMISSION.getValue(),
+            searchString,
+            pageable);
     }
 
     @Override

@@ -17,8 +17,10 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 
 public class QuizCourseTopicServiceImpl implements QuizCourseTopicService {
+
     private QuizCourseTopicRepo quizCourseTopicRepo;
     private EduCourseRepo eduCourseRepo;
+
     @Override
     public List<QuizCourseTopic> findAll() {
         return quizCourseTopicRepo.findAll();
@@ -27,6 +29,7 @@ public class QuizCourseTopicServiceImpl implements QuizCourseTopicService {
     public List<QuizCourseTopic> findByEduCourse_Id(String courseId) {
         return quizCourseTopicRepo.findByEduCourse_Id(courseId);
     }
+
     @Override
     public QuizCourseTopic save(QuizCourseTopicCreateInputModel input) {
         QuizCourseTopic quizCourseTopic = new QuizCourseTopic();
@@ -45,7 +48,7 @@ public class QuizCourseTopicServiceImpl implements QuizCourseTopicService {
 
         return quizCourseTopic;
     }
-    
+
     @Override
     public List<QuizCourseTopic> findAllByEduCourse(String courseId) {
         EduCourse eduCourse = eduCourseRepo.findById(courseId).orElse(null);

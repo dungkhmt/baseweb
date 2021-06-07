@@ -9,8 +9,11 @@ import java.util.UUID;
 
 @Repository
 public interface PostTripRepo extends JpaRepository<PostOfficeTrip, UUID> {
+
     List<PostOfficeTrip> findAll();
+
     PostOfficeTrip findByPostOfficeTripId(UUID postOfficeTripId);
+
     PostOfficeTrip save(PostOfficeTrip postOfficetrip);
 
 }

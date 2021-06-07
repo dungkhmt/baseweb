@@ -17,13 +17,44 @@ import java.util.UUID;
 
 @Service
 public interface BacklogTaskService {
+
     BacklogTask save(BacklogTask task);
+
     List<BacklogTask> findByBacklogProjectId(UUID backlogProjectId);
+
     Page<BacklogTask> findByBacklogProjectId(UUID backlogProjectId, Pageable pageable, ProjectFilterParamsModel filter);
-    Page<BacklogTask> findByBacklogProjectIdAndPartyAssigned(UUID backlogProjectId, UUID assignedPartyId, ProjectFilterParamsModel filter, Pageable pageable);
-    Page<BacklogTask> findOpeningTaskByCreatedUserLogin(UUID backlogProjectId, String userLoginId, ProjectFilterParamsModel filter, Pageable pageable);
+
+    Page<BacklogTask> findByBacklogProjectIdAndPartyAssigned(
+        UUID backlogProjectId,
+        UUID assignedPartyId,
+        ProjectFilterParamsModel filter,
+        Pageable pageable
+    );
+
+    Page<BacklogTask> findOpeningTaskByCreatedUserLogin(
+        UUID backlogProjectId,
+        String userLoginId,
+        ProjectFilterParamsModel filter,
+        Pageable pageable
+    );
+
     BacklogTask findByBacklogTaskId(UUID backlogTaskId);
-    BacklogTask create(CreateBacklogTaskInputModel taskInput, CreateBacklogTaskAssignmentInputModel assignmentInput, CreateBacklogTaskAssignableInputModel assignableInput, MultipartFile[] files, String userLoginId);
-    BacklogTask update(CreateBacklogTaskInputModel taskInput, CreateBacklogTaskAssignmentInputModel assignmentInput, CreateBacklogTaskAssignableInputModel assignableInput, MultipartFile[] files, String userLoginId) throws IOException;
+
+    BacklogTask create(
+        CreateBacklogTaskInputModel taskInput,
+        CreateBacklogTaskAssignmentInputModel assignmentInput,
+        CreateBacklogTaskAssignableInputModel assignableInput,
+        MultipartFile[] files,
+        String userLoginId
+    );
+
+    BacklogTask update(
+        CreateBacklogTaskInputModel taskInput,
+        CreateBacklogTaskAssignmentInputModel assignmentInput,
+        CreateBacklogTaskAssignableInputModel assignableInput,
+        MultipartFile[] files,
+        String userLoginId
+    ) throws IOException;
+
     BacklogTask updateTaskStatus(UUID taskId, String newStatus, List<BacklogTaskAssignment> assignments);
 }

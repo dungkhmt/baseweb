@@ -8,12 +8,15 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Log4j2
 public class VrpSolver {
+
     private long[][] distanceMatrix;
     private int vehicleNumber;
     private int depot;
     private List<GeoPoint> geoPoints;
+
     public VrpSolver(List<GeoPoint> geoPoints, int vehicleNumber, int depot) {
         this.vehicleNumber = vehicleNumber;
         this.depot = depot;
@@ -70,12 +73,14 @@ public class VrpSolver {
 
     public void validDistanceMatrix() {
         int n = distanceMatrix.length;
-        for(int k=0;k<n;k++) {
+        for (int k = 0; k < n; k++) {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    if(j<=i) //check for only upper half of diagonal
+                    if (j <= i) //check for only upper half of diagonal
+                    {
                         continue;
-                    if(distanceMatrix[i][k]+distanceMatrix[k][j]<distanceMatrix[i][j]) {
+                    }
+                    if (distanceMatrix[i][k] + distanceMatrix[k][j] < distanceMatrix[i][j]) {
 //                        System.out.print(distanceMatrix[i][k] + " ");
 //                        System.out.print(distanceMatrix[k][j] + " ");
 //                        System.out.print(distanceMatrix[i][k] + distanceMatrix[k][j] + " ");
@@ -87,6 +92,7 @@ public class VrpSolver {
             }
         }
     }
+
     public Route solve() {
         Loader.loadNativeLibraries();
 //        this.printDistanceMatrix();

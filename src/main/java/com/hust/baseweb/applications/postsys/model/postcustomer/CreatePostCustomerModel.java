@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreatePostCustomerModel {
+
     private String postCustomerName;
     private String phoneNum;
     private Double latitude;

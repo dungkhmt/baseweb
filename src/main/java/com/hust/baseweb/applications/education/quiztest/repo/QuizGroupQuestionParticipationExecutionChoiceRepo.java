@@ -7,11 +7,22 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;
 
-public interface QuizGroupQuestionParticipationExecutionChoiceRepo extends JpaRepository<QuizGroupQuestionParticipationExecutionChoice, CompositeQuizGroupQuestionParticipationExecutionChoiceId> {
+public interface QuizGroupQuestionParticipationExecutionChoiceRepo
+    extends JpaRepository<QuizGroupQuestionParticipationExecutionChoice, CompositeQuizGroupQuestionParticipationExecutionChoiceId> {
 
-    List<QuizGroupQuestionParticipationExecutionChoice> findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupId(String userId, UUID groupId);
-    List<QuizGroupQuestionParticipationExecutionChoice> findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupIdAndQuestionId(String userId,UUID quizgroupId, UUID questionId);
+    List<QuizGroupQuestionParticipationExecutionChoice> findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupId(
+        String userId,
+        UUID groupId
+    );
+
+    List<QuizGroupQuestionParticipationExecutionChoice> findQuizGroupQuestionParticipationExecutionChoicesByParticipationUserLoginIdAndQuizGroupIdAndQuestionId(
+        String userId,
+        UUID quizgroupId,
+        UUID questionId
+    );
+
     List<QuizGroupQuestionParticipationExecutionChoice> findByQuizGroupIdIn(List<UUID> quizGroupIds);
+
     List<QuizGroupQuestionParticipationExecutionChoice> findByQuizGroupId(UUID quizGroupId);
 
 }

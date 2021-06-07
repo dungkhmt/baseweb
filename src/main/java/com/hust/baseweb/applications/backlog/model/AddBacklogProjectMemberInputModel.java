@@ -13,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class AddBacklogProjectMemberInputModel {
+
     UUID backlogProjectId;
     List<String> usersLoginId;
 }

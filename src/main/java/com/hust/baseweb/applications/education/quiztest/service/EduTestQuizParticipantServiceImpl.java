@@ -14,7 +14,8 @@ import java.util.List;
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Service
-public class EduTestQuizParticipantServiceImpl implements EduTestQuizParticipantService{
+public class EduTestQuizParticipantServiceImpl implements EduTestQuizParticipantService {
+
     private EduTestQuizParticipantRepo eduTestQuizParticipationRepo;
 
     @Override
@@ -22,8 +23,11 @@ public class EduTestQuizParticipantServiceImpl implements EduTestQuizParticipant
         List<EduTestQuizParticipant> eduTestQuizParticipants = eduTestQuizParticipationRepo
             .findByTestIdAndParticipantUserLoginId(input.getTestQuizId(), userLogin.getUserLoginId());
 
-        if(eduTestQuizParticipants != null && eduTestQuizParticipants.size() > 0){
-            log.info("register, record userLoginId = " + userLogin.getUserLoginId() + " testId " + input.getTestQuizId() +
+        if (eduTestQuizParticipants != null && eduTestQuizParticipants.size() > 0) {
+            log.info("register, record userLoginId = " +
+                     userLogin.getUserLoginId() +
+                     " testId " +
+                     input.getTestQuizId() +
                      " EXISTS!!");
             return null;
         }
@@ -33,7 +37,7 @@ public class EduTestQuizParticipantServiceImpl implements EduTestQuizParticipant
         eduTestQuizParticipant.setParticipantUserLoginId(userLogin.getUserLoginId());
 
         eduTestQuizParticipant.setStatusId(eduTestQuizParticipant.STATUS_REGISTERED);
-        eduTestQuizParticipant= eduTestQuizParticipationRepo.save(eduTestQuizParticipant);
+        eduTestQuizParticipant = eduTestQuizParticipationRepo.save(eduTestQuizParticipant);
 
         return eduTestQuizParticipant;
     }

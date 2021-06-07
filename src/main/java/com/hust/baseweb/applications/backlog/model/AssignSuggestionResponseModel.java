@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AssignSuggestionResponseModel {
+
     BacklogTask backlogTask;
     UserLoginReduced userSuggestion;
 }

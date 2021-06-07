@@ -52,12 +52,12 @@ public interface UserService {
     GetAllRegistsOM getAllRegists();
 
     SimpleResponse approve(ApproveRegistrationIM im);
-	
-	UserLogin updatePassword2(String userLoginId, String password);
 
-	List<UserLogin> getALlUserLoginsByGroupId(String groupId);
+    UserLogin updatePassword2(String userLoginId, String password);
 
-	List<String> getGroupPermsByUserLoginId(String userLoginId);
+    List<UserLogin> getALlUserLoginsByGroupId(String groupId);
 
-	PersonModel findPersonByUserLoginId(String userLoginId);
+    List<String> getGroupPermsByUserLoginId(String userLoginId);
+
+    PersonModel findPersonByUserLoginId(String userLoginId);
 }

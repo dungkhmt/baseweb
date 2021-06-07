@@ -10,8 +10,11 @@ import java.util.List;
 
 @Service
 public interface ProgrammingContestService {
+
     ProgrammingContest save(UserLogin userLogin, CreateProgrammingContestInputModel input);
+
     List<ProgrammingContest> findAll();
+
     ProgrammingContest findByContestId(String contestId);
 
 

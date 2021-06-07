@@ -20,10 +20,12 @@ import java.util.List;
 @Getter
 @Setter
 public class StaffTaskAssignmentInput {
+
     private List<Staff> staffs;
     private List<Task> tasks;
     private List<Distance> distances;
-    public void loadData(String filename){
+
+    public void loadData(String filename) {
         try {
             tasks = new ArrayList();
             staffs = new ArrayList();
@@ -35,59 +37,60 @@ public class StaffTaskAssignmentInput {
             Iterator<Row> rowIterator = sheet.rowIterator();
             rowIterator.next();
 
-            while(rowIterator.hasNext()){
+            while (rowIterator.hasNext()) {
                 Row r = rowIterator.next();
                 int taskID;
                 int duration;
                 String locationID;
                 Cell c = r.getCell(0);
-                taskID = (int)c.getNumericCellValue();
+                taskID = (int) c.getNumericCellValue();
                 c = r.getCell(1);
-                duration = (int)c.getNumericCellValue();
+                duration = (int) c.getNumericCellValue();
                 c = r.getCell(2);
                 locationID = c.getStringCellValue();
                 c = r.getCell(3);
                 String typeID = "";
                 typeID = c.getStringCellValue();
-                tasks.add(new Task(taskID + "",typeID,duration,locationID));
+                tasks.add(new Task(taskID + "", typeID, duration, locationID));
                 System.out.println(taskID + "\t" + duration + "\t" + locationID);
             }
 
             sheet = wb.getSheet("Staffs");
             rowIterator = sheet.iterator();
             rowIterator.next();
-            while(rowIterator.hasNext()){
+            while (rowIterator.hasNext()) {
                 Row r = rowIterator.next();
                 Cell c = r.getCell(0);
-                String staffId = (int)c.getNumericCellValue() + "";
+                String staffId = (int) c.getNumericCellValue() + "";
                 c = r.getCell(1);
                 String[] a_skills = c.getStringCellValue().split(",");
                 List<String> skills = new ArrayList();
-                for(String s: a_skills)
+                for (String s : a_skills) {
                     skills.add(s.trim());
-                staffs.add(new Staff(staffId,skills));
+                }
+                staffs.add(new Staff(staffId, skills));
             }
-            for(Staff s: staffs){
+            for (Staff s : staffs) {
                 System.out.println(s.toString());
             }
             sheet = wb.getSheet("Distances");
             rowIterator = sheet.iterator();
             rowIterator.next();
-            while(rowIterator.hasNext()){
+            while (rowIterator.hasNext()) {
                 Row r = rowIterator.next();
                 Cell c = r.getCell(0);
                 String from = c.getStringCellValue();
                 c = r.getCell(1);
                 String to = c.getStringCellValue();
                 c = r.getCell(2);
-                int travelTime = (int)c.getNumericCellValue();
-                distances.add(new Distance(from,to,travelTime));
+                int travelTime = (int) c.getNumericCellValue();
+                distances.add(new Distance(from, to, travelTime));
             }
-            for(Distance d: distances){
+            for (Distance d : distances) {
                 System.out.println(d.toString());
             }
             System.out.println("OK");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

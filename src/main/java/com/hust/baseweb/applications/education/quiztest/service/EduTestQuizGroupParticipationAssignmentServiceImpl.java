@@ -20,7 +20,8 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class EduTestQuizGroupParticipationAssignmentServiceImpl implements EduTestQuizGroupParticipationAssignmentService{
+public class EduTestQuizGroupParticipationAssignmentServiceImpl
+    implements EduTestQuizGroupParticipationAssignmentService {
 
     private EduTestQuizGroupParticipationAssignmentRepo eduTestQuizGroupParticipationAssignmentRepo;
     private EduQuizTestGroupRepo eduQuizTestGroupRepo;
@@ -35,36 +36,45 @@ public class EduTestQuizGroupParticipationAssignmentServiceImpl implements EduTe
             eduTestQuizGroup -> eduTestQuizGroup.getQuizGroupId()
         ).collect(Collectors.toList());
         Map<UUID, EduTestQuizGroup> mId2Group = new HashMap();
-        for(EduTestQuizGroup e: eduTestQuizGroups){
-            mId2Group.put(e.getQuizGroupId(),e);
+        for (EduTestQuizGroup e : eduTestQuizGroups) {
+            mId2Group.put(e.getQuizGroupId(), e);
         }
         List<EduTestQuizGroupParticipationAssignment> eduTestQuizGroupParticipationAssignments
             = eduTestQuizGroupParticipationAssignmentRepo.findAllByQuizGroupIdIn(groupIds);
-        List<QuizTestGroupParticipantAssignmentOutputModel> quizTestGroupParticipantAssignmentOutputModels  = new ArrayList<>();
-        for(EduTestQuizGroupParticipationAssignment e: eduTestQuizGroupParticipationAssignments){
+        List<QuizTestGroupParticipantAssignmentOutputModel> quizTestGroupParticipantAssignmentOutputModels = new ArrayList<>();
+        for (EduTestQuizGroupParticipationAssignment e : eduTestQuizGroupParticipationAssignments) {
             String userLoginId = e.getParticipationUserLoginId();
             PersonModel personModel = userService.findPersonByUserLoginId(userLoginId);
             EduTestQuizGroup g = mId2Group.get(e.getQuizGroupId());
             UUID groupId = null;
             String groupCode = "";
-            if(g != null){
-                groupId = g.getQuizGroupId(); groupCode = g.getGroupCode();
+            if (g != null) {
+                groupId = g.getQuizGroupId();
+                groupCode = g.getGroupCode();
             }
             String fullName = "";
-            if(personModel != null){
-                fullName = personModel.getFirstName() + " " + personModel.getMiddleName() + " " + personModel.getLastName();
+            if (personModel != null) {
+                fullName = personModel.getFirstName() +
+                           " " +
+                           personModel.getMiddleName() +
+                           " " +
+                           personModel.getLastName();
             }
             quizTestGroupParticipantAssignmentOutputModels.add(
-                new QuizTestGroupParticipantAssignmentOutputModel(groupId,groupCode,userLoginId,fullName));
+                new QuizTestGroupParticipantAssignmentOutputModel(groupId, groupCode, userLoginId, fullName));
         }
         return quizTestGroupParticipantAssignmentOutputModels;
     }
 
     @Override
-    public EduTestQuizGroupParticipationAssignment assignParticipant2QuizTestGroup(AddParticipantToQuizTestGroupInputModel input) {
+    public EduTestQuizGroupParticipationAssignment assignParticipant2QuizTestGroup(
+        AddParticipantToQuizTestGroupInputModel input
+    ) {
         EduTestQuizGroup eduTestQuizGroup = eduQuizTestGroupRepo.findById(input.getQuizTestGroupId()).orElse(null);
-        if(eduTestQuizGroup == null){
-            log.info("assignParticipant2QuizTestGroup, cannot find eduTestQuizGroup " + input.getQuizTestGroupId() + "BUG???");
+        if (eduTestQuizGroup == null) {
+            log.info("assignParticipant2QuizTestGroup, cannot find eduTestQuizGroup " +
+                     input.getQuizTestGroupId() +
+                     "BUG???");
             return null;
         }
         String testId = eduTestQuizGroup.getTestId();
@@ -72,30 +82,38 @@ public class EduTestQuizGroupParticipationAssignmentServiceImpl implements EduTe
         // get list of test-group of the current testId
         List<EduTestQuizGroup> eduTestQuizGroups = eduQuizTestGroupRepo.findByTestId(testId);
         List<UUID> groupIds = new ArrayList<>();
-        for(EduTestQuizGroup g: eduTestQuizGroups){
+        for (EduTestQuizGroup g : eduTestQuizGroups) {
             groupIds.add(g.getQuizGroupId());
         }
         // get list of group-participant assignment related to input participant userLoginId
         List<EduTestQuizGroupParticipationAssignment> eduTestQuizGroupParticipationAssignments
-            = eduTestQuizGroupParticipationAssignmentRepo.findAllByQuizGroupIdInAndParticipationUserLoginId(groupIds, input.getParticipantUserLoginId());
+            = eduTestQuizGroupParticipationAssignmentRepo.findAllByQuizGroupIdInAndParticipationUserLoginId(
+            groupIds,
+            input.getParticipantUserLoginId());
 
-        if(eduTestQuizGroupParticipationAssignments == null || eduTestQuizGroupParticipationAssignments.size() == 0) {
-               EduTestQuizGroupParticipationAssignment eduTestQuizGroupParticipationAssignment =
-                            new EduTestQuizGroupParticipationAssignment();
+        if (eduTestQuizGroupParticipationAssignments == null || eduTestQuizGroupParticipationAssignments.size() == 0) {
+            EduTestQuizGroupParticipationAssignment eduTestQuizGroupParticipationAssignment =
+                new EduTestQuizGroupParticipationAssignment();
             eduTestQuizGroupParticipationAssignment.setParticipationUserLoginId(input.getParticipantUserLoginId());
             eduTestQuizGroupParticipationAssignment.setQuizGroupId(input.getQuizTestGroupId());
             eduTestQuizGroupParticipationAssignment = eduTestQuizGroupParticipationAssignmentRepo.save(
                 eduTestQuizGroupParticipationAssignment);
             return eduTestQuizGroupParticipationAssignment;
-        }else{
-            if(eduTestQuizGroupParticipationAssignments.size() > 1){
-                log.info("assignParticipant2QuizTestGroup FOUND more than quiz-test-group of a given testId associated with the input participant " + input.getParticipantUserLoginId());
+        } else {
+            if (eduTestQuizGroupParticipationAssignments.size() > 1) {
+                log.info(
+                    "assignParticipant2QuizTestGroup FOUND more than quiz-test-group of a given testId associated with the input participant " +
+                    input.getParticipantUserLoginId());
                 return null;
-            }else{
+            } else {
                 // lay ra assignment participant-2-group hien tai and update with new group
                 EduTestQuizGroupParticipationAssignment a = eduTestQuizGroupParticipationAssignments.get(0);
-                if(a.getQuizGroupId() == input.getQuizTestGroupId()){
-                    log.info("assignParticipant2QuizTestGroup records group " + input.getQuizTestGroupId() + ", participant " + input.getParticipantUserLoginId() + " EXISTS!!");
+                if (a.getQuizGroupId() == input.getQuizTestGroupId()) {
+                    log.info("assignParticipant2QuizTestGroup records group " +
+                             input.getQuizTestGroupId() +
+                             ", participant " +
+                             input.getParticipantUserLoginId() +
+                             " EXISTS!!");
                     return a;
                 }
 
@@ -109,11 +127,16 @@ public class EduTestQuizGroupParticipationAssignmentServiceImpl implements EduTe
 
     @Override
     public boolean removeParticipantFromQuizTestGroup(RemoveParticipantToQuizTestGroupInputModel input) {
-        log.info("removeParticipantFromQuizTestGroup, groupId = " + input.getQuizTestGroupId() + " participantId = " + input.getParticipantUserLoginId());
+        log.info("removeParticipantFromQuizTestGroup, groupId = " +
+                 input.getQuizTestGroupId() +
+                 " participantId = " +
+                 input.getParticipantUserLoginId());
         EduTestQuizGroupParticipationAssignment a = eduTestQuizGroupParticipationAssignmentRepo
-            .findByQuizGroupIdAndParticipationUserLoginId(input.getQuizTestGroupId(), input.getParticipantUserLoginId());
+            .findByQuizGroupIdAndParticipationUserLoginId(
+                input.getQuizTestGroupId(),
+                input.getParticipantUserLoginId());
 
-        if(a != null){
+        if (a != null) {
             eduTestQuizGroupParticipationAssignmentRepo.delete(a);
             return true;
         }

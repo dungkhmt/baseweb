@@ -16,10 +16,12 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+
 @Log4j2
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProgrammingContestUserRegistrationServiceImpl implements ProgrammingContestUserRegistrationService {
+
     private ProgrammingContestUserRegistrationRepo programmingContestUserRegistrationRepo;
     private ContestProblemRepo contestProblemRepo;
     private ProgrammingContestUserRegistrationProblemRepo programmingContestUserRegistrationProblemRepo;
@@ -34,30 +36,40 @@ public class ProgrammingContestUserRegistrationServiceImpl implements Programmin
         programmingContestUserRegistration.setContestId(input.getContestId());
         programmingContestUserRegistration.setUserLoginId(input.getUserLoginId());
         programmingContestUserRegistration.setStatusId(input.getStatusId());
-        programmingContestUserRegistration = programmingContestUserRegistrationRepo.save(programmingContestUserRegistration);
+        programmingContestUserRegistration = programmingContestUserRegistrationRepo.save(
+            programmingContestUserRegistration);
         return programmingContestUserRegistration;
     }
+
     @Transactional
     @Modifying
     @Override
     public ProgrammingContestUserRegistration updateStatus(CreateProgrammingContestUserRegistrationInputModel input) {
         ProgrammingContestUserRegistration programmingContestUserRegistration = programmingContestUserRegistrationRepo
-            .findByContestIdAndUserLoginId(input.getContestId(),input.getUserLoginId());
+            .findByContestIdAndUserLoginId(input.getContestId(), input.getUserLoginId());
 
-        if(programmingContestUserRegistration == null){
-            log.info("updateStatus, cannot find programmingContestUserRegistration with contestId = " + input.getContestId() + " userLoginId = " + input.getUserLoginId());
-        }else{
+        if (programmingContestUserRegistration == null) {
+            log.info("updateStatus, cannot find programmingContestUserRegistration with contestId = " +
+                     input.getContestId() +
+                     " userLoginId = " +
+                     input.getUserLoginId());
+        } else {
             programmingContestUserRegistration.setStatusId(input.getStatusId());
-            log.info("updateStatus, obj status = " + programmingContestUserRegistration.getStatusId() + ", contestId = "
-            + programmingContestUserRegistration.getContestId() + ", userLoginId = " + programmingContestUserRegistration.getUserLoginId());
-            programmingContestUserRegistration = programmingContestUserRegistrationRepo.save(programmingContestUserRegistration);
+            log.info("updateStatus, obj status = " +
+                     programmingContestUserRegistration.getStatusId() +
+                     ", contestId = "
+                     +
+                     programmingContestUserRegistration.getContestId() +
+                     ", userLoginId = " +
+                     programmingContestUserRegistration.getUserLoginId());
+            programmingContestUserRegistration = programmingContestUserRegistrationRepo.save(
+                programmingContestUserRegistration);
             log.info("updateStatus, status = " + programmingContestUserRegistration.getStatusId() + " updated");
         }
 
         //programmingContestUserRegistrationRepo.updateStatus(input.getContestId(),input.getUserLoginId(),"APPROVED");
 
         log.info("updateStatus finished");
-
 
 
         return null;//programmingContestUserRegistration;
@@ -71,7 +83,7 @@ public class ProgrammingContestUserRegistrationServiceImpl implements Programmin
     @Override
     public List<ProgrammingContestUserRegistration> findByUserLoginIdAndStatusId(String userLoginId, String statusId) {
         log.info("findByUserLoginIdAndStatusId, userLoginId  = " + userLoginId + ", statudId = " + statusId);
-        return programmingContestUserRegistrationRepo.findByUserLoginIdAndStatusId(userLoginId,statusId);
+        return programmingContestUserRegistrationRepo.findByUserLoginIdAndStatusId(userLoginId, statusId);
     }
 
     @Override
@@ -84,11 +96,12 @@ public class ProgrammingContestUserRegistrationServiceImpl implements Programmin
         log.info("search, contestId = " + input.getContestId() + " userLoginId = " + input.getUserLoginId() +
                  " statusId = " + input.getStatusId());
 
-        if(input.getContestId() == null && input.getStatusId() == null && input.getUserLoginId() != null) {
+        if (input.getContestId() == null && input.getStatusId() == null && input.getUserLoginId() != null) {
             return programmingContestUserRegistrationRepo.findByUserLoginId(input.getUserLoginId());
-        }else if(input.getUserLoginId() == null && input.getContestId() != null && input.getStatusId() != null){
-            return programmingContestUserRegistrationRepo.findByContestIdAndStatusId(input.getContestId(),input.getStatusId());
-        }else{
+        } else if (input.getUserLoginId() == null && input.getContestId() != null && input.getStatusId() != null) {
+            return programmingContestUserRegistrationRepo.findByContestIdAndStatusId(input.getContestId(),
+                                                                                     input.getStatusId());
+        } else {
             return programmingContestUserRegistrationRepo.findAll();
         }
         //return null;
@@ -96,26 +109,27 @@ public class ProgrammingContestUserRegistrationServiceImpl implements Programmin
 
     @Override
     public List<ProgrammingContestUserRegistration> findByContestIdAndStatusId(String contestId, String statusId) {
-        return programmingContestUserRegistrationRepo.findByContestIdAndStatusId(contestId,statusId);
+        return programmingContestUserRegistrationRepo.findByContestIdAndStatusId(contestId, statusId);
     }
 
 
     @Override
     public List<ContestProblem> getProblemsOfContestAndUser(String contestId, String userLoginId) {
         ProgrammingContest programmingContest = programmingContestRepo.findByContestId(contestId);
-        if(programmingContest == null){
+        if (programmingContest == null) {
             log.info("getProblemsOfContestAndUser, cannot find contest " + contestId);
             return null;
         }
         log.info("getProblemsOfContestAndUser, contestTypeId = " + programmingContest.getContestTypeId());
 
         List<ContestProblem> contestProblems = null;
-            if(programmingContest.getContestTypeId().equals(ProgrammingContest.CONTEST_TYPE_PARTICIPANT_IDENTICAL)){    contestProblems = programmingContestService.getProblemsOfContest(contestId);
-        }else if(programmingContest.getContestTypeId().equals(ProgrammingContest.CONTEST_TYPE_PARTICIPANT_SPECIFIC)){
+        if (programmingContest.getContestTypeId().equals(ProgrammingContest.CONTEST_TYPE_PARTICIPANT_IDENTICAL)) {
+            contestProblems = programmingContestService.getProblemsOfContest(contestId);
+        } else if (programmingContest.getContestTypeId().equals(ProgrammingContest.CONTEST_TYPE_PARTICIPANT_SPECIFIC)) {
             List<ProgrammingContestUserRegistrationProblem> programmingContestUserRegistrationProblems =
-                programmingContestUserRegistrationProblemRepo.findByContestIdAndUserLoginId(contestId,userLoginId);
+                programmingContestUserRegistrationProblemRepo.findByContestIdAndUserLoginId(contestId, userLoginId);
             contestProblems = new ArrayList<>();
-            for(ProgrammingContestUserRegistrationProblem programmingContestUserRegistrationProblem: programmingContestUserRegistrationProblems){
+            for (ProgrammingContestUserRegistrationProblem programmingContestUserRegistrationProblem : programmingContestUserRegistrationProblems) {
                 String problemId = programmingContestUserRegistrationProblem.getProblemId();
                 ContestProblem contestProblem = contestProblemRepo.findByProblemId(problemId);
                 contestProblems.add(contestProblem);

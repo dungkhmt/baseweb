@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 
 public class UpdatePasswordDirectly {
+
     private String password;
 
 }

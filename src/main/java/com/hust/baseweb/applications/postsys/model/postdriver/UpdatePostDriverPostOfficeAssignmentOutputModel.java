@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdatePostDriverPostOfficeAssignmentOutputModel {
+
     private String status;
     private String detail;
     private PostDriverPostOfficeAssignment postDriverPostOfficeAssignment;

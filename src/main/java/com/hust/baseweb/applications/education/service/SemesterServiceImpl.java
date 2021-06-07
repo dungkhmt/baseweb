@@ -12,8 +12,10 @@ import java.util.List;
 @Log4j2
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class SemesterServiceImpl implements SemesterService{
+public class SemesterServiceImpl implements SemesterService {
+
     private SemesterRepo semesterRepo;
+
     @Override
     public List<Semester> findAll() {
         return semesterRepo.findAll();
