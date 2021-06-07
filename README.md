@@ -101,6 +101,8 @@ mvn install:install-file -Dfile=ortools-java-8.0.8283.jar -DpomFile=pom-local.xm
 
 Sau lần chạy thành công đầu tiên, ở các lần chạy sau chỉ cần thực hiện lần lượt bước 3.1 và 4
 ### 5. Tài nguyên
+Ở thời điểm hiện tại, các công nghệ sử dụng đã phát hành các phiên bản mới với nhiều bổ sung, nâng cấp. Tuy nhiên, những nâng cấp đó không phải lúc nào cũng đảm bảo được tính
+tương thích ngược, dẫn đến việc cài đặt theo hướng dẫn này có thể gặp những lỗi phát sinh không cần thiết. Vì vậy, nên sử dụng các bộ cài đặt được cung cấp ở đây:
 * [Installers](https://drive.google.com/drive/folders/1r4VCwCz2JZGg9-LxQFPNw1aTZJl9gYp3?usp=sharing)
 ### 6. Một số lỗi thường gặp
 ### 6.1. You need to run build with JDK or have tools.jar on the classpath
