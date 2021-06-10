@@ -12,6 +12,7 @@ import java.util.Objects;
 @Setter
 @Component
 public class ProjectFilterParamsModel {
+
     private String backlogTaskName;
     private String categoryName;
     private String statusName;

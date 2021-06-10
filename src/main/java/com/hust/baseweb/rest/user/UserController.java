@@ -160,19 +160,23 @@ public class UserController {
                                      .map(UserLogin::getUserLoginId)
                                      .collect(Collectors.toList()));
     }
-	
-	 @PostMapping("/user/updatepassword2")
+
+    @PostMapping("/user/updatepassword2")
     public ResponseEntity<?> update(Principal principal, @RequestBody UpdatePasswordModel input) {
         log.info("okController: ");
-        UserLogin u  = userService.updatePassword2(input.getUserLoginId(),input.getPassword());
+        UserLogin u = userService.updatePassword2(input.getUserLoginId(), input.getPassword());
         return ResponseEntity.ok().body(u);
     }
 
     @PostMapping("/user/updatepassword3/{partyId}")
-    public ResponseEntity<?> update3(Principal principal,@PathVariable String partyId, @RequestBody UpdatePasswordModel input){
+    public ResponseEntity<?> update3(
+        Principal principal,
+        @PathVariable String partyId,
+        @RequestBody UpdatePasswordModel input
+    ) {
         DPerson p = userService.findByPartyId(partyId);
         DPersonDetailModel detailModel = new DPersonDetailModel(p);
-        UserLogin u = userService.updatePassword2(detailModel.getUserLoginId(),input.getPassword());
+        UserLogin u = userService.updatePassword2(detailModel.getUserLoginId(), input.getPassword());
         return ResponseEntity.ok().body(u);
     }
 }

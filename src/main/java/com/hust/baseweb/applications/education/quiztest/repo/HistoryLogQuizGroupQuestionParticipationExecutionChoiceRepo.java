@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface HistoryLogQuizGroupQuestionParticipationExecutionChoiceRepo extends JpaRepository<HistoryLogQuizGroupQuestionParticipationExecutionChoice, UUID> {
+public interface HistoryLogQuizGroupQuestionParticipationExecutionChoiceRepo
+    extends JpaRepository<HistoryLogQuizGroupQuestionParticipationExecutionChoice, UUID> {
 
 }

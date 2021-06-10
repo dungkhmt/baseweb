@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExecuteTripInputModel {
+
     private String postOfficeFixedTripId;
     private String postOfficeFixedTripExecuteId;
     private Date depatureDateTime;

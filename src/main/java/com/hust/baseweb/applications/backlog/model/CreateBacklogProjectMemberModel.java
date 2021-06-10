@@ -12,7 +12,8 @@ import java.util.UUID;
 @Getter
 @Setter
 public class CreateBacklogProjectMemberModel {
+
     UUID backlogProjectId;
-//    String userLoginId;
+    //    String userLoginId;
     UUID memberPartyId;
 }

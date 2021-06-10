@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.education.entity;
 
-import com.hust.baseweb.entity.UserLogin;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,7 +33,7 @@ public class QuizQuestion {
     //@ManyToOne(fetch = FetchType.LAZY)
     //@JoinColumn(name = "created_by_user_login_id", referencedColumnName = "user_login_id")
     //private UserLogin createdByUserLogin;
-    @Column(name="created_by_user_login_id")
+    @Column(name = "created_by_user_login_id")
     private String createdByUserLoginId;
 
     @Column(name = "level_id")
@@ -48,9 +47,9 @@ public class QuizQuestion {
     @Column(name = "status_id")
     private String statusId;
 
-    @Column(name= "created_stamp")
+    @Column(name = "created_stamp")
     private Date createdStamp;
 
-    @Column(name= "last_updated_stamp")
+    @Column(name = "last_updated_stamp")
     private Date lastUpdatedStamp;
 }

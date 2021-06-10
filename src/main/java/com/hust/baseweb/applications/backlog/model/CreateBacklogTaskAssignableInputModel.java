@@ -10,6 +10,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class CreateBacklogTaskAssignableInputModel {
+
     private UUID backlogTaskId;
     private List<UUID> assignedToPartyId;
     private Date startDate;

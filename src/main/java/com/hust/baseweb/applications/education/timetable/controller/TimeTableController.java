@@ -29,12 +29,12 @@ public class TimeTableController {
     private TimeTableService timeTableService;
 
     @GetMapping("/view")
-    public ResponseEntity<?> view(Principal principal)
-    {
+    public ResponseEntity<?> view(Principal principal) {
         List<TimeTable> list = timeTableService.findAll();
         log.info("Showing!");
         return ResponseEntity.ok().body(list);
     }
+
     @PostMapping("/upload")
     public ResponseEntity<?> upload(Principal principal, @RequestParam("file") MultipartFile file) {
         log.info("Successfully upload " + file.getOriginalFilename() + " !");

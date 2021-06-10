@@ -75,18 +75,19 @@ public class GisMapController {
     }
 
     @GetMapping("/gismap/get-all-streets")
-    public ResponseEntity<?> getAllStreets(Principal principal){
+    public ResponseEntity<?> getAllStreets(Principal principal) {
         return ResponseEntity.ok().body(gisMapService.findAll());
     }
 
     @GetMapping("/gismap/get-unterminated-streets")
-    public ResponseEntity<?> getUnTerminatedStreets(Principal principal){
+    public ResponseEntity<?> getUnTerminatedStreets(Principal principal) {
         List<Street> streetList = new ArrayList<>();
-        for(String id: mId2Street.keySet()){
-          streetList.add(mId2Street.get(id));
+        for (String id : mId2Street.keySet()) {
+            streetList.add(mId2Street.get(id));
         }
         return ResponseEntity.ok().body(streetList);
     }
+
     @PostMapping("/gismap/ignore-unterminated-street")
     public synchronized ResponseEntity<?> ignoreUnTerminatedStreet(
         Principal principal, @RequestBody
@@ -99,6 +100,7 @@ public class GisMapController {
         mId2Street.remove(street.getStreetId());
         return ResponseEntity.ok().body(street);
     }
+
     @PostMapping("/gismap/remove-built-street")
     public synchronized ResponseEntity<?> removeBuiltStreet(
         Principal principal, @RequestBody

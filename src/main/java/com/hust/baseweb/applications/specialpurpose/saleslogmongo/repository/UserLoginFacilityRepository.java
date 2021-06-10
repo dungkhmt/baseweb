@@ -8,11 +8,17 @@ import java.util.Date;
 import java.util.List;
 
 public interface UserLoginFacilityRepository extends MongoRepository<UserLoginFacility, ObjectId> {
-    List<UserLoginFacility> findByUserLoginIdAndUserLoginFacilityRelationTypeAndThruDate(String userLoginId,
-                                                                                         String userLoginFacilityRelationType,
-                                                                                         Date thruDate);
-    List<UserLoginFacility> findByFacilityIdAndUserLoginFacilityRelationTypeAndThruDate(String facilityId,
-                                                                                         String userLoginFacilityRelationType,
-                                                                                         Date thruDate);
+
+    List<UserLoginFacility> findByUserLoginIdAndUserLoginFacilityRelationTypeAndThruDate(
+        String userLoginId,
+        String userLoginFacilityRelationType,
+        Date thruDate
+    );
+
+    List<UserLoginFacility> findByFacilityIdAndUserLoginFacilityRelationTypeAndThruDate(
+        String facilityId,
+        String userLoginFacilityRelationType,
+        Date thruDate
+    );
 
 }

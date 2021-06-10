@@ -95,6 +95,7 @@ public class PostOrderController {
 
     /**
      * Lấy thông tin đơn hàng đã được gán cho postman thành công
+     *
      * @param postOfficeId
      * @param fromDate
      * @param toDate
@@ -108,7 +109,9 @@ public class PostOrderController {
         @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date toDate,
         @RequestParam boolean from
     ) {
-        return ResponseEntity.ok().body(postmanService.findOrdersByPostOfficeIdAndDate(postOfficeId, fromDate, toDate, from));
+        return ResponseEntity
+            .ok()
+            .body(postmanService.findOrdersByPostOfficeIdAndDate(postOfficeId, fromDate, toDate, from));
     }
 
     @GetMapping("/get-order-by-trip")

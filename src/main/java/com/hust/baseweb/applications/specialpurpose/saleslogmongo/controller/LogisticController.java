@@ -22,18 +22,19 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class LogisticController {
+
     private UserService userService;
     private final LogisticService logisticService;
 
 
     @PostMapping("mongo/create-product")
-    public ResponseEntity<?> createProduct(Principal principal, @RequestBody CreateProductInputModel input){
-        Product product = logisticService.createProduct(input.getProductId(), input.getProductName(),input.getUomId());
+    public ResponseEntity<?> createProduct(Principal principal, @RequestBody CreateProductInputModel input) {
+        Product product = logisticService.createProduct(input.getProductId(), input.getProductName(), input.getUomId());
         return ResponseEntity.ok().body(product);
     }
 
     @GetMapping("/mongo/get-list-products")
-    public ResponseEntity<?> getListProducts(Principal principal){
+    public ResponseEntity<?> getListProducts(Principal principal) {
         return ResponseEntity.ok().body(logisticService.findAllProducts());
     }
 
@@ -59,23 +60,30 @@ public class LogisticController {
 
     @PostMapping("/mongo/create-facility-of-user-login-salesman")
     @ApiOperation(value = "tao moi kho ma salesman hien tai duoc ban hang tu kho do")
-    public ResponseEntity<?> createFacilityOfUserLogin(Principal principal, @RequestBody CreateFacilityInputModel input){
+    public ResponseEntity<?> createFacilityOfUserLogin(
+        Principal principal,
+        @RequestBody CreateFacilityInputModel input
+    ) {
         // TOTO update to Facility, Organization, SalesmanFacility
         UserLogin u = userService.findById(principal.getName());
-        Facility facility = logisticService.createFacilityOfSalesman(u.getUserLoginId(), input.getFacilityName(), input.getAddress());
+        Facility facility = logisticService.createFacilityOfSalesman(
+            u.getUserLoginId(),
+            input.getFacilityName(),
+            input.getAddress());
 
         return ResponseEntity.ok().body(facility);
     }
+
     @GetMapping("/mongo/get-facility-of-user-login")
     @ApiOperation(value = "tra ve DS cac facility ma userlogin salesman hien tai cos quyen ban hang tu kho do")
-    public ResponseEntity<?> getListFacilityOfUserLogin(Principal principal){
+    public ResponseEntity<?> getListFacilityOfUserLogin(Principal principal) {
         UserLogin u = userService.findById(principal.getName());
         List<FacilityModel> facilityList = logisticService.getFacilityOfSalesman(u.getUserLoginId());
         return ResponseEntity.ok().body(facilityList);
     }
 
     @GetMapping("mongo/get-all-facility")
-    public ResponseEntity<?> getAllFacilities(Principal principal){
+    public ResponseEntity<?> getAllFacilities(Principal principal) {
         return ResponseEntity.ok().body(logisticService.getAllFacilities());
     }
 

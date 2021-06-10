@@ -10,6 +10,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class AssignmentSuggestionSolverInput {
+
     private UUID backlogTaskId;
     private Date startDate;
     private Date endDate;

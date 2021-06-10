@@ -16,9 +16,12 @@ public interface SalesService {
     SalesOrder createSalesOrder(CreateSalesOrderInputModel input);
 
     Customer createCusstomerOfSalesman(String salesmanId, String customerName, String address);
+
     List<CustomerModel> getCustomersOfSalesman(String salesmanId);
+
     List<SalesOrderViewModel> getAllSalesOrders();
 
     void deleteAllRunningData();
+
     void removeAllCustomerData();
 }

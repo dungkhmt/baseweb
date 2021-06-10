@@ -16,6 +16,7 @@ import java.util.List;
 @Setter
 @ApiModel(description = "Model tạo đơn mua")
 public class CreatePurchaseOrderInputModel {
+
     public static final SimpleDateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String fromProviderId;
     private String userLoginId;
@@ -29,7 +30,7 @@ public class CreatePurchaseOrderInputModel {
         purchaseOrder.setPoStaffId(userLoginId);
         try {
             purchaseOrder.setOrderDate(datetimeFormat.parse(orderDate));
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         purchaseOrder.setToFacilityId(toFacilityId);

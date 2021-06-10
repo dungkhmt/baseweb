@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FacilityModel {
+
     private String facilityId;
     private String facilityName;
     private String address;

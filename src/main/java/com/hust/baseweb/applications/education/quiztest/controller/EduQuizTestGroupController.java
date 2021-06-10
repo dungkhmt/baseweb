@@ -71,6 +71,7 @@ public class EduQuizTestGroupController {
 
         return ResponseEntity.ok().body(eduQuizTestGroupService.getTestGroupQuestionDetail(principal, testID));
     }
+
     @GetMapping("/get-all-quiz-test-group-participants/{testId}")
     public ResponseEntity<?> getQuizTestGroupParticipants(Principal principal, @PathVariable String testId) {
         log.info("getQuizTestGroupParticipants, testId = " + testId);

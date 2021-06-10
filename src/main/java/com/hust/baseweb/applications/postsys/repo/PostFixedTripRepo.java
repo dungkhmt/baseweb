@@ -9,11 +9,18 @@ import java.util.UUID;
 
 @Repository
 public interface PostFixedTripRepo extends JpaRepository<PostFixedTrip, UUID> {
+
     List<PostFixedTrip> findAll();
+
     PostFixedTrip findByPostOfficeFixedTripId(UUID postOfficeFixedTripId);
+
     PostFixedTrip findByPostOfficeTripId(UUID postOfficeTripId);
+
     PostFixedTrip save(PostFixedTrip postFixedTrip);
+
     List<PostFixedTrip> findByPostOfficeTrip_fromPostOfficeId(String fromPostOfficeId);
+
     List<PostFixedTrip> findByPostOfficeTrip_fromPostOfficeIdIn(List<String> fromPostOfficeIds);
+
     List<PostFixedTrip> findByPostOfficeFixedTripIdIn(List<UUID> postOfficeFixedTripIds);
 }

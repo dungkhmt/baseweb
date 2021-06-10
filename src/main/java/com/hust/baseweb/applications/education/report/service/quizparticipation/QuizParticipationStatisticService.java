@@ -6,6 +6,8 @@ import com.hust.baseweb.applications.education.report.model.quizparticipation.Qu
 import java.util.List;
 
 public interface QuizParticipationStatisticService {
+
     public List<QuizParticipationStatisticOutputModel> getQuizParticipationStatistic(
-        GetQuizParticipationStatisticInputModel input);
+        GetQuizParticipationStatisticInputModel input
+    );
 }

@@ -16,7 +16,8 @@ import java.util.*;
 @Service
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class ProgrammingContestServiceImpl implements ProgrammingContestService{
+public class ProgrammingContestServiceImpl implements ProgrammingContestService {
+
     private ProgrammingContestRepo programmingContestRepo;
     private ProgrammingContestProblemService programmingContestProblemService;
     private ContestProblemService contestProblemService;
@@ -47,31 +48,36 @@ public class ProgrammingContestServiceImpl implements ProgrammingContestService{
 
     @Override
     public List<ContestProblem> getProblemsOfContest(String contestId) {
-        List<ProgrammingContestProblem> programmingContestProblems = programmingContestProblemService.findByContestId(contestId);
+        List<ProgrammingContestProblem> programmingContestProblems = programmingContestProblemService.findByContestId(
+            contestId);
         List<ContestProblem> contestProblems = new ArrayList();
-        for(ProgrammingContestProblem programmingContestProblem: programmingContestProblems){
+        for (ProgrammingContestProblem programmingContestProblem : programmingContestProblems) {
             String problemId = programmingContestProblem.getProblemId();
             ContestProblem contestProblem = contestProblemService.findByProblemId(problemId);
             contestProblems.add(contestProblem);
         }
         return contestProblems;
     }
-    private String getGroupKey(ContestProblem contestProblem){
+
+    private String getGroupKey(ContestProblem contestProblem) {
         String gk = "-";
-        if(contestProblem.getLevelId() != null && !contestProblem.getLevelId().equals(""))
+        if (contestProblem.getLevelId() != null && !contestProblem.getLevelId().equals("")) {
             gk += contestProblem.getLevelId();
-        if(contestProblem.getCategoryId() != null && !contestProblem.getCategoryId().equals(""))
+        }
+        if (contestProblem.getCategoryId() != null && !contestProblem.getCategoryId().equals("")) {
             gk = gk + "-" + contestProblem.getCategoryId();
+        }
         return gk;
     }
+
     @Override
     public boolean distributeProblemsOfContestToParticipants(String contestId) {
         ProgrammingContest programmingContest = programmingContestRepo.findByContestId(contestId);
-        if(programmingContest == null){
+        if (programmingContest == null) {
             log.info("distributeProblemsOfContestToParticipants, cannot find contest " + contestId);
             return false;
         }
-        if(programmingContest.getContestTypeId().equals(ProgrammingContest.CONTEST_TYPE_PARTICIPANT_IDENTICAL)){
+        if (programmingContest.getContestTypeId().equals(ProgrammingContest.CONTEST_TYPE_PARTICIPANT_IDENTICAL)) {
             log.info("distributeProblemsOfContestToParticipants, this contest is IDENTICAL");
             return false;
         }
@@ -80,23 +86,23 @@ public class ProgrammingContestServiceImpl implements ProgrammingContestService{
 
         // get list of approved participants to the contest
         List<ProgrammingContestUserRegistration> programmingContestUserRegistrations = programmingContestUserRegistrationRepo
-            .findByContestIdAndStatusId(contestId,ProgrammingContestUserRegistration.REGISTATION_STATUS_APPROVED);
+            .findByContestIdAndStatusId(contestId, ProgrammingContestUserRegistration.REGISTATION_STATUS_APPROVED);
 
         HashSet<String> groups = new HashSet();
-        for(ContestProblem contestProblem: contestProblems){
+        for (ContestProblem contestProblem : contestProblems) {
             groups.add(getGroupKey(contestProblem));
         }
         HashMap<String, List<ContestProblem>> mapKey2ContestProblem = new HashMap();
-        for(ContestProblem contestProblem: contestProblems){
+        for (ContestProblem contestProblem : contestProblems) {
             String gk = getGroupKey(contestProblem);
-            if(mapKey2ContestProblem.get(gk) == null){
-                mapKey2ContestProblem.put(gk,new ArrayList<ContestProblem>());
+            if (mapKey2ContestProblem.get(gk) == null) {
+                mapKey2ContestProblem.put(gk, new ArrayList<ContestProblem>());
             }
             mapKey2ContestProblem.get(gk).add(contestProblem);
         }
-        for(ProgrammingContestUserRegistration pcur: programmingContestUserRegistrations){
+        for (ProgrammingContestUserRegistration pcur : programmingContestUserRegistrations) {
             String userLoginId = pcur.getUserLoginId();
-            for(String gk: groups){
+            for (String gk : groups) {
                 List<ContestProblem> L = mapKey2ContestProblem.get(gk);
                 // pick randomly a problem from L
                 Random R = new Random();
@@ -108,10 +114,16 @@ public class ProgrammingContestServiceImpl implements ProgrammingContestService{
                 programmingContestUserRegistrationProblem.setUserLoginId(userLoginId);
                 programmingContestUserRegistrationProblem.setProblemId(p.getProblemId());
 
-                programmingContestUserRegistrationProblem = programmingContestUserRegistrationProblemRepo.save(programmingContestUserRegistrationProblem);
+                programmingContestUserRegistrationProblem = programmingContestUserRegistrationProblemRepo.save(
+                    programmingContestUserRegistrationProblem);
 
-                log.info("distributeProblemsOfContestToParticipants, distribute problem " + p.getProblemId() + " to participant "
-                         + userLoginId + " in the contest " + contestId);
+                log.info("distributeProblemsOfContestToParticipants, distribute problem " +
+                         p.getProblemId() +
+                         " to participant "
+                         +
+                         userLoginId +
+                         " in the contest " +
+                         contestId);
             }
         }
         return false;

@@ -19,6 +19,7 @@ import java.util.List;
 @Service
 @Log4j2
 public class PostCustomerService {
+
     @Autowired
     PostCustomerRepo postCustomerRepo;
 
@@ -30,6 +31,7 @@ public class PostCustomerService {
 
     @Autowired
     UserService userService;
+
     public List<PostCustomer> findAll() {
         return postCustomerRepo.findAll();
     }
@@ -55,7 +57,7 @@ public class PostCustomerService {
     }
 
     public PostCustomer findCustomerByPartyId(Principal principal) {
-        UserLogin userLogin=userService.findById(principal.getName());
+        UserLogin userLogin = userService.findById(principal.getName());
         return postCustomerRepo.findByPartyId(userLogin.getParty().getPartyId());
     }
 }

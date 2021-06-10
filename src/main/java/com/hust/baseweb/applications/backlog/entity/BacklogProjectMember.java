@@ -16,22 +16,22 @@ import java.util.UUID;
 @Setter
 @Entity
 @IdClass(CompositeProjectMember.class)
-@Table(name="backlog_project_member")
+@Table(name = "backlog_project_member")
 public class BacklogProjectMember {
 
-    public BacklogProjectMember(CreateBacklogProjectMemberModel input){
+    public BacklogProjectMember(CreateBacklogProjectMemberModel input) {
         backlogProjectId = input.getBacklogProjectId();
         memberPartyId = input.getMemberPartyId();
     }
 
     @Id
-    @Column(name="backlog_project_id")
+    @Column(name = "backlog_project_id")
     private UUID backlogProjectId;
 
     @Id
-    @Column(name="member_party_id")
+    @Column(name = "member_party_id")
     private UUID memberPartyId;
 
-    @Column(name="created_stamp", insertable = false, updatable = false)
+    @Column(name = "created_stamp", insertable = false, updatable = false)
     private Date createdStamp;
 }

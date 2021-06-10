@@ -15,13 +15,14 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @Entity
-@Table(name="backlog_task_category")
+@Table(name = "backlog_task_category")
 public class BacklogTaskCategory {
+
     @Id
-    @Column(name="backlog_task_category_id")
+    @Column(name = "backlog_task_category_id")
     private String backlogTaskCategoryId;
 
-    @Column(name="backlog_task_category_name")
+    @Column(name = "backlog_task_category_name")
     private String backlogTaskCategoryName;
 //
 //    @Column(name="last_update_stamp")

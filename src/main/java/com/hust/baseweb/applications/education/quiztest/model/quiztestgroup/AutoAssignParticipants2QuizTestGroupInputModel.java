@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AutoAssignParticipants2QuizTestGroupInputModel {
+
     //private UUID classId;
     private String quizTestId;
 }

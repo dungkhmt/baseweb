@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdatePostDriverPostOfficeAssignmentInputModel {
+
     private String postDriverId;
     private String postDriverPostOfficeAssignmentId;
     private String postOfficeFixedTripId;

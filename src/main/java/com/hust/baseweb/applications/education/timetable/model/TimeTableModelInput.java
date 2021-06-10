@@ -2,10 +2,12 @@ package com.hust.baseweb.applications.education.timetable.model;
 
 import lombok.Getter;
 import lombok.Setter;
+
 @Getter
 @Setter
 public class TimeTableModelInput /// A Row
 {
+
     private int cid;
     private int acid;
     private String course_code;

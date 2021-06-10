@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Route {
+
     private boolean isSolutionFound;
     private List<List<Integer>> indexes;
     private List<Long> distance;

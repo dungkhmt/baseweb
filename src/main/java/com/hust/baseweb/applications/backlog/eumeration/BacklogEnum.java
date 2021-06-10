@@ -11,6 +11,7 @@ public enum BacklogEnum {
 
     @Getter
     String value;
+
     BacklogEnum(String value) {
         this.value = value;
     }

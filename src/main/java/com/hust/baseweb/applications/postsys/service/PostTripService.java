@@ -169,7 +169,8 @@ public class PostTripService {
             postTripExecuteRepo.delete(postTripExecute);
             postShipOrderFixedTripPostOfficeAssignmentRepo.deleteAll(postShipOrderFixedTripPostOfficeAssignmentRepo.findByPostOfficeFixedTripExecuteId(
                 postTripExecute.getPostOfficeFixedTripExecuteId()));
-            log.info("Delete execute trip success, execute trip id = " + postTripExecute.getPostOfficeFixedTripExecuteId());
+            log.info("Delete execute trip success, execute trip id = " +
+                     postTripExecute.getPostOfficeFixedTripExecuteId());
             return new ResponseSample("SUCCESS", "Delete Execute Trip Success");
         } else {
             return new ResponseSample("ERROR", "Trip already been executing");

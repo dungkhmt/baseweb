@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuizTestParticipationExecutionResultOutputModel {
+
     private String testId;
     private UUID quizGroupId;
     private String participationUserLoginId;

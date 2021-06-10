@@ -185,6 +185,6 @@ public class Test {
             }
 
         }*/
-        System.out.println((int)1.99);
+        System.out.println((int) 1.99);
     }
 }

@@ -217,8 +217,7 @@ public class PostmanService {
                     postOrder.setStatusId("POST_ORDER_READY_PICKUP"); //san sang doi postman pickup
                     postShipOrderPostmanLastMileAssignment.setStatusId("POST_ORDER_ASSIGNMENT_PICKUP_WAITING");
                     postShipOrderPostmanLastMileAssignment.setPickupDelivery("p");
-                }
-                else{
+                } else {
                     postOrder.setStatusId("POST_ORDER_READY_SHIP");
                     postShipOrderPostmanLastMileAssignment.setStatusId("POST_ORDER_ASSIGNMENT_SHIP_WAITING");
                     postShipOrderPostmanLastMileAssignment.setPickupDelivery("d");

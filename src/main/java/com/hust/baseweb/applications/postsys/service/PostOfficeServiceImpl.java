@@ -154,11 +154,17 @@ public class PostOfficeServiceImpl implements PostOfficeService {
             List<PostOrder> postOrders = new ArrayList<>();
             if (from) {
                 postOrders = postOrderRepo.findByFromPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(
-                    postOffice.getPostOfficeId(), "POST_ORDER_ASSIGNED", fromDate, new Date(toDate.getTime() + (1000 * 60 * 60 * 24))
+                    postOffice.getPostOfficeId(),
+                    "POST_ORDER_ASSIGNED",
+                    fromDate,
+                    new Date(toDate.getTime() + (1000 * 60 * 60 * 24))
                 );
             } else {
                 postOrders = postOrderRepo.findByToPostOfficeIdAndStatusIdAndCreatedStampGreaterThanEqualAndCreatedStampLessThan(
-                    postOffice.getPostOfficeId(), "POST_ORDER_FINAL_TRIP", fromDate, new Date(toDate.getTime() + (1000 * 60 * 60 * 24))
+                    postOffice.getPostOfficeId(),
+                    "POST_ORDER_FINAL_TRIP",
+                    fromDate,
+                    new Date(toDate.getTime() + (1000 * 60 * 60 * 24))
                 );
             }
             if (postOrders.size() > 0) {

@@ -44,5 +44,6 @@ public interface PostTripExecuteRepo extends JpaRepository<PostTripExecute, UUID
            nativeQuery = true)
     List<ExecuteTripOutputModelOM> findAllByDateAndPostOfficeFixedTripIdsIn(
         @Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
-        @Param("postOfficeFixedTripIds") List<UUID> postOfficeFixedTripIds);
+        @Param("postOfficeFixedTripIds") List<UUID> postOfficeFixedTripIds
+    );
 }

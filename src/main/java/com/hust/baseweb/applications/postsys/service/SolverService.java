@@ -21,12 +21,14 @@ import java.util.List;
 @Service
 @Log4j2
 public class SolverService {
+
     @Autowired
     PostOfficeRepo postOfficeRepo;
     @Autowired
     PostOrderRepo postOrderRepo;
     @Autowired
     PostmanRepo postmanRepo;
+
     public PostOfficeVrpSolveOutputModel postOfficeVrpSolve(PostOfficeVrpSolveInputModel postOfficeVrpSolveInputModel) {
         PostOffice postOffice = postOfficeRepo.findById(postOfficeVrpSolveInputModel.getPostOfficeId()).get();
         List<PostOrder> postOrders = postOrderRepo.findByPostShipOrderIdIn(postOfficeVrpSolveInputModel.getPostOrderIds());
@@ -36,8 +38,7 @@ public class SolverService {
             for (int i = 0; i < postOrders.size(); i++) {
                 geoPoints.add(postOrders.get(i).getFromCustomer().getPostalAddress().getGeoPoint());
             }
-        }
-        else {
+        } else {
             for (int i = 0; i < postOrders.size(); i++) {
                 geoPoints.add(postOrders.get(i).getToCustomer().getPostalAddress().getGeoPoint());
             }
@@ -53,22 +54,25 @@ public class SolverService {
         }
         log.info("Solving " + postOrders.size() + " orders, " + postmen.size() + " postmen");
         VrpSolver vrpSolver = new VrpSolver(geoPoints, postmen.size(), 0);
-        Route route =  vrpSolver.solve();
-        PostOfficeVrpSolveOutputModel solution = new PostOfficeVrpSolveOutputModel(false, new ArrayList<>(), null, postOfficeVrpSolveInputModel.getPostmanIds());
+        Route route = vrpSolver.solve();
+        PostOfficeVrpSolveOutputModel solution = new PostOfficeVrpSolveOutputModel(
+            false,
+            new ArrayList<>(),
+            null,
+            postOfficeVrpSolveInputModel.getPostmanIds());
         if (route.isSolutionFound()) {
             solution.setRoutes(new ArrayList<>());
             for (int i = 0; i < postmen.size(); i++) {
                 solution.getRoutes().add(new ArrayList<>());
                 for (int j = 0; j < route.getIndexes().get(i).size(); j++) {
                     if (route.getIndexes().get(i).get(j) > 0) {
-                        solution.getRoutes().get(i).add(postOrders.get(route.getIndexes().get(i).get(j) -1));
+                        solution.getRoutes().get(i).add(postOrders.get(route.getIndexes().get(i).get(j) - 1));
                     }
                 }
             }
             solution.setSolutionFound(true);
             solution.setDistance(route.getDistance());
-        }
-        else {
+        } else {
             log.info("Postman vrp solve: no solution found");
         }
         return solution;

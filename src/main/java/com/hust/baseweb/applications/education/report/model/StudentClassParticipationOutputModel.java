@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentClassParticipationOutputModel {
+
     private String date;
     private int count;
 }

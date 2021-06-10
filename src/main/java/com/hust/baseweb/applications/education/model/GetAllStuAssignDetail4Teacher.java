@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GetAllStuAssignDetail4Teacher {
+
     String studentId;
     String studentName;
     List<Assignment> assignmentList = new ArrayList<>();
     int totalSubmitedAssignment;
 
-    private class Assignment{
+    private class Assignment {
+
         String assignmentId;
         String assignmentName;
         int assignmentStatus;
@@ -32,6 +34,7 @@ public class GetAllStuAssignDetail4Teacher {
             return assignmentStatus;
         }
     }
+
     public GetAllStuAssignDetail4Teacher() {
 
     }
@@ -44,7 +47,7 @@ public class GetAllStuAssignDetail4Teacher {
         this.totalSubmitedAssignment = assignment.assignmentStatus;
     }
 
-    public void addAssignment(GetAllStuAssigns4TeacherOM getAllStuAssigns4TeacherOM){
+    public void addAssignment(GetAllStuAssigns4TeacherOM getAllStuAssigns4TeacherOM) {
         Assignment assignment = new Assignment(getAllStuAssigns4TeacherOM);
         this.assignmentList.add(assignment);
         this.totalSubmitedAssignment += assignment.assignmentStatus;

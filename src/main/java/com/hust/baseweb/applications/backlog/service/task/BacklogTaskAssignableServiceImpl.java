@@ -22,15 +22,21 @@ public class BacklogTaskAssignableServiceImpl implements BacklogTaskAssignableSe
     @Override
     public List<BacklogTaskAssignable> save(CreateBacklogTaskAssignableInputModel input) {
         List<BacklogTaskAssignable> backlogTaskAssignments = new ArrayList<>();
-        if(input.getAssignedToPartyId() == null) {
+        if (input.getAssignedToPartyId() == null) {
             input.setAssignedToPartyId(new ArrayList<>());
         }
         // add new assignment or modify existed assigment
-        for(UUID assignedPartyId : input.getAssignedToPartyId()) {
-            if(assignedPartyId == null) break;
-            BacklogTaskAssignable assignment = backlogTaskAssignableRepo.findByBacklogTaskIdAndAndAssignedToPartyId(input.getBacklogTaskId(), assignedPartyId);
-            if(assignment == null) {
-                if(input.getStartDate() == null) input.setStartDate(new Date());
+        for (UUID assignedPartyId : input.getAssignedToPartyId()) {
+            if (assignedPartyId == null) {
+                break;
+            }
+            BacklogTaskAssignable assignment = backlogTaskAssignableRepo.findByBacklogTaskIdAndAndAssignedToPartyId(
+                input.getBacklogTaskId(),
+                assignedPartyId);
+            if (assignment == null) {
+                if (input.getStartDate() == null) {
+                    input.setStartDate(new Date());
+                }
                 backlogTaskAssignments.add(backlogTaskAssignableRepo.save(
                     new BacklogTaskAssignable(
                         input.getBacklogTaskId(),
@@ -46,21 +52,22 @@ public class BacklogTaskAssignableServiceImpl implements BacklogTaskAssignableSe
 
                 backlogTaskAssignableRepo.save(assignment);
             }
-        };
+        }
+        ;
 
         // set status "ASSIGNMENT_INACTIVE" for inactive assignment
         List<BacklogTaskAssignable> assignments = backlogTaskAssignableRepo.findAllByBacklogTaskId(input.getBacklogTaskId());
         assignments.forEach((assignment) -> {
             AtomicBoolean isExist = new AtomicBoolean(false);
 
-            for(UUID assignedPartyId : input.getAssignedToPartyId()) {
-                if(assignedPartyId.equals(assignment.getAssignedToPartyId())) {
+            for (UUID assignedPartyId : input.getAssignedToPartyId()) {
+                if (assignedPartyId.equals(assignment.getAssignedToPartyId())) {
                     isExist.set(true);
                     break;
                 }
             }
 
-            if(!isExist.get()) {
+            if (!isExist.get()) {
                 assignment.setStatusId("ASSIGNMENT_INACTIVE");
 
                 backlogTaskAssignableRepo.save(assignment);

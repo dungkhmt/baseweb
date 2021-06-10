@@ -77,9 +77,10 @@ public class Simulator {
 
         CommandLineParser commandLineParser = new DefaultParser();
         return commandLineParser.parse(options, arg);
-       
+
 
     }
+
     private void run() throws InterruptedException {
 
         CreateOrderAgent[] agents = new CreateOrderAgent[nbCreateOrderAgents];

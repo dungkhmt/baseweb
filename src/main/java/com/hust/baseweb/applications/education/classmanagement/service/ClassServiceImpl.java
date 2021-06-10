@@ -53,7 +53,7 @@ public class ClassServiceImpl implements ClassService {
         EduClass aClass = new EduClass();
         //EduClass dupClass = classRepo.findFirstByCode(Integer.valueOf(addClassModel.getClassCode())).orElse(null);
         List<EduClass> dupClass = classRepo.findByClassCode(addClassModel.getClassCode());
-        if (dupClass != null && dupClass.size() > 0){
+        if (dupClass != null && dupClass.size() > 0) {
             aClass.setMessage("duplicate");
             return aClass;
         }
@@ -113,7 +113,7 @@ public class ClassServiceImpl implements ClassService {
             classes = classRepo.findBySemesterWithFilters(
                 semester.getId(),
                 null == filterParams.getCode() ? "" : filterParams.getCode().toString(),
-                    null == filterParams.getClassCode() ? "" : filterParams.getClassCode().toString(),
+                null == filterParams.getClassCode() ? "" : filterParams.getClassCode().toString(),
                 null == filterParams.getCourseId() ? "" : StringUtils.deleteWhitespace(filterParams.getCourseId()),
                 null == filterParams.getCourseName() ? "" : StringUtils.normalizeSpace(filterParams.getCourseName()),
                 null == filterParams.getClassType() ? "" : StringUtils.deleteWhitespace(filterParams.getClassType()),
@@ -249,20 +249,24 @@ public class ClassServiceImpl implements ClassService {
     @Transactional(readOnly = true)
     public List<GetAllStuAssignDetail4Teacher> getAllStuAssign4Teacher(UUID classId) {
         List<GetAllStuAssignDetail4Teacher> getAllStuAssignDetail4TeacherList = new ArrayList<>();
-        List<GetAllStuAssigns4TeacherOM> getAllStuAssigns4TeacherList =  classRepo.getAllStudentAssignments4Teacher(classId);
+        List<GetAllStuAssigns4TeacherOM> getAllStuAssigns4TeacherList = classRepo.getAllStudentAssignments4Teacher(
+            classId);
         String tempStudentId = "";
         String tempAssignmentId = "";
-        for (GetAllStuAssigns4TeacherOM getAllStuAssigns4TeacherOM: getAllStuAssigns4TeacherList){
-            if (getAllStuAssigns4TeacherOM.getId().equals(tempStudentId)){
-                if (getAllStuAssigns4TeacherOM.getAssignmentId().equals(tempAssignmentId)){
-                }else{
+        for (GetAllStuAssigns4TeacherOM getAllStuAssigns4TeacherOM : getAllStuAssigns4TeacherList) {
+            if (getAllStuAssigns4TeacherOM.getId().equals(tempStudentId)) {
+                if (getAllStuAssigns4TeacherOM.getAssignmentId().equals(tempAssignmentId)) {
+                } else {
                     tempAssignmentId = getAllStuAssigns4TeacherOM.getAssignmentId();
-                    getAllStuAssignDetail4TeacherList.get(getAllStuAssignDetail4TeacherList.size()-1).addAssignment(getAllStuAssigns4TeacherOM);
+                    getAllStuAssignDetail4TeacherList
+                        .get(getAllStuAssignDetail4TeacherList.size() - 1)
+                        .addAssignment(getAllStuAssigns4TeacherOM);
                 }
-            }else{
+            } else {
                 tempStudentId = getAllStuAssigns4TeacherOM.getId();
                 tempAssignmentId = getAllStuAssigns4TeacherOM.getAssignmentId();
-                GetAllStuAssignDetail4Teacher getAllStuAssignDetail4Teacher = new GetAllStuAssignDetail4Teacher(getAllStuAssigns4TeacherOM);
+                GetAllStuAssignDetail4Teacher getAllStuAssignDetail4Teacher = new GetAllStuAssignDetail4Teacher(
+                    getAllStuAssigns4TeacherOM);
                 getAllStuAssignDetail4TeacherList.add(getAllStuAssignDetail4Teacher);
             }
         }

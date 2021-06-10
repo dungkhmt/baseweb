@@ -17,6 +17,7 @@ import java.util.Date;
 @ApiModel("Thông tin cho biet 1 salesman co the ban hang cho customer nao")
 @Document("user_login_customer")
 public class UserLoginCustomer {
+
     @Id
     private String userLoginCustomerId;
     private String userLoginId;// user login of salesman

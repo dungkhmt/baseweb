@@ -19,6 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostOfficeVrpSolveOutputModel {
+
     private boolean isSolutionFound;
     private List<List<PostOrder>> routes;
     private List<Long> distance;

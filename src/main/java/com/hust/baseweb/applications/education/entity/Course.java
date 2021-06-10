@@ -17,12 +17,12 @@ import java.util.Date;
 public class Course {
 
     @Id
-	private String id;
-	
-	@Column(name="course_name")
-	private String name;
+    private String id;
 
-	private short credit;
+    @Column(name = "course_name")
+    private String name;
+
+    private short credit;
 
     @LastModifiedDate
     private Date lastUpdatedStamp;

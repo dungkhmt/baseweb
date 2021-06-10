@@ -22,29 +22,34 @@ import java.util.List;
 @Log4j2
 @AllArgsConstructor(onConstructor_ = @Autowired)
 public class ProgrammingContestProblemController {
+
     private ProgrammingContestProblemService programmingContestProblemService;
     private UserService userService;
     private ContestProblemService contestProblemService;
     private ProgrammingContestService programmingContestService;
 
     @PostMapping("create-programmingcontest-problem")
-    public ResponseEntity<?> createProgrammingContestProblem(Principal principal, @RequestBody
-                                                             CreateProgrammingContestProblemInputModel input
-                                                             ){
-        log.info("createProgrammingContestProblem, contestId = " + input.getContestId() + " problemId = " + input.getProblemId());
+    public ResponseEntity<?> createProgrammingContestProblem(
+        Principal principal, @RequestBody
+        CreateProgrammingContestProblemInputModel input
+    ) {
+        log.info("createProgrammingContestProblem, contestId = " +
+                 input.getContestId() +
+                 " problemId = " +
+                 input.getProblemId());
         ProgrammingContestProblem programmingContestProblem = programmingContestProblemService.save(input);
         return ResponseEntity.ok().body(programmingContestProblem);
     }
 
 
-
     @GetMapping("get-all-programming-contest-problem-list")
-    public ResponseEntity<?> getAllProgrammingContestProblemList(Principal principal){
+    public ResponseEntity<?> getAllProgrammingContestProblemList(Principal principal) {
         List<ProgrammingContestProblem> programmingContestProblemList = programmingContestProblemService.findAll();
         return ResponseEntity.ok().body(programmingContestProblemList);
     }
+
     @GetMapping("get-problems-of-programming-contest/{contestId}")
-    public ResponseEntity<?> getProblemsOfProgrammingContest(Principal principal, @PathVariable String contestId){
+    public ResponseEntity<?> getProblemsOfProgrammingContest(Principal principal, @PathVariable String contestId) {
         log.info("getProblemsOfProgrammingContest, contestId = " + contestId);
         List<ContestProblem> contestProblems = programmingContestService.getProblemsOfContest(contestId);
         /*

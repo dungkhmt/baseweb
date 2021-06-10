@@ -12,8 +12,10 @@ import java.util.List;
 @Log4j2
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class CourseServiceImpl implements  CourseService{
+public class CourseServiceImpl implements CourseService {
+
     private EduCourseRepo courseRepo;
+
     @Override
     public List<EduCourse> findAll() {
         //return null;// TODO

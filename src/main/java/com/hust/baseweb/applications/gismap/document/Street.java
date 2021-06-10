@@ -16,6 +16,7 @@ import java.util.List;
 @Setter
 @Document
 public class Street {
+
     @Id
     private String streetId;
     private String streetName;
@@ -27,10 +28,14 @@ public class Street {
 
     private String createdByUserLoginId;
 
-    public void addPoint(double lat, double lng, String timestamp){
+    public void addPoint(double lat, double lng, String timestamp) {
         Point p = new Point();
-        p.setLat(lat); p.setLng(lng); p.setTimestamp(timestamp);
-        if(points == null) points = new ArrayList<>();
+        p.setLat(lat);
+        p.setLng(lng);
+        p.setTimestamp(timestamp);
+        if (points == null) {
+            points = new ArrayList<>();
+        }
         points.add(p);
     }
 }

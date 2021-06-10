@@ -11,15 +11,16 @@ import java.util.UUID;
 @Entity
 @Table(name = "edu_course_chapter")
 public class EduCourseChapter {
+
     public static final String STATUS_PRIVATE = "STATUS_PRIVATE";
     public static final String STATUS_PUBLIC = "STATUS_PUBLIC";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="chapter_id")
+    @Column(name = "chapter_id")
     private UUID chapterId;
 
-    @Column(name="chapter_name")
+    @Column(name = "chapter_name")
     private String chapterName;
 
     @ManyToOne(fetch = FetchType.LAZY)

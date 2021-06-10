@@ -18,21 +18,25 @@ import java.util.List;
 @Log4j2
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class StudentClassParticipationServiceImpl implements StudentClassParticipationService{
+public class StudentClassParticipationServiceImpl implements StudentClassParticipationService {
+
     private LogUserLoginCourseChapterMaterialRepo logUserLoginCourseChapterMaterialRepo;
 
 
     @Override
     public List<StudentClassParticipationOutputModel> getStudentClassParticipationStatistic(
-        GetClassParticipationStatisticInputModel input) {
+        GetClassParticipationStatisticInputModel input
+    ) {
         /*
             TO BE IMPROVED
          */
         int len = 10;
-        if(input.getLength() != 0)
+        if (input.getLength() != 0) {
             len = input.getLength();
+        }
 
-        List<LogUserLoginCourseChapterMaterial> logUserLoginCourseChapterMaterials = logUserLoginCourseChapterMaterialRepo.findAll();
+        List<LogUserLoginCourseChapterMaterial> logUserLoginCourseChapterMaterials = logUserLoginCourseChapterMaterialRepo
+            .findAll();
 
         List<StudentClassParticipationOutputModel> studentClassParticipationOutputModels = new ArrayList<>();
         /*
@@ -44,38 +48,44 @@ public class StudentClassParticipationServiceImpl implements StudentClassPartici
         studentClassParticipationOutputModels.add(new StudentClassParticipationOutputModel("2021-05-06",120));
         */
         HashMap<String, Integer> mDate2Count = new HashMap();
-        for(LogUserLoginCourseChapterMaterial i: logUserLoginCourseChapterMaterials){
+        for (LogUserLoginCourseChapterMaterial i : logUserLoginCourseChapterMaterials) {
             Date date = i.getCreateStamp();
-            if(date == null) {
+            if (date == null) {
                 log.info("getStudentClassParticipationStatistic, date = NULL " + i.getEduCourseMaterialId());
                 continue;
             }
             //log.info("getStudentClassParticipationStatistic, date = " + date.toString());
             String s_date = DateTimeUtils.date2YYYYMMDD(date);
-            if(mDate2Count.get(s_date) == null)
-                mDate2Count.put(s_date,1);
-            else
-                mDate2Count.put(s_date,mDate2Count.get(s_date)+1);
+            if (mDate2Count.get(s_date) == null) {
+                mDate2Count.put(s_date, 1);
+            } else {
+                mDate2Count.put(s_date, mDate2Count.get(s_date) + 1);
+            }
         }
         String[] s = new String[mDate2Count.keySet().size()];
         int idx = -1;
-        for(String k: mDate2Count.keySet()){
+        for (String k : mDate2Count.keySet()) {
             idx++;
             s[idx] = k;
         }
-        for(int i  = 0; i < s.length; i++){
-            for(int j = i+1; j < s.length; j++){
-                if(s[i].compareTo(s[j]) < 0){
-                    String tmp = s[i]; s[i] = s[j]; s[j] = tmp;
+        for (int i = 0; i < s.length; i++) {
+            for (int j = i + 1; j < s.length; j++) {
+                if (s[i].compareTo(s[j]) < 0) {
+                    String tmp = s[i];
+                    s[i] = s[j];
+                    s[j] = tmp;
                 }
             }
         }
-        if(len > s.length) len = s.length;
+        if (len > s.length) {
+            len = s.length;
+        }
 
-        for(int i = 0; i < len; i++){
-        //for(String sd: mDate2Count.keySet()){
+        for (int i = 0; i < len; i++) {
+            //for(String sd: mDate2Count.keySet()){
             String sd = s[i];
-            studentClassParticipationOutputModels.add(new StudentClassParticipationOutputModel(sd,mDate2Count.get(sd)));
+            studentClassParticipationOutputModels.add(new StudentClassParticipationOutputModel(sd,
+                                                                                               mDate2Count.get(sd)));
             //log.info("getStudentClassParticipationStatistic, date " + sd + " -> " + mDate2Count.get(sd));
         }
         return studentClassParticipationOutputModels;

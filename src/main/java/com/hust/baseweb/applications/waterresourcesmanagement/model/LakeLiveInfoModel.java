@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LakeLiveInfoModel {
+
     private Lake lake;
     private int[] mucNuocLuKiemTraHistory;
     private int[] luuLuongXaLuKiemTraHistory;

@@ -54,7 +54,7 @@ public class QuizController {
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/edu/teacher/course/quiz/detail/{questionId}")
     public ResponseEntity<?> getAllQuizCourseTopics(Principal principal, @PathVariable UUID questionId) {
-        log.info("getQuizQuestion"+ questionId);
+        log.info("getQuizQuestion" + questionId);
         QuizQuestion quizQuestion = quizQuestionService.findById(questionId);
         return ResponseEntity.ok().body(quizQuestion);
     }
@@ -129,7 +129,7 @@ public class QuizController {
 
         //System.out.println("hehehehehehehe");
         log.info("createQuizQuestion, topicId = " + input.getQuizCourseTopicId());
-        QuizQuestion quizQuestion = quizQuestionService.save(u,input, files);
+        QuizQuestion quizQuestion = quizQuestionService.save(u, input, files);
         return ResponseEntity.ok().body(quizQuestion);
     }
 
@@ -179,6 +179,7 @@ public class QuizController {
 
         return ResponseEntity.ok().body(quizQuestionDetailModels);
     }
+
     @GetMapping("/get-unpublished-quiz-of-course/{courseId}")
     public ResponseEntity<?> getUnPublishedQuizOfCourse(Principal principal, @PathVariable String courseId) {
 
@@ -200,8 +201,11 @@ public class QuizController {
                 String level1 = o1.getLevelId();
                 String level2 = o2.getLevelId();
                 int c1 = topic1.compareTo(topic2);
-                if(c1 == 0) return level1.compareTo(level2);
-                else return c1;
+                if (c1 == 0) {
+                    return level1.compareTo(level2);
+                } else {
+                    return c1;
+                }
             }
         });
         log.info("getUnPublishedQuizOfCourse, courseId = " + courseId
@@ -228,8 +232,11 @@ public class QuizController {
                 String level1 = o1.getLevelId();
                 String level2 = o2.getLevelId();
                 int c1 = topic1.compareTo(topic2);
-                if(c1 == 0) return level1.compareTo(level2);
-                else return c1;
+                if (c1 == 0) {
+                    return level1.compareTo(level2);
+                } else {
+                    return c1;
+                }
             }
         });
         return ResponseEntity.ok().body(quizQuestionDetailModels);
@@ -315,8 +322,12 @@ public class QuizController {
 
         return ResponseEntity.ok().body(ans);
     }
+
     @PostMapping("/remove-choice-answer-of-quiz")
-    public ResponseEntity<?> removeChoiceAnswerOfQuiz(Principal principal, @RequestBody RemoveChoiceAnswerInputModel input){
+    public ResponseEntity<?> removeChoiceAnswerOfQuiz(
+        Principal principal,
+        @RequestBody RemoveChoiceAnswerInputModel input
+    ) {
         QuizChoiceAnswer quizChoiceAnswer = quizChoiceAnswerService.delete(input.getChoiceAnswerId());
         return ResponseEntity.ok().body(quizChoiceAnswer);
     }

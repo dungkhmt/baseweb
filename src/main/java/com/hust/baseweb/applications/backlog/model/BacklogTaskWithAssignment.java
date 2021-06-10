@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 public class BacklogTaskWithAssignment {
+
     BacklogTask backlogTask;
     List<UserLoginReduced> assignment;
 }

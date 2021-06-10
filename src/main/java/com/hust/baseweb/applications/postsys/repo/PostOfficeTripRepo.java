@@ -8,5 +8,6 @@ import java.util.UUID;
 
 @Repository
 public interface PostOfficeTripRepo extends JpaRepository<PostOfficeTrip, UUID> {
+
     PostOfficeTrip findByFromPostOfficeIdAndToPostOfficeId(String fromPostOfficeId, String toPostOfficeId);
 }

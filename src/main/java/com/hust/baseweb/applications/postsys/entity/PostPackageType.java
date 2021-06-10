@@ -9,13 +9,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="POST_PACKAGE_TYPE")
+@Table(name = "POST_PACKAGE_TYPE")
 @Getter
 @Setter
 public class PostPackageType {
+
     @Id
-    @Column(name="post_package_type_id")
+    @Column(name = "post_package_type_id")
     private String postPackageTypeId;
-    @Column(name="post_package_type_name")
+    @Column(name = "post_package_type_name")
     private String postPackageTypeName;
 }
