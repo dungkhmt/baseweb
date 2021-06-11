@@ -14,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostmanAssignmentByDate {
+
     private UUID postmanId;
     private String postmanName;
     private String postOfficeId;

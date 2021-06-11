@@ -30,14 +30,19 @@ public interface PostShipOrderTripPostOfficeAssignmentRepo
                    "from " +
                    "post_ship_order_trip_post_office_assignment psotpoa1 " +
                    "inner join (" +
-                        "select max(psotpoa.delivery_order) delivery_order, psotpoa.post_ship_order_id " +
-                        "from post_ship_order_trip_post_office_assignment psotpoa " +
-                        "inner join post_ship_order pso on pso.post_ship_order_id = psotpoa.post_ship_order_id " +
-                        "where psotpoa.created_stamp >= ?1 and psotpoa.created_stamp < ?2 " +
-                        "and pso.status_id = ?3 " +
-                        "group by psotpoa.post_ship_order_id " +
-                   ") a on a.post_ship_order_id = psotpoa1.post_ship_order_id and a.delivery_order = psotpoa1.delivery_order", nativeQuery = true)
-    List<PostShipOrderTripPostOfficeAssignment> findByMaxDeliveryOrderAndDate(Date fromDate, Date toDate, String statusId);
+                   "select max(psotpoa.delivery_order) delivery_order, psotpoa.post_ship_order_id " +
+                   "from post_ship_order_trip_post_office_assignment psotpoa " +
+                   "inner join post_ship_order pso on pso.post_ship_order_id = psotpoa.post_ship_order_id " +
+                   "where psotpoa.created_stamp >= ?1 and psotpoa.created_stamp < ?2 " +
+                   "and pso.status_id = ?3 " +
+                   "group by psotpoa.post_ship_order_id " +
+                   ") a on a.post_ship_order_id = psotpoa1.post_ship_order_id and a.delivery_order = psotpoa1.delivery_order",
+           nativeQuery = true)
+    List<PostShipOrderTripPostOfficeAssignment> findByMaxDeliveryOrderAndDate(
+        Date fromDate,
+        Date toDate,
+        String statusId
+    );
 
     List<PostShipOrderTripPostOfficeAssignment> findByPostOrder_PostShipOrderIdOrderByCreatedStampAsc(UUID postOrderId);
 }

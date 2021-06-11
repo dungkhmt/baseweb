@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreatePostShipOrderInputModel {
+
     private boolean fromCustomerExist;
     private String fromCustomerId;
     private String fromCustomerName;

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface LogUserLoginCourseChapterMaterialService {
+
     public void logUserLoginMaterial(UserLogin userLogin, UUID eduCourseChapterMaterialId);
+
     public List<StudentCourseParticipationModel> findAllByClassId(UUID classId);
 }

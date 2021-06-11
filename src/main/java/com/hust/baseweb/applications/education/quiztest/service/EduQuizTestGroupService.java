@@ -8,6 +8,8 @@ import java.security.Principal;
 import java.util.List;
 
 public interface EduQuizTestGroupService {
+
     List<EduTestQuizGroup> generateQuizTestGroups(GenerateQuizTestGroupInputModel input);
+
     QuizGroupTestDetailModel getTestGroupQuestionDetail(Principal principal, String testID);
 }

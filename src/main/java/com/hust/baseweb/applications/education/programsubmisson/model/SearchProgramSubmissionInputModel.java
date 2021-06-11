@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 
 public class SearchProgramSubmissionInputModel {
+
     private String contestId;
     private String problemId;
     private String submittedByUserLoginId;

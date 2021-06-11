@@ -19,10 +19,10 @@ public class EduCourse {
     @Id
     private String id;
 
-    @Column(name="course_name")
+    @Column(name = "course_name")
     private String name;
 
-    @Column(name="credit")
+    @Column(name = "credit")
     private short credit;
 
     @LastModifiedDate

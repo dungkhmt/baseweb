@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OfficeOrderDetailOutput {
+
     PostOffice postOffice;
     List<PostOrder> fromPostOrders;
     List<PostOrder> toPostOrders;

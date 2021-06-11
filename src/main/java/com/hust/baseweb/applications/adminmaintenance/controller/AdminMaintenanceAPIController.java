@@ -53,10 +53,10 @@ public class AdminMaintenanceAPIController {
     }
 
     @GetMapping("/update-edu-class-set-class-code")
-    public ResponseEntity<?> updateEduClassSetClassCode(Principal principal){
+    public ResponseEntity<?> updateEduClassSetClassCode(Principal principal) {
         List<EduClass> eduClasses = classRepo.findAll();
-        for(EduClass c: eduClasses){
-            c.setClassCode(c.getCode()+"");
+        for (EduClass c : eduClasses) {
+            c.setClassCode(c.getCode() + "");
             c = classRepo.save(c);
         }
         return ResponseEntity.ok().body("OK");

@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateProductInputModel {
+
     private String productId;
     private String productName;
     private String uomId;

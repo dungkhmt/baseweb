@@ -20,11 +20,13 @@ import java.util.*;
 @Log4j2
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class LogUserLoginCourseChapterMaterialServiceImpl implements  LogUserLoginCourseChapterMaterialService{
+public class LogUserLoginCourseChapterMaterialServiceImpl implements LogUserLoginCourseChapterMaterialService {
+
     private LogUserLoginCourseChapterMaterialRepo logUserLoginCourseChapterMaterialRepo;
     private EduCourseChapterMaterialRepo eduCourseChapterMaterialRepo;
     private UserService userService;
     private ClassRepo classRepo;
+
     @Override
     public void logUserLoginMaterial(UserLogin userLogin, UUID eduCourseChapterMaterialId) {
         LogUserLoginCourseChapterMaterial logUserLoginCourseChapterMaterial = new LogUserLoginCourseChapterMaterial();
@@ -39,15 +41,15 @@ public class LogUserLoginCourseChapterMaterialServiceImpl implements  LogUserLog
     public List<StudentCourseParticipationModel> findAllByClassId(UUID classId) {
         List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialRepo.findAll();
         Map<UUID, String> mId2Name = new HashMap<UUID, String>();
-        for(EduCourseChapterMaterial m: eduCourseChapterMaterials){
-            mId2Name.put(m.getEduCourseMaterialId(),m.getEduCourseMaterialName());
+        for (EduCourseChapterMaterial m : eduCourseChapterMaterials) {
+            mId2Name.put(m.getEduCourseMaterialId(), m.getEduCourseMaterialName());
         }
 
         EduClass eduClass = classRepo.findById(classId).orElse(null);
         int classCode = 0;
         String courseId = "";
         String courseName = "";
-        if(eduClass != null){
+        if (eduClass != null) {
             classCode = eduClass.getCode();
             courseId = eduClass.getEduCourse().getId();
             courseName = eduClass.getEduCourse().getName();
@@ -55,7 +57,7 @@ public class LogUserLoginCourseChapterMaterialServiceImpl implements  LogUserLog
 
         List<LogUserLoginCourseChapterMaterial> lst = logUserLoginCourseChapterMaterialRepo.findAll();
         List<StudentCourseParticipationModel> studentClassParticipationOutputModels = new ArrayList();
-        for(LogUserLoginCourseChapterMaterial e: lst){
+        for (LogUserLoginCourseChapterMaterial e : lst) {
             PersonModel personModel = userService.findPersonByUserLoginId(e.getUserLoginId());
             studentClassParticipationOutputModels.add(new StudentCourseParticipationModel(
                 e.getUserLoginId(),

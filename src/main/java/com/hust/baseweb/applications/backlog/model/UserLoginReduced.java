@@ -17,6 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class UserLoginReduced {
+
     private String userLoginId;
     private UUID partyId;
     private String partyCode;

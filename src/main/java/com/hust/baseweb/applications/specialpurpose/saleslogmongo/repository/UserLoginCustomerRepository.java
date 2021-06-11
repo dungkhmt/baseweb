@@ -7,6 +7,9 @@ import java.util.Date;
 import java.util.List;
 
 public interface UserLoginCustomerRepository extends MongoRepository<UserLoginCustomer, String> {
-    List<UserLoginCustomer> findAllByUserLoginIdAndUserLoginOrganizationRelationTypeAndThruDate(String userLoginId,
-                                                                                                String userLoginOrganizationRelationType, Date thruDate);
+
+    List<UserLoginCustomer> findAllByUserLoginIdAndUserLoginOrganizationRelationTypeAndThruDate(
+        String userLoginId,
+        String userLoginOrganizationRelationType, Date thruDate
+    );
 }

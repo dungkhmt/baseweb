@@ -13,14 +13,16 @@ import java.util.List;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MongoProductServiceImpl implements MongoProductService {
+
     private final ProductRepository productRepository;
+
     @Override
     public List<ProductModel> findAllProductAndPrice() {
         List<Product> products = productRepository.findAll();
         List<ProductModel> productModels = new ArrayList<ProductModel>();
-        for(Product p: products){
+        for (Product p : products) {
             // temporarily hard code
-            productModels.add(new ProductModel(p.getProductId(),p.getProductName(),1000));
+            productModels.add(new ProductModel(p.getProductId(), p.getProductName(), 1000));
         }
         return productModels;
     }

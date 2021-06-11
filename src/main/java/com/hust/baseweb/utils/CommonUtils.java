@@ -17,9 +17,10 @@ public class CommonUtils {
     public static Logger LOG = LoggerFactory.getLogger(CommonUtils.class);
     public static int SEQ_ID_LEN = 6;
 
-    public static boolean nullString(String s){
+    public static boolean nullString(String s) {
         return s == null || s.equals("");
     }
+
     @SuppressWarnings("unchecked")
     public static Map<String, Object> json2MapObject(String json) {
         Gson gson = new Gson();
@@ -117,70 +118,85 @@ public class CommonUtils {
         return stringBuilder.toString();
     }
 
-    public static int convertStr2Int(String s){
-        try{
+    public static int convertStr2Int(String s) {
+        try {
             //s.replaceAll("0"," ");
             System.out.println("convertStr2Int, s = " + s);
 
-            s= s.trim();
+            s = s.trim();
             int num = Integer.valueOf(s);
             return num;
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
     }
-    public static String[] generateNextSeqId(String[] seqIds, int sz){
+
+    public static String[] generateNextSeqId(String[] seqIds, int sz) {
         String[] res = new String[sz];
         int[] idx = new int[seqIds.length];
-        try{
+        try {
             int minValue = 0;
             HashSet<Integer> S = new HashSet<Integer>();
-            for(int i = 0; i < seqIds.length; i++){
+            for (int i = 0; i < seqIds.length; i++) {
 
                 idx[i] = convertStr2Int(seqIds[i]);
                 System.out.println("generateNextSeqId, convert get " + idx[i]);
-                if(idx[i] < 0) return null;
-                if(i == 0) minValue = idx[i];
-                else {
-                    if(minValue > idx[i]) minValue= idx[i];
+                if (idx[i] < 0) {
+                    return null;
+                }
+                if (i == 0) {
+                    minValue = idx[i];
+                } else {
+                    if (minValue > idx[i]) {
+                        minValue = idx[i];
+                    }
                 }
                 S.add(idx[i]);
             }
-            for(int i = 0; i < sz; i++){
+            for (int i = 0; i < sz; i++) {
                 int n = minValue;
-                do{
+                do {
                     n = n + 1;
-                }while(S.contains(n));
+                } while (S.contains(n));
                 S.add(n);
                 res[i] = buildSeqId(n);
             }
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
         return res;
     }
-    public static int[] genRandom(int a, int n, Random R){
+
+    public static int[] genRandom(int a, int n, Random R) {
         // return a random elements from 0,...,n-1
-        if(a > n) return null;
+        if (a > n) {
+            return null;
+        }
         int[] idx = new int[n];
-        for(int j = 0; j < n; j++) idx[j] = j;
+        for (int j = 0; j < n; j++) {
+            idx[j] = j;
+        }
         int[] ans = new int[a];
-        for(int j = 0; j < a; j++){
+        for (int j = 0; j < a; j++) {
             int k = R.nextInt(n);
             ans[j] = idx[k];
             // remove the kth element by swapping idx[k] with idx[n-1]
-            int tmp = idx[k]; idx[k] = idx[n-1]; idx[n-1] = tmp;
+            int tmp = idx[k];
+            idx[k] = idx[n - 1];
+            idx[n - 1] = tmp;
             n = n - 1;
         }
         return ans;
     }
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
         Random R = new Random();
-        int[] a = genRandom(4,10, R);
-        for(int i = 0; i < a.length; i++)
+        int[] a = genRandom(4, 10, R);
+        for (int i = 0; i < a.length; i++) {
             System.out.print(a[i] + " ");
+        }
     }
 }

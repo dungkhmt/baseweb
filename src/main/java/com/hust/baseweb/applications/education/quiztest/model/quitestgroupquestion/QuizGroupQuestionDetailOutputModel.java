@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuizGroupQuestionDetailOutputModel {
+
     private UUID quizGroupId;
     private String groupCode;
     private String questionStatement;

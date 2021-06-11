@@ -9,6 +9,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class CreateBacklogTaskInputModel {
+
     private UUID backlogTaskId;
     private String backlogTaskName;
     private String categoryId;

@@ -10,10 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class SolverController {
-    @Autowired SolverService solverService;
+
+    @Autowired
+    SolverService solverService;
 
     @PostMapping("/post-office-vrp-solve")
-    public ResponseEntity<?> postOfficeVrpSolve(@RequestBody PostOfficeVrpSolveInputModel postOfficeVrpSolveInputModel) {
+    public ResponseEntity<?> postOfficeVrpSolve(
+        @RequestBody PostOfficeVrpSolveInputModel postOfficeVrpSolveInputModel
+    ) {
         return ResponseEntity.ok().body(solverService.postOfficeVrpSolve(postOfficeVrpSolveInputModel));
     }
 }

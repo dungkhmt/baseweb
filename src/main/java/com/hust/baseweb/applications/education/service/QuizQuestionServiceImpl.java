@@ -65,7 +65,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
-    public QuizQuestion save(QuizQuestionCreateInputModel input, MultipartFile[] files) {
+    public QuizQuestion save(UserLogin u, QuizQuestionCreateInputModel input, MultipartFile[] files) {
 
         //Do save file
         Date now = new Date();
@@ -74,7 +74,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         ArrayList<String> attachmentPaths = new ArrayList<>();
         Arrays.asList(files).forEach(file -> {
             try {
-                Path path = Paths.get(properties.getFilesystemRoot()+"\\" + properties.getClassManagementDataPath());
+                Path path = Paths.get(properties.getFilesystemRoot() + "\\" + properties.getClassManagementDataPath());
                 String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
                 if (file.isEmpty()) {
@@ -102,6 +102,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         QuizQuestion quizQuestion = new QuizQuestion();
         quizQuestion.setLevelId(input.getLevelId());
         quizQuestion.setQuestionContent(input.getQuestionContent());
+        //quizQuestion.setCreatedByUserLogin(u);
+        quizQuestion.setCreatedByUserLoginId(u.getUserLoginId());
         QuizCourseTopic quizCourseTopic = quizCourseTopicRepo.findById(input.getQuizCourseTopicId()).orElse(null);
 
         quizQuestion.setQuizCourseTopic(quizCourseTopic);
@@ -154,8 +156,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         try {
             String tempDate = formatter.format(quizQuestion.getCreatedStamp());
             quizQuestionDetailModel.setCreatedStamp(tempDate);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             //  Block of code to handle errors
         }
         List<QuizChoiceAnswer> quizChoiceAnswers = quizChoiceAnswerRepo.findAllByQuizQuestion(quizQuestion);
@@ -213,7 +214,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
-    public QuizQuestion update(UUID questionId, QuizQuestionUpdateInputModel input, MultipartFile[] files){
+    public QuizQuestion update(UUID questionId, QuizQuestionUpdateInputModel input, MultipartFile[] files) {
 //        Date now = new Date();
 //        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 //        String prefixFileName = formatter.format(now);
@@ -243,15 +244,17 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 //        });
         //taskInput.setAttachmentPaths(attachmentPaths.toArray(new String[0]));
         QuizQuestion quizQuestionTemp = quizQuestionRepo.findById(questionId).orElse(null);
-        if (quizQuestionTemp == null)
+        if (quizQuestionTemp == null) {
             return null;
+        }
         QuizQuestion quizQuestion = new QuizQuestion();
         quizQuestion.setQuestionId(questionId);
         quizQuestion.setLevelId(input.getLevelId());
         quizQuestion.setQuestionContent(input.getQuestionContent());
         QuizCourseTopic quizCourseTopic = quizCourseTopicRepo.findById(input.getQuizCourseTopicId()).orElse(null);
-        if (quizCourseTopic == null)
+        if (quizCourseTopic == null) {
             return null;
+        }
         quizQuestion.setQuizCourseTopic(quizCourseTopic);
 //        quizQuestion.setAttachment(String.join(";", attachmentPaths.toArray(new String[0])));
         quizQuestion.setLastUpdatedStamp(new Date());

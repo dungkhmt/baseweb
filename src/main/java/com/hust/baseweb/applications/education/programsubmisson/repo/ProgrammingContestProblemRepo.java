@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface ProgrammingContestProblemRepo extends JpaRepository<ProgrammingContestProblem,
     CompositeProgrammingContestProblemId> {
+
     ProgrammingContestProblem save(ProgrammingContestProblem programmingContestProblem);
+
     List<ProgrammingContestProblem> findByContestId(String contestId);
 }

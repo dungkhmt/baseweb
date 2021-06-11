@@ -14,16 +14,17 @@ import java.util.UUID;
 @IdClass(CompositeQuizGroupQuestionParticipationExecutionId.class)
 
 public class QuizGroupQuestionParticipationExecution {
+
     @Id
-    @Column(name="question_id")
+    @Column(name = "question_id")
     private UUID questionId;
 
     @Id
-    @Column(name="quiz_group_id")
+    @Column(name = "quiz_group_id")
     private UUID quizGroupId;
 
     @Id
-    @Column(name="participation_user_login_id")
+    @Column(name = "participation_user_login_id")
     private String participationUserLoginId;
 
 }

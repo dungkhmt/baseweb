@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EduTestQuizParticipationCreateInputModel {
+
     private String testQuizId;
     //private String userLoginId; take this param from principal of Controller
 }

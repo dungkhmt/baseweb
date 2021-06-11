@@ -177,7 +177,7 @@ public class SalesServiceImple implements SalesService {
     public List<SalesOrderViewModel> getAllSalesOrders() {
         List<SalesOrder> salesOrders = salesOrderRepository.findAll();
         List<SalesOrderViewModel> orderViewModels = new ArrayList<>();
-        
+
         return orderViewModels;
     }
 
@@ -196,7 +196,7 @@ public class SalesServiceImple implements SalesService {
 
         List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(customerIds);
 
-        for(Organization organization: organizations){
+        for (Organization organization : organizations) {
             organizationRepository.delete(organization);
         }
         customerRepository.deleteAll();

@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public interface TimeTableService
-{
+public interface TimeTableService {
+
     TimeTable save(TimeTableModelInput input);
+
     List<TimeTable> findAll();
 }

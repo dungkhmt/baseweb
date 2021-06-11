@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchProgrammingContestUserRegistrationInputModel {
+
     private String userLoginId;
     private String contestId;
     private String statusId;

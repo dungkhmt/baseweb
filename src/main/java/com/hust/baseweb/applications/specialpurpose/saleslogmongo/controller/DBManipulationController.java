@@ -18,28 +18,32 @@ import java.security.Principal;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class DBManipulationController {
+
     UserService userService;
     private final SalesService salesService;
     private final LogisticService logisticsService;
 
     @GetMapping("/mongo/delete-all-sales-logistics")
-    public ResponseEntity<?> deleteAllSalesLogisticsData(Principal principal){
+    public ResponseEntity<?> deleteAllSalesLogisticsData(Principal principal) {
         salesService.deleteAllRunningData();
         logisticsService.removeAllRunningData();
         return ResponseEntity.ok().body("remove all running data OK");
     }
+
     @GetMapping("/mongo/delete-all-products")
-    public ResponseEntity<?> deleteAllProducts(Principal principal){
+    public ResponseEntity<?> deleteAllProducts(Principal principal) {
         logisticsService.removeAllProductData();
         return ResponseEntity.ok().body("remove all products data OK");
     }
+
     @GetMapping("/mongo/delete-all-facilities")
-    public ResponseEntity<?> deleteAllFacilities(Principal principal){
+    public ResponseEntity<?> deleteAllFacilities(Principal principal) {
         logisticsService.removeAllFacilityData();
         return ResponseEntity.ok().body("remove all facility data OK");
     }
+
     @GetMapping("/mongo/delete-all-customers")
-    public ResponseEntity<?> deleteAllCustomers(Principal principal){
+    public ResponseEntity<?> deleteAllCustomers(Principal principal) {
         salesService.removeAllCustomerData();
         return ResponseEntity.ok().body("remove all customers data OK");
     }

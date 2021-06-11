@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RemoveQuizGroupQuestionInputModel {
+
     private UUID quizGroupId;
     private UUID questionId;
 }

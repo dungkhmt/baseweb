@@ -13,20 +13,21 @@ import java.util.UUID;
 @Table(name = "quiz_group_question_participation_execution_choice")
 @IdClass(CompositeQuizGroupQuestionParticipationExecutionChoiceId.class)
 public class QuizGroupQuestionParticipationExecutionChoice {
+
     @Id
-    @Column(name="question_id")
+    @Column(name = "question_id")
     private UUID questionId;
 
     @Id
-    @Column(name="quiz_group_id")
+    @Column(name = "quiz_group_id")
     private UUID quizGroupId;
 
     @Id
-    @Column(name="participation_user_login_id")
+    @Column(name = "participation_user_login_id")
     private String participationUserLoginId;
 
     @Id
-    @Column(name="choice_answer_id")
+    @Column(name = "choice_answer_id")
     private UUID choiceAnswerId;
 
 

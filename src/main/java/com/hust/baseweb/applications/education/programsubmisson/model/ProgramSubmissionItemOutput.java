@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProgramSubmissionItemOutput {
+
     private String test;
     private String output;
 }

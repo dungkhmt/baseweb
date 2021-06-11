@@ -8,5 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface QuizChoiceAnswerRepo extends JpaRepository<QuizChoiceAnswer, UUID> {
+
     List<QuizChoiceAnswer> findAllByQuizQuestion(QuizQuestion quizQuestion);
 }

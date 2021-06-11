@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExecuteTripOutputModel {
+
     private String postOfficeFixedTripExecuteId;
     private String postOfficeFixedTripId;
     private Date departureDateTime;

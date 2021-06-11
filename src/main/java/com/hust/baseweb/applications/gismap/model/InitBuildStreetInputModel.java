@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InitBuildStreetInputModel {
+
     private String streetName;
     private boolean forCar;
     private boolean forTruck;

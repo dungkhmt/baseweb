@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface UserRepo extends JpaRepository<UserLogin, UUID>{
+public interface UserRepo extends JpaRepository<UserLogin, UUID> {
 
     @Query("select roles from UserLogin ul where ul.userLoginId = ?1")
     String findSecurityGroupByUser(String username);

@@ -9,5 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface PostDriverPostOfficeAssignmentRepo extends JpaRepository<PostDriverPostOfficeAssignment, UUID> {
+
     List<PostDriverPostOfficeAssignment> findByPostDriverId(UUID postDriverId);
 }

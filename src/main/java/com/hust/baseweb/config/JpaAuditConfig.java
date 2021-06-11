@@ -14,6 +14,7 @@ import javax.persistence.EntityManagerFactory;
 @Configuration
 @EnableJpaAuditing
 public class JpaAuditConfig {
+
     @Autowired
     private EntityManagerFactory entityManagerFactory;
 
@@ -22,7 +23,7 @@ public class JpaAuditConfig {
         return new SpringSecurityAuditorAware();
     }
 
-    @Bean(name="jpa_transaction_manager")
+    @Bean(name = "jpa_transaction_manager")
     @Primary
     PlatformTransactionManager jpaTransactionManager() {
         return new JpaTransactionManager(entityManagerFactory);

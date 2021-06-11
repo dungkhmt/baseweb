@@ -24,7 +24,7 @@ public class EduClass {
 
     private Integer code;
 
-    @Column(name="class_code")
+    @Column(name = "class_code")
     private String classCode;
 
     @ManyToOne(optional = false)
@@ -33,17 +33,17 @@ public class EduClass {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", referencedColumnName = "id")
-	private EduCourse eduCourse;
+    private EduCourse eduCourse;
 
-	private String classType;
+    private String classType;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", referencedColumnName = "id")
-	private EduDepartment eduDepartment;
+    private EduDepartment eduDepartment;
 
-	@ManyToOne
+    @ManyToOne
     @JoinColumn(name = "teacher_id", referencedColumnName = "user_login_id")
-	private UserLogin teacher;
+    private UserLogin teacher;
 
     @LastModifiedDate
     private Date lastUpdatedStamp;

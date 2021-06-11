@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdatePostmanPostOrderAssignmentInputModel {
+
     private String postShipOrderPostmanLastMileAssignmentId;
     private String postShipOrderId;
     private String status;

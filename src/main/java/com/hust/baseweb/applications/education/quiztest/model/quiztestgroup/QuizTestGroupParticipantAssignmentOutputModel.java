@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuizTestGroupParticipantAssignmentOutputModel {
+
     private UUID quizTestGroupId;
     private String quizTestGroupCode;
     private String participantUserLoginId;

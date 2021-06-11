@@ -15,7 +15,9 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface ClassRepo extends JpaRepository<EduClass, UUID> {
+
     List<EduClass> findAll();
+
     List<EduClass> findByClassCode(String classCode);
 
     /*Class save(Class aClass);

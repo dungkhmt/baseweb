@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class QuizGroupQuestionAssignmentServiceImpl implements QuizGroupQuestionAssignmentService{
+public class QuizGroupQuestionAssignmentServiceImpl implements QuizGroupQuestionAssignmentService {
+
     private QuizGroupQuestionAssignmentRepo quizGroupQuestionAssignmentRepo;
     private EduQuizTestGroupRepo eduQuizTestGroupRepo;
     private QuizQuestionRepo quizQuestionRepo;
@@ -32,28 +33,32 @@ public class QuizGroupQuestionAssignmentServiceImpl implements QuizGroupQuestion
         // TO BE IMPROVED
         List<QuizQuestion> quizQuestions = quizQuestionRepo.findAll();
         HashMap<UUID, QuizQuestion> mId2QuizQuestion = new HashMap();
-        for(QuizQuestion q: quizQuestions){
-            mId2QuizQuestion.put(q.getQuestionId(),q);
+        for (QuizQuestion q : quizQuestions) {
+            mId2QuizQuestion.put(q.getQuestionId(), q);
         }
 
         HashMap<UUID, EduTestQuizGroup> mId2QuizTestGroup = new HashMap();
-        for(EduTestQuizGroup g: eduQuizTestGroups){
-            mId2QuizTestGroup.put(g.getQuizGroupId(),g);
+        for (EduTestQuizGroup g : eduQuizTestGroups) {
+            mId2QuizTestGroup.put(g.getQuizGroupId(), g);
         }
 
         log.info("findAllQuizGroupQuestionAssignmentOfTest, groups.sz = " + eduQuizTestGroups.size());
-        List<UUID> quizGroupIds= eduQuizTestGroups.stream().map(eduQuizTestGroup -> eduQuizTestGroup.getQuizGroupId()).collect(
-            Collectors.toList());
-        for(UUID id: quizGroupIds){
+        List<UUID> quizGroupIds = eduQuizTestGroups
+            .stream()
+            .map(eduQuizTestGroup -> eduQuizTestGroup.getQuizGroupId())
+            .collect(
+                Collectors.toList());
+        for (UUID id : quizGroupIds) {
             log.info("findAllQuizGroupQuestionAssignmentOfTest, groupId " + id);
         }
-        List<QuizGroupQuestionAssignment> quizGroupQuestionAssignment = quizGroupQuestionAssignmentRepo.findAllByQuizGroupIdIn(quizGroupIds);
+        List<QuizGroupQuestionAssignment> quizGroupQuestionAssignment = quizGroupQuestionAssignmentRepo.findAllByQuizGroupIdIn(
+            quizGroupIds);
         log.info("findAllQuizGroupQuestionAssignmentOfTest, return sz = " + quizGroupQuestionAssignment.size());
         List<QuizGroupQuestionDetailOutputModel> quizGroupQuestionDetailOutputModels = new ArrayList();
-        for(QuizGroupQuestionAssignment qgq: quizGroupQuestionAssignment){
+        for (QuizGroupQuestionAssignment qgq : quizGroupQuestionAssignment) {
             QuizQuestion q = mId2QuizQuestion.get(qgq.getQuestionId());
             EduTestQuizGroup g = mId2QuizTestGroup.get(qgq.getQuizGroupId());
-            QuizGroupQuestionDetailOutputModel quizGroupQuestionDetailOutputModel  = new QuizGroupQuestionDetailOutputModel();
+            QuizGroupQuestionDetailOutputModel quizGroupQuestionDetailOutputModel = new QuizGroupQuestionDetailOutputModel();
             quizGroupQuestionDetailOutputModel.setGroupCode(g.getGroupCode());
             quizGroupQuestionDetailOutputModel.setQuestionId(qgq.getQuestionId());
             quizGroupQuestionDetailOutputModel.setQuizGroupId(qgq.getQuizGroupId());
@@ -72,11 +77,20 @@ public class QuizGroupQuestionAssignmentServiceImpl implements QuizGroupQuestion
     @Transactional
     @Override
     public boolean removeQuizGroupQuestionAssignment(RemoveQuizGroupQuestionInputModel input) {
-        log.info("removeQuizGroupQuestionAssignment, quizGroup " + input.getQuizGroupId() + " questionId " + input.getQuestionId());
-        QuizGroupQuestionAssignment gq = quizGroupQuestionAssignmentRepo.findByQuestionIdAndQuizGroupId(input.getQuestionId(), input.getQuizGroupId());
-        if(gq == null){
-            log.info("removeQuizGroupQuestionAssignment, quizGroup " + input.getQuizGroupId() + " questionId " + input.getQuestionId()
-            + " NOT EXIST!!");
+        log.info("removeQuizGroupQuestionAssignment, quizGroup " +
+                 input.getQuizGroupId() +
+                 " questionId " +
+                 input.getQuestionId());
+        QuizGroupQuestionAssignment gq = quizGroupQuestionAssignmentRepo.findByQuestionIdAndQuizGroupId(
+            input.getQuestionId(),
+            input.getQuizGroupId());
+        if (gq == null) {
+            log.info("removeQuizGroupQuestionAssignment, quizGroup " +
+                     input.getQuizGroupId() +
+                     " questionId " +
+                     input.getQuestionId()
+                     +
+                     " NOT EXIST!!");
             return false;
         }
         quizGroupQuestionAssignmentRepo.delete(gq);
@@ -85,11 +99,20 @@ public class QuizGroupQuestionAssignmentServiceImpl implements QuizGroupQuestion
 
     @Override
     public QuizGroupQuestionAssignment addQuizGroupQuestionAssignment(AddQuizGroupQuestionInputModel input) {
-        log.info("addQuizGroupQuestionAssignment, quizGroup " + input.getQuizGroupId() + " questionId " + input.getQuestionId());
-        QuizGroupQuestionAssignment gq = quizGroupQuestionAssignmentRepo.findByQuestionIdAndQuizGroupId(input.getQuestionId(), input.getQuizGroupId());
-        if(gq != null){
-            log.info("addQuizGroupQuestionAssignment, quizGroup " + input.getQuizGroupId() + " questionId " + input.getQuestionId()
-                     + " ALREADY EXIST!!");
+        log.info("addQuizGroupQuestionAssignment, quizGroup " +
+                 input.getQuizGroupId() +
+                 " questionId " +
+                 input.getQuestionId());
+        QuizGroupQuestionAssignment gq = quizGroupQuestionAssignmentRepo.findByQuestionIdAndQuizGroupId(
+            input.getQuestionId(),
+            input.getQuizGroupId());
+        if (gq != null) {
+            log.info("addQuizGroupQuestionAssignment, quizGroup " +
+                     input.getQuizGroupId() +
+                     " questionId " +
+                     input.getQuestionId()
+                     +
+                     " ALREADY EXIST!!");
 
             return gq;
         }

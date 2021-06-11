@@ -11,6 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class CompositeQuizGroupQuestionParticipationExecutionChoiceId implements Serializable {
+
     private UUID questionId;
     private UUID quizGroupId;
     private String participationUserLoginId;

@@ -14,23 +14,24 @@ import javax.persistence.Table;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="programming_contest")
+@Table(name = "programming_contest")
 @Entity
 public class ProgrammingContest {
+
     public static final String CONTEST_TYPE_PARTICIPANT_IDENTICAL = "PARTICIPANT_IDENTICAL";
     public static final String CONTEST_TYPE_PARTICIPANT_SPECIFIC = "PARTICIPANT_SPECIFIC";
 
     @Id
-    @Column(name="contest_id")
+    @Column(name = "contest_id")
     private String contestId;
 
-    @Column(name="contest_name")
+    @Column(name = "contest_name")
     private String contestName;
 
-    @Column(name="created_by_user_login_id")
+    @Column(name = "created_by_user_login_id")
     private String createdByUserLoginId;
 
-    @Column(name="contest_type_id")
+    @Column(name = "contest_type_id")
     private String contestTypeId;
 
 }

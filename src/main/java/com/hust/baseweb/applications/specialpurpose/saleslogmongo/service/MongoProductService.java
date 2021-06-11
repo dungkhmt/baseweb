@@ -5,5 +5,6 @@ import com.hust.baseweb.applications.specialpurpose.saleslogmongo.model.ProductM
 import java.util.List;
 
 public interface MongoProductService {
+
     List<ProductModel> findAllProductAndPrice();
 }

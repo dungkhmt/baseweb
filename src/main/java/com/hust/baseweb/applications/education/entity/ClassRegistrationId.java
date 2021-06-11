@@ -29,8 +29,12 @@ public class ClassRegistrationId implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ClassRegistrationId)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ClassRegistrationId)) {
+            return false;
+        }
 
         ClassRegistrationId id = (ClassRegistrationId) o;
 

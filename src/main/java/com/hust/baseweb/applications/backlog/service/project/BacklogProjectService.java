@@ -10,11 +10,18 @@ import java.util.UUID;
 
 @Service
 public interface BacklogProjectService {
+
     BacklogProject save(UserLogin userLogin, CreateProjectInputModel input);
+
     List<BacklogProject> findAll();
+
     List<BacklogProject> findByProjectCode(String projectCode);
+
     List<BacklogProject> findByProjectName(String projectName);
+
     BacklogProject findByBacklogProjectId(UUID backlogProjectId);
+
     List<BacklogProject> findAllByMemberPartyId(UUID partyId);
+
     BacklogProject create(CreateProjectInputModel projectModel);
 }

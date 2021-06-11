@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HistoryLogQuizGroupQuestionParticipationExecutionChoiceDetailModel {
+
     private String userLoginId;
     private String fullName;
     private String classCode;

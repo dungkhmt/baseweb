@@ -120,10 +120,10 @@ public class LogisticServiceImpl implements LogisticService {
         Facility facility = facilityRepository.findByFacilityId(facilityId);
         getInventoryItemOutputModel.setFacility(facility);
         List<GetInventoryItemOutputModel.ProductQuantity> productQuantities = new ArrayList<>();
-        for(ProductFacility productFacility: productFacilities){
+        for (ProductFacility productFacility : productFacilities) {
             Product product = productRepository.findByProductId(productFacility.getId().getProductId());
             int qty = productFacility.getQuantityOnHand();
-            productQuantities.add(new GetInventoryItemOutputModel.ProductQuantity(product,qty));
+            productQuantities.add(new GetInventoryItemOutputModel.ProductQuantity(product, qty));
         }
         getInventoryItemOutputModel.setProductQuantities(productQuantities);
 
@@ -180,7 +180,6 @@ public class LogisticServiceImpl implements LogisticService {
     }
 
 
-
     @Override
     public List<FacilityModel> getFacilityOfSalesman(String salesmanId) {
         List<UserLoginFacility> userLoginFacilities = userLoginFacilityRepository.findByUserLoginIdAndUserLoginFacilityRelationTypeAndThruDate(
@@ -197,9 +196,13 @@ public class LogisticServiceImpl implements LogisticService {
         //List<Facility> facility = facilityRepository.findAllByFacilityIdIn(facilityIds);
         List<FacilityModel> facilityModels = new ArrayList<FacilityModel>();
         List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(facilityIds);
-        for(Organization organization: organizations){
+        for (Organization organization : organizations) {
 
-            FacilityModel facilityModel = new FacilityModel(organization.getOrganizationId(),organization.getOrganizationName(), organization.getAddress(), salesmanId);
+            FacilityModel facilityModel = new FacilityModel(
+                organization.getOrganizationId(),
+                organization.getOrganizationName(),
+                organization.getAddress(),
+                salesmanId);
             facilityModels.add(facilityModel);
         }
         return facilityModels;
@@ -217,25 +220,31 @@ public class LogisticServiceImpl implements LogisticService {
 //        return facilities;
     }
 
-    private String getUserLoginIdCreateFacility(String facilityId){
-        List<UserLoginFacility> userLoginFacilities = userLoginFacilityRepository.findByFacilityIdAndUserLoginFacilityRelationTypeAndThruDate(facilityId,
-                                                                                                                                              UserLoginFacilityRelationType.SALESMAN_SELL_FROM_FACILITY,
-                                                                                                                                              null
-                                                                                                                                              );
-        if(userLoginFacilities != null && userLoginFacilities.size() > 0){
+    private String getUserLoginIdCreateFacility(String facilityId) {
+        List<UserLoginFacility> userLoginFacilities = userLoginFacilityRepository.findByFacilityIdAndUserLoginFacilityRelationTypeAndThruDate(
+            facilityId,
+            UserLoginFacilityRelationType.SALESMAN_SELL_FROM_FACILITY,
+            null
+        );
+        if (userLoginFacilities != null && userLoginFacilities.size() > 0) {
             return userLoginFacilities.get(0).getUserLoginId();
         }
         return null;
     }
+
     @Override
     public List<FacilityModel> getAllFacilities() {
         List<Facility> facilities = facilityRepository.findAll();
         List<String> facilityIds = facilities.stream().map(Facility::getFacilityId).collect(Collectors.toList());
         List<FacilityModel> facilityModels = new ArrayList<FacilityModel>();
         List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(facilityIds);
-        for(Organization organization: organizations){
+        for (Organization organization : organizations) {
             String userLoginId = getUserLoginIdCreateFacility(organization.getOrganizationId());
-            FacilityModel facilityModel = new FacilityModel(organization.getOrganizationId(),organization.getOrganizationName(), organization.getAddress(),userLoginId);
+            FacilityModel facilityModel = new FacilityModel(
+                organization.getOrganizationId(),
+                organization.getOrganizationName(),
+                organization.getAddress(),
+                userLoginId);
             facilityModels.add(facilityModel);
         }
         return facilityModels;
@@ -281,7 +290,7 @@ public class LogisticServiceImpl implements LogisticService {
     @Override
     public Product createProduct(String productId, String productName, String uomId) {
         Product product = productRepository.findByProductId(productId);
-        if(product != null){
+        if (product != null) {
             log.info("createProduct -> ProductId " + productId + " EXISTS!!!!");
             return null;
         }
@@ -290,7 +299,7 @@ public class LogisticServiceImpl implements LogisticService {
         product = new Product();
         product.setProductId(productId);
         product.setProductName(productName);
-        if(uom != null) {
+        if (uom != null) {
             product.setUomId(uom.getUomId());
             product.setUomDescription(uom.getDescription());
         }
@@ -322,7 +331,7 @@ public class LogisticServiceImpl implements LogisticService {
         List<Facility> facilities = facilityRepository.findAll();
         List<String> facilityIds = facilities.stream().map(Facility::getFacilityId).collect(Collectors.toList());
         List<Organization> organizations = organizationRepository.findAllByOrganizationIdIn(facilityIds);
-        for(Organization organization: organizations){
+        for (Organization organization : organizations) {
             organizationRepository.delete(organization);
         }
         facilityRepository.deleteAll();

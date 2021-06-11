@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BacklogUserLoginRepo extends JpaRepository<UserLogin, String> {
+
     @Query(value = "select distinct ul.*\n" +
                    "from user_login ul inner join public.user_login_security_group ulsg\n" +
                    "on ul.user_login_id = ulsg.user_login_id\n" +

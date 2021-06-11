@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.education.quiztest.model.edutestquizpartici
 import com.hust.baseweb.entity.UserLogin;
 
 public interface EduTestQuizParticipantService {
+
     public EduTestQuizParticipant register(UserLogin userLogin, EduTestQuizParticipationCreateInputModel input);
 
 }

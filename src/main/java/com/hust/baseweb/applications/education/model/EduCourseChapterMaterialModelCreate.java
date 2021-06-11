@@ -9,6 +9,7 @@ import java.util.UUID;
 @Setter
 
 public class EduCourseChapterMaterialModelCreate {
+
     private UUID chapterId;
     private String materialName;
     private String materialType;

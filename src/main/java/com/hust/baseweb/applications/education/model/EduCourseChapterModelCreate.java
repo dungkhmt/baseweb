@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EduCourseChapterModelCreate {
+
     private String chapterName;
     private String courseId;
 }
