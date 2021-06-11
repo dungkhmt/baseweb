@@ -64,7 +64,8 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService{
         testDetail.setTestId(testID);
         testDetail.setTestName(test.getTestName());
         testDetail.setDuration(test.getDuration());
-        SimpleDateFormat  formatter = new SimpleDateFormat("dd/M/yyyy hh:mm:ss");
+        //SimpleDateFormat  formatter = new SimpleDateFormat("dd/M/yyyy hh:mm:ss");
+        SimpleDateFormat  formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String strDate = formatter.format(test.getScheduleDatetime());
         testDetail.setScheduleDatetime(strDate);
         testDetail.setCourseName(courseName);
