@@ -28,6 +28,8 @@ public interface UserService {
 
     Page<UserRestBriefProjection> findPersonByFullName(Pageable page, String sString);
 
+    UserRestBriefProjection findUserBriefByUserLoginId(String sString);
+
     List<UserLogin> getAllUserLogins();
 
     UserLogin createAndSaveUserLogin(String userName, String password);

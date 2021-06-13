@@ -31,6 +31,13 @@ public interface UserRestRepository extends PagingAndSortingRepository<DPerson, 
         String fullNameString
     );
 
+    @Query(
+        "select p from DPerson p where p.userLogin.userLoginId = :loginUserId")
+    UserRestBriefProjection findByLoginUserId(
+        String loginUserId
+    );
+
+
     default void customize(final QuerydslBindings bindings, final QDPerson store) {
         // bindings.bind(store.address.city).single((path, value) ->
         // path.startsWith(value));
