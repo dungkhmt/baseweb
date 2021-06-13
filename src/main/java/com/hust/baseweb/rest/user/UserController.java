@@ -88,6 +88,19 @@ public class UserController {
             userService.findPersonByFullName(page, searchString));
     }
 
+    @GetMapping(path = "/users/search")
+    public ResponseEntity<?> getCustomSearchedUsers(
+        Pageable page,
+        String userLoginId,
+        Principal principal
+    ) {
+        log.info("::getCustomSearchedUsers, userLoginId = " + userLoginId);
+
+        return ResponseEntity.ok().body(
+            userService.findUsersByUserLoginId(page, userLoginId)
+        );
+    }
+
     @GetMapping(path = "/get-security-groups")
     public ResponseEntity<?> getSecurityGroups(Principal principal) {
         List<SecurityGroup> securityGroups = securityGroupService.findAll();
