@@ -28,7 +28,7 @@ public interface UserService {
 
     Page<UserRestBriefProjection> findPersonByFullName(Pageable page, String sString);
 
-    UserRestBriefProjection findUserBriefByUserLoginId(String sString);
+    Page<UserRestBriefProjection> findUsersByUserLoginId(Pageable page, String sString);
 
     List<UserLogin> getAllUserLogins();
 

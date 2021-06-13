@@ -32,9 +32,10 @@ public interface UserRestRepository extends PagingAndSortingRepository<DPerson, 
     );
 
     @Query(
-        "select p from DPerson p where p.userLogin.userLoginId = :loginUserId")
-    UserRestBriefProjection findByLoginUserId(
-        String loginUserId
+        "select p from DPerson p where p.userLogin.userLoginId = :userLoginId")
+    Page<UserRestBriefProjection> findByLoginUserId(
+        Pageable page,
+        String userLoginId
     );
 
 

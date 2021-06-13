@@ -155,8 +155,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserRestBriefProjection findUserBriefByUserLoginId(String sString) {
-        return userRestRepository.findByLoginUserId(sString);
+    public Page<UserRestBriefProjection> findUsersByUserLoginId(Pageable page, String sString) {
+        return userRestRepository.findByLoginUserId(page, sString);
     }
 
     @Override

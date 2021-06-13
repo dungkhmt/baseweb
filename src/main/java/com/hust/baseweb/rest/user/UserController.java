@@ -42,21 +42,6 @@ public class UserController {
     private PartyService partyService;
     private SecurityGroupService securityGroupService;
 
-    @GetMapping(path = "/user")
-    public ResponseEntity<?> getLoginUserById(
-        String userId,
-        Principal principal
-    ) {
-        log.info("::getUser, searchId = " + userId);
-
-        UserRestBriefProjection urbp = userService.findUserBriefByUserLoginId(userId);
-
-        if(urbp == null) {
-            return ResponseEntity.ok().body("{}");
-        }
-        return ResponseEntity.ok().body(urbp);
-    }
-
     @PostMapping(path = "/user")
     public ResponseEntity<?> save(
         @RequestBody PersonModel personModel,
@@ -101,6 +86,19 @@ public class UserController {
 
         return ResponseEntity.ok().body(
             userService.findPersonByFullName(page, searchString));
+    }
+
+    @GetMapping(path = "/users/search")
+    public ResponseEntity<?> getCustomSearchedUsers(
+        Pageable page,
+        String userLoginId,
+        Principal principal
+    ) {
+        log.info("::getCustomSearchedUsers, userLoginId = " + userLoginId);
+
+        return ResponseEntity.ok().body(
+            userService.findUsersByUserLoginId(page, userLoginId)
+        );
     }
 
     @GetMapping(path = "/get-security-groups")
