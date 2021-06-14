@@ -11,6 +11,7 @@ create table notifications(
     notification_id uuid not null default uuid_generate_v1(),
     notification_name varchar(500),
     notification_type_id varchar(100),
+    from_user_login_id varchar(60),
     to_user_login_id varchar(60),
     url varchar(200),
     status_id varchar(60),

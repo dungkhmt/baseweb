@@ -1,6 +1,8 @@
 package com.hust.baseweb.service;
 
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
+import com.hust.baseweb.applications.notifications.entity.Notifications;
+import com.hust.baseweb.applications.notifications.repo.NotificationsRepo;
 import com.hust.baseweb.entity.*;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
 import com.hust.baseweb.entity.Status.StatusEnum;
@@ -60,6 +62,8 @@ public class UserServiceImpl implements UserService {
     private final SecurityGroupService groupService;
 
     private final static ExecutorService EMAIL_EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
+
+    private NotificationsRepo notificationsRepo;
 
     @Override
     public UserLogin findById(String userLoginId) {
@@ -312,6 +316,18 @@ public class UserServiceImpl implements UserService {
 
             userRegisterRepo.save(userRegister);
             EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
+
+            // push notifications
+            Notifications notif = new Notifications();
+            notif.setToUserLoginId("admin");
+            notif.setCreatedStamp(new Date());
+            notif.setStatusId(Notifications.STATUS_CREATED);
+            notif.setNotificationName("User register " + im.getLastName() + " " + im.getMiddleName()
+                                      + " " + im.getFirstName());
+            
+            notif.setFromUserLoginId(im.getUserLoginId());
+            notif = notificationsRepo.save(notif);
+
             res = new SimpleResponse(200, null, null);
         }
 
