@@ -324,7 +324,7 @@ public class UserServiceImpl implements UserService {
             notif.setStatusId(Notifications.STATUS_CREATED);
             notif.setNotificationName("User register " + im.getLastName() + " " + im.getMiddleName()
                                       + " " + im.getFirstName());
-            
+
             notif.setFromUserLoginId(im.getUserLoginId());
             notif = notificationsRepo.save(notif);
 

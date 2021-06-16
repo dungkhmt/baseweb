@@ -1,6 +1,7 @@
 create table teacher(
     teacher_id varchar(60),
     teacher_name varchar(200),
+    user_login_id varchar(60),
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_teacher primary key(teacher_id)
@@ -19,6 +20,7 @@ create table teacher_course(
 
 create table class_teacher_assignment_plan(
     plan_id uuid not null default uuid_generate_v1(),
+    plan_name varchar(200),
     created_by_user_login_id varchar(60),
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
