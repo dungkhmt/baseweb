@@ -29,6 +29,16 @@ public class ContestProblem {
     public static final String CONTEST_PROBLEM_CATEGORY_GRAPHS = "GRAPHS";
     public static final String CONTEST_PROBLEM_CATEGORY_BFS = "BFS";
     public static final String CONTEST_PROBLEM_CATEGORY_DFS = "DFS";
+    public static final String CONTEST_PROBLEM_CATEGORY_HASHING = "HASHING";
+    public static final String CONTEST_PROBLEM_CATEGORY_BINARY_SEARCH = "BINARY_SEARCH";
+    public static final String CONTEST_PROBLEM_CATEGORY_BRANCH_AND_BOUND = "BRANCH_AND_BOUND";
+    public static final String CONTEST_PROBLEM_CATEGORY_STRING_MATCH = "STRING_MATCH";
+    public static final String CONTEST_PROBLEM_CATEGORY_COMPUTATIONAL_GEOMETRY = "COMPUTATIONAL_GEOMETRY";
+    public static final String CONTEST_PROBLEM_CATEGORY_SHORTEST_PATH = "SHORTEST_PATH";
+    public static final String CONTEST_PROBLEM_CATEGORY_MINIMUM_SPANNING_TREE = "MINIMUM_SPANNING_TREE";
+    public static final String CONTEST_PROBLEM_CATEGORY_TREE = "TREE";
+    public static final String CONTEST_PROBLEM_CATEGORY_STACK = "STACK";
+    public static final String CONTEST_PROBLEM_CATEGORY_QUEUE = "QUEUE";
 
 
     @Id
