@@ -51,7 +51,17 @@ public class ContestProblemController {
         categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_GRAPHS);
         categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_DFS);
         categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_BFS);
-
+        categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_HASHING);
+        categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_BINARY_SEARCH);
+        categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_TREE);
+        categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_MINIMUM_SPANNING_TREE);
+        categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_BRANCH_AND_BOUND);
+        categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_COMPUTATIONAL_GEOMETRY);
+        categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_QUEUE);
+        categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_STACK);
+        categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_SHORTEST_PATH);
+        categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_STRING_MATCH);
+        
         return ResponseEntity.ok().body(categories);
     }
 
