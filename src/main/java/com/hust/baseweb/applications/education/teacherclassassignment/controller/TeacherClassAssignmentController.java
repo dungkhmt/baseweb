@@ -1,11 +1,8 @@
 package com.hust.baseweb.applications.education.teacherclassassignment.controller;
 
-import com.hust.baseweb.applications.education.teacherclassassignment.entity.ClassTeacherAssignmentClassInfo;
-import com.hust.baseweb.applications.education.teacherclassassignment.entity.ClassTeacherAssignmentPlan;
-import com.hust.baseweb.applications.education.teacherclassassignment.model.AlgoTeacherAssignmentIM;
-import com.hust.baseweb.applications.education.teacherclassassignment.model.ClassTeacherAssignmentPlanCreateModel;
-import com.hust.baseweb.applications.education.teacherclassassignment.model.ClassTeacherAssignmentPlanDetailModel;
-import com.hust.baseweb.applications.education.teacherclassassignment.model.TeacherClassAssignmentOM;
+import com.google.gson.Gson;
+import com.hust.baseweb.applications.education.teacherclassassignment.entity.*;
+import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.ClassTeacherAssignmentPlanService;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.TeacherClassAssignmentAlgoService;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.TeacherClassAssignmentService;
@@ -13,16 +10,23 @@ import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.ws.Response;
+import java.io.InputStream;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,11 +43,102 @@ public class TeacherClassAssignmentController {
     private UserService userService;
     private ClassTeacherAssignmentPlanService classTeacherAssignmentPlanService;
 
+    @PostMapping("/upload-excel-class-4-teacher-assignment")
+    public ResponseEntity<?> uploadExcelClass4TeacherAssignment(
+        Principal principal, @RequestParam("inputJson") String inputJson,
+        @RequestParam("file") MultipartFile file
+    ) {
+        Gson gson = new Gson();
+        UploadExcelClass4TeacherAssignmentInputModel input = gson.fromJson(inputJson, UploadExcelClass4TeacherAssignmentInputModel.class);
+        UUID planId = input.getPlanId();
+        log.info("uploadExcelClass4TeacherAssignment, json = " + inputJson + " planId = " + planId);
+        classTeacherAssignmentPlanService.extractExcelAndStoreDB(planId, file);
+        return ResponseEntity.ok().body("OK");
+
+    }
     @GetMapping("/get-all-class-teacher-assignment-plan")
     public ResponseEntity<?> getAllClassTeacherAssignmentPlan(Principal principal){
         UserLogin u = userService.findById(principal.getName());
         List<ClassTeacherAssignmentPlan> classTeacherAssignmentPlanList = classTeacherAssignmentPlanService.findAll();
         return ResponseEntity.ok().body(classTeacherAssignmentPlanList);
+    }
+    @PostMapping("/upload-excel-teacher-course")
+    public ResponseEntity<?> uploadExcelTeacherCourse(
+        Principal principal, @RequestParam("inputJson") String inputJson,
+        @RequestParam("file") MultipartFile file
+    ) {
+        Gson gson = new Gson();
+        UploadExcelTeacherCourseInputModel input = gson.fromJson(
+            inputJson,
+            UploadExcelTeacherCourseInputModel.class);
+        UUID planId = input.getPlanId();
+        String choice = input.getChoice();
+        log.info("uploadExcelTeacherCourse, choice = " + choice);
+        boolean ok = classTeacherAssignmentPlanService.extractExcelAndStoreDBTeacherCourse(planId, choice, file);
+        return ResponseEntity.ok().body(ok);
+    }
+    @GetMapping("/get-all-teachers")
+    public ResponseEntity<?> getAllTeachers(Principal principal){
+        List<EduTeacher> eduTeachers = classTeacherAssignmentPlanService.findAllTeachers();
+        return ResponseEntity.ok().body(eduTeachers);
+    }
+    @GetMapping("/get-teacher-for-assignment/{planId}")
+    public ResponseEntity<?> getTeacherForAssignmentPlan(Principal principal, @PathVariable UUID planId){
+        List<TeacherForAssignmentPlan> teacherForAssignmentPlans =
+            classTeacherAssignmentPlanService.findAllTeacherByPlanId(planId);
+        return ResponseEntity.ok().body(teacherForAssignmentPlans);
+
+    }
+    @GetMapping("/get-teacher-course-4-assignment/{planId}")
+    public ResponseEntity<?> getTeacherCourseForAssignment(Principal principal, @PathVariable UUID planId){
+        List<TeacherCourseForAssignmentPlan> teacherCourses =
+            classTeacherAssignmentPlanService.findTeacherCourseOfPlan(planId);
+
+        return ResponseEntity.ok().body(teacherCourses);
+    }
+    @GetMapping("/get-all-teacher-course")
+    public ResponseEntity<?> getAllTeacherCourse(Principal principal){
+        List<TeacherCourse> teacherCourses = classTeacherAssignmentPlanService.findAllTeacherCourse();
+
+        return ResponseEntity.ok().body(teacherCourses);
+    }
+    @PostMapping("/add-teacher-to-assign-plan")
+    public ResponseEntity<?> addTeacherToAssignmentPlan(Principal principal,
+          @RequestParam(required = false, name = "planId") UUID planId,
+          @RequestParam(required = false, name = "teacherList") String teacherList
+    ){
+        log.info("addTeacherToAssignmentPlan, planId = " + planId + " teacherList = " + teacherList);
+
+        boolean ok = classTeacherAssignmentPlanService.addTeacherToAssignmentPlan(planId, teacherList);
+
+        return ResponseEntity.ok().body("OK");
+
+    }
+
+    @PostMapping("/add-teacher-course-to-assign-plan")
+    public ResponseEntity<?> addTeacherCourseToAssignmentPlan(Principal principal,
+                @RequestParam(required = false, name = "planId") UUID planId,
+                @RequestParam(required = false, name = "teacherCourseList") String teacherCourseList
+                ){
+        log.info("addTeacherCourseToAssignmentPlan, planId = " + planId + " teacherCourseList = " + teacherCourseList);
+
+        boolean ok = classTeacherAssignmentPlanService.addTeacherCourseToAssignmentPlan(planId, teacherCourseList);
+
+        return ResponseEntity.ok().body("OK");
+
+    }
+    @PostMapping("/auto-assign-teacher-2-class")
+    public ResponseEntity<?> autoAssignTeacher2Class(Principal principal, @RequestBody RunAutoAssignTeacher2ClassInputModel input){
+        log.info("autoAssignTeacher2Class");
+        classTeacherAssignmentPlanService.autoAssignTeacher2Class(input.getPlanId());
+        return ResponseEntity.ok().body("OK");
+    }
+    @GetMapping("/get-class-teacher-assignment-solution/{planId}")
+    public ResponseEntity<?> getClassTeacherAssignmentSolutions(Principal principal, @PathVariable UUID planId){
+        log.info("getClassTeacherAssignmentSolutions, planId = " + planId);
+        List<ClassTeacherAssignmentSolutionModel> classTeacherAssignmentSolutionModels =
+            classTeacherAssignmentPlanService.getClassTeacherAssignmentSolution(planId);
+        return ResponseEntity.ok().body(classTeacherAssignmentSolutionModels);
     }
 
     @GetMapping("/get-class-teacher-assignment-plan/detail/{planId}")

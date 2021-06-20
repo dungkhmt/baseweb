@@ -13,7 +13,7 @@ VALUES ('ROLE_EDUCATION_VIEW_LIST_COURSE', 'Group education: view list course');
 
 INSERT INTO public.security_group
     (group_id, description)
-VALUES ('ROLE_EDUCATION_VIEW_LIST_TEACHER', 'Group education: view list teacher');
+VALUES ('ROLE_EDUCATION_VIEW_LIST_TEACHER', 'Group education: view list eduTeacher');
 
 INSERT INTO public.security_group
     (group_id, description)
@@ -46,7 +46,7 @@ VALUES ('EDUCATION_VIEW_LIST_CLASS', 'Permission education view list class');
 
 INSERT INTO public.security_permission
     (permission_id, description)
-VALUES ('EDUCATION_VIEW_LIST_TEACHER', 'Permission education view list teacher');
+VALUES ('EDUCATION_VIEW_LIST_TEACHER', 'Permission education view list eduTeacher');
 
 INSERT INTO public.security_permission
     (permission_id, description)
@@ -75,7 +75,7 @@ VALUES ('MENU_EDUCATION_VIEW_LIST_COURSE', 'MENU', NULL, 'EDUCATION_TEACHING_ASS
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description)
 VALUES ('MENU_EDUCATION_VIEW_LIST_TEACHER', 'MENU', NULL, 'EDUCATION_TEACHING_ASSIGNMENT',
-'Menu education: view list teacher');
+'Menu education: view list eduTeacher');
 
 INSERT INTO public.application
 (application_id, application_type_id, module_id, permission_id, description)
