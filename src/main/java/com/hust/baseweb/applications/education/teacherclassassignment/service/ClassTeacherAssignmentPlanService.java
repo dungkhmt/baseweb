@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.education.teacherclassassignment.entity.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.ClassTeacherAssignmentPlanCreateModel;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.ClassTeacherAssignmentPlanDetailModel;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.ClassTeacherAssignmentSolutionModel;
+import com.hust.baseweb.applications.education.teacherclassassignment.model.PairOfConflictTimetableClassModel;
 import com.hust.baseweb.entity.UserLogin;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,4 +34,6 @@ public interface ClassTeacherAssignmentPlanService {
     public List<ClassTeacherAssignmentSolutionModel> getClassTeacherAssignmentSolution(UUID planId);
 
     public boolean addTeacherCourseToAssignmentPlan(UUID planId, String teacherCourseList);
+
+    public List<PairOfConflictTimetableClassModel> getPairOfConflictTimetableClass(UUID planId);
 }

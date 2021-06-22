@@ -96,6 +96,12 @@ public class TeacherClassAssignmentController {
 
         return ResponseEntity.ok().body(teacherCourses);
     }
+    @GetMapping("/get-pair-of-conflict-timetable-class/{planId}")
+    public ResponseEntity<?> getPairOfConflictTimetableClass(Principal principal, @PathVariable UUID planId){
+        List<PairOfConflictTimetableClassModel> lst = classTeacherAssignmentPlanService.getPairOfConflictTimetableClass(planId);
+        log.info("getPairOfConflictTimetableClass, return list.sz = " + lst.size());
+        return ResponseEntity.ok().body(lst);
+    }
     @GetMapping("/get-all-teacher-course")
     public ResponseEntity<?> getAllTeacherCourse(Principal principal){
         List<TeacherCourse> teacherCourses = classTeacherAssignmentPlanService.findAllTeacherCourse();

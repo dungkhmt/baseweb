@@ -1,4 +1,4 @@
-create table edu_teacher(
+create table teacher(
     teacher_id varchar(60),
     teacher_name varchar(200),
     user_login_id varchar(60),
@@ -15,7 +15,7 @@ create table teacher_course(
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     constraint pk_teacher_course primary key(teacher_id, course_id),
-    constraint fk_teacher_course_teacher_id foreign key(teacher_id) references edu_teacher(teacher_id),
+    constraint fk_teacher_course_teacher_id foreign key(teacher_id) references teacher(teacher_id),
     constraint fk_teacher_course_course_id foreign key(course_id) references edu_course(id)
 );
 
@@ -62,7 +62,7 @@ create table class_teacher_assignment_class_info(
 create table teacher_for_assignment_plan(
     teacher_id varchar(60),
     plan_id uuid,
-    int max_hour_load,
+    max_hour_load int,
 
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

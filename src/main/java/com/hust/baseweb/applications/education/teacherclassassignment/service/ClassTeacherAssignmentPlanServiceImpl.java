@@ -8,6 +8,8 @@ import com.hust.baseweb.applications.education.teacherclassassignment.entity.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.entity.compositeid.TeacherCourseId;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.repo.*;
+import com.hust.baseweb.applications.education.teacherclassassignment.utils.CheckConflict;
+import com.hust.baseweb.applications.education.teacherclassassignment.utils.TimetableConflictChecker;
 import com.hust.baseweb.entity.UserLogin;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -453,5 +455,51 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             }
         }
         return true;
+    }
+
+    @Override
+    public List<PairOfConflictTimetableClassModel> getPairOfConflictTimetableClass(UUID planId) {
+        List<ClassTeacherAssignmentClassInfo> classes =
+            classTeacherAssignmentClassInfoRepo.findAllByPlanId(planId);
+
+        AlgoClassIM[] inputClass = new AlgoClassIM[classes.size()];
+
+        for(int i = 0; i < classes.size(); i++){
+            ClassTeacherAssignmentClassInfo c = classes.get(i);
+            AlgoClassIM ci = new AlgoClassIM();
+            ci.setClassCode(c.getClassId());
+            ci.setTimetable(c.getLesson());
+            ci.setClassType(c.getClassType());
+            ci.setCourseId(c.getCourseId());
+            ci.setCourseName(c.getCourseId());
+            ci.setHourLoad(1);// TOBE UPGRADED
+            inputClass[i] = ci;
+        }
+        CheckConflict checker = new CheckConflict();
+
+        List<PairOfConflictTimetableClassModel> lst = new ArrayList<>();
+        for(int i = 0; i < inputClass.length; i++){
+            for(int j = i+1; j < inputClass.length; j++){
+                //if(checker.isConflict(inputClass[i],inputClass[j])){
+                    ClassTeacherAssignmentClassInfo ci = classes.get(i);
+                    ClassTeacherAssignmentClassInfo cj = classes.get(j);
+                if(TimetableConflictChecker.conflict(ci.getLesson(), cj.getLesson())){
+                    PairOfConflictTimetableClassModel p = new PairOfConflictTimetableClassModel();
+                    p.setClassId1(ci.getClassId());
+                    p.setCourseId1(ci.getCourseId());
+                    p.setTimetable1(ci.getTimeTable());
+                    p.setTimetableCode1(ci.getLesson());
+
+                    p.setClassId2(cj.getClassId());
+                    p.setCourseId2(cj.getCourseId());
+                    p.setTimetable2(cj.getTimeTable());
+                    p.setTimetableCode2(cj.getLesson());
+
+                    lst.add(p);
+                }
+            }
+        }
+
+        return lst;
     }
 }
