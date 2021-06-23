@@ -11,12 +11,8 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassTeacherAssignmentSolutionModel {
+public class RemoveClassTeacherAssignmentSolutionInputModel {
+    //private String classId;
+    //private UUID planId;
     private UUID solutionItemId;
-    private String classCode;
-    private String courseId;
-    private String courseName;
-    private String teacherId;
-    private String teacherName;
-    private String timetable;
 }

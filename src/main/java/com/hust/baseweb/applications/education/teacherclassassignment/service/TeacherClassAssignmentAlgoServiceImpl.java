@@ -48,6 +48,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         }
         for (int i = 0; i < m; i++) {
             AlgoTeacherIM t = algoTeacherIMs[i];
+            if(t.getCourses() == null) continue;
             for (int j = 0; j < t.getCourses().size(); j++) {
                 Course4Teacher course4Teacher = t.getCourses().get(j);
                 if (mCourseID2ClassIndex.get(course4Teacher.getCourseId()) == null) {

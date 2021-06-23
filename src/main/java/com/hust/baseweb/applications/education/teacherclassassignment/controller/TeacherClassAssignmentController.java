@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.hust.baseweb.applications.education.teacherclassassignment.entity.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.ClassTeacherAssignmentPlanService;
+import com.hust.baseweb.applications.education.teacherclassassignment.service.ClassTeacherAssignmentSolutionExcelExporter;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.TeacherClassAssignmentAlgoService;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.TeacherClassAssignmentService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -17,16 +19,23 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.Response;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.Principal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -145,6 +154,82 @@ public class TeacherClassAssignmentController {
         List<ClassTeacherAssignmentSolutionModel> classTeacherAssignmentSolutionModels =
             classTeacherAssignmentPlanService.getClassTeacherAssignmentSolution(planId);
         return ResponseEntity.ok().body(classTeacherAssignmentSolutionModels);
+    }
+
+    @GetMapping("/get-not-assigned-class-solution/{planId}")
+    public ResponseEntity<?> getNotAssignedClassSolution(Principal principal, @PathVariable UUID planId){
+        List<ClassTeacherAssignmentSolutionModel> notAssignedClasses =
+            classTeacherAssignmentPlanService.getNotAssignedClassSolution(planId);
+        log.info("getNotAssignedClassSolution, return list.sz = " + notAssignedClasses.size());
+        return ResponseEntity.ok().body(notAssignedClasses);
+    }
+    @GetMapping("/get-suggested-teacher-for-class/{classId}")
+    public ResponseEntity<?> getSuggestedTeacherForClass(Principal principal, @PathVariable String classId){
+        log.info("getSuggestedTeacherForClass, classId = " + classId);
+        List<SuggestedTeacherForClass> lst = classTeacherAssignmentPlanService.getSuggestedTeacherForClass(classId);
+
+        return ResponseEntity.ok().body(lst);
+    }
+    @PostMapping("/manual-remove-class-teacher-assignment-solution")
+    public ResponseEntity<?> manualRemoveClassTeacherAssignmentSolution(Principal principal,
+                                                                        @RequestBody RemoveClassTeacherAssignmentSolutionInputModel input){
+        UserLogin u = userService.findById(principal.getName());
+        log.info("manualRemoveClassTeacherAssignmentSolution, solutionItemId = " + input.getSolutionItemId());
+        boolean ok = classTeacherAssignmentPlanService.removeClassTeacherAssignmentSolution(u,input);
+        return ResponseEntity.ok().body(ok);
+    }
+    @GetMapping("/export-excel-class-teacher-assignment-solution/{planId}")
+    //public void exportExcelClassTeacherAssignmentSolution(HttpServletResponse response, @PathVariable UUID planId){
+    public ResponseEntity<?> exportExcelClassTeacherAssignmentSolution(Principal principal, @PathVariable UUID planId){
+
+        log.info("exportExcelClassTeacherAssignmentSolution, planId = " + planId);
+        List<ClassTeacherAssignmentSolutionModel> classTeacherAssignmentSolutionModels =
+            classTeacherAssignmentPlanService.getClassTeacherAssignmentSolution(planId);
+        ClassTeacherAssignmentSolutionExcelExporter excelExporter
+            = new ClassTeacherAssignmentSolutionExcelExporter(classTeacherAssignmentSolutionModels);
+
+        ByteArrayInputStream in = excelExporter.toExcel();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=customers.xlsx");
+
+        return ResponseEntity
+            .ok()
+            .headers(headers)
+            .body(new InputStreamResource(in));
+
+        /*
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=phan_cong_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        List<ClassTeacherAssignmentSolutionModel> classTeacherAssignmentSolutionModels =
+            classTeacherAssignmentPlanService.getClassTeacherAssignmentSolution(planId);
+
+        ClassTeacherAssignmentSolutionExcelExporter excelExporter
+            = new ClassTeacherAssignmentSolutionExcelExporter(classTeacherAssignmentSolutionModels);
+
+        try {
+            excelExporter.export(response);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        */
+
+    }
+    @PostMapping("/manual-assign-teacher-to-class")
+    public ResponseEntity<?> manualAssignTeacherToClass(Principal principal,
+                                                        @RequestBody AssignTeacherToClassInputModel input){
+        UserLogin u = userService.findById(principal.getName());
+        log.info("manualAssignTeacherToClass, planId = " + input.getPlanId()+ " teacherId = " + input.getTeacherId()
+        + " classId = " + input.getClassId());
+
+        TeacherClassAssignmentSolution teacherClassAssignmentSolution = classTeacherAssignmentPlanService.assignTeacherToClass(u,input);
+        return ResponseEntity.ok().body(teacherClassAssignmentSolution);
     }
 
     @GetMapping("/get-class-teacher-assignment-plan/detail/{planId}")

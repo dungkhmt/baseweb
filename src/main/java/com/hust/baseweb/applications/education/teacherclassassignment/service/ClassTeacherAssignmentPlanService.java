@@ -1,10 +1,7 @@
 package com.hust.baseweb.applications.education.teacherclassassignment.service;
 
 import com.hust.baseweb.applications.education.teacherclassassignment.entity.*;
-import com.hust.baseweb.applications.education.teacherclassassignment.model.ClassTeacherAssignmentPlanCreateModel;
-import com.hust.baseweb.applications.education.teacherclassassignment.model.ClassTeacherAssignmentPlanDetailModel;
-import com.hust.baseweb.applications.education.teacherclassassignment.model.ClassTeacherAssignmentSolutionModel;
-import com.hust.baseweb.applications.education.teacherclassassignment.model.PairOfConflictTimetableClassModel;
+import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
 import com.hust.baseweb.entity.UserLogin;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +27,10 @@ public interface ClassTeacherAssignmentPlanService {
     public boolean extractExcelAndStoreDBTeacherCourse(UUID planId, String choice, MultipartFile file);
 
     public boolean autoAssignTeacher2Class(UUID planId);
+    public List<ClassTeacherAssignmentSolutionModel> getNotAssignedClassSolution(UUID planId);
+    public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId);
+    public TeacherClassAssignmentSolution assignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input);
+    public boolean removeClassTeacherAssignmentSolution(UserLogin u, RemoveClassTeacherAssignmentSolutionInputModel input);
 
     public List<ClassTeacherAssignmentSolutionModel> getClassTeacherAssignmentSolution(UUID planId);
 

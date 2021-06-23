@@ -5,18 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassTeacherAssignmentSolutionModel {
-    private UUID solutionItemId;
-    private String classCode;
-    private String courseId;
-    private String courseName;
+public class SuggestedTeacherForClass {
     private String teacherId;
     private String teacherName;
-    private String timetable;
+    private double hourLoad;
 }
