@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.education.teacherclassassignment.service;
 
 import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.utils.CheckConflict;
+import com.hust.baseweb.applications.education.teacherclassassignment.utils.TimetableConflictChecker;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -86,7 +87,9 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         boolean[][] conflict = new boolean[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                conflict[i][j] = checker.isConflict(algoClassIMS[i], algoClassIMS[j]);
+                //conflict[i][j] = checker.isConflict(algoClassIMS[i], algoClassIMS[j]);
+                conflict[i][j] = TimetableConflictChecker
+                    .conflict(algoClassIMS[i].getTimetable(),algoClassIMS[j].getTimetable());
                 if (conflict[i][j]) {
                     //System.out.println("Conflict " + algoClassIMS[i].getTimetable() + " VS. " + algoClassIMS[j].getTimetable());
                 } else {
