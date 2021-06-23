@@ -502,6 +502,42 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
     }
 
     @Override
+    public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolution(UUID planId) {
+        List<ClassesAssignedToATeacherModel> lst = new ArrayList();
+        List<EduTeacher> teachers = eduTeacherRepo.findAll();
+        HashMap<String, EduTeacher> mId2Teacher = new HashMap();
+        for(EduTeacher t: teachers){
+            mId2Teacher.put(t.getTeacherId(),t);
+        }
+
+        HashMap<String, List> mTeacherId2Classes = new HashMap();
+        List<ClassTeacherAssignmentSolutionModel> sol = getClassTeacherAssignmentSolution(planId);
+        for(ClassTeacherAssignmentSolutionModel s: sol){
+            if(mTeacherId2Classes.get(s.getTeacherId()) == null){
+                mTeacherId2Classes.put(s.getTeacherId(),new ArrayList());
+            }
+            mTeacherId2Classes.get(s.getTeacherId()).add(s);
+        }
+        for(String teacherId: mTeacherId2Classes.keySet()){
+            ClassesAssignedToATeacherModel c = new ClassesAssignedToATeacherModel();
+            c.setTeacherId(teacherId);
+            String teacherName = "";
+            if(mId2Teacher.get(teacherId) != null) teacherName = mId2Teacher.get(teacherId).getTeacherName();
+            c.setTeacherName(teacherName);
+
+            c.setClassList(mTeacherId2Classes.get(teacherId));
+            c.setNumberOfClass(c.getClassList().size());
+            double hourLoad = 0;
+            for(ClassTeacherAssignmentSolutionModel i: c.getClassList())
+                hourLoad += i.getHourLoad();
+            c.setHourLoad(hourLoad);
+
+            lst.add(c);
+        }
+        return lst;
+    }
+
+    @Override
     public List<ClassTeacherAssignmentSolutionModel> getClassTeacherAssignmentSolution(UUID planId) {
         List<TeacherClassAssignmentSolution> teacherClassAssignmentSolutions =
             teacherClassAssignmentSolutionRepo.findAllByPlanId(planId);
@@ -537,6 +573,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             EduTeacher teacher = mID2Teacher.get(s.getTeacherId());
             classTeacherAssignmentSolutionModel.setTeacherName(teacher.getTeacherName());
             classTeacherAssignmentSolutionModel.setTimetable(info.getLesson());
+            classTeacherAssignmentSolutionModel.setHourLoad(info.getHourLoad());
 
             classTeacherAssignmentSolutionModels.add(classTeacherAssignmentSolutionModel);
         }

@@ -49,6 +49,7 @@ create table class_teacher_assignment_class_info(
     department_id varchar(60),
     teacher_id varchar(60),
     created_by_user_login_id varchar(60),
+    hour_load numeric,
 
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

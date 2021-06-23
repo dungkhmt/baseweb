@@ -1,23 +1,22 @@
 package com.hust.baseweb.applications.education.teacherclassassignment.model;
 
+import com.hust.baseweb.applications.education.teacherclassassignment.entity.ClassTeacherAssignmentClassInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassTeacherAssignmentSolutionModel {
-    private UUID solutionItemId;
-    private String classCode;
-    private String courseId;
-    private String courseName;
+public class ClassesAssignedToATeacherModel {
     private String teacherId;
     private String teacherName;
-    private String timetable;
     private double hourLoad;
+    private int numberOfClass;
+    private List<ClassTeacherAssignmentSolutionModel> classList;
+
 }

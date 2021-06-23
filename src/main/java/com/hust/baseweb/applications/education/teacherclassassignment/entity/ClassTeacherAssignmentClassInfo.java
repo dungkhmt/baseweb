@@ -74,4 +74,6 @@ public class ClassTeacherAssignmentClassInfo {
     @Column(name="created_stamp")
     private Date createdStamp;
 
+    @Column(name="hour_load")
+    private double hourLoad;
 }

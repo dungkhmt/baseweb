@@ -155,6 +155,11 @@ public class TeacherClassAssignmentController {
             classTeacherAssignmentPlanService.getClassTeacherAssignmentSolution(planId);
         return ResponseEntity.ok().body(classTeacherAssignmentSolutionModels);
     }
+    @GetMapping("/get-classes-assigned-to-a-teacher-solution/{planId}")
+    public ResponseEntity<?> getClassesAssignedToATeacherSolution(Principal principal, @PathVariable UUID planId){
+        List<ClassesAssignedToATeacherModel> lst = classTeacherAssignmentPlanService.getClassesAssignedToATeacherSolution(planId);
+        return ResponseEntity.ok().body(lst);
+    }
 
     @GetMapping("/get-not-assigned-class-solution/{planId}")
     public ResponseEntity<?> getNotAssignedClassSolution(Principal principal, @PathVariable UUID planId){
