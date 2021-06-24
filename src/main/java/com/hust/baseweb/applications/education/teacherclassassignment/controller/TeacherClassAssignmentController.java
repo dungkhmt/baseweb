@@ -126,7 +126,19 @@ public class TeacherClassAssignmentController {
 
         boolean ok = classTeacherAssignmentPlanService.addTeacherToAssignmentPlan(planId, teacherList);
 
-        return ResponseEntity.ok().body("OK");
+        return ResponseEntity.ok().body(ok);
+
+    }
+    @PostMapping("/remove-class-from-assign-plan")
+    public ResponseEntity<?> removeClassFromAssignmentPlan(Principal principal,
+                                                        @RequestParam(required = false, name = "planId") UUID planId,
+                                                        @RequestParam(required = false, name = "classList") String classList
+    ){
+        log.info("removeClassFromAssignmentPlan, planId = " + planId + " classList = " + classList);
+
+        boolean ok = classTeacherAssignmentPlanService.removeClassFromAssignmentPlan(planId, classList);
+
+        return ResponseEntity.ok().body(ok);
 
     }
 
@@ -159,6 +171,18 @@ public class TeacherClassAssignmentController {
     public ResponseEntity<?> getClassesAssignedToATeacherSolution(Principal principal, @PathVariable UUID planId){
         List<ClassesAssignedToATeacherModel> lst = classTeacherAssignmentPlanService.getClassesAssignedToATeacherSolution(planId);
         return ResponseEntity.ok().body(lst);
+    }
+    @PostMapping("/update-class-for-assignment")
+    public ResponseEntity<?> updateClassForAssignment(Principal principal, @RequestBody UpdateClassForAssignmentInputModel input){
+        UserLogin u = userService.findById(principal.getName());
+        ClassTeacherAssignmentClassInfo c = classTeacherAssignmentPlanService.updateClassForAssignment(u,input);
+        return ResponseEntity.ok().body(c);
+    }
+    @PostMapping("/update-teacher-for-assignment")
+    public ResponseEntity<?> updateTeacherForAssignment(Principal principal, @RequestBody UpdateTeacherForAssignmentInputModel input){
+        UserLogin u = userService.findById(principal.getName());
+        TeacherForAssignmentPlan t = classTeacherAssignmentPlanService.updateTeacherForAssignment(u,input);
+        return ResponseEntity.ok().body(t);
     }
 
     @GetMapping("/get-not-assigned-class-solution/{planId}")

@@ -63,7 +63,7 @@ create table class_teacher_assignment_class_info(
 create table teacher_for_assignment_plan(
     teacher_id varchar(60),
     plan_id uuid,
-    max_hour_load int,
+    max_hour_load numeric,
 
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

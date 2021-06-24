@@ -21,6 +21,8 @@ public interface ClassTeacherAssignmentPlanService {
     public List<TeacherForAssignmentPlan> findAllTeacherByPlanId(UUID planId);
     public boolean addTeacherToAssignmentPlan(UUID planId, String teacherList);
 
+    public boolean removeClassFromAssignmentPlan(UUID planId, String classList);
+
     public List<TeacherCourse> findAllTeacherCourse();
     public List<TeacherCourseForAssignmentPlan> findTeacherCourseOfPlan(UUID planId);
 
@@ -38,4 +40,8 @@ public interface ClassTeacherAssignmentPlanService {
     public boolean addTeacherCourseToAssignmentPlan(UUID planId, String teacherCourseList);
 
     public List<PairOfConflictTimetableClassModel> getPairOfConflictTimetableClass(UUID planId);
+
+    public ClassTeacherAssignmentClassInfo updateClassForAssignment(UserLogin u, UpdateClassForAssignmentInputModel input);
+
+    public TeacherForAssignmentPlan updateTeacherForAssignment(UserLogin u, UpdateTeacherForAssignmentInputModel input);
 }

@@ -12,6 +12,9 @@ import com.hust.baseweb.applications.education.teacherclassassignment.utils.Chec
 import com.hust.baseweb.applications.education.teacherclassassignment.utils.TimetableConflictChecker;
 import com.hust.baseweb.entity.UserLogin;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -174,6 +177,29 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             teacherForAssignmentPlan.setPlanId(planId);
 
             teacherForAssignmentPlan = teacherForAssignmentPlanRepo.save(teacherForAssignmentPlan);
+        }
+        return true;
+    }
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    class ClassIdModel{
+        String classId;
+    }
+    @Override
+    public boolean removeClassFromAssignmentPlan(UUID planId, String classList) {
+        log.info("removeClassFromAssignmentPlan");
+        String[] lst = classList.split(";");
+        Gson gson = new Gson();
+        for(String t: lst) {
+            ClassIdModel cm = gson.fromJson(t,ClassIdModel.class);
+            String classId = cm.getClassId();
+            ClassTeacherAssignmentClassInfo cls= classTeacherAssignmentClassInfoRepo.findById(classId).orElse(null);
+            if(cls != null){
+                classTeacherAssignmentClassInfoRepo.delete(cls);
+                log.info("removeClassFromAssignmentPlan, remove classId " + classId + " OK");
+            }
         }
         return true;
     }
@@ -350,7 +376,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             ci.setClassType(c.getClassType());
             ci.setCourseId(c.getCourseId());
             ci.setCourseName(c.getCourseId());
-            ci.setHourLoad(1);// TOBE UPGRADED
+            ci.setHourLoad(c.getHourLoad());// TOBE UPGRADED
             inputClass[i] = ci;
         }
 
@@ -361,7 +387,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             AlgoTeacherIM ti = new AlgoTeacherIM();
             ti.setId(t.getTeacherId());
             ti.setName(teacher.getTeacherName());
-            ti.setPrespecifiedHourLoad(0);// TOBE UPGRADED
+            ti.setPrespecifiedHourLoad(t.getMaxHourLoad());// TOBE UPGRADED
             List<Course4Teacher> course4Teachers = mTeacher2Courses.get(t.getTeacherId());
             ti.setCourses(course4Teachers);
 
@@ -646,5 +672,33 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         }
 
         return lst;
+    }
+
+    @Override
+    public ClassTeacherAssignmentClassInfo updateClassForAssignment(
+        UserLogin u,
+        UpdateClassForAssignmentInputModel input
+    ) {
+        ClassTeacherAssignmentClassInfo classTeacherAssignmentClassInfo =
+            classTeacherAssignmentClassInfoRepo.findById(input.getClassId()).orElse(null);
+        if(classTeacherAssignmentClassInfo != null){
+            classTeacherAssignmentClassInfo.setHourLoad(input.getHourLoad());
+            classTeacherAssignmentClassInfo = classTeacherAssignmentClassInfoRepo.save(classTeacherAssignmentClassInfo);
+        }
+        return classTeacherAssignmentClassInfo;
+    }
+
+    @Override
+    public TeacherForAssignmentPlan updateTeacherForAssignment(
+        UserLogin u,
+        UpdateTeacherForAssignmentInputModel input
+    ) {
+        TeacherForAssignmentPlan teacherForAssignmentPlan =
+            teacherForAssignmentPlanRepo.findByTeacherIdAndPlanId(input.getTeacherId(), input.getPlanId());
+        if(teacherForAssignmentPlan != null){
+            teacherForAssignmentPlan.setMaxHourLoad(input.getHourLoad());
+            teacherForAssignmentPlan = teacherForAssignmentPlanRepo.save(teacherForAssignmentPlan);
+        }
+        return teacherForAssignmentPlan;
     }
 }

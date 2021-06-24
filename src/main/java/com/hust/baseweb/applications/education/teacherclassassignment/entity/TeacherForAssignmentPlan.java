@@ -23,5 +23,5 @@ public class TeacherForAssignmentPlan {
     private UUID planId;
 
     @Column(name="max_hour_load")
-    private int maxHourLoad;
+    private double maxHourLoad;
 }

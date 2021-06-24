@@ -29,6 +29,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         int n = algoClassIMS.length;// number of classes;
         int m = algoTeacherIMs.length;// number of teachers;
         double[] hourClass;// hourClass[i] is the number of hours of class i
+        double[] maxHourTeacher; // maxHourTeacher[j] is the upper bound of the total hourLoad of classes assigned to teacher j
         HashMap<String, Integer> mTeacher2Index = new HashMap();
         for (int i = 0; i < m; i++) {
             mTeacher2Index.put(algoTeacherIMs[i].getId(), i);
@@ -42,12 +43,15 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         }
         HashSet<Integer>[] D = new HashSet[n];
         hourClass = new double[n];
+        maxHourTeacher = new double[m];
         for (int i = 0; i < n; i++) {
             D[i] = new HashSet<Integer>();
             hourClass[i] = algoClassIMS[i].getHourLoad();
         }
         for (int i = 0; i < m; i++) {
             AlgoTeacherIM t = algoTeacherIMs[i];
+            maxHourTeacher[i] = t.getPrespecifiedHourLoad();
+
             if(t.getCourses() == null) continue;
             for (int j = 0; j < t.getCourses().size(); j++) {
                 Course4Teacher course4Teacher = t.getCourses().get(j);
@@ -98,9 +102,19 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
                 }
             }
         }
-        CBLSSolver solver = new CBLSSolver(n, m, D, conflict, hourClass);
-        solver.solve();
-        int[] sol = solver.getSolution();
+        int [] sol = null;
+        MaxLoadConstraintORToolMIPSolver mipSolver =
+            new MaxLoadConstraintORToolMIPSolver(n, m, D, conflict, hourClass, maxHourTeacher);
+        boolean solved = mipSolver.solve();
+        if(solved){
+            sol = mipSolver.getSolutionAssignment();
+        }else {
+            CBLSSolver solver = new CBLSSolver(n, m, D, conflict, hourClass, maxHourTeacher);
+            solver.solve();
+            sol = solver.getSolution();
+        }
+
+
 
         HashMap<AlgoTeacherIM, List<AlgoClassIM>> mTeacher2AssignedClass = new HashMap();
 
