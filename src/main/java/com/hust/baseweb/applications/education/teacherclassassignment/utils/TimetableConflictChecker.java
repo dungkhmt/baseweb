@@ -64,7 +64,7 @@ public class TimetableConflictChecker {
         return d + slotMapping.getEndSlot(slots);
     }
     public static String extractPeriod(String timeTableCode){
-        System.out.println("extractPeriod, timetableCode = " + timeTableCode);
+        //System.out.println("extractPeriod, timetableCode = " + timeTableCode);
         if(timeTableCode.length() < 9) return null;
         String str = timeTableCode.substring(2,9);
         String[] s = str.split(",");

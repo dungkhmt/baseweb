@@ -13,13 +13,15 @@ public interface ClassTeacherAssignmentPlanService {
     public List<ClassTeacherAssignmentPlan> findAll();
     public ClassTeacherAssignmentPlanDetailModel getClassTeacherAssignmentPlanDetail(UUID planId);
 
-    public List<ClassTeacherAssignmentClassInfo> findAllClassTeacherAssignmentClassByPlanId(UUID planId);
+    //public List<ClassTeacherAssignmentClassInfo> findAllClassTeacherAssignmentClassByPlanId(UUID planId);
+    public List<ClassInfoForAssignment2TeacherModel> findAllClassTeacherAssignmentClassByPlanId(UUID planId);
 
     public boolean extractExcelAndStoreDB(UUID planId, MultipartFile file);
 
     public List<EduTeacher> findAllTeachers();
     public List<TeacherForAssignmentPlan> findAllTeacherByPlanId(UUID planId);
     public boolean addTeacherToAssignmentPlan(UUID planId, String teacherList);
+    public boolean removeTeacherFromAssignmentPlan(UUID planId, String teacherList);
 
     public boolean removeClassFromAssignmentPlan(UUID planId, String classList);
 
@@ -38,6 +40,7 @@ public interface ClassTeacherAssignmentPlanService {
     public List<ClassTeacherAssignmentSolutionModel> getClassTeacherAssignmentSolution(UUID planId);
 
     public boolean addTeacherCourseToAssignmentPlan(UUID planId, String teacherCourseList);
+    public boolean removeTeacherCourseFromAssignmentPlan(UUID planId, String teacherCourseList);
 
     public List<PairOfConflictTimetableClassModel> getPairOfConflictTimetableClass(UUID planId);
 

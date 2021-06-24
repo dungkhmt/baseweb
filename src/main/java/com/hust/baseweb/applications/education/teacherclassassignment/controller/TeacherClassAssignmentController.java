@@ -129,6 +129,19 @@ public class TeacherClassAssignmentController {
         return ResponseEntity.ok().body(ok);
 
     }
+    @PostMapping("/remove-teacher-from-assign-plan")
+    public ResponseEntity<?> removeTeacherFromAssignmentPlan(Principal principal,
+                                                        @RequestParam(required = false, name = "planId") UUID planId,
+                                                        @RequestParam(required = false, name = "teacherList") String teacherList
+    ){
+        log.info("removeTeacherFromAssignmentPlan, planId = " + planId + " teacherList = " + teacherList);
+
+        boolean ok = classTeacherAssignmentPlanService.removeTeacherFromAssignmentPlan(planId, teacherList);
+
+        return ResponseEntity.ok().body(ok);
+
+    }
+
     @PostMapping("/remove-class-from-assign-plan")
     public ResponseEntity<?> removeClassFromAssignmentPlan(Principal principal,
                                                         @RequestParam(required = false, name = "planId") UUID planId,
@@ -152,8 +165,19 @@ public class TeacherClassAssignmentController {
         boolean ok = classTeacherAssignmentPlanService.addTeacherCourseToAssignmentPlan(planId, teacherCourseList);
 
         return ResponseEntity.ok().body("OK");
-
     }
+    @PostMapping("/remove-teacher-course-from-assign-plan")
+    public ResponseEntity<?> removeTeacherCourseFromAssignmentPlan(Principal principal,
+                                                              @RequestParam(required = false, name = "planId") UUID planId,
+                                                              @RequestParam(required = false, name = "teacherCourseList") String teacherCourseList
+    ){
+        log.info("removeTeacherCourseFromAssignmentPlan, planId = " + planId + " teacherCourseList = " + teacherCourseList);
+
+        boolean ok = classTeacherAssignmentPlanService.removeTeacherCourseFromAssignmentPlan(planId, teacherCourseList);
+
+        return ResponseEntity.ok().body("OK");
+    }
+
     @PostMapping("/auto-assign-teacher-2-class")
     public ResponseEntity<?> autoAssignTeacher2Class(Principal principal, @RequestBody RunAutoAssignTeacher2ClassInputModel input){
         log.info("autoAssignTeacher2Class");
@@ -282,7 +306,7 @@ public class TeacherClassAssignmentController {
     @GetMapping("/get-class-list-for-assignment-2-teacher/{planId}")
     public ResponseEntity<?> getClassListForAssignment2Teacher(Principal principal, @PathVariable UUID planId){
         log.info("getClassListForAssignment2Teacher, planId = " + planId);
-        List<ClassTeacherAssignmentClassInfo> classTeacherAssignmentClassInfos =
+        List<ClassInfoForAssignment2TeacherModel> classTeacherAssignmentClassInfos =
             classTeacherAssignmentPlanService.findAllClassTeacherAssignmentClassByPlanId(planId);
         return ResponseEntity.ok().body(classTeacherAssignmentClassInfos);
     }

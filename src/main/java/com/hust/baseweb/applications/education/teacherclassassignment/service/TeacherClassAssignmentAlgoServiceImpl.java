@@ -108,7 +108,9 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         boolean solved = mipSolver.solve();
         if(solved){
             sol = mipSolver.getSolutionAssignment();
+            log.info("computeTeacherClassAssignment, MIP found optimal solution!!");
         }else {
+            log.info("computeTeacherClassAssignment, MIP cannot find optimal solution, Apply CBLS");
             CBLSSolver solver = new CBLSSolver(n, m, D, conflict, hourClass, maxHourTeacher);
             solver.solve();
             sol = solver.getSolution();

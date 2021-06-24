@@ -77,11 +77,55 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
     }
 
     @Override
-    public List<ClassTeacherAssignmentClassInfo> findAllClassTeacherAssignmentClassByPlanId(UUID planId) {
+
+    //public List<ClassTeacherAssignmentClassInfo> findAllClassTeacherAssignmentClassByPlanId(UUID planId) {
+    public List<ClassInfoForAssignment2TeacherModel> findAllClassTeacherAssignmentClassByPlanId(UUID planId) {
         List<ClassTeacherAssignmentClassInfo> classTeacherAssignmentClassInfos =
             classTeacherAssignmentClassInfoRepo.findAllByPlanId(planId);
+        List<ClassInfoForAssignment2TeacherModel> lst = new ArrayList();
+        List<TeacherCourse> teacherCourses = teacherCourseRepo.findAll();
+        HashMap<String, List<TeacherCourse>> mCourseId2Teacher = new HashMap();
+        for(TeacherCourse tc: teacherCourses){
+            if(mCourseId2Teacher.get(tc.getCourseId()) == null)
+                mCourseId2Teacher.put(tc.getCourseId(), new ArrayList<>());
+            mCourseId2Teacher.get(tc.getCourseId()).add(tc);
+        }
+        List<TeacherCourseForAssignmentPlan> teacherCourseForAssignmentPlans = teacherCourseForAssignmentPlanRepo.findAllByPlanId(planId);
+        List<TeacherForAssignmentPlan> teacherForAssignmentPlans = teacherForAssignmentPlanRepo.findAllByPlanId(planId);
+        HashSet<String> teacherPlanIds = new HashSet();
+        for(TeacherForAssignmentPlan t: teacherForAssignmentPlans){
+            teacherPlanIds.add(t.getTeacherId());
+        }
+        HashMap<String, List<TeacherCourseForAssignmentPlan>> mCourseId2TeacherInPlan = new HashMap();
+        for(TeacherCourseForAssignmentPlan tcp: teacherCourseForAssignmentPlans){
+            if(mCourseId2TeacherInPlan.get(tcp.getCourseId())==null)
+                mCourseId2TeacherInPlan.put(tcp.getCourseId(),new ArrayList());
 
-        return classTeacherAssignmentClassInfos;
+            if(teacherPlanIds.contains(tcp.getTeacherId())){
+                mCourseId2TeacherInPlan.get(tcp.getCourseId()).add(tcp);
+            }
+        }
+
+        for(ClassTeacherAssignmentClassInfo c: classTeacherAssignmentClassInfos){
+            ClassInfoForAssignment2TeacherModel classInfoForAssignment2TeacherModel =
+                new ClassInfoForAssignment2TeacherModel(c);
+            int nbTeachers = 0;
+
+            if(mCourseId2Teacher.get(c.getCourseId()) != null)
+                nbTeachers = mCourseId2Teacher.get(c.getCourseId()).size();
+
+            int nbTeachersInPlan = 0;
+            if(mCourseId2TeacherInPlan.get(c.getCourseId())!=null){
+                nbTeachersInPlan = mCourseId2TeacherInPlan.get(c.getCourseId()).size();
+            }
+
+            classInfoForAssignment2TeacherModel.setNumberPosibleTeachers(nbTeachers);
+            classInfoForAssignment2TeacherModel.setNumberPosibleTeachersInPlan(nbTeachersInPlan);
+
+            lst.add(classInfoForAssignment2TeacherModel);
+        }
+        //return classTeacherAssignmentClassInfos;
+        return lst;
     }
 
     @Transactional
@@ -180,6 +224,25 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         }
         return true;
     }
+    @Transactional
+    @Override
+    public boolean removeTeacherFromAssignmentPlan(UUID planId, String teacherList) {
+        log.info("removeTeacherFromAssignmentPlan");
+        String[] lst = teacherList.split(";");
+        Gson gson = new Gson();
+        for(String t: lst){
+            TeacherMaxHourLoad teacherMaxHourLoad = gson.fromJson(t,TeacherMaxHourLoad.class);
+            TeacherForAssignmentPlan teacherForAssignmentPlan
+                = teacherForAssignmentPlanRepo.findByTeacherIdAndPlanId(teacherMaxHourLoad.getTeacherId(), planId);
+            if(teacherForAssignmentPlan != null){
+                teacherForAssignmentPlanRepo.delete(teacherForAssignmentPlan);
+                log.info("removeTeacherFromAssignmentPlan, delete (" + teacherMaxHourLoad.getTeacherId() + "," + planId + ")");
+            }
+
+        }
+        return true;
+    }
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -623,6 +686,29 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
 
                 teacherCourseForAssignmentPlan = teacherCourseForAssignmentPlanRepo
                     .save(teacherCourseForAssignmentPlan);
+            }
+        }
+        return true;
+    }
+
+    @Transactional
+    @Override
+    public boolean removeTeacherCourseFromAssignmentPlan(UUID planId, String teacherCourseList) {
+        String[] lst = teacherCourseList.split(";");
+        log.info("removeTeacherCourseFromAssignmentPlan, planId = " + planId + ", teacherCourseList = " + teacherCourseList);
+        Gson gson = new Gson();
+        if(lst != null && lst.length > 0){
+            for(int i = 0; i < lst.length; i++){
+                TeacherCoursePriority tcp = gson.fromJson(lst[i],TeacherCoursePriority.class);
+                TeacherCourseForAssignmentPlan teacherCourseForAssignmentPlan
+                    = teacherCourseForAssignmentPlanRepo.findByTeacherIdAndCourseIdAndPlanId(tcp.getTeacherId(),tcp.getCourseId(),planId);
+
+                if(teacherCourseForAssignmentPlan != null) {
+                    teacherCourseForAssignmentPlanRepo
+                        .delete(teacherCourseForAssignmentPlan);
+                    log.info("removeTeacherCourseFromAssignmentPlan, remove (" + tcp.getTeacherId() + "," + tcp.getCourseId() + "," + planId + ")");
+
+                }
             }
         }
         return true;
