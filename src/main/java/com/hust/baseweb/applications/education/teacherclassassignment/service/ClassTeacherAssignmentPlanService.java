@@ -35,6 +35,8 @@ public interface ClassTeacherAssignmentPlanService {
     public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId);
     public TeacherClassAssignmentSolution assignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input);
     public boolean removeClassTeacherAssignmentSolution(UserLogin u, RemoveClassTeacherAssignmentSolutionInputModel input);
+    public boolean removeClassTeacherAssignmentSolutionList(UUID planId, String solutionItemList);
+
     public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolution(UUID planId);
 
     public List<ClassTeacherAssignmentSolutionModel> getClassTeacherAssignmentSolution(UUID planId);

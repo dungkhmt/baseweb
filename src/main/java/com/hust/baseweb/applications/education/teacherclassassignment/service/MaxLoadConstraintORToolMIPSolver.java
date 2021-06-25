@@ -55,6 +55,8 @@ public class MaxLoadConstraintORToolMIPSolver {
             return;
         }
 
+        System.out.println("createSolverAndVariables, n = " + n + " m = " + m);
+
         for(int i = 0; i < n; i++){
             for(int j = 0; j < m; j++){
                 if(!D[i].contains(j)){// teacher j cannot be assigned to class i
@@ -122,9 +124,10 @@ public class MaxLoadConstraintORToolMIPSolver {
         // Analyse solution.
         if (resultStatus == MPSolver.ResultStatus.OPTIMAL) {
             assignment = new int[n];
+            System.out.println("solve, n = " + n + " m = " + m);
             for(int i = 0; i < n; i++){
                 for(int j = 0; j < m; j++){
-                    System.out.println("solver, x[" + i + "," + j + "] = " + x[i][j].solutionValue());
+                    System.out.println("solver, x[" + i + "," + j + "] = " + x[j][i].solutionValue());
                     if(x[j][i].solutionValue() > 0){
                         assignment[i] = j;
                     }

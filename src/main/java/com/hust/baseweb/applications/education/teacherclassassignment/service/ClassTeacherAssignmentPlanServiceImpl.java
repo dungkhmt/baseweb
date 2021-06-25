@@ -427,10 +427,18 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             }
 
         }
+
+        // load existing solution/assignment
+        List<TeacherClassAssignmentSolution> preAssignmentSolutions =
+            teacherClassAssignmentSolutionRepo.findAllByPlanId(planId);
+
+
+
+
         AlgoClassIM[] inputClass = new AlgoClassIM[classes.size()];
         AlgoTeacherIM[] inputTeacher = new AlgoTeacherIM[teachers.size()];
-        TeacherClassAssignmentModel[] preAssignment = null;
 
+        HashMap<String, AlgoClassIM> mClassId2AlgoClass = new HashMap();
         for(int i = 0; i < classes.size(); i++){
             ClassTeacherAssignmentClassInfo c = classes.get(i);
             AlgoClassIM ci = new AlgoClassIM();
@@ -440,9 +448,13 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             ci.setCourseId(c.getCourseId());
             ci.setCourseName(c.getCourseId());
             ci.setHourLoad(c.getHourLoad());// TOBE UPGRADED
+
+            mClassId2AlgoClass.put(c.getClassId(),ci);
+
             inputClass[i] = ci;
         }
 
+        HashMap<String, AlgoTeacherIM> mTeacherId2AlgoTeacher = new HashMap();
         for(int i = 0; i < teachers.size(); i++){
             TeacherForAssignmentPlan t = teachers.get(i);
             EduTeacher teacher = mId2Teacher.get(t.getTeacherId());//teachers.get(i);
@@ -454,8 +466,22 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             List<Course4Teacher> course4Teachers = mTeacher2Courses.get(t.getTeacherId());
             ti.setCourses(course4Teachers);
 
+            mTeacherId2AlgoTeacher.put(t.getTeacherId(),ti);
+
             inputTeacher[i] = ti;
         }
+
+        TeacherClassAssignmentModel[] preAssignment = new TeacherClassAssignmentModel[preAssignmentSolutions.size()];
+        for(int i= 0; i < preAssignmentSolutions.size(); i++){
+            TeacherClassAssignmentSolution s = preAssignmentSolutions.get(i);
+            String teacherId = s.getTeacherId();
+            String classId = s.getClassId();
+            AlgoClassIM ci = mClassId2AlgoClass.get(classId);
+            AlgoTeacherIM ti = mTeacherId2AlgoTeacher.get(teacherId);
+
+            preAssignment[i]  = new TeacherClassAssignmentModel(ci,ti);
+        }
+
         AlgoTeacherAssignmentIM input = new AlgoTeacherAssignmentIM();
         input.setClasses(inputClass);
         input.setTeachers(inputTeacher);
@@ -588,6 +614,24 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             teacherClassAssignmentSolutionRepo.delete(teacherClassAssignmentSolution);
         }
         return true;
+    }
+
+    @Override
+    public boolean removeClassTeacherAssignmentSolutionList(UUID planId, String solutionItemList) {
+        String[] lst = solutionItemList.split(";");
+        Gson gson = new Gson();
+        for(String t: lst) {
+            RemoveClassTeacherAssignmentSolutionInputModel cm = gson.fromJson(t,
+                                                                              RemoveClassTeacherAssignmentSolutionInputModel.class);
+            TeacherClassAssignmentSolution s = teacherClassAssignmentSolutionRepo
+                .findById(cm.getSolutionItemId())
+                .orElse(null);
+            if (s != null) {
+                teacherClassAssignmentSolutionRepo.delete(s);
+                log.info("removeClassTeacherAssignmentSolutionList, delete " + s.getSolutionItemId());
+            }
+        }
+            return true;
     }
 
     @Override

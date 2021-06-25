@@ -26,6 +26,8 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
     public TeacherClassAssignmentOM computeTeacherClassAssignment(AlgoTeacherAssignmentIM input) {
         AlgoTeacherIM[] algoTeacherIMs = input.getTeachers();
         AlgoClassIM[] algoClassIMS = input.getClasses();
+        TeacherClassAssignmentModel[] preAssignment = input.getPreAssignments();
+
         int n = algoClassIMS.length;// number of classes;
         int m = algoTeacherIMs.length;// number of teachers;
         double[] hourClass;// hourClass[i] is the number of hours of class i
@@ -34,6 +36,11 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         for (int i = 0; i < m; i++) {
             mTeacher2Index.put(algoTeacherIMs[i].getId(), i);
         }
+        HashMap<String, Integer> mClassId2Index = new HashMap();
+        for(int i = 0; i < n; i++){
+            mClassId2Index.put(algoClassIMS[i].getClassCode(), i);
+        }
+
         HashMap<String, List<Integer>> mCourseID2ClassIndex = new HashMap();
         for (int i = 0; i < n; i++) {
             if (mCourseID2ClassIndex.get(algoClassIMS[i].getCourseId()) == null) {
@@ -65,6 +72,16 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             }
         }
 
+        if(preAssignment != null){
+            for(int i = 0;i < preAssignment.length; i++){
+                AlgoClassIM ci = preAssignment[i].getAlgoClassIM();
+                AlgoTeacherIM ti = preAssignment[i].getAlgoTeacherIM();
+                int ic = mClassId2Index.get(ci.getClassCode());
+                int it = mTeacher2Index.get(ti.getId());
+                D[ic].clear();
+                D[ic].add(it);
+            }
+        }
         for (int i = 0; i < n; i++) {
             /*
             System.out.println("Class " +

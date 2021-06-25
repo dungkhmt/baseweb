@@ -154,6 +154,18 @@ public class TeacherClassAssignmentController {
         return ResponseEntity.ok().body(ok);
 
     }
+    @PostMapping("/remove-class-teacher-assign-solution-list")
+    public ResponseEntity<?> removeClassTeacherAssignmentSolutionList(Principal principal,
+                                                           @RequestParam(required = false, name = "planId") UUID planId,
+                                                           @RequestParam(required = false, name = "solutionItemList") String solutionItemList
+    ){
+        log.info("removeClassFromAssignmentPlan, planId = " + planId + " solutionItemList = " + solutionItemList);
+
+        boolean ok = classTeacherAssignmentPlanService.removeClassTeacherAssignmentSolutionList(planId, solutionItemList);
+
+        return ResponseEntity.ok().body(ok);
+
+    }
 
     @PostMapping("/add-teacher-course-to-assign-plan")
     public ResponseEntity<?> addTeacherCourseToAssignmentPlan(Principal principal,
