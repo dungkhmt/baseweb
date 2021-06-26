@@ -68,7 +68,7 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService {
         testDetail.setTestName(test.getTestName());
         testDetail.setDuration(test.getDuration());
         //SimpleDateFormat  formatter = new SimpleDateFormat("dd/M/yyyy hh:mm:ss");
-        SimpleDateFormat  formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String strDate = formatter.format(test.getScheduleDatetime());
         testDetail.setScheduleDatetime(strDate);
         testDetail.setCourseName(courseName);
@@ -79,8 +79,9 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService {
         //System.out.println(listGroupAsignment.size());
         EduTestQuizGroup eduTestQuizGroup = null;//new EduTestQuizGroup();
         for (EduTestQuizGroupParticipationAssignment ele : listGroupAsignment) {
-            eduTestQuizGroup = eduQuizTestGroupRepo.findEduTestQuizGroupByTestIdAndQuizGroupId(testID,
-                                                                                               ele.getQuizGroupId());
+            eduTestQuizGroup = eduQuizTestGroupRepo.findEduTestQuizGroupByTestIdAndQuizGroupId(
+                testID,
+                ele.getQuizGroupId());
             if (eduTestQuizGroup != null) {
                 break;
             }

@@ -13,14 +13,15 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "teacher")
 public class EduTeacher {
+
     @Id
-    @Column(name="teacher_id")
+    @Column(name = "teacher_id")
     private String teacherId;
 
-    @Column(name="teacher_name")
+    @Column(name = "teacher_name")
     private String teacherName;
 
-    @Column(name="user_login_id")
+    @Column(name = "user_login_id")
     private String userLoginId;
 
 }

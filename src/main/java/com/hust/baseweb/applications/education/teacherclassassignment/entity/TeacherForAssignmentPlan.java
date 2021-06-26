@@ -14,14 +14,15 @@ import java.util.UUID;
 @Table(name = "teacher_for_assignment_plan")
 @IdClass(TeacherPlanId.class)
 public class TeacherForAssignmentPlan {
+
     @Id
-    @Column(name="teacher_id")
+    @Column(name = "teacher_id")
     private String teacherId;
 
     @Id
-    @Column(name="plan_id")
+    @Column(name = "plan_id")
     private UUID planId;
 
-    @Column(name="max_hour_load")
+    @Column(name = "max_hour_load")
     private double maxHourLoad;
 }

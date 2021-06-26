@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 
 public class ClassTeacherAssignmentPlanCreateModel {
+
     private String planName;
 
 }

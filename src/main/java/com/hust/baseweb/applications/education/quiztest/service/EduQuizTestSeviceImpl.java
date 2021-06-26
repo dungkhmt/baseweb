@@ -575,8 +575,9 @@ public class EduQuizTestSeviceImpl implements QuizTestService {
 
 
         //find user + group id
-        List<EduTestQuizParticipant> eduTestQuizParticipants = eduTestQuizParticipantRepo.findByTestIdAndStatusId(testId,
-                                                                                                                  "STATUS_APPROVED");
+        List<EduTestQuizParticipant> eduTestQuizParticipants = eduTestQuizParticipantRepo.findByTestIdAndStatusId(
+            testId,
+            "STATUS_APPROVED");
 
         List<StudentInfo> list = repo.findAllStudentInTest(testId);
 

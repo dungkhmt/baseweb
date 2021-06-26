@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Service
-public class NotificationsServiceImpl implements NotificationsService{
+public class NotificationsServiceImpl implements NotificationsService {
 
 }

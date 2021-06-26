@@ -61,7 +61,7 @@ public class ContestProblemController {
         categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_STACK);
         categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_SHORTEST_PATH);
         categories.add(ContestProblem.CONTEST_PROBLEM_CATEGORY_STRING_MATCH);
-        
+
         return ResponseEntity.ok().body(categories);
     }
 

@@ -69,8 +69,9 @@ public class QuizParticipationStatisticServiceImpl implements QuizParticipationS
         for (int i = 0; i < len; i++) {
             String sd = s[i];
             //for(String sd: mDate2Count.keySet()){
-            quizParticipationStatisticOutputModels.add(new QuizParticipationStatisticOutputModel(sd,
-                                                                                                 mDate2Count.get(sd)));
+            quizParticipationStatisticOutputModels.add(new QuizParticipationStatisticOutputModel(
+                sd,
+                mDate2Count.get(sd)));
             //log.info("getQuizParticipationStatistic, map date " + sd + " -> " + mDate2Count.get(sd));
         }
         return quizParticipationStatisticOutputModels;

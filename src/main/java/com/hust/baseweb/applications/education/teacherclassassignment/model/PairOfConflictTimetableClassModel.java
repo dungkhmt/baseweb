@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PairOfConflictTimetableClassModel {
+
     private String classId1;
     private String timetable1;
     private String timetableCode1;

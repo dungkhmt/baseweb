@@ -12,18 +12,19 @@ import java.util.UUID;
 @Entity
 @Table(name = "class_teacher_assignment_plan")
 public class ClassTeacherAssignmentPlan {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="plan_id")
+    @Column(name = "plan_id")
     private UUID planId;
 
-    @Column(name="plan_name")
+    @Column(name = "plan_name")
     private String planName;
 
-    @Column(name="created_by_user_login_id")
+    @Column(name = "created_by_user_login_id")
     private String createdByUserLoginId;
 
-    @Column(name="created_stamp")
+    @Column(name = "created_stamp")
     private Date createdStamp;
 
 }

@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RemoveClassTeacherAssignmentSolutionInputModel {
+
     //private String classId;
     //private UUID planId;
     private UUID solutionItemId;

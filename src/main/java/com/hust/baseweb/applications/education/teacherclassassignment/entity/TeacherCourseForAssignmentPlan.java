@@ -13,19 +13,20 @@ import java.util.UUID;
 @Table(name = "teacher_course_for_assignment_plan")
 @IdClass(TeacherCoursePlanId.class)
 public class TeacherCourseForAssignmentPlan {
+
     @Id
-    @Column(name="teacher_id")
+    @Column(name = "teacher_id")
     private String teacherId;
 
     @Id
-    @Column(name="course_id")
+    @Column(name = "course_id")
     private String courseId;
 
     @Id
-    @Column(name="plan_id")
+    @Column(name = "plan_id")
     private UUID planId;
 
-    @Column(name="priority")
+    @Column(name = "priority")
     private int priority;
 
 }

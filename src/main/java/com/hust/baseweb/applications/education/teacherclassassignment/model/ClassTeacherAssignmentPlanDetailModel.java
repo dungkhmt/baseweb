@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClassTeacherAssignmentPlanDetailModel {
+
     private UUID planId;
     private String planName;
     private String createdByUserLoginId;

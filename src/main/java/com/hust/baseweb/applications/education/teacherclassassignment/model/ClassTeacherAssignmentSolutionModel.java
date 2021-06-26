@@ -12,12 +12,20 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClassTeacherAssignmentSolutionModel {
+
     private UUID solutionItemId;
+
     private String classCode;
+
     private String courseId;
+
     private String courseName;
+
     private String teacherId;
+
     private String teacherName;
+
     private String timetable;
+
     private double hourLoad;
 }

@@ -7,5 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface TeacherClassAssignmentSolutionRepo extends JpaRepository<TeacherClassAssignmentSolution, UUID> {
+
     List<TeacherClassAssignmentSolution> findAllByPlanId(UUID planId);
 }

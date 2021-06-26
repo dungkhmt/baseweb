@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TeacherMaxHourLoad {
+
     private String teacherId;
     private int maxHourLoad;
 }

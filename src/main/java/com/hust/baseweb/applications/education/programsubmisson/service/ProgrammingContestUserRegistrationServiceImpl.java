@@ -99,8 +99,9 @@ public class ProgrammingContestUserRegistrationServiceImpl implements Programmin
         if (input.getContestId() == null && input.getStatusId() == null && input.getUserLoginId() != null) {
             return programmingContestUserRegistrationRepo.findByUserLoginId(input.getUserLoginId());
         } else if (input.getUserLoginId() == null && input.getContestId() != null && input.getStatusId() != null) {
-            return programmingContestUserRegistrationRepo.findByContestIdAndStatusId(input.getContestId(),
-                                                                                     input.getStatusId());
+            return programmingContestUserRegistrationRepo.findByContestIdAndStatusId(
+                input.getContestId(),
+                input.getStatusId());
         } else {
             return programmingContestUserRegistrationRepo.findAll();
         }

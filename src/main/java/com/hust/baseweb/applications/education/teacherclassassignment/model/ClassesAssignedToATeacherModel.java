@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.education.teacherclassassignment.model;
 
-import com.hust.baseweb.applications.education.teacherclassassignment.entity.ClassTeacherAssignmentClassInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClassesAssignedToATeacherModel {
+
     private String teacherId;
     private String teacherName;
     private double hourLoad;

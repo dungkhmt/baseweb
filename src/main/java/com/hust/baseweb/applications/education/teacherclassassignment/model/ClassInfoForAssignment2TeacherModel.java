@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClassInfoForAssignment2TeacherModel {
+
     private UUID planId;
     private String classId;
     private String schoolName;
@@ -36,7 +37,7 @@ public class ClassInfoForAssignment2TeacherModel {
     private int numberPosibleTeachers;
     private int numberPosibleTeachersInPlan;
 
-    public ClassInfoForAssignment2TeacherModel(ClassTeacherAssignmentClassInfo c){
+    public ClassInfoForAssignment2TeacherModel(ClassTeacherAssignmentClassInfo c) {
         this.planId = c.getPlanId();
         this.classId = c.getClassId();
         this.className = c.getClassName();
@@ -50,7 +51,7 @@ public class ClassInfoForAssignment2TeacherModel {
         this.enrollment = c.getEnrollment();
         this.hourLoad = c.getHourLoad();
         this.lesson = c.getLesson();
-        this.timeTable  = c.getTimeTable();
+        this.timeTable = c.getTimeTable();
         this.maxEnrollment = c.getMaxEnrollment();
         this.schoolName = c.getSchoolName();
         this.program = c.getProgram();

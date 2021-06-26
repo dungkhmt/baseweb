@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SuggestedTeacherForClass {
+
     private String teacherId;
     private String teacherName;
     private double hourLoad;

@@ -97,8 +97,9 @@ public class ProgrammingContestUserRegistrationController {
     public ResponseEntity<?> getApprovedProgrammingContestsOfUser(Principal principal) {
         log.info("getApprovedProgrammingContestsOfUser, userloginid = " + principal.getName());
         List<ProgrammingContestUserRegistration> programmingContestUserRegistrationList = programmingContestUserRegistrationService
-            .findByUserLoginIdAndStatusId(principal.getName(),
-                                          ProgrammingContestUserRegistration.REGISTATION_STATUS_APPROVED);
+            .findByUserLoginIdAndStatusId(
+                principal.getName(),
+                ProgrammingContestUserRegistration.REGISTATION_STATUS_APPROVED);
         return ResponseEntity.ok().body(programmingContestUserRegistrationList);
     }
 }

@@ -11,6 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class TeacherPlanId implements Serializable {
+
     private String teacherId;
     private UUID planId;
 }

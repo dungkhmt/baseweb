@@ -12,15 +12,16 @@ import javax.persistence.*;
 @Table(name = "teacher_course")
 @IdClass(TeacherCourseId.class)
 public class TeacherCourse {
+
     @Id
-    @Column(name="teacher_id")
+    @Column(name = "teacher_id")
     private String teacherId;
 
     @Id
-    @Column(name="course_id")
+    @Column(name = "course_id")
     private String courseId;
 
-    @Column(name="priority")
+    @Column(name = "priority")
     private int priority;
 
 }

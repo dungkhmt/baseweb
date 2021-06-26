@@ -12,23 +12,24 @@ import java.util.UUID;
 @Entity
 @Table(name = "class_teacher_assignment_solution")
 public class TeacherClassAssignmentSolution {
+
     @Id
-    @Column(name="solution_item_id")
+    @Column(name = "solution_item_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID solutionItemId;
 
-    @Column(name="class_id")
+    @Column(name = "class_id")
     private String classId;
 
-    @Column(name="plan_id")
+    @Column(name = "plan_id")
     private UUID planId;
 
-    @Column(name="teacher_id")
+    @Column(name = "teacher_id")
     private String teacherId;
 
-    @Column(name="created_by_user_login_id")
+    @Column(name = "created_by_user_login_id")
     private String createdByUserLoginId;
 
-    @Column(name="created_stamp")
+    @Column(name = "created_stamp")
     private Date createdStamp;
 }

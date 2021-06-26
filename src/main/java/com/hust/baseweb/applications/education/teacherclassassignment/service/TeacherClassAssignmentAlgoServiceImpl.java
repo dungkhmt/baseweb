@@ -37,7 +37,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             mTeacher2Index.put(algoTeacherIMs[i].getId(), i);
         }
         HashMap<String, Integer> mClassId2Index = new HashMap();
-        for(int i = 0; i < n; i++){
+        for (int i = 0; i < n; i++) {
             mClassId2Index.put(algoClassIMS[i].getClassCode(), i);
         }
 
@@ -59,7 +59,9 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             AlgoTeacherIM t = algoTeacherIMs[i];
             maxHourTeacher[i] = t.getPrespecifiedHourLoad();
 
-            if(t.getCourses() == null) continue;
+            if (t.getCourses() == null) {
+                continue;
+            }
             for (int j = 0; j < t.getCourses().size(); j++) {
                 Course4Teacher course4Teacher = t.getCourses().get(j);
                 if (mCourseID2ClassIndex.get(course4Teacher.getCourseId()) == null) {
@@ -72,8 +74,8 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             }
         }
 
-        if(preAssignment != null){
-            for(int i = 0;i < preAssignment.length; i++){
+        if (preAssignment != null) {
+            for (int i = 0; i < preAssignment.length; i++) {
                 AlgoClassIM ci = preAssignment[i].getAlgoClassIM();
                 AlgoTeacherIM ti = preAssignment[i].getAlgoTeacherIM();
                 int ic = mClassId2Index.get(ci.getClassCode());
@@ -111,7 +113,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             for (int j = 0; j < n; j++) {
                 //conflict[i][j] = checker.isConflict(algoClassIMS[i], algoClassIMS[j]);
                 conflict[i][j] = TimetableConflictChecker
-                    .conflict(algoClassIMS[i].getTimetable(),algoClassIMS[j].getTimetable());
+                    .conflict(algoClassIMS[i].getTimetable(), algoClassIMS[j].getTimetable());
                 if (conflict[i][j]) {
                     //System.out.println("Conflict " + algoClassIMS[i].getTimetable() + " VS. " + algoClassIMS[j].getTimetable());
                 } else {
@@ -119,20 +121,19 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
                 }
             }
         }
-        int [] sol = null;
+        int[] sol = null;
         MaxLoadConstraintORToolMIPSolver mipSolver =
             new MaxLoadConstraintORToolMIPSolver(n, m, D, conflict, hourClass, maxHourTeacher);
         boolean solved = mipSolver.solve();
-        if(solved){
+        if (solved) {
             sol = mipSolver.getSolutionAssignment();
             log.info("computeTeacherClassAssignment, MIP found optimal solution!!");
-        }else {
+        } else {
             log.info("computeTeacherClassAssignment, MIP cannot find optimal solution, Apply CBLS");
             CBLSSolver solver = new CBLSSolver(n, m, D, conflict, hourClass, maxHourTeacher);
             solver.solve();
             sol = solver.getSolution();
         }
-
 
 
         HashMap<AlgoTeacherIM, List<AlgoClassIM>> mTeacher2AssignedClass = new HashMap();

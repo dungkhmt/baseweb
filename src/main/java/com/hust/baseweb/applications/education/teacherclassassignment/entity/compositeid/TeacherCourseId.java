@@ -10,6 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class TeacherCourseId implements Serializable {
+
     private String teacherId;
     private String courseId;
 }
