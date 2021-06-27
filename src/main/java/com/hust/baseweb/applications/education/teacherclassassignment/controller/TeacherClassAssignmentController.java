@@ -273,22 +273,26 @@ public class TeacherClassAssignmentController {
         return ResponseEntity.ok().body(ok);
     }
 
-    @GetMapping("/export-excel-class-teacher-assignment-solution/{planId}")
+    @GetMapping(value = "/export-excel-class-teacher-assignment-solution/{planId}")
     //public void exportExcelClassTeacherAssignmentSolution(HttpServletResponse response, @PathVariable UUID planId){
     public ResponseEntity<?> exportExcelClassTeacherAssignmentSolution(@PathVariable UUID planId) {
 
         log.info("exportExcelClassTeacherAssignmentSolution, planId = " + planId);
 
-        List<ClassTeacherAssignmentSolutionModel> classTeacherAssignmentSolutionModels =
-            classTeacherAssignmentPlanService.getClassTeacherAssignmentSolution(planId);
+        ClassTeacherAssignmentPlanDetailModel plan = classTeacherAssignmentPlanService.getClassTeacherAssignmentPlanDetail(
+            planId);
+        List<ClassTeacherAssignmentSolutionModel> solution = classTeacherAssignmentPlanService.getClassTeacherAssignmentSolution(
+            planId);
+        ClassTeacherAssignmentSolutionExcelExporter exporter
+            = new ClassTeacherAssignmentSolutionExcelExporter(solution);
 
-        ClassTeacherAssignmentSolutionExcelExporter excelExporter
-            = new ClassTeacherAssignmentSolutionExcelExporter(classTeacherAssignmentSolutionModels);
-
-        ByteArrayInputStream in = excelExporter.toExcel();
+        ByteArrayInputStream in = exporter.toExcel();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=customers.xlsx");
+
+        headers.add("Content-Type", "application/octet-stream");
+        headers.add("Content-Disposition", "attachment; filename=" + plan.getPlanName() + ".xlsx");
+        headers.add("Access-Control-Expose-Headers", "Content-Disposition");
 
         return ResponseEntity
             .ok()
@@ -304,14 +308,14 @@ public class TeacherClassAssignmentController {
         String headerValue = "attachment; filename=phan_cong_" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
 
-        List<ClassTeacherAssignmentSolutionModel> classTeacherAssignmentSolutionModels =
+        List<ClassTeacherAssignmentSolutionModel> solution =
             classTeacherAssignmentPlanService.getClassTeacherAssignmentSolution(planId);
 
-        ClassTeacherAssignmentSolutionExcelExporter excelExporter
-            = new ClassTeacherAssignmentSolutionExcelExporter(classTeacherAssignmentSolutionModels);
+        ClassTeacherAssignmentSolutionExcelExporter exporter
+            = new ClassTeacherAssignmentSolutionExcelExporter(solution);
 
         try {
-            excelExporter.export(response);
+            exporter.export(response);
         }catch(Exception e){
             e.printStackTrace();
         }
