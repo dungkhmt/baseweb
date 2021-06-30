@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface NotificationsRepo extends JpaRepository<Notifications, UUID> {
 
+    long countByToUserAndStatusId(String toUser, String statusId);
 }
