@@ -319,14 +319,13 @@ public class UserServiceImpl implements UserService {
 
             // push notifications
             Notifications notif = new Notifications();
-            notif.setToUserLoginId("admin");
-            notif.setCreatedStamp(new Date());
+            notif.setToUser("admin");
             notif.setStatusId(Notifications.STATUS_CREATED);
-            notif.setNotificationName("User register " + im.getLastName() + " " + im.getMiddleName()
-                                      + " " + im.getFirstName());
+            notif.setContent("User register " + im.getLastName() + " " + im.getMiddleName()
+                             + " " + im.getFirstName());
 
-            notif.setFromUserLoginId(im.getUserLoginId());
-            notif = notificationsRepo.save(notif);
+            notif.setFromUser(im.getUserLoginId());
+            notificationsRepo.save(notif);
 
             res = new SimpleResponse(200, null, null);
         }

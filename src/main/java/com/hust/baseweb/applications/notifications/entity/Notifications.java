@@ -2,6 +2,9 @@ package com.hust.baseweb.applications.notifications.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -11,34 +14,31 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "notifications")
+@EntityListeners(AuditingEntityListener.class)
 public class Notifications {
 
-    public static final String STATUS_CREATED = "STATUS_CREATED";
-    public static final String STATUS_VIEWED = "STATUS_VIEWED";
+    public static final String STATUS_CREATED = "NOTIFICATION_CREATED";
 
+    public static final String STATUS_READ = "NOTIFICATION_CREATED";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "notification_id")
-    private UUID notificationId;
+    private UUID id;
 
-    @Column(name = "notification_name")
-    private String notificationName;
+    private String content;
 
-    @Column(name = "from_user_login_id")
-    private String fromUserLoginId;
+    private String fromUser;
 
-    @Column(name = "to_user_login_id")
-    private String toUserLoginId;
+    private String toUser;
 
-    @Column(name = "url")
     private String url;
 
-    @Column(name = "status_id")
     private String statusId;
 
-    @Column(name = "created_stamp")
-    private Date createdStamp;
+    @LastModifiedDate
+    private Date lastUpdatedStamp;
 
+    @CreatedDate
+    private Date createdStamp;
 
 }
