@@ -40,14 +40,7 @@ public interface UserService {
 
     Party update(PersonUpdateModel personUpdateModel, UUID partyId);
 
-
     UserLogin findUserLoginByPartyId(UUID partyId);
-
-    UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel);
-
-    /*boolean approveRegisterUser(String userLoginId);*/
-
-    /*List<UserRegister.OutputModel> findAllRegisterUser();*/
 
     SimpleResponse register(RegisterIM im);
 
@@ -62,4 +55,11 @@ public interface UserService {
     List<String> getGroupPermsByUserLoginId(String userLoginId);
 
     PersonModel findPersonByUserLoginId(String userLoginId);
+
+//    UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel);
+
+//    boolean approveRegisterUser(String userLoginId);
+
+//    List<UserRegister.OutputModel> findAllRegisterUser();
+
 }
