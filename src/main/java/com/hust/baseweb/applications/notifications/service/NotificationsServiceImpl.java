@@ -12,7 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 import static com.hust.baseweb.applications.notifications.entity.Notifications.STATUS_CREATED;
+import static com.hust.baseweb.applications.notifications.entity.Notifications.STATUS_READ;
 
 @Log4j2
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -46,5 +49,15 @@ public class NotificationsServiceImpl implements NotificationsService {
         notification.setStatusId(STATUS_CREATED);
 
         notificationsRepo.save(notification);
+    }
+
+    @Override
+    public void markAsRead(UUID notificationId) {
+        Notifications notification = notificationsRepo.findById(notificationId).orElse(null);
+
+        if (null != notification) {
+            notification.setStatusId(STATUS_READ);
+            notificationsRepo.save(notification);
+        }
     }
 }

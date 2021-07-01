@@ -7,13 +7,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.UUID;
 
 @Log4j2
 @RestController
@@ -41,5 +39,11 @@ public class NotificationController {
             notificationsService.countNumUnreadNotification(toUser));
 
         return ResponseEntity.ok().body(om);
+    }
+
+    @PatchMapping("/{id}/mark-as-read")
+    public ResponseEntity<?> markAsRead(@PathVariable UUID id) {
+        notificationsService.markAsRead(id);
+        return ResponseEntity.ok().body(null);
     }
 }
