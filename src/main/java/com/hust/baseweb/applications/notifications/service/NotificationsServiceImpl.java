@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.notifications.service;
 
+import com.hust.baseweb.applications.notifications.entity.Notifications;
 import com.hust.baseweb.applications.notifications.model.NotificationDTO;
 import com.hust.baseweb.applications.notifications.repo.NotificationsRepo;
 import lombok.AllArgsConstructor;
@@ -32,5 +33,18 @@ public class NotificationsServiceImpl implements NotificationsService {
     @Override
     public long countNumUnreadNotification(String toUser) {
         return notificationsRepo.countByToUserAndStatusId(toUser, STATUS_CREATED);
+    }
+
+    @Override
+    public void create(String fromUser, String toUser, String content, String url) {
+        Notifications notification = new Notifications();
+
+        notification.setFromUser(fromUser);
+        notification.setToUser(toUser);
+        notification.setContent(content);
+        notification.setUrl(url);
+        notification.setStatusId(STATUS_CREATED);
+
+        notificationsRepo.save(notification);
     }
 }
