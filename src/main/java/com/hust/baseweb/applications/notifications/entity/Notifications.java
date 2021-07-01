@@ -19,7 +19,7 @@ public class Notifications {
 
     public static final String STATUS_CREATED = "NOTIFICATION_CREATED";
 
-    public static final String STATUS_READ = "NOTIFICATION_CREATED";
+    public static final String STATUS_READ = "NOTIFICATION_READ";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

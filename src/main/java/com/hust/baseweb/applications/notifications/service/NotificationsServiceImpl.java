@@ -1,6 +1,6 @@
 package com.hust.baseweb.applications.notifications.service;
 
-import com.hust.baseweb.applications.notifications.entity.Notifications;
+import com.hust.baseweb.applications.notifications.model.NotificationDTO;
 import com.hust.baseweb.applications.notifications.repo.NotificationsRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,8 +23,8 @@ public class NotificationsServiceImpl implements NotificationsService {
     @Override
     public Page getNotifications(int page, int size) {
         Pageable sortedByCreatedStampDsc =
-            PageRequest.of(page, size, Sort.by("createdStamp").descending());
-        Page<Notifications> notifications = notificationsRepo.findAll(sortedByCreatedStampDsc);
+            PageRequest.of(page, size, Sort.by("created_stamp").descending());
+        Page<NotificationDTO> notifications = notificationsRepo.findAllNotifications(sortedByCreatedStampDsc);
 
         return notifications;
     }
