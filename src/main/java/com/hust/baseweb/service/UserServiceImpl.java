@@ -251,14 +251,15 @@ public class UserServiceImpl implements UserService {
             EMAIL_EXECUTOR_SERVICE.execute(() ->
                                                mailService.sendSimpleMail(
                                                    new String[]{email},
-                                                   "Đăng ký tài khoản thành công",
+                                                   "Open ERP - Đăng ký tài khoản thành công",
                                                    String.format(
-                                                       "Open ERP - Nền tảng ERP mã nguồn mở\n\n" +
-                                                       "Xin chào %s, bạn đã đăng ký thành công tài khoản tại hệ thống " +
+                                                       "Xin chào %s,\n\n" +
+                                                       "Bạn đã đăng ký thành công tài khoản tại hệ thống " +
                                                        "Open ERP với tên đăng nhập %s. " +
                                                        "Đây là email tự động, vui lòng chờ đến khi được " +
                                                        "quản trị viên phê duyệt và không phản hồi lại email này.\n\n" +
-                                                       "Xin cảm ơn!",
+                                                       "Xin cảm ơn,\n" +
+                                                       "Open ERP team",
                                                        fullName, im.getUserLoginId()),
                                                    null));
 
