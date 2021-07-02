@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface NotificationsRepo extends JpaRepository<Notifications, UUID> {
@@ -29,4 +30,6 @@ public interface NotificationsRepo extends JpaRepository<Notifications, UUID> {
                    "\tn.from_user = ur.user_login_id",
            nativeQuery = true)
     Page<NotificationDTO> findAllNotifications(Pageable pageable);
+
+    List<Notifications> findByToUserAndStatusId(String toUserId, String currentStatusId);
 }

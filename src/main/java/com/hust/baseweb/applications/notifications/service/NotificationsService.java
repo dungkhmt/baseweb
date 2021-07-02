@@ -12,5 +12,7 @@ public interface NotificationsService {
 
     void create(String fromUser, String toUser, String content, String url);
 
-    void markAsRead(UUID notificationId);
+    void updateStatus(UUID notificationId, String status);
+
+    void updateMultipleNotificationsStatus(String userId, String status);
 }

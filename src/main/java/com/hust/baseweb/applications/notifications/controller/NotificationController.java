@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Map;
 import java.util.UUID;
+
+import static com.hust.baseweb.applications.notifications.entity.Notifications.STATUS_READ;
 
 @Log4j2
 @RestController
@@ -23,27 +26,62 @@ public class NotificationController {
     private final NotificationsService notificationsService;
 
     /**
-     * @param toUser
+     * @param userId
      * @param page
      * @param size
-     * @return
      */
     @GetMapping(params = {"page", "size"})
     public ResponseEntity<?> getNotifications(
-        @CurrentSecurityContext(expression = "authentication.name") String toUser,
+        @CurrentSecurityContext(expression = "authentication.name") String userId,
         @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
         @RequestParam(defaultValue = "10") @Positive Integer size
     ) {
         GetNotificationsOM om = new GetNotificationsOM(
             notificationsService.getNotifications(page, size),
-            notificationsService.countNumUnreadNotification(toUser));
+            notificationsService.countNumUnreadNotification(userId));
 
         return ResponseEntity.ok().body(om);
     }
 
-    @PatchMapping("/{id}/mark-as-read")
-    public ResponseEntity<?> markAsRead(@PathVariable UUID id) {
-        notificationsService.markAsRead(id);
-        return ResponseEntity.ok().body(null);
+    /**
+     * Update status of notifications whose id equal {@code id}.
+     *
+     * @param id   notification id
+     * @param body request body
+     */
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> updateStatus(@PathVariable UUID id, @RequestBody Map<String, Object> body) {
+        Object value = body.get("status");
+        String status = null == value ? null : value.toString();
+
+        if (!STATUS_READ.equals(status)) {
+            return ResponseEntity.badRequest().body("Invalid status");
+        } else {
+            notificationsService.updateStatus(id, status);
+            return ResponseEntity.ok().body(null);
+        }
+    }
+
+    /**
+     * Update multiple notifications status of current log in user.
+     * Currently used for marking all notifications as read.
+     *
+     * @param userId
+     * @param body   request body
+     */
+    @PatchMapping("/status")
+    public ResponseEntity<?> updateMultipleNotificationsStatus(
+        @CurrentSecurityContext(expression = "authentication.name") String userId,
+        @RequestBody Map<String, Object> body
+    ) {
+        Object value = body.get("status");
+        String status = null == value ? null : value.toString();
+
+        if (!STATUS_READ.equals(status)) {
+            return ResponseEntity.badRequest().body("Invalid status");
+        } else {
+            notificationsService.updateMultipleNotificationsStatus(userId, STATUS_READ);
+            return ResponseEntity.ok().body(null);
+        }
     }
 }

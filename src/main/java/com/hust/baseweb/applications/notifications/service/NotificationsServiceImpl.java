@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.hust.baseweb.applications.notifications.entity.Notifications.STATUS_CREATED;
@@ -52,12 +53,25 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
-    public void markAsRead(UUID notificationId) {
+    public void updateStatus(UUID notificationId, String status) {
         Notifications notification = notificationsRepo.findById(notificationId).orElse(null);
 
         if (null != notification) {
             notification.setStatusId(STATUS_READ);
             notificationsRepo.save(notification);
+        }
+    }
+
+    @Override
+    public void updateMultipleNotificationsStatus(String userId, String status) {
+        List<Notifications> notifications = notificationsRepo.findByToUserAndStatusId(userId, STATUS_CREATED);
+
+        if (null != notifications) {
+            for (Notifications notification : notifications) {
+                notification.setStatusId(STATUS_READ);
+            }
+
+            notificationsRepo.saveAll(notifications);
         }
     }
 }
