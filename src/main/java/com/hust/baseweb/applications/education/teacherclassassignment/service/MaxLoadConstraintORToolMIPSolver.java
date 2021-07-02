@@ -14,6 +14,7 @@ public class MaxLoadConstraintORToolMIPSolver {
     private int m;// number of teachers
     private HashSet<Integer>[] D;// D[i] is the set of teachers that can be assigned to class i
     private boolean[][] conflict;
+    private int[][] priority;
     private double[] hourClass;
     private double[] maxHourTeacher;
 
@@ -33,6 +34,7 @@ public class MaxLoadConstraintORToolMIPSolver {
         int n,
         int m,
         HashSet[] D,
+        int[][] priority,
         boolean[][] conflict,
         double[] hourClass,
         double[] maxHourTeacher
@@ -40,6 +42,7 @@ public class MaxLoadConstraintORToolMIPSolver {
         this.n = n;
         this.m = m;
         this.D = D;
+        this.priority = priority;
         this.conflict = conflict;
         this.hourClass = hourClass;
         this.maxHourTeacher = maxHourTeacher;

@@ -247,6 +247,10 @@
             <artifactId>spring-content-rest-boot-starter</artifactId>
             <version>1.2.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+        </dependency>
     </dependencies>
 
     <repositories>

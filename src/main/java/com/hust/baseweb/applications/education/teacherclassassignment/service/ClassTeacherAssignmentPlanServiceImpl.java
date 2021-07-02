@@ -434,9 +434,10 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             if (mTeacher2Courses.get(tc.getTeacherId()) == null) {
                 mTeacher2Courses.put(tc.getTeacherId(), new ArrayList<>());
             }
+
             EduCourse course = mId2Course.get(tc.getCourseId());
             if (course != null) {
-                Course4Teacher c4t = new Course4Teacher(course.getId(), course.getName(), null);
+                Course4Teacher c4t = new Course4Teacher(course.getId(), course.getName(), tc.getPriority(), null);
                 mTeacher2Courses.get(tc.getTeacherId()).add(c4t);
             }
 

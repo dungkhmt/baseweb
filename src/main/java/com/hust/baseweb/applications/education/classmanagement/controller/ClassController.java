@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
 import com.google.gson.Gson;
+import com.hust.baseweb.applications.cache.UserCache;
 import com.hust.baseweb.applications.education.classmanagement.service.ClassServiceImpl;
 import com.hust.baseweb.applications.education.content.Video;
 import com.hust.baseweb.applications.education.content.VideoService;
@@ -11,6 +12,7 @@ import com.hust.baseweb.applications.education.report.model.courseparticipation.
 import com.hust.baseweb.applications.education.report.model.quizparticipation.StudentQuizParticipationModel;
 import com.hust.baseweb.applications.education.service.*;
 import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,6 +29,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +50,7 @@ public class ClassController {
     private LogUserLoginCourseChapterMaterialService logUserLoginCourseChapterMaterialService;
     private LogUserLoginQuizQuestionService logUserLoginQuizQuestionService;
     private VideoService videoService;
+
 
     @PostMapping
     public ResponseEntity<?> getClassesOfCurrSemester(

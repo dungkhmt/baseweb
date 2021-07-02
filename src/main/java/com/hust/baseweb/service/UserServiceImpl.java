@@ -340,6 +340,10 @@ public class UserServiceImpl implements UserService {
     public PersonModel findPersonByUserLoginId(String userLoginId) {
         UserLogin userLogin = userLoginRepo.findByUserLoginId(userLoginId);
         Person person = personRepo.findByPartyId(userLogin.getParty().getPartyId());
+        if(person == null){
+            log.info("findPersonByUserLoginId, person of " + userLoginId + " not exists" );
+            return new PersonModel();
+        }
 
         PersonModel personModel = new PersonModel();
         personModel.setFirstName(person.getFirstName());

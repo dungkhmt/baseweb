@@ -21,12 +21,12 @@ public class AlgoTeacherIM {
 
     private double prespecifiedHourLoad; // so gio da duoc phan cong boi nhiem vu giang day khac
 
-    public void addIfNotExistCourse4Teacher(String courseId, String courseName, String type) {
+    public void addIfNotExistCourse4Teacher(String courseId, String courseName, int priority, String type) {
         for (Course4Teacher ct : courses) {
             if (ct.getCourseId().equals(courseId) && ct.getType().equals(type)) {
                 return;
             }
         }
-        courses.add(new Course4Teacher(courseId, courseName, type));
+        courses.add(new Course4Teacher(courseId, courseName, priority, type));
     }
 }

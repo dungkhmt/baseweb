@@ -66,10 +66,10 @@ public class Main {
                             teacherIMList.add(t);
                             mId2Teacher.put(teacherId, t);
 
-                            t.addIfNotExistCourse4Teacher(cls.getCourseId(), cls.getCourseName(), cls.getClassType());
+                            t.addIfNotExistCourse4Teacher(cls.getCourseId(), cls.getCourseName(), 1, cls.getClassType());
 
                         } else {
-                            t.addIfNotExistCourse4Teacher(cls.getCourseId(), cls.getCourseName(), cls.getClassType());
+                            t.addIfNotExistCourse4Teacher(cls.getCourseId(), cls.getCourseName(), 1, cls.getClassType());
                         }
                     }
                 }

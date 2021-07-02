@@ -1,5 +1,7 @@
 package com.hust.baseweb.applications.education.service;
 
+import com.hust.baseweb.BasewebApplication;
+import com.hust.baseweb.applications.education.classmanagement.controller.ClassController;
 import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.entity.EduCourseChapterMaterial;
 import com.hust.baseweb.applications.education.entity.LogUserLoginCourseChapterMaterial;
@@ -26,6 +28,22 @@ public class LogUserLoginCourseChapterMaterialServiceImpl implements LogUserLogi
     private EduCourseChapterMaterialRepo eduCourseChapterMaterialRepo;
     private UserService userService;
     private ClassRepo classRepo;
+
+    //private UserCache userCache;
+    public static HashMap<String, PersonModel> mUserLoginId2PersonModel = new HashMap();
+
+    public PersonModel getPersonModel(String userLoginId){
+        if(mUserLoginId2PersonModel.get(userLoginId) == null){
+            // load data from DB
+            List<UserLogin> userLoginList = userService.getAllUserLogins();
+            log.info("UserCache, got list " + userLoginList.size() + " users");
+            for(UserLogin u: userLoginList){
+                PersonModel pm = userService.findPersonByUserLoginId(u.getUserLoginId());
+                mUserLoginId2PersonModel.put(u.getUserLoginId(),pm);
+            }
+        }
+        return mUserLoginId2PersonModel.get(userLoginId);
+    }
 
     @Override
     public void logUserLoginMaterial(UserLogin userLogin, UUID eduCourseChapterMaterialId) {
@@ -58,7 +76,10 @@ public class LogUserLoginCourseChapterMaterialServiceImpl implements LogUserLogi
         List<LogUserLoginCourseChapterMaterial> lst = logUserLoginCourseChapterMaterialRepo.findAll();
         List<StudentCourseParticipationModel> studentClassParticipationOutputModels = new ArrayList();
         for (LogUserLoginCourseChapterMaterial e : lst) {
-            PersonModel personModel = userService.findPersonByUserLoginId(e.getUserLoginId());
+            //PersonModel personModel = userService.findPersonByUserLoginId(e.getUserLoginId());
+            // use cache
+            PersonModel personModel = getPersonModel(e.getUserLoginId());
+
             studentClassParticipationOutputModels.add(new StudentCourseParticipationModel(
                 e.getUserLoginId(),
                 personModel.getLastName() + " " + personModel.getMiddleName() + " " + personModel.getFirstName(),
