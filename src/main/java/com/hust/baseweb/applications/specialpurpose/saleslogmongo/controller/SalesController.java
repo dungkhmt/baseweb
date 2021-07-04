@@ -25,6 +25,7 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Log4j2
 public class SalesController {
+
     UserService userService;
 
     private final SalesService salesService;
@@ -40,28 +41,31 @@ public class SalesController {
     }
 
 
-
     @PostMapping("/mongo/create-customer-of-salesman")
     @ApiOperation(value = "tao moi khach hang")
-    public ResponseEntity<?> createCustomer(Principal principal, @RequestBody CreateCustomerInputModel input){
+    public ResponseEntity<?> createCustomer(Principal principal, @RequestBody CreateCustomerInputModel input) {
         // TOTO: create a customer of current user_login (salesman), this salesman manage the newly created customer
         //      update to the SalesmanCustomer, Customer, Organization collections
         UserLogin u = userService.findById(principal.getName());
-        Customer customer = salesService.createCusstomerOfSalesman(u.getUserLoginId(), input.getCustomerName(), input.getAddress());
+        Customer customer = salesService.createCusstomerOfSalesman(
+            u.getUserLoginId(),
+            input.getCustomerName(),
+            input.getAddress());
         return ResponseEntity.ok().body(customer);
     }
+
     @GetMapping("/mongo/get-customer-of-user-login")
     @ApiOperation(value = "lay danh sach khach hang quan ly bo user login hien tai")
-    public ResponseEntity<?> getCustomerOfUserLogin(Principal principal){
+    public ResponseEntity<?> getCustomerOfUserLogin(Principal principal) {
         // TODO: get list of customers managed by current user login, use SalesmanCustomer, Organization  collections
         UserLogin userLogin = userService.findById(principal.getName());
         List<CustomerModel> customerList = salesService.getCustomersOfSalesman(userLogin.getUserLoginId());
         return ResponseEntity.ok().body(customerList);
-        
+
     }
 
     @GetMapping("mongo/get-products-and-price")
-    public ResponseEntity<?> getProductsAndPrice(Principal principal){
+    public ResponseEntity<?> getProductsAndPrice(Principal principal) {
         List<ProductModel> products = mongoProductService.findAllProductAndPrice();
         return ResponseEntity.ok().body(products);
     }

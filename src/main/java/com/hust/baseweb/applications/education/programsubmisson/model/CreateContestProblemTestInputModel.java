@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateContestProblemTestInputModel {
+
     private String problemId;
     private String testName;
     private String testPoint;

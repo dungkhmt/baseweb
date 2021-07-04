@@ -30,6 +30,12 @@ public class QuizQuestion {
     @JoinColumn(name = "course_topic_id", referencedColumnName = "quiz_course_topic_id")
     private QuizCourseTopic quizCourseTopic;
 
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "created_by_user_login_id", referencedColumnName = "user_login_id")
+    //private UserLogin createdByUserLogin;
+    @Column(name = "created_by_user_login_id")
+    private String createdByUserLoginId;
+
     @Column(name = "level_id")
     private String levelId;
 
@@ -41,9 +47,9 @@ public class QuizQuestion {
     @Column(name = "status_id")
     private String statusId;
 
-    @Column(name= "created_stamp")
+    @Column(name = "created_stamp")
     private Date createdStamp;
 
-    @Column(name= "last_updated_stamp")
+    @Column(name = "last_updated_stamp")
     private Date lastUpdatedStamp;
 }

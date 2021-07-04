@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;
 
-public interface QuizGroupQuestionAssignmentRepo extends JpaRepository<QuizGroupQuestionAssignment, CompositeQuizGroupQuestionAssignmentId> {
+public interface QuizGroupQuestionAssignmentRepo
+    extends JpaRepository<QuizGroupQuestionAssignment, CompositeQuizGroupQuestionAssignmentId> {
 
     List<QuizGroupQuestionAssignment> findQuizGroupQuestionAssignmentsByQuizGroupId(UUID groupId);
 

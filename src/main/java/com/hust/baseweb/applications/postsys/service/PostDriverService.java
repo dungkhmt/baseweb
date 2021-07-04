@@ -48,29 +48,48 @@ public class PostDriverService {
         return new ResponseSample("SUCCESS", "Cập nhật thành công");
     }
 
-    public UpdatePostDriverPostOfficeAssignmentOutputModel addPostDriverPostOfficeAssignment(UpdatePostDriverPostOfficeAssignmentInputModel updatePostDriverPostOfficeAssignmentInputModel) {
+    public UpdatePostDriverPostOfficeAssignmentOutputModel addPostDriverPostOfficeAssignment(
+        UpdatePostDriverPostOfficeAssignmentInputModel updatePostDriverPostOfficeAssignmentInputModel
+    ) {
         PostDriverPostOfficeAssignment postDriverPostOfficeAssignment = new PostDriverPostOfficeAssignment();
-        PostDriver postDriver = postDriverRepo.findByPostDriverId(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostDriverId()));
-        PostFixedTrip postFixedTrip = postFixedTripRepo.findById(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostOfficeFixedTripId())).get();
+        PostDriver postDriver = postDriverRepo.findByPostDriverId(UUID.fromString(
+            updatePostDriverPostOfficeAssignmentInputModel.getPostDriverId()));
+        PostFixedTrip postFixedTrip = postFixedTripRepo
+            .findById(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostOfficeFixedTripId()))
+            .get();
         postDriverPostOfficeAssignment.setPostOfficeFixedTripId(postFixedTrip.getPostOfficeFixedTripId());
         postDriverPostOfficeAssignment.setPostFixedTrip(postFixedTrip);
         postDriverPostOfficeAssignment.setPostDriver(postDriver);
         postDriverPostOfficeAssignment.setPostDriverId(postDriver.getPostDriverId());
         postDriverPostOfficeAssignmentRepo.save(postDriverPostOfficeAssignment);
-        return new UpdatePostDriverPostOfficeAssignmentOutputModel("SUCCESS", "Cập nhật thành công", postDriverPostOfficeAssignment);
+        return new UpdatePostDriverPostOfficeAssignmentOutputModel(
+            "SUCCESS",
+            "Cập nhật thành công",
+            postDriverPostOfficeAssignment);
     }
 
-    public UpdatePostDriverPostOfficeAssignmentOutputModel updatePostDriverPostOfficeAssignment(UpdatePostDriverPostOfficeAssignmentInputModel updatePostDriverPostOfficeAssignmentInputModel) {
-        PostDriverPostOfficeAssignment postDriverPostOfficeAssignment = postDriverPostOfficeAssignmentRepo.findById(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostDriverPostOfficeAssignmentId())).get();
-        PostFixedTrip postFixedTrip = postFixedTripRepo.findById(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostOfficeFixedTripId())).get();
+    public UpdatePostDriverPostOfficeAssignmentOutputModel updatePostDriverPostOfficeAssignment(
+        UpdatePostDriverPostOfficeAssignmentInputModel updatePostDriverPostOfficeAssignmentInputModel
+    ) {
+        PostDriverPostOfficeAssignment postDriverPostOfficeAssignment = postDriverPostOfficeAssignmentRepo
+            .findById(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostDriverPostOfficeAssignmentId()))
+            .get();
+        PostFixedTrip postFixedTrip = postFixedTripRepo
+            .findById(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostOfficeFixedTripId()))
+            .get();
         postDriverPostOfficeAssignment.setPostOfficeFixedTripId(postFixedTrip.getPostOfficeFixedTripId());
         postDriverPostOfficeAssignment.setPostFixedTrip(postFixedTrip);
         postDriverPostOfficeAssignmentRepo.save(postDriverPostOfficeAssignment);
-        return new UpdatePostDriverPostOfficeAssignmentOutputModel("SUCCESS", "Cập nhật thành công", postDriverPostOfficeAssignment);
+        return new UpdatePostDriverPostOfficeAssignmentOutputModel(
+            "SUCCESS",
+            "Cập nhật thành công",
+            postDriverPostOfficeAssignment);
     }
 
     public ResponseSample deletePostDriverPostOfficeAssignment(UpdatePostDriverPostOfficeAssignmentInputModel updatePostDriverPostOfficeAssignmentInputModel) {
-        PostDriverPostOfficeAssignment postDriverPostOfficeAssignment = postDriverPostOfficeAssignmentRepo.findById(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostDriverPostOfficeAssignmentId())).get();
+        PostDriverPostOfficeAssignment postDriverPostOfficeAssignment = postDriverPostOfficeAssignmentRepo
+            .findById(UUID.fromString(updatePostDriverPostOfficeAssignmentInputModel.getPostDriverPostOfficeAssignmentId()))
+            .get();
         postDriverPostOfficeAssignmentRepo.delete(postDriverPostOfficeAssignment);
         return new ResponseSample("SUCCESS", "Xoá thành công");
     }

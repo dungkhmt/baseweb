@@ -15,36 +15,37 @@ import java.util.UUID;
 @Entity
 @Table(name = "edu_quiz_test")
 public class EduQuizTest {
+
     @Id
-    @Column(name="test_id")
+    @Column(name = "test_id")
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private String testId;
 
-    @Column(name="test_name")
+    @Column(name = "test_name")
     private String testName;
 
-    @Column(name="schedule_datetime")
+    @Column(name = "schedule_datetime")
     private Date scheduleDatetime;
 
-    @Column(name="duration")
+    @Column(name = "duration")
     private Integer duration;
 
-    @Column(name="course_id")
+    @Column(name = "course_id")
     private String courseId;
 
-    @Column(name="status_id")
+    @Column(name = "status_id")
     private String statusId;
 
-    @Column(name="created_by_user_login_id")
+    @Column(name = "created_by_user_login_id")
     private String createdByUserLoginId;
 
-    @Column(name="last_updated_stamp")
+    @Column(name = "last_updated_stamp")
     private Date lastUpdatedStamp;
 
-    @Column(name="created_stamp")
+    @Column(name = "created_stamp")
     private Date createdStamp;
 
-    @Column(name="class_id")
+    @Column(name = "class_id")
     private UUID classId;
 
 }

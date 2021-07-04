@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProgramSubmissionOutput {
+
     private List<ProgramSubmissionItemOutput> items;
     private String msg;
 }

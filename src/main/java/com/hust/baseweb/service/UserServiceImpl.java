@@ -1,6 +1,8 @@
 package com.hust.baseweb.service;
 
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
+import com.hust.baseweb.applications.mail.service.MailService;
+import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import com.hust.baseweb.entity.*;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
 import com.hust.baseweb.entity.Status.StatusEnum;
@@ -24,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,23 +44,39 @@ import java.util.concurrent.Executors;
 @javax.transaction.Transactional
 public class UserServiceImpl implements UserService {
 
-	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+    public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+
     public static final String module = UserService.class.getName();
+
     private final UserLoginRepo userLoginRepo;
+
     private final UserRestRepository userRestRepository;
+
     private final PartyService partyService;
+
     private final PartyTypeRepo partyTypeRepo;
+
     private final PartyRepo partyRepo;
+
     private final StatusRepo statusRepo;
+
     private final PersonRepo personRepo;
+
     private final SecurityGroupRepo securityGroupRepo;
+
     private final UserRegisterRepo userRegisterRepo;
+
     private final StatusItemRepo statusItemRepo;
+
     private final JavaMailSender javaMailSender;
+
+    private final MailService mailService;
 
     private final SecurityGroupService groupService;
 
     private final static ExecutorService EMAIL_EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
+
+    private NotificationsService notificationsService;
 
     @Override
     public UserLogin findById(String userLoginId) {
@@ -155,6 +172,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Page<UserRestBriefProjection> findUsersByUserLoginId(Pageable page, String sString) {
+        return userRestRepository.findByLoginUserId(page, sString);
+    }
+
+    @Override
     public DPerson findByPartyId(String partyId) {
         return userRestRepository.findById(UUID.fromString(partyId)).orElseThrow(NoSuchElementException::new);
     }
@@ -184,35 +206,183 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel) {
-        String userLoginId = inputModel.getUserLoginId();
-        String email = inputModel.getEmail();
+    @Transactional
+    public SimpleResponse register(RegisterIM im) {
+        SimpleResponse res;
+        String userLoginId = im.getUserLoginId();
 
-        if (userRegisterRepo.existsByUserLoginIdOrEmail(userLoginId, email) || userLoginRepo.existsById(userLoginId)) {
-            return new UserRegister.OutputModel();
+        //if (userRegisterRepo.existsByUserLoginIdOrEmail(userLoginId, email) || userLoginRepo.existsById(userLoginId)) {
+        if (userLoginRepo.existsById(userLoginId)) {
+            res = new SimpleResponse(
+                400,
+                "existed",
+                "Tên người dùng hoặc email đã được sử dụng");
+        } else {
+            StatusItem userRegistered = statusItemRepo
+                .findById("USER_REGISTERED")
+                .orElseThrow(NoSuchElementException::new);
+
+            String firstName = StringUtils.normalizeSpace(im.getFirstName());
+            String middleName = StringUtils.normalizeSpace(im.getMiddleName());
+            String lastName = StringUtils.normalizeSpace(im.getLastName());
+            String fullName = String.join(" ", firstName, middleName, lastName);
+            String email = im.getEmail();
+
+            UserRegister userRegister = new UserRegister(
+                im.getUserLoginId(),
+                im.getPassword(),
+                email,
+                firstName,
+                middleName,
+                lastName,
+                String.join(",", im.getRoles()),
+                userRegistered);
+
+            userRegisterRepo.save(userRegister);
+
+            // push notifications
+            notificationsService.create(
+                im.getUserLoginId(),
+                "admin",
+                fullName + " đã đăng kí tài khoản. Phê duyệt ngay",
+                "/user-group/user/approve-register");
+
+            // send email.
+            EMAIL_EXECUTOR_SERVICE.execute(() ->
+                                               mailService.sendSimpleMail(
+                                                   new String[]{email},
+                                                   "Open ERP - Đăng ký tài khoản thành công",
+                                                   String.format(
+                                                       "Xin chào %s,\n\n" +
+                                                       "Bạn đã đăng ký thành công tài khoản tại hệ thống " +
+                                                       "Open ERP với tên đăng nhập %s. " +
+                                                       "Đây là email tự động, vui lòng chờ đến khi được " +
+                                                       "quản trị viên phê duyệt và không phản hồi lại email này.\n\n" +
+                                                       "Xin cảm ơn,\n" +
+                                                       "Open ERP team",
+                                                       fullName, im.getUserLoginId()),
+                                                   null));
+
+            res = new SimpleResponse(200, null, null);
         }
-        StatusItem userRegistered = statusItemRepo
-            .findById("USER_REGISTERED")
-            .orElseThrow(NoSuchElementException::new);
-        UserRegister userRegister = inputModel.createUserRegister(userRegistered);
-        userRegister = userRegisterRepo.save(userRegister);
 
-        EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
-
-        return userRegister.toOutputModel();
+        return res;
     }
 
-    private void sendEmail(String email, String userLoginId) {
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(email);
+    @Override
+    @Transactional(readOnly = true)
+    public GetAllRegistsOM getAllRegists() {
+        List<RegistsOM> userRegisters = userRegisterRepo.getAllRegists("USER_REGISTERED");
 
-        simpleMailMessage.setSubject("Đăng ký thành công - SSCM - Quản lý chuỗi cung ứng");
-        simpleMailMessage.setText(String.format(
-            "Bạn đã đăng ký thành công tài khoản tại hệ thống với tên đăng nhập %s, " +
-            "vui lòng chờ cho đến khi được quản trị viên phê duyệt. \nXin cảm ơn!",
-            userLoginId));
-        javaMailSender.send(simpleMailMessage);
+        if (null == userRegisters) {
+            return new GetAllRegistsOM();
+        }
+
+        return new GetAllRegistsOM(userRegisters, groupService.getRoles());
     }
+
+    @Override
+    @Transactional
+    public SimpleResponse approve(ApproveRegistrationIM im) {
+        UserRegister userRegister = userRegisterRepo.findById(im.getUserLoginId()).orElse(null);
+
+        if (null == userRegister) {
+            return new SimpleResponse(404, "not existed", "Đăng ký không tồn tại hoặc đã bị xoá");
+        }
+
+        if ("USER_APPROVED".equals(userRegister.getStatusItem().getStatusId())) {
+            return new SimpleResponse(400, "approved", "Tài khoản đã được phê duyệt trước đó");
+        }
+
+        createAndSaveUserLogin(new PersonModel(
+            userRegister.getUserLoginId(),
+            userRegister.getPassword(),
+            im.getRoles(),
+            userRegister.getUserLoginId(),
+            userRegister.getFirstName(),
+            userRegister.getLastName(),
+            userRegister.getMiddleName(),
+            null,
+            null));
+
+        StatusItem userApproved = statusItemRepo.findById("USER_APPROVED").orElseThrow(NoSuchElementException::new);
+        userRegister.setStatusItem(userApproved);
+
+        userRegisterRepo.save(userRegister);
+
+        return new SimpleResponse(200, null, null);
+    }
+
+    @Override
+    public UserLogin updatePassword2(String userLoginId, String password) {
+        //String passWordOut = PASSWORD_ENCODER.encode(password);
+        log.info("::updatePassword2, user_login " + userLoginId + " " + password);
+//        UserLogin u = userLoginRepo.getByUserLoginId(userLoginId);
+        UserLogin u = userLoginRepo.findByUserLoginId(userLoginId);
+        //u.setPassword(passWordOut);
+        u.setPassword(password);
+        u = userLoginRepo.save(u);
+        //log.info("::updatePassword2, user_login " + u.getUserLoginId() + " encrypted password = "+ passWordOut);
+        return u;
+    }
+
+    @Override
+    public List<UserLogin> getALlUserLoginsByGroupId(String groupId) {
+        return userLoginRepo.findAllUserLoginsByGroupId(groupId);
+    }
+
+    @Override
+    public List<String> getGroupPermsByUserLoginId(String userLoginId) {
+        return userLoginRepo.findGroupPermsByUserLoginId(userLoginId);
+    }
+
+    @Override
+    public PersonModel findPersonByUserLoginId(String userLoginId) {
+        UserLogin userLogin = userLoginRepo.findByUserLoginId(userLoginId);
+        Person person = personRepo.findByPartyId(userLogin.getParty().getPartyId());
+        if(person == null){
+            log.info("findPersonByUserLoginId, person of " + userLoginId + " not exists" );
+            return new PersonModel();
+        }
+
+        PersonModel personModel = new PersonModel();
+        personModel.setFirstName(person.getFirstName());
+        personModel.setMiddleName(person.getMiddleName());
+        personModel.setLastName(person.getLastName());
+
+        return personModel;
+    }
+
+//    @Override
+//    public UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel) {
+//        String userLoginId = inputModel.getUserLoginId();
+//        String email = inputModel.getEmail();
+//
+//        if (userRegisterRepo.existsByUserLoginIdOrEmail(userLoginId, email) || userLoginRepo.existsById(userLoginId)) {
+//            return new UserRegister.OutputModel();
+//        }
+//        StatusItem userRegistered = statusItemRepo
+//            .findById("USER_REGISTERED")
+//            .orElseThrow(NoSuchElementException::new);
+//        UserRegister userRegister = inputModel.createUserRegister(userRegistered);
+//        userRegister = userRegisterRepo.save(userRegister);
+//
+//        EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
+//
+//        return userRegister.toOutputModel();
+//    }
+//
+//    private void sendEmail(String email, String userLoginId) {
+//        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+//        simpleMailMessage.setTo(email);
+//
+//        simpleMailMessage.setSubject("Đăng ký thành công - SSCM - Quản lý chuỗi cung ứng");
+//        simpleMailMessage.setText(String.format(
+//            "Bạn đã đăng ký thành công tài khoản tại hệ thống với tên đăng nhập %s, " +
+//            "vui lòng chờ cho đến khi được quản trị viên phê duyệt. \nXin cảm ơn!",
+//            userLoginId));
+//        javaMailSender.send(simpleMailMessage);
+//    }
 
     /*@Override
     public boolean approveRegisterUser(String userLoginId) {
@@ -276,121 +446,4 @@ public class UserServiceImpl implements UserService {
         *//*
 
     }*/
-
-    @Override
-    @Transactional
-    public SimpleResponse register(RegisterIM im) {
-        SimpleResponse res;
-        String userLoginId = im.getUserLoginId();
-        String email = im.getEmail();
-
-        //if (userRegisterRepo.existsByUserLoginIdOrEmail(userLoginId, email) || userLoginRepo.existsById(userLoginId)) {
-        if (userLoginRepo.existsById(userLoginId)) {
-            res = new SimpleResponse(
-                400,
-                "existed",
-                "Tên người dùng hoặc email đã được sử dụng");
-        } else {
-            StatusItem userRegistered = statusItemRepo
-                .findById("USER_REGISTERED")
-                .orElseThrow(NoSuchElementException::new);
-
-            UserRegister userRegister = new UserRegister(
-                im.getUserLoginId(),
-                im.getPassword(),
-                im.getEmail(),
-                StringUtils.normalizeSpace(im.getFirstName()),
-                StringUtils.normalizeSpace(im.getMiddleName()),
-                StringUtils.normalizeSpace(im.getLastName()),
-                String.join(",", im.getRoles()),
-                userRegistered);
-
-            userRegisterRepo.save(userRegister);
-            EMAIL_EXECUTOR_SERVICE.execute(() -> sendEmail(email, userLoginId));
-            res = new SimpleResponse(200, null, null);
-        }
-
-        return res;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public GetAllRegistsOM getAllRegists() {
-        List<RegistsOM> userRegisters = userRegisterRepo.getAllRegists("USER_REGISTERED");
-
-        if (null == userRegisters) {
-            return new GetAllRegistsOM();
-        }
-
-        return new GetAllRegistsOM(userRegisters, groupService.getRoles());
-    }
-
-    @Override
-    @Transactional
-    public SimpleResponse approve(ApproveRegistrationIM im) {
-        UserRegister userRegister = userRegisterRepo.findById(im.getUserLoginId()).orElse(null);
-
-        if (null == userRegister) {
-            return new SimpleResponse(404, "not existed", "Đăng ký không tồn tại hoặc đã bị xoá");
-        }
-
-        if ("USER_APPROVED".equals(userRegister.getStatusItem().getStatusId())) {
-            return new SimpleResponse(400, "approved", "Tài khoản đã được phê duyệt trước đó");
-        }
-
-        createAndSaveUserLogin(new PersonModel(
-            userRegister.getUserLoginId(),
-            userRegister.getPassword(),
-            im.getRoles(),
-            userRegister.getUserLoginId(),
-            userRegister.getFirstName(),
-            userRegister.getLastName(),
-            userRegister.getMiddleName(),
-            null,
-            null));
-
-        StatusItem userApproved = statusItemRepo.findById("USER_APPROVED").orElseThrow(NoSuchElementException::new);
-        userRegister.setStatusItem(userApproved);
-
-        userRegisterRepo.save(userRegister);
-
-        return new SimpleResponse(200, null, null);
-    }
-	
-	@Override
-    public UserLogin updatePassword2(String userLoginId, String password) {
-        //String passWordOut = PASSWORD_ENCODER.encode(password);
-        log.info("::updatePassword2, user_login " + userLoginId + " "+ password);
-//        UserLogin u = userLoginRepo.getByUserLoginId(userLoginId);
-        UserLogin u = userLoginRepo.findByUserLoginId(userLoginId);
-        //u.setPassword(passWordOut);
-        u.setPassword(password);
-        u = userLoginRepo.save(u);
-        //log.info("::updatePassword2, user_login " + u.getUserLoginId() + " encrypted password = "+ passWordOut);
-        return u;
-    }
-
-    @Override
-    public List<UserLogin> getALlUserLoginsByGroupId(String groupId) {
-        return userLoginRepo.findAllUserLoginsByGroupId(groupId);
-    }
-
-    @Override
-    public List<String> getGroupPermsByUserLoginId(String userLoginId){
-        return userLoginRepo.findGroupPermsByUserLoginId(userLoginId);
-    }
-
-    @Override
-    public PersonModel findPersonByUserLoginId(String userLoginId) {
-        UserLogin userLogin = userLoginRepo.findByUserLoginId(userLoginId);
-        Person person = personRepo.findByPartyId(userLogin.getParty().getPartyId());
-
-        PersonModel personModel = new PersonModel();
-        personModel.setFirstName(person.getFirstName());
-        personModel.setMiddleName(person.getMiddleName());
-        personModel.setLastName(person.getLastName());
-
-        return personModel;
-    }
-
 }

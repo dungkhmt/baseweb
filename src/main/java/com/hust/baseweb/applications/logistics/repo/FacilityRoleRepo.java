@@ -27,5 +27,10 @@ public interface FacilityRoleRepo extends JpaRepository<FacilityRole, UUID> {
 
     List<FacilityRole> findAllByFacilityAndRoleTypeAndThruDate(Facility facility, RoleType roleType, Date thruDate);
 
-    List<FacilityRole> findAllByFacilityAndUserLoginAndRoleTypeAndThruDate(Facility facility, UserLogin userLogin, RoleType roleType, Date thruDate);
+    List<FacilityRole> findAllByFacilityAndUserLoginAndRoleTypeAndThruDate(
+        Facility facility,
+        UserLogin userLogin,
+        RoleType roleType,
+        Date thruDate
+    );
 }

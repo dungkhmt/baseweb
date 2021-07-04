@@ -9,6 +9,8 @@ public class AlgoClassIM {
 
     private int id;
 
+    private String classCode;
+
     private String classType;
 
     private String courseId;// ma mon hoc, vi du IT3011

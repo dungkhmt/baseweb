@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuizParticipationStatisticOutputModel {
+
     private String date;
     private int count;
 }

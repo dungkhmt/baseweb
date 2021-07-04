@@ -28,6 +28,8 @@ public interface UserService {
 
     Page<UserRestBriefProjection> findPersonByFullName(Pageable page, String sString);
 
+    Page<UserRestBriefProjection> findUsersByUserLoginId(Pageable page, String sString);
+
     List<UserLogin> getAllUserLogins();
 
     UserLogin createAndSaveUserLogin(String userName, String password);
@@ -38,26 +40,26 @@ public interface UserService {
 
     Party update(PersonUpdateModel personUpdateModel, UUID partyId);
 
-
     UserLogin findUserLoginByPartyId(UUID partyId);
-
-    UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel);
-
-    /*boolean approveRegisterUser(String userLoginId);*/
-
-    /*List<UserRegister.OutputModel> findAllRegisterUser();*/
 
     SimpleResponse register(RegisterIM im);
 
     GetAllRegistsOM getAllRegists();
 
     SimpleResponse approve(ApproveRegistrationIM im);
-	
-	UserLogin updatePassword2(String userLoginId, String password);
 
-	List<UserLogin> getALlUserLoginsByGroupId(String groupId);
+    UserLogin updatePassword2(String userLoginId, String password);
 
-	List<String> getGroupPermsByUserLoginId(String userLoginId);
+    List<UserLogin> getALlUserLoginsByGroupId(String groupId);
 
-	PersonModel findPersonByUserLoginId(String userLoginId);
+    List<String> getGroupPermsByUserLoginId(String userLoginId);
+
+    PersonModel findPersonByUserLoginId(String userLoginId);
+
+//    UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel);
+
+//    boolean approveRegisterUser(String userLoginId);
+
+//    List<UserRegister.OutputModel> findAllRegisterUser();
+
 }

@@ -16,7 +16,9 @@ public class MailController {
 
     @GetMapping("/simple-mail")
     void send(@RequestBody String[] to) {
+        //void send(){
         mailService.sendSimpleMail(to, null, null, "test", "test from openerp", null);
+        //mailService.sendSimpleMail(new String[] {"dungkhmt@gmail.com"}, null, null, "test", "test from openerp", null);
     }
 
     @PostMapping("/send-mail-with-multiple-files")

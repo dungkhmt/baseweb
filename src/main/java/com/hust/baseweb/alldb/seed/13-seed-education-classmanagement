@@ -129,7 +129,7 @@ INSERT INTO public.edu_assignment (id,assignment_name,subject,class_id,last_upda
 -- screen security
 INSERT INTO security_permission
 (permission_id, description, last_updated_stamp, created_stamp)
-VALUES('SCR_TCLASSLIST', 'The permission to view class list screen for teachers', now(), now());
+VALUES('SCR_TCLASSLIST', 'The permission to view class list screen for eduTeachers', now(), now());
 
 INSERT INTO security_group_permission
 (group_id, permission_id, last_updated_stamp, created_stamp)

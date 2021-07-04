@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @Document(collection = "course")
 public class Course {
+
     @Id
     private String courseId;
 

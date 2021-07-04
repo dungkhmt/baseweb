@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostmanUpdateInputModel {
+
     private String postmanId;
     private String postmanName;
     private String postOfficeId;

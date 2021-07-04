@@ -104,7 +104,10 @@ public class CustomerAPIController {
 
         // create customer stored in mongoDB
         UserLogin u = userService.findById(principal.getName());
-        Customer customer = salesService.createCusstomerOfSalesman(u.getUserLoginId(), input.getCustomerName(), input.getAddress());
+        Customer customer = salesService.createCusstomerOfSalesman(
+            u.getUserLoginId(),
+            input.getCustomerName(),
+            input.getAddress());
 
         return ResponseEntity.ok().body(partyCustomer);
     }

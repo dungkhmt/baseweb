@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddPointStreetInputModel {
+
     private String streetId;
     private double lat;
     private double lng;

@@ -94,7 +94,7 @@ public class TeacherExtracter implements IExtracter {
             } else {
 
              */
-            if(teacher == null){
+            if (teacher == null) {
                 teacher = new AlgoTeacherIM();
 
                 teacher.setId(id);
@@ -103,13 +103,14 @@ public class TeacherExtracter implements IExtracter {
 
                 preTeacher = id;
                 teachers.add(teacher);
-                mID2Teacher.put(id,teacher);
+                mID2Teacher.put(id, teacher);
             }
 
             teacher.getCourses().add(
                 new Course4Teacher(
                     row.getCell(indexOfColumn.get("course_id")).getStringCellValue(),
                     row.getCell(indexOfColumn.get("course_name")).getStringCellValue(),
+                    (int)row.getCell(indexOfColumn.get("priority")).getNumericCellValue(),
                     row.getCell(indexOfColumn.get("type")).getStringCellValue()
                 )
             );

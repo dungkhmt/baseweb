@@ -10,6 +10,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class QuizTestCreateInputModel {
+
     private String testId;
     private String testName;
     private Date scheduleDatetime;
@@ -19,11 +20,11 @@ public class QuizTestCreateInputModel {
 
     @Override
     public String toString() {
-        return "[TestId: " + testId + 
-        ", TestName: " + testName + 
-        ", ScheduleDatetime: " + scheduleDatetime + 
-        ", Duration: " + duration +
-        ", CourseId: " + courseId + 
-        ", ClassId: " + classId + "]";
+        return "[TestId: " + testId +
+               ", TestName: " + testName +
+               ", ScheduleDatetime: " + scheduleDatetime +
+               ", Duration: " + duration +
+               ", CourseId: " + courseId +
+               ", ClassId: " + classId + "]";
     }
 }

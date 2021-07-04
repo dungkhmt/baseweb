@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdatePostShipOrderInputModel {
+
     private String postOrderId;
     private String status;
     private String currentPostOfficeId;

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 
-public class  UpdatePasswordModel {
+public class UpdatePasswordModel {
 
     private String userLoginId;
     private String password;

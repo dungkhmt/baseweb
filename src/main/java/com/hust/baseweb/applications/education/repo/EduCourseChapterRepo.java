@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface EduCourseChapterRepo extends JpaRepository<EduCourseChapter, UUID> {
+
     EduCourseChapter save(EduCourseChapter eduCourseChapter);
+
     List<EduCourseChapter> findAllByEduCourse(EduCourse eduCourse);
 }

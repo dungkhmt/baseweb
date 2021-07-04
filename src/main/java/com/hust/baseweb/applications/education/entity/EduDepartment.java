@@ -13,8 +13,8 @@ import javax.persistence.Id;
 public class EduDepartment {
 
     @Id
-	private String id;
-	
-	@Column(name="department_name")
-	private String name;
+    private String id;
+
+    @Column(name = "department_name")
+    private String name;
 }

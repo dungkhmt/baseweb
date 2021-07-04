@@ -23,16 +23,18 @@ import java.security.Principal;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @CrossOrigin
 public class EduTestQuizParticipantController {
+
     private EduTestQuizParticipantService eduTestQuizParticipantService;
     private UserService userService;
 
     @PostMapping("/create-quiz-test-participation-register")
-    public ResponseEntity<?> createQuizTestParticipationRegister(Principal principal, @RequestBody
-                                                                 EduTestQuizParticipationCreateInputModel input
-                                                                 ){
+    public ResponseEntity<?> createQuizTestParticipationRegister(
+        Principal principal, @RequestBody
+        EduTestQuizParticipationCreateInputModel input
+    ) {
         UserLogin u = userService.findById(principal.getName());
-        log.info("createQuizTestParticipationRegister, userLoginId = "+ u.getUserLoginId());
-        EduTestQuizParticipant eduTestQuizParticipant = eduTestQuizParticipantService.register(u,input);
+        log.info("createQuizTestParticipationRegister, userLoginId = " + u.getUserLoginId());
+        EduTestQuizParticipant eduTestQuizParticipant = eduTestQuizParticipantService.register(u, input);
         return ResponseEntity.ok().body(eduTestQuizParticipant);
     }
 }

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface LakeRoleRepo extends JpaRepository<LakeRole, UUID> {
+
     List<LakeRole> findAllByUserLoginIdAndThruDate(String userLoginId, Timestamp thruDate);
+
     List<LakeRole> findAllByUserLoginIdAndLakeAndThruDate(String userLoginId, Lake lake, Timestamp thruDate);
 }

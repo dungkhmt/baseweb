@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name="post_office")
+@Table(name = "post_office")
 public class PostOffice {
 
     @Id

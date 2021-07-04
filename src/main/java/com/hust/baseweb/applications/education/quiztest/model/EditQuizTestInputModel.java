@@ -12,6 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EditQuizTestInputModel {
+
     private String testId;
     private Date scheduleDate;
     private int duration;

@@ -11,15 +11,13 @@ import java.util.List;
 
 @Service
 @Log4j2
-public class TimeTableServiceImpl implements TimeTableService
-{
+public class TimeTableServiceImpl implements TimeTableService {
 
     @Autowired
     private TimeTableRepo timetableRepo;
 
     @Override
-    public TimeTable save(TimeTableModelInput input)
-    {
+    public TimeTable save(TimeTableModelInput input) {
         TimeTable timetable = new TimeTable();
 
         timetable.setCid(input.getCid());
@@ -50,8 +48,7 @@ public class TimeTableServiceImpl implements TimeTableService
     }
 
     @Override
-    public List<TimeTable> findAll()
-    {
+    public List<TimeTable> findAll() {
         List<TimeTable> timetablelist = timetableRepo.findAll();
         return timetablelist;
     }

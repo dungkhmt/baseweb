@@ -18,8 +18,10 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class QuizChoiceAnswerServiceImpl implements QuizChoiceAnswerService {
+
     private QuizChoiceAnswerRepo quizChoiceAnswerRepo;
     private QuizQuestionRepo quizQuestionRepo;
+
     @Override
     public List<QuizChoiceAnswer> findAll() {
         return quizChoiceAnswerRepo.findAll();
@@ -33,7 +35,7 @@ public class QuizChoiceAnswerServiceImpl implements QuizChoiceAnswerService {
         QuizQuestion quizQuestion = quizQuestionRepo.findById(input.getQuizQuestionId()).orElse(null);
         quizChoiceAnswer.setQuizQuestion(quizQuestion);
 
-        quizChoiceAnswer  = quizChoiceAnswerRepo.save(quizChoiceAnswer);
+        quizChoiceAnswer = quizChoiceAnswerRepo.save(quizChoiceAnswer);
 
         return quizChoiceAnswer;
     }
@@ -41,8 +43,9 @@ public class QuizChoiceAnswerServiceImpl implements QuizChoiceAnswerService {
     @Override
     public QuizChoiceAnswer update(UUID choiceAnswerId, QuizChoiceAnswerCreateInputModel input) {
         QuizChoiceAnswer quizChoiceAnswerTemp = quizChoiceAnswerRepo.findById(choiceAnswerId).orElse(null);
-        if (quizChoiceAnswerTemp == null)
+        if (quizChoiceAnswerTemp == null) {
             return null;
+        }
         QuizChoiceAnswer quizChoiceAnswer = new QuizChoiceAnswer();
         quizChoiceAnswer.setChoiceAnswerId(choiceAnswerId);
         quizChoiceAnswer.setChoiceAnswerContent(input.getChoiceAnswerContent());
@@ -50,11 +53,12 @@ public class QuizChoiceAnswerServiceImpl implements QuizChoiceAnswerService {
         quizChoiceAnswer.setLastUpdatedStamp(new Date());
         quizChoiceAnswer.setCreatedStamp(quizChoiceAnswerTemp.getCreatedStamp());
         QuizQuestion quizQuestion = quizQuestionRepo.findById(input.getQuizQuestionId()).orElse(null);
-        if (quizQuestion == null)
+        if (quizQuestion == null) {
             return null;
+        }
         quizChoiceAnswer.setQuizQuestion(quizQuestion);
 
-        quizChoiceAnswer  = quizChoiceAnswerRepo.save(quizChoiceAnswer);
+        quizChoiceAnswer = quizChoiceAnswerRepo.save(quizChoiceAnswer);
 
         return quizChoiceAnswer;
     }

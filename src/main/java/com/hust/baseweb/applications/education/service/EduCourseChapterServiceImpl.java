@@ -16,9 +16,11 @@ import java.util.UUID;
 @Log4j2
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class EduCourseChapterServiceImpl implements  EduCourseChapterService{
+public class EduCourseChapterServiceImpl implements EduCourseChapterService {
+
     private EduCourseChapterRepo eduCourseChapterRepo;
     private EduCourseRepo eduCourseRepo;
+
     @Override
     public EduCourseChapter save(EduCourseChapterModelCreate eduCourseChapterModelCreate) {
         EduCourseChapter eduCourseChapter = new EduCourseChapter();
@@ -43,9 +45,9 @@ public class EduCourseChapterServiceImpl implements  EduCourseChapterService{
     @Override
     public String changeOpenCloseChapterStatus(UUID chapterId) {
         EduCourseChapter eduCourseChapter = eduCourseChapterRepo.findById(chapterId).orElse(null);
-        if(eduCourseChapter.getStatusId().equals(EduCourseChapter.STATUS_PRIVATE)){
+        if (eduCourseChapter.getStatusId().equals(EduCourseChapter.STATUS_PRIVATE)) {
             eduCourseChapter.setStatusId(EduCourseChapter.STATUS_PUBLIC);
-        }else{
+        } else {
             eduCourseChapter.setStatusId(EduCourseChapter.STATUS_PRIVATE);
         }
         eduCourseChapter = eduCourseChapterRepo.save(eduCourseChapter);

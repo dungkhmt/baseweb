@@ -13,5 +13,6 @@ public class Course4Teacher {
 
     private String courseName;
 
+    private int priority;
     private String type;
 }

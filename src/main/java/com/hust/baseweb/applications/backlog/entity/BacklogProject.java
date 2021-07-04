@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name="backlog_project")
+@Table(name = "backlog_project")
 public class BacklogProject {
 
     public BacklogProject(CreateProjectInputModel input) {
@@ -24,12 +24,12 @@ public class BacklogProject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="backlog_project_id")
+    @Column(name = "backlog_project_id")
     private UUID backlogProjectId;
 
-    @Column(name="backlog_project_code")
+    @Column(name = "backlog_project_code")
     private String backlogProjectCode;
 
-    @Column(name="backlog_project_name")
+    @Column(name = "backlog_project_name")
     private String backlogProjectName;
 }

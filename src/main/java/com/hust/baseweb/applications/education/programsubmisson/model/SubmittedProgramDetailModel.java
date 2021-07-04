@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubmittedProgramDetailModel {
+
     private String programCode;
 
 }

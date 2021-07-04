@@ -7,14 +7,24 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;
 
-public interface EduTestQuizGroupParticipationAssignmentRepo extends JpaRepository<EduTestQuizGroupParticipationAssignment, CompositeEduTestQuizGroupParticipationAssignmentId> {
+public interface EduTestQuizGroupParticipationAssignmentRepo
+    extends JpaRepository<EduTestQuizGroupParticipationAssignment, CompositeEduTestQuizGroupParticipationAssignmentId> {
 
-    List<EduTestQuizGroupParticipationAssignment> findEduTestQuizGroupParticipationAssignmentsByParticipationUserLoginId(String userId);
+    List<EduTestQuizGroupParticipationAssignment> findEduTestQuizGroupParticipationAssignmentsByParticipationUserLoginId(
+        String userId
+    );
 
     List<EduTestQuizGroupParticipationAssignment> findAllByQuizGroupIdIn(List<UUID> quizGroupIds);
-    List<EduTestQuizGroupParticipationAssignment> findAllByQuizGroupIdInAndParticipationUserLoginId(List<UUID> quizGroupIds, String participationUserLoginId);
 
-    EduTestQuizGroupParticipationAssignment findByQuizGroupIdAndParticipationUserLoginId(UUID quizGroupId, String participationUserLoginId);
+    List<EduTestQuizGroupParticipationAssignment> findAllByQuizGroupIdInAndParticipationUserLoginId(
+        List<UUID> quizGroupIds,
+        String participationUserLoginId
+    );
+
+    EduTestQuizGroupParticipationAssignment findByQuizGroupIdAndParticipationUserLoginId(
+        UUID quizGroupId,
+        String participationUserLoginId
+    );
 
     @Override
     boolean existsById(CompositeEduTestQuizGroupParticipationAssignmentId compositeEduTestQuizGroupParticipationAssignmentId);

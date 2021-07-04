@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.education.teacherclassassignment.service;
 
 import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.utils.CheckConflict;
+import com.hust.baseweb.applications.education.teacherclassassignment.utils.TimetableConflictChecker;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +26,21 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
     public TeacherClassAssignmentOM computeTeacherClassAssignment(AlgoTeacherAssignmentIM input) {
         AlgoTeacherIM[] algoTeacherIMs = input.getTeachers();
         AlgoClassIM[] algoClassIMS = input.getClasses();
+        TeacherClassAssignmentModel[] preAssignment = input.getPreAssignments();
+
         int n = algoClassIMS.length;// number of classes;
         int m = algoTeacherIMs.length;// number of teachers;
         double[] hourClass;// hourClass[i] is the number of hours of class i
+        double[] maxHourTeacher; // maxHourTeacher[j] is the upper bound of the total hourLoad of classes assigned to teacher j
         HashMap<String, Integer> mTeacher2Index = new HashMap();
         for (int i = 0; i < m; i++) {
             mTeacher2Index.put(algoTeacherIMs[i].getId(), i);
         }
+        HashMap<String, Integer> mClassId2Index = new HashMap();
+        for (int i = 0; i < n; i++) {
+            mClassId2Index.put(algoClassIMS[i].getClassCode(), i);
+        }
+
         HashMap<String, List<Integer>> mCourseID2ClassIndex = new HashMap();
         for (int i = 0; i < n; i++) {
             if (mCourseID2ClassIndex.get(algoClassIMS[i].getCourseId()) == null) {
@@ -39,26 +48,56 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             }
             mCourseID2ClassIndex.get(algoClassIMS[i].getCourseId()).add(i);
         }
-        HashSet<Integer>[] D = new HashSet[n];
+        HashSet[] D = new HashSet[n];
+        int[][] priorityMatrix = new int[n][m]; // to be upgrade
+        for(int i = 0; i < n; i++){
+            for(int j = 0;j < m; j++){
+                priorityMatrix[i][j] = Integer.MAX_VALUE;
+            }
+
+        }
+        //ArrayList<Integer>[] D = new ArrayList[n];
         hourClass = new double[n];
+        maxHourTeacher = new double[m];
         for (int i = 0; i < n; i++) {
-            D[i] = new HashSet<Integer>();
+            D[i] = new HashSet();
             hourClass[i] = algoClassIMS[i].getHourLoad();
         }
         for (int i = 0; i < m; i++) {
             AlgoTeacherIM t = algoTeacherIMs[i];
+            maxHourTeacher[i] = t.getPrespecifiedHourLoad();
+
+            if (t.getCourses() == null) {
+                continue;
+            }
             for (int j = 0; j < t.getCourses().size(); j++) {
                 Course4Teacher course4Teacher = t.getCourses().get(j);
+                int priority = course4Teacher.getPriority();
+
                 if (mCourseID2ClassIndex.get(course4Teacher.getCourseId()) == null) {
                     //System.out.println(name() + "::no class for course " + course4Teacher.getCourseId());
                 } else {
                     for (int c : mCourseID2ClassIndex.get(course4Teacher.getCourseId())) {
                         D[c].add(i);
+                        //D[c].add(new AlgoTeacherClassPriorityModel(i,c,priority));
+                        priorityMatrix[c][i] = priority;
                     }
                 }
             }
         }
 
+        if (preAssignment != null) {
+            for (int i = 0; i < preAssignment.length; i++) {
+                AlgoClassIM ci = preAssignment[i].getAlgoClassIM();
+                AlgoTeacherIM ti = preAssignment[i].getAlgoTeacherIM();
+                int ic = mClassId2Index.get(ci.getClassCode());
+                int it = mTeacher2Index.get(ti.getId());
+                D[ic].clear();
+                D[ic].add(it);
+                //D[ic].add(new AlgoTeacherClassPriorityModel(it,ic,1));
+
+            }
+        }
         for (int i = 0; i < n; i++) {
             /*
             System.out.println("Class " +
@@ -69,6 +108,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
                                algoClassIMS[i].getCourseName() +
                                ": ");
             */
+            /*
             for (int j : D[i]) {
                 if (algoTeacherIMs[j].getId().equals("bang.banha@hust.edu.vn")) {
                     System.out.println("teacher " + j + ": " + algoTeacherIMs[j].getId());
@@ -82,11 +122,15 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
 
                 }
             }
+            */
+
         }
         boolean[][] conflict = new boolean[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                conflict[i][j] = checker.isConflict(algoClassIMS[i], algoClassIMS[j]);
+                //conflict[i][j] = checker.isConflict(algoClassIMS[i], algoClassIMS[j]);
+                conflict[i][j] = TimetableConflictChecker
+                    .conflict(algoClassIMS[i].getTimetable(), algoClassIMS[j].getTimetable());
                 if (conflict[i][j]) {
                     //System.out.println("Conflict " + algoClassIMS[i].getTimetable() + " VS. " + algoClassIMS[j].getTimetable());
                 } else {
@@ -94,9 +138,20 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
                 }
             }
         }
-        CBLSSolver solver = new CBLSSolver(n, m, D, conflict, hourClass);
-        solver.solve();
-        int[] sol = solver.getSolution();
+        int[] sol = null;
+        MaxLoadConstraintORToolMIPSolver mipSolver =
+            new MaxLoadConstraintORToolMIPSolver(n, m, D, priorityMatrix, conflict, hourClass, maxHourTeacher);
+        boolean solved = mipSolver.solve();
+        if (solved) {
+            sol = mipSolver.getSolutionAssignment();
+            log.info("computeTeacherClassAssignment, MIP found optimal solution!!");
+        } else {
+            log.info("computeTeacherClassAssignment, MIP cannot find optimal solution, Apply CBLS");
+            CBLSSolver solver = new CBLSSolver(n, m, D, priorityMatrix, conflict, hourClass, maxHourTeacher);
+            solver.solve();
+            sol = solver.getSolution();
+        }
+
 
         HashMap<AlgoTeacherIM, List<AlgoClassIM>> mTeacher2AssignedClass = new HashMap();
 

@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostmanUpdateOutputModel {
+
     private String status;
     private String detail;
     Postman postman;

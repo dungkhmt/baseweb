@@ -10,20 +10,21 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name="log_user_login_course_chapter_material")
+@Table(name = "log_user_login_course_chapter_material")
 public class LogUserLoginCourseChapterMaterial {
+
     @Id
-    @Column(name="user_login_course_chapter_material_id")
+    @Column(name = "user_login_course_chapter_material_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID userLoginCourseChapterMaterial;
 
-    @Column(name="user_login_id")
+    @Column(name = "user_login_id")
     private String userLoginId;
 
-    @Column(name="edu_course_material_id")
+    @Column(name = "edu_course_material_id")
     private UUID eduCourseMaterialId;
 
-    @Column(name="created_stamp")
+    @Column(name = "created_stamp")
     private Date createStamp;
 
 

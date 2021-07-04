@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Task {
+
     private String taskID;
     private String taskTypeID;
     private int duration;

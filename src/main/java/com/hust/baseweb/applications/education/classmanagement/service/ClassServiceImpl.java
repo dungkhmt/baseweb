@@ -7,6 +7,8 @@ import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.getclasslist.ClassOM;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
 import com.hust.baseweb.applications.education.repo.*;
+import com.hust.baseweb.applications.notifications.entity.Notifications;
+import com.hust.baseweb.applications.notifications.repo.NotificationsRepo;
 import com.hust.baseweb.entity.UserLogin;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,6 +38,7 @@ public class ClassServiceImpl implements ClassService {
 
     private EduDepartmentRepo eduDepartmentRepo;
 
+    private NotificationsRepo notificationsRepo;
     @Override
     public EduClass findById(UUID id) {
         EduClass eduClass = classRepo.findById(id).orElse(null);
@@ -53,7 +56,7 @@ public class ClassServiceImpl implements ClassService {
         EduClass aClass = new EduClass();
         //EduClass dupClass = classRepo.findFirstByCode(Integer.valueOf(addClassModel.getClassCode())).orElse(null);
         List<EduClass> dupClass = classRepo.findByClassCode(addClassModel.getClassCode());
-        if (dupClass != null && dupClass.size() > 0){
+        if (dupClass != null && dupClass.size() > 0) {
             aClass.setMessage("duplicate");
             return aClass;
         }
@@ -113,7 +116,7 @@ public class ClassServiceImpl implements ClassService {
             classes = classRepo.findBySemesterWithFilters(
                 semester.getId(),
                 null == filterParams.getCode() ? "" : filterParams.getCode().toString(),
-                    null == filterParams.getClassCode() ? "" : filterParams.getClassCode().toString(),
+                null == filterParams.getClassCode() ? "" : filterParams.getClassCode().toString(),
                 null == filterParams.getCourseId() ? "" : StringUtils.deleteWhitespace(filterParams.getCourseId()),
                 null == filterParams.getCourseName() ? "" : StringUtils.normalizeSpace(filterParams.getCourseName()),
                 null == filterParams.getClassType() ? "" : StringUtils.deleteWhitespace(filterParams.getClassType()),
@@ -139,6 +142,14 @@ public class ClassServiceImpl implements ClassService {
     @Transactional
     public SimpleResponse register(UUID classId, String studentId) {
         SimpleResponse res;
+        EduClass cls = classRepo.findById(classId).orElse(null);
+        if(cls == null){
+            res = new SimpleResponse(
+                400,
+                "class not exists",
+                "Không tìm thấy lớp " + classId);
+            return res;
+        }
         String check = registRepo.checkRegistration(classId, studentId);
 
         if ("WAITING_FOR_APPROVAL".equals(check) || "APPROVED".equals(check)) {
@@ -148,6 +159,16 @@ public class ClassServiceImpl implements ClassService {
                 "Bạn đã đăng ký lớp này rồi");
         } else {
             res = createOrUpdateRegist(classId, studentId, RegistStatus.WAITING_FOR_APPROVAL);
+
+            // push notification to admin
+            Notifications notifications = new Notifications();
+            notifications.setStatusId(Notifications.STATUS_CREATED);
+            notifications.setContent("SV " + studentId + " đăng ký vào lớp " + cls.getClassCode());
+            notifications.setToUser("admin");// TOBE upgraded
+            notifications.setFromUser(studentId);
+
+            notifications  = notificationsRepo.save(notifications);
+
         }
         return res;
     }
@@ -160,7 +181,14 @@ public class ClassServiceImpl implements ClassService {
         RegistStatus status
     ) {
         Map<String, SimpleResponse> res = new HashMap<>();
-
+        EduClass cls = classRepo.findById(classId).orElse(null);
+        if(cls == null){
+            res.put(classId.toString(), new SimpleResponse(
+                404,
+                "invalid update",
+                "Không tìm thấy lớp"));
+            return res;
+        }
         for (String studentId : studentIds) {
             String check = registRepo.checkRegistration(classId, studentId);
 
@@ -180,6 +208,12 @@ public class ClassServiceImpl implements ClassService {
                         } else {
                             res.put(studentId, createOrUpdateRegist(classId, studentId, status));
                         }
+                        Notifications notifications = new Notifications();
+                        notifications.setToUser(studentId);
+                        notifications.setContent("Bạn vừa được phê duyệt tham gia lớp " + cls.getClassCode());
+                        notifications.setStatusId(Notifications.STATUS_CREATED);
+                        notifications = notificationsRepo.save(notifications);
+
                         break;
                     case "APPROVED":
                         // -> REMOVED.
@@ -190,6 +224,7 @@ public class ClassServiceImpl implements ClassService {
                         } else {
                             res.put(studentId, invalidUpdateRes());
                         }
+
                         break;
                     case "REFUSED":
                         // -> WAITING_FOR_APPROVAL.
@@ -249,20 +284,24 @@ public class ClassServiceImpl implements ClassService {
     @Transactional(readOnly = true)
     public List<GetAllStuAssignDetail4Teacher> getAllStuAssign4Teacher(UUID classId) {
         List<GetAllStuAssignDetail4Teacher> getAllStuAssignDetail4TeacherList = new ArrayList<>();
-        List<GetAllStuAssigns4TeacherOM> getAllStuAssigns4TeacherList =  classRepo.getAllStudentAssignments4Teacher(classId);
+        List<GetAllStuAssigns4TeacherOM> getAllStuAssigns4TeacherList = classRepo.getAllStudentAssignments4Teacher(
+            classId);
         String tempStudentId = "";
         String tempAssignmentId = "";
-        for (GetAllStuAssigns4TeacherOM getAllStuAssigns4TeacherOM: getAllStuAssigns4TeacherList){
-            if (getAllStuAssigns4TeacherOM.getId().equals(tempStudentId)){
-                if (getAllStuAssigns4TeacherOM.getAssignmentId().equals(tempAssignmentId)){
-                }else{
+        for (GetAllStuAssigns4TeacherOM getAllStuAssigns4TeacherOM : getAllStuAssigns4TeacherList) {
+            if (getAllStuAssigns4TeacherOM.getId().equals(tempStudentId)) {
+                if (getAllStuAssigns4TeacherOM.getAssignmentId().equals(tempAssignmentId)) {
+                } else {
                     tempAssignmentId = getAllStuAssigns4TeacherOM.getAssignmentId();
-                    getAllStuAssignDetail4TeacherList.get(getAllStuAssignDetail4TeacherList.size()-1).addAssignment(getAllStuAssigns4TeacherOM);
+                    getAllStuAssignDetail4TeacherList
+                        .get(getAllStuAssignDetail4TeacherList.size() - 1)
+                        .addAssignment(getAllStuAssigns4TeacherOM);
                 }
-            }else{
+            } else {
                 tempStudentId = getAllStuAssigns4TeacherOM.getId();
                 tempAssignmentId = getAllStuAssigns4TeacherOM.getAssignmentId();
-                GetAllStuAssignDetail4Teacher getAllStuAssignDetail4Teacher = new GetAllStuAssignDetail4Teacher(getAllStuAssigns4TeacherOM);
+                GetAllStuAssignDetail4Teacher getAllStuAssignDetail4Teacher = new GetAllStuAssignDetail4Teacher(
+                    getAllStuAssigns4TeacherOM);
                 getAllStuAssignDetail4TeacherList.add(getAllStuAssignDetail4Teacher);
             }
         }

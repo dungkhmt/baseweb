@@ -6,5 +6,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface LogUserLoginQuizQuestionService {
+
     public List<StudentQuizParticipationModel> findAllByClassId(UUID classId);
 }

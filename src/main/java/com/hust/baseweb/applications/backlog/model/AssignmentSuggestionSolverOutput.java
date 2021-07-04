@@ -9,5 +9,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class AssignmentSuggestionSolverOutput {
+
     HashMap<UUID, UUID> assignmentSuggestion;
 }

@@ -12,9 +12,14 @@ import java.util.UUID;
 
 @Service
 public interface BacklogProjectMemberService {
+
     BacklogProjectMember save(CreateBacklogProjectMemberModel input);
+
     List<BacklogProjectMember> findAllByBacklogProjectId(UUID backlogProjectId);
+
     List<BacklogProjectMember> findAllByMemberPartyId(UUID partyId);
+
     List<UserLogin> findAllNotMember(UUID projectId, String searchString, Pageable pageable);
+
     String addMember(AddBacklogProjectMemberInputModel input);
 }

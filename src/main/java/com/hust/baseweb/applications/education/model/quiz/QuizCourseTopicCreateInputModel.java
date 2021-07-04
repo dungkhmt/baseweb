@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class QuizCourseTopicCreateInputModel {
+
     private String quizCourseTopicId;
     private String quizCourseTopicName;
     private String courseId;

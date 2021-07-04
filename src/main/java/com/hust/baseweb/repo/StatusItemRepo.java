@@ -8,5 +8,6 @@ import java.util.List;
 public interface StatusItemRepo extends JpaRepository<StatusItem, String> {
 
     StatusItem findByStatusId(String statusId);
+
     List<StatusItem> findAllByStatusIdStartsWith(String statusId);
 }

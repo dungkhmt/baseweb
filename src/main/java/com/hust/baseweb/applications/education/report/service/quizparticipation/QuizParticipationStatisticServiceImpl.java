@@ -19,48 +19,59 @@ import java.util.List;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class QuizParticipationStatisticServiceImpl implements QuizParticipationStatisticService {
+
     private LogUserLoginQuizQuestionRepo logUserLoginQuizQuestionRepo;
+
     @Override
     public List<QuizParticipationStatisticOutputModel> getQuizParticipationStatistic(
-        GetQuizParticipationStatisticInputModel input) {
+        GetQuizParticipationStatisticInputModel input
+    ) {
         List<LogUserLoginQuizQuestion> logUserLoginQuizQuestions = logUserLoginQuizQuestionRepo.findAll();
         List<QuizParticipationStatisticOutputModel> quizParticipationStatisticOutputModels = new ArrayList();
         HashMap<String, Integer> mDate2Count = new HashMap<>();
 
         int len = 10;
-        if(input.getLength() != 0) len = input.getLength();
+        if (input.getLength() != 0) {
+            len = input.getLength();
+        }
 
-        for(LogUserLoginQuizQuestion i: logUserLoginQuizQuestions){
+        for (LogUserLoginQuizQuestion i : logUserLoginQuizQuestions) {
             Date date = i.getCreateStamp();
-            if(date == null){
+            if (date == null) {
                 continue;
             }
             String s_date = DateTimeUtils.date2YYYYMMDD(date);
-            if(mDate2Count.get(s_date) == null){
-                mDate2Count.put(s_date,1);
-            }else{
-                mDate2Count.put(s_date,mDate2Count.get(s_date)+1);
+            if (mDate2Count.get(s_date) == null) {
+                mDate2Count.put(s_date, 1);
+            } else {
+                mDate2Count.put(s_date, mDate2Count.get(s_date) + 1);
             }
 
         }
         String[] s = new String[mDate2Count.keySet().size()];
         int idx = -1;
-        for(String k: mDate2Count.keySet()){
+        for (String k : mDate2Count.keySet()) {
             idx++;
             s[idx] = k;
         }
-        for(int i = 0; i < s.length; i++){
-            for(int j = i+1; j < s.length; j++){
-                if(s[i].compareTo(s[j]) < 0){
-                    String tmp = s[i]; s[i] = s[j]; s[j] = tmp;
+        for (int i = 0; i < s.length; i++) {
+            for (int j = i + 1; j < s.length; j++) {
+                if (s[i].compareTo(s[j]) < 0) {
+                    String tmp = s[i];
+                    s[i] = s[j];
+                    s[j] = tmp;
                 }
             }
         }
-        if(len > s.length) len = s.length;
-        for(int i = 0; i < len; i++){
+        if (len > s.length) {
+            len = s.length;
+        }
+        for (int i = 0; i < len; i++) {
             String sd = s[i];
-        //for(String sd: mDate2Count.keySet()){
-            quizParticipationStatisticOutputModels.add(new QuizParticipationStatisticOutputModel(sd,mDate2Count.get(sd)));
+            //for(String sd: mDate2Count.keySet()){
+            quizParticipationStatisticOutputModels.add(new QuizParticipationStatisticOutputModel(
+                sd,
+                mDate2Count.get(sd)));
             //log.info("getQuizParticipationStatistic, map date " + sd + " -> " + mDate2Count.get(sd));
         }
         return quizParticipationStatisticOutputModels;

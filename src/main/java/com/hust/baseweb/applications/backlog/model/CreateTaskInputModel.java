@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 public class CreateTaskInputModel {
+
     private CreateBacklogTaskInputModel taskInput;
     private CreateBacklogTaskAssignmentInputModel assignmentInput;
     private CreateBacklogTaskAssignableInputModel assignableInput;

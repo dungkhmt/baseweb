@@ -11,12 +11,13 @@ import java.util.UUID;
 @Entity
 @Table(name = "contest_problem_test")
 public class ContestProblemTest {
+
     @Id
     @Column(name = "problem_test_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID problemTestId;
 
-    @Column(name="problem_id")
+    @Column(name = "problem_id")
     private String problemId;
 
     @Column(name = "problem_test_filename")

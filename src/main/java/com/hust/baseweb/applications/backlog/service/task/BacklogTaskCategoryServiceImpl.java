@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class BacklogTaskCategoryServiceImpl implements BacklogTaskCategoryService{
+public class BacklogTaskCategoryServiceImpl implements BacklogTaskCategoryService {
 
     BacklogTaskCategoryRepo backlogTaskCategoryRepo;
 

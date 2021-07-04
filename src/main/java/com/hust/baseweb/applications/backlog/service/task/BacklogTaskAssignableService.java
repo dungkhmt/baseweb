@@ -9,7 +9,10 @@ import java.util.UUID;
 
 @Service
 public interface BacklogTaskAssignableService {
+
     List<BacklogTaskAssignable> save(CreateBacklogTaskAssignableInputModel input);
+
     List<BacklogTaskAssignable> findAllByBacklogTaskId(UUID backlogTaskId);
+
     List<BacklogTaskAssignable> findAllActiveByBacklogTaskId(UUID backlogTaskId);
 }

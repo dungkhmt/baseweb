@@ -23,13 +23,21 @@ public interface UserRestRepository extends PagingAndSortingRepository<DPerson, 
     Page<DPerson> findByType(PartyType type, Pageable page);
 
     @Query(
-         "select p from DPerson p where p.type.id = :type and status.id = :status and COALESCE(concat(trim(p.person.firstName), trim(p.person.middleName), trim(p.person.lastName)),'') like %:fullNameString%")
+        "select p from DPerson p where p.type.id = :type and status.id = :status and COALESCE(concat(trim(p.person.firstName), trim(p.person.middleName), trim(p.person.lastName)),'') like %:fullNameString%")
     Page<UserRestBriefProjection> findByTypeAndStatusAndFullNameLike(
         Pageable page,
         String type,
         String status,
         String fullNameString
     );
+
+    @Query(
+        "select p from DPerson p where p.userLogin.userLoginId = :userLoginId")
+    Page<UserRestBriefProjection> findByLoginUserId(
+        Pageable page,
+        String userLoginId
+    );
+
 
     default void customize(final QuerydslBindings bindings, final QDPerson store) {
         // bindings.bind(store.address.city).single((path, value) ->

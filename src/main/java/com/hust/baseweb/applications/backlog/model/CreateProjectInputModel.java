@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class CreateProjectInputModel {
+
     private String backlogProjectCode;
     private String backlogProjectName;
 }

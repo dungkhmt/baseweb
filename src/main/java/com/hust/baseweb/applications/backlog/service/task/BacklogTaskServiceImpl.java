@@ -38,21 +38,40 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
     @Override
     public List<BacklogTask> findByBacklogProjectId(UUID backlogProjectId) {
         List<BacklogTask> taskList = backlogTaskRepo.findByBacklogProjectId(backlogProjectId);
-        if(taskList == null) return  new ArrayList<>();
+        if (taskList == null) {
+            return new ArrayList<>();
+        }
         return taskList;
     }
 
     @Override
-    public Page<BacklogTask> findByBacklogProjectId(UUID backlogProjectId, Pageable pageable, ProjectFilterParamsModel filter) {
+    public Page<BacklogTask> findByBacklogProjectId(
+        UUID backlogProjectId,
+        Pageable pageable,
+        ProjectFilterParamsModel filter
+    ) {
         Page<BacklogTask> taskList = backlogTaskRepo.findByBacklogProjectId(backlogProjectId, pageable, filter);
-        if(taskList == null) return new PageImpl<>(new ArrayList<>(), pageable, 0);
+        if (taskList == null) {
+            return new PageImpl<>(new ArrayList<>(), pageable, 0);
+        }
         return taskList;
     }
 
     @Override
-    public Page<BacklogTask> findByBacklogProjectIdAndPartyAssigned(UUID backlogProjectId, UUID assignedPartyId, ProjectFilterParamsModel filter, Pageable pageable) {
-        Page<BacklogTask> taskList = backlogTaskRepo.findByBacklogProjectIdAndPartyAssigned(backlogProjectId, assignedPartyId, filter, pageable);
-        if(taskList == null) return new PageImpl<>(new ArrayList<>(), pageable, 0);
+    public Page<BacklogTask> findByBacklogProjectIdAndPartyAssigned(
+        UUID backlogProjectId,
+        UUID assignedPartyId,
+        ProjectFilterParamsModel filter,
+        Pageable pageable
+    ) {
+        Page<BacklogTask> taskList = backlogTaskRepo.findByBacklogProjectIdAndPartyAssigned(
+            backlogProjectId,
+            assignedPartyId,
+            filter,
+            pageable);
+        if (taskList == null) {
+            return new PageImpl<>(new ArrayList<>(), pageable, 0);
+        }
         return taskList;
     }
 
@@ -63,15 +82,23 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
         ProjectFilterParamsModel filter,
         Pageable pageable
     ) {
-        Page<BacklogTask> taskList = backlogTaskRepo.findOpeningTaskByCreatedUserLogin(backlogProjectId, userLoginId, filter, pageable);
-        if(taskList == null) return new PageImpl<>(new ArrayList<>(), pageable, 0);
+        Page<BacklogTask> taskList = backlogTaskRepo.findOpeningTaskByCreatedUserLogin(
+            backlogProjectId,
+            userLoginId,
+            filter,
+            pageable);
+        if (taskList == null) {
+            return new PageImpl<>(new ArrayList<>(), pageable, 0);
+        }
         return taskList;
     }
 
     @Override
     public BacklogTask findByBacklogTaskId(UUID backlogTaskId) {
         BacklogTask task = backlogTaskRepo.findByBacklogTaskId(backlogTaskId);
-        if(task == null) return new BacklogTask();
+        if (task == null) {
+            return new BacklogTask();
+        }
         return task;
     }
 
@@ -123,8 +150,12 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
         String userLoginId
     ) throws IOException {
         BacklogTask task = backlogTaskRepo.findByBacklogTaskId(taskInput.getBacklogTaskId());
-        if(task == null) return new BacklogTask();
-        if(!task.getCreatedByUserLoginId().equals(userLoginId)) return new BacklogTask();
+        if (task == null) {
+            return new BacklogTask();
+        }
+        if (!task.getCreatedByUserLoginId().equals(userLoginId)) {
+            return new BacklogTask();
+        }
 
         Date now = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -133,12 +164,12 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
         String[] savedFileNames = task.getAttachmentPaths().split(";");
         ArrayList<String> newAttachmentPaths = new ArrayList<>();
 
-        for(int i = 0; i < taskInput.getAttachmentPaths().length; i++) {
+        for (int i = 0; i < taskInput.getAttachmentPaths().length; i++) {
             boolean isFileExisted = Arrays.asList(savedFileNames).contains(taskInput.getAttachmentPaths()[i]);
 
-            switch(taskInput.getAttachmentStatus()[i]) {
+            switch (taskInput.getAttachmentStatus()[i]) {
                 case "deleted":
-                    if(isFileExisted) {
+                    if (isFileExisted) {
                         storageService.deleteIfExists("", taskInput.getAttachmentPaths()[i]);
                     }
                     break;
@@ -176,7 +207,7 @@ public class BacklogTaskServiceImpl implements BacklogTaskService {
     public BacklogTask updateTaskStatus(UUID taskId, String newStatus, List<BacklogTaskAssignment> assignments) {
         BacklogTask task = backlogTaskRepo.findByBacklogTaskId(taskId);
 
-        if(!newStatus.equals(task.getStatusId())) {
+        if (!newStatus.equals(task.getStatusId())) {
             for (BacklogTaskAssignment assignment : assignments) {
                 // change compare value if import other status in database
                 switch (newStatus) {

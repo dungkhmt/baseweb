@@ -15,62 +15,63 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Lake {
+
     @Id
-    @Column(name="lake_id")
+    @Column(name = "lake_id")
     private String lakeId;
 
-    @Column(name="lake_name")
+    @Column(name = "lake_name")
     private String lakeName;
 
-    @Column(name="latitude")
+    @Column(name = "latitude")
     private String latitude;
-    @Column(name="longitude")
+    @Column(name = "longitude")
     private String longitude;
 
 
-    @Column(name="cap_cong_trinh")
+    @Column(name = "cap_cong_trinh")
     private String capCongTrinh;
 
-    @Column(name="dien_tich_luu_vuc")
+    @Column(name = "dien_tich_luu_vuc")
     private String dienTichLuuVuc;
 
 
-    @Column(name="muc_dam_bao_tuoi")
+    @Column(name = "muc_dam_bao_tuoi")
     private String mucDamBaoTuoi;
 
 
-    @Column(name="dien_tich_tuoi")
+    @Column(name = "dien_tich_tuoi")
     private String dienTichTuoi;
 
 
-    @Column(name="muc_nuoc_chet")
+    @Column(name = "muc_nuoc_chet")
     private String mucNuocChet;
 
 
-    @Column(name="muc_nuoc_dang_binh_thuong")
+    @Column(name = "muc_nuoc_dang_binh_thuong")
     private String mucNuocDangBinhThuong;
 
-    @Column(name="muc_nuoc_lu_thiet_ke")
+    @Column(name = "muc_nuoc_lu_thiet_ke")
     private String mucNuocLuThietKe;
 
-    @Column(name="muc_nuoc_lu_kiem_tra")
+    @Column(name = "muc_nuoc_lu_kiem_tra")
     private String mucNuocLuKiemTra;
 
 
-    @Column(name="dung_tich_toan_bo")
+    @Column(name = "dung_tich_toan_bo")
     private String dungTichToanBo;
 
-    @Column(name="dung_tich_huu_ich")
+    @Column(name = "dung_tich_huu_ich")
     private String dungTichHuuIch;
 
-    @Column(name="dung_tich_chet")
+    @Column(name = "dung_tich_chet")
     private String dungTichChet;
 
-    @Column(name="luu_luong_xa_lu_thiet_ke")
+    @Column(name = "luu_luong_xa_lu_thiet_ke")
     private String luuLuongXaLuThietKe;
 
 
-    @Column(name="luu_luong_xa_lu_kiem_tra")
+    @Column(name = "luu_luong_xa_lu_kiem_tra")
     private String luuLuongXaLuKiemTra;
 
     /*

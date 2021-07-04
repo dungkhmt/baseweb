@@ -6,7 +6,10 @@ import com.hust.baseweb.applications.education.programsubmisson.model.CreateProg
 import java.util.List;
 
 public interface ProgrammingContestProblemService {
+
     ProgrammingContestProblem save(CreateProgrammingContestProblemInputModel input);
+
     List<ProgrammingContestProblem> findAll();
+
     List<ProgrammingContestProblem> findByContestId(String contestId);
 }

@@ -76,8 +76,10 @@ public class FacilityRoleServiceImpl implements FacilityRoleService {
         RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_FROM_FACILITY");
         Facility facility = facilityRepo.findByFacilityId(facilityId);
         List<FacilityRole> facilityRoles = facilityRoleRepo
-            .findAllByFacilityAndRoleTypeAndThruDate(facility,roleType,null);
-        if(facilityRoles == null) return null;
+            .findAllByFacilityAndRoleTypeAndThruDate(facility, roleType, null);
+        if (facilityRoles == null) {
+            return null;
+        }
 
         return facilityRoles
             .stream()
@@ -124,13 +126,17 @@ public class FacilityRoleServiceImpl implements FacilityRoleService {
 
         RoleType roleType = roleTypeRepo.findByRoleTypeId("SALESMAN_SELL_FROM_FACILITY");
 
-        List<FacilityRole> facilityRoles = facilityRoleRepo.findAllByFacilityAndUserLoginAndRoleTypeAndThruDate(facility,
-                                                                                                                userLogin,
-                                                                                                                roleType,
-                                                                                                                null);
-        if(facilityRoles != null && facilityRoles.size() > 0){
+        List<FacilityRole> facilityRoles = facilityRoleRepo.findAllByFacilityAndUserLoginAndRoleTypeAndThruDate(
+            facility,
+            userLogin,
+            roleType,
+            null);
+        if (facilityRoles != null && facilityRoles.size() > 0) {
             FacilityRole facilityRole = facilityRoles.get(0);
-            log.info("create, facilityRole exists!!! with " + facilityRole.getFacilityRoleId() + ", thruDate = " + facilityRole.getThruDate());
+            log.info("create, facilityRole exists!!! with " +
+                     facilityRole.getFacilityRoleId() +
+                     ", thruDate = " +
+                     facilityRole.getThruDate());
             return buildToApiOutputModelFunction(Collections.singletonList(facilityRole)).apply(facilityRole);
         }
 

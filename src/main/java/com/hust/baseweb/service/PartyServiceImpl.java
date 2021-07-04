@@ -37,7 +37,7 @@ public class PartyServiceImpl implements PartyService {
     public Party disableParty(String partyId) {
         Party party = partyRepo.findById(UUID.fromString(partyId)).get();
         party.setPartyStatus(statusRepo.getOne(StatusEnum.PARTY_DISABLED.name()));
-        UserLogin userLogin=party.getUserLogin();
+        UserLogin userLogin = party.getUserLogin();
         userLogin.setEnabled(false);
         userLoginRepo.save(userLogin);
         return partyRepo.save(party);

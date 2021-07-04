@@ -1,24 +1,31 @@
-create table notification_type(
-    notification_type_id varchar(100),
-    notification_type_name varchar(200),
-    last_updated_stamp timestamp NULL,
-	created_stamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+-- Drop table
 
-    constraint pk_notification_type_id primary key(notification_type_id)
+-- DROP TABLE public.notification_type;
+
+create TABLE public.notification_type (
+	notification_type_id varchar(100) NOT NULL,
+	notification_type_name varchar(200) NULL,
+	last_updated_stamp timestamp NULL,
+	created_stamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT pk_notification_type_id PRIMARY KEY (notification_type_id)
 );
 
-create table notifications(
-    notification_id uuid not null default uuid_generate_v1(),
-    notification_name varchar(500),
-    notification_type_id varchar(100),
-    to_user_login_id varchar(60),
-    url varchar(200),
-    status_id varchar(60),
-    last_updated_stamp timestamp NULL,
+-- Drop table
+
+-- DROP TABLE public.notifications;
+
+create TABLE public.notifications (
+	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	"content" varchar(500) NULL,
+	notification_type_id varchar(100) NULL,
+	from_user varchar(60) NULL,
+	to_user varchar(60) NULL,
+	url varchar(200) NULL,
+	status_id varchar(60) NULL,
+	last_updated_stamp timestamp NULL,
 	created_stamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    constraint pk_notification_id primary key(notification_id),
-    constraint fk_notification_user_login_id foreign key(to_user_login_id) references user_login(user_login_id),
-    constraint fk_notification_notification_type_id foreign key(notification_type_id) references notification_type(notification_type_id)
-
+	CONSTRAINT pk_notification_id PRIMARY KEY (id),
+	CONSTRAINT fk_notification_notification_type_id FOREIGN KEY (notification_type_id) REFERENCES notification_type(notification_type_id),
+	CONSTRAINT fk_notification_user_login_id FOREIGN KEY (to_user) REFERENCES user_login(user_login_id)
 );
+
