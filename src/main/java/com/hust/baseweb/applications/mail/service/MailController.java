@@ -21,8 +21,15 @@ public class MailController {
 
     @PostMapping("/send-mail-with-multiple-files")
     public void sendMailWithMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-        String[] to = {"inflict0126104@gmail.com"};
+//        String[] to = {"inflict0126104@gmail.com"};
+        String[] to = {"phamducdat2402@ gmail.com"};
         String body = "body";
         mailService.sendMailWithAttachments(to, null, null, "subject", body, false, null, null, files);
+    }
+
+    @PostMapping("/send-first-response")
+    public void sendFirstResponse() {
+        String[] to = {"phamducdat2402@gmail.com"};
+        mailService.sendMailFirstResponse(to, "Lê Anh Tuấn","tuanlatuan");
     }
 }

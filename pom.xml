@@ -186,6 +186,11 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+        </dependency>
+
         <!-- zip file-->
         <dependency>
             <groupId>net.lingala.zip4j</groupId>

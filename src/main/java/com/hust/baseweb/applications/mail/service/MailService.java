@@ -375,4 +375,10 @@ public interface MailService {
         String htmlText,
         File[] attachments
     );
+
+    void sendMailFirstResponse(
+        String[] to,
+        String name,
+        String username
+        );
 }
