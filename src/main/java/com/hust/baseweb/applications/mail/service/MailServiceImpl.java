@@ -1,31 +1,24 @@
 package com.hust.baseweb.applications.mail.service;
 
 import com.hust.baseweb.config.MailProperties;
-import freemarker.template.Template;
+import freemarker.template.Configuration;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import freemarker.template.Configuration;
+
 /**
  * @author Le Anh Tuan
  */
@@ -104,17 +97,13 @@ public class MailServiceImpl implements MailService {
         MimeMessageHelper messageHelper = initMimeMessage(to, cc, bcc, subject, replyTo, replyPersonal);
 
         messageHelper.setText(body, isHtml);
-//        messageHelper.setPriority(5);
-        messageHelper.setPriority(10);
-//        messageHelper.setFileTypeMap()
-        System.out.println(messageHelper.getFileTypeMap());
-                messageHelper.setValidateAddresses(true);
-                ConfigurableMimeFileTypeMap configurableMimeFileTypeMap = new ConfigurableMimeFileTypeMap();
-                messageHelper.setFileTypeMap(configurableMimeFileTypeMap);
+
+//        messageHelper.setPriority(10);
+//        messageHelper.setValidateAddresses(true);
+//        ConfigurableMimeFileTypeMap configurableMimeFileTypeMap = new ConfigurableMimeFileTypeMap();
+//        messageHelper.setFileTypeMap(configurableMimeFileTypeMap);
 
         return messageHelper;
-
-//        Research 3 following methods
     }
 
     public MimeMessageHelper createMimeMessage(
@@ -415,35 +404,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendMailFirstResponse(String[] to, String name, String username) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-
-            MimeMessageHelper messageHelper =
-                new MimeMessageHelper(message, true);
-            //model có thể đặt bằng null nếu như không có thuộc tính nào cần thay thế
-            Map<String, Object> model = new HashMap<>();
-            model.put("name", name);
-            model.put("username", username);
-
-            //Qúa trình chuyển đổi string sang html
-            Template template = config.getTemplate("email-template.html");
-            String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-
-            //Thêm logo
-            //Lấy logo trong templates
-            File resource = ResourceUtils.getFile("classpath:templates/logo.png");
-            messageHelper.setFrom(properties.getUsername(), "Open ERP");
-            messageHelper.setTo("phamducdat2402@gmail.com");
-            messageHelper.setSubject("Test Subject");
-            messageHelper.setText(html, true);
-
-            //Bắt buộc addInline phải sau setText, sẽ thay thế contentld bằng file,bla,bla,... tuy nhiên
-            //không thay được bằng mỗi string
-            messageHelper.addInline("logo", resource);
-            mailSender.send(message);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void sendMultipleMimeMessages(MimeMessage... mimeMessages) throws MailException {
+        mailSender.send(mimeMessages);
     }
 }

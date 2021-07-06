@@ -5,6 +5,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.File;
 
 /**
@@ -376,9 +377,13 @@ public interface MailService {
         File[] attachments
     );
 
-    void sendMailFirstResponse(
-        String[] to,
-        String name,
-        String username
-        );
+    /**
+     * Send the given mime messages in batch.
+     *
+     * @param mimeMessages the messages to send
+     * @throws MailParseException          in case of failure when parsing a message
+     * @throws MailAuthenticationException in case of authentication failure
+     * @throws MailSendException           in case of failure when sending a message
+     */
+    void sendMultipleMimeMessages(MimeMessage... mimeMessages) throws MailException;
 }
