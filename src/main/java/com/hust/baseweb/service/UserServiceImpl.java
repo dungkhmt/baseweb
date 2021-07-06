@@ -20,6 +20,8 @@ import com.hust.baseweb.rest.user.PredicateBuilder;
 import com.hust.baseweb.rest.user.UserRestBriefProjection;
 import com.hust.baseweb.rest.user.UserRestRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -27,12 +29,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.util.ResourceUtils;
 
 import javax.persistence.EntityExistsException;
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -76,7 +82,9 @@ public class UserServiceImpl implements UserService {
 
     private final static ExecutorService EMAIL_EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
-    private NotificationsService notificationsService;
+    private final NotificationsService notificationsService;
+
+    private final Configuration config;
 
     @Override
     public UserLogin findById(String userLoginId) {
@@ -248,20 +256,28 @@ public class UserServiceImpl implements UserService {
                 "/user-group/user/approve-register");
 
             // send email.
-            EMAIL_EXECUTOR_SERVICE.execute(() ->
-                                               mailService.sendSimpleMail(
-                                                   new String[]{email},
-                                                   "Open ERP - Đăng ký tài khoản thành công",
-                                                   String.format(
-                                                       "Xin chào %s,\n\n" +
-                                                       "Bạn đã đăng ký thành công tài khoản tại hệ thống " +
-                                                       "Open ERP với tên đăng nhập %s. " +
-                                                       "Đây là email tự động, vui lòng chờ đến khi được " +
-                                                       "quản trị viên phê duyệt và không phản hồi lại email này.\n\n" +
-                                                       "Xin cảm ơn,\n" +
-                                                       "Open ERP team",
-                                                       fullName, im.getUserLoginId()),
-                                                   null));
+            EMAIL_EXECUTOR_SERVICE.execute(() -> {
+                try {
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("name", fullName);
+                    model.put("username", im.getUserLoginId());
+
+                    Template template = config.getTemplate("successfully-register-mail-template.html");
+                    String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+
+                    MimeMessageHelper helper = mailService.createMimeMessage(
+                        new String[]{email},
+                        "Open ERP - Đăng ký tài khoản thành công",
+                        html,
+                        true);
+                    File resource = ResourceUtils.getFile("classpath:templates/logo.png");
+                    helper.addInline("logo", resource);
+
+                    mailService.sendMultipleMimeMessages(helper.getMimeMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
 
             res = new SimpleResponse(200, null, null);
         }
@@ -340,8 +356,8 @@ public class UserServiceImpl implements UserService {
     public PersonModel findPersonByUserLoginId(String userLoginId) {
         UserLogin userLogin = userLoginRepo.findByUserLoginId(userLoginId);
         Person person = personRepo.findByPartyId(userLogin.getParty().getPartyId());
-        if(person == null){
-            log.info("findPersonByUserLoginId, person of " + userLoginId + " not exists" );
+        if (person == null) {
+            log.info("findPersonByUserLoginId, person of " + userLoginId + " not exists");
             return new PersonModel();
         }
 
