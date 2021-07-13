@@ -27,4 +27,13 @@ public interface UserLoginRepo extends JpaRepository<UserLogin, String> {
                    "where user_login_id = ?1",
            nativeQuery = true)
     List<String> findGroupPermsByUserLoginId(String userLoginId);
+
+    @Query(value = "select\n" +
+                   "\tur.email\n" +
+                   "from\n" +
+                   "\tuser_login ul\n" +
+                   "inner join user_register ur on\n" +
+                   "\tul.user_login_id = ur.user_login_id\n",
+           nativeQuery = true)
+    List<String> findAllUserEmail();
 }
