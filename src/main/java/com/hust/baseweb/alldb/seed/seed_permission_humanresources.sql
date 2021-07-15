@@ -72,6 +72,7 @@ INSERT INTO public.security_group_permission
     (group_id, permission_id)
  VALUES ('ROLE_HR_ADMIN', 'PERM_DEPARTMENT_CREATE');
 
+
 INSERT INTO public.security_group_permission
     (group_id, permission_id)
 VALUES ('ROLE_HR_ADMIN', 'PERM_DEPARTMENT_VIEW');

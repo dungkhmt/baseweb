@@ -138,19 +138,25 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             }
         }
         int[] sol = null;
-        MaxLoadConstraintORToolMIPSolver mipSolver =
-            new MaxLoadConstraintORToolMIPSolver(n, m, D, priorityMatrix, conflict, hourClass, maxHourTeacher);
+        MapDataInput mapDataInput = new MapDataInput(n, m, D, conflict, priorityMatrix, hourClass, maxHourTeacher);
+
+        //MaxLoadConstraintORToolMIPSolver mipSolver =
+        //    new MaxLoadConstraintORToolMIPSolver(n, m, D, priorityMatrix, conflict, hourClass, maxHourTeacher);
+        ORToolMIPSolver mipSolver  = new ORToolMIPSolver(mapDataInput);
         boolean solved = mipSolver.solve();
         if (solved) {
             sol = mipSolver.getSolutionAssignment();
             log.info("computeTeacherClassAssignment, MIP found optimal solution!!");
-        } else {
+            log.info("computeTeacherClassAssignment, notAssign = " + mipSolver.getNotAssignedClass().size());
+        }
+        /*
+        else {
             log.info("computeTeacherClassAssignment, MIP cannot find optimal solution, Apply CBLS");
             CBLSSolver solver = new CBLSSolver(n, m, D, priorityMatrix, conflict, hourClass, maxHourTeacher);
             solver.solve();
             sol = solver.getSolution();
         }
-
+        */
 
         HashMap<AlgoTeacherIM, List<AlgoClassIM>> mTeacher2AssignedClass = new HashMap();
 

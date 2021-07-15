@@ -413,6 +413,8 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
     @Override
     public boolean autoAssignTeacher2Class(UUID planId) {
         List<ClassTeacherAssignmentClassInfo> classes = classTeacherAssignmentClassInfoRepo.findAllByPlanId(planId);
+        log.info("autoAssignTeacher2Class, classes.sz = " + classes.size());
+        //if(true) return true;
         List<EduTeacher> allteachers = eduTeacherRepo.findAll();
         //List<TeacherCourse> teacherCourses = teacherCourseRepo.findAll();
         HashMap<String, EduTeacher> mId2Teacher = new HashMap();
@@ -718,13 +720,20 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         for (TeacherClassAssignmentSolution s : teacherClassAssignmentSolutions) {
             String classId = s.getClassId();
             ClassTeacherAssignmentClassInfo info = mClass2Info.get(classId);
+            if(info == null){
+                continue;
+            }
             ClassTeacherAssignmentSolutionModel classTeacherAssignmentSolutionModel = new ClassTeacherAssignmentSolutionModel();
 
             classTeacherAssignmentSolutionModel.setSolutionItemId(s.getSolutionItemId());
             classTeacherAssignmentSolutionModel.setClassCode(s.getClassId());
             classTeacherAssignmentSolutionModel.setCourseId(info.getCourseId());
             EduCourse course = mID2Course.get(info.getCourseId());
-            classTeacherAssignmentSolutionModel.setCourseName(course.getName());
+            if(course == null){
+                log.info("getClassTeacherAssignmentSolution, courseId " + info.getCourseId() + " null");
+            }else {
+                classTeacherAssignmentSolutionModel.setCourseName(course.getName());
+            }
             classTeacherAssignmentSolutionModel.setTeacherId(s.getTeacherId());
             EduTeacher teacher = mID2Teacher.get(s.getTeacherId());
             classTeacherAssignmentSolutionModel.setTeacherName(teacher.getTeacherName());
