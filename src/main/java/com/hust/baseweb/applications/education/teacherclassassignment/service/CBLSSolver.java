@@ -276,6 +276,11 @@ public class CBLSSolver {
                     classesAssigned2Teacher[m.ti].add(m.i);
                     load[m.ti] += hourClass[m.i];
                 } else {
+                    /*
+                    current: m.ti is assign to class m.j
+                    new: m.ti is no longer to be assigned to m.j, it (m.ti) is assigned to class m.i,
+                         m.j is assigned to teacher m.tj
+                     */
                     teacherAssigned2Class[m.j] = m.tj;
                     teacherAssigned2Class[m.i] = m.ti;
                     classesAssigned2Teacher[m.ti].remove(m.j);

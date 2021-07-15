@@ -175,6 +175,8 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
                 String lesson = c.getStringCellValue();
                 c = row.getCell(14);
                 String department = c.getStringCellValue();
+                c = row.getCell(15);
+                double hourLoad = c.getNumericCellValue();
 
                 ClassTeacherAssignmentClassInfo cls = new ClassTeacherAssignmentClassInfo();
                 cls.setClassId(classId);
@@ -190,6 +192,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
                 cls.setEnrollment(enrollment);
                 cls.setMaxEnrollment(maxEnrollment);
                 cls.setPlanId(planId);
+                cls.setHourLoad(hourLoad);
                 lst.add(cls);
                 log.info(classId + "\t" + courseId + "\t" + className + "\t" + timeTable);
                 cls = classTeacherAssignmentClassInfoRepo.save(cls);

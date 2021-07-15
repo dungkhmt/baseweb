@@ -54,7 +54,6 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             for(int j = 0;j < m; j++){
                 priorityMatrix[i][j] = Integer.MAX_VALUE;
             }
-
         }
         //ArrayList<Integer>[] D = new ArrayList[n];
         hourClass = new double[n];

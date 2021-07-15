@@ -21,11 +21,20 @@ public class MaxLoadConstraintORToolMIPSolver {
     // intermediate Data structure
     private double totalHourClass;
     private int INF;
+    private int maxP;// max value of priority
+    private int minP;// min value of priority
+
+    // parameters
+    private int alpha;
+    private int[] beta;
 
     // MIP modelling
     private MPVariable[][] x;// x[i,j] = 1 indicates that teacher i is assigned to class j
     private MPSolver solver;
     private MPVariable obj;
+    private MPVariable[][] y;// Y[i,k] = 1 indicates that class i is assigned to a teacher with priority k
+    private MPVariable[] z;// Z[i] = 1 indicates that class i is assigned to some teacher
+    private MPVariable[] u;// u[j] is the hour_load of teacher j
 
     // data structures for solution
     private int[] assignment;// assignment[i] is the teacher assigned to class i
@@ -56,7 +65,22 @@ public class MaxLoadConstraintORToolMIPSolver {
             totalHourClass += hourClass[i];
         }
         INF = (int) totalHourClass + 1;
+        maxP = 0;
+        minP = Integer.MAX_VALUE;
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(priority[i][j] < Integer.MAX_VALUE){
+                        if(priority[i][j] > maxP) maxP = priority[i][j];
+                        if(priority[i][j] < minP) minP = priority[i][j];
+                }
 
+            }
+        }
+
+        // init parameters
+        alpha = 10000;
+        beta = new int[maxP + 1];
+        for(int k = minP; k <= maxP; k++) beta[k] = 1;
     }
 
     public void createSolverAndVariables() {
@@ -83,12 +107,30 @@ public class MaxLoadConstraintORToolMIPSolver {
         }
         obj = solver.makeIntVar(0, totalHourClass, "minOfMaxLoad");
 
+        // create variables y
+        y = new MPVariable[n][maxP+1];
+        for(int i = 0; i < n; i++){
+            for(int k = minP; k <= maxP; k++){
+                y[i][k] = solver.makeIntVar(0,1,"y[" + i + "," + k + "]");
+            }
+        }
+
+        // create variable z
+        z = new MPVariable[n];
+        for(int i = 0; i < n; i++)
+            z[i] = solver.makeIntVar(0,1,"z[" + i + "]");
+
+        // create variable u
+        //u = new MPVariable[n];
+        //for(int i = 0; i < n; i++)
+        //    u[i] = solver.makeIntVar(0,totalHourClass,"u[" + i + "]");
     }
 
     private void createdConstraints() {
-        // each class is assigned to exactly one teacher
+        // each class is assigned to at most one teacher
         for (int i = 0; i < n; i++) {
-            MPConstraint c = solver.makeConstraint(1, 1);
+            //MPConstraint c = solver.makeConstraint(1, 1);
+            MPConstraint c = solver.makeConstraint(0, 1);
             for (int j = 0; j < m; j++) {
                 c.setCoefficient(x[j][i], 1);
             }
@@ -110,6 +152,29 @@ public class MaxLoadConstraintORToolMIPSolver {
                         MPConstraint c = solver.makeConstraint(0, 1);
                         c.setCoefficient(x[j][i1], 1);
                         c.setCoefficient(x[j][i2], 1);
+                    }
+                }
+            }
+        }
+
+        // constraint between x and z: z[i] >= x[j,i]
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                MPConstraint c = solver.makeConstraint(0, 1);
+                c.setCoefficient(z[i],1);
+                c.setCoefficient(x[j][i],-1);
+            }
+
+        }
+
+        // constraint between x and y
+        for(int p = minP; p <= maxP; p++){
+            for(int i = 0; i < n; i++){
+                for(int j = 0; j < m; j++){
+                    if(priority[i][j] == p){ // y[i,p] = x[j,i]
+                        MPConstraint c = solver.makeConstraint(0,0);
+                        c.setCoefficient(y[i][p],1);
+                        c.setCoefficient(x[j][i],-1);
                     }
                 }
             }
