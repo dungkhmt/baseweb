@@ -203,10 +203,11 @@ public class MaxPriorityClassAssignmentORToolMIPSolver {
         // constraint between x and y
         for(int p = minP; p <= maxP; p++){
             for(int i = 0; i < n; i++){
+                MPConstraint c = solver.makeConstraint(0,0);
+                c.setCoefficient(y[i][p],1);
                 for(int j = 0; j < m; j++){
                     if(priority[i][j] == p){ // y[i,p] = x[j,i]
-                        MPConstraint c = solver.makeConstraint(0,0);
-                        c.setCoefficient(y[i][p],1);
+
                         c.setCoefficient(x[j][i],-1);
                     }
                     /*

@@ -105,7 +105,7 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
             for (int j = 0; j < m; j++) {
                 if (!D[i].contains(j)) {// teacher j cannot be assigned to class i
                     x[j][i] = solver.makeIntVar(0, 0, "x[" + j + "," + i + "]");
-                    System.out.println(name() + "::solve, FORCE var x[" + j + "," + i + "] = 0");
+                    //System.out.println(name() + "::solve, FORCE var x[" + j + "," + i + "] = 0");
                 } else {
                     x[j][i] = solver.makeIntVar(0, 1, "x[" + j + "," + i + "]");
                 }
@@ -195,11 +195,16 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         // constraint between x and y
         for(int p = minP; p <= maxP; p++){
             for(int i = 0; i < n; i++){
+                MPConstraint c = solver.makeConstraint(0,0);
+                c.setCoefficient(y[i][p],1);
                 for(int j = 0; j < m; j++){
                     if(priority[i][j] == p){ // y[i,p] = x[j,i]
-                        MPConstraint c = solver.makeConstraint(0,0);
-                        c.setCoefficient(y[i][p],1);
+                        //MPConstraint c = solver.makeConstraint(0,0);
+                        //c.setCoefficient(y[i][p],1);
                         c.setCoefficient(x[j][i],-1);
+                        //if(i == 18 && j == 67){
+                            System.out.println(name() + "::solve, constraintXY, x[" + j + "," + i + "] = y[" + i + "," + p + "]");
+                        //}
                     }
                     /*
                     else{
@@ -259,11 +264,12 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         createConstraintChannelXZ();
         createConstraintChannelYZ();
         //createConstraintOnY();
-        createConstraintObj();
-        createMaxNbAssignedClassConstraint();
-        //createMaxPriorityObjectiveConstraint();
 
-        createInstantiationConstraint(76,18);
+        //createConstraintObj();
+        createMaxNbAssignedClassConstraint();
+        createMaxPriorityObjectiveConstraint();
+
+        //createInstantiationConstraint(67,18);
     }
     private void createObjective(){
         MPObjective objective = solver.objective();
