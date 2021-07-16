@@ -67,5 +67,8 @@ public interface ClassTeacherAssignmentPlanService {
         UpdateClassForAssignmentInputModel input
     );
 
+
     public TeacherForAssignmentPlan updateTeacherForAssignment(UserLogin u, UpdateTeacherForAssignmentInputModel input);
+
+    public TeacherCourseForAssignmentPlan updateTeacherCourseForAssignmentPlan(UserLogin u, UpdateTeacherCoursePriorityForAssignmentPlanInputModel input);
 }

@@ -875,4 +875,20 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         }
         return teacherForAssignmentPlan;
     }
+
+    @Override
+    public TeacherCourseForAssignmentPlan updateTeacherCourseForAssignmentPlan(
+        UserLogin u,
+        UpdateTeacherCoursePriorityForAssignmentPlanInputModel input
+    ) {
+        TeacherCourseForAssignmentPlan teacherCourseForAssignmentPlan = teacherCourseForAssignmentPlanRepo
+            .findByTeacherIdAndCourseIdAndPlanId(input.getTeacherId(),input.getCourseId(),input.getPlanId());
+        if(teacherCourseForAssignmentPlan != null){
+            teacherCourseForAssignmentPlan.setPriority(input.getPriority());
+            teacherCourseForAssignmentPlan = teacherCourseForAssignmentPlanRepo.save(teacherCourseForAssignmentPlan);
+            log.info("updateTeacherCourseForAssignmentPlan, update OK!!");
+
+        }
+        return null;
+    }
 }

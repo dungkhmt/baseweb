@@ -246,6 +246,19 @@ public class TeacherClassAssignmentController {
         return ResponseEntity.ok().body(t);
     }
 
+    @PostMapping("/update-teacher-course-for-assignment-plan")
+    public ResponseEntity<?> updateTeacherCourseForAssignmentPlan(Principal principal,
+                                                                  @RequestBody UpdateTeacherCoursePriorityForAssignmentPlanInputModel input){
+
+        UserLogin u = userService.findById(principal.getName());
+        log.info("updateTeacherCourseForAssignmentPlan, planId = " + input.getPlanId() + " teacherId = " + input.getTeacherId()
+        + " courseId = " + input.getCourseId() + " priority = " + input.getPriority());
+        TeacherCourseForAssignmentPlan teacherCourseForAssignmentPlan = classTeacherAssignmentPlanService
+            .updateTeacherCourseForAssignmentPlan(u,input);
+
+        return ResponseEntity.ok().body("OK)");
+    }
+
     @GetMapping("/get-not-assigned-class-solution/{planId}")
     public ResponseEntity<?> getNotAssignedClassSolution(Principal principal, @PathVariable UUID planId) {
         List<ClassTeacherAssignmentSolutionModel> notAssignedClasses =
