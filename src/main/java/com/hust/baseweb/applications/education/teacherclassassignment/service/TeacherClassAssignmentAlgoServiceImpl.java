@@ -35,10 +35,13 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         HashMap<String, Integer> mTeacher2Index = new HashMap();
         for (int i = 0; i < m; i++) {
             mTeacher2Index.put(algoTeacherIMs[i].getId(), i);
+            log.info("map: teacher[" + i + "] = " + algoTeacherIMs[i].getId());
         }
         HashMap<String, Integer> mClassId2Index = new HashMap();
         for (int i = 0; i < n; i++) {
             mClassId2Index.put(algoClassIMS[i].getClassCode(), i);
+            log.info("map: class[" + i + "] = " + algoClassIMS[i].getClassCode());
+
         }
 
         HashMap<String, List<Integer>> mCourseID2ClassIndex = new HashMap();
@@ -86,6 +89,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         }
 
         if (preAssignment != null) {
+            log.info("prepare preAssignment.sz = " + preAssignment.length);
             for (int i = 0; i < preAssignment.length; i++) {
                 AlgoClassIM ci = preAssignment[i].getAlgoClassIM();
                 AlgoTeacherIM ti = preAssignment[i].getAlgoTeacherIM();
@@ -148,6 +152,8 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             sol = mipSolver.getSolutionAssignment();
             log.info("computeTeacherClassAssignment, MIP found optimal solution!!");
             log.info("computeTeacherClassAssignment, notAssign = " + mipSolver.getNotAssignedClass().size());
+        }else{
+            return null;
         }
         /*
         else {

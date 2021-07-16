@@ -24,6 +24,7 @@ public class ORToolMIPSolver {
         + " nbAssignedClass = " + maxAssignedClassConstraintORToolMIPSolver.getObjectiveNumberAssignedClass()
         );
 
+        if(true) return ok;
 
         int nbAssignedClasses = I.n - notAssigned.size();
         maxPriorityClassAssignmentORToolMIPSolver.setNbAssignedClasses(nbAssignedClasses);

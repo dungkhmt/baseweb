@@ -94,7 +94,7 @@ public class TimetableConflictChecker {
             String code1 = extractPeriod(timetableCode1);
             String code2 = extractPeriod(timetableCode2);
             if (code1 == null || code2 == null) {
-                System.out.println("conflict, EXCEPTION timeTableCode timeTableCode1 = " + timetableCode1
+                System.out.println("TimetableConflictChecker::conflict, EXCEPTION timeTableCode timeTableCode1 = " + timetableCode1
                                    + ", timeTableCode2 = " + timetableCode2);
                 return true;
             }

@@ -105,6 +105,7 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
             for (int j = 0; j < m; j++) {
                 if (!D[i].contains(j)) {// teacher j cannot be assigned to class i
                     x[j][i] = solver.makeIntVar(0, 0, "x[" + j + "," + i + "]");
+                    System.out.println(name() + "::solve, FORCE var x[" + j + "," + i + "] = 0");
                 } else {
                     x[j][i] = solver.makeIntVar(0, 1, "x[" + j + "," + i + "]");
                 }
@@ -245,6 +246,11 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         for(int i = 0; i < n; i++) c.setCoefficient(z[i],1);
         c.setCoefficient(objectiveMaxNbClassAssigned,-1);
     }
+    private void createInstantiationConstraint(int j, int i){
+        // create constraint saying that teacher j is assigned to class i: x[j][i] = 1
+        MPConstraint c = solver.makeConstraint(1,1);
+        c.setCoefficient(x[j][i],1);
+    }
     private void createdConstraints() {
         createConstraintAtMostOneTeacherIsAssignedToEachClass();
         createConstraintMaxHourLoadTeacher();
@@ -256,6 +262,8 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         createConstraintObj();
         createMaxNbAssignedClassConstraint();
         //createMaxPriorityObjectiveConstraint();
+
+        createInstantiationConstraint(76,18);
     }
     private void createObjective(){
         MPObjective objective = solver.objective();
@@ -289,6 +297,9 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
             }
         }
     }
+    public String name(){
+        return "MaxAssignedClassConstraintORToolMIPSolver";
+    }
     private boolean solvePhase1(){
         // maximize the number of class assigned
         initDatastructures();
@@ -302,6 +313,8 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         notAssigned = new HashSet<Integer>();
         // Analyse solution.
         if (resultStatus == MPSolver.ResultStatus.OPTIMAL) {
+            System.out.println(name() + "solve --> OPTIMAL SOLVED!!");
+
             assignment = new int[n];
             for(int i = 0; i < n; i++) assignment[i] = -1;
             //System.out.println("solve, n = " + n + " m = " + m + ", objective = " + objectiveMaxNbClassAssigned.value());
@@ -321,6 +334,9 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
                 }
             }
             return true;
+        }else{
+            System.out.println(name() + "::solve, NOT FOUND OPTIMAL??");
+
         }
         return false;
 

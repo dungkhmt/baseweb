@@ -506,6 +506,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         input.setPreAssignments(preAssignment);
 
         TeacherClassAssignmentOM solution = teacherClassAssignmentAlgoService.computeTeacherClassAssignment(input);
+        if(solution == null) return false;
 
         // remove all existing items of planId
         List<TeacherClassAssignmentSolution> teacherClassAssignmentSolutions = teacherClassAssignmentSolutionRepo.findAllByPlanId(
@@ -521,23 +522,23 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         for (int i = 0; i < assignments.length; i++) {
             TeacherClassAssignmentModel a = assignments[i];
             if (a == null) {
-                log.info("autoAssignTeacher2Class, found assignment " + i + " NULL");
+                //log.info("autoAssignTeacher2Class, found assignment " + i + " NULL");
                 continue;
             }
             TeacherClassAssignmentSolution s = new TeacherClassAssignmentSolution();
             if (a.getAlgoClassIM() == null) {
-                log.info("autoAssignTeacher2Class, found assignment class NULL " + a.getAlgoTeacherIM().getId());
+                //log.info("autoAssignTeacher2Class, found assignment class NULL " + a.getAlgoTeacherIM().getId());
                 continue;
             }
-            log.info("autoAssignTeacher2Class, assignment " + a.getAlgoClassIM().getCourseId() +
-                     ", " + a.getAlgoClassIM().getId() + ", " + a.getAlgoClassIM().getClassCode());
+            //log.info("autoAssignTeacher2Class, assignment " + a.getAlgoClassIM().getCourseId() +
+            //         ", " + a.getAlgoClassIM().getId() + ", " + a.getAlgoClassIM().getClassCode());
 
             s.setClassId(a.getAlgoClassIM().getClassCode());
             s.setTeacherId(a.getAlgoTeacherIM().getId());
             s.setPlanId(planId);
             s.setCreatedStamp(new Date());
             s = teacherClassAssignmentSolutionRepo.save(s);
-            log.info("autoAssignTeacher2Class, save solution " + s.getClassId() + " -> " + s.getTeacherId());
+            //log.info("autoAssignTeacher2Class, save solution " + s.getClassId() + " -> " + s.getTeacherId());
         }
         return false;
     }
