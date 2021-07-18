@@ -18,5 +18,5 @@ public class MapDataInput {
     public int[][] priority;
     public double[] hourClass;
     public double[] maxHourTeacher;
-
+    public int[][] preAssignment;
 }

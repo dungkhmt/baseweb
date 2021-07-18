@@ -498,6 +498,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             AlgoTeacherIM ti = mTeacherId2AlgoTeacher.get(teacherId);
 
             preAssignment[i] = new TeacherClassAssignmentModel(ci, ti);
+
         }
 
         AlgoTeacherAssignmentIM input = new AlgoTeacherAssignmentIM();

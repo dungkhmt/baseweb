@@ -17,6 +17,7 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
     private int[][] priority;
     private double[] hourClass;
     private double[] maxHourTeacher;
+    private int[][] preAssignment;
 
     // intermediate Data structure
     private double totalHourClass;
@@ -58,6 +59,7 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         this.conflict = I.conflict;
         this.hourClass = I.hourClass;
         this.maxHourTeacher = I.maxHourTeacher;
+        this.preAssignment = I.getPreAssignment();
     }
 
     public HashSet<Integer> getNotAssignedClass(){
@@ -85,7 +87,13 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         alpha = 10000;
         beta = new int[maxP + 1];
         for(int k = minP; k <= maxP; k++) beta[k] = 1;
-        beta[minP] = 10000; beta[minP+1] = 100;
+        //beta[minP] = 10000; beta[minP+1] = 100;
+        for(int k = maxP-1; k >= minP; k--){
+            if(beta[k+1] < 10000000)
+                beta[k] = beta[k+1]*10;
+            else
+                beta[k] = beta[k+1];
+        }
     }
 
     public void createSolverAndVariables() {
@@ -256,8 +264,16 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         MPConstraint c = solver.makeConstraint(1,1);
         c.setCoefficient(x[j][i],1);
     }
+    private void createPreAssignmentConstraints(){
+        for(int k = 0; k < preAssignment.length; k++){
+            int i = preAssignment[k][0];// class index
+            int j = preAssignment[k][1];// teacher
+            createInstantiationConstraint(j,i);
+        }
+    }
     private void createdConstraints() {
         createConstraintAtMostOneTeacherIsAssignedToEachClass();
+        createPreAssignmentConstraints();
         createConstraintMaxHourLoadTeacher();
         createConstraintConflictClasses();
         createConstraintChannelXY();

@@ -87,6 +87,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
                 }
             }
         }
+        int[][] pa = new int[preAssignment.length][];
 
         if (preAssignment != null) {
             log.info("prepare preAssignment.sz = " + preAssignment.length);
@@ -97,8 +98,11 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
                 int it = mTeacher2Index.get(ti.getId());
                 D[ic].clear();
                 D[ic].add(it);
+                log.info("computeTeacherClassAssignment, preAssign class[" + ic + "] = " + ci.getClassCode()
+                         + " - teacher[" + it + "] = " + ti.getId());
                 //D[ic].add(new AlgoTeacherClassPriorityModel(it,ic,1));
-
+                pa[i] = new int[2];
+                pa[i][0] = ic; pa[i][1] = it;
             }
         }
         for (int i = 0; i < n; i++) {
@@ -142,7 +146,8 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             }
         }
         int[] sol = null;
-        MapDataInput mapDataInput = new MapDataInput(n, m, D, conflict, priorityMatrix, hourClass, maxHourTeacher);
+        MapDataInput mapDataInput = new MapDataInput(n, m, D, conflict, priorityMatrix, hourClass,
+                                                     maxHourTeacher,pa);
 
         //MaxLoadConstraintORToolMIPSolver mipSolver =
         //    new MaxLoadConstraintORToolMIPSolver(n, m, D, priorityMatrix, conflict, hourClass, maxHourTeacher);
