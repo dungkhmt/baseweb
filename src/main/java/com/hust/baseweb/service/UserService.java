@@ -56,6 +56,8 @@ public interface UserService {
 
     PersonModel findPersonByUserLoginId(String userLoginId);
 
+    List<String> findAllUserLoginIdOfGroup(String groupId);
+
 //    UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel);
 
 //    boolean approveRegisterUser(String userLoginId);

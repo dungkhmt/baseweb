@@ -142,7 +142,8 @@ public class QuizController {
 
     @GetMapping("/change-quiz-open-close-status/{questionId}")
     public ResponseEntity<?> changeQuizOpenCloseStatus(Principal principal, @PathVariable UUID questionId) {
-        QuizQuestion quizQuestion = quizQuestionService.changeOpenCloseStatus(questionId);
+        UserLogin u = userService.findById(principal.getName());
+        QuizQuestion quizQuestion = quizQuestionService.changeOpenCloseStatus(u,questionId);
         return ResponseEntity.ok().body(quizQuestion);
     }
 

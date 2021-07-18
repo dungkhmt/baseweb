@@ -13,8 +13,10 @@ import com.hust.baseweb.applications.education.repo.LogUserLoginQuizQuestionRepo
 import com.hust.baseweb.applications.education.repo.QuizChoiceAnswerRepo;
 import com.hust.baseweb.applications.education.repo.QuizCourseTopicRepo;
 import com.hust.baseweb.applications.education.repo.QuizQuestionRepo;
+import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import com.hust.baseweb.config.FileSystemStorageProperties;
 import com.hust.baseweb.entity.UserLogin;
+import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
     private FileSystemStorageProperties properties;
 
+    private NotificationsService notificationsService;
+    private UserService userService;
     @Override
     public QuizQuestion save(QuizQuestionCreateInputModel input) {
         QuizQuestion quizQuestion = new QuizQuestion();
@@ -171,10 +175,20 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
-    public QuizQuestion changeOpenCloseStatus(UUID questionId) {
+    public QuizQuestion changeOpenCloseStatus(UserLogin u, UUID questionId) {
         QuizQuestion quizQuestion = quizQuestionRepo.findById(questionId).orElse(null);
         if (quizQuestion.getStatusId().equals(QuizQuestion.STATUS_PRIVATE)) {
             quizQuestion.setStatusId(QuizQuestion.STATUS_PUBLIC);
+            List<String> userLoginIds = userService.findAllUserLoginIdOfGroup("ROLE_EDUCATION_LEARNING_MANAGEMENT_STUDENT");
+
+            for(String userLoginId: userLoginIds){
+                notificationsService.create(u.getUserLoginId(),userLoginId,
+                                            u.getUserLoginId() + " vừa public quiz " +
+                                            quizQuestion.getQuizCourseTopic().getQuizCourseTopicName() + " của môn "
+                                            + quizQuestion.getQuizCourseTopic().getEduCourse().getName()
+                    ,"");
+                log.info("changeOpenCloseStatus, push notif to " + userLoginId);
+            }
         } else {
             quizQuestion.setStatusId(QuizQuestion.STATUS_PRIVATE);
         }

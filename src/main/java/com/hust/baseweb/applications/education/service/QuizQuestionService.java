@@ -23,7 +23,7 @@ public interface QuizQuestionService {
 
     QuizQuestionDetailModel findQuizDetail(UUID questionId);
 
-    QuizQuestion changeOpenCloseStatus(UUID questionId);
+    QuizQuestion changeOpenCloseStatus(UserLogin u, UUID questionId);
 
     public boolean checkAnswer(UserLogin userLogin, QuizChooseAnswerInputModel quizChooseAnswerInputModel);
 

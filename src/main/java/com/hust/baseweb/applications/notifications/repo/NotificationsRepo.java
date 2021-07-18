@@ -27,9 +27,9 @@ public interface NotificationsRepo extends JpaRepository<Notifications, UUID> {
                    "from\n" +
                    "\tnotifications n\n" +
                    "left join user_register ur on\n" +
-                   "\tn.from_user = ur.user_login_id",
+                   "\tn.from_user = ur.user_login_id where n.to_user = ?1",
            nativeQuery = true)
-    Page<NotificationDTO> findAllNotifications(Pageable pageable);
+    Page<NotificationDTO> findAllNotifications(String userLoginId, Pageable pageable);
 
     List<Notifications> findByToUserAndStatusId(String toUserId, String currentStatusId);
 }

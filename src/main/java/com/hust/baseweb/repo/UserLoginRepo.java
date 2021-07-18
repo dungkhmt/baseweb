@@ -36,4 +36,9 @@ public interface UserLoginRepo extends JpaRepository<UserLogin, String> {
                    "\tul.user_login_id = ur.user_login_id\n",
            nativeQuery = true)
     List<String> findAllUserEmail();
+
+    @Query(value = "select u.user_login_id from user_login u inner join user_login_security_group ug \n" +
+                   " on u.user_login_id = ug.user_login_id \n" +
+                   "where ug.group_id = ?1", nativeQuery = true)
+    List<String> findAllUserLoginOfGroup(String groupId);
 }

@@ -11,6 +11,7 @@ import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.report.model.courseparticipation.StudentCourseParticipationModel;
 import com.hust.baseweb.applications.education.report.model.quizparticipation.StudentQuizParticipationModel;
 import com.hust.baseweb.applications.education.service.*;
+import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.service.UserService;
@@ -50,7 +51,7 @@ public class ClassController {
     private LogUserLoginCourseChapterMaterialService logUserLoginCourseChapterMaterialService;
     private LogUserLoginQuizQuestionService logUserLoginQuizQuestionService;
     private VideoService videoService;
-
+    private NotificationsService notificationsService;
 
     @PostMapping
     public ResponseEntity<?> getClassesOfCurrSemester(
@@ -218,6 +219,8 @@ public class ClassController {
         Principal principal, @RequestParam("inputJson") String inputJson,
         @RequestParam("files") MultipartFile[] files
     ) {
+        UserLogin u = userService.findById(principal.getName());
+
         Gson gson = new Gson();
         EduCourseChapterMaterialModelCreate eduCourseChapterMaterialModelCreate = gson.fromJson(
             inputJson,
@@ -236,6 +239,15 @@ public class ClassController {
             e.printStackTrace();
         }
 
+        // push notification
+        List<String> userLoginIds = userService
+            .findAllUserLoginIdOfGroup("ROLE_EDUCATION_LEARNING_MANAGEMENT_STUDENT");
+        for(String userLoginId: userLoginIds){
+            log.info("createChapterMaterialOfCourse, push notif to " + userLoginId);
+            notificationsService.create(u.getUserLoginId(),userLoginId,
+                                        u.getUserLoginId() + " vừa upload bài giảng "
+                                        + eduCourseChapterMaterialModelCreate.getMaterialName(),"");
+        }
         return ResponseEntity.ok().body(eduCourseChapterMaterial);
     }
 

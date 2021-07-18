@@ -369,6 +369,11 @@ public class UserServiceImpl implements UserService {
         return personModel;
     }
 
+    @Override
+    public List<String> findAllUserLoginIdOfGroup(String groupId) {
+        return userLoginRepo.findAllUserLoginOfGroup(groupId);
+    }
+
 //    @Override
 //    public UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel) {
 //        String userLoginId = inputModel.getUserLoginId();
