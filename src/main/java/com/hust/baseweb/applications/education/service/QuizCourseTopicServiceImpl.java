@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.education.service;
 
+import com.hust.baseweb.applications.education.cache.CacheQuizCourseTopic;
 import com.hust.baseweb.applications.education.entity.EduCourse;
 import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.model.quiz.QuizCourseTopicCreateInputModel;
@@ -10,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Log4j2
@@ -21,9 +23,20 @@ public class QuizCourseTopicServiceImpl implements QuizCourseTopicService {
     private QuizCourseTopicRepo quizCourseTopicRepo;
     private EduCourseRepo eduCourseRepo;
 
+    //public static HashMap<String, QuizCourseTopic> mId2QuizCourseTopic = null;
+    public static CacheQuizCourseTopic cacheQuizCourseTopic  = null;
     @Override
     public List<QuizCourseTopic> findAll() {
-        return quizCourseTopicRepo.findAll();
+        List<QuizCourseTopic> quizCourseTopics = quizCourseTopicRepo.findAll();
+        if(cacheQuizCourseTopic == null){// for the first time
+            //mId2QuizCourseTopic = new HashMap<String, QuizCourseTopic>();
+            cacheQuizCourseTopic = new CacheQuizCourseTopic();
+            for(QuizCourseTopic q: quizCourseTopics){
+                //mId2QuizCourseTopic.put(q.getQuizCourseTopicId(),q);
+                cacheQuizCourseTopic.put(q.getQuizCourseTopicId(),q);
+            }
+        }
+        return quizCourseTopics;
     }
 
     public List<QuizCourseTopic> findByEduCourse_Id(String courseId) {

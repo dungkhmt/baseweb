@@ -17,6 +17,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Log4j2
@@ -72,21 +74,25 @@ public class LogUserLoginCourseChapterMaterialServiceImpl implements LogUserLogi
             courseId = eduClass.getEduCourse().getId();
             courseName = eduClass.getEduCourse().getName();
         }
-
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<LogUserLoginCourseChapterMaterial> lst = logUserLoginCourseChapterMaterialRepo.findAll();
         List<StudentCourseParticipationModel> studentClassParticipationOutputModels = new ArrayList();
         for (LogUserLoginCourseChapterMaterial e : lst) {
             //PersonModel personModel = userService.findPersonByUserLoginId(e.getUserLoginId());
             // use cache
             PersonModel personModel = getPersonModel(e.getUserLoginId());
-
+            String datetime = "";
+            if(e.getCreateStamp() != null){
+                datetime = df.format(e.getCreateStamp());
+            }
             studentClassParticipationOutputModels.add(new StudentCourseParticipationModel(
                 e.getUserLoginId(),
                 personModel.getLastName() + " " + personModel.getMiddleName() + " " + personModel.getFirstName(),
                 classCode + "",
                 courseId,
                 courseName,
-                mId2Name.get(e.getEduCourseMaterialId()), e.getCreateStamp()));
+                mId2Name.get(e.getEduCourseMaterialId()),
+                datetime));
         }
         return studentClassParticipationOutputModels;
     }

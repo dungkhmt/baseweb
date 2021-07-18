@@ -19,5 +19,5 @@ public class StudentCourseParticipationModel {
     private String courseId;
     private String courseName;
     private String eduCourseMaterialName;
-    private Date createdStamp;
+    private String createdStamp;
 }

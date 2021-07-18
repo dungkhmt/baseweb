@@ -19,7 +19,9 @@ public class StudentQuizParticipationModel {
     private String questionId;
     private String courseId;
     private String courseName;
+    private String topicName;
+    private String topicId;
     private int grade;
-    private Date createdStamp;
-
+    //private Date createdStamp;
+    private String createdStamp;
 }

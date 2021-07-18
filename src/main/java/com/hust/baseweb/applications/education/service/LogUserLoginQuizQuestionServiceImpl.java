@@ -1,7 +1,9 @@
 package com.hust.baseweb.applications.education.service;
 
+import com.hust.baseweb.applications.education.cache.CacheQuizCourseTopic;
 import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.entity.LogUserLoginQuizQuestion;
+import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.repo.ClassRepo;
 import com.hust.baseweb.applications.education.repo.LogUserLoginQuizQuestionRepo;
 import com.hust.baseweb.applications.education.report.model.quizparticipation.StudentQuizParticipationModel;
@@ -13,7 +15,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,10 +45,18 @@ public class LogUserLoginQuizQuestionServiceImpl implements LogUserLoginQuizQues
             courseId = eduClass.getEduCourse().getId();
             courseName = eduClass.getEduCourse().getName();
         }
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        HashMap<String, PersonModel> mUserLoginId2PersonModel =
+            LogUserLoginCourseChapterMaterialServiceImpl.mUserLoginId2PersonModel;
+        //CacheQuizCourseTopic cacheQuizCourseTopic = QuizCourseTopicServiceImpl.cacheQuizCourseTopic;
 
         List<StudentQuizParticipationModel> studentQuizParticipationModels = new ArrayList();
         for (LogUserLoginQuizQuestion e : logUserLoginQuizQuestions) {
-            PersonModel personModel = userService.findPersonByUserLoginId(e.getUserLoginId());
+            //PersonModel personModel = userService.findPersonByUserLoginId(e.getUserLoginId());
+            PersonModel personModel = mUserLoginId2PersonModel.get(e.getUserLoginId());
+            //QuizCourseTopic q = cacheQuizCourseTopic.get(e.getQuestionId());
+
             studentQuizParticipationModels.add(new StudentQuizParticipationModel(
                 e.getUserLoginId(),
                 personModel.getLastName() + " " + personModel.getMiddleName() + " " + personModel.getFirstName(),
@@ -51,9 +64,15 @@ public class LogUserLoginQuizQuestionServiceImpl implements LogUserLoginQuizQues
                 e.getQuestionId().toString(),
                 courseId,
                 courseName,
+                "",
+                "",
+                //q.getQuizCourseTopicName(),
+                //q.getQuizCourseTopicId(),
                 0,
-                e.getCreateStamp()
+                //e.getCreateStamp()
+                df.format(e.getCreateStamp())
             ));
+            //log.info("findAllByClassId, datetime = " + df.format(e.getCreateStamp()));
         }
         return studentQuizParticipationModels;
     }
