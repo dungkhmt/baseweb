@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.education.teacherclassassignment.service.Cl
 import com.hust.baseweb.applications.education.teacherclassassignment.service.ClassTeacherAssignmentSolutionExcelExporter;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.TeacherClassAssignmentAlgoService;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.TeacherClassAssignmentService;
+import com.hust.baseweb.applications.education.teacherclassassignment.utils.TimetableConflictChecker;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -210,7 +212,38 @@ public class TeacherClassAssignmentController {
         classTeacherAssignmentPlanService.autoAssignTeacher2Class(input.getPlanId());
         return ResponseEntity.ok().body("OK");
     }
+    @GetMapping("/get-conflict-class-assigned-to-teacher-in-solution/{planId}")
+    public ResponseEntity<?> getConflictClassesAssignedToTeacherInSolution(Principal principal, @PathVariable UUID planId){
+        List<ClassTeacherAssignmentSolutionModel> classTeacherAssignmentSolutionModels =
+            classTeacherAssignmentPlanService.getClassTeacherAssignmentSolution(planId);
 
+        List<ConflictClassAssignedToTeacherModel> conflictClassAssignedToTeacherModels = new ArrayList();
+        for(int i = 0; i < classTeacherAssignmentSolutionModels.size(); i++){
+            ClassTeacherAssignmentSolutionModel si = classTeacherAssignmentSolutionModels.get(i);
+            for(int j = i+1; j < classTeacherAssignmentSolutionModels.size(); j++){
+                ClassTeacherAssignmentSolutionModel sj = classTeacherAssignmentSolutionModels.get(j);
+                if(si.getTeacherId() ==
+                   sj.getTeacherId()){
+                   boolean conflict = TimetableConflictChecker
+                       .conflict(si.getTimetable(),sj.getTimetable());
+                   if(conflict){
+                       ConflictClassAssignedToTeacherModel e = new ConflictClassAssignedToTeacherModel();
+                       e.setTeacherId(si.getTeacherId());
+                       e.setTeacherName(si.getTeacherName());
+                       e.setClassCode1(si.getClassCode());
+                       e.setCourseName1(si.getCourseName());
+                       e.setTimeTable1(si.getTimetable());
+                       e.setClassCode2(sj.getClassCode());
+                       e.setCourseName2(sj.getCourseName());
+                       e.setTimeTable2(sj.getTimetable());
+                       conflictClassAssignedToTeacherModels.add(e);
+                   }
+                }
+            }
+        }
+        log.info("getConflictClassesAssignedToTeacherInSolution, conflict list.sz = " + conflictClassAssignedToTeacherModels.size());
+        return ResponseEntity.ok().body(conflictClassAssignedToTeacherModels);
+    }
     @GetMapping("/get-class-teacher-assignment-solution/{planId}")
     public ResponseEntity<?> getClassTeacherAssignmentSolutions(Principal principal, @PathVariable UUID planId) {
         log.info("getClassTeacherAssignmentSolutions, planId = " + planId);
