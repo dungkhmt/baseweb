@@ -252,7 +252,7 @@ public class UserServiceImpl implements UserService {
             notificationsService.create(
                 im.getUserLoginId(),
                 "admin",
-                fullName + " đã đăng kí tài khoản. Phê duyệt ngay",
+                fullName + " đã đăng kí tài khoản. Phê duyệt ngay.",
                 "/user-group/user/approve-register");
 
             // send email.
