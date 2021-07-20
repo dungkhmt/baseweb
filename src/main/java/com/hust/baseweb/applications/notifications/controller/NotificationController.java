@@ -1,8 +1,8 @@
 package com.hust.baseweb.applications.notifications.controller;
 
 import com.hust.baseweb.applications.notifications.model.GetNotificationsOM;
+import com.hust.baseweb.applications.notifications.model.UpdateMultipleNotificationStatusBody;
 import com.hust.baseweb.applications.notifications.service.NotificationsService;
-import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.security.Principal;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,23 +26,21 @@ import static com.hust.baseweb.applications.notifications.entity.Notifications.S
 public class NotificationController {
 
     private final NotificationsService notificationsService;
-    private UserService userService;
+
     /**
-     * @param userId
+     * @param toUser
      * @param page
      * @param size
      */
     @GetMapping(params = {"page", "size"})
     public ResponseEntity<?> getNotifications(
-        Principal principal,
-        @CurrentSecurityContext(expression = "authentication.name") String userId,
+        @CurrentSecurityContext(expression = "authentication.name") String toUser,
         @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
         @RequestParam(defaultValue = "10") @Positive Integer size
     ) {
-        UserLogin u = userService.findById(principal.getName());
         GetNotificationsOM om = new GetNotificationsOM(
-            notificationsService.getNotifications(u,page, size),
-            notificationsService.countNumUnreadNotification(userId));
+            notificationsService.getNotifications(toUser, page, size),
+            notificationsService.countNumUnreadNotification(toUser));
 
         return ResponseEntity.ok().body(om);
     }
@@ -77,15 +74,15 @@ public class NotificationController {
     @PatchMapping("/status")
     public ResponseEntity<?> updateMultipleNotificationsStatus(
         @CurrentSecurityContext(expression = "authentication.name") String userId,
-        @RequestBody Map<String, Object> body
+        @RequestBody UpdateMultipleNotificationStatusBody body
     ) {
-        Object value = body.get("status");
-        String status = null == value ? null : value.toString();
-
-        if (!STATUS_READ.equals(status)) {
+        if (!STATUS_READ.equals(body.getStatus())) {
             return ResponseEntity.badRequest().body("Invalid status");
         } else {
-            notificationsService.updateMultipleNotificationsStatus(userId, STATUS_READ);
+            notificationsService.updateMultipleNotificationsStatus(
+                userId,
+                STATUS_READ,
+                body.getBeforeOrAt());
             return ResponseEntity.ok().body(null);
         }
     }
