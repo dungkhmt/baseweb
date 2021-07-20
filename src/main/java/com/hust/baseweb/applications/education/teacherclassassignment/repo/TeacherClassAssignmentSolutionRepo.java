@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface TeacherClassAssignmentSolutionRepo extends JpaRepository<TeacherClassAssignmentSolution, UUID> {
 
     List<TeacherClassAssignmentSolution> findAllByPlanId(UUID planId);
+    List<TeacherClassAssignmentSolution> findAllByPlanIdAndTeacherId(UUID planId, String teacherId);
 }

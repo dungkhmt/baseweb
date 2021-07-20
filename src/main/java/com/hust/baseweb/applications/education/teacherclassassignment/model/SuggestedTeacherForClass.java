@@ -14,4 +14,5 @@ public class SuggestedTeacherForClass {
     private String teacherId;
     private String teacherName;
     private double hourLoad;
+    private String info;
 }

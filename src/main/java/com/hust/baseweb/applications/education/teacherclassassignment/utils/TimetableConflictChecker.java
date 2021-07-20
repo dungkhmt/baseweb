@@ -98,6 +98,7 @@ public class TimetableConflictChecker {
                                    + ", timeTableCode2 = " + timetableCode2);
                 return true;
             }
+            //System.out.println("TimetableConflictChecker::conflict, code1 = "+ code1 + ", code2 = " + code2);
             String[] p1 = code1.split(",");
             String[] p2 = code2.split(",");
             if (p1 == null || p2 == null) {

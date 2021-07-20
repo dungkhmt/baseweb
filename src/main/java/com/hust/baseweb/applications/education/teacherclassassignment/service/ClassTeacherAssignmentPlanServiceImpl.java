@@ -584,24 +584,61 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
     }
 
     @Override
-    public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId) {
+    public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId, UUID planId) {
         List<ClassTeacherAssignmentClassInfo> cls = classTeacherAssignmentClassInfoRepo.findByClassId(classId);
         String courseId = null;
+        double hourLoad = 0;
+        String timetable = "";
         for (ClassTeacherAssignmentClassInfo cti : cls) {
             courseId = cti.getCourseId();
+            hourLoad = cti.getHourLoad();
+            timetable = cti.getLesson();
             break;
         }
         List<SuggestedTeacherForClass> lst = new ArrayList<SuggestedTeacherForClass>();
-
+        log.info("getSuggestedTeacherForClass, courseId = " + courseId + ", planId = " + planId);
         // TOBE improved
-        List<TeacherCourse> teacherCourses = teacherCourseRepo.findAll();
-        for (TeacherCourse tc : teacherCourses) {
+        //List<TeacherCourse> teacherCourses = teacherCourseRepo.findAll();
+        List<TeacherCourseForAssignmentPlan> teacherCourses = teacherCourseForAssignmentPlanRepo.findAllByPlanId(planId);// consider only item in the plan
+
+        //for (TeacherCourse tc : teacherCourses) {
+        for(TeacherCourseForAssignmentPlan tc: teacherCourses){
+            //log.info("getSuggestedTeacherForClass, teacherCourse: teacherId = " + tc.getTeacherId() +
+            //         ", courseId = " + tc.getCourseId());
             if (tc.getCourseId().equals(courseId)) {
                 SuggestedTeacherForClass t = new SuggestedTeacherForClass();
                 t.setTeacherId(tc.getTeacherId());
                 t.setTeacherName(tc.getTeacherId());
-                t.setHourLoad(0.0);// TOBE upgrade
+                //t.setHourLoad(0.0);// TOBE upgrade
+
+                String info = tc.getTeacherId() + ": ";
+
+                // get list of classes assigned to teacherId for more detail about suggestion
+                List<TeacherClassAssignmentSolution> teacherClassAssignmentSolutions =
+                    teacherClassAssignmentSolutionRepo.findAllByPlanIdAndTeacherId(planId, tc.getTeacherId());
+
+                double hourLoadOfTeacher = 0;
+
+                for(TeacherClassAssignmentSolution tcs: teacherClassAssignmentSolutions){
+                    List<ClassTeacherAssignmentClassInfo> ctai = classTeacherAssignmentClassInfoRepo.findByClassId(tcs.getClassId());
+                    ClassTeacherAssignmentClassInfo c = null;
+                    if(ctai != null && ctai.size() > 0){
+                        c = ctai.get(0);
+                    }else{
+                        continue;
+                    }
+                    hourLoadOfTeacher += c.getHourLoad();
+                    boolean conflict  = TimetableConflictChecker.conflict(c.getLesson(),timetable);
+                    if(conflict){
+                        info = info + " [Conflict: Class " + c.getClassId() + ", TimeTable " + c.getLesson() + "] ";
+                    }
+                }
+                info = info + " hour = " + hourLoadOfTeacher;
+                t.setInfo(info);
+
                 lst.add(t);
+                //log.info("getSuggestedTeacherForClass, MATCH teacherCourse: teacherId = " + tc.getTeacherId() +
+                //         ", courseId = " + tc.getCourseId() + ", lst.sz = " + lst.size());
             }
         }
 
