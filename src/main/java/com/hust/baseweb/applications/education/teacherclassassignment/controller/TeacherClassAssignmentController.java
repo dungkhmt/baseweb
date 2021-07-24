@@ -40,6 +40,8 @@ public class TeacherClassAssignmentController {
     private UserService userService;
     private ClassTeacherAssignmentPlanService classTeacherAssignmentPlanService;
 
+    private TeacherClassAssignmentAlgoService teacherClassAssignmentAlgoService;
+
     @PostMapping("/upload-excel-class-4-teacher-assignment")
     public ResponseEntity<?> uploadExcelClass4TeacherAssignment(
         Principal principal, @RequestParam("inputJson") String inputJson,
@@ -216,16 +218,18 @@ public class TeacherClassAssignmentController {
     public ResponseEntity<?> getConflictClassesAssignedToTeacherInSolution(Principal principal, @PathVariable UUID planId){
         List<ClassTeacherAssignmentSolutionModel> classTeacherAssignmentSolutionModels =
             classTeacherAssignmentPlanService.getClassTeacherAssignmentSolution(planId);
+        log.info("getConflictClassesAssignedToTeacherInSolution, planId = " + planId + ", sol.sz = " + classTeacherAssignmentSolutionModels.size());
 
         List<ConflictClassAssignedToTeacherModel> conflictClassAssignedToTeacherModels = new ArrayList();
         for(int i = 0; i < classTeacherAssignmentSolutionModels.size(); i++){
             ClassTeacherAssignmentSolutionModel si = classTeacherAssignmentSolutionModels.get(i);
             for(int j = i+1; j < classTeacherAssignmentSolutionModels.size(); j++){
                 ClassTeacherAssignmentSolutionModel sj = classTeacherAssignmentSolutionModels.get(j);
-                if(si.getTeacherId() ==
-                   sj.getTeacherId()){
+                if(si.getTeacherId().equals(sj.getTeacherId())){
                    boolean conflict = TimetableConflictChecker
                        .conflict(si.getTimetable(),sj.getTimetable());
+                   //log.info("getConflictClassesAssignedToTeacherInSolution, timetable1 = " + si.getTimetable() + " timetable2 = " + sj.getTimetable() +
+                   //         " conflict = " + conflict);
                    if(conflict){
                        ConflictClassAssignedToTeacherModel e = new ConflictClassAssignedToTeacherModel();
                        e.setTeacherId(si.getTeacherId());
@@ -300,10 +304,12 @@ public class TeacherClassAssignmentController {
         return ResponseEntity.ok().body(notAssignedClasses);
     }
 
-    @GetMapping("/get-suggested-teacher-for-class/{classId}")
-    public ResponseEntity<?> getSuggestedTeacherForClass(Principal principal, @PathVariable String classId) {
+    @GetMapping("/get-suggested-teacher-for-class/{classId}/{planId}")
+    public ResponseEntity<?> getSuggestedTeacherForClass(Principal principal,
+                                                         @PathVariable String classId,
+                                                         @PathVariable UUID planId) {
         log.info("getSuggestedTeacherForClass, classId = " + classId);
-        List<SuggestedTeacherForClass> lst = classTeacherAssignmentPlanService.getSuggestedTeacherForClass(classId);
+        List<SuggestedTeacherForClass> lst = classTeacherAssignmentPlanService.getSuggestedTeacherForClass(classId,planId);
 
         return ResponseEntity.ok().body(lst);
     }
@@ -419,10 +425,14 @@ public class TeacherClassAssignmentController {
         AlgoTeacherAssignmentIM input
     ) {
         System.out.println("computeTeacherClassAssignment start");
-        TeacherClassAssignmentOM teacherClassAssignmentOM = algoService.computeTeacherClassAssignment(
-            input);
 
-        return ResponseEntity.ok().body(teacherClassAssignmentOM);
+        //TeacherClassAssignmentOM teacherClassAssignmentOM = algoService.computeTeacherClassAssignment(
+        //    input);
+
+        TeacherClassAssignmentOM solution = teacherClassAssignmentAlgoService.computeTeacherClassAssignment(input);
+
+        //return ResponseEntity.ok().body(teacherClassAssignmentOM);
+        return ResponseEntity.ok().body(solution);
     }
 
     @PostMapping("/teacher-class-assignment/mip")

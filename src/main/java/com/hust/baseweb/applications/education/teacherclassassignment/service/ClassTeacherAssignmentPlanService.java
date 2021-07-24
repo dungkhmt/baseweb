@@ -41,7 +41,7 @@ public interface ClassTeacherAssignmentPlanService {
 
     public List<ClassTeacherAssignmentSolutionModel> getNotAssignedClassSolution(UUID planId);
 
-    public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId);
+    public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId,UUID planId);
 
     public TeacherClassAssignmentSolution assignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input);
 

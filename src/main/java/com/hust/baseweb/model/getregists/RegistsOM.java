@@ -9,4 +9,6 @@ public interface RegistsOM {
     String getEmail();
 
     String getRoles();
+
+    String getCreatedStamp();
 }
