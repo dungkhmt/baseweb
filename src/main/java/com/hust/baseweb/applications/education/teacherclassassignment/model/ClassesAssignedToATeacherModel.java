@@ -17,6 +17,6 @@ public class ClassesAssignedToATeacherModel {
     private String teacherName;
     private double hourLoad;
     private int numberOfClass;
-    private List<ClassTeacherAssignmentSolutionModel> classList;
-
+    private List<ClassTeacherAssignmentSolutionModel> classList;// SORTED
+    private int remainEmptySlots;// so tiet trong ke tu tiet cuoi cung cua lop cuoi cung den het tiet 12 cua thu 6
 }

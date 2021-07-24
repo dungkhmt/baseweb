@@ -8,6 +8,7 @@ import com.hust.baseweb.applications.education.teacherclassassignment.entity.com
 import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.repo.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.utils.CheckConflict;
+import com.hust.baseweb.applications.education.teacherclassassignment.utils.TimeTableStartAndDuration;
 import com.hust.baseweb.applications.education.teacherclassassignment.utils.TimetableConflictChecker;
 import com.hust.baseweb.entity.UserLogin;
 import lombok.AllArgsConstructor;
@@ -691,8 +692,38 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             }
             c.setHourLoad(hourLoad);
 
+            if(c.getClassList().size() == 0) continue;
+
+            // sort classes assigned to curren teacher in an increasing order of time-table
+            ClassTeacherAssignmentSolutionModel[] arr = new ClassTeacherAssignmentSolutionModel[c.getClassList().size()];
+            for(int i = 0; i < arr.length; i++){
+                arr[i] = c.getClassList().get(i);
+                TimeTableStartAndDuration ttsd  = TimetableConflictChecker.extractFromString(arr[i].getTimetable());
+                arr[i].setStartSlot(ttsd.getStartSlot());
+                arr[i].setEndSlot(ttsd.getEndSlot());
+                arr[i].setDuration(ttsd.getDuration());
+            }
+            for(int i = 0; i < arr.length; i++){
+                for(int j = i+1; j < arr.length; j++){
+                    if(arr[i].getStartSlot() > arr[j].getStartSlot()){
+                        ClassTeacherAssignmentSolutionModel tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+                    }
+                }
+            }
+            int previousSlot = arr[0].getStartSlot() - 1;
+            arr[0].setStartIndexFromPrevious(previousSlot);
+            for(int i = 1; i < arr.length; i++){
+                arr[i].setStartIndexFromPrevious(arr[i].getStartSlot() - arr[i-1].getEndSlot() - 1);
+            }
+            c.getClassList().clear();
+            for(int i = 0; i < arr.length; i++){
+                c.getClassList().add(arr[i]);
+            }
+            c.setRemainEmptySlots(72 - arr[arr.length-1].getEndSlot());
             lst.add(c);
         }
+
+
         return lst;
     }
 

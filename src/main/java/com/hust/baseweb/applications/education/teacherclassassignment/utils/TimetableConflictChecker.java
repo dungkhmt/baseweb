@@ -88,7 +88,27 @@ public class TimetableConflictChecker {
 
         return convertStartSlotStr2Code(s[0]) + "," + convertEndSlotStr2Code(s[1]);
     }
+    public static TimeTableStartAndDuration extractFromString(String timeTable){
+        String code = extractPeriod(timeTable);
+        String[] p = code.split(",");
+        int startSlot = 0;
+        int endSlot = 0;
+        int duration = 0;
+        int d = Integer.valueOf(p[0].substring(0,1));
+        int x = Integer.valueOf(p[0].substring(1,2));
+        int s1 = Integer.valueOf(p[0].substring(2,3));
+        int s2 = Integer.valueOf(p[1].substring(2,3));
+        if(x == 1){// MORNING
+            startSlot = (d-2)*12 + s1;
+            endSlot = (d-2)*12 + s2;
+        }else{// x = 2 AFTERNOON
+            startSlot = (d-2)*12 + s1 + 6;
+            endSlot = (d-2)*12 + s2 + 6;
+        }
+        duration = endSlot - startSlot + 1;
 
+        return new TimeTableStartAndDuration(startSlot,endSlot,duration);
+    }
     public static boolean conflict(String timetableCode1, String timetableCode2) {
         try {
             String code1 = extractPeriod(timetableCode1);
@@ -128,5 +148,7 @@ public class TimetableConflictChecker {
         String t = "1,221505,221730";
         String c = TimetableConflictChecker.extractPeriod(t);
         System.out.println(c);
+
+        System.out.println(TimetableConflictChecker.extractFromString(t2).toString());
     }
 }
