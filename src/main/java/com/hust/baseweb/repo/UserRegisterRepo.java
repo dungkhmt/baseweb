@@ -21,7 +21,8 @@ public interface UserRegisterRepo extends JpaRepository<UserRegister, String> {
                    "\tuser_login_id id,\n" +
                    "\tconcat(first_name , ' ', middle_name , ' ', last_name ) fullName,\n" +
                    "\temail,\n" +
-                   "\tregistered_roles roles\n" +
+                   "\tregistered_roles roles,\n" +
+                   "\tcreated_stamp createdStamp\n" +
                    "from\n" +
                    "\tuser_register ur\n" +
                    "where\n" +
