@@ -53,6 +53,7 @@ public interface ClassTeacherAssignmentPlanService {
     public boolean removeClassTeacherAssignmentSolutionList(UUID planId, String solutionItemList);
 
     public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolution(UUID planId);
+    public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(UUID planId);
 
     public List<ClassTeacherAssignmentSolutionModel> getClassTeacherAssignmentSolution(UUID planId);
 

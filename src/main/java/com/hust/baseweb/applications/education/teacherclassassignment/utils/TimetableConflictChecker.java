@@ -109,6 +109,24 @@ public class TimetableConflictChecker {
 
         return new TimeTableStartAndDuration(startSlot,endSlot,duration);
     }
+    public static boolean conflictMultiTimeTable(String timetableCode1, String timetableCode2){
+        String[] s1 = timetableCode1.split(";");
+        String[] s2 = timetableCode2.split(";");
+        if(s1 == null || s1.length == 0 || s2 == null || s2.length == 0){
+            return true;
+        }
+        for(int i1 = 0; i1 < s1.length; i1++ ){
+            String t1 = s1[i1].trim();
+            if(t1 == null || t1.equals("")) continue;
+            for(int i2 = 0; i2 < s2.length; i2++){
+                String t2 = s2[i2].trim();
+                if(t2 == null || t2.equals("")) continue;
+                if(conflict(t1,t2))
+                    return true;
+            }
+        }
+        return false;
+    }
     public static boolean conflict(String timetableCode1, String timetableCode2) {
         try {
             String code1 = extractPeriod(timetableCode1);

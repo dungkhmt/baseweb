@@ -262,6 +262,15 @@ public class TeacherClassAssignmentController {
             planId);
         return ResponseEntity.ok().body(lst);
     }
+    @GetMapping("/get-classes-assigned-to-a-teacher-solution-for-view-grid/{planId}")
+    public ResponseEntity<?> getClassesAssignedToATeacherSolutionForViewGrid(Principal principal, @PathVariable UUID planId) {
+        log.info("getClassesAssignedToATeacherSolutionForViewGrid, planId = " + planId);
+        List<ClassesAssignedToATeacherModel> lst = classTeacherAssignmentPlanService
+            .getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(
+            planId);
+        return ResponseEntity.ok().body(lst);
+    }
+
 
     @PostMapping("/update-class-for-assignment")
     public ResponseEntity<?> updateClassForAssignment(

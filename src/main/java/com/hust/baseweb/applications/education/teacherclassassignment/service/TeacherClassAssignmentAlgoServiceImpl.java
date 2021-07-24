@@ -137,7 +137,8 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
             for (int j = 0; j < n; j++) {
                 //conflict[i][j] = checker.isConflict(algoClassIMS[i], algoClassIMS[j]);
                 conflict[i][j] = TimetableConflictChecker
-                    .conflict(algoClassIMS[i].getTimetable(), algoClassIMS[j].getTimetable());
+                    //.conflict(algoClassIMS[i].getTimetable(), algoClassIMS[j].getTimetable());
+                    .conflictMultiTimeTable(algoClassIMS[i].getTimetable(), algoClassIMS[j].getTimetable());
                 if (conflict[i][j]) {
                     //System.out.println("Conflict " + algoClassIMS[i].getTimetable() + " VS. " + algoClassIMS[j].getTimetable());
                 } else {

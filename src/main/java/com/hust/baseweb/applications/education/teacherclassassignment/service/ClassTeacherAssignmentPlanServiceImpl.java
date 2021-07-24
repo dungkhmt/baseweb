@@ -710,6 +710,9 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             if (mTeacherId2Classes.get(s.getTeacherId()) == null) {
                 mTeacherId2Classes.put(s.getTeacherId(), new ArrayList());
             }
+
+
+
             mTeacherId2Classes.get(s.getTeacherId()).add(s);
         }
         for (String teacherId : mTeacherId2Classes.keySet()) {
@@ -731,7 +734,92 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
 
             if(c.getClassList().size() == 0) continue;
 
-            // sort classes assigned to curren teacher in an increasing order of time-table
+            // sort classes assigned to current teacher in an increasing order of time-table
+            ClassTeacherAssignmentSolutionModel[] arr = new ClassTeacherAssignmentSolutionModel[c.getClassList().size()];
+            for(int i = 0; i < arr.length; i++){
+                arr[i] = c.getClassList().get(i);
+                TimeTableStartAndDuration ttsd  = TimetableConflictChecker.extractFromString(arr[i].getTimetable());
+                arr[i].setStartSlot(ttsd.getStartSlot());
+                arr[i].setEndSlot(ttsd.getEndSlot());
+                arr[i].setDuration(ttsd.getDuration());
+            }
+            for(int i = 0; i < arr.length; i++){
+                for(int j = i+1; j < arr.length; j++){
+                    if(arr[i].getStartSlot() > arr[j].getStartSlot()){
+                        ClassTeacherAssignmentSolutionModel tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+                    }
+                }
+            }
+            int previousSlot = arr[0].getStartSlot() - 1;
+            arr[0].setStartIndexFromPrevious(previousSlot);
+            for(int i = 1; i < arr.length; i++){
+                arr[i].setStartIndexFromPrevious(arr[i].getStartSlot() - arr[i-1].getEndSlot() - 1);
+            }
+            c.getClassList().clear();
+            for(int i = 0; i < arr.length; i++){
+                c.getClassList().add(arr[i]);
+            }
+            c.setRemainEmptySlots(72 - arr[arr.length-1].getEndSlot());
+            lst.add(c);
+        }
+
+
+        return lst;
+    }
+    @Override
+    public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(UUID planId) {
+        List<ClassesAssignedToATeacherModel> lst = new ArrayList();
+        List<EduTeacher> teachers = eduTeacherRepo.findAll();
+        HashMap<String, EduTeacher> mId2Teacher = new HashMap();
+        for (EduTeacher t : teachers) {
+            mId2Teacher.put(t.getTeacherId(), t);
+        }
+
+        HashMap<String, List> mTeacherId2Classes = new HashMap();
+        List<ClassTeacherAssignmentSolutionModel> sol = getClassTeacherAssignmentSolution(planId);
+        for (ClassTeacherAssignmentSolutionModel s : sol) {
+            if (mTeacherId2Classes.get(s.getTeacherId()) == null) {
+                mTeacherId2Classes.put(s.getTeacherId(), new ArrayList());
+            }
+            // if the class s has two or more fragments, then duplicate multiple fragments
+            if(s.checkMultipleFragments()){
+                ClassTeacherAssignmentSolutionModel[] ss = s.checkMultipleFragmentsAndDuplicate();
+                log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, class " + s.getClassCode()
+                         + " has multiple timetable ss.length = " + ss.length);
+                if(ss != null){
+                    for(int i = 0; i < ss.length; i++){
+                        mTeacherId2Classes.get(s.getTeacherId()).add(ss[i]);
+                        log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, class " + s.getClassCode()
+                                 + " has multiple timetable ss.length = " + ss.length + " ADD fragment " + ss[i].getTimetable());
+                    }
+                }
+            }else {
+                log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, class " + s.getClassCode()
+                         + " has ONLY ONE timetable");
+
+                mTeacherId2Classes.get(s.getTeacherId()).add(s);
+            }
+        }
+        for (String teacherId : mTeacherId2Classes.keySet()) {
+            ClassesAssignedToATeacherModel c = new ClassesAssignedToATeacherModel();
+            c.setTeacherId(teacherId);
+            String teacherName = "";
+            if (mId2Teacher.get(teacherId) != null) {
+                teacherName = mId2Teacher.get(teacherId).getTeacherName();
+            }
+            c.setTeacherName(teacherName);
+
+            c.setClassList(mTeacherId2Classes.get(teacherId));
+            c.setNumberOfClass(c.getClassList().size());
+            double hourLoad = 0;
+            for (ClassTeacherAssignmentSolutionModel i : c.getClassList()) {
+                hourLoad += i.getHourLoad();
+            }
+            c.setHourLoad(hourLoad);
+
+            if(c.getClassList().size() == 0) continue;
+
+            // sort classes assigned to current teacher in an increasing order of time-table
             ClassTeacherAssignmentSolutionModel[] arr = new ClassTeacherAssignmentSolutionModel[c.getClassList().size()];
             for(int i = 0; i < arr.length; i++){
                 arr[i] = c.getClassList().get(i);
