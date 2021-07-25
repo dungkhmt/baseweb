@@ -7,15 +7,20 @@ import com.hust.baseweb.applications.education.teacherclassassignment.service.Cl
 import com.hust.baseweb.applications.education.teacherclassassignment.service.ClassTeacherAssignmentSolutionExcelExporter;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.TeacherClassAssignmentAlgoService;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.TeacherClassAssignmentService;
-import com.hust.baseweb.applications.education.teacherclassassignment.utils.TimetableConflictChecker;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,8 +43,6 @@ public class TeacherClassAssignmentController {
 
     private UserService userService;
     private ClassTeacherAssignmentPlanService classTeacherAssignmentPlanService;
-
-    private TeacherClassAssignmentAlgoService teacherClassAssignmentAlgoService;
 
     @PostMapping("/upload-excel-class-4-teacher-assignment")
     public ResponseEntity<?> uploadExcelClass4TeacherAssignment(
@@ -81,10 +83,36 @@ public class TeacherClassAssignmentController {
         return ResponseEntity.ok().body(ok);
     }
 
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/add-teacher")
+    public ResponseEntity<?> addTeacher(Principal principal, @RequestBody EduTeacher teacher){
+        String result = classTeacherAssignmentPlanService.addTeacher(teacher);
+        log.info("addTeacher, teacherId " + teacher.getTeacherId());
+        if(result.equals("OK"))
+            return ResponseEntity.ok(result);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    }
+
     @GetMapping("/get-all-teachers")
     public ResponseEntity<?> getAllTeachers(Principal principal) {
         List<EduTeacher> eduTeachers = classTeacherAssignmentPlanService.findAllTeachers();
         return ResponseEntity.ok().body(eduTeachers);
+    }
+
+    @GetMapping("/get-all-teachers-by-page")
+    public ResponseEntity<?> getTeachersByPage(
+        Principal principal,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int pageSize,
+        @RequestParam(defaultValue = "teacherName") String sortBy,
+        @RequestParam(defaultValue = "asc") String sortType,
+        @RequestParam(defaultValue = "_") String keyword
+    ){
+        Sort sort = Sort.by(sortBy);
+        if(sortType.equals("desc")) sort = sort.descending();
+        Pageable paging = PageRequest.of(page, pageSize, sort);
+        Page<EduTeacher> eduTeacherPage = classTeacherAssignmentPlanService.findAllTeachersByPage(keyword, paging);
+        return ResponseEntity.ok(eduTeacherPage);
     }
 
     @GetMapping("/get-teacher-for-assignment/{planId}")
@@ -214,40 +242,7 @@ public class TeacherClassAssignmentController {
         classTeacherAssignmentPlanService.autoAssignTeacher2Class(input.getPlanId());
         return ResponseEntity.ok().body("OK");
     }
-    @GetMapping("/get-conflict-class-assigned-to-teacher-in-solution/{planId}")
-    public ResponseEntity<?> getConflictClassesAssignedToTeacherInSolution(Principal principal, @PathVariable UUID planId){
-        List<ClassTeacherAssignmentSolutionModel> classTeacherAssignmentSolutionModels =
-            classTeacherAssignmentPlanService.getClassTeacherAssignmentSolution(planId);
-        log.info("getConflictClassesAssignedToTeacherInSolution, planId = " + planId + ", sol.sz = " + classTeacherAssignmentSolutionModels.size());
 
-        List<ConflictClassAssignedToTeacherModel> conflictClassAssignedToTeacherModels = new ArrayList();
-        for(int i = 0; i < classTeacherAssignmentSolutionModels.size(); i++){
-            ClassTeacherAssignmentSolutionModel si = classTeacherAssignmentSolutionModels.get(i);
-            for(int j = i+1; j < classTeacherAssignmentSolutionModels.size(); j++){
-                ClassTeacherAssignmentSolutionModel sj = classTeacherAssignmentSolutionModels.get(j);
-                if(si.getTeacherId().equals(sj.getTeacherId())){
-                   boolean conflict = TimetableConflictChecker
-                       .conflict(si.getTimetable(),sj.getTimetable());
-                   //log.info("getConflictClassesAssignedToTeacherInSolution, timetable1 = " + si.getTimetable() + " timetable2 = " + sj.getTimetable() +
-                   //         " conflict = " + conflict);
-                   if(conflict){
-                       ConflictClassAssignedToTeacherModel e = new ConflictClassAssignedToTeacherModel();
-                       e.setTeacherId(si.getTeacherId());
-                       e.setTeacherName(si.getTeacherName());
-                       e.setClassCode1(si.getClassCode());
-                       e.setCourseName1(si.getCourseName());
-                       e.setTimeTable1(si.getTimetable());
-                       e.setClassCode2(sj.getClassCode());
-                       e.setCourseName2(sj.getCourseName());
-                       e.setTimeTable2(sj.getTimetable());
-                       conflictClassAssignedToTeacherModels.add(e);
-                   }
-                }
-            }
-        }
-        log.info("getConflictClassesAssignedToTeacherInSolution, conflict list.sz = " + conflictClassAssignedToTeacherModels.size());
-        return ResponseEntity.ok().body(conflictClassAssignedToTeacherModels);
-    }
     @GetMapping("/get-class-teacher-assignment-solution/{planId}")
     public ResponseEntity<?> getClassTeacherAssignmentSolutions(Principal principal, @PathVariable UUID planId) {
         log.info("getClassTeacherAssignmentSolutions, planId = " + planId);
@@ -262,15 +257,6 @@ public class TeacherClassAssignmentController {
             planId);
         return ResponseEntity.ok().body(lst);
     }
-    @GetMapping("/get-classes-assigned-to-a-teacher-solution-for-view-grid/{planId}")
-    public ResponseEntity<?> getClassesAssignedToATeacherSolutionForViewGrid(Principal principal, @PathVariable UUID planId) {
-        log.info("getClassesAssignedToATeacherSolutionForViewGrid, planId = " + planId);
-        List<ClassesAssignedToATeacherModel> lst = classTeacherAssignmentPlanService
-            .getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(
-            planId);
-        return ResponseEntity.ok().body(lst);
-    }
-
 
     @PostMapping("/update-class-for-assignment")
     public ResponseEntity<?> updateClassForAssignment(
@@ -313,12 +299,10 @@ public class TeacherClassAssignmentController {
         return ResponseEntity.ok().body(notAssignedClasses);
     }
 
-    @GetMapping("/get-suggested-teacher-for-class/{classId}/{planId}")
-    public ResponseEntity<?> getSuggestedTeacherForClass(Principal principal,
-                                                         @PathVariable String classId,
-                                                         @PathVariable UUID planId) {
+    @GetMapping("/get-suggested-teacher-for-class/{classId}")
+    public ResponseEntity<?> getSuggestedTeacherForClass(Principal principal, @PathVariable String classId) {
         log.info("getSuggestedTeacherForClass, classId = " + classId);
-        List<SuggestedTeacherForClass> lst = classTeacherAssignmentPlanService.getSuggestedTeacherForClass(classId,planId);
+        List<SuggestedTeacherForClass> lst = classTeacherAssignmentPlanService.getSuggestedTeacherForClass(classId);
 
         return ResponseEntity.ok().body(lst);
     }
@@ -434,14 +418,10 @@ public class TeacherClassAssignmentController {
         AlgoTeacherAssignmentIM input
     ) {
         System.out.println("computeTeacherClassAssignment start");
+        TeacherClassAssignmentOM teacherClassAssignmentOM = algoService.computeTeacherClassAssignment(
+            input);
 
-        //TeacherClassAssignmentOM teacherClassAssignmentOM = algoService.computeTeacherClassAssignment(
-        //    input);
-
-        TeacherClassAssignmentOM solution = teacherClassAssignmentAlgoService.computeTeacherClassAssignment(input);
-
-        //return ResponseEntity.ok().body(teacherClassAssignmentOM);
-        return ResponseEntity.ok().body(solution);
+        return ResponseEntity.ok().body(teacherClassAssignmentOM);
     }
 
     @PostMapping("/teacher-class-assignment/mip")

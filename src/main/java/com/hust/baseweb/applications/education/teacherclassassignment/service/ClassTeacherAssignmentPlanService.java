@@ -3,6 +3,8 @@ package com.hust.baseweb.applications.education.teacherclassassignment.service;
 import com.hust.baseweb.applications.education.teacherclassassignment.entity.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
 import com.hust.baseweb.entity.UserLogin;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -16,12 +18,15 @@ public interface ClassTeacherAssignmentPlanService {
 
     public ClassTeacherAssignmentPlanDetailModel getClassTeacherAssignmentPlanDetail(UUID planId);
 
-    //public List<ClassTeacherAssignmentClassInfo> findAllClassTeacherAssignmentClassByPlanId(UUID planId);
     public List<ClassInfoForAssignment2TeacherModel> findAllClassTeacherAssignmentClassByPlanId(UUID planId);
 
     public boolean extractExcelAndStoreDB(UUID planId, MultipartFile file);
 
+    public String addTeacher(EduTeacher teacher);
+
     public List<EduTeacher> findAllTeachers();
+
+    public Page<EduTeacher> findAllTeachersByPage(String keyword, Pageable pageable);
 
     public List<TeacherForAssignmentPlan> findAllTeacherByPlanId(UUID planId);
 
@@ -41,7 +46,7 @@ public interface ClassTeacherAssignmentPlanService {
 
     public List<ClassTeacherAssignmentSolutionModel> getNotAssignedClassSolution(UUID planId);
 
-    public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId,UUID planId);
+    public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId);
 
     public TeacherClassAssignmentSolution assignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input);
 
@@ -53,7 +58,6 @@ public interface ClassTeacherAssignmentPlanService {
     public boolean removeClassTeacherAssignmentSolutionList(UUID planId, String solutionItemList);
 
     public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolution(UUID planId);
-    public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(UUID planId);
 
     public List<ClassTeacherAssignmentSolutionModel> getClassTeacherAssignmentSolution(UUID planId);
 
