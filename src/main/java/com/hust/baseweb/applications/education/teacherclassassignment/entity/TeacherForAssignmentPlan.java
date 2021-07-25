@@ -25,4 +25,7 @@ public class TeacherForAssignmentPlan {
 
     @Column(name = "max_hour_load")
     private double maxHourLoad;
+
+    @Column(name = "minimize_number_working_days")
+    private String minimizeNumberWorkingDays;
 }

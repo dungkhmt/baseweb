@@ -1,6 +1,7 @@
 package com.hust.baseweb.applications.education.teacherclassassignment.utils;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class TimetableConflictChecker {
 
@@ -89,8 +90,12 @@ public class TimetableConflictChecker {
         return convertStartSlotStr2Code(s[0]) + "," + convertEndSlotStr2Code(s[1]);
     }
     public static TimeTableStartAndDuration extractFromString(String timeTable){
+
         String code = extractPeriod(timeTable);
+        if(code == null || code.equals("")) return null;
+
         String[] p = code.split(",");
+        if(p == null || p.length < 2) return null;
         int startSlot = 0;
         int endSlot = 0;
         int duration = 0;
@@ -107,7 +112,19 @@ public class TimetableConflictChecker {
         }
         duration = endSlot - startSlot + 1;
 
-        return new TimeTableStartAndDuration(startSlot,endSlot,duration);
+        return new TimeTableStartAndDuration(d,startSlot,endSlot,duration);
+    }
+    public static HashSet<Integer> extractDayOfTimeTable(String timetable){
+        // timetable is under format 1,325,326,2-9,11-18,B1-402;2,221,222,2-9,11-18,B1-402;
+        String[] T = timetable.split(";");
+        HashSet<Integer> D = new HashSet<Integer>();
+        if(T != null){
+            for(int i = 0; i < T.length; i++){
+                TimeTableStartAndDuration ttsd = extractFromString(T[i]);
+                if(ttsd != null) D.add(ttsd.getDay());
+            }
+        }
+        return D;
     }
     public static boolean conflictMultiTimeTable(String timetableCode1, String timetableCode2){
         String[] s1 = timetableCode1.split(";");

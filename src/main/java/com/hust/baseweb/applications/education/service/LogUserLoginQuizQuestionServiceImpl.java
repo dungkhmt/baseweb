@@ -36,6 +36,7 @@ public class LogUserLoginQuizQuestionServiceImpl implements LogUserLoginQuizQues
     @Override
     public List<StudentQuizParticipationModel> findAllByClassId(UUID classId) {
         List<LogUserLoginQuizQuestion> logUserLoginQuizQuestions = logUserLoginQuizQuestionRepo.findAll();
+
         EduClass eduClass = classRepo.findById(classId).orElse(null);
         int classCode = 0;
         String courseId = "";
@@ -56,19 +57,28 @@ public class LogUserLoginQuizQuestionServiceImpl implements LogUserLoginQuizQues
             //PersonModel personModel = userService.findPersonByUserLoginId(e.getUserLoginId());
             PersonModel personModel = mUserLoginId2PersonModel.get(e.getUserLoginId());
             //QuizCourseTopic q = cacheQuizCourseTopic.get(e.getQuestionId());
-
+            int grade = 0;
+            //if(e.getIsCorrectAnswer() == 'Y')
+            if(e.getIsCorrectAnswer() != null)
+                if(e.getIsCorrectAnswer().equals("Y"))
+                    grade = 1;
+            String fullName = "";
+            if(personModel != null){
+                fullName = personModel.getLastName() + " " + personModel.getMiddleName() + " " + personModel.getFirstName();
+            }
             studentQuizParticipationModels.add(new StudentQuizParticipationModel(
                 e.getUserLoginId(),
-                personModel.getLastName() + " " + personModel.getMiddleName() + " " + personModel.getFirstName(),
-                classCode + "",
-                e.getQuestionId().toString(),
+                fullName,
+                (e.getClassId() != null ? e.getClassId().toString() : ""),
+                e.getClassCode() + "",
+                (e.getQuestionId() != null ? e.getQuestionId().toString() : ""),
                 courseId,
                 courseName,
-                "",
-                "",
+                e.getQuestionTopicName(),
+                e.getQuestionTopicId(),
                 //q.getQuizCourseTopicName(),
                 //q.getQuizCourseTopicId(),
-                0,
+                grade,
                 //e.getCreateStamp()
                 df.format(e.getCreateStamp())
             ));

@@ -21,6 +21,8 @@ public class AlgoTeacherIM {
 
     private double prespecifiedHourLoad; // so gio da duoc phan cong boi nhiem vu giang day khac
 
+    private boolean minimizeNumberWorkingDays;
+
     public void addIfNotExistCourse4Teacher(String courseId, String courseName, int priority, String type) {
         for (Course4Teacher ct : courses) {
             if (ct.getCourseId().equals(courseId) && ct.getType().equals(type)) {

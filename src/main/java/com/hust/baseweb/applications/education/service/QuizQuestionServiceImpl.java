@@ -1,18 +1,13 @@
 package com.hust.baseweb.applications.education.service;
 
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
-import com.hust.baseweb.applications.education.entity.LogUserLoginQuizQuestion;
-import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
-import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
-import com.hust.baseweb.applications.education.entity.QuizQuestion;
+import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.model.quiz.QuizChooseAnswerInputModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionCreateInputModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionUpdateInputModel;
-import com.hust.baseweb.applications.education.repo.LogUserLoginQuizQuestionRepo;
-import com.hust.baseweb.applications.education.repo.QuizChoiceAnswerRepo;
-import com.hust.baseweb.applications.education.repo.QuizCourseTopicRepo;
-import com.hust.baseweb.applications.education.repo.QuizQuestionRepo;
+import com.hust.baseweb.applications.education.repo.*;
+import com.hust.baseweb.applications.education.suggesttimetable.repo.EduClassRepo;
 import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import com.hust.baseweb.config.FileSystemStorageProperties;
 import com.hust.baseweb.entity.UserLogin;
@@ -47,6 +42,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     private QuizChoiceAnswerRepo quizChoiceAnswerRepo;
 
     private LogUserLoginQuizQuestionRepo logUserLoginQuizQuestionRepo;
+
+    private ClassRepo classRepo;
 
     private FileSystemStorageProperties properties;
 
@@ -199,13 +196,9 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     @Override
     public boolean checkAnswer(UserLogin userLogin, QuizChooseAnswerInputModel quizChooseAnswerInputModel) {
         QuizQuestionDetailModel quizQuestionDetail = findQuizDetail(quizChooseAnswerInputModel.getQuestionId());
+        EduClass eduClass = classRepo.findById(quizChooseAnswerInputModel.getClassId()).orElse(null);
 
-        LogUserLoginQuizQuestion logUserLoginQuizQuestion = new LogUserLoginQuizQuestion();
-        logUserLoginQuizQuestion.setUserLoginId(userLogin.getUserLoginId());
-        logUserLoginQuizQuestion.setQuestionId(quizChooseAnswerInputModel.getQuestionId());
-        logUserLoginQuizQuestion.setCreateStamp(new Date());
-        logUserLoginQuizQuestion = logUserLoginQuizQuestionRepo.save(logUserLoginQuizQuestion);
-
+        String isCorrectAnswer = "Y";
         boolean ans = true;
 
         List<UUID> correctAns = quizQuestionDetail
@@ -217,7 +210,24 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
         if (!correctAns.containsAll(quizChooseAnswerInputModel.getChooseAnsIds())) {
             ans = false;
+            isCorrectAnswer = "N";
         }
+
+        // log information
+        LogUserLoginQuizQuestion logUserLoginQuizQuestion = new LogUserLoginQuizQuestion();
+        logUserLoginQuizQuestion.setUserLoginId(userLogin.getUserLoginId());
+        logUserLoginQuizQuestion.setQuestionId(quizChooseAnswerInputModel.getQuestionId());
+        logUserLoginQuizQuestion.setCreateStamp(new Date());
+
+        logUserLoginQuizQuestion.setIsCorrectAnswer(isCorrectAnswer);
+        if(eduClass != null)
+            logUserLoginQuizQuestion.setClassCode(eduClass.getClassCode());
+        logUserLoginQuizQuestion.setClassId(quizChooseAnswerInputModel.getClassId());
+
+        logUserLoginQuizQuestion.setQuestionTopicId(quizQuestionDetail.getQuizCourseTopic().getQuizCourseTopicId());
+        logUserLoginQuizQuestion.setQuestionTopicName(quizQuestionDetail.getQuizCourseTopic().getQuizCourseTopicName());
+
+        logUserLoginQuizQuestion = logUserLoginQuizQuestionRepo.save(logUserLoginQuizQuestion);
 
         return ans;
     }

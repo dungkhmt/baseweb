@@ -16,6 +16,7 @@ public class StudentQuizParticipationModel {
     private String userLoginId;
     private String fullName;
     private String classId;
+    private String classCode;
     private String questionId;
     private String courseId;
     private String courseName;

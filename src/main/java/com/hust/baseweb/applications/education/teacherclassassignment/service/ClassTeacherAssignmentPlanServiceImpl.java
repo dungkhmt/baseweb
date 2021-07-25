@@ -485,6 +485,12 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             List<Course4Teacher> course4Teachers = mTeacher2Courses.get(t.getTeacherId());
             ti.setCourses(course4Teachers);
 
+            if(t.getMinimizeNumberWorkingDays().equals("Y")){
+                ti.setMinimizeNumberWorkingDays(true);
+            }else{
+                ti.setMinimizeNumberWorkingDays(false);
+            }
+
             mTeacherId2AlgoTeacher.put(t.getTeacherId(), ti);
 
             inputTeacher[i] = ti;
@@ -727,10 +733,14 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             c.setClassList(mTeacherId2Classes.get(teacherId));
             c.setNumberOfClass(c.getClassList().size());
             double hourLoad = 0;
+            HashSet<Integer> D = new HashSet<Integer>();
             for (ClassTeacherAssignmentSolutionModel i : c.getClassList()) {
                 hourLoad += i.getHourLoad();
+                HashSet<Integer> Di = TimetableConflictChecker.extractDayOfTimeTable(i.getTimetable());
+                for(int d: Di) D.add(d);
             }
             c.setHourLoad(hourLoad);
+            c.setNumberOfWorkingDays(D.size());
 
             if(c.getClassList().size() == 0) continue;
 
@@ -1029,6 +1039,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             teacherForAssignmentPlanRepo.findByTeacherIdAndPlanId(input.getTeacherId(), input.getPlanId());
         if (teacherForAssignmentPlan != null) {
             teacherForAssignmentPlan.setMaxHourLoad(input.getHourLoad());
+            teacherForAssignmentPlan.setMinimizeNumberWorkingDays(input.getMinimizeNumberWorkingDays());
             teacherForAssignmentPlan = teacherForAssignmentPlanRepo.save(teacherForAssignmentPlan);
         }
         return teacherForAssignmentPlan;

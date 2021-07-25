@@ -19,4 +19,6 @@ public class MapDataInput {
     public double[] hourClass;
     public double[] maxHourTeacher;
     public int[][] preAssignment;
+    public boolean[][] classDays;// classDays[i][d] = true indicates that class i happens on day d
+    public HashSet<Integer> teacherWantToMinimizeWorkingDays;
 }

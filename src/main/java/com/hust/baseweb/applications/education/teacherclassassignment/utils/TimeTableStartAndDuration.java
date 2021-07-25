@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TimeTableStartAndDuration {
+    private int day;// Mon = 2, Tue = 3,...
     private int startSlot;
     private int endSlot;
     private int duration;

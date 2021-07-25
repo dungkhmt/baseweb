@@ -64,7 +64,7 @@ create table teacher_for_assignment_plan(
     teacher_id varchar(60),
     plan_id uuid,
     max_hour_load numeric,
-
+    minimize_number_working_days varchar(1),
     last_updated_stamp            timestamp,
     created_stamp                 timestamp default current_timestamp,
     constraint pk_teacher_for_assignment_plan primary key(teacher_id, plan_id),

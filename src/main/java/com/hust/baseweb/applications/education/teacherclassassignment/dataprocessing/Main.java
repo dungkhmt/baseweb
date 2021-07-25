@@ -62,7 +62,7 @@ public class Main {
                         if (t == null) {
                             System.out.println("cannot find teacher of id " + teacherId);
 
-                            t = new AlgoTeacherIM(teacherId, teacherId, new ArrayList<Course4Teacher>(), 0);
+                            t = new AlgoTeacherIM(teacherId, teacherId, new ArrayList<Course4Teacher>(), 0, true);
                             teacherIMList.add(t);
                             mId2Teacher.put(teacherId, t);
 

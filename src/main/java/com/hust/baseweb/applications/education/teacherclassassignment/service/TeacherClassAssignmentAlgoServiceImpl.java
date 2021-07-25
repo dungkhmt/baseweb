@@ -32,9 +32,15 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         int m = algoTeacherIMs.length;// number of teachers;
         double[] hourClass;// hourClass[i] is the number of hours of class i
         double[] maxHourTeacher; // maxHourTeacher[j] is the upper bound of the total hourLoad of classes assigned to teacher j
+        HashSet<Integer> teacherWantToMinimizeWorkingDays = new HashSet<Integer>();
+        boolean[][] classDays = new boolean[n][7];
+
         HashMap<String, Integer> mTeacher2Index = new HashMap();
         for (int i = 0; i < m; i++) {
             mTeacher2Index.put(algoTeacherIMs[i].getId(), i);
+            if(algoTeacherIMs[i].isMinimizeNumberWorkingDays()){
+                teacherWantToMinimizeWorkingDays.add(i);
+            }
             log.info("map: teacher[" + i + "] = " + algoTeacherIMs[i].getId());
         }
         HashMap<String, Integer> mClassId2Index = new HashMap();
@@ -146,9 +152,22 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
                 }
             }
         }
+
+        for(int i = 0; i < n; i++){
+            for(int d = 0; d < 7; d++){
+                classDays[i][d] = false;
+            }
+        }
+        for(int i = 0;i < n; i++){
+            HashSet<Integer> days = TimetableConflictChecker.extractDayOfTimeTable(algoClassIMS[i].getTimetable());
+            for(int d: days){
+                classDays[i][d-2] = true;
+            }
+        }
+
         int[] sol = null;
         MapDataInput mapDataInput = new MapDataInput(n, m, D, conflict, priorityMatrix, hourClass,
-                                                     maxHourTeacher,pa);
+                                                     maxHourTeacher,pa, classDays, teacherWantToMinimizeWorkingDays);
 
         //MaxLoadConstraintORToolMIPSolver mipSolver =
         //    new MaxLoadConstraintORToolMIPSolver(n, m, D, priorityMatrix, conflict, hourClass, maxHourTeacher);

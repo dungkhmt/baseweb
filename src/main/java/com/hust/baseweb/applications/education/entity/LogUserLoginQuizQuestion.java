@@ -25,6 +25,22 @@ public class LogUserLoginQuizQuestion {
     @Column(name = "question_id")
     private UUID questionId;
 
+    @Column(name = "question_topic_id")
+    private String questionTopicId;
+
+    @Column(name = "question_topic_name")
+    private String questionTopicName;
+
+    @Column(name = "is_correct_answer")
+    private String isCorrectAnswer;
+
+    @Column(name = "class_code")
+    private String classCode;
+
+    @Column(name = "class_id")
+    private UUID classId;
+
+
     @Column(name = "created_stamp")
     private Date createStamp;
 

@@ -12,6 +12,8 @@ import java.util.UUID;
 @Setter
 public class QuizChooseAnswerInputModel {
 
+    private UUID classId;
+
     @NotNull(message = "Được yêu cầu")
     private UUID questionId;
 
