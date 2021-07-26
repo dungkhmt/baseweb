@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.education.teacherclassassignment.service;
 
 import com.hust.baseweb.applications.education.teacherclassassignment.entity.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
+import com.hust.baseweb.applications.education.teacherclassassignment.model.teachersuggestion.SuggestedTeacherAndActionForClass;
 import com.hust.baseweb.entity.UserLogin;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,7 @@ public interface ClassTeacherAssignmentPlanService {
     public List<ClassTeacherAssignmentSolutionModel> getNotAssignedClassSolution(UUID planId);
 
     public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId, UUID planId);
+    public List<SuggestedTeacherAndActionForClass> getSuggestedTeacherAndActionForClass(String classId, UUID planId);
 
     public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(UUID planId);
 

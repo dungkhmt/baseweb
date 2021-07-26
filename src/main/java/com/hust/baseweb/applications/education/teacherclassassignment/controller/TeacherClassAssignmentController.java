@@ -3,6 +3,7 @@ package com.hust.baseweb.applications.education.teacherclassassignment.controlle
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.education.teacherclassassignment.entity.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
+import com.hust.baseweb.applications.education.teacherclassassignment.model.teachersuggestion.SuggestedTeacherAndActionForClass;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.ClassTeacherAssignmentPlanService;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.ClassTeacherAssignmentSolutionExcelExporter;
 import com.hust.baseweb.applications.education.teacherclassassignment.service.TeacherClassAssignmentAlgoService;
@@ -352,7 +353,16 @@ public class TeacherClassAssignmentController {
 
         return ResponseEntity.ok().body(lst);
     }
+    @GetMapping("/get-suggested-teacher-and-actions-for-class/{classId}/{planId}")
+    public ResponseEntity<?> getSuggestedTeacherAndActionsForClass(Principal principal,
+                                                         @PathVariable String classId,
+                                                         @PathVariable UUID planId) {
+        log.info("getSuggestedTeacherAndActionForClass, classId = " + classId + " planId = " + planId);
+        List<SuggestedTeacherAndActionForClass> lst = classTeacherAssignmentPlanService
+            .getSuggestedTeacherAndActionForClass(classId,planId);
 
+        return ResponseEntity.ok().body(lst);
+    }
     @PostMapping("/manual-remove-class-teacher-assignment-solution")
     public ResponseEntity<?> manualRemoveClassTeacherAssignmentSolution(
         Principal principal,
