@@ -172,7 +172,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         //MaxLoadConstraintORToolMIPSolver mipSolver =
         //    new MaxLoadConstraintORToolMIPSolver(n, m, D, priorityMatrix, conflict, hourClass, maxHourTeacher);
         ORToolMIPSolver mipSolver  = new ORToolMIPSolver(mapDataInput);
-        boolean solved = mipSolver.solve();
+        boolean solved = mipSolver.solve(input.getSolver());
         if (solved) {
             sol = mipSolver.getSolutionAssignment();
             log.info("computeTeacherClassAssignment, MIP found optimal solution!!");

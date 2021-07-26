@@ -16,7 +16,11 @@ public class ORToolMIPSolver {
         maxPriorityClassAssignmentORToolMIPSolver = new MaxPriorityClassAssignmentORToolMIPSolver(I);
         minWorkingDaysClassAssignmentORToolMIPSolver = new MinWorkingDaysClassAssignmentORToolMIPSolver(I);
     }
-    public boolean solve(){
+    public String name(){
+        return "ORToolMIPSolver";
+    }
+    public boolean solve(String solver){
+        System.out.println(name() + "::solve, solver = " + solver);
         boolean ok = maxAssignedClassConstraintORToolMIPSolver.solve();
         assignment = maxAssignedClassConstraintORToolMIPSolver.getSolutionAssignment();
         notAssigned= maxAssignedClassConstraintORToolMIPSolver.getNotAssignedClass();
@@ -24,30 +28,37 @@ public class ORToolMIPSolver {
                            + maxAssignedClassConstraintORToolMIPSolver.getObjectivePriority()
         + " nbAssignedClass = " + maxAssignedClassConstraintORToolMIPSolver.getObjectiveNumberAssignedClass()
         );
+        int nbAssignedClasses = I.n - notAssigned.size();
 
         //if(true) return ok;
+        if(solver.equals("PRIORITY")) {
+            System.out.println(name() + "::solve, solver = " + solver + " start priority solver");
 
-        int nbAssignedClasses = I.n - notAssigned.size();
-        maxPriorityClassAssignmentORToolMIPSolver.setNbAssignedClasses(nbAssignedClasses);
+            maxPriorityClassAssignmentORToolMIPSolver.setNbAssignedClasses(nbAssignedClasses);
 
 
-        ok = maxPriorityClassAssignmentORToolMIPSolver.solve();
-        assignment = maxPriorityClassAssignmentORToolMIPSolver.getSolutionAssignment();
-        notAssigned = maxPriorityClassAssignmentORToolMIPSolver.getNotAssignedClass();
+            ok = maxPriorityClassAssignmentORToolMIPSolver.solve();
+            assignment = maxPriorityClassAssignmentORToolMIPSolver.getSolutionAssignment();
+            notAssigned = maxPriorityClassAssignmentORToolMIPSolver.getNotAssignedClass();
 
-        System.out.println("PHASE 2: maxPriorityClassAssignmentORToolMIPSolver, priority = "
-                           + maxPriorityClassAssignmentORToolMIPSolver.getObjectivePriority()
-        + " nbAssignedClass = " + maxPriorityClassAssignmentORToolMIPSolver.getObjectiveNumberAssignedClass()
-        );
+            System.out.println("PHASE 2: maxPriorityClassAssignmentORToolMIPSolver, priority = "
+                               +
+                               maxPriorityClassAssignmentORToolMIPSolver.getObjectivePriority()
+                               +
+                               " nbAssignedClass = " +
+                               maxPriorityClassAssignmentORToolMIPSolver.getObjectiveNumberAssignedClass()
+            );
+        }
+        else if(solver.equals("WORKDAYS")) {
+            System.out.println(name() + "::solve, solver = " + solver + " start work days solver");
+                minWorkingDaysClassAssignmentORToolMIPSolver.setNbAssignedClasses(nbAssignedClasses);
+                ok = minWorkingDaysClassAssignmentORToolMIPSolver.solve();
+                assignment = minWorkingDaysClassAssignmentORToolMIPSolver.getSolutionAssignment();
+                notAssigned = minWorkingDaysClassAssignmentORToolMIPSolver.getNotAssignedClass();
 
-        minWorkingDaysClassAssignmentORToolMIPSolver.setNbAssignedClasses(nbAssignedClasses);
-        ok = minWorkingDaysClassAssignmentORToolMIPSolver.solve();
-        assignment = minWorkingDaysClassAssignmentORToolMIPSolver.getSolutionAssignment();
-        notAssigned = minWorkingDaysClassAssignmentORToolMIPSolver.getNotAssignedClass();
-
-        System.out.println("PHASE 3: minWorkingDaysClassAssignmentORToolMIPSolver, objectiveMinWorkingDays = " +
-                           minWorkingDaysClassAssignmentORToolMIPSolver.getObjectiveMinWorkingDays());
-
+                System.out.println("PHASE 3: minWorkingDaysClassAssignmentORToolMIPSolver, objectiveMinWorkingDays = " +
+                                   minWorkingDaysClassAssignmentORToolMIPSolver.getObjectiveMinWorkingDays());
+            }
         return ok;
     }
     public int[] getSolutionAssignment() {

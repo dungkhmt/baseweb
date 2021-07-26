@@ -14,4 +14,5 @@ import java.util.UUID;
 public class RunAutoAssignTeacher2ClassInputModel {
 
     private UUID planId;
+    private String solver;
 }

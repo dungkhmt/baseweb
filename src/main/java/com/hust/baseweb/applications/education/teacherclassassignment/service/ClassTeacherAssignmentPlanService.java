@@ -42,11 +42,13 @@ public interface ClassTeacherAssignmentPlanService {
 
     public boolean extractExcelAndStoreDBTeacherCourse(UUID planId, String choice, MultipartFile file);
 
-    public boolean autoAssignTeacher2Class(UUID planId);
+    public boolean autoAssignTeacher2Class(RunAutoAssignTeacher2ClassInputModel input);
 
     public List<ClassTeacherAssignmentSolutionModel> getNotAssignedClassSolution(UUID planId);
 
-    public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId);
+    public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId, UUID planId);
+
+    public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(UUID planId);
 
     public TeacherClassAssignmentSolution assignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input);
 

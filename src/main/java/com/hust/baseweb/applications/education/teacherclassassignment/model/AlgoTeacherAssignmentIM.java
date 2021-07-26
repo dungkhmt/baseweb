@@ -12,4 +12,6 @@ public class AlgoTeacherAssignmentIM {
     private AlgoClassIM[] classes;
 
     private TeacherClassAssignmentModel[] preAssignments; // mot so lop da duoc phan cong truoc
+
+    private String solver;
 }
