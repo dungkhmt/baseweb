@@ -53,6 +53,7 @@ public interface ClassTeacherAssignmentPlanService {
     public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(UUID planId);
 
     public TeacherClassAssignmentSolution assignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input);
+    public TeacherClassAssignmentSolution reAssignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input);
 
     public boolean removeClassTeacherAssignmentSolution(
         UserLogin u,

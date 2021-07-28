@@ -273,7 +273,8 @@ public class TeacherClassAssignmentController {
                 ClassTeacherAssignmentSolutionModel sj = classTeacherAssignmentSolutionModels.get(j);
                 if(si.getTeacherId().equals(sj.getTeacherId())){
                     boolean conflict = TimetableConflictChecker
-                        .conflict(si.getTimetable(),sj.getTimetable());
+                        .conflictMultiTimeTable(si.getTimetable(),sj.getTimetable());
+                        //.conflict(si.getTimetable(),sj.getTimetable());
                     //log.info("getConflictClassesAssignedToTeacherInSolution, timetable1 = " + si.getTimetable() + " timetable2 = " + sj.getTimetable() +
                     //         " conflict = " + conflict);
                     if(conflict){
@@ -434,6 +435,23 @@ public class TeacherClassAssignmentController {
                  + " classId = " + input.getClassId());
 
         TeacherClassAssignmentSolution teacherClassAssignmentSolution = classTeacherAssignmentPlanService.assignTeacherToClass(
+            u,
+            input);
+        return ResponseEntity.ok().body(teacherClassAssignmentSolution);
+    }
+    @PostMapping("/manual-reassign-teacher-to-class")
+    public ResponseEntity<?> manualReAssignTeacherToClass(
+        Principal principal,
+        @RequestBody AssignTeacherToClassInputModel input
+    ) {
+        // class input.getClassId() was assigned to a teacher t
+        // now remove class input.getClassId() from t, and re-assign to teacher input.getTeacherId()
+
+        UserLogin u = userService.findById(principal.getName());
+        log.info("manualReAssignTeacherToClass, planId = " + input.getPlanId() + " teacherId = " + input.getTeacherId()
+                 + " classId = " + input.getClassId());
+
+        TeacherClassAssignmentSolution teacherClassAssignmentSolution = classTeacherAssignmentPlanService.reAssignTeacherToClass(
             u,
             input);
         return ResponseEntity.ok().body(teacherClassAssignmentSolution);

@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.education.service;
 
+import com.hust.baseweb.applications.education.entity.EduCourse;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.model.quiz.QuizChooseAnswerInputModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionCreateInputModel;
@@ -20,6 +21,8 @@ public interface QuizQuestionService {
     List<QuizQuestion> findAll();
 
     List<QuizQuestion> findQuizOfCourse(String courseId);
+
+    EduCourse findCourseOfQuizQuestion(UUID questionId);
 
     QuizQuestionDetailModel findQuizDetail(UUID questionId);
 

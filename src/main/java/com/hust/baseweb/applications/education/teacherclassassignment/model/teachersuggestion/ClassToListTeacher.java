@@ -14,4 +14,5 @@ import java.util.List;
 public class ClassToListTeacher{
     private String classCode;
     private List<TeacherCandidate> teachers;
+    private String infoNewTeachers;
 }

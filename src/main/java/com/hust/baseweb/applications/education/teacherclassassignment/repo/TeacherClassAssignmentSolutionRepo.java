@@ -10,4 +10,5 @@ public interface TeacherClassAssignmentSolutionRepo extends JpaRepository<Teache
 
     List<TeacherClassAssignmentSolution> findAllByPlanId(UUID planId);
     List<TeacherClassAssignmentSolution> findAllByPlanIdAndTeacherId(UUID planId, String teacherId);
+    List<TeacherClassAssignmentSolution> findAllByPlanIdAndClassId(UUID planId, String classId);
 }

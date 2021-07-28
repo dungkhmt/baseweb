@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.education.controller;
 
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.education.classmanagement.service.ClassService;
+import com.hust.baseweb.applications.education.entity.EduCourse;
 import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
 import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
@@ -214,7 +215,13 @@ public class QuizController {
 
         return ResponseEntity.ok().body(quizQuestionDetailModels);
     }
-
+    @GetMapping("/get-course-of-quiz-question/{questionId}")
+    public ResponseEntity<?> getCourseOfQuizQuestion(Principal principal, @PathVariable UUID questionId){
+        log.info("getCourseOfQuizQuestion, questionId = " + questionId);
+        EduCourse eduCourse  = quizQuestionService.findCourseOfQuizQuestion(questionId);
+        log.info("getCourseOfQuizQuestion, questionId = " + questionId + " got courseId = " + eduCourse.getId());
+        return ResponseEntity.ok().body(eduCourse);
+    }
     @GetMapping("/get-quiz-of-course/{courseId}")
     public ResponseEntity<?> getQuizOfCourse(Principal principal, @PathVariable String courseId) {
         log.info("getQuizOfCourse, courseId = " + courseId);
