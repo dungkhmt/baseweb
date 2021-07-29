@@ -16,6 +16,7 @@ import com.hust.baseweb.applications.education.quiztest.model.edutestquizpartici
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizParticipantRepo;
+import com.hust.baseweb.applications.education.quiztest.service.EduQuizTestQuizQuestionService;
 import com.hust.baseweb.applications.education.quiztest.service.QuizTestService;
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
 import com.hust.baseweb.entity.UserLogin;
@@ -44,6 +45,7 @@ public class QuizTestController {
     private EduTestQuizParticipantRepo eduTestQuizParticipationRepo;
     private QuizQuestionService quizQuestionService;
     private ClassService classService;
+    private EduQuizTestQuizQuestionService eduQuizTestQuizQuestionService;
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @PostMapping("/create-quiz-test")

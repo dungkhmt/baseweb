@@ -169,4 +169,18 @@ create table edu_test_quiz_participant(
 
 );
 
+create table edu_quiz_test_quiz_question(
+    test_id varchar(60) not null,
+    question_id uuid not null,
+    created_by_user_login_id varchar(60),
+    status_id varchar(60),
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_edu_quiz_test_quiz_question primary key(test_id,question_id),
+    constraint fk_edu_quiz_test_quiz_question_test_id foreign key(test_id) references edu_quiz_test(test_id),
+    constraint fk_edu_quiz_test_quiz_question_question_id foreign key(question_id) references quiz_question(question_id),
+    constraint fk_edu_quiz_test_quiz_question_created_by_user_login_id foreign key(created_by_user_login_id) references user_login(user_login_id)
+);
+
+
 

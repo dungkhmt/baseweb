@@ -22,6 +22,8 @@ public interface QuizQuestionService {
 
     List<QuizQuestion> findQuizOfCourse(String courseId);
 
+    List<QuizQuestion> findAllQuizQuestionsByQuestionIdsIn(List<UUID> questionIds);
+
     EduCourse findCourseOfQuizQuestion(UUID questionId);
 
     QuizQuestionDetailModel findQuizDetail(UUID questionId);

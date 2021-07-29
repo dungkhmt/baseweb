@@ -145,6 +145,12 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
+    public List<QuizQuestion> findAllQuizQuestionsByQuestionIdsIn(List<UUID> questionIds) {
+        List<QuizQuestion> quizQuestions = quizQuestionRepo.findAllByQuestionIdIn(questionIds);
+        return quizQuestions;
+    }
+
+    @Override
     public EduCourse findCourseOfQuizQuestion(UUID questionId) {
         QuizQuestion quizQuestion = quizQuestionRepo.findById(questionId).orElse(null);
         if(quizQuestion == null) return null;
