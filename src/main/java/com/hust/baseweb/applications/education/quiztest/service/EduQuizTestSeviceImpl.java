@@ -96,6 +96,10 @@ public class EduQuizTestSeviceImpl implements QuizTestService {
 
     @Override
     public List<EduQuizTest> getAllTestByCreateUser(String userLoginId) {
+        if(userLoginId.equals("admin")){
+            log.info("getAllTestByCreateUser, user_login_id = admin -> findAll");
+            return repo.findAll();
+        }
         return repo.findByCreateUser(userLoginId);
     }
 
