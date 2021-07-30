@@ -13,72 +13,76 @@ import java.util.UUID;
 
 public interface ClassTeacherAssignmentPlanService {
 
-    public ClassTeacherAssignmentPlan create(UserLogin u, ClassTeacherAssignmentPlanCreateModel input);
+    ClassTeacherAssignmentPlan create(UserLogin u, ClassTeacherAssignmentPlanCreateModel input);
 
-    public List<ClassTeacherAssignmentPlan> findAll();
+    List<ClassTeacherAssignmentPlan> findAll();
 
-    public ClassTeacherAssignmentPlanDetailModel getClassTeacherAssignmentPlanDetail(UUID planId);
+    ClassTeacherAssignmentPlanDetailModel getClassTeacherAssignmentPlanDetail(UUID planId);
 
-    public List<ClassInfoForAssignment2TeacherModel> findAllClassTeacherAssignmentClassByPlanId(UUID planId);
+    List<ClassInfoForAssignment2TeacherModel> findAllClassTeacherAssignmentClassByPlanId(UUID planId);
 
-    public boolean extractExcelAndStoreDB(UUID planId, MultipartFile file);
+    boolean extractExcelAndStoreDB(UUID planId, MultipartFile file);
 
-    public String addTeacher(EduTeacher teacher);
+    String addTeacher(EduTeacher teacher);
 
-    public List<EduTeacher> findAllTeachers();
+    List<EduTeacher> findAllTeachers();
 
-    public Page<EduTeacher> findAllTeachersByPage(String keyword, Pageable pageable);
+    Page<EduTeacher> findAllTeachersByPage(String keyword, Pageable pageable);
 
-    public List<TeacherForAssignmentPlan> findAllTeacherByPlanId(UUID planId);
+    List<TeacherForAssignmentPlan> findAllTeacherByPlanId(UUID planId);
 
-    public boolean addTeacherToAssignmentPlan(UUID planId, String teacherList);
+    boolean addTeacherToAssignmentPlan(UUID planId, String teacherList);
 
-    public boolean removeTeacherFromAssignmentPlan(UUID planId, String teacherList);
+    boolean removeTeacherFromAssignmentPlan(UUID planId, String teacherList);
 
-    public boolean removeClassFromAssignmentPlan(UUID planId, String classList);
+    boolean removeClassFromAssignmentPlan(UUID planId, String classList);
 
-    public List<TeacherCourse> findAllTeacherCourse();
+    List<TeacherCourse> findAllTeacherCourse();
 
-    public List<TeacherCourseForAssignmentPlan> findTeacherCourseOfPlan(UUID planId);
+    List<TeacherCourseForAssignmentPlan> findTeacherCourseOfPlan(UUID planId);
 
-    public boolean extractExcelAndStoreDBTeacherCourse(UUID planId, String choice, MultipartFile file);
+    boolean extractExcelAndStoreDBTeacherCourse(UUID planId, String choice, MultipartFile file);
 
-    public boolean autoAssignTeacher2Class(RunAutoAssignTeacher2ClassInputModel input);
+    boolean autoAssignTeacher2Class(RunAutoAssignTeacher2ClassInputModel input);
 
-    public List<ClassTeacherAssignmentSolutionModel> getNotAssignedClassSolution(UUID planId);
+    List<ClassTeacherAssignmentSolutionModel> getNotAssignedClassSolution(UUID planId);
 
-    public List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId, UUID planId);
-    public List<SuggestedTeacherAndActionForClass> getSuggestedTeacherAndActionForClass(String classId, UUID planId);
+    List<SuggestedTeacherForClass> getSuggestedTeacherForClass(String classId, UUID planId);
 
-    public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(UUID planId);
+    List<SuggestedTeacherAndActionForClass> getSuggestedTeacherAndActionForClass(String classId, UUID planId);
 
-    public TeacherClassAssignmentSolution assignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input);
+    List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(UUID planId);
     public TeacherClassAssignmentSolution reAssignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input);
 
-    public boolean removeClassTeacherAssignmentSolution(
+    TeacherClassAssignmentSolution assignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input);
+
+    boolean removeClassTeacherAssignmentSolution(
         UserLogin u,
         RemoveClassTeacherAssignmentSolutionInputModel input
     );
 
-    public boolean removeClassTeacherAssignmentSolutionList(UUID planId, String solutionItemList);
+    boolean removeClassTeacherAssignmentSolutionList(UUID planId, String solutionItemList);
 
-    public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolution(UUID planId);
+    List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolution(UUID planId);
 
-    public List<ClassTeacherAssignmentSolutionModel> getClassTeacherAssignmentSolution(UUID planId);
+    List<ClassTeacherAssignmentSolutionModel> getClassTeacherAssignmentSolution(UUID planId);
 
-    public boolean addTeacherCourseToAssignmentPlan(UUID planId, String teacherCourseList);
+    boolean addTeacherCourseToAssignmentPlan(UUID planId, String teacherCourseList);
 
-    public boolean removeTeacherCourseFromAssignmentPlan(UUID planId, String teacherCourseList);
+    boolean removeTeacherCourseFromAssignmentPlan(UUID planId, String teacherCourseList);
 
-    public List<PairOfConflictTimetableClassModel> getPairOfConflictTimetableClass(UUID planId);
+    List<PairOfConflictTimetableClassModel> getPairOfConflictTimetableClass(UUID planId);
 
-    public ClassTeacherAssignmentClassInfo updateClassForAssignment(
+    ClassTeacherAssignmentClassInfo updateClassForAssignment(
         UserLogin u,
         UpdateClassForAssignmentInputModel input
     );
 
 
-    public TeacherForAssignmentPlan updateTeacherForAssignment(UserLogin u, UpdateTeacherForAssignmentInputModel input);
+    TeacherForAssignmentPlan updateTeacherForAssignment(UserLogin u, UpdateTeacherForAssignmentInputModel input);
 
-    public TeacherCourseForAssignmentPlan updateTeacherCourseForAssignmentPlan(UserLogin u, UpdateTeacherCoursePriorityForAssignmentPlanInputModel input);
+    TeacherCourseForAssignmentPlan updateTeacherCourseForAssignmentPlan(
+        UserLogin u,
+        UpdateTeacherCoursePriorityForAssignmentPlanInputModel input
+    );
 }

@@ -43,13 +43,20 @@ import java.util.*;
 public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssignmentPlanService {
 
     private UserLoginRepo userLoginRepo;
+
     private ClassTeacherAssignmentPlanRepo classTeacherAssignmentPlanRepo;
+
     private ClassTeacherAssignmentClassInfoRepo classTeacherAssignmentClassInfoRepo;
+
     private TeacherCourseRepo teacherCourseRepo;
+
     private EduTeacherRepo eduTeacherRepo;
+
     private EduCourseRepo eduCourseRepo;
     private TeacherClassAssignmentSolutionRepo teacherClassAssignmentSolutionRepo;
+
     private TeacherCourseForAssignmentPlanRepo teacherCourseForAssignmentPlanRepo;
+
     private TeacherForAssignmentPlanRepo teacherForAssignmentPlanRepo;
 
     private TeacherClassAssignmentAlgoService teacherClassAssignmentAlgoService;
@@ -214,25 +221,29 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
     }
 
     @Override
-    public String addTeacher(EduTeacher teacher){
+    public String addTeacher(EduTeacher teacher) {
         Optional<EduTeacher> t = eduTeacherRepo.findById(teacher.getTeacherId());
-        if(t.isPresent()) {
+        if (t.isPresent()) {
             return "Email đã tồn tại";
         }
 
-        if(teacher.getUserLoginId() != null && !teacher.getUserLoginId().isEmpty()){
+        if (teacher.getUserLoginId() != null && !teacher.getUserLoginId().isEmpty()) {
             Optional<EduTeacher> t2 = eduTeacherRepo.findByUserLoginId(teacher.getUserLoginId());
-            if(t2.isPresent()) {
+            if (t2.isPresent()) {
                 return "Tài khoản đã liên kết với email khác";
             }
 
             Optional<UserLogin> user = userLoginRepo.findById(teacher.getUserLoginId());
-            if(!user.isPresent()) return "Tài khoản không tồn tại";
+            if (!user.isPresent()) {
+                return "Tài khoản không tồn tại";
+            }
         }
 
         eduTeacherRepo.save(teacher);
         return "OK";
-    };
+    }
+
+    ;
 
     @Override
     public List<EduTeacher> findAllTeachers() {
@@ -240,7 +251,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
     }
 
     @Override
-    public Page<EduTeacher> findAllTeachersByPage(String keyword, Pageable pageable){
+    public Page<EduTeacher> findAllTeachersByPage(String keyword, Pageable pageable) {
         return eduTeacherRepo.findAllContain(keyword, pageable);
     }
 
@@ -280,10 +291,15 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             if (teacherForAssignmentPlan != null) {
                 // remove related items from TeacherClassAssignmentSolution
                 List<TeacherClassAssignmentSolution> sol = teacherClassAssignmentSolutionRepo
-                    .findAllByPlanIdAndTeacherId(planId,teacherForAssignmentPlan.getTeacherId());
-                for(TeacherClassAssignmentSolution s: sol){
-                    log.info("removeTeacherFromAssignmentPlan, delete item in solution (" + s.getClassId() + " - " + s.getTeacherId()
-                             + ") in plan " + planId);
+                    .findAllByPlanIdAndTeacherId(planId, teacherForAssignmentPlan.getTeacherId());
+                for (TeacherClassAssignmentSolution s : sol) {
+                    log.info("removeTeacherFromAssignmentPlan, delete item in solution (" +
+                             s.getClassId() +
+                             " - " +
+                             s.getTeacherId()
+                             +
+                             ") in plan " +
+                             planId);
                     teacherClassAssignmentSolutionRepo.delete(s);
                 }
 
@@ -527,11 +543,11 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             List<Course4Teacher> course4Teachers = mTeacher2Courses.get(t.getTeacherId());
             ti.setCourses(course4Teachers);
 
-            if(t.getMinimizeNumberWorkingDays() != null){
-                if(t.getMinimizeNumberWorkingDays().equals("Y")) {
+            if (t.getMinimizeNumberWorkingDays() != null) {
+                if (t.getMinimizeNumberWorkingDays().equals("Y")) {
                     ti.setMinimizeNumberWorkingDays(true);
                 }
-            }else{
+            } else {
                 ti.setMinimizeNumberWorkingDays(false);
             }
 
@@ -559,7 +575,9 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         input.setSolver(I.getSolver());
 
         TeacherClassAssignmentOM solution = teacherClassAssignmentAlgoService.computeTeacherClassAssignment(input);
-        if(solution == null) return false;
+        if (solution == null) {
+            return false;
+        }
 
         // remove all existing items of planId
         List<TeacherClassAssignmentSolution> teacherClassAssignmentSolutions = teacherClassAssignmentSolutionRepo.findAllByPlanId(
@@ -657,7 +675,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         List<TeacherCourseForAssignmentPlan> teacherCourses = teacherCourseForAssignmentPlanRepo.findAllByPlanId(planId);// consider only item in the plan
 
         //for (TeacherCourse tc : teacherCourses) {
-        for(TeacherCourseForAssignmentPlan tc: teacherCourses){
+        for (TeacherCourseForAssignmentPlan tc : teacherCourses) {
             if (tc.getCourseId().equals(courseId)) {
                 SuggestedTeacherForClass t = new SuggestedTeacherForClass();
                 t.setTeacherId(tc.getTeacherId());
@@ -672,17 +690,17 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
 
                 double hourLoadOfTeacher = 0;
 
-                for(TeacherClassAssignmentSolution tcs: teacherClassAssignmentSolutions){
+                for (TeacherClassAssignmentSolution tcs : teacherClassAssignmentSolutions) {
                     List<ClassTeacherAssignmentClassInfo> ctai = classTeacherAssignmentClassInfoRepo.findByClassId(tcs.getClassId());
                     ClassTeacherAssignmentClassInfo c = null;
-                    if(ctai != null && ctai.size() > 0){
+                    if (ctai != null && ctai.size() > 0) {
                         c = ctai.get(0);
-                    }else{
+                    } else {
                         continue;
                     }
                     hourLoadOfTeacher += c.getHourLoad();
-                    boolean conflict  = TimetableConflictChecker.conflict(c.getLesson(),timetable);
-                    if(conflict){
+                    boolean conflict = TimetableConflictChecker.conflict(c.getLesson(), timetable);
+                    if (conflict) {
                         info = info + " [Conflict: Class " + c.getClassId() + ", TimeTable " + c.getLesson() + "] ";
                     }
                 }
@@ -696,11 +714,13 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         return lst;
     }
 
-    private boolean checkCanAssign(ClassTeacherAssignmentClassInfo selectedClass,
-                                  ClassTeacherAssignmentClassInfo c, TeacherCourseForAssignmentPlan t,
-                                  HashMap<String, List<TeacherClassAssignmentSolution>> mTeacherToAssignedClass,
-                                  HashMap<String, ClassTeacherAssignmentClassInfo> mClassIdToClassInfo,
-                                  HashMap<String, TeacherClassAssignmentSolution> mClassIdToAssignedTeacher){
+    private boolean checkCanAssign(
+        ClassTeacherAssignmentClassInfo selectedClass,
+        ClassTeacherAssignmentClassInfo c, TeacherCourseForAssignmentPlan t,
+        HashMap<String, List<TeacherClassAssignmentSolution>> mTeacherToAssignedClass,
+        HashMap<String, ClassTeacherAssignmentClassInfo> mClassIdToClassInfo,
+        HashMap<String, TeacherClassAssignmentSolution> mClassIdToAssignedTeacher
+    ) {
         String t1 = mClassIdToAssignedTeacher.get(selectedClass.getClassId()).getTeacherId();
         /*
             t1: current teacher assigned to the selectedClass
@@ -711,15 +731,15 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
 
 
         List<TeacherClassAssignmentSolution> cls = mTeacherToAssignedClass.get(t.getTeacherId());
-        if(cls != null){
-            for(TeacherClassAssignmentSolution s: cls){
+        if (cls != null) {
+            for (TeacherClassAssignmentSolution s : cls) {
                 ClassTeacherAssignmentClassInfo ci = mClassIdToClassInfo.get(s.getClassId());
-                if(ci == selectedClass){
+                if (ci == selectedClass) {
                     // IGNORE
                     // This case: t is equal t1 which is the current teacher assign to selectedClass
                     // selectedClass will be removed from t1 (which is t), thus ci will no longer to be in t-> no need to check conflict
-                }else{
-                    if(TimetableConflictChecker.conflictMultiTimeTable(ci.getLesson(),c.getLesson())){
+                } else {
+                    if (TimetableConflictChecker.conflictMultiTimeTable(ci.getLesson(), c.getLesson())) {
                         return false;
                     }
                 }
@@ -727,6 +747,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         }
         return true;
     }
+
     @Override
     public List<SuggestedTeacherAndActionForClass> getSuggestedTeacherAndActionForClass(String classId, UUID planId) {
         List<ClassTeacherAssignmentClassInfo> cls = classTeacherAssignmentClassInfoRepo.findByClassId(classId);
@@ -744,14 +765,14 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         }
         List<TeacherForAssignmentPlan> teachersInPlan = teacherForAssignmentPlanRepo.findAllByPlanId(planId);
         HashSet<String> teacherIdsInPlan = new HashSet<String>();
-        for(TeacherForAssignmentPlan t: teachersInPlan){
+        for (TeacherForAssignmentPlan t : teachersInPlan) {
             teacherIdsInPlan.add(t.getTeacherId());
         }
 
         List<ClassTeacherAssignmentClassInfo> listClass = classTeacherAssignmentClassInfoRepo.findAllByPlanId(planId);
         HashMap<String, ClassTeacherAssignmentClassInfo> mClassIdToClassInfo = new HashMap();
-        for(ClassTeacherAssignmentClassInfo c: listClass){
-            mClassIdToClassInfo.put(c.getClassId(),c);
+        for (ClassTeacherAssignmentClassInfo c : listClass) {
+            mClassIdToClassInfo.put(c.getClassId(), c);
         }
 
         List<SuggestedTeacherAndActionForClass> lst = new ArrayList();
@@ -765,35 +786,40 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             teacherClassAssignmentSolutionRepo.findAllByPlanId(planId);
         HashMap<String, List<TeacherClassAssignmentSolution>> mTeacherToAssignedClass = new HashMap();
         HashMap<String, TeacherClassAssignmentSolution> mClassIdToAssignedTeacher = new HashMap();
-        for(TeacherClassAssignmentSolution s: teacherClassAssignmentSolutions){
-            if(mTeacherToAssignedClass.get(s.getTeacherId()) == null)
-                mTeacherToAssignedClass.put(s.getTeacherId(),new ArrayList());
+        for (TeacherClassAssignmentSolution s : teacherClassAssignmentSolutions) {
+            if (mTeacherToAssignedClass.get(s.getTeacherId()) == null) {
+                mTeacherToAssignedClass.put(s.getTeacherId(), new ArrayList());
+            }
             mTeacherToAssignedClass.get(s.getTeacherId()).add(s);
 
-            mClassIdToAssignedTeacher.put(s.getClassId(),s);
+            mClassIdToAssignedTeacher.put(s.getClassId(), s);
         }
         String assignedTeacherId = mClassIdToAssignedTeacher.get(selectedClass.getClassId()).getTeacherId();
 
         // explore possibilities for new teachers
-        for(TeacherCourseForAssignmentPlan tc: teacherCourses){
+        for (TeacherCourseForAssignmentPlan tc : teacherCourses) {
             //if (tc.getCourseId().equals(courseId))
             //    log.info("getSuggestedTeacherAndActionForClass, consider teacher " + tc.getTeacherId() + " for course " +
             //             courseId + " for class " + classId + " InPlan = " + teacherIdsInPlan.contains(tc.getTeacherId()));
 
             if (tc.getCourseId().equals(courseId) && !tc.getTeacherId().equals(assignedTeacherId)
-            && teacherIdsInPlan.contains(tc.getTeacherId())) {
+                && teacherIdsInPlan.contains(tc.getTeacherId())) {
 
-                log.info("getSuggestedTeacherAndActionForClass, consider teacher " + tc.getTeacherId() + " for class " + classId);
+                log.info("getSuggestedTeacherAndActionForClass, consider teacher " +
+                         tc.getTeacherId() +
+                         " for class " +
+                         classId);
 
                 List<TeacherClassAssignmentSolution> L = mTeacherToAssignedClass.get(tc.getTeacherId());
                 List<ClassTeacherAssignmentClassInfo> listConflictClass = new ArrayList();
-                if(L != null) {
+                if (L != null) {
                     log.info("getSuggestedTeacherAndActionForClass, consider teacher " + tc.getTeacherId()
                              + " HAS " + L.size());
                     for (TeacherClassAssignmentSolution s : L) {
                         ClassTeacherAssignmentClassInfo ci = mClassIdToClassInfo.get(s.getClassId());
                         //if (true) {// FOR TESTING
-                        if(TimetableConflictChecker.conflictMultiTimeTable(selectedClass.getLesson(),ci.getLesson())){
+                        if (TimetableConflictChecker.conflictMultiTimeTable(selectedClass.getLesson(),
+                                                                            ci.getLesson())) {
                             listConflictClass.add(ci);
 
                             log.info("getSuggestedTeacherAndActionForClass, consider teacher " +
@@ -812,20 +838,20 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
                 boolean okTeacher = true;
                 // find other teachers for each conflicting class in listConflictClass with selectedClass
                 HashMap<String, List> mClassIdToNewTeacher = new HashMap();
-                for(ClassTeacherAssignmentClassInfo c: listConflictClass){
+                for (ClassTeacherAssignmentClassInfo c : listConflictClass) {
                     // consider a conflicting class c, try to find other teachers for this class
 
-                    for(TeacherCourseForAssignmentPlan tci: teacherCourses){
-                        if(! tci.getTeacherId().equals(tc.getTeacherId())
-                           && c.getCourseId().equals(tci.getCourseId())
-                           && teacherIdsInPlan.contains(tci.getTeacherId())
-                        ){
-                            if(checkCanAssign(selectedClass,
-                                              c, tci,
-                                              mTeacherToAssignedClass,
-                                              mClassIdToClassInfo,
-                                              mClassIdToAssignedTeacher)){
-                                if(mClassIdToNewTeacher.get(c.getClassId())== null){
+                    for (TeacherCourseForAssignmentPlan tci : teacherCourses) {
+                        if (!tci.getTeacherId().equals(tc.getTeacherId())
+                            && c.getCourseId().equals(tci.getCourseId())
+                            && teacherIdsInPlan.contains(tci.getTeacherId())
+                        ) {
+                            if (checkCanAssign(selectedClass,
+                                               c, tci,
+                                               mTeacherToAssignedClass,
+                                               mClassIdToClassInfo,
+                                               mClassIdToAssignedTeacher)) {
+                                if (mClassIdToNewTeacher.get(c.getClassId()) == null) {
                                     mClassIdToNewTeacher.put(c.getClassId(), new ArrayList());
                                 }
                                 mClassIdToNewTeacher.get(c.getClassId()).add(tci);
@@ -855,14 +881,14 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
                         }
                         */
                     }
-                    if(mClassIdToNewTeacher.get(c.getClassId()) == null){
+                    if (mClassIdToNewTeacher.get(c.getClassId()) == null) {
                         okTeacher = false;
                         //break;
                     }
                 }
 
-                if(okTeacher) {
-                //if(true){
+                if (okTeacher) {
+                    //if(true){
                     SuggestedTeacherAndActionForClass t = new SuggestedTeacherAndActionForClass();
                     t.setTeacherId(tc.getTeacherId());
                     t.setTeacherName(tc.getTeacherId());
@@ -870,11 +896,11 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
 
                     String info = tc.getTeacherId() + ": ";
                     List<ClassToListTeacher> moveClass = new ArrayList();
-                    for(ClassTeacherAssignmentClassInfo c: listConflictClass){
+                    for (ClassTeacherAssignmentClassInfo c : listConflictClass) {
                         List<TeacherCourseForAssignmentPlan> Lc = mClassIdToNewTeacher.get(c.getClassId());
                         List<TeacherCandidate> teachers = new ArrayList();
                         String inforNewTeachers = "";
-                        if(Lc != null) {
+                        if (Lc != null) {
                             for (TeacherCourseForAssignmentPlan tci : Lc) {
                                 TeacherCandidate o =
                                     new TeacherCandidate();
@@ -882,8 +908,10 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
                                 teachers.add(o);
                                 inforNewTeachers += tci.getTeacherId() + "; ";
                             }
-                        }else{
-                            log.info("getSuggestedTeacherAndActionForClass, class " + c.getClassId() + " DOES NOT has new teachers");
+                        } else {
+                            log.info("getSuggestedTeacherAndActionForClass, class " +
+                                     c.getClassId() +
+                                     " DOES NOT has new teachers");
                         }
                         ClassToListTeacher o = new ClassToListTeacher();
                         o.setClassCode(c.getClassId());
@@ -903,7 +931,9 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
     }
 
     @Override
-    public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(UUID planId) {
+    public List<ClassesAssignedToATeacherModel> getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable(
+        UUID planId
+    ) {
         List<ClassesAssignedToATeacherModel> lst = new ArrayList();
         List<EduTeacher> teachers = eduTeacherRepo.findAll();
         List<TeacherForAssignmentPlan> teachersInPlan = teacherForAssignmentPlanRepo.findAllByPlanId(planId);
@@ -920,31 +950,44 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             }
             teacherHasClasses.add(s.getTeacherId());
             // if the class s has two or more fragments, then duplicate multiple fragments
-            if(s.checkMultipleFragments()){
+            if (s.checkMultipleFragments()) {
                 ClassTeacherAssignmentSolutionModel[] ss = s.checkMultipleFragmentsAndDuplicate();
-                log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, class " + s.getClassCode()
-                         + " has multiple timetable ss.length = " + ss.length);
-                if(ss != null){
-                    for(int i = 0; i < ss.length; i++){
+                log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, class " +
+                         s.getClassCode()
+                         +
+                         " has multiple timetable ss.length = " +
+                         ss.length);
+                if (ss != null) {
+                    for (int i = 0; i < ss.length; i++) {
                         mTeacherId2Classes.get(s.getTeacherId()).add(ss[i]);
-                        log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, class " + s.getClassCode()
-                                 + " has multiple timetable ss.length = " + ss.length + " ADD fragment " + ss[i].getTimetable());
+                        log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, class " +
+                                 s.getClassCode()
+                                 +
+                                 " has multiple timetable ss.length = " +
+                                 ss.length +
+                                 " ADD fragment " +
+                                 ss[i].getTimetable());
                     }
                 }
-            }else {
-                log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, class " + s.getClassCode()
-                         + " has ONLY ONE timetable");
+            } else {
+                log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, class " +
+                         s.getClassCode()
+                         +
+                         " has ONLY ONE timetable");
 
                 mTeacherId2Classes.get(s.getTeacherId()).add(s);
             }
         }
-        for(TeacherForAssignmentPlan t: teachersInPlan){
-            log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, consider teacher " + t.getTeacherId());
-            if(!teacherHasClasses.contains(t.getTeacherId())){
-                log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, consider teacher " + t.getTeacherId()
-                + " DOES NOT have classes assigned");
+        for (TeacherForAssignmentPlan t : teachersInPlan) {
+            log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, consider teacher " +
+                     t.getTeacherId());
+            if (!teacherHasClasses.contains(t.getTeacherId())) {
+                log.info("getClassesAssignedToATeacherSolutionDuplicateWhenMultipleFragmentTimeTable, consider teacher " +
+                         t.getTeacherId()
+                         +
+                         " DOES NOT have classes assigned");
 
-                mTeacherId2Classes.put(t.getTeacherId(),new ArrayList());
+                mTeacherId2Classes.put(t.getTeacherId(), new ArrayList());
             }
         }
         for (String teacherId : mTeacherId2Classes.keySet()) {
@@ -966,7 +1009,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
 
             //if(c.getClassList().size() == 0) continue;
 
-            if(c.getClassList().size() > 0) {
+            if (c.getClassList().size() > 0) {
                 // sort classes assigned to current teacher in an increasing order of time-table
                 ClassTeacherAssignmentSolutionModel[] arr = new ClassTeacherAssignmentSolutionModel[c
                     .getClassList()
@@ -1003,9 +1046,9 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         }
 
 
-
         return lst;
     }
+
     @Override
     public TeacherClassAssignmentSolution assignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input) {
         TeacherClassAssignmentSolution teacherClassAssignmentSolution = new TeacherClassAssignmentSolution();
@@ -1019,13 +1062,19 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
 
         return teacherClassAssignmentSolution;
     }
+
     @Override
     public TeacherClassAssignmentSolution reAssignTeacherToClass(UserLogin u, AssignTeacherToClassInputModel input) {
         List<TeacherClassAssignmentSolution> L = teacherClassAssignmentSolutionRepo
             .findAllByPlanIdAndClassId(input.getPlanId(), input.getClassId());
-        for(TeacherClassAssignmentSolution s: L){
+        for (TeacherClassAssignmentSolution s : L) {
             // remove class s.getClassId() from current solution
-            log.info("reAssignTeacherToClass, REMOVE assignment (" + s.getClassId() + " - " + s.getTeacherId() + ") in plan " + s.getPlanId());
+            log.info("reAssignTeacherToClass, REMOVE assignment (" +
+                     s.getClassId() +
+                     " - " +
+                     s.getTeacherId() +
+                     ") in plan " +
+                     s.getPlanId());
             teacherClassAssignmentSolutionRepo.delete(s);
         }
 
@@ -1110,7 +1159,9 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             for (ClassTeacherAssignmentSolutionModel i : c.getClassList()) {
                 hourLoad += i.getHourLoad();
                 HashSet<Integer> Di = TimetableConflictChecker.extractDayOfTimeTable(i.getTimetable());
-                for(int d: Di) D.add(d);
+                for (int d : Di) {
+                    D.add(d);
+                }
             }
             c.setHourLoad(hourLoad);
             c.setNumberOfWorkingDays(D.size());
@@ -1146,7 +1197,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         for (TeacherClassAssignmentSolution s : teacherClassAssignmentSolutions) {
             String classId = s.getClassId();
             ClassTeacherAssignmentClassInfo info = mClass2Info.get(classId);
-            if(info == null){
+            if (info == null) {
                 continue;
             }
             ClassTeacherAssignmentSolutionModel classTeacherAssignmentSolutionModel = new ClassTeacherAssignmentSolutionModel();
@@ -1155,9 +1206,9 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
             classTeacherAssignmentSolutionModel.setClassCode(s.getClassId());
             classTeacherAssignmentSolutionModel.setCourseId(info.getCourseId());
             EduCourse course = mID2Course.get(info.getCourseId());
-            if(course == null){
+            if (course == null) {
                 log.info("getClassTeacherAssignmentSolution, courseId " + info.getCourseId() + " null");
-            }else {
+            } else {
                 classTeacherAssignmentSolutionModel.setCourseName(course.getName());
             }
             classTeacherAssignmentSolutionModel.setTeacherId(s.getTeacherId());
@@ -1203,10 +1254,11 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
                  teacherCourseList);
         Gson gson = new Gson();
         if (lst != null && lst.length > 0) {
-            List<ClassTeacherAssignmentClassInfo> classTeacherAssignmentClassInfos = classTeacherAssignmentClassInfoRepo.findAllByPlanId(planId);
+            List<ClassTeacherAssignmentClassInfo> classTeacherAssignmentClassInfos = classTeacherAssignmentClassInfoRepo
+                .findAllByPlanId(planId);
             HashMap<String, ClassTeacherAssignmentClassInfo> mClassId2ClassTeacherAssignmentInfo = new HashMap();
-            for(ClassTeacherAssignmentClassInfo c: classTeacherAssignmentClassInfos){
-                mClassId2ClassTeacherAssignmentInfo.put(c.getClassId(),c);
+            for (ClassTeacherAssignmentClassInfo c : classTeacherAssignmentClassInfos) {
+                mClassId2ClassTeacherAssignmentInfo.put(c.getClassId(), c);
             }
 
             for (int i = 0; i < lst.length; i++) {
@@ -1219,16 +1271,23 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
 
                 // remove related items in solution
                 List<TeacherClassAssignmentSolution> sol = teacherClassAssignmentSolutionRepo
-                    .findAllByPlanIdAndTeacherId(planId,tcp.getTeacherId());
-                for(TeacherClassAssignmentSolution s: sol){
+                    .findAllByPlanIdAndTeacherId(planId, tcp.getTeacherId());
+                for (TeacherClassAssignmentSolution s : sol) {
                     String classId = s.getClassId();
                     ClassTeacherAssignmentClassInfo c = mClassId2ClassTeacherAssignmentInfo.get(classId);
-                    if(c != null){
-                        if(c.getCourseId().equals(tcp.getCourseId())){
+                    if (c != null) {
+                        if (c.getCourseId().equals(tcp.getCourseId())) {
                             // remove s (solution for classId with tcp.getCourseId())
                             teacherClassAssignmentSolutionRepo.delete(s);
-                            log.info("removeTeacherCourseFromAssignmentPlan, remove assignment(" + classId + "[" + c.getCourseId()
-                                     + "] - " + tcp.getTeacherId()  + ") in plan " + planId);
+                            log.info("removeTeacherCourseFromAssignmentPlan, remove assignment(" +
+                                     classId +
+                                     "[" +
+                                     c.getCourseId()
+                                     +
+                                     "] - " +
+                                     tcp.getTeacherId() +
+                                     ") in plan " +
+                                     planId);
                         }
                     }
                 }
@@ -1331,8 +1390,8 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         UpdateTeacherCoursePriorityForAssignmentPlanInputModel input
     ) {
         TeacherCourseForAssignmentPlan teacherCourseForAssignmentPlan = teacherCourseForAssignmentPlanRepo
-            .findByTeacherIdAndCourseIdAndPlanId(input.getTeacherId(),input.getCourseId(),input.getPlanId());
-        if(teacherCourseForAssignmentPlan != null){
+            .findByTeacherIdAndCourseIdAndPlanId(input.getTeacherId(), input.getCourseId(), input.getPlanId());
+        if (teacherCourseForAssignmentPlan != null) {
             teacherCourseForAssignmentPlan.setPriority(input.getPriority());
             teacherCourseForAssignmentPlan = teacherCourseForAssignmentPlanRepo.save(teacherCourseForAssignmentPlan);
             log.info("updateTeacherCourseForAssignmentPlan, update OK!!");
