@@ -1,11 +1,13 @@
 package com.hust.baseweb.applications.notifications.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 
 import static com.hust.baseweb.applications.notifications.entity.Notifications.STATUS_READ;
+import static com.hust.baseweb.utils.DateTimeUtils.ISO_8601_DATE_FORMAT;
 
 /**
  * @author Le Anh Tuan
@@ -49,4 +51,17 @@ public interface NotificationDTO {
         return avatar.equals("") ? null : avatar;
     }
 
+    @JsonIgnore
+    default String toJson() {
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("id", getId());
+        jsonObject.put("content", getContent());
+        jsonObject.put("url", getUrl());
+        jsonObject.put("avatar", getAvatar());
+        jsonObject.put("read", getRead());
+        jsonObject.put("createdStamp", ISO_8601_DATE_FORMAT.format(getCreatedStamp()));
+
+        return jsonObject.toJSONString();
+    }
 }
