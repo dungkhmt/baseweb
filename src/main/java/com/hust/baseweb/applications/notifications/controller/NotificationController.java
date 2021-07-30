@@ -3,20 +3,26 @@ package com.hust.baseweb.applications.notifications.controller;
 import com.hust.baseweb.applications.notifications.model.GetNotificationsOM;
 import com.hust.baseweb.applications.notifications.model.UpdateMultipleNotificationStatusBody;
 import com.hust.baseweb.applications.notifications.service.NotificationsService;
-import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.UUID;
 
 import static com.hust.baseweb.applications.notifications.entity.Notifications.STATUS_READ;
+import static com.hust.baseweb.applications.notifications.service.NotificationsService.SSE_EVENT_HEARTBEAT;
+import static com.hust.baseweb.applications.notifications.service.NotificationsService.subscriptions;
 
 @Log4j2
 @RestController
@@ -26,6 +32,48 @@ import static com.hust.baseweb.applications.notifications.entity.Notifications.S
 public class NotificationController {
 
     private final NotificationsService notificationsService;
+
+    /**
+     * @param toUser
+     * @return
+     */
+    @GetMapping("/subscription")
+    public SseEmitter events(@CurrentSecurityContext(expression = "authentication.name") String toUser) {
+        log.info(toUser + " subscribes at " + LocalDateTime
+            .now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss")));
+
+        if (subscriptions.containsKey(toUser)) {
+            return subscriptions.get(toUser);
+        } else {
+            SseEmitter subscription = new SseEmitter(Long.MAX_VALUE);
+            Runnable callback = () -> subscriptions.remove(toUser);
+
+            subscription.onTimeout(callback); // OK
+            subscription.onCompletion(callback); // OK
+            subscription.onError((exception) -> { // Must consider carefully, but currently OK
+                subscriptions.remove(toUser);
+                log.info("onError fired with exception: " + exception);
+            });
+
+            subscriptions.put(toUser, subscription);
+            return subscription;
+        }
+    }
+
+    /**
+     * To keep connection alive
+     */
+    @Async
+    @Scheduled(fixedRate = 60000)
+    public void sendHeartbeatSignal() {
+        subscriptions.forEach((toUser, subscription) -> {
+            try {
+                subscription.send(SseEmitter.event().name(SSE_EVENT_HEARTBEAT));
+            } catch (Exception e) {
+                // Currently, nothing need be done here
+            }
+        });
+    }
 
     /**
      * @param toUser

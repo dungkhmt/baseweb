@@ -40,6 +40,23 @@ public interface NotificationsRepo
            nativeQuery = true)
     Page<NotificationDTO> findAllNotifications(String toUser, Pageable pageable);
 
+    @Query(value = "select\n" +
+                   "\tcast(id as varchar),\n" +
+                   "\tcontent,\n" +
+                   "\tfrom_user fromUser,\n" +
+                   "\turl,\n" +
+                   "\tfirst_name firstName,\n" +
+                   "\tmiddle_name middleName,\n" +
+                   "\tlast_name lastName,\n" +
+                   "\tn.status_id statusId,\n" +
+                   "\tn.created_stamp createdStamp\n" +
+                   "from\n" +
+                   "\tnotifications n\n" +
+                   "left join user_register ur on\n" +
+                   "\tn.from_user = ur.user_login_id where n.id = ?1",
+           nativeQuery = true)
+    NotificationDTO findNotificationById(UUID notificationId);
+
     @Override
     default void customize(
         QuerydslBindings bindings, QNotifications root

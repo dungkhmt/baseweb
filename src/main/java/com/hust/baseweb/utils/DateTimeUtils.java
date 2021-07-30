@@ -11,6 +11,8 @@ public class DateTimeUtils {
 
     public static final String START_DATE_TIME = "2000-01-01 00:00:00";
 
+    public static final DateFormat ISO_8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
     public static List<String> getListDateHavingDay(int d, Date fromDate, Date toDate, String effectiveStartDate) {
         ArrayList<String> L = new ArrayList<String>();
         Date fd = fromDate;
