@@ -2,6 +2,8 @@ package com.hust.baseweb.utils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,6 +14,12 @@ public class DateTimeUtils {
     public static final String START_DATE_TIME = "2000-01-01 00:00:00";
 
     public static final DateFormat ISO_8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+    public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
+
+    public static String getCurrentDateTime() {
+        return LocalDateTime.now().format(dateTimeFormatter);
+    }
 
     public static List<String> getListDateHavingDay(int d, Date fromDate, Date toDate, String effectiveStartDate) {
         ArrayList<String> L = new ArrayList<String>();
