@@ -1,7 +1,6 @@
 package com.hust.baseweb.applications.education.classmanagement.controller;
 
 import com.google.gson.Gson;
-import com.hust.baseweb.applications.cache.UserCache;
 import com.hust.baseweb.applications.education.classmanagement.service.ClassServiceImpl;
 import com.hust.baseweb.applications.education.content.Video;
 import com.hust.baseweb.applications.education.content.VideoService;
@@ -13,11 +12,11 @@ import com.hust.baseweb.applications.education.report.model.quizparticipation.St
 import com.hust.baseweb.applications.education.service.*;
 import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import com.hust.baseweb.entity.UserLogin;
-import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -28,9 +27,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -242,11 +242,11 @@ public class ClassController {
         // push notification
         List<String> userLoginIds = userService
             .findAllUserLoginIdOfGroup("ROLE_EDUCATION_LEARNING_MANAGEMENT_STUDENT");
-        for(String userLoginId: userLoginIds){
+        for (String userLoginId : userLoginIds) {
             log.info("createChapterMaterialOfCourse, push notif to " + userLoginId);
-            notificationsService.create(u.getUserLoginId(),userLoginId,
+            notificationsService.create(u.getUserLoginId(), userLoginId,
                                         u.getUserLoginId() + " vừa upload bài giảng "
-                                        + eduCourseChapterMaterialModelCreate.getMaterialName(),"");
+                                        + eduCourseChapterMaterialModelCreate.getMaterialName(), "");
         }
         return ResponseEntity.ok().body(eduCourseChapterMaterial);
     }
@@ -300,12 +300,17 @@ public class ClassController {
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
-    @GetMapping("/get-log-user-quiz/{classId}")
-    public ResponseEntity<?> getLogUserQuiz(Principal principal, @PathVariable UUID classId) {
+    @GetMapping("/{classId}/user-quiz/log")
+    public ResponseEntity<?> getLogUserQuiz(
+        @PathVariable UUID classId,
+        @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
+        @RequestParam(defaultValue = "10") @Positive Integer size
+    ) {
         log.info("getLogUserQuiz, classId = " + classId);
-        UserLogin userLogin = userService.findById(principal.getName());
-        List<StudentQuizParticipationModel> studentQuizParticipationModels =
-            logUserLoginQuizQuestionService.findAllByClassId(classId);
+        Page<StudentQuizParticipationModel> studentQuizParticipationModels = logUserLoginQuizQuestionService.findByClassId(
+            classId,
+            page,
+            size);
 
         return ResponseEntity.ok().body(studentQuizParticipationModels);
     }

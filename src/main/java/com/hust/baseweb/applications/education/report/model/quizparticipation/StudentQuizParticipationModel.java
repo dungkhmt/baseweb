@@ -14,15 +14,24 @@ import java.util.Date;
 public class StudentQuizParticipationModel {
 
     private String userLoginId;
+
     private String fullName;
+
     private String classId;
+
     private String classCode;
+
     private String questionId;
+
     private String courseId;
+
     private String courseName;
+
     private String topicName;
+
     private String topicId;
+
     private int grade;
-    //private Date createdStamp;
-    private String createdStamp;
+
+    private Date createdStamp;
 }

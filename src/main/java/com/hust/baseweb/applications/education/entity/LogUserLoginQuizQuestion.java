@@ -40,7 +40,6 @@ public class LogUserLoginQuizQuestion {
     @Column(name = "class_id")
     private UUID classId;
 
-
     @Column(name = "created_stamp")
     private Date createStamp;
 
