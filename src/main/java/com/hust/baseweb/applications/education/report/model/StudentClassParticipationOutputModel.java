@@ -13,4 +13,6 @@ public class StudentClassParticipationOutputModel {
 
     private String date;
     private int count;
+    private int accCount;// accumulated
+
 }

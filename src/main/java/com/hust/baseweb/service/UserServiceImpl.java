@@ -6,10 +6,7 @@ import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import com.hust.baseweb.entity.*;
 import com.hust.baseweb.entity.PartyType.PartyTypeEnum;
 import com.hust.baseweb.entity.Status.StatusEnum;
-import com.hust.baseweb.model.ApproveRegistrationIM;
-import com.hust.baseweb.model.PersonModel;
-import com.hust.baseweb.model.PersonUpdateModel;
-import com.hust.baseweb.model.RegisterIM;
+import com.hust.baseweb.model.*;
 import com.hust.baseweb.model.getregists.GetAllRegistsOM;
 import com.hust.baseweb.model.getregists.RegistsOM;
 import com.hust.baseweb.model.querydsl.SearchCriteria;
@@ -327,6 +324,18 @@ public class UserServiceImpl implements UserService {
         userRegisterRepo.save(userRegister);
 
         return new SimpleResponse(200, null, null);
+    }
+
+    @Override
+    public SimpleResponse disableUserRegistration(DisableUserRegistrationIM im) {
+        StatusItem statusItem = statusItemRepo.findByStatusId(UserRegister.STATUS_DISABLED);
+        UserRegister u = userRegisterRepo.findById(im.getUserLoginId()).orElse(null);
+        if(u != null){
+            u.setStatusItem(statusItem);
+            u = userRegisterRepo.save(u);
+            log.info("disableUserRegistration OK");
+        }
+        return new SimpleResponse(200,null,null);
     }
 
     @Override

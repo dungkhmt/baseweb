@@ -80,13 +80,22 @@ public class StudentClassParticipationServiceImpl implements StudentClassPartici
         if (len > s.length) {
             len = s.length;
         }
-
+        int acc =  0;
         for (int i = 0; i < len; i++) {
             //for(String sd: mDate2Count.keySet()){
             String sd = s[i];
+            int count = mDate2Count.get(sd);
+            acc = acc + count;
+        }
+        for (int i = 0; i < len; i++) {
+            //for(String sd: mDate2Count.keySet()){
+            String sd = s[i];
+            int count = mDate2Count.get(sd);
+            acc = acc - count;
+
             studentClassParticipationOutputModels.add(new StudentClassParticipationOutputModel(
                 sd,
-                mDate2Count.get(sd)));
+                count, acc));
             //log.info("getStudentClassParticipationStatistic, date " + sd + " -> " + mDate2Count.get(sd));
         }
         return studentClassParticipationOutputModels;

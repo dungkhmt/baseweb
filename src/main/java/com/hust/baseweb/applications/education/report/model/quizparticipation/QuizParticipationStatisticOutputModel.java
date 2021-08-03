@@ -13,4 +13,5 @@ public class QuizParticipationStatisticOutputModel {
 
     private String date;
     private int count;
+    private int accCount;
 }

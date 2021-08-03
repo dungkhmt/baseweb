@@ -33,7 +33,7 @@ public interface UserLoginRepo extends JpaRepository<UserLogin, String> {
                    "from\n" +
                    "\tuser_login ul\n" +
                    "inner join user_register ur on\n" +
-                   "\tul.user_login_id = ur.user_login_id\n",
+                   "\tul.user_login_id = ur.user_login_id and ur.status_id != 'USER_DISABLED'\n",
            nativeQuery = true)
     List<String> findAllUserEmail();
 

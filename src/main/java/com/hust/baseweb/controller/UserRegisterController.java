@@ -2,12 +2,14 @@ package com.hust.baseweb.controller;
 
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.model.ApproveRegistrationIM;
+import com.hust.baseweb.model.DisableUserRegistrationIM;
 import com.hust.baseweb.model.RegisterIM;
 import com.hust.baseweb.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 /**
  * @author Hien Hoang (hienhoang2702@gmail.com)
@@ -51,6 +53,11 @@ public class UserRegisterController {
     @PostMapping("/user/approve-registration")
     public ResponseEntity<?> approve(@RequestBody ApproveRegistrationIM im) {
         SimpleResponse res = userService.approve(im);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+    @PostMapping("/user/disable-registration")
+    public ResponseEntity<?> disableUserRegistration(Principal principal, @RequestBody DisableUserRegistrationIM input){
+        SimpleResponse res = userService.disableUserRegistration(input);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 }

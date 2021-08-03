@@ -169,6 +169,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         MapDataInput mapDataInput = new MapDataInput(n, m, D, conflict, priorityMatrix, hourClass,
                                                      maxHourTeacher,pa, classDays, teacherWantToMinimizeWorkingDays);
 
+        mapDataInput.savePlainTextFile("D:/tmp/data-bca/1.txt");
         //MaxLoadConstraintORToolMIPSolver mipSolver =
         //    new MaxLoadConstraintORToolMIPSolver(n, m, D, priorityMatrix, conflict, hourClass, maxHourTeacher);
         ORToolMIPSolver mipSolver  = new ORToolMIPSolver(mapDataInput);

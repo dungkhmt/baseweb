@@ -4,10 +4,7 @@ import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.entity.UserRegister;
-import com.hust.baseweb.model.ApproveRegistrationIM;
-import com.hust.baseweb.model.PersonModel;
-import com.hust.baseweb.model.PersonUpdateModel;
-import com.hust.baseweb.model.RegisterIM;
+import com.hust.baseweb.model.*;
 import com.hust.baseweb.model.getregists.GetAllRegistsOM;
 import com.hust.baseweb.model.querydsl.SortAndFiltersInput;
 import com.hust.baseweb.rest.user.DPerson;
@@ -47,6 +44,8 @@ public interface UserService {
     GetAllRegistsOM getAllRegists();
 
     SimpleResponse approve(ApproveRegistrationIM im);
+
+    SimpleResponse disableUserRegistration(DisableUserRegistrationIM im);
 
     UserLogin updatePassword2(String userLoginId, String password);
 

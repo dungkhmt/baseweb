@@ -46,6 +46,7 @@ public class AdminController {
 
         for (String email : toEmails) {
             if (null != email) {
+                log.info("sendMailToAllUsers, prepare to send email to " + email);
                 SimpleMailMessage mail = mailService.createSimpleMail(
                     new String[]{email},
                     input.getMailTitle(),
