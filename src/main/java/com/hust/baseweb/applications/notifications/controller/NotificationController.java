@@ -15,8 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,8 +37,7 @@ public class NotificationController {
      */
     @GetMapping("/subscription")
     public SseEmitter events(@CurrentSecurityContext(expression = "authentication.name") String toUser) {
-        log.info(toUser + " subscribes at " + LocalDateTime
-            .now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss")));
+//        log.info(toUser + " subscribes at " + getCurrentDateTime());
 
         if (subscriptions.containsKey(toUser)) {
             return subscriptions.get(toUser);
@@ -64,11 +61,12 @@ public class NotificationController {
      * To keep connection alive
      */
     @Async
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 40000)
     public void sendHeartbeatSignal() {
         subscriptions.forEach((toUser, subscription) -> {
             try {
-                subscription.send(SseEmitter.event().name(SSE_EVENT_HEARTBEAT));
+                subscription.send(SseEmitter.event().name(SSE_EVENT_HEARTBEAT).data("keep alive"));
+//                log.info("SENT HEARBEAT SIGNAL AT: " + getCurrentDateTime());
             } catch (Exception e) {
                 // Currently, nothing need be done here
             }
