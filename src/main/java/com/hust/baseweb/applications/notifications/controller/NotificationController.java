@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Map;
@@ -36,9 +37,12 @@ public class NotificationController {
      * @return
      */
     @GetMapping("/subscription")
-    public SseEmitter events(@CurrentSecurityContext(expression = "authentication.name") String toUser) {
+    public SseEmitter events(
+        @CurrentSecurityContext(expression = "authentication.name") String toUser,
+        HttpServletResponse response
+    ) {
 //        log.info(toUser + " subscribes at " + getCurrentDateTime());
-
+        response.setHeader("X-Accel-Buffering", "no");
         if (subscriptions.containsKey(toUser)) {
             return subscriptions.get(toUser);
         } else {
