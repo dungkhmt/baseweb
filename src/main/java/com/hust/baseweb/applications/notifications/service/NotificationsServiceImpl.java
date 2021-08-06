@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -81,7 +82,9 @@ public class NotificationsServiceImpl implements NotificationsService {
                 SseEmitter.event()
                           .id(notification.getId().toString())
                           .name(SSE_EVENT_NEW_NOTIFICATION)
-                          .data(notificationsRepo.findNotificationById(notification.getId()).toJson())
+                          .data(
+                              notificationsRepo.findNotificationById(notification.getId()).toJson(),
+                              MediaType.TEXT_EVENT_STREAM)
                 // TODO: discover reconnectTime() method
             );
         }

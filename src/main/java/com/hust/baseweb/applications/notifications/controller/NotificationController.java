@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.notifications.model.UpdateMultipleNotificat
 import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import static com.hust.baseweb.applications.notifications.entity.Notifications.STATUS_READ;
 import static com.hust.baseweb.applications.notifications.service.NotificationsService.SSE_EVENT_HEARTBEAT;
 import static com.hust.baseweb.applications.notifications.service.NotificationsService.subscriptions;
+import static com.hust.baseweb.utils.DateTimeUtils.getCurrentDateTime;
 
 @Log4j2
 @RestController
@@ -41,8 +43,11 @@ public class NotificationController {
         @CurrentSecurityContext(expression = "authentication.name") String toUser,
         HttpServletResponse response
     ) {
-//        log.info(toUser + " subscribes at " + getCurrentDateTime());
+        log.info(toUser + " subscribes at " + getCurrentDateTime());
+
         response.setHeader("X-Accel-Buffering", "no");
+        response.setHeader("Cache-Control", "no-cache");
+
         if (subscriptions.containsKey(toUser)) {
             return subscriptions.get(toUser);
         } else {
@@ -69,7 +74,10 @@ public class NotificationController {
     public void sendHeartbeatSignal() {
         subscriptions.forEach((toUser, subscription) -> {
             try {
-                subscription.send(SseEmitter.event().name(SSE_EVENT_HEARTBEAT).data("keep alive"));
+                subscription.send(SseEmitter
+                                      .event()
+                                      .name(SSE_EVENT_HEARTBEAT)
+                                      .data("keep alive", MediaType.TEXT_EVENT_STREAM));
 //                log.info("SENT HEARBEAT SIGNAL AT: " + getCurrentDateTime());
             } catch (Exception e) {
                 // Currently, nothing need be done here
