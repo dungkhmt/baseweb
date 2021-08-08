@@ -26,7 +26,9 @@ public interface UserRegisterRepo extends JpaRepository<UserRegister, String> {
                    "from\n" +
                    "\tuser_register ur\n" +
                    "where\n" +
-                   "\tstatus_id = ?1",
+                   "\tstatus_id = ?1\n" +
+                   "order by\n" +
+                   "\tcreated_stamp desc",
            nativeQuery = true)
     List<RegistsOM> getAllRegists(String status);
 }
