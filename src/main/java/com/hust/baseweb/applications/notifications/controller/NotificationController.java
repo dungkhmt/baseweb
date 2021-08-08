@@ -5,6 +5,8 @@ import com.hust.baseweb.applications.notifications.model.UpdateMultipleNotificat
 import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -14,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Map;
@@ -26,10 +27,10 @@ import static com.hust.baseweb.applications.notifications.service.NotificationsS
 import static com.hust.baseweb.utils.DateTimeUtils.getCurrentDateTime;
 
 @Log4j2
-@RestController
-@AllArgsConstructor
-@RequestMapping("/notification")
 @Validated
+@RestController
+@RequestMapping("/notification")
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class NotificationController {
 
     private final NotificationsService notificationsService;
@@ -39,19 +40,16 @@ public class NotificationController {
      * @return
      */
     @GetMapping("/subscription")
-    public SseEmitter events(
-        @CurrentSecurityContext(expression = "authentication.name") String toUser,
-        HttpServletResponse response
+    public ResponseEntity<SseEmitter> events(
+        @CurrentSecurityContext(expression = "authentication.name") String toUser
     ) {
         log.info(toUser + " subscribes at " + getCurrentDateTime());
 
-        response.setHeader("X-Accel-Buffering", "no");
-        response.setHeader("Cache-Control", "no-cache");
-
+        SseEmitter subscription;
         if (subscriptions.containsKey(toUser)) {
-            return subscriptions.get(toUser);
+            subscription = subscriptions.get(toUser);
         } else {
-            SseEmitter subscription = new SseEmitter(Long.MAX_VALUE);
+            subscription = new SseEmitter(Long.MAX_VALUE);
             Runnable callback = () -> subscriptions.remove(toUser);
 
             subscription.onTimeout(callback); // OK
@@ -62,8 +60,13 @@ public class NotificationController {
             });
 
             subscriptions.put(toUser, subscription);
-            return subscription;
         }
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("X-Accel-Buffering", "no");
+//        responseHeaders.set("Cache-Control", "no-cache"); // may be not necessary because Nginx server set it already
+
+        return ResponseEntity.ok().headers(responseHeaders).body(subscription);
     }
 
     /**
@@ -78,7 +81,8 @@ public class NotificationController {
                                       .event()
                                       .name(SSE_EVENT_HEARTBEAT)
                                       .data("keep alive", MediaType.TEXT_EVENT_STREAM));
-//                log.info("SENT HEARBEAT SIGNAL AT: " + getCurrentDateTime());
+//                                      .comment(":\n\nkeep alive"));
+//                log.info("SENT HEARTBEAT SIGNAL AT: " + getCurrentDateTime());
             } catch (Exception e) {
                 // Currently, nothing need be done here
             }
