@@ -323,6 +323,35 @@ public class UserServiceImpl implements UserService {
 
         userRegisterRepo.save(userRegister);
 
+        // send email
+        UserRegister ur = userRegisterRepo.findById(im.getUserLoginId()).orElse(null);
+        if(ur != null) {
+            String fullName = String.join(" ", ur.getFirstName(), ur.getMiddleName(), ur.getLastName());
+            String email = ur.getEmail();
+            log.info("approve, email = " + email + " fullname = " + fullName);
+            EMAIL_EXECUTOR_SERVICE.execute(() -> {
+                try {
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("name", fullName);
+                    model.put("username", im.getUserLoginId());
+
+                    Template template = config.getTemplate("successfully-approve-register-mail-template.html");
+                    String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+
+                    MimeMessageHelper helper = mailService.createMimeMessage(
+                        new String[]{email},
+                        "Open ERP - Tài khoản đã được phê duyệt",
+                        html,
+                        true);
+                    File resource = ResourceUtils.getFile("classpath:templates/logo.png");
+                    helper.addInline("logo", resource);
+
+                    mailService.sendMultipleMimeMessages(helper.getMimeMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
         return new SimpleResponse(200, null, null);
     }
 
