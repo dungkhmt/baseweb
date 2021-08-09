@@ -24,7 +24,6 @@ import java.util.UUID;
 import static com.hust.baseweb.applications.notifications.entity.Notifications.STATUS_READ;
 import static com.hust.baseweb.applications.notifications.service.NotificationsService.SSE_EVENT_HEARTBEAT;
 import static com.hust.baseweb.applications.notifications.service.NotificationsService.subscriptions;
-import static com.hust.baseweb.utils.DateTimeUtils.getCurrentDateTime;
 
 @Log4j2
 @Validated
@@ -36,14 +35,16 @@ public class NotificationController {
     private final NotificationsService notificationsService;
 
     /**
+     * Subscribes SseEmitter to receive pushed events from server
+     *
      * @param toUser
      * @return
      */
     @GetMapping("/subscription")
-    public ResponseEntity<SseEmitter> events(
+    public ResponseEntity<SseEmitter> subscribes(
         @CurrentSecurityContext(expression = "authentication.name") String toUser
     ) {
-        log.info(toUser + " subscribes at " + getCurrentDateTime());
+        log.info("{} SUBSCRIBES", toUser);
 
         SseEmitter subscription;
         if (subscriptions.containsKey(toUser)) {
@@ -64,8 +65,9 @@ public class NotificationController {
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("X-Accel-Buffering", "no");
-//        responseHeaders.set("Cache-Control", "no-cache"); // may be not necessary because Nginx server set it already
+        responseHeaders.set("Cache-Control", "no-cache"); // may be not necessary because Nginx server set it already
 
+        log.info("OPEN CONNECT TO {}", toUser);
         return ResponseEntity.ok().headers(responseHeaders).body(subscription);
     }
 
@@ -90,9 +92,11 @@ public class NotificationController {
     }
 
     /**
+     * Get list of notifications with pagination
+     *
      * @param toUser
-     * @param page
-     * @param size
+     * @param page   page number, start at 0
+     * @param size   page size
      */
     @GetMapping(params = {"page", "size"})
     public ResponseEntity<?> getNotifications(
@@ -127,8 +131,8 @@ public class NotificationController {
     }
 
     /**
-     * Update multiple notifications status of current log in user.
-     * Currently used for marking all notifications as read.
+     * Update multiple notifications' status of current log in user.
+     * Currently, used for marking all notifications as read.
      *
      * @param userId
      * @param body   request body
