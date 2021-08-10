@@ -18,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -144,7 +145,7 @@ public class QuizController {
     @GetMapping("/change-quiz-open-close-status/{questionId}")
     public ResponseEntity<?> changeQuizOpenCloseStatus(Principal principal, @PathVariable UUID questionId) {
         UserLogin u = userService.findById(principal.getName());
-        QuizQuestion quizQuestion = quizQuestionService.changeOpenCloseStatus(u,questionId);
+        QuizQuestion quizQuestion = quizQuestionService.changeOpenCloseStatus(u, questionId);
         return ResponseEntity.ok().body(quizQuestion);
     }
 
@@ -166,9 +167,12 @@ public class QuizController {
     public ResponseEntity<?> getPublishedQuizOfClass(Principal principal, @PathVariable UUID classId) {
         GetClassDetailOM eduClass = classService.getClassDetail(classId);
         String courseId = eduClass.getCourseId();
-        log.info("getPublishedQuizOfClass, classId = " + classId + ", courseId = " + courseId);
+
+//        log.info("getPublishedQuizOfClass, classId = " + classId + ", courseId = " + courseId);
+
         List<QuizQuestion> quizQuestions = quizQuestionService.findQuizOfCourse(courseId);
         List<QuizQuestionDetailModel> quizQuestionDetailModels = new ArrayList<>();
+
         for (QuizQuestion q : quizQuestions) {
             if (q.getStatusId().equals(QuizQuestion.STATUS_PRIVATE)) {
                 continue;
@@ -176,8 +180,9 @@ public class QuizController {
             QuizQuestionDetailModel quizQuestionDetailModel = quizQuestionService.findQuizDetail(q.getQuestionId());
             quizQuestionDetailModels.add(quizQuestionDetailModel);
         }
-        log.info("getPublishedQuizOfClass, classId = " + classId + ", courseId = " + courseId
-                 + " RETURN list.sz = " + quizQuestionDetailModels.size());
+
+//        log.info("getPublishedQuizOfClass, classId = " + classId + ", courseId = " + courseId
+//                 + " RETURN list.sz = " + quizQuestionDetailModels.size());
 
         return ResponseEntity.ok().body(quizQuestionDetailModels);
     }
@@ -215,13 +220,15 @@ public class QuizController {
 
         return ResponseEntity.ok().body(quizQuestionDetailModels);
     }
+
     @GetMapping("/get-course-of-quiz-question/{questionId}")
-    public ResponseEntity<?> getCourseOfQuizQuestion(Principal principal, @PathVariable UUID questionId){
+    public ResponseEntity<?> getCourseOfQuizQuestion(Principal principal, @PathVariable UUID questionId) {
         log.info("getCourseOfQuizQuestion, questionId = " + questionId);
-        EduCourse eduCourse  = quizQuestionService.findCourseOfQuizQuestion(questionId);
+        EduCourse eduCourse = quizQuestionService.findCourseOfQuizQuestion(questionId);
         log.info("getCourseOfQuizQuestion, questionId = " + questionId + " got courseId = " + eduCourse.getId());
         return ResponseEntity.ok().body(eduCourse);
     }
+
     @GetMapping("/get-quiz-of-course/{courseId}")
     public ResponseEntity<?> getQuizOfCourse(Principal principal, @PathVariable String courseId) {
         log.info("getQuizOfCourse, courseId = " + courseId);
@@ -320,13 +327,12 @@ public class QuizController {
 
     @PostMapping("/quiz-choose_answer")
     public ResponseEntity<?> quizChooseAnswer(
-        Principal principal,
+        @CurrentSecurityContext(expression = "authentication.name") String userId,
         @RequestBody @Valid QuizChooseAnswerInputModel input
     ) {
-        UserLogin userLogin = userService.findById(principal.getName());
-        log.info("quizChooseAnswer, userLoginId = " + userLogin.getUserLoginId());
+//        log.info("quizChooseAnswer, userLoginId = " + userLogin.getUserLoginId());
 
-        boolean ans = quizQuestionService.checkAnswer(userLogin, input);
+        boolean ans = quizQuestionService.checkAnswer(userId, input);
 
         return ResponseEntity.ok().body(ans);
     }

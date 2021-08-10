@@ -7,7 +7,6 @@ import com.hust.baseweb.applications.education.model.quiz.QuizQuestionCreateInpu
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.model.quiz.QuizQuestionUpdateInputModel;
 import com.hust.baseweb.applications.education.repo.*;
-import com.hust.baseweb.applications.education.suggesttimetable.repo.EduClassRepo;
 import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import com.hust.baseweb.config.FileSystemStorageProperties;
 import com.hust.baseweb.entity.UserLogin;
@@ -49,6 +48,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
     private NotificationsService notificationsService;
     private UserService userService;
+
     @Override
     public QuizQuestion save(QuizQuestionCreateInputModel input) {
         QuizQuestion quizQuestion = new QuizQuestion();
@@ -127,20 +127,21 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         //List<String> quizCourseTopicIds = quizCourseTopics.stream()
         //                                                  .map(quizCourseTopic -> quizCourseTopic.getQuizCourseTopicId()).collect(
         //    Collectors.toList());
-        for (QuizCourseTopic q : quizCourseTopics) {
-            log.info("findQuizOfCourse, courseId = " +
-                     courseId +
-                     ", topic = " +
-                     q.getQuizCourseTopicId() +
-                     ", " +
-                     q.getQuizCourseTopicName() +
-                     ", courseId = " +
-                     q.getEduCourse().getId());
 
-        }
+//        for (QuizCourseTopic q : quizCourseTopics) {
+//            log.info("findQuizOfCourse, courseId = " +
+//                     courseId +
+//                     ", topic = " +
+//                     q.getQuizCourseTopicId() +
+//                     ", " +
+//                     q.getQuizCourseTopicName() +
+//                     ", courseId = " +
+//                     q.getEduCourse().getId());
+//        }
+
         List<QuizQuestion> quizQuestions = quizQuestionRepo.findAllByQuizCourseTopicIn(quizCourseTopics);
-        log.info("findQuizOfCourse, courseId = " + courseId + ", quizCourseTopics.sz = " + quizCourseTopics.size()
-                 + " return quizQuestions.sz = " + quizQuestions.size());
+//        log.info("findQuizOfCourse, courseId = " + courseId + ", quizCourseTopics.sz = " + quizCourseTopics.size()
+//                 + " return quizQuestions.sz = " + quizQuestions.size());
         return quizQuestions;
     }
 
@@ -153,7 +154,9 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     @Override
     public EduCourse findCourseOfQuizQuestion(UUID questionId) {
         QuizQuestion quizQuestion = quizQuestionRepo.findById(questionId).orElse(null);
-        if(quizQuestion == null) return null;
+        if (quizQuestion == null) {
+            return null;
+        }
         EduCourse eduCourse = quizQuestion.getQuizCourseTopic().getEduCourse();
         return eduCourse;
     }
@@ -190,14 +193,15 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         QuizQuestion quizQuestion = quizQuestionRepo.findById(questionId).orElse(null);
         if (quizQuestion.getStatusId().equals(QuizQuestion.STATUS_PRIVATE)) {
             quizQuestion.setStatusId(QuizQuestion.STATUS_PUBLIC);
-            List<String> userLoginIds = userService.findAllUserLoginIdOfGroup("ROLE_EDUCATION_LEARNING_MANAGEMENT_STUDENT");
+            List<String> userLoginIds = userService.findAllUserLoginIdOfGroup(
+                "ROLE_EDUCATION_LEARNING_MANAGEMENT_STUDENT");
 
-            for(String userLoginId: userLoginIds){
-                notificationsService.create(u.getUserLoginId(),userLoginId,
+            for (String userLoginId : userLoginIds) {
+                notificationsService.create(u.getUserLoginId(), userLoginId,
                                             u.getUserLoginId() + " vừa public quiz " +
                                             quizQuestion.getQuizCourseTopic().getQuizCourseTopicName() + " của môn "
                                             + quizQuestion.getQuizCourseTopic().getEduCourse().getName()
-                    ,"");
+                    , "");
                 log.info("changeOpenCloseStatus, push notif to " + userLoginId);
             }
         } else {
@@ -208,7 +212,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
-    public boolean checkAnswer(UserLogin userLogin, QuizChooseAnswerInputModel quizChooseAnswerInputModel) {
+    public boolean checkAnswer(String userId, QuizChooseAnswerInputModel quizChooseAnswerInputModel) {
         QuizQuestionDetailModel quizQuestionDetail = findQuizDetail(quizChooseAnswerInputModel.getQuestionId());
         EduClass eduClass = classRepo.findById(quizChooseAnswerInputModel.getClassId()).orElse(null);
 
@@ -229,13 +233,14 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
         // log information
         LogUserLoginQuizQuestion logUserLoginQuizQuestion = new LogUserLoginQuizQuestion();
-        logUserLoginQuizQuestion.setUserLoginId(userLogin.getUserLoginId());
+        logUserLoginQuizQuestion.setUserLoginId(userId);
         logUserLoginQuizQuestion.setQuestionId(quizChooseAnswerInputModel.getQuestionId());
         logUserLoginQuizQuestion.setCreateStamp(new Date());
 
         logUserLoginQuizQuestion.setIsCorrectAnswer(isCorrectAnswer);
-        if(eduClass != null)
+        if (eduClass != null) {
             logUserLoginQuizQuestion.setClassCode(eduClass.getClassCode());
+        }
         logUserLoginQuizQuestion.setClassId(quizChooseAnswerInputModel.getClassId());
 
         logUserLoginQuizQuestion.setQuestionTopicId(quizQuestionDetail.getQuizCourseTopic().getQuizCourseTopicId());

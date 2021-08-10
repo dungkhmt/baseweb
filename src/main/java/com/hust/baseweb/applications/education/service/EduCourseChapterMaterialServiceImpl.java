@@ -47,7 +47,8 @@ public class EduCourseChapterMaterialServiceImpl implements EduCourseChapterMate
 
     @Override
     public List<EduCourseChapterMaterial> findAllByChapterId(UUID chapterId) {
-        log.info("findAllByChapterId, chapterId = " + chapterId);
+//        log.info("findAllByChapterId, chapterId = " + chapterId);
+
         EduCourseChapter eduCourseChapter = eduCourseChapterRepo.findById(chapterId).orElse(null);
         List<EduCourseChapterMaterial> eduCourseChapterMaterials = eduCourseChapterMaterialRepo.findAllByEduCourseChapter(
             eduCourseChapter);

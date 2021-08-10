@@ -157,7 +157,8 @@ public class BacklogControllerAPI {
         UserLogin userLogin = userService.findById(principal.getName());
         UUID userPartyId = userLogin.getParty().getPartyId();
 
-        log.info("get all project by user, userLoginId = " + principal.getName());
+//        log.info("get all project by user, userLoginId = " + principal.getName());
+
         List<BacklogProject> listBacklog = backlogProjectService.findAllByMemberPartyId(userPartyId);
         Map<String, List<BacklogTask>> map_BackLog_Task = new HashMap<>();
         for (BacklogProject backlog : listBacklog) {

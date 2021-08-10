@@ -30,9 +30,9 @@ public interface QuizQuestionService {
 
     QuizQuestion changeOpenCloseStatus(UserLogin u, UUID questionId);
 
-    public boolean checkAnswer(UserLogin userLogin, QuizChooseAnswerInputModel quizChooseAnswerInputModel);
+    boolean checkAnswer(String userId, QuizChooseAnswerInputModel quizChooseAnswerInputModel);
 
-    public QuizQuestion findById(UUID questionId);
+    QuizQuestion findById(UUID questionId);
 
-    public QuizQuestion update(UUID questionId, QuizQuestionUpdateInputModel input, MultipartFile[] files);
+    QuizQuestion update(UUID questionId, QuizQuestionUpdateInputModel input, MultipartFile[] files);
 }

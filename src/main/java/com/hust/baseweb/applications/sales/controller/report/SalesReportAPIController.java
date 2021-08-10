@@ -71,7 +71,7 @@ public class SalesReportAPIController {
             cnt++;
         }
         fromDateStr = DateTimeUtils.date2YYYYMMDD(currentDate);
-        log.info("reportDateBasedRevenueRecent, fromDate = " + fromDateStr + ", toDate = " + toDateStr);
+//        log.info("reportDateBasedRevenueRecent, fromDate = " + fromDateStr + ", toDate = " + toDateStr);
         //DateBasedRevenueReportOutputModel revenueReport = salesReportService.computeDateBasedRevenue(fromDateStr, toDateStr);
 
         SaleReportModel.DateBasedInput I = new SaleReportModel.DateBasedInput(

@@ -177,8 +177,8 @@ public class ClassController {
         String courseId = eduClass.getCourseId();
 
         List<EduCourseChapter> eduCourseChapters = eduCourseChapterService.findAllByCourseId(courseId);
-        log.info("getChaptersOfClass, classId = " + classId + ", courseId = " + courseId
-                 + " RETURN list.sz = " + eduCourseChapters.size());
+//        log.info("getChaptersOfClass, classId = " + classId + ", courseId = " + courseId
+//                 + " RETURN list.sz = " + eduCourseChapters.size());
 
         return ResponseEntity.ok().body(eduCourseChapters);
     }
