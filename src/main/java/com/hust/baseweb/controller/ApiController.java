@@ -79,7 +79,6 @@ public class ApiController {
 
     @GetMapping("/my-account")
     public ResponseEntity<?> getAccount(Principal principal) {
-        System.out.println("this is temp");
         UserLogin userLogin = userService.findById(principal.getName());
         Party party = userLogin.getParty();
         Person person = personService.findByPartyId(party.getPartyId());
