@@ -28,6 +28,7 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
     // parameters
     private int alpha;
     private int[] beta;
+    private long timeLimit = 10000;
 
     // MIP modelling
     private MPVariable[][] x;// x[i,j] = 1 indicates that teacher i is assigned to class j
@@ -211,7 +212,7 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
                         //c.setCoefficient(y[i][p],1);
                         c.setCoefficient(x[j][i],-1);
                         //if(i == 18 && j == 67){
-                            System.out.println(name() + "::solve, constraintXY, x[" + j + "," + i + "] = y[" + i + "," + p + "]");
+                            //System.out.println(name() + "::solve, constraintXY, x[" + j + "," + i + "] = y[" + i + "," + p + "]");
                         //}
                     }
                     /*
@@ -265,6 +266,9 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         c.setCoefficient(x[j][i],1);
     }
     private void createPreAssignmentConstraints(){
+        if(preAssignment == null || preAssignment.length == 0)
+            return;
+
         for(int k = 0; k < preAssignment.length; k++){
             int i = preAssignment[k][0];// class index
             int j = preAssignment[k][1];// teacher
@@ -330,6 +334,8 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         createObjective();
 
         // Solves.
+        solver.setTimeLimit(timeLimit);
+        System.out.println("model created , start solving time limit = " + timeLimit);
         final MPSolver.ResultStatus resultStatus = solver.solve();
 
         notAssigned = new HashSet<Integer>();
@@ -363,7 +369,9 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         return false;
 
     }
-
+    public void setTimeLimit(long timeLimit){
+        this.timeLimit = timeLimit;
+    }
     public boolean solve() {
         if(true)
         return solvePhase1();
@@ -379,6 +387,7 @@ public class MaxAssignedClassConstraintORToolMIPSolver {
         // Analyse solution.
         if (resultStatus == MPSolver.ResultStatus.OPTIMAL) {
             assignment = new int[n];
+            for(int i = 0; i < n ;i++) assignment[i] = -1;
             System.out.println("solve, n = " + n + " m = " + m);
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < m; j++) {

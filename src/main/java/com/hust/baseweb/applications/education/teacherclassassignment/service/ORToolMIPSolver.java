@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.education.teacherclassassignment.service;
 
+import java.io.PrintWriter;
 import java.util.HashSet;
 
 public class ORToolMIPSolver {
@@ -18,6 +19,26 @@ public class ORToolMIPSolver {
     }
     public String name(){
         return "ORToolMIPSolver";
+    }
+    public boolean testSolveOffline(String fo, int timeLimit){
+        System.out.println(name() + "::testSolveOffline, fo = " + fo);
+        maxAssignedClassConstraintORToolMIPSolver.setTimeLimit(timeLimit);
+        boolean ok = maxAssignedClassConstraintORToolMIPSolver.solve();
+        assignment = maxAssignedClassConstraintORToolMIPSolver.getSolutionAssignment();
+        notAssigned= maxAssignedClassConstraintORToolMIPSolver.getNotAssignedClass();
+        try{
+            PrintWriter out = new PrintWriter(fo);
+            int ans = 0;
+            for(int i = 0; i < assignment.length; i++) {
+                out.println(i + " " + assignment[i]);
+                if(assignment[i] > -1) ans += 1;
+            }
+            out.println(ans);
+            out.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return ok;
     }
     public boolean solve(String solver){
         System.out.println(name() + "::solve, solver = " + solver);
@@ -66,5 +87,21 @@ public class ORToolMIPSolver {
     }
     public HashSet<Integer> getNotAssignedClass(){
         return notAssigned;
+    }
+
+
+    public static void main(String[] args){
+        System.out.println("ORToolMIPSolver start....");
+        MapDataInput input = new MapDataInput();
+        String fi = "D:/tmp/data-bca/3.txt";
+        String fo = "D:/tmp/data-bca/3-out.txt";
+        //String fi = "D:/tmp/data-bca/input/bca-1.txt";
+        //input.genRandom(fi,500,50);
+        input.loadDataFromPlanFile(fi);
+        ORToolMIPSolver solver= new ORToolMIPSolver(input);
+        //solver.solve("MAXCLASS");
+        boolean ok = solver.testSolveOffline(fo,1000);
+
+        input.checkSolution(fi,fo);
     }
 }
