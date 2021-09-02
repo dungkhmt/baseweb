@@ -44,11 +44,11 @@ public class NotificationController {
     public ResponseEntity<SseEmitter> subscribes(
         @CurrentSecurityContext(expression = "authentication.name") String toUser
     ) {
-        log.info("{} SUBSCRIBES", toUser);
-
         SseEmitter subscription;
+
         if (subscriptions.containsKey(toUser)) {
             subscription = subscriptions.get(toUser);
+            log.info("{} RE-SUBSCRIBES", toUser);
         } else {
             subscription = new SseEmitter(Long.MAX_VALUE);
             Runnable callback = () -> subscriptions.remove(toUser);
@@ -61,13 +61,14 @@ public class NotificationController {
             });
 
             subscriptions.put(toUser, subscription);
+            log.info("{} SUBSCRIBES", toUser);
         }
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("X-Accel-Buffering", "no");
         responseHeaders.set("Cache-Control", "no-cache"); // may be not necessary because Nginx server set it already
 
-        log.info("OPEN CONNECT TO {}", toUser);
+//        log.info("OPEN CONNECT TO {}", toUser);
         return ResponseEntity.ok().headers(responseHeaders).body(subscription);
     }
 
@@ -77,6 +78,9 @@ public class NotificationController {
     @Async
     @Scheduled(fixedRate = 40000)
     public void sendHeartbeatSignal() {
+        log.info("#CURRENT ACTIVE USER = {}, START SENDING HEARTBEAT EVENT", subscriptions.size());
+        long start = System.currentTimeMillis();
+
         subscriptions.forEach((toUser, subscription) -> {
             try {
                 subscription.send(SseEmitter
@@ -87,8 +91,14 @@ public class NotificationController {
 //                log.info("SENT HEARTBEAT SIGNAL AT: " + getCurrentDateTime());
             } catch (Exception e) {
                 // Currently, nothing need be done here
+                log.info("FAILED WHEN SENDING HEARTBEAT SIGNAL TO {}, MAY BE USER DISCONNECTED", toUser);
             }
         });
+
+        log.info(
+            "#CURRENT ACTIVE USER = {}, SENDING HEARTBEAT EVENT DONE IN: {} SECONDS",
+            subscriptions.size(),
+            (System.currentTimeMillis() - start) * 1.0 / 1000);
     }
 
     /**
