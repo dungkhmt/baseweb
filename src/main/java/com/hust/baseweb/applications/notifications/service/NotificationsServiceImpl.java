@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,7 +76,7 @@ public class NotificationsServiceImpl implements NotificationsService {
         notification = notificationsRepo.save(notification);
 
         // Send new notification.
-        SseEmitter subscription = subscriptions.get(toUser);
+        List<SseEmitter> subscription = subscriptions.get(toUser);
         if (null != subscription) {
             send(
                 subscription,
@@ -90,22 +91,22 @@ public class NotificationsServiceImpl implements NotificationsService {
         }
     }
 
-    private void send(SseEmitter subscription, SseEmitter.SseEventBuilder event) {
-        executor.execute(() -> {
-                             try {
-                                 subscription.send(event);
-                             } catch (Exception ignore) {
-                                 // This is normal behavior when a client disconnects.
-                                 // onError callback will be automatically fired.
-//                                     try {
-//                                         subscription.completeWithError(ignore);
-//                                         log.info("Marked SseEmitter as complete with an error");
-//                                     } catch (Exception completionException) {
-//                                         log.info("Failed to mark SseEmitter as complete on error");
-//                                     }
-                             }
-                         }
-        );
+    private void send(List<SseEmitter> subscriptions, SseEmitter.SseEventBuilder event) {
+        executor.execute(() -> subscriptions.forEach(subscription -> {
+                                                         try {
+                                                             subscription.send(event);
+                                                         } catch (Exception ignore) {
+                                                             // This is normal behavior when a client disconnects.
+                                                             // onError callback will be automatically fired.
+//                                                             try {
+//                                                                 subscription.completeWithError(ignore);
+//                                                                 log.info("Marked SseEmitter as complete with an error");
+//                                                             } catch (Exception completionException) {
+//                                                                 log.info("Failed to mark SseEmitter as complete on error");
+//                                                             }
+                                                         }
+                                                     }
+        ));
     }
 
 

@@ -18,6 +18,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,23 +48,31 @@ public class NotificationController {
     ) {
         SseEmitter subscription;
 
+//        if (subscriptions.containsKey(toUser)) {
+//            subscription = subscriptions.get(toUser);
+//            log.info("{} RE-SUBSCRIBES", toUser);
+//        } else {
+        subscription = new SseEmitter(Long.MAX_VALUE);
+        Runnable callback = () -> subscriptions.remove(toUser);
+
+        subscription.onTimeout(callback); // OK
+        subscription.onCompletion(callback); // OK
+        subscription.onError((exception) -> { // Must consider carefully, but currently OK
+            log.info("onError fired with exception: " + exception);
+        });
+
         if (subscriptions.containsKey(toUser)) {
-            subscription = subscriptions.get(toUser);
+            subscriptions.get(toUser).add(subscription);
             log.info("{} RE-SUBSCRIBES", toUser);
         } else {
-            subscription = new SseEmitter(Long.MAX_VALUE);
-            Runnable callback = () -> subscriptions.remove(toUser);
-
-            subscription.onTimeout(callback); // OK
-            subscription.onCompletion(callback); // OK
-            subscription.onError((exception) -> { // Must consider carefully, but currently OK
-                subscriptions.remove(toUser);
-                log.info("onError fired with exception: " + exception);
+            subscriptions.put(toUser, new ArrayList<SseEmitter>() {
+                {
+                    add(subscription);
+                }
             });
-
-            subscriptions.put(toUser, subscription);
             log.info("{} SUBSCRIBES", toUser);
         }
+//        }
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("X-Accel-Buffering", "no");
@@ -82,16 +92,26 @@ public class NotificationController {
         long start = System.currentTimeMillis();
 
         subscriptions.forEach((toUser, subscription) -> {
-            try {
-                subscription.send(SseEmitter
-                                      .event()
-                                      .name(SSE_EVENT_HEARTBEAT)
-                                      .data("keep alive", MediaType.TEXT_EVENT_STREAM));
+            ListIterator<SseEmitter> iterator = subscription.listIterator();
+            int size = subscription.size();
+
+            while (iterator.hasNext()) {
+                try {
+                    iterator.next().send(SseEmitter
+                                             .event()
+                                             .name(SSE_EVENT_HEARTBEAT)
+                                             .data("keep alive", MediaType.TEXT_EVENT_STREAM));
 //                                      .comment(":\n\nkeep alive"));
-//                log.info("SENT HEARTBEAT SIGNAL AT: " + getCurrentDateTime());
-            } catch (Exception e) {
-                // Currently, nothing need be done here
-                log.info("FAILED WHEN SENDING HEARTBEAT SIGNAL TO {}, MAY BE USER DISCONNECTED", toUser);
+                } catch (Exception e) {
+                    // Currently, nothing need be done here
+                    iterator.remove();
+                    size--;
+                    log.info("FAILED WHEN SENDING HEARTBEAT SIGNAL TO {}, MAY BE USER CLOSED A CONNECTION", toUser);
+                }
+            }
+
+            if (size == 0) {
+                subscriptions.remove(toUser);
             }
         });
 

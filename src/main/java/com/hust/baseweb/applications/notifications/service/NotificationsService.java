@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,7 +16,7 @@ public interface NotificationsService {
     String SSE_EVENT_NEW_NOTIFICATION = "NEW_NOTIFICATION";
 
     // Use concurrent instead of synchronized collection because of performance and thread-safe
-    ConcurrentHashMap<String, SseEmitter> subscriptions = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, List<SseEmitter>> subscriptions = new ConcurrentHashMap<>();
 
     Page<NotificationDTO> getNotifications(String toUser, int page, int size);
 
