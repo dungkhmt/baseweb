@@ -47,38 +47,33 @@ public class NotificationController {
         @CurrentSecurityContext(expression = "authentication.name") String toUser
     ) {
         SseEmitter subscription;
-
-//        if (subscriptions.containsKey(toUser)) {
-//            subscription = subscriptions.get(toUser);
-//            log.info("{} RE-SUBSCRIBES", toUser);
-//        } else {
         subscription = new SseEmitter(Long.MAX_VALUE);
         Runnable callback = () -> subscriptions.remove(toUser);
 
         subscription.onTimeout(callback); // OK
         subscription.onCompletion(callback); // OK
-        subscription.onError((exception) -> { // Must consider carefully, but currently OK
-            log.info("onError fired with exception: " + exception);
+        subscription.onError((ex) -> { // Must consider carefully, but currently OK
+            log.error("onError fired with exception: " + ex);
         });
 
+        // Add new subscription to user's connection list.
         if (subscriptions.containsKey(toUser)) {
             subscriptions.get(toUser).add(subscription);
-            log.info("{} RE-SUBSCRIBES", toUser);
+            log.info(
+                "{} RE-SUBSCRIBES --> #CURRENT CONNECTION = {}",
+                toUser,
+                subscriptions.get(toUser).size());
         } else {
-            subscriptions.put(toUser, new ArrayList<SseEmitter>() {
-                {
-                    add(subscription);
-                }
-            });
+            subscriptions.put(toUser, new ArrayList<SseEmitter>() {{
+                add(subscription);
+            }});
             log.info("{} SUBSCRIBES", toUser);
         }
-//        }
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("X-Accel-Buffering", "no");
         responseHeaders.set("Cache-Control", "no-cache"); // may be not necessary because Nginx server set it already
 
-//        log.info("OPEN CONNECT TO {}", toUser);
         return ResponseEntity.ok().headers(responseHeaders).body(subscription);
     }
 
@@ -92,6 +87,7 @@ public class NotificationController {
         long start = System.currentTimeMillis();
 
         subscriptions.forEach((toUser, subscription) -> {
+            // Use iterator to avoid ConcurrentModificationException.
             ListIterator<SseEmitter> iterator = subscription.listIterator();
             int size = subscription.size();
 
@@ -103,10 +99,9 @@ public class NotificationController {
                                              .data("keep alive", MediaType.TEXT_EVENT_STREAM));
 //                                      .comment(":\n\nkeep alive"));
                 } catch (Exception e) {
-                    // Currently, nothing need be done here
                     iterator.remove();
                     size--;
-                    log.info("FAILED WHEN SENDING HEARTBEAT SIGNAL TO {}, MAY BE USER CLOSED A CONNECTION", toUser);
+                    log.error("FAILED WHEN SENDING HEARTBEAT SIGNAL TO {}, MAY BE USER CLOSED A CONNECTION", toUser);
                 }
             }
 
