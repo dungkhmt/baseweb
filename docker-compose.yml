@@ -1,52 +1,57 @@
-version: '2.3'
+version: '3'
 
-volumes:
-  baseweb_data: {}
-  
 services:
-    
-    nginx:
-        container_name: gateway
+
+    gateway:
         image: gateway:latest
         ports:
           - '80:80'
         volumes:
           - /var/run/docker.sock:/tmp/docker.sock:ro
-    dms:
-        container_name: dms 
-        image: dms:latest
-        expose:
-        - "8080"
+    baseweb:
+        container_name: baseweb
+        image: baseweb:latest
         environment:
+          POSTGRES_HOST: db
+          POSTGRES_PORT: 5432
+          REDIS_HOST: redis
+          REDIS_PORT: 6379
+          MONGO_URI: 'mongodb:27017'
+          MONGO_DB_NAME: baseweb
           POSTGRES_DB: ${PG_DATABASE:-dms}
           POSTGRES_PASSWORD: ${PG_PASSWORD:-root}
-          POSTGRES_USER: ${PG_USER:-root}
-        links:
-            - "pgsql:pgsql"
-            
-    basewebfrontend:
-        container_name: basewebfrontend
+          POSTGRES_USER: postgres
+          GOOGLE_MAP_API_KEY: ''
+          CONTENT_SERVICE_HOST: content-service
+          CONTENT_SERVICE_PORT: 8081
+        volumes:
+          - baseweb_data:/app/data_upload
+     basewebfrontend:
         image: basewebfrontend:latest
-        expose:
-        - "80"
-        
+
     redis:
-        container_name: redis
         image: "redis:alpine"
 
-    pgsql:
-        container_name: pgsql
-        image: postgres:9.5
+    db:
+        image: postgres
         environment:
+          POSTGRES_DB: ${PG_DATABASE:-dms}
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: ${PG_PASSWORD:-root}
-        restart: on-failure
         volumes:
-          - baseweb_data:/var/lib/postgresql/data
+          - pg_data:/var/lib/postgresql/data
 
     mongodb:
-        container_name: mongodb
         image: mongo:latest
-        ports:
-          - 27017:27017
+        command:
+          - --replSet=rs0
         volumes:
-          - baseweb_data:/var/lib/mongodb/data
+          - mongo_data:/var/lib/mongodb/data
+
+volumes:
+  mongo_data:
+    driver: local
+  pg_data:
+    driver: local
+  baseweb_data:
+    driver: local
