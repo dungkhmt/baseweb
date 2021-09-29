@@ -18,6 +18,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -262,6 +264,17 @@ public class ClassController {
         return ResponseEntity.ok().body(eduCourseChapterMaterial);
     }
 
+    @GetMapping("/get-course-chapter-material-detail/{courseId}/{classId}")
+    public ResponseEntity<?> getCourseChapterMaterialDetailV2(
+            Principal principal, @PathVariable UUID courseId, @PathVariable UUID classId) {
+        log.info("getCourseChapterMaterialDetail, id = " + courseId);
+        String userId = principal.getName();
+        logUserLoginCourseChapterMaterialService.logUserLoginMaterialV2(userId, classId, courseId);
+        log.info("getCourseChapterMaterialDetail, id = " + courseId);
+        EduCourseChapterMaterial eduCourseChapterMaterial = eduCourseChapterMaterialService.findById(courseId);
+        return ResponseEntity.ok().body(eduCourseChapterMaterial);
+    }
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-chapter-materials-of-course/{chapterId}")
     public ResponseEntity<?> getChapterMaterialsOfCourse(Principal principal, @PathVariable UUID chapterId) {
@@ -296,6 +309,25 @@ public class ClassController {
 
         List<StudentCourseParticipationModel> studentCourseParticipationModels =
             logUserLoginCourseChapterMaterialService.findAllByClassId(classId);
+        return ResponseEntity.ok().body(studentCourseParticipationModels);
+    }
+
+    @GetMapping("/get-log-user-course-chapter-material-by-page")
+    public ResponseEntity<?> getLogUserCourseChapterMaterialByPage(
+        @RequestParam(name="classId") UUID classId,
+        @RequestParam(name="page", defaultValue = "0") int page,
+        @RequestParam(name="pageSize", defaultValue = "5") int pageSize,
+        @RequestParam(name="sortType", defaultValue = "desc") String sortType,
+        @RequestParam(name="keyword", defaultValue = "_") String keyword
+    ) {
+        log.info("getLogUserCourseChapterMaterial, classId = " + classId);
+
+        Sort sort = Sort.by("createStamp");
+        if(sortType.equals("desc")) sort = sort.descending();
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+        
+        Page<StudentCourseParticipationModel> studentCourseParticipationModels =
+            logUserLoginCourseChapterMaterialService.findDataByClassIdAndPage(classId, keyword, pageable);
         return ResponseEntity.ok().body(studentCourseParticipationModels);
     }
 
