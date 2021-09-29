@@ -1,6 +1,8 @@
 package com.hust.baseweb.applications.education.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -27,5 +29,7 @@ public class LogUserLoginCourseChapterMaterial {
     @Column(name = "created_stamp")
     private Date createStamp;
 
-
+    @ManyToOne
+    @JoinColumn(name="edu_class_id")
+    private EduClass eduClass;
 }
