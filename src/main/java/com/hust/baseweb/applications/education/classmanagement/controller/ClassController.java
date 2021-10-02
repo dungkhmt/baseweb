@@ -246,7 +246,10 @@ public class ClassController {
             log.info("createChapterMaterialOfCourse, push notif to " + userLoginId);
             notificationsService.create(u.getUserLoginId(), userLoginId,
                                         u.getUserLoginId() + " vừa upload bài giảng "
-                                        + eduCourseChapterMaterialModelCreate.getMaterialName(), "");
+                                        + eduCourseChapterMaterialModelCreate.getMaterialName()
+                + ", chương " + eduCourseChapterMaterial.getEduCourseChapter().getChapterName()
+                                        + ", môn học" + eduCourseChapterMaterial.getEduCourseChapter().getEduCourse().getName(),
+                                        "");
         }
         return ResponseEntity.ok().body(eduCourseChapterMaterial);
     }
