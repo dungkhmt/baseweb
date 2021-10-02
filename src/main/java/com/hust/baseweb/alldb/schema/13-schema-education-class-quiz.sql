@@ -46,6 +46,8 @@ create table log_user_login_course_chapter_material(
     constraint fk_user_login_course_chapter_material_course_chapter_material foreign key(edu_course_material_id) references edu_course_chapter_material(edu_course_material_id)
 );
 
+alter table log_user_login_course_chapter_material ADD COLUMN edu_class_id uuid references edu_class (id);
+
 create table log_user_login_quiz_question(
     log_user_login_quiz_question_id uuid not null default uuid_generate_v1(),
     user_login_id varchar(60),
