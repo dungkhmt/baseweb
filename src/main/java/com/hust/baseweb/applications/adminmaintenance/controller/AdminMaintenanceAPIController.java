@@ -2,6 +2,7 @@ package com.hust.baseweb.applications.adminmaintenance.controller;
 
 import com.hust.baseweb.applications.adminmaintenance.model.deliveryplan.DeleteAllDeliveryPlanInputModel;
 import com.hust.baseweb.applications.adminmaintenance.model.salesroutes.DeleteSalesRoutesDetailInputModel;
+import com.hust.baseweb.applications.adminmaintenance.service.educlasscourse.ClassCourseMaintenanceService;
 import com.hust.baseweb.applications.adminmaintenance.service.salesroutes.SalesRouteDetailMaintenanceService;
 import com.hust.baseweb.applications.adminmaintenance.service.tms.DeliveryPlanMaintenanceService;
 import com.hust.baseweb.applications.education.entity.EduClass;
@@ -28,6 +29,13 @@ public class AdminMaintenanceAPIController {
     private AdminMaintenanceService adminMaintenanceService;
 
     private ClassRepo classRepo;
+
+    private ClassCourseMaintenanceService classCourseMaintenanceService;
+    @GetMapping("/update-class-id-log-course")
+    public ResponseEntity<?> updateClassIdLogCourse(Principal principal){
+        int rs = classCourseMaintenanceService.updateClassIdLogCourse();
+        return ResponseEntity.ok().body("OK " + rs);
+    }
 
     @PostMapping("/delete-all-delivery-plan")
     public ResponseEntity<?> deleteAllDeliveryPlan(

@@ -24,4 +24,6 @@ public class EduTeacher {
     @Column(name = "user_login_id")
     private String userLoginId;
 
+    @Column(name="max_credit")
+    private double maxCredit;
 }

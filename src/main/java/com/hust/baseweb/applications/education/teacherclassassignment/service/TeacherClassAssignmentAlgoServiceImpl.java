@@ -93,10 +93,11 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
                 }
             }
         }
-        int[][] pa = new int[preAssignment.length][];
+        int[][] pa = null;
 
         if (preAssignment != null) {
             log.info("prepare preAssignment.sz = " + preAssignment.length);
+            pa = new int[preAssignment.length][];
             for (int i = 0; i < preAssignment.length; i++) {
                 AlgoClassIM ci = preAssignment[i].getAlgoClassIM();
                 AlgoTeacherIM ti = preAssignment[i].getAlgoTeacherIM();
@@ -160,8 +161,14 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         }
         for(int i = 0;i < n; i++){
             HashSet<Integer> days = TimetableConflictChecker.extractDayOfTimeTable(algoClassIMS[i].getTimetable());
-            for(int d: days){
-                classDays[i][d-2] = true;
+            if(days != null) {
+                for (int d : days) {
+                    classDays[i][d - 2] = true;
+                }
+            }else{
+                log.info("computeTeacherClassAssignment, exception invalid timetable at class[" + i + "], " +
+                         "code = " + algoClassIMS[i].getClassCode() + " timetable = " + algoClassIMS[i].getTimetable());
+                return null;
             }
         }
 
@@ -169,7 +176,7 @@ public class TeacherClassAssignmentAlgoServiceImpl implements TeacherClassAssign
         MapDataInput mapDataInput = new MapDataInput(n, m, D, conflict, priorityMatrix, hourClass,
                                                      maxHourTeacher,pa, classDays, teacherWantToMinimizeWorkingDays);
 
-        mapDataInput.savePlainTextFile("D:/tmp/data-bca/1.txt");
+        //mapDataInput.savePlainTextFile("D:/tmp/data-bca/1.txt");
         //MaxLoadConstraintORToolMIPSolver mipSolver =
         //    new MaxLoadConstraintORToolMIPSolver(n, m, D, priorityMatrix, conflict, hourClass, maxHourTeacher);
         ORToolMIPSolver mipSolver  = new ORToolMIPSolver(mapDataInput);

@@ -2,7 +2,9 @@ package com.hust.baseweb.applications.education.teacherclassassignment.service;
 
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.education.entity.EduCourse;
+import com.hust.baseweb.applications.education.entity.mongodb.Teacher;
 import com.hust.baseweb.applications.education.repo.EduCourseRepo;
+import com.hust.baseweb.applications.education.repo.mongodb.TeacherRepo;
 import com.hust.baseweb.applications.education.teacherclassassignment.entity.*;
 import com.hust.baseweb.applications.education.teacherclassassignment.entity.compositeid.TeacherCourseId;
 import com.hust.baseweb.applications.education.teacherclassassignment.model.*;
@@ -33,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -61,6 +64,7 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
 
     private TeacherClassAssignmentAlgoService teacherClassAssignmentAlgoService;
 
+    private TeacherRepo teacherRepo;
     @Override
     public ClassTeacherAssignmentPlan create(UserLogin u, ClassTeacherAssignmentPlanCreateModel input) {
         ClassTeacherAssignmentPlan classTeacherAssignmentPlan = new ClassTeacherAssignmentPlan();
@@ -264,16 +268,46 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
     @Override
     public boolean addTeacherToAssignmentPlan(UUID planId, String teacherList) {
         log.info("addTeacherToAssignmentPlan");
+        List<EduTeacher> teachers = eduTeacherRepo.findAll();
+        Map<String, EduTeacher> mId2Teacher = new HashMap();
+        for(EduTeacher t: teachers){
+            mId2Teacher.put(t.getTeacherId(),t);
+            log.info("addTeacherToAssignmentPlan, put teacher " + t.getTeacherId() + " maxCredit " + t.getMaxCredit());
+        }
         String[] lst = teacherList.split(";");
         Gson gson = new Gson();
         for (String t : lst) {
             TeacherMaxHourLoad teacherMaxHourLoad = gson.fromJson(t, TeacherMaxHourLoad.class);
-            TeacherForAssignmentPlan teacherForAssignmentPlan = new TeacherForAssignmentPlan();
+            TeacherForAssignmentPlan teacherForAssignmentPlan =
+                teacherForAssignmentPlanRepo.findByTeacherIdAndPlanId(teacherMaxHourLoad.getTeacherId(), planId);
+            if(teacherForAssignmentPlan == null) {
+                teacherForAssignmentPlan = new TeacherForAssignmentPlan();
+                log.info("addTeacherToAssignmentPlan, record not exist -> create new!");
+            }
+
             teacherForAssignmentPlan.setMaxHourLoad(teacherMaxHourLoad.getMaxHourLoad());
             teacherForAssignmentPlan.setTeacherId(teacherMaxHourLoad.getTeacherId());
             teacherForAssignmentPlan.setPlanId(planId);
 
+            EduTeacher teacher = mId2Teacher.get(teacherMaxHourLoad.getTeacherId());
+            if(teacher != null){
+                if(teacherMaxHourLoad.getMaxHourLoad() == 0) {
+                    // take info from DB
+
+                    teacherForAssignmentPlan.setMaxHourLoad(teacher.getMaxCredit());
+                    log.info("addTeacherToAssignmentPlan, input maxHourLoad = 0 -> take from DB = " + teacherForAssignmentPlan.getMaxHourLoad()
+                    + " = " + teacher.getMaxCredit());
+                }
+            }else{
+                log.info("addTeacherToAssignmentPlan, not found teacher " + teacherMaxHourLoad.getTeacherId());
+            }
+
+
             teacherForAssignmentPlan = teacherForAssignmentPlanRepo.save(teacherForAssignmentPlan);
+
+            log.info("addTeacherToAssignmentPlan, save teacher " + teacherForAssignmentPlan.getTeacherId() + " plan "
+            + teacherForAssignmentPlan.getPlanId() + " maxCredit  " + teacherForAssignmentPlan.getMaxHourLoad());
+
         }
         return true;
     }
@@ -379,12 +413,20 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
 
                 c = row.getCell(4);
                 String teacherId = c.getStringCellValue();
-                //c = row.getCell(5);
+                c = row.getCell(5);
+
                 //int maxCredits = Integer.valueOf(c.getStringCellValue());
+
                 c = row.getCell(6);
                 int priority = 0;
                 if (c.getCellType().equals(CellType.STRING)) {
-                    priority = Integer.valueOf(c.getStringCellValue());
+                    //System.out.println("line i = " + i + ", column 6, str = " + c.getStringCellValue());
+                    try {
+                        priority = Integer.valueOf(c.getStringCellValue());
+                    }catch(Exception e){
+                        System.out.println("exception priority convert str to int");
+                        //e.printStackTrace();
+                    }
                 } else if (c.getCellType().equals(CellType.NUMERIC)) {
                     priority = (int) c.getNumericCellValue();
                 }
@@ -573,6 +615,20 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
         input.setTeachers(inputTeacher);
         input.setPreAssignments(preAssignment);
         input.setSolver(I.getSolver());
+
+        // save input json to file
+
+        /*
+        Gson gson = new Gson();
+        String jsonInput = gson.toJson(input);
+        try{
+            PrintWriter out = new PrintWriter("teacherclassassignment.json");
+            out.write(jsonInput);
+            out.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        */
 
         TeacherClassAssignmentOM solution = teacherClassAssignmentAlgoService.computeTeacherClassAssignment(input);
         if (solution == null) {
@@ -1017,9 +1073,24 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
                 for (int i = 0; i < arr.length; i++) {
                     arr[i] = c.getClassList().get(i);
                     TimeTableStartAndDuration ttsd = TimetableConflictChecker.extractFromString(arr[i].getTimetable());
-                    arr[i].setStartSlot(ttsd.getStartSlot());
-                    arr[i].setEndSlot(ttsd.getEndSlot());
-                    arr[i].setDuration(ttsd.getDuration());
+                    if(ttsd == null) {
+                        log.info("getSuggestedTeacherAndActionForClass, TimeTableStartAndDuration NULL for "
+                                 +
+                                 arr[i].getTimetable() +
+                                 " class " +
+                                 arr[i].getClassCode() +
+                                 ", " +
+                                 arr[i].getCourseName() +
+                                 " courseId = " +
+                                 arr[i].getCourseId());
+                        arr[i].setStartSlot(0);
+                        arr[i].setEndSlot(0);
+                        arr[i].setDuration(0);
+                    }else {
+                        arr[i].setStartSlot(ttsd.getStartSlot());
+                        arr[i].setEndSlot(ttsd.getEndSlot());
+                        arr[i].setDuration(ttsd.getDuration());
+                    }
                 }
                 for (int i = 0; i < arr.length; i++) {
                     for (int j = i + 1; j < arr.length; j++) {
@@ -1042,7 +1113,9 @@ public class ClassTeacherAssignmentPlanServiceImpl implements ClassTeacherAssign
                 c.setRemainEmptySlots(72 - arr[arr.length - 1].getEndSlot());
 
             }
-            lst.add(c);
+            if(c.getClassList().size() > 0) {
+                lst.add(c);
+            }
         }
 
 

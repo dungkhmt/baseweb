@@ -7,6 +7,10 @@ create table teacher(
     created_stamp                 timestamp default current_timestamp,
     constraint pk_teacher primary key(teacher_id)
 );
+
+alter table teacher add column max_credit numeric;
+
+
 create table teacher_course(
     teacher_id varchar(60),
     course_id varchar(60),

@@ -38,6 +38,7 @@ public class TimetableConflictChecker {
             mEndSlotStr2SlotCode.put("21550", "24");
             mEndSlotStr2SlotCode.put("21645", "25");
             mEndSlotStr2SlotCode.put("21730", "26");
+            mEndSlotStr2SlotCode.put("21735", "26");
         }
 
         public String getStartSlot(String s) {
@@ -64,8 +65,11 @@ public class TimetableConflictChecker {
         String slots = getSlotStr(s);
         return d + slotMapping.getStartSlot(slots);
     }
-
+    public static String name(){
+        return "TimetableConflictChecker";
+    }
     public static String convertEndSlotStr2Code(String s) {
+        System.out.println(name() + "::convertEndSlotStr2Code, s = " + s);
         String d = getDayOfWeek(s);
         String slots = getSlotStr(s);
         return d + slotMapping.getEndSlot(slots);
@@ -90,29 +94,34 @@ public class TimetableConflictChecker {
         return convertStartSlotStr2Code(s[0]) + "," + convertEndSlotStr2Code(s[1]);
     }
     public static TimeTableStartAndDuration extractFromString(String timeTable){
+        try {
+            String code = extractPeriod(timeTable);
+            if (code == null || code.equals("")) return null;
 
-        String code = extractPeriod(timeTable);
-        if(code == null || code.equals("")) return null;
+            String[] p = code.split(",");
+            if (p == null || p.length < 2) return null;
+            System.out.println("extractFromString(" + timeTable + "), extract code = " + code + " p[0] = " + p[0] + ", p[1] = " + p[1]);
+            int startSlot = 0;
+            int endSlot = 0;
+            int duration = 0;
+            int d = Integer.valueOf(p[0].substring(0, 1));
+            int x = Integer.valueOf(p[0].substring(1, 2));
+            int s1 = Integer.valueOf(p[0].substring(2, 3));
+            int s2 = Integer.valueOf(p[1].substring(2, 3));
+            if (x == 1) {// MORNING
+                startSlot = (d - 2) * 12 + s1;
+                endSlot = (d - 2) * 12 + s2;
+            } else {// x = 2 AFTERNOON
+                startSlot = (d - 2) * 12 + s1 + 6;
+                endSlot = (d - 2) * 12 + s2 + 6;
+            }
+            duration = endSlot - startSlot + 1;
 
-        String[] p = code.split(",");
-        if(p == null || p.length < 2) return null;
-        int startSlot = 0;
-        int endSlot = 0;
-        int duration = 0;
-        int d = Integer.valueOf(p[0].substring(0,1));
-        int x = Integer.valueOf(p[0].substring(1,2));
-        int s1 = Integer.valueOf(p[0].substring(2,3));
-        int s2 = Integer.valueOf(p[1].substring(2,3));
-        if(x == 1){// MORNING
-            startSlot = (d-2)*12 + s1;
-            endSlot = (d-2)*12 + s2;
-        }else{// x = 2 AFTERNOON
-            startSlot = (d-2)*12 + s1 + 6;
-            endSlot = (d-2)*12 + s2 + 6;
+            return new TimeTableStartAndDuration(d, startSlot, endSlot, duration);
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
         }
-        duration = endSlot - startSlot + 1;
-
-        return new TimeTableStartAndDuration(d,startSlot,endSlot,duration);
     }
     public static HashSet<Integer> extractDayOfTimeTable(String timetable){
         // timetable is under format 1,325,326,2-9,11-18,B1-402;2,221,222,2-9,11-18,B1-402;
@@ -121,7 +130,12 @@ public class TimetableConflictChecker {
         if(T != null){
             for(int i = 0; i < T.length; i++){
                 TimeTableStartAndDuration ttsd = extractFromString(T[i]);
-                if(ttsd != null) D.add(ttsd.getDay());
+                if(ttsd != null) {
+                    D.add(ttsd.getDay());
+                }else{
+                    System.out.println("extractDayOfTimeTable, invalid timetable " + timetable);
+                    return null;
+                }
             }
         }
         return D;
