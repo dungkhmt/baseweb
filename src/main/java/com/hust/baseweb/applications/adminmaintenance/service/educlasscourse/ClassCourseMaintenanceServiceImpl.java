@@ -63,11 +63,16 @@ public class ClassCourseMaintenanceServiceImpl implements ClassCourseMaintenance
             String courseId = eduCourse.getId();
             List<EduClass> cls = mapCourseID2ClassList.get(courseId);
             String classId = null;
-            if(cls != null)
-                for(EduClass c: cls){
-                if(c.getClassCode().equals("DSA")){
-                    classId = c.getClassCode(); break;
-                }
+            if(cls != null)   for(EduClass c: cls){
+                    if(c.getClassCode().equals("TTUD_20202")){
+                        classId = c.getClassCode(); break;
+                    }else if(c.getClassCode().equals("CTDL_20202")){
+                        classId = c.getClassCode(); break;
+                    }else if(c.getClassCode().equals("TOAN_RR_20202")){
+                        classId = c.getClassCode(); break;
+                    }else if(c.getClassCode().equals("DSA")){
+                        classId = c.getClassCode(); break;
+                    }
             }
             if(classId != null){
                 EduClass c = mapID2Class.get(classId);
