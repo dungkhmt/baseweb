@@ -123,14 +123,15 @@ public class NotificationController {
      * @param page   page number, start at 0
      * @param size   page size
      */
-    @GetMapping(params = {"page", "size"})
+    @GetMapping(params = {"fromId", "page", "size"})
     public ResponseEntity<?> getNotifications(
         @CurrentSecurityContext(expression = "authentication.name") String toUser,
+        @RequestParam UUID fromId,
         @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
         @RequestParam(defaultValue = "10") @Positive Integer size
     ) {
         GetNotificationsOM om = new GetNotificationsOM(
-            notificationsService.getNotifications(toUser, page, size),
+            notificationsService.getNotifications(toUser, fromId, page, size),
             notificationsService.countNumUnreadNotification(toUser));
 
         return ResponseEntity.ok().body(om);

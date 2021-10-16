@@ -50,10 +50,14 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
-    public Page<NotificationDTO> getNotifications(String toUser, int page, int size) {
+    public Page<NotificationDTO> getNotifications(String toUser, UUID fromId, int page, int size) {
         Pageable sortedByCreatedStampDsc =
             PageRequest.of(page, size, Sort.by("created_stamp").descending());
-        Page<NotificationDTO> notifications = notificationsRepo.findAllNotifications(toUser, sortedByCreatedStampDsc);
+        Page<NotificationDTO> notifications = fromId == null
+            ? notificationsRepo.findAllNotifications(
+            toUser,
+            sortedByCreatedStampDsc)
+            : notificationsRepo.findNotificationsFromId(toUser, fromId, sortedByCreatedStampDsc);
 
         return notifications;
     }

@@ -18,7 +18,7 @@ public interface NotificationsService {
     // Use concurrent instead of synchronized collection because of performance and thread-safe
     ConcurrentHashMap<String, List<SseEmitter>> subscriptions = new ConcurrentHashMap<>();
 
-    Page<NotificationDTO> getNotifications(String toUser, int page, int size);
+    Page<NotificationDTO> getNotifications(String toUser, UUID fromId, int page, int size);
 
     long countNumUnreadNotification(String toUser);
 
