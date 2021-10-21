@@ -18,7 +18,7 @@ In postgres create 3 new table in `baseweb/src/main/java/com/hust/baseweb/alldb/
 Install mongodb cluster with docker:
 - `docker compose up -d`
 - `docker exec -it localmongo1 mongo`
-  rs.initiate(
+- rs.initiate(
   {
   _id : 'rs0',
   members: [
