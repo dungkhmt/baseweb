@@ -83,6 +83,9 @@ public class UserServiceImpl implements UserService {
 
     private final Configuration config;
 
+    public static Map<String, PersonModel> mId2Person = null;
+
+
     @Override
     public UserLogin findById(String userLoginId) {
         return userLoginRepo.findByUserLoginId(userLoginId);
@@ -392,19 +395,46 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PersonModel findPersonByUserLoginId(String userLoginId) {
-        UserLogin userLogin = userLoginRepo.findByUserLoginId(userLoginId);
-        Person person = personRepo.findByPartyId(userLogin.getParty().getPartyId());
-        if (person == null) {
-            log.info("findPersonByUserLoginId, person of " + userLoginId + " not exists");
-            return new PersonModel();
+        /*
+        updated: 2021-10-26 (by PQD)
+        use Caching
+         */
+        if(mId2Person == null){
+            mId2Person = new HashMap();
         }
+        if(mId2Person.get(userLoginId) == null) {
+            UserLogin userLogin = userLoginRepo.findByUserLoginId(userLoginId);
+            Person person = personRepo.findByPartyId(userLogin.getParty().getPartyId());
+            if (person == null) {
+                log.info("findPersonByUserLoginId, person of " + userLoginId + " not exists");
+                return new PersonModel();
+            }
 
-        PersonModel personModel = new PersonModel();
-        personModel.setFirstName(person.getFirstName());
-        personModel.setMiddleName(person.getMiddleName());
-        personModel.setLastName(person.getLastName());
+            PersonModel personModel = new PersonModel();
+            personModel.setFirstName(person.getFirstName());
+            personModel.setMiddleName(person.getMiddleName());
+            personModel.setLastName(person.getLastName());
+            mId2Person.put(userLoginId, personModel);
+        }
+        return mId2Person.get(userLoginId);
 
+        /*
+            UserLogin userLogin = userLoginRepo.findByUserLoginId(userLoginId);
+            Person person = personRepo.findByPartyId(userLogin.getParty().getPartyId());
+            if (person == null) {
+                log.info("findPersonByUserLoginId, person of " + userLoginId + " not exists");
+                return new PersonModel();
+            }
+
+            PersonModel personModel = new PersonModel();
+            personModel.setFirstName(person.getFirstName());
+            personModel.setMiddleName(person.getMiddleName());
+            personModel.setLastName(person.getLastName());
+
+
+        }
         return personModel;
+         */
     }
 
     @Override
