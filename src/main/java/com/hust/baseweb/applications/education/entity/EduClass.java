@@ -17,6 +17,9 @@ import java.util.UUID;
 @Table(name = "edu_class")
 @EntityListeners(AuditingEntityListener.class)
 public class EduClass {
+    public static final String STATUS_OPEN = "OPEN";
+    public static final String STATUS_HIDDEN = "HIDDEN";
+    public static final String STATUS_DISABLED = "DISABLED";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

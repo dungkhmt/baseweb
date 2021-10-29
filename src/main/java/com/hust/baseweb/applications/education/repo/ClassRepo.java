@@ -126,6 +126,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
     @Query(value = "select cast(ecl.id as varchar) id,\n" +
                    "\tecl.code code,\n" +
                    "\tecl.class_code classCode,\n" +
+                   "\tecl.status_id statusId,\n" +
                    "\tec.id courseId,\n" +
                    "\tec.course_name \"name\",\n" +
                    "\tecl.class_type classType,\n" +

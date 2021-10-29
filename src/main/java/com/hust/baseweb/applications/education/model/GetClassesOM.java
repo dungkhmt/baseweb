@@ -8,6 +8,8 @@ public interface GetClassesOM {
 
     String getClassCode();
 
+    String getStatusId();
+
     String getCourseId();
 
     String getName();

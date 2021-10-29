@@ -128,6 +128,7 @@ create TABLE edu_class (
 	semester_id int2 NOT NULL,
 	course_id varchar(10) NOT NULL,
 	class_type varchar(10) NOT NULL,
+	status_id varchar(60),
 	department_id varchar(10) NOT NULL,
 	teacher_id varchar(255) NULL,
 	last_updated_stamp timestamp NULL,
@@ -145,6 +146,16 @@ alter table public.edu_class add CONSTRAINT fk_class_department FOREIGN KEY (dep
 alter table public.edu_class add CONSTRAINT fk_class_semester FOREIGN KEY (semester_id) REFERENCES edu_semester(id);
 
 
+create table edu_class_user_login_role{
+    class_id uuid not null,
+    user_login_id varchar(60) not null,
+    role_id varchar(60) not null,
+	last_updated_stamp timestamp NULL,
+	created_stamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_edu_class_user_login_id_role primary key(class_id, user_login_id),
+    constraint fk_edu_class_user_login_user_login_id foreign key (user_login_id) references user_login(user_login_id),
+    constraint fk_edu_class_user_login_class_id foreign key (class_id) references edu_class(id)
+}
 
 -- public.edu_class_registration definition
 
