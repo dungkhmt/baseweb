@@ -30,6 +30,9 @@ public class EduClass {
     @Column(name = "class_code")
     private String classCode;
 
+    @Column(name="status_id")
+    private String statusId;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "semester_id", referencedColumnName = "id")
     private Semester semester;

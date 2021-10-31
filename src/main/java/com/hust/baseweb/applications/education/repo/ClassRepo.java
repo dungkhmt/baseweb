@@ -53,6 +53,7 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
                    "\tcl.department_id = d.id\n" +
                    "where\n" +
                    "\tcl.semester_id = ?1\n" +
+                   "\tand cl.status_id = ?2\n" +
                    "order by\n" +
                    "\tco.id",
            countQuery = "select\n" +
@@ -64,9 +65,9 @@ public interface ClassRepo extends JpaRepository<EduClass, UUID> {
                         "inner join edu_department as d on\n" +
                         "\tcl.department_id = d.id\n" +
                         "where\n" +
-                        "\tcl.semester_id = ?1",
+                        "\tcl.semester_id = ?1 and cl.status_id = ?2",
            nativeQuery = true)
-    Page<ClassOM> findBySemester(short semesterId, Pageable pageable);
+    Page<ClassOM> findBySemester(short semesterId, String status, Pageable pageable);
 
     @Query(value = "select\n" +
                    "\tcast(cl.id as varchar) id,\n" +

@@ -15,9 +15,7 @@ import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -62,6 +60,8 @@ public class DataAdminController {
     public ResponseEntity<?> getPageLogUserLoginCourseChapterMaterial(
         Principal principal, @RequestParam int page, int size, Pageable pageable
     ){
+        Pageable sortedByCreatedStampDsc =
+            PageRequest.of(page, size, Sort.by("createStamp").descending());
         /*
         Get Chapter List -> tobe improved, e.g., by Caching
          */
@@ -76,7 +76,8 @@ public class DataAdminController {
             mId2Chapter.put(c.getChapterId(),c);
         }
 
-        List<LogUserLoginCourseChapterMaterial> lst = dataAdminLogUserLoginCourseChapterMaterial.getPage(page * size, size);
+        //List<LogUserLoginCourseChapterMaterial> lst = dataAdminLogUserLoginCourseChapterMaterial.getPage(page * size, size);
+        Page<LogUserLoginCourseChapterMaterial> lst = dataAdminLogUserLoginCourseChapterMaterial.findAll(sortedByCreatedStampDsc);
         int count = dataAdminLogUserLoginCourseChapterMaterial.countTotal();
 
         List<LogUserLoginCourseChapterMaterialOutputModel> lstModel = new ArrayList();

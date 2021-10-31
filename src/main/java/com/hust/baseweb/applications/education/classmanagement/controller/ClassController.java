@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.education.content.VideoService;
 import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
+import com.hust.baseweb.applications.education.repo.ClassRepo;
 import com.hust.baseweb.applications.education.report.model.courseparticipation.StudentCourseParticipationModel;
 import com.hust.baseweb.applications.education.report.model.quizparticipation.StudentQuizParticipationModel;
 import com.hust.baseweb.applications.education.service.*;
@@ -54,7 +55,7 @@ public class ClassController {
     private LogUserLoginQuizQuestionService logUserLoginQuizQuestionService;
     private VideoService videoService;
     private NotificationsService notificationsService;
-
+    private ClassRepo classRepo;
     @PostMapping
     public ResponseEntity<?> getClassesOfCurrSemester(
         Principal principal,
@@ -64,6 +65,8 @@ public class ClassController {
         @Min(value = 0, message = "Kích thước trang có giá trị không âm") Integer size,
         @RequestBody GetClassesIM filterParams
     ) {
+        log.info("getClassesOfCurrSemester");
+
         if (null == page) {
             page = 0;
         }
@@ -84,6 +87,20 @@ public class ClassController {
     public ResponseEntity<String> register(@Valid @RequestBody RegistIM im, Principal principal) {
         SimpleResponse res = classService.register(im.getClassId(), principal.getName());
         return ResponseEntity.status(res.getStatus()).body(res.getMessage());
+    }
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @GetMapping("/update-class-status")
+    public ResponseEntity updateClassStatus(Principal principal, @RequestParam UUID classId,
+                                            @RequestParam String status){
+        log.info("updateClassStatus, classId = " + classId + ", status = " + status);
+        EduClass eduClass = classRepo.findById(classId).orElse(null);
+        if(eduClass != null){
+            eduClass.setStatusId(status);
+            eduClass = classRepo.save(eduClass);
+        }else{
+            log.info("updateClassStatus, classId = " + classId + ", status = " + status + " class NOT FOUND??");
+        }
+        return ResponseEntity.ok().body("OK");
     }
 
     @GetMapping("/{id}/students")
