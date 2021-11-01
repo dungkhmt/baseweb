@@ -7,6 +7,8 @@ import com.hust.baseweb.applications.education.content.VideoService;
 import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
+import com.hust.baseweb.applications.education.model.educlassuserloginrole.AddEduClassUserLoginRoleIM;
+import com.hust.baseweb.applications.education.model.educlassuserloginrole.EduClassUserLoginRoleType;
 import com.hust.baseweb.applications.education.repo.ClassRepo;
 import com.hust.baseweb.applications.education.report.model.courseparticipation.StudentCourseParticipationModel;
 import com.hust.baseweb.applications.education.report.model.quizparticipation.StudentQuizParticipationModel;
@@ -15,6 +17,7 @@ import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -88,6 +91,31 @@ public class ClassController {
         SimpleResponse res = classService.register(im.getClassId(), principal.getName());
         return ResponseEntity.status(res.getStatus()).body(res.getMessage());
     }
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/add-class-user-login-role")
+    public ResponseEntity addEduClassUserLoginRole(Principal principal,
+                                                @RequestBody AddEduClassUserLoginRoleIM input){
+        log.info("addEduClassUserLoginRole, classId = " + input.getClassId()
+                 + " userlogin = " + input.getUserLoginId() + " roleId = " + input.getRoleId());
+
+        EduClassUserLoginRole eduClassUserLoginRole = classService.addEduClassUserLoginRole(input);
+
+        return ResponseEntity.ok().body("OK");
+    }
+    @GetMapping("/get-class-of-user/{userLoginId}")
+    public ResponseEntity getClassOfUser(Principal principal, @PathVariable String userLoginId){
+        List<EduClass> eduClasses = classService.getClassOfUser(userLoginId);
+        return ResponseEntity.ok().body(eduClasses);
+    }
+    @GetMapping("/get-role-list-educlass-userlogin")
+    public ResponseEntity<?> getRoleListEduClassUserLogin(){
+        List<EduClassUserLoginRoleType> lst = new ArrayList();
+        lst.add(new EduClassUserLoginRoleType(EduClassUserLoginRole.ROLE_PARTICIPANT,"Người tham gia"));
+        lst.add(new EduClassUserLoginRoleType(EduClassUserLoginRole.ROLE_OWNER,"Người tạo và sở hữu"));
+        lst.add(new EduClassUserLoginRoleType(EduClassUserLoginRole.ROLE_MANAGER,"Người quản lý"));
+        return ResponseEntity.ok().body(lst);
+    }
+
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/update-class-status")
     public ResponseEntity updateClassStatus(Principal principal, @RequestParam UUID classId,

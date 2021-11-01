@@ -4,6 +4,8 @@ import com.hust.baseweb.applications.education.classmanagement.enumeration.Regis
 import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
+import com.hust.baseweb.applications.education.model.educlassuserloginrole.AddEduClassUserLoginRoleIM;
+import com.hust.baseweb.applications.education.model.educlassuserloginrole.EduClassUserLoginRoleType;
 import com.hust.baseweb.applications.education.model.getclasslist.ClassOM;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
 import com.hust.baseweb.applications.education.repo.*;
@@ -15,6 +17,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +41,11 @@ public class ClassServiceImpl implements ClassService {
 
     private EduDepartmentRepo eduDepartmentRepo;
 
+    private EduClassUserLoginRoleRepo eduClassUserLoginRoleRepo;
+
     private NotificationsRepo notificationsRepo;
+
+
     @Override
     public EduClass findById(UUID id) {
         EduClass eduClass = classRepo.findById(id).orElse(null);
@@ -331,6 +338,34 @@ public class ClassServiceImpl implements ClassService {
         return classRepo.getStudentsOfClass(id, RegistStatus.WAITING_FOR_APPROVAL.toString());
     }
 
+    @Override
+    public EduClassUserLoginRole addEduClassUserLoginRole(AddEduClassUserLoginRoleIM input) {
+        EduClassUserLoginRole eduClassUserLoginRole = new EduClassUserLoginRole();
+        eduClassUserLoginRole.setClassId(input.getClassId());
+        eduClassUserLoginRole.setUserLoginId(input.getUserLoginId());
+        eduClassUserLoginRole.setRoleId(input.getRoleId());
+        eduClassUserLoginRole.setFromDate(new Date());
+
+        eduClassUserLoginRole = eduClassUserLoginRoleRepo.save(eduClassUserLoginRole);
+
+        return eduClassUserLoginRole;
+    }
+
+    @Override
+    public List<EduClass> getClassOfUser(String userLoginId){
+        //Page<EduClassUserLoginRole> lstRoles = eduClassUserLoginRoleRepo
+        //    .findAllByUserLoginIdAndThruDate(userLoginId, null, pageable);
+        //int totalCount = eduClassUserLoginRoleRepo.totalCountByUserLoginIdAndThruDate(userLoginId,null);
+        List<EduClassUserLoginRole> lstRoles = eduClassUserLoginRoleRepo.findAllByUserLoginIdAndThruDate(userLoginId,null);
+
+        List<EduClass> lst = new ArrayList();
+        for(EduClassUserLoginRole e: lstRoles){
+            EduClass eduClass = classRepo.findById(e.getClassId()).orElse(null);
+            if(eduClass != null) lst.add(eduClass);
+        }
+        //Page<EduClass> page = new PageImpl<>(lst,totalCount,pageable);
+        return lst;
+    }
     @Transactional
     private SimpleResponse createOrUpdateRegist(UUID classId, String studentId, RegistStatus status) {
         EduClass eduClass = new EduClass();
