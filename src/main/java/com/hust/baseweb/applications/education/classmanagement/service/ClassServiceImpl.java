@@ -5,6 +5,7 @@ import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.educlassuserloginrole.AddEduClassUserLoginRoleIM;
+import com.hust.baseweb.applications.education.model.educlassuserloginrole.ClassOfUserOM;
 import com.hust.baseweb.applications.education.model.educlassuserloginrole.EduClassUserLoginRoleType;
 import com.hust.baseweb.applications.education.model.getclasslist.ClassOM;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
@@ -100,6 +101,14 @@ public class ClassServiceImpl implements ClassService {
 
         aClass = classRepo.save(aClass);
         log.info("save OK, aClass.id = " + aClass.getId());
+
+        // create a corresponding role record in EduClassUserLoginRole
+        EduClassUserLoginRole eduClassUserLoginRole = new EduClassUserLoginRole();
+        eduClassUserLoginRole.setClassId(aClass.getId());
+        eduClassUserLoginRole.setUserLoginId(userLogin.getUserLoginId());
+        eduClassUserLoginRole.setRoleId(EduClassUserLoginRole.ROLE_OWNER);
+        eduClassUserLoginRole = eduClassUserLoginRoleRepo.save(eduClassUserLoginRole);
+        
         return aClass;
     }
 
@@ -352,16 +361,27 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public List<EduClass> getClassOfUser(String userLoginId){
+    public List<ClassOfUserOM> getClassOfUser(String userLoginId){
         //Page<EduClassUserLoginRole> lstRoles = eduClassUserLoginRoleRepo
         //    .findAllByUserLoginIdAndThruDate(userLoginId, null, pageable);
         //int totalCount = eduClassUserLoginRoleRepo.totalCountByUserLoginIdAndThruDate(userLoginId,null);
         List<EduClassUserLoginRole> lstRoles = eduClassUserLoginRoleRepo.findAllByUserLoginIdAndThruDate(userLoginId,null);
 
-        List<EduClass> lst = new ArrayList();
-        for(EduClassUserLoginRole e: lstRoles){
-            EduClass eduClass = classRepo.findById(e.getClassId()).orElse(null);
-            if(eduClass != null) lst.add(eduClass);
+        List<ClassOfUserOM> lst = new ArrayList();
+        for(EduClassUserLoginRole er: lstRoles){
+            EduClass eduClass = classRepo.findById(er.getClassId()).orElse(null);
+
+            if(eduClass != null) {
+                ClassOfUserOM e = new ClassOfUserOM();
+                e.setClassId(eduClass.getId());
+                e.setClassCode(eduClass.getClassCode());
+                e.setCourseId(eduClass.getEduCourse().getId());
+                e.setCourseName(eduClass.getEduCourse().getName());
+                e.setStatusId(eduClass.getStatusId());
+                e.setSemester(eduClass.getSemester().getId()+"");
+                e.setCreatedByUserLoginId(eduClass.getTeacher().getUserLoginId());
+                lst.add(e);
+            }
         }
         //Page<EduClass> page = new PageImpl<>(lst,totalCount,pageable);
         return lst;

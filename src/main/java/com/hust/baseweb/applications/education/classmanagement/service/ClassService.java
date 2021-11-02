@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.education.entity.EduClassUserLoginRole;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.educlassuserloginrole.AddEduClassUserLoginRoleIM;
+import com.hust.baseweb.applications.education.model.educlassuserloginrole.ClassOfUserOM;
 import com.hust.baseweb.applications.education.model.educlassuserloginrole.EduClassUserLoginRoleType;
 import com.hust.baseweb.applications.education.model.getclasslist.GetClassListOM;
 import com.hust.baseweb.entity.UserLogin;
@@ -50,7 +51,7 @@ public interface ClassService {
 
     EduClassUserLoginRole addEduClassUserLoginRole(AddEduClassUserLoginRoleIM input);
 
-    List<EduClass> getClassOfUser(String userLoginId);
+    List<ClassOfUserOM> getClassOfUser(String userLoginId);
 
 
 }

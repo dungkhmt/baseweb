@@ -8,6 +8,7 @@ import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.educlassuserloginrole.AddEduClassUserLoginRoleIM;
+import com.hust.baseweb.applications.education.model.educlassuserloginrole.ClassOfUserOM;
 import com.hust.baseweb.applications.education.model.educlassuserloginrole.EduClassUserLoginRoleType;
 import com.hust.baseweb.applications.education.repo.ClassRepo;
 import com.hust.baseweb.applications.education.report.model.courseparticipation.StudentCourseParticipationModel;
@@ -102,9 +103,14 @@ public class ClassController {
 
         return ResponseEntity.ok().body("OK");
     }
-    @GetMapping("/get-class-of-user/{userLoginId}")
-    public ResponseEntity getClassOfUser(Principal principal, @PathVariable String userLoginId){
-        List<EduClass> eduClasses = classService.getClassOfUser(userLoginId);
+    @GetMapping("/get-classes-of-user/{userLoginId}")
+    public ResponseEntity getClassesOfUser(Principal principal, @PathVariable String userLoginId){
+        String currentUserLoginId = principal.getName();
+        log.info("getClassesOfUser, currentUserLoginId = " + currentUserLoginId + " userLoginId = " + userLoginId);
+
+        if(userLoginId.equals("null")) userLoginId = currentUserLoginId;
+
+        List<ClassOfUserOM> eduClasses = classService.getClassOfUser(userLoginId);
         return ResponseEntity.ok().body(eduClasses);
     }
     @GetMapping("/get-role-list-educlass-userlogin")
