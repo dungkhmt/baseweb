@@ -108,7 +108,7 @@ public class ClassServiceImpl implements ClassService {
         eduClassUserLoginRole.setUserLoginId(userLogin.getUserLoginId());
         eduClassUserLoginRole.setRoleId(EduClassUserLoginRole.ROLE_OWNER);
         eduClassUserLoginRole = eduClassUserLoginRoleRepo.save(eduClassUserLoginRole);
-        
+
         return aClass;
     }
 

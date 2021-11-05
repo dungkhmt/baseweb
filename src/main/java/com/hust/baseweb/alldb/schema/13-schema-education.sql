@@ -99,6 +99,21 @@ create table public.edu_course_chapter_material(
 
 );
 
+create table comments_edu_course_material(
+    comment_id uuid not null default uuid_generate_v1(),
+    comment_message text,
+    edu_course_material_id uuid,
+    reply_to_comment_id uuid,
+    posted_by_user_login_id varchar(60),
+    status_id varchar(60),
+	last_updated_stamp timestamp NULL,
+	created_stamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_comments_edu_course_material primary key(comment_id),
+    constraint fk_comments_edu_course_material_material_id foreign key (edu_course_material_id) references edu_course_chapter_material(edu_course_material_id),
+    constraint fk_comments_edu_course_material_material_replay_to_comment_id foreign key (reply_to_comment_id) references comments_edu_course_material(comment_id),
+    constraint fk_comments_edu_course_material_user_login_id foreign key(posted_by_user_login_id) references user_login(user_login_id)
+
+)
 -- Drop table
 
 -- DROP TABLE public.edu_semester;
