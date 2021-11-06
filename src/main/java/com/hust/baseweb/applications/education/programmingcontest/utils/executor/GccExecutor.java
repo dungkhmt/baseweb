@@ -60,7 +60,7 @@ public class GccExecutor {
 
         return sourceSH;
     }
-    public String genSubmitScriptFile(List<TestCase> testCases, String source, String tmpName, int timeout){
+    public String genSubmitScriptFile(List<TestCase> testCases, String source, String tmpName, int timeLimit){
         String genTestCase = "";
         for(int i = 0; i < testCases.size(); i++){
             String testcase = "cat <<EOF >> testcase" + i + ".txt \n"
@@ -82,9 +82,11 @@ public class GccExecutor {
                 + "while [ \"$n\" -lt " + testCases.size()+" ]"+"\n"
                 + "do\n"
                 + "f=\"testcase\"$n\".txt\"" +"\n"
-                + "cat $f | timeout " + timeout + "s" +" ./main" +"\n"
+                + "cat $f | timeout " + timeLimit +"s " +"./main  || echo Time Limit Exceeded" + "\n"
+                + "echo testcasedone\n"
                 + "n=`expr $n + 1`\n"
                 + "done\n"
+                + "echo successful\n"
                 + "else\n"
                 + "echo Compile Error\n"
                 + "fi" + "\n"

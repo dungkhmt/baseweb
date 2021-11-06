@@ -1,6 +1,5 @@
 package com.hust.baseweb.applications.education.programmingcontest.utils;
 
-
 import com.hust.baseweb.applications.education.programmingcontest.entity.TestCase;
 import com.hust.baseweb.applications.education.programmingcontest.utils.executor.GccExecutor;
 import com.hust.baseweb.applications.education.programmingcontest.utils.executor.GolangExecutor;

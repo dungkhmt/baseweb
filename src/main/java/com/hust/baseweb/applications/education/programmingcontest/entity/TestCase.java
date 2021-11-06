@@ -1,6 +1,9 @@
 package com.hust.baseweb.applications.education.programmingcontest.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -28,7 +31,7 @@ public class TestCase {
 
     @JoinColumn(name = "contest_problem_id", referencedColumnName = "problem_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private ContestProblemNew contestProblem;
+    private ContestProblemNew contestProblemNew;
 
 //    @JoinTable(name = "contest_problem_test_case",
 //            joinColumns = @JoinColumn(name = "test_case_id", referencedColumnName = "test_case_id"),

@@ -1,6 +1,9 @@
 package com.hust.baseweb.applications.education.programmingcontest.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -8,6 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Data
 @Entity
+@Builder
 @Table(name = "problem_source_code_new")
 public class ProblemSourceCode {
     @Id
@@ -38,7 +42,7 @@ public class ProblemSourceCode {
 
     @JoinColumn(name = "contest_problem_id", referencedColumnName = "problem_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private ContestProblemNew contestProblem;
+    private ContestProblemNew contestProblemNew;
 
     public String createSolutionSourceCode(){
         return this.getBaseSource() + "\n" + this.getProblemFunctionSolution() + "\n" + this.getMainSource();

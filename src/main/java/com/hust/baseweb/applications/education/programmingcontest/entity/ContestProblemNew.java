@@ -1,10 +1,11 @@
 package com.hust.baseweb.applications.education.programmingcontest.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public class ContestProblemNew {
 //    @OneToMany(fetch = FetchType.LAZY)
 //    private List<ProblemSourceCode> problemSourceCode;
 
-    @OneToMany(mappedBy = "contestProblem")
+    @OneToMany(mappedBy = "contestProblemNew")
     private Set<ProblemSourceCode> problemSourceCodes;
 
     @Column(name = "problem_name", unique = true)

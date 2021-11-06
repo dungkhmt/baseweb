@@ -9,5 +9,5 @@ import java.util.UUID;
 
 public interface TestCaseRepo extends JpaRepository<TestCase, UUID> {
     TestCase findTestCaseByTestCaseId(UUID uuid);
-    List<TestCase> findAllByContestProblem(ContestProblemNew contestProblem);
+    List<TestCase> findAllByContestProblemNew(ContestProblemNew contestProblemNew);
 }

@@ -3,6 +3,8 @@ package com.hust.baseweb.applications.education.programmingcontest.docker;
 import com.hust.baseweb.applications.education.programmingcontest.utils.ComputerLanguage;
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
+import com.spotify.docker.client.DockerClient.ExecCreateParam;
+import com.spotify.docker.client.DockerClient.ListContainersParam;
 import com.spotify.docker.client.LogStream;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.Container;
@@ -12,13 +14,13 @@ import com.spotify.docker.client.messages.ExecCreation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.spotify.docker.client.DockerClient.*;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Configuration
 public class DockerClientBase {
     @Value("${DOCKER_SERVER_HOST}")
@@ -127,8 +129,8 @@ public class DockerClientBase {
         }
         dockerClient.copyToContainer(new java.io.File("./temp_dir/"+dirName).toPath(), containerId, "/workdir/");
         ExecCreation runExecCreation = dockerClient.execCreate(
-                containerId, runCommand, DockerClient.ExecCreateParam.attachStdout(),
-                DockerClient.ExecCreateParam.attachStderr());
+                containerId, runCommand, ExecCreateParam.attachStdout(),
+                ExecCreateParam.attachStderr());
         LogStream output = dockerClient.execStart(runExecCreation.id());
         String execOutput = output.readFully();
         return execOutput;

@@ -1,9 +1,4 @@
-package com.hust.minileetcode.utils;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
+package com.hust.baseweb.applications.education.programmingcontest.utils;
 
 //@AllArgsConstructor(onConstructor = @__(@Autowired))
 //@Getter

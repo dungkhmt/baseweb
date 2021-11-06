@@ -2,26 +2,36 @@ package com.hust.baseweb.applications.education.programmingcontest.controller;
 
 import com.hust.baseweb.applications.education.programmingcontest.entity.ContestProblemNew;
 import com.hust.baseweb.applications.education.programmingcontest.entity.TestCase;
-import com.hust.baseweb.applications.education.programmingcontest.model.*;
+import com.hust.baseweb.applications.education.programmingcontest.exception.MiniLeetCodeException;
+import com.hust.baseweb.applications.education.programmingcontest.repo.ContestProblemNewRepo;
+import com.hust.baseweb.applications.education.programmingcontest.repo.ProblemSubmissionRepo;
 import com.hust.baseweb.applications.education.programmingcontest.service.ProblemTestCaseService;
+import com.hust.baseweb.applications.education.programmingcontest.utils.TempDir;
+import com.hust.baseweb.repo.UserLoginRepo;
+import com.hust.baseweb.applications.education.programmingcontest.model.*;
+
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.UUID;
-@Log4j2
-@Controller
-@AllArgsConstructor(onConstructor_ = @Autowired)
+
+@RestController
 @CrossOrigin
-public class ProgrammingContestNewController {
+@AllArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
+public class NewContestProblemController {
     ProblemTestCaseService problemTestCaseService;
+//    AnswerChecking answerChecking;
+    TempDir tempDir;
+    ProblemSubmissionRepo problemSubmissionRepo;
+    UserLoginRepo userLoginRepo;
+    ContestProblemNewRepo contestProblemNewRepo;
 
     @PostMapping("/create-contest-problem-new")
     public ResponseEntity<?> createContestProblem(@RequestBody ModelCreateContestProblem modelCreateContestProblem) throws Exception{
@@ -38,21 +48,21 @@ public class ProgrammingContestNewController {
 
     @PostMapping("/update-contest-problem/{problemId}")
     public ResponseEntity<?> updateContestProblem(@RequestBody ModelCreateContestProblem modelCreateContestProblem, @PathVariable("problemId") String problemId) throws Exception{
-        problemTestCaseService.updateContestProblem(modelCreateContestProblem, problemId);
-        return ResponseEntity.ok(null);
+        ContestProblemNew contestProblemNew = problemTestCaseService.updateContestProblem(modelCreateContestProblem, problemId);
+        return ResponseEntity.ok(contestProblemNew);
     }
 
 
     @PostMapping("/add-problem-language-source-code/{problemId}")
     public ResponseEntity<?> addProblemLanguageSourceCode(
-        @PathVariable("problemId") String problemId,
-        @RequestBody ModelAddProblemLanguageSourceCode modelAddProblemLanguageSourceCode) throws Exception{
-        try {
-            problemTestCaseService.updateProblemSourceCode(modelAddProblemLanguageSourceCode, problemId);
-            return ResponseEntity.status(200).body(null);
-        }catch (Exception e){
-            throw new Exception(e.toString());
-        }
+            @PathVariable("problemId") String problemId,
+            @RequestBody ModelAddProblemLanguageSourceCode modelAddProblemLanguageSourceCode) throws Exception{
+            try {
+                problemTestCaseService.updateProblemSourceCode(modelAddProblemLanguageSourceCode, problemId);
+                return ResponseEntity.status(200).body(null);
+            }catch (Exception e){
+                throw new Exception(e.toString());
+            }
     }
 
     @PostMapping("/update-test-case-and-generate-answer/{problemId}")
@@ -62,8 +72,7 @@ public class ProgrammingContestNewController {
     }
 
     @PostMapping("/get-test-case-result/{problemId}")
-    public ResponseEntity<?> getTestCaseResult(@PathVariable("problemId") String problemId, @RequestBody
-        ModelGetTestCaseResult testCaseResult, Principal principal) throws Exception {
+    public ResponseEntity<?> getTestCaseResult(@PathVariable("problemId") String problemId, @RequestBody ModelGetTestCaseResult testCaseResult, Principal principal) throws Exception {
         log.info("get test case result {}", problemId);
         String testcaseResult = problemTestCaseService.getTestCaseResult(problemId, principal.getName(), testCaseResult);
         log.info("testcaseResult {}", testcaseResult);
@@ -99,8 +108,16 @@ public class ProgrammingContestNewController {
 
     @GetMapping("/problem-details/{problemId}")
     public ResponseEntity<?> getProblemDetails(@PathVariable("problemId") String problemId) throws Exception {
-        ContestProblemNew contestProblem = problemTestCaseService.getContestProblem(problemId);
-        return ResponseEntity.status(200).body(contestProblem);
+        log.info("getProblemDetails problemId ", problemId);
+        ContestProblemNew contestProblemNew = problemTestCaseService.getContestProblem(problemId);
+        return ResponseEntity.status(200).body(contestProblemNew);
+    }
+
+    @PostMapping("/update-problem-detail/{problemId}")
+    public ResponseEntity<?> updateProblemDetails(@RequestBody ModelCreateContestProblem modelCreateContestProblem, @PathVariable("problemId") String problemId) throws Exception {
+        log.info("updateProblemDetails problemId {}", problemId);
+        ContestProblemNew contestProblemNew = problemTestCaseService.updateContestProblem(modelCreateContestProblem, problemId);
+        return ResponseEntity.status(200).body(contestProblemNew);
     }
 
     @PostMapping("/problem-detail-run-code/{problemId}")
@@ -122,4 +139,23 @@ public class ProgrammingContestNewController {
         return ResponseEntity.status(200).body(testCase);
     }
 
+    @PostMapping("/problem-details-submission/{problemId}")
+    public ResponseEntity<?> problemDetailsSubmission(@PathVariable("problemId") String problemId, @RequestBody ModelProblemDetailSubmission modelProblemDetailSubmission, Principal principal) throws Exception {
+        log.info("problemDetailsSubmission {}", problemId);
+        ModelProblemSubmissionResponse response = problemTestCaseService.problemDetailSubmission(modelProblemDetailSubmission, problemId, principal.getName());
+        return ResponseEntity.status(200).body(response);
+    }
+
+    @GetMapping("/get-all-problem-submission-by-user/{problemId}")
+    public ResponseEntity<?> getAllProblemSubmissionByUser(@PathVariable("problemId") String problemId, Principal principal) throws Exception {
+        ListProblemSubmissionResponse listProblemSubmissionResponse = problemTestCaseService.getListProblemSubmissionResponse(problemId, principal.getName());
+        return ResponseEntity.status(200).body(listProblemSubmissionResponse);
+    }
+
+    @GetMapping("/get-problem-submission/{id}")
+    public ResponseEntity<?> getProblemSubmissionById(@PathVariable("id") UUID id, Principal principal) throws MiniLeetCodeException {
+        log.info("getProblemSubmissionById id {}", id);
+        ModelProblemSubmissionDetailResponse modelProblemSubmissionDetailResponse = problemTestCaseService.findProblemSubmissionById(id, principal.getName());
+        return ResponseEntity.status(200).body(modelProblemSubmissionDetailResponse);
+    }
 }

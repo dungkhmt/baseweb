@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.ArrayList;
 
-public interface ContestProblemRepoNew extends JpaRepository<ContestProblemNew, String> {
+public interface ContestProblemNewRepo extends JpaRepository<ContestProblemNew, String> {
     ContestProblemNew findByProblemId(String problemId);
 
     @Query("select cp.problemName from ContestProblemNew cp")
     ArrayList<String> findAllProblemName();
+
+
 }
