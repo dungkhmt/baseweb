@@ -1,6 +1,7 @@
 package com.hust.baseweb.service;
 
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
+import com.hust.baseweb.entity.AccountActivation;
 import com.hust.baseweb.entity.Party;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.entity.UserRegister;
@@ -34,6 +35,7 @@ public interface UserService {
     UserLogin updatePassword(UserLogin user, String password);
 
     Party createAndSaveUserLogin(PersonModel personModel) throws Exception;
+    Party createAndSaveUserLoginNotYetActivated(PersonModel personModel);
 
     Party update(PersonUpdateModel personUpdateModel, UUID partyId);
 
@@ -56,6 +58,12 @@ public interface UserService {
     PersonModel findPersonByUserLoginId(String userLoginId);
 
     List<String> findAllUserLoginIdOfGroup(String groupId);
+
+    SimpleResponse approveCreateAccountActivationSendEmail(ApproveRegistrationIM im);
+
+    SimpleResponse activateAccount(UUID activationId);
+
+    SimpleResponse resetPassword(String userLoginId);
 
 //    UserRegister.OutputModel registerUser(UserRegister.InputModel inputModel);
 

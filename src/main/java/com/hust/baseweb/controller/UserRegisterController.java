@@ -5,17 +5,20 @@ import com.hust.baseweb.model.ApproveRegistrationIM;
 import com.hust.baseweb.model.DisableUserRegistrationIM;
 import com.hust.baseweb.model.RegisterIM;
 import com.hust.baseweb.service.UserService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.UUID;
 
 /**
  * @author Hien Hoang (hienhoang2702@gmail.com)
  */
 @RestController
 @CrossOrigin
+@Log4j2
 public class UserRegisterController {
 
     private UserService userService;
@@ -45,6 +48,12 @@ public class UserRegisterController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
+    @GetMapping("/public/user/resetpassword/{userLoginId}")
+    public ResponseEntity<?> resetPassword(@PathVariable String userLoginId){
+        log.info("resetPassword, userLoginId = " + userLoginId);
+        SimpleResponse res = userService.resetPassword(userLoginId);
+        return ResponseEntity.ok().body(res);
+    }
     @GetMapping("/user/registration-list")
     public ResponseEntity<?> getAllRegists() {
         return ResponseEntity.ok().body(userService.getAllRegists());
@@ -55,6 +64,21 @@ public class UserRegisterController {
         SimpleResponse res = userService.approve(im);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
+
+    @PostMapping("/user/approve-registration-send-email-for-activation")
+    public ResponseEntity<?> approveRegistrationSendEmailForAccountActivation(@RequestBody ApproveRegistrationIM im){
+        SimpleResponse res = userService.approveCreateAccountActivationSendEmail(im);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/public/activate-account/{activattionId}")
+    public ResponseEntity<?> activateAccount(@PathVariable UUID activattionId){
+        log.info("activateAccount, activationId = " + activattionId);
+        SimpleResponse res = userService.activateAccount(activattionId);
+        return ResponseEntity.ok().body("OK");
+    }
+
+
     @PostMapping("/user/disable-registration")
     public ResponseEntity<?> disableUserRegistration(Principal principal, @RequestBody DisableUserRegistrationIM input){
         SimpleResponse res = userService.disableUserRegistration(input);

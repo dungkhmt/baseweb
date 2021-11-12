@@ -4,5 +4,5 @@ create table account_activation(
     status_id varchar(100),
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    constraint account_activation_id primary key(id)
-)
+    constraint pk_account_activation_id primary key(id)
+);

@@ -51,6 +51,8 @@ public class UserServiceImpl implements UserService {
 
     public static final String module = UserService.class.getName();
 
+    private AccountActivationRepo accountActivationRepo;
+
     private final UserLoginRepo userLoginRepo;
 
     private final UserRestRepository userRestRepository;
@@ -137,6 +139,39 @@ public class UserServiceImpl implements UserService {
 
         Set<SecurityGroup> roles = securityGroupRepo.findAllByGroupIdIn(personModel.getRoles());
         UserLogin userLogin = new UserLogin(personModel.getUserName(), personModel.getPassword(), roles, true);
+
+        log.info("save, roles = " + personModel.getRoles().size());
+        if (userLoginRepo.existsById(personModel.getUserName())) {
+            throw new RuntimeException();
+        }
+
+        userLogin.setParty(party);
+        userLoginRepo.save(userLogin);
+
+        return party;
+    }
+    @Override
+    @Transactional
+    public Party createAndSaveUserLoginNotYetActivated(PersonModel personModel) {
+        Party party = partyRepo.save(new Party(
+            personModel.getPartyCode(),
+            partyTypeRepo.getOne(PartyTypeEnum.PERSON.name()),
+            "",
+            statusRepo
+                .findById(StatusEnum.PARTY_ENABLED.name())
+                .orElseThrow(NoSuchElementException::new),
+            false));
+
+        personRepo.save(new Person(
+            party.getPartyId(),
+            personModel.getFirstName(),
+            personModel.getMiddleName(),
+            personModel.getLastName(),
+            personModel.getGender(),
+            personModel.getBirthDate()));
+
+        Set<SecurityGroup> roles = securityGroupRepo.findAllByGroupIdIn(personModel.getRoles());
+        UserLogin userLogin = new UserLogin(personModel.getUserName(), personModel.getPassword(), roles, false);
 
         log.info("save, roles = " + personModel.getRoles().size());
         if (userLoginRepo.existsById(personModel.getUserName())) {
@@ -469,6 +504,146 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<String> findAllUserLoginIdOfGroup(String groupId) {
         return userLoginRepo.findAllUserLoginOfGroup(groupId);
+    }
+
+    @Override
+    @Transactional
+    public SimpleResponse approveCreateAccountActivationSendEmail(ApproveRegistrationIM im) {
+        log.info("approveCreateAccountActivationSendEmail, user_login_id = " + im.getUserLoginId());
+
+        UserRegister userRegister = userRegisterRepo.findById(im.getUserLoginId()).orElse(null);
+
+        AccountActivation accountActivation = new AccountActivation();
+        accountActivation.setUserLoginId(im.getUserLoginId());
+        accountActivation.setCreatedStamp(new Date());
+        accountActivation.setStatusId(AccountActivation.STATUS_CREATED);
+
+        accountActivation = accountActivationRepo.save(accountActivation);
+
+        createAndSaveUserLoginNotYetActivated(new PersonModel(
+            userRegister.getUserLoginId(),
+            userRegister.getPassword(),
+            im.getRoles(),
+            userRegister.getUserLoginId(),
+            userRegister.getFirstName(),
+            userRegister.getLastName(),
+            userRegister.getMiddleName(),
+            null,
+            null));
+
+        StatusItem userApproved = statusItemRepo.findById("USER_APPROVED").orElseThrow(NoSuchElementException::new);
+        userRegister.setStatusItem(userApproved);
+
+        userRegisterRepo.save(userRegister);
+
+
+        UUID activationId = accountActivation.getId();
+        // send email activation
+        UserRegister ur = userRegisterRepo.findById(im.getUserLoginId()).orElse(null);
+        if(ur != null) {
+            String fullName = String.join(" ", ur.getFirstName(), ur.getMiddleName(), ur.getLastName());
+            String email = ur.getEmail();
+            log.info("approve, email = " + email + " fullname = " + fullName);
+            EMAIL_EXECUTOR_SERVICE.execute(() -> {
+                try {
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("name", fullName);
+                    model.put("username", im.getUserLoginId());
+                    model.put("url","https://openerp.dailyopt.ai/activation/activate/" + activationId.toString());
+
+                    Template template = config.getTemplate("approve-register-mail-for-account-activation-template.html");
+                    String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+
+                    MimeMessageHelper helper = mailService.createMimeMessage(
+                        new String[]{email},
+                        "Open ERP - Tài khoản đã được phê duyệt",
+                        html,
+                        true);
+                    File resource = ResourceUtils.getFile("classpath:templates/logo.png");
+                    helper.addInline("logo", resource);
+
+                    mailService.sendMultipleMimeMessages(helper.getMimeMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+
+        return new SimpleResponse(200, null, null);
+    }
+
+    @Override
+    @Transactional
+    public SimpleResponse activateAccount(UUID activationId) {
+        AccountActivation accountActivation = accountActivationRepo.findById(activationId).orElse(null);
+        if(accountActivation == null){
+            return new SimpleResponse(404, "not existed", "Đăng ký không tồn tại hoặc đã bị xoá");
+        }
+
+        UserLogin u = userLoginRepo.findByUserLoginId(accountActivation.getUserLoginId());
+        if(u == null){
+            return new SimpleResponse(404, "not existed", "UserLoginId " + accountActivation.getUserLoginId()
+                                                          + " không tồn tại hoặc đã bị xoá");
+
+        }
+        u.setEnabled(true);
+        u = userLoginRepo.save(u);
+
+        accountActivation.setStatusId(AccountActivation.STATUS_ACTIVATED);
+
+        accountActivation = accountActivationRepo.save(accountActivation);
+
+        return new SimpleResponse(200, null, null);
+    }
+    private String genRandomPassword(){
+        String table = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@$!";
+        String password = "";
+        Random R = new Random();
+        for(int i = 0; i <= 10; i++){
+            int idx = R.nextInt(table.length());
+            password = password + table.charAt(idx);
+        }
+        return password;
+    }
+    @Override
+    public SimpleResponse resetPassword(String userLoginId) {
+        UserRegister ur = userRegisterRepo.findById(userLoginId).orElse(null);
+        if(ur != null) {
+            String fullName = String.join(" ", ur.getFirstName(), ur.getMiddleName(), ur.getLastName());
+            String email = ur.getEmail();
+            log.info("approve, email = " + email + " fullname = " + fullName);
+            String password = genRandomPassword();
+            UserLogin u = userLoginRepo.findByUserLoginId(userLoginId);
+            u.setPassword(password);
+            u = userLoginRepo.save(u);
+
+            EMAIL_EXECUTOR_SERVICE.execute(() -> {
+                try {
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("name", fullName);
+                    model.put("username", userLoginId);
+                    model.put("password",password);
+
+                    Template template = config.getTemplate("send-mail-reset-password-template.html");
+                    String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+
+                    MimeMessageHelper helper = mailService.createMimeMessage(
+                        new String[]{email},
+                        "Open ERP - Tài khoản đã được phê duyệt",
+                        html,
+                        true);
+                    File resource = ResourceUtils.getFile("classpath:templates/logo.png");
+                    helper.addInline("logo", resource);
+
+                    mailService.sendMultipleMimeMessages(helper.getMimeMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        return null;
     }
 
 //    @Override
