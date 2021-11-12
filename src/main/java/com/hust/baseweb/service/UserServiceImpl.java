@@ -630,7 +630,7 @@ public class UserServiceImpl implements UserService {
 
                     MimeMessageHelper helper = mailService.createMimeMessage(
                         new String[]{email},
-                        "Open ERP - Tài khoản đã được phê duyệt",
+                        "Open ERP - Reset password",
                         html,
                         true);
                     File resource = ResourceUtils.getFile("classpath:templates/logo.png");

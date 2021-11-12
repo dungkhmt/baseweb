@@ -58,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .permitAll()
             .regexMatchers(".*/user/register/*$")
             .permitAll()
-            .regexMatchers(".*/public/*$")
+            .antMatchers("/public/**")
             .permitAll()
             .anyRequest()
             .authenticated()
