@@ -28,7 +28,7 @@ public class ContentApiController {
     private MongoContentService mongoContentService;
 
     @PostMapping("/content/create")
-    public ResponseEntity<String> create(@RequestParam("inputJson") String inputJson,
+    public ResponseEntity<?> create(@RequestParam("inputJson") String inputJson,
                                          @RequestParam("file") MultipartFile file) {
         Gson gson = new Gson();
         ContentHeaderModel modelHeader = gson.fromJson(inputJson, ContentHeaderModel.class);
@@ -43,7 +43,9 @@ public class ContentApiController {
             return ResponseEntity.ok().body(null);
         }
         log.info("create, returned id = " + id.toHexString());
-        return ResponseEntity.ok().body("/" + id.toHexString());
+        ContentHeaderModel rs = new ContentHeaderModel(id.toHexString());
+        //return ResponseEntity.ok().body("" + id.toHexString());
+        return ResponseEntity.ok().body(rs);
     }
 
     @GetMapping("/content/get/{id}")
