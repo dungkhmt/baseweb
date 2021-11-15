@@ -8,6 +8,7 @@ import com.hust.baseweb.service.PersonService;
 import com.hust.baseweb.service.SecurityGroupService;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Log4j2
 @RestController
 @CrossOrigin
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -91,10 +93,16 @@ public class ApiController {
 
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(Principal principal, @RequestBody PasswordChangeModel passwordChangeModel) {
+        log.info("changePassword, userlogin = " + principal.getName() + " password = " + passwordChangeModel.getNewPassword());
         UserLogin userLogin = userService.findById(principal.getName());
         if (UserLogin.PASSWORD_ENCODER.matches(passwordChangeModel.getCurrentPassword(), userLogin.getPassword())) {
             UserLogin user = userService.updatePassword(userLogin, passwordChangeModel.getNewPassword());
             return ResponseEntity.ok().body("");
+        }else{
+            log.info("changePassword, userlogin = " + principal.getName() + " password = " + passwordChangeModel.getNewPassword() +
+            " ERROR current password  = " + passwordChangeModel.getCurrentPassword() +
+                     " DIFFERS " + userLogin.getPassword() + " not correct");
+
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password isn't correct");
     }

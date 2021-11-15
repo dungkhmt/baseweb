@@ -9,6 +9,8 @@ import com.hust.baseweb.applications.education.entity.EduCourseChapterMaterial;
 import com.hust.baseweb.applications.education.entity.LogUserLoginCourseChapterMaterial;
 import com.hust.baseweb.applications.education.repo.EduCourseChapterMaterialRepo;
 import com.hust.baseweb.applications.education.repo.EduCourseChapterRepo;
+import com.hust.baseweb.applications.education.report.model.quizparticipation.StudentQuizParticipationModel;
+import com.hust.baseweb.applications.education.service.LogUserLoginQuizQuestionService;
 import com.hust.baseweb.applications.notifications.entity.Notifications;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.service.UserService;
@@ -47,6 +49,9 @@ public class DataAdminController {
     @Autowired
     private EduCourseChapterRepo eduCourseChapterRepo;
 
+    @Autowired
+    private LogUserLoginQuizQuestionService logUserLoginQuizQuestionService;
+
     @GetMapping("/admin/data/notifications")
     public ResponseEntity<?> getPageNotifications(Principal principal, @RequestParam int page, @RequestParam int size,
                                 Pageable pageable ) {
@@ -56,6 +61,19 @@ public class DataAdminController {
         Page<Notifications> aPage = new PageImpl<>(lst, pageable, count);
         return ResponseEntity.ok().body(aPage);
     }
+    @GetMapping("/admin/data/view-users-do-pratice-quiz")
+    public ResponseEntity<?> getPageLogUsersDoQuiz(Principal principal, @RequestParam int page, int size, Pageable pageable){
+        Pageable sortedByCreatedStampDsc =
+            PageRequest.of(page, size, Sort.by("createStamp").descending());
+        Page<StudentQuizParticipationModel> studentQuizParticipationModels =
+            logUserLoginQuizQuestionService.getPageLogStudentQuiz(
+            page,
+            size);
+
+        return ResponseEntity.ok().body(studentQuizParticipationModels);
+
+    }
+
     @GetMapping("/admin/data/view-course-video")
     public ResponseEntity<?> getPageLogUserLoginCourseChapterMaterial(
         Principal principal, @RequestParam int page, int size, Pageable pageable

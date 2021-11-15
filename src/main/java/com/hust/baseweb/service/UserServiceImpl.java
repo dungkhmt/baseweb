@@ -637,13 +637,18 @@ public class UserServiceImpl implements UserService {
                     helper.addInline("logo", resource);
 
                     mailService.sendMultipleMimeMessages(helper.getMimeMessage());
+
+                    //return new SimpleResponse(200, null, "mật khẩu mới đã được gửi đến email cho tài khoản " + userLoginId);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
+
+            return new SimpleResponse(200, null, "mật khẩu mới đã được gửi đến email cho tài khoản " + userLoginId);
         }
 
-        return null;
+        return new SimpleResponse(404, null, "Tài khoản " + userLoginId + " không tồn tài");
     }
 
 //    @Override

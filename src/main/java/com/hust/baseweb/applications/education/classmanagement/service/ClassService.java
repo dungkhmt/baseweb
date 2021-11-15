@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.education.classmanagement.enumeration.Regis
 import com.hust.baseweb.applications.education.entity.AssignmentSubmission;
 import com.hust.baseweb.applications.education.entity.EduClass;
 import com.hust.baseweb.applications.education.entity.EduClassUserLoginRole;
+import com.hust.baseweb.applications.education.entity.EduCourse;
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
 import com.hust.baseweb.applications.education.model.*;
 import com.hust.baseweb.applications.education.model.educlassuserloginrole.AddEduClassUserLoginRoleIM;
@@ -53,5 +54,5 @@ public interface ClassService {
 
     List<ClassOfUserOM> getClassOfUser(String userLoginId);
 
-
+    EduCourse getCourseOfClassCode(String classCode);
 }

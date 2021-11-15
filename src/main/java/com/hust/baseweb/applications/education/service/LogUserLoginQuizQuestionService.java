@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface LogUserLoginQuizQuestionService {
 
     Page<StudentQuizParticipationModel> findByClassId(UUID classId, Integer page, Integer size);
+
+    Page<StudentQuizParticipationModel> getPageLogStudentQuiz(Integer page, Integer size);
 }

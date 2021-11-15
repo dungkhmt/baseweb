@@ -46,6 +46,7 @@ public class ClassServiceImpl implements ClassService {
 
     private NotificationsRepo notificationsRepo;
 
+    public static Map<String, EduCourse> mClassCode2Course = null;
 
     @Override
     public EduClass findById(UUID id) {
@@ -386,6 +387,27 @@ public class ClassServiceImpl implements ClassService {
         //Page<EduClass> page = new PageImpl<>(lst,totalCount,pageable);
         return lst;
     }
+
+    @Override
+    public EduCourse getCourseOfClassCode(String classCode) {
+        if(mClassCode2Course == null){
+            mClassCode2Course = new HashMap<String, EduCourse>();
+        }
+        // try first with cache
+        EduCourse course= mClassCode2Course.get(classCode);
+        if(course != null) return course;
+
+        List<EduClass> lst = classRepo.findByClassCode(classCode);
+        if(lst != null && lst.size() > 0){
+            EduClass aClass = lst.get(0);
+            // update to cache
+            if(aClass.getEduCourse() != null)
+                mClassCode2Course.put(aClass.getClassCode(),aClass.getEduCourse());
+        }
+        course = mClassCode2Course.get(classCode);
+        return course;
+    }
+
     @Transactional
     private SimpleResponse createOrUpdateRegist(UUID classId, String studentId, RegistStatus status) {
         EduClass eduClass = new EduClass();
