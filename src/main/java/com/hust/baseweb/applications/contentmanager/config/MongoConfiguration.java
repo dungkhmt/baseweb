@@ -1,3 +1,4 @@
+/*
 package com.hust.baseweb.applications.contentmanager.config;
 
 import com.mongodb.client.MongoClient;
@@ -28,3 +29,4 @@ class MongoConfiguration extends AbstractMongoClientConfiguration {
   }
 
 }
+*/

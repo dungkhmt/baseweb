@@ -1,3 +1,4 @@
+/*
 package com.hust.baseweb.applications.contentmanager.controller;
 
 import java.io.IOException;
@@ -66,3 +67,4 @@ public class ContentApiController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
+*/
