@@ -1,5 +1,9 @@
 package com.hust.baseweb.applications.education.service;
 
+import com.google.gson.Gson;
+import com.hust.baseweb.applications.contentmanager.model.ContentHeaderModel;
+import com.hust.baseweb.applications.contentmanager.model.ContentModel;
+import com.hust.baseweb.applications.contentmanager.repo.MongoContentService;
 import com.hust.baseweb.applications.education.classmanagement.service.storage.exception.StorageException;
 import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.model.quiz.QuizChooseAnswerInputModel;
@@ -13,7 +17,9 @@ import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,6 +55,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     private NotificationsService notificationsService;
     private UserService userService;
 
+    private MongoContentService mongoContentService;
+
     @Override
     public QuizQuestion save(QuizQuestionCreateInputModel input) {
         QuizQuestion quizQuestion = new QuizQuestion();
@@ -66,40 +74,68 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
-    public QuizQuestion save(UserLogin u, QuizQuestionCreateInputModel input, MultipartFile[] files) {
+    public QuizQuestion save(UserLogin u, String json, MultipartFile[] files) {
 
         //Do save file
-        Date now = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        String prefixFileName = formatter.format(now);
-        ArrayList<String> attachmentPaths = new ArrayList<>();
-        Arrays.asList(files).forEach(file -> {
+//        Date now = new Date();
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+//        String prefixFileName = formatter.format(now);
+//        ArrayList<String> attachmentPaths = new ArrayList<>();
+//        Arrays.asList(files).forEach(file -> {
+//            try {
+//                Path path = Paths.get(properties.getFilesystemRoot() + "\\" + properties.getClassManagementDataPath());
+//                String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+//
+//                if (file.isEmpty()) {
+//                    throw new StorageException("Failed to store empty file " + originalFileName);
+//                }
+//
+//                if (originalFileName.contains("..")) {
+//                    // This is a security check
+//                    throw new StorageException(
+//                        "Cannot store file with relative path outside current directory "
+//                        + originalFileName);
+//                }
+//
+//                // Can throw IOExeption, e.g NoSuchFileException.
+//                Files.copy(
+//                    file.getInputStream(),
+//                    path.resolve(prefixFileName + "-" + originalFileName),
+//                    StandardCopyOption.REPLACE_EXISTING);
+//                attachmentPaths.add(prefixFileName + "-" + file.getOriginalFilename());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+        //taskInput.setAttachmentPaths(attachmentPaths.toArray(new String[0]));
+
+        Gson gson = new Gson();
+        QuizQuestionCreateInputModel input = gson.fromJson(json, QuizQuestionCreateInputModel.class);
+        List<String> attachmentId = new ArrayList<>();
+        String[] fileId = input.getFileId();
+        List<MultipartFile> fileArray = Arrays.asList(files);
+
+        fileArray.forEach((file) -> {
+            ContentModel model = new ContentModel(fileId[fileArray.indexOf(file)], file);
+            log.info("createQuizQuestion, fileId: " + fileId[fileArray.indexOf(file)]);
+
+            ObjectId id = null;
             try {
-                Path path = Paths.get(properties.getFilesystemRoot() + "\\" + properties.getClassManagementDataPath());
-                String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
-
-                if (file.isEmpty()) {
-                    throw new StorageException("Failed to store empty file " + originalFileName);
-                }
-
-                if (originalFileName.contains("..")) {
-                    // This is a security check
-                    throw new StorageException(
-                        "Cannot store file with relative path outside current directory "
-                        + originalFileName);
-                }
-
-                // Can throw IOExeption, e.g NoSuchFileException.
-                Files.copy(
-                    file.getInputStream(),
-                    path.resolve(prefixFileName + "-" + originalFileName),
-                    StandardCopyOption.REPLACE_EXISTING);
-                attachmentPaths.add(prefixFileName + "-" + file.getOriginalFilename());
+                id = mongoContentService.storeFileToGridFs(model);
             } catch (IOException e) {
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+
+            if (id != null) {
+                ContentHeaderModel rs = new ContentHeaderModel(id.toHexString());
+                attachmentId.add(rs.getId());
+            }
         });
-        //taskInput.setAttachmentPaths(attachmentPaths.toArray(new String[0]));
+
+
+
+
         QuizQuestion quizQuestion = new QuizQuestion();
         quizQuestion.setLevelId(input.getLevelId());
         quizQuestion.setQuestionContent(input.getQuestionContent());
@@ -109,7 +145,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
         quizQuestion.setQuizCourseTopic(quizCourseTopic);
         quizQuestion.setStatusId(QuizQuestion.STATUS_PRIVATE);
-        quizQuestion.setAttachment(String.join(";", attachmentPaths.toArray(new String[0])));
+        quizQuestion.setAttachment(String.join(";", attachmentId));
         quizQuestion.setCreatedStamp(new Date());
         quizQuestion = quizQuestionRepo.save(quizQuestion);
 

@@ -151,12 +151,12 @@ public class QuizController {
     ) {
         UserLogin u = userService.findById(principal.getName());
 
-        Gson g = new Gson();
-        QuizQuestionCreateInputModel input = g.fromJson(json, QuizQuestionCreateInputModel.class);
+//        Gson g = new Gson();
+//        QuizQuestionCreateInputModel input = g.fromJson(json, QuizQuestionCreateInputModel.class);
 
         //System.out.println("hehehehehehehe");
-        log.info("createQuizQuestion, topicId = " + input.getQuizCourseTopicId());
-        QuizQuestion quizQuestion = quizQuestionService.save(u, input, files);
+//        log.info("createQuizQuestion, topicId = " + input.getQuizCourseTopicId());
+        QuizQuestion quizQuestion = quizQuestionService.save(u, json, files);
         return ResponseEntity.ok().body(quizQuestion);
     }
 
