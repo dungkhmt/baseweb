@@ -1,13 +1,12 @@
 package com.hust.baseweb.applications.education.programmingcontest.model;
 
+import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class ModelCreateContest {
+@Builder
+public class ModelGetContestResponse {
     private String contestId;
     private String contestName;
-    private int contestTime;
-    private List<String> problemIds;
+    private Integer contestTime;
 }

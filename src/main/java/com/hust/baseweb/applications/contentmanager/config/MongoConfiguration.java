@@ -1,4 +1,4 @@
-/*
+
 package com.hust.baseweb.applications.contentmanager.config;
 
 import com.mongodb.client.MongoClient;
@@ -14,19 +14,25 @@ import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 class MongoConfiguration extends AbstractMongoClientConfiguration {
   @Autowired
     private Environment env;
-  @Override
-  protected String getDatabaseName() {
+
+  @Autowired
+  private MongoConfigurationProperties properties;
+
+    @Override
+    protected String getDatabaseName() {
     //return env.getProperty("MONGO_DB");
       //return env.getProperty("baseweb");
-      return "basewed";
+      //return "basewed";
+      return properties.getDatabase();
   }
 
 
   @Override
   public MongoClient mongoClient() {
     //return MongoClients.create("mongodb://"+env.getProperty("MONGO_HOST")+":"+env.getProperty("MONGO_PORT")+"/");
-      return MongoClients.create("mongodb://localhost:27017,localhost:27018,localhost:27019");
+      //return MongoClients.create("mongodb://localhost:27017,localhost:27018,localhost:27019");
+      return MongoClients.create(properties.getUri());
   }
 
 }
-*/
+

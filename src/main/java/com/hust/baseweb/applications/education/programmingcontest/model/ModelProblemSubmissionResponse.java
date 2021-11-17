@@ -16,4 +16,5 @@ public class ModelProblemSubmissionResponse {
     private float memoryUsage;
     private String language;
     private String result;
+    private String problemName;
 }

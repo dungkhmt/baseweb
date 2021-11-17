@@ -184,5 +184,32 @@ create table edu_quiz_test_quiz_question(
     constraint fk_edu_quiz_test_quiz_question_created_by_user_login_id foreign key(created_by_user_login_id) references user_login(user_login_id)
 );
 
+create table comment_on_quiz_question(
+    comment_id uuid not null default uuid_generate_v1(),
+    question_id uuid,
+    comment_text text,
+    reply_to_comment_id uuid,
+    created_by_user_login_id varchar(60),
+    status_id varchar(60),
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_comment_on_quiz_question primary key(comment_id),
+    constraint fk_comment_on_quiz_question_created_by_user_login_id foreign key(created_by_user_login_id) references user_login(user_login_id),
+    constraint fk_comment_on_quiz_question_question_id foreign key(question_id) references quiz_question(question_id),
+    constraint fk_comment_on_quiz_question_reply_to_comment_id foreign key(reply_to_comment_id) references  comment_on_quiz_question(comment_id)
+);
 
+create table solution_hint_to_quiz_question(
+    solution_id uuid not null default uuid_generate_v1(),
+    question_id uuid,
+    solution_text text,
+    created_by_user_login_id varchar(60),
+    status_id varchar(60),
 
+    last_updated_stamp            TIMESTAMP,
+    created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    constraint pk_solution_hint_to_quiz_question primary key (solution_id),
+    constraint fk_solution_hint_to_quiz_question_question_id foreign key(question_id) references quiz_question(question_id),
+    constraint fk_solution_hint_to_quiz_question_created_by_user_login_id foreign key(created_by_user_login_id) references user_login(user_login_id)
+);

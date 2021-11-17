@@ -2,12 +2,10 @@ package com.hust.baseweb.applications.education.controller;
 
 import com.google.gson.Gson;
 import com.hust.baseweb.applications.education.classmanagement.service.ClassService;
-import com.hust.baseweb.applications.education.entity.EduCourse;
-import com.hust.baseweb.applications.education.entity.QuizChoiceAnswer;
-import com.hust.baseweb.applications.education.entity.QuizCourseTopic;
-import com.hust.baseweb.applications.education.entity.QuizQuestion;
+import com.hust.baseweb.applications.education.entity.*;
 import com.hust.baseweb.applications.education.model.GetClassDetailOM;
 import com.hust.baseweb.applications.education.model.quiz.*;
+import com.hust.baseweb.applications.education.service.CommentOnQuizQuestionService;
 import com.hust.baseweb.applications.education.service.QuizChoiceAnswerService;
 import com.hust.baseweb.applications.education.service.QuizCourseTopicService;
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
@@ -44,6 +42,26 @@ public class QuizController {
     private UserService userService;
 
     private ClassService classService;
+
+    private CommentOnQuizQuestionService commentOnQuizQuestionService;
+
+    @PostMapping("/post-comment-on-quiz")
+    public ResponseEntity<?> postCommentOnQuizQuestion(Principal principal,
+                                                       @RequestBody CreateCommentOnQuizQuestionIM input){
+
+        UserLogin u = userService.findById(principal.getName());
+        log.info("postCommentOnQuizQuestion, user " + u.getUserLoginId() + " post comments = " + input.getComment());
+
+        CommentOnQuizQuestion commentOnQuizQuestion = commentOnQuizQuestionService.createComment(input.getQuestionId(), input.getComment(), u);
+
+        return ResponseEntity.ok().body(commentOnQuizQuestion);
+    }
+    @GetMapping("/get-list-comments-on-quiz/{questionId}")
+    public ResponseEntity<?> getListCommentsOnQuiz(Principal principal, @PathVariable UUID questionId){
+        List<CommentOnQuizQuestionDetailOM> lst = commentOnQuizQuestionService.findByQuestionId(questionId);
+        return ResponseEntity.ok().body(lst);
+    }
+
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-all-quiz-course-topics")
