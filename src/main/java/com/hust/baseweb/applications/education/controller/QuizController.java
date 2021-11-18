@@ -81,8 +81,8 @@ public class QuizController {
     @GetMapping("/edu/teacher/course/quiz/detail/{questionId}")
     public ResponseEntity<?> getAllQuizCourseTopics(Principal principal, @PathVariable UUID questionId) {
         log.info("getQuizQuestion" + questionId);
-        QuizQuestion quizQuestion = quizQuestionService.findById(questionId);
-        return ResponseEntity.ok().body(quizQuestion);
+        QuizQuestionDetailModel quizQuestionDetailModel = quizQuestionService.findById(questionId);
+        return ResponseEntity.ok().body(quizQuestionDetailModel);
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})

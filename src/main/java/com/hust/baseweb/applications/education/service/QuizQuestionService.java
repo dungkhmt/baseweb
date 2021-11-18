@@ -32,7 +32,7 @@ public interface QuizQuestionService {
 
     boolean checkAnswer(String userId, QuizChooseAnswerInputModel quizChooseAnswerInputModel);
 
-    QuizQuestion findById(UUID questionId);
+    QuizQuestionDetailModel findById(UUID questionId);
 
     QuizQuestion update(UUID questionId, QuizQuestionUpdateInputModel input, MultipartFile[] files);
 }

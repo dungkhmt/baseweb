@@ -17,14 +17,20 @@ import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -206,6 +212,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         quizQuestionDetailModel.setQuizCourseTopic(quizQuestion.getQuizCourseTopic());
         quizQuestionDetailModel.setQuestionId(quizQuestion.getQuestionId());
         quizQuestionDetailModel.setStatusId(quizQuestion.getStatusId());
+
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             String tempDate = formatter.format(quizQuestion.getCreatedStamp());
@@ -295,8 +302,52 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
-    public QuizQuestion findById(UUID questionId) {
-        return quizQuestionRepo.findById(questionId).orElse(null);
+    public QuizQuestionDetailModel findById(UUID questionId) {
+        QuizQuestion quizQuestion = quizQuestionRepo.findById(questionId).orElse(null);
+        QuizQuestionDetailModel quizQuestionDetailModel = new QuizQuestionDetailModel();
+        quizQuestionDetailModel.setQuizCourseTopic(quizQuestion.getQuizCourseTopic());
+        quizQuestionDetailModel.setCreatedByUserLoginId(quizQuestion.getCreatedByUserLoginId());
+        quizQuestionDetailModel.setLevelId(quizQuestion.getLevelId());
+        quizQuestionDetailModel.setQuestionContent(quizQuestion.getQuestionContent());
+        quizQuestionDetailModel.setQuestionId(quizQuestion.getQuestionId());
+        quizQuestionDetailModel.setStatusId(quizQuestion.getStatusId());
+        quizQuestionDetailModel.setStatement(quizQuestion.getQuestionContent());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            String tempDate = formatter.format(quizQuestion.getCreatedStamp());
+            quizQuestionDetailModel.setCreatedStamp(tempDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        List<QuizChoiceAnswer> quizChoiceAnswers = quizChoiceAnswerRepo.findAllByQuizQuestion(quizQuestion);
+        quizQuestionDetailModel.setQuizChoiceAnswerList(quizChoiceAnswers);
+
+        if (quizQuestion.getAttachment() != null) {
+            String[] fileId = quizQuestion.getAttachment().split(";", -1);
+            if (fileId.length != 0) {
+                List<byte[]> fileArray = new ArrayList<>();
+                for (String s : fileId) {
+                    try {
+                        GridFsResource content = mongoContentService.getById(s);
+                        if (content != null) {
+                            InputStream inputStream = content.getInputStream();
+                            fileArray.add(IOUtils.toByteArray(inputStream));
+                        }
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+                quizQuestionDetailModel.setAttachment(fileArray);
+            } else {
+                quizQuestionDetailModel.setAttachment(null);
+            }
+        } else {
+            quizQuestionDetailModel.setAttachment(null);
+        }
+        return quizQuestionDetailModel;
     }
 
     @Override
