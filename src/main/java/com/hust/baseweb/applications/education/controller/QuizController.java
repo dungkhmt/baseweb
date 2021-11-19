@@ -180,7 +180,14 @@ public class QuizController {
         }
         return ResponseEntity.ok().body(quizQuestionDetailModels);
     }
+    @GetMapping("/get-quiz-question-detail/{questionId}")
+    public ResponseEntity<?> getQuizQuestionDetail(Principal principal, @PathVariable UUID questionId){
+        //QuizQuestion q = quizQuestionService.findById(questionId);
+        log.info("getQuizQuestionDetail, questionId = " + questionId);
+        QuizQuestionDetailModel quizQuestionDetailModel = quizQuestionService.findQuizDetail(questionId);
+        return ResponseEntity.ok().body(quizQuestionDetailModel);
 
+    }
     @GetMapping("/get-published-quiz-of-class/{classId}")
     public ResponseEntity<?> getPublishedQuizOfClass(Principal principal, @PathVariable UUID classId) {
         GetClassDetailOM eduClass = classService.getClassDetail(classId);

@@ -1,8 +1,11 @@
 package com.hust.baseweb.applications.education.service;
 
+import com.hust.baseweb.applications.education.config.EducationConfigProperties;
 import com.hust.baseweb.applications.education.entity.CommentOnQuizQuestion;
+import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.model.quiz.CommentOnQuizQuestionDetailOM;
 import com.hust.baseweb.applications.education.repo.CommentOnQuizQuestionRepo;
+import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.model.PersonModel;
 import com.hust.baseweb.service.UserService;
@@ -26,6 +29,16 @@ public class CommentOnQuizQuestionServiceImpl implements CommentOnQuizQuestionSe
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private NotificationsService notificationsService;
+
+    @Autowired
+    private QuizQuestionService quizQuestionService;
+
+    @Autowired
+    private EducationConfigProperties properties;
+
     @Override
     public CommentOnQuizQuestion createComment(UUID questionId, String comment, UserLogin u) {
         CommentOnQuizQuestion commentOnQuizQuestion = new CommentOnQuizQuestion();
@@ -35,6 +48,22 @@ public class CommentOnQuizQuestionServiceImpl implements CommentOnQuizQuestionSe
         commentOnQuizQuestion.setCreatedStamp(new Date());
         commentOnQuizQuestion.setStatusId(CommentOnQuizQuestion.STATUS_CREATED);
         commentOnQuizQuestion = commentOnQuizQuestionRepo.save(commentOnQuizQuestion);
+
+
+        // push notification to admin
+        QuizQuestion q = quizQuestionService.findById(questionId);
+        String fromUserLoginId = u.getUserLoginId();
+        String toUserLoginId = q.getCreatedByUserLoginId();
+        String msg = "user " + fromUserLoginId + " comments on quiz " + q.getQuizCourseTopic().getQuizCourseTopicName() +
+                     " of course " + q.getQuizCourseTopic().getEduCourse().getName();
+
+        //String url = properties.getUrl_root() + "/edu/teacher/course/quiz/view/detail/" + questionId + "/" + q.getQuizCourseTopic().getEduCourse().getId();
+        String url = "/edu/teacher/course/quiz/view/detail/" + questionId + "/" + q.getQuizCourseTopic().getEduCourse().getId();
+
+        log.info("createComment, push notification from " + fromUserLoginId + " to " + toUserLoginId
+        + " msg = " + msg + ", url = " + url);
+        notificationsService.create(fromUserLoginId, toUserLoginId, msg,url);
+
         return commentOnQuizQuestion;
     }
 

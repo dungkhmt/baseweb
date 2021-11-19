@@ -214,7 +214,12 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     @Override
     public boolean checkAnswer(String userId, QuizChooseAnswerInputModel quizChooseAnswerInputModel) {
         QuizQuestionDetailModel quizQuestionDetail = findQuizDetail(quizChooseAnswerInputModel.getQuestionId());
-        EduClass eduClass = classRepo.findById(quizChooseAnswerInputModel.getClassId()).orElse(null);
+        String classCode = "";
+        if(quizChooseAnswerInputModel.getClassId() != null) {
+            EduClass eduClass = classRepo.findById(quizChooseAnswerInputModel.getClassId()).orElse(null);
+            if(eduClass != null)
+                classCode = eduClass.getClassCode();
+        }
 
         String isCorrectAnswer = "Y";
         boolean ans = true;
@@ -238,9 +243,11 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         logUserLoginQuizQuestion.setCreateStamp(new Date());
 
         logUserLoginQuizQuestion.setIsCorrectAnswer(isCorrectAnswer);
-        if (eduClass != null) {
-            logUserLoginQuizQuestion.setClassCode(eduClass.getClassCode());
-        }
+        //if (eduClass != null) {
+        //    logUserLoginQuizQuestion.setClassCode(eduClass.getClassCode());
+        //}
+        logUserLoginQuizQuestion.setClassCode(classCode);
+
         logUserLoginQuizQuestion.setClassId(quizChooseAnswerInputModel.getClassId());
 
         logUserLoginQuizQuestion.setQuestionTopicId(quizQuestionDetail.getQuizCourseTopic().getQuizCourseTopicId());

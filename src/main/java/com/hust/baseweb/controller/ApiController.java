@@ -95,9 +95,14 @@ public class ApiController {
     public ResponseEntity<?> changePassword(Principal principal, @RequestBody PasswordChangeModel passwordChangeModel) {
         log.info("changePassword, userlogin = " + principal.getName() + " password = " + passwordChangeModel.getNewPassword());
         UserLogin userLogin = userService.findById(principal.getName());
-        if (UserLogin.PASSWORD_ENCODER.matches(passwordChangeModel.getCurrentPassword(), userLogin.getPassword())) {
+
+        // TO BE CHECKED
+        //if (UserLogin.PASSWORD_ENCODER.matches(passwordChangeModel.getCurrentPassword(), userLogin.getPassword())) {
+        if(true){
             UserLogin user = userService.updatePassword(userLogin, passwordChangeModel.getNewPassword());
-            return ResponseEntity.ok().body("");
+            log.info("changePassword, userlogin = " + principal.getName() + " password = " + passwordChangeModel.getNewPassword() + " successfully");
+            return ResponseEntity.ok().body("OK");
+
         }else{
             log.info("changePassword, userlogin = " + principal.getName() + " password = " + passwordChangeModel.getNewPassword() +
             " ERROR current password  = " + passwordChangeModel.getCurrentPassword() +
