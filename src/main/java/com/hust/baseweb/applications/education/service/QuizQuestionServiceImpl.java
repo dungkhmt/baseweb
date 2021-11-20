@@ -150,7 +150,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         QuizCourseTopic quizCourseTopic = quizCourseTopicRepo.findById(input.getQuizCourseTopicId()).orElse(null);
 
         quizQuestion.setQuizCourseTopic(quizCourseTopic);
-        quizQuestion.setStatusId(QuizQuestion.STATUS_PRIVATE);
+        quizQuestion.setStatusId(QuizQuestion.STATUS_PUBLIC);
         quizQuestion.setAttachment(String.join(";", attachmentId));
         quizQuestion.setCreatedStamp(new Date());
         quizQuestion = quizQuestionRepo.save(quizQuestion);
@@ -212,6 +212,30 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         quizQuestionDetailModel.setQuizCourseTopic(quizQuestion.getQuizCourseTopic());
         quizQuestionDetailModel.setQuestionId(quizQuestion.getQuestionId());
         quizQuestionDetailModel.setStatusId(quizQuestion.getStatusId());
+
+        if (quizQuestion.getAttachment() != null) {
+            String[] fileId = quizQuestion.getAttachment().split(";", -1);
+            if (fileId.length != 0) {
+                List<byte[]> fileArray = new ArrayList<>();
+                for (String s : fileId) {
+                    try {
+                        GridFsResource content = mongoContentService.getById(s);
+                        if (content != null) {
+                            InputStream inputStream = content.getInputStream();
+                            fileArray.add(IOUtils.toByteArray(inputStream));
+                        }
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+                quizQuestionDetailModel.setAttachment(fileArray);
+            } else {
+                quizQuestionDetailModel.setAttachment(null);
+            }
+        } else {
+            quizQuestionDetailModel.setAttachment(null);
+        }
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
@@ -351,7 +375,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
     }
 
     @Override
-    public QuizQuestion update(UUID questionId, QuizQuestionUpdateInputModel input, MultipartFile[] files) {
+    public QuizQuestion update(UUID questionId, String json, MultipartFile[] files) {
 //        Date now = new Date();
 //        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 //        String prefixFileName = formatter.format(now);
@@ -380,6 +404,31 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 //            }
 //        });
         //taskInput.setAttachmentPaths(attachmentPaths.toArray(new String[0]));
+
+        Gson gson = new Gson();
+        QuizQuestionUpdateInputModel input = gson.fromJson(json, QuizQuestionUpdateInputModel.class);
+        List<String> attachmentId = new ArrayList<>();
+        String[] fileId = input.getFileId();
+        List<MultipartFile> fileArray = Arrays.asList(files);
+
+        fileArray.forEach((file) -> {
+            ContentModel model = new ContentModel(fileId[fileArray.indexOf(file)], file);
+            log.info("createQuizQuestion, fileId: " + fileId[fileArray.indexOf(file)]);
+
+            ObjectId id = null;
+            try {
+                id = mongoContentService.storeFileToGridFs(model);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            if (id != null) {
+                ContentHeaderModel rs = new ContentHeaderModel(id.toHexString());
+                attachmentId.add(rs.getId());
+            }
+        });
+
         QuizQuestion quizQuestionTemp = quizQuestionRepo.findById(questionId).orElse(null);
         if (quizQuestionTemp == null) {
             return null;
@@ -393,7 +442,7 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             return null;
         }
         quizQuestion.setQuizCourseTopic(quizCourseTopic);
-//        quizQuestion.setAttachment(String.join(";", attachmentPaths.toArray(new String[0])));
+        quizQuestion.setAttachment(String.join(";", attachmentId));
         quizQuestion.setLastUpdatedStamp(new Date());
         quizQuestion.setCreatedStamp(quizQuestionTemp.getCreatedStamp());
         quizQuestion.setStatusId(quizQuestionTemp.getStatusId());

@@ -34,5 +34,5 @@ public interface QuizQuestionService {
 
     QuizQuestionDetailModel findById(UUID questionId);
 
-    QuizQuestion update(UUID questionId, QuizQuestionUpdateInputModel input, MultipartFile[] files);
+    QuizQuestion update(UUID questionId, String json, MultipartFile[] files);
 }

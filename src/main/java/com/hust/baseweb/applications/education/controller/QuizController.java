@@ -95,10 +95,10 @@ public class QuizController {
         @RequestParam("files") MultipartFile[] files
     ) {
 
-        Gson g = new Gson();
-        QuizQuestionUpdateInputModel input = g.fromJson(json, QuizQuestionUpdateInputModel.class);
-        log.info("updateQuizQuestion, topicId = " + input.getQuizCourseTopicId());
-        QuizQuestion quizQuestion = quizQuestionService.update(questionId, input, files);
+//        Gson g = new Gson();
+//        QuizQuestionUpdateInputModel input = g.fromJson(json, QuizQuestionUpdateInputModel.class);
+//        log.info("updateQuizQuestion, topicId = " + input.getQuizCourseTopicId());
+        QuizQuestion quizQuestion = quizQuestionService.update(questionId, json, files);
         return ResponseEntity.ok().body(quizQuestion);
     }
 
