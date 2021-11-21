@@ -11,4 +11,6 @@ public interface CommentOnQuizQuestionService {
     CommentOnQuizQuestion createComment(UUID questionId, String comment, UserLogin u);
 
     List<CommentOnQuizQuestionDetailOM> findByQuestionId(UUID questionId);
+
+    int getNumberCommentsOnQuiz(UUID questionId);
 }

@@ -87,4 +87,9 @@ public class CommentOnQuizQuestionServiceImpl implements CommentOnQuizQuestionSe
         }
         return list;
     }
+    @Override
+    public int getNumberCommentsOnQuiz(UUID questionId){
+        int nbr = commentOnQuizQuestionRepo.getNumberCommentsOnQuiz(questionId);
+        return nbr;
+    }
 }

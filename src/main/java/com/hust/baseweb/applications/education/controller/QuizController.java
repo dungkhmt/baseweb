@@ -61,6 +61,12 @@ public class QuizController {
         List<CommentOnQuizQuestionDetailOM> lst = commentOnQuizQuestionService.findByQuestionId(questionId);
         return ResponseEntity.ok().body(lst);
     }
+    @GetMapping("/get-number-comments-on-quiz/{questionId}")
+    public ResponseEntity<?> getNumberCommentsOnQuiz(Principal principal, @PathVariable UUID questionId){
+        int nbr = commentOnQuizQuestionService.getNumberCommentsOnQuiz(questionId);
+        log.info("getNumberCommentsOnQuiz, questionId = " + questionId + " size = " + nbr);
+        return ResponseEntity.ok().body(nbr);
+    }
 
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
@@ -100,7 +106,8 @@ public class QuizController {
     @GetMapping("/get-quiz-course-topics-of-course/{courseId}")
     public ResponseEntity<?> getQuizCourseTopicsOfCourse(Principal principal, @PathVariable String courseId) {
         log.info("getQuizCourseTopicsOfCourse, courseId = " + courseId);
-        List<QuizCourseTopic> quizCourseTopics = quizCourseTopicService.findByEduCourse_Id(courseId);
+        //List<QuizCourseTopic> quizCourseTopics = quizCourseTopicService.findByEduCourse_Id(courseId);
+        List<QuizCourseTopicDetailOM> quizCourseTopics = quizCourseTopicService.findTopicByCourseId(courseId);
         return ResponseEntity.ok().body(quizCourseTopics);
     }
 
