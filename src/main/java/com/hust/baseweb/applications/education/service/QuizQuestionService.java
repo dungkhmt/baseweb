@@ -16,7 +16,7 @@ public interface QuizQuestionService {
 
     QuizQuestion save(QuizQuestionCreateInputModel input);
 
-    QuizQuestion save(UserLogin u, QuizQuestionCreateInputModel input, MultipartFile[] files);
+    QuizQuestion save(UserLogin u, String json, MultipartFile[] files);
 
     List<QuizQuestion> findAll();
 
@@ -32,7 +32,7 @@ public interface QuizQuestionService {
 
     boolean checkAnswer(String userId, QuizChooseAnswerInputModel quizChooseAnswerInputModel);
 
-    QuizQuestion findById(UUID questionId);
+    QuizQuestionDetailModel findById(UUID questionId);
 
-    QuizQuestion update(UUID questionId, QuizQuestionUpdateInputModel input, MultipartFile[] files);
+    QuizQuestion update(UUID questionId, String json, MultipartFile[] files);
 }

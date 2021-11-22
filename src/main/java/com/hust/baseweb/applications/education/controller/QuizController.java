@@ -81,8 +81,8 @@ public class QuizController {
     @GetMapping("/edu/teacher/course/quiz/detail/{questionId}")
     public ResponseEntity<?> getAllQuizCourseTopics(Principal principal, @PathVariable UUID questionId) {
         log.info("getQuizQuestion" + questionId);
-        QuizQuestion quizQuestion = quizQuestionService.findById(questionId);
-        return ResponseEntity.ok().body(quizQuestion);
+        QuizQuestionDetailModel quizQuestionDetailModel = quizQuestionService.findById(questionId);
+        return ResponseEntity.ok().body(quizQuestionDetailModel);
     }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
@@ -95,10 +95,10 @@ public class QuizController {
         @RequestParam("files") MultipartFile[] files
     ) {
 
-        Gson g = new Gson();
-        QuizQuestionUpdateInputModel input = g.fromJson(json, QuizQuestionUpdateInputModel.class);
-        log.info("updateQuizQuestion, topicId = " + input.getQuizCourseTopicId());
-        QuizQuestion quizQuestion = quizQuestionService.update(questionId, input, files);
+//        Gson g = new Gson();
+//        QuizQuestionUpdateInputModel input = g.fromJson(json, QuizQuestionUpdateInputModel.class);
+//        log.info("updateQuizQuestion, topicId = " + input.getQuizCourseTopicId());
+        QuizQuestion quizQuestion = quizQuestionService.update(questionId, json, files);
         return ResponseEntity.ok().body(quizQuestion);
     }
 
@@ -151,12 +151,12 @@ public class QuizController {
     ) {
         UserLogin u = userService.findById(principal.getName());
 
-        Gson g = new Gson();
-        QuizQuestionCreateInputModel input = g.fromJson(json, QuizQuestionCreateInputModel.class);
+//        Gson g = new Gson();
+//        QuizQuestionCreateInputModel input = g.fromJson(json, QuizQuestionCreateInputModel.class);
 
         //System.out.println("hehehehehehehe");
-        log.info("createQuizQuestion, topicId = " + input.getQuizCourseTopicId());
-        QuizQuestion quizQuestion = quizQuestionService.save(u, input, files);
+//        log.info("createQuizQuestion, topicId = " + input.getQuizCourseTopicId());
+        QuizQuestion quizQuestion = quizQuestionService.save(u, json, files);
         return ResponseEntity.ok().body(quizQuestion);
     }
 

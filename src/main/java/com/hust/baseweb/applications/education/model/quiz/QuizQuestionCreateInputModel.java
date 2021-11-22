@@ -12,4 +12,6 @@ public class QuizQuestionCreateInputModel {
     private String levelId;
 
     private String questionContent;
+
+    private String[] fileId;
 }
