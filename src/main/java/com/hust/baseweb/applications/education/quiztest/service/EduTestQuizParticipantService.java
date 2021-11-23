@@ -8,4 +8,5 @@ public interface EduTestQuizParticipantService {
 
     public EduTestQuizParticipant register(UserLogin userLogin, EduTestQuizParticipationCreateInputModel input);
 
+    public EduTestQuizParticipant findEduTestQuizParticipantByParticipantUserLoginIdAndAndTestId(String userId, String testId);
 }

@@ -4,6 +4,7 @@ import com.hust.baseweb.applications.education.config.EducationConfigProperties;
 import com.hust.baseweb.applications.education.entity.CommentOnQuizQuestion;
 import com.hust.baseweb.applications.education.entity.QuizQuestion;
 import com.hust.baseweb.applications.education.model.quiz.CommentOnQuizQuestionDetailOM;
+import com.hust.baseweb.applications.education.model.quiz.QuizQuestionDetailModel;
 import com.hust.baseweb.applications.education.repo.CommentOnQuizQuestionRepo;
 import com.hust.baseweb.applications.notifications.service.NotificationsService;
 import com.hust.baseweb.entity.UserLogin;
@@ -51,7 +52,7 @@ public class CommentOnQuizQuestionServiceImpl implements CommentOnQuizQuestionSe
 
 
         // push notification to admin
-        QuizQuestion q = quizQuestionService.findById(questionId);
+        QuizQuestionDetailModel q = quizQuestionService.findById(questionId);
         String fromUserLoginId = u.getUserLoginId();
         String toUserLoginId = q.getCreatedByUserLoginId();
         String msg = "user " + fromUserLoginId + " comments on quiz " + q.getQuizCourseTopic().getQuizCourseTopicName() +

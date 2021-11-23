@@ -6,6 +6,7 @@ import com.hust.baseweb.applications.education.quiztest.entity.*;
 import com.hust.baseweb.applications.education.quiztest.model.QuizGroupTestDetailModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.GenerateQuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.*;
+import com.hust.baseweb.applications.education.quiztest.utils.Utils;
 import com.hust.baseweb.applications.education.repo.EduCourseRepo;
 import com.hust.baseweb.applications.education.service.QuizQuestionService;
 import com.hust.baseweb.service.UserService;
@@ -32,6 +33,7 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService {
     private QuizGroupQuestionAssignmentRepo quizGroupQuestionAssignmentRepo;
     private EduTestQuizGroupParticipationAssignmentRepo eduTestQuizGroupParticipationAssignmentRepo;
     private QuizGroupQuestionParticipationExecutionChoiceRepo quizGroupQuestionParticipationExecutionChoiceRepo;
+    private EduTestQuizParticipantService eduTestQuizParticipantService;
     private static Random R = new Random();
 
     @Override
@@ -58,6 +60,9 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService {
     }
 
     public QuizGroupTestDetailModel getTestGroupQuestionDetail(Principal principal, String testID) {
+        EduTestQuizParticipant participant = eduTestQuizParticipantService
+            .findEduTestQuizParticipantByParticipantUserLoginIdAndAndTestId(principal.getName(), testID);
+
 
         EduQuizTest test = eduQuizTestRepo.findById(testID).get();
         String courseName = eduCourseRepo.findById(test.getCourseId()).get().getName();
@@ -105,10 +110,55 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService {
             testDetail.setParticipationExecutionChoice(null);
             return testDetail;
         }
+        String permutation = "0123456789";
+        if(participant != null){
+            if(participant.getPermutation() != null && !participant.getPermutation().equals(""))
+                permutation = participant.getPermutation();
+        }
+        /*
+        ArrayList<Integer> indices = new ArrayList();
+        int m = 0;
+        for(int i = 0; i < permutation.length(); i++) {
+            int idx =Integer.valueOf(permutation.charAt(i));
+            indices.add(idx);
+            m = Math.max(idx,m);
+        }
+        */
+        int len = tmpl.size();
+        for(QuizGroupQuestionAssignment asign: tmpl){
+            //System.out.println("here ");
+            QuizQuestionDetailModel quizQuestion = quizQuestionService.findQuizDetail(asign.getQuestionId());
+            if(len < quizQuestion.getQuizChoiceAnswerList().size()){
+                len  = quizQuestion.getQuizChoiceAnswerList().size();
+            }
+        }
+        if(len < permutation.length()) len = permutation.length();
+
+        // randome indices sequence based on permutation
+        int[] indices = Utils.genSequence(permutation,len);
+
+        log.info("getTestGroupQuestionDetail, random indices = ");
+        for(int i = 0; i < indices.length; i++) log.info(indices[i] + " ");
+
         tmpl.forEach(asign -> {
             //System.out.println("here ");
             QuizQuestionDetailModel quizQuestion = quizQuestionService.findQuizDetail(asign.getQuestionId());
             //System.out.println("ok ");
+
+            // random order choices based on permutation
+            List<QuizChoiceAnswer> answers = new ArrayList();
+            for(int i = 0;i < indices.length; i++){
+                if(indices[i] >= quizQuestion.getQuizChoiceAnswerList().size()){
+                    continue;
+                }
+                answers.add(quizQuestion.getQuizChoiceAnswerList().get(indices[i]));
+                if(answers.size() == quizQuestion.getQuizChoiceAnswerList().size()) break;
+            }
+            //for(int i = m+1; i < quizQuestion.getQuizChoiceAnswerList().size();i++){
+            //    answers.add(quizQuestion.getQuizChoiceAnswerList().get(i));
+            //}
+            quizQuestion.setQuizChoiceAnswerList(answers);
+
             listQuestions.add(quizQuestion);
         });
 
@@ -128,7 +178,16 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService {
             }
         });
 
+        ArrayList<QuizQuestionDetailModel> sorted_lst = new ArrayList();
+        for(int i = 0; i < indices.length; i++){
+            int idx = indices[i];
+            if(idx >= listQuestions.size()){
+                continue;
+            }
+            sorted_lst.add(listQuestions.get(idx));
+        }
 
+        /*
         // swap randomly listQUestions
         QuizQuestionDetailModel[] arr = new QuizQuestionDetailModel[listQuestions.size()];
         for (int i = 0; i < arr.length; i++) {
@@ -148,8 +207,12 @@ public class EduQuizTestGroupServiceImpl implements EduQuizTestGroupService {
                 a.setIsCorrectAnswer('-');
             }
         }
+        */
 
-        testDetail.setListQuestion(listQuestions);
+
+        //testDetail.setListQuestion(listQuestions);
+        testDetail.setListQuestion(sorted_lst);
+
         testDetail.setQuizGroupId(groupId.toString());
         testDetail.setGroupCode(groupCode);
         testDetail.setParticipationExecutionChoice(participationExecutionChoice);

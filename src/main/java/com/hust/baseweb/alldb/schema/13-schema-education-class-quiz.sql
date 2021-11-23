@@ -160,6 +160,7 @@ create table edu_test_quiz_participant(
     test_id varchar(60),
     participant_user_login_id varchar(60),
     status_id varchar(60),
+    permutation varchar(50),
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
