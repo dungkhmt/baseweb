@@ -30,4 +30,5 @@ public interface UserRestBriefProjection {
 
     String getPartyId();
 
+    String enabled();
 }

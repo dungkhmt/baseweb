@@ -50,6 +50,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
     private QuizCourseTopicService quizCourseTopicService;
 
+
+
     private QuizChoiceAnswerRepo quizChoiceAnswerRepo;
 
     private LogUserLoginQuizQuestionRepo logUserLoginQuizQuestionRepo;
@@ -184,6 +186,15 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         List<QuizQuestion> quizQuestions = quizQuestionRepo.findAllByQuizCourseTopicIn(quizCourseTopics);
 //        log.info("findQuizOfCourse, courseId = " + courseId + ", quizCourseTopics.sz = " + quizCourseTopics.size()
 //                 + " return quizQuestions.sz = " + quizQuestions.size());
+        return quizQuestions;
+    }
+
+    @Override
+    public List<QuizQuestion> findQuizOfCourseTopic(String quizCourseTopicId) {
+        QuizCourseTopic quizCourseTopic = quizCourseTopicRepo.findById(quizCourseTopicId).orElse(null);
+        if(quizCourseTopic == null) return null;
+        List<QuizQuestion> quizQuestions = quizQuestionRepo.findAllByQuizCourseTopic(quizCourseTopic);
+
         return quizQuestions;
     }
 

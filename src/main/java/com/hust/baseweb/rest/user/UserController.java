@@ -116,6 +116,14 @@ public class UserController {
         DPerson p = userService.findByPartyId(partyId);
         DPersonDetailModel detailModel = new DPersonDetailModel(p);
         UserLogin userLogin = userService.findById(principal.getName());
+        UserLogin u = userService.findById(p.getUserLogin().getUserLoginId());
+        if(u.isEnabled()) {
+            detailModel.setEnabled("Y");
+            log.info("getUsersDetail, userLoginId " + u.getUserLoginId() + " is enabled");
+        }else {
+            detailModel.setEnabled("N");
+            log.info("getUsersDetail, userLoginId " + u.getUserLoginId() + " is NOT enabled");
+        }
 
         List<SecurityPermission> permissionList = new ArrayList<>();
         for (SecurityGroup sg : userLogin.getRoles()) {

@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService {
             personModel.getBirthDate()));
 
         Set<SecurityGroup> roles = securityGroupRepo.findAllByGroupIdIn(personModel.getRoles());
-        UserLogin userLogin = new UserLogin(personModel.getUserName(), personModel.getPassword(), roles, false);
+        UserLogin userLogin = new UserLogin(personModel.getUserName(), personModel.getPassword(), roles, true);
 
         log.info("save, roles = " + personModel.getRoles().size());
         if (userLoginRepo.existsById(personModel.getUserName())) {
@@ -238,7 +238,13 @@ public class UserServiceImpl implements UserService {
 
         u.setRoles(securityGroupRepo.findAllByGroupIdIn(personUpdateModel.getRoles()));
 
-        userLoginRepo.save(u);
+        if(personUpdateModel.getEnabled().equals("Y")){
+            u.setEnabled(true);
+        }else if(personUpdateModel.getEnabled().equals("N")){
+            u.setEnabled(false);
+        }
+        u = userLoginRepo.save(u);
+
         return partyRepo.findById(person.getPartyId()).orElseThrow(NoSuchElementException::new);
     }
 
@@ -251,6 +257,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public SimpleResponse register(RegisterIM im) {
+        //log.info("register, affiliations = " + im.getAffiliations().get(0));
+
         SimpleResponse res;
         String userLoginId = im.getUserLoginId();
 
@@ -279,6 +287,7 @@ public class UserServiceImpl implements UserService {
                 middleName,
                 lastName,
                 String.join(",", im.getRoles()),
+                String.join(",", im.getAffiliations()),
                 userRegistered);
 
             userRegisterRepo.save(userRegister);
@@ -589,6 +598,7 @@ public class UserServiceImpl implements UserService {
         }
         u.setEnabled(true);
         u = userLoginRepo.save(u);
+        log.info("activateAccount, userLoginId = " + u.getUserLoginId() + " enabled = " + u.isEnabled());
 
         accountActivation.setStatusId(AccountActivation.STATUS_ACTIVATED);
 

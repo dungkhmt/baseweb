@@ -30,6 +30,8 @@ public class UserRegister {
     private String lastName;         // varchar(100),
 
     private String registeredRoles;
+    //private String affiliationId;
+    private String affiliations;
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
     @ManyToOne(fetch = FetchType.EAGER)
@@ -49,6 +51,7 @@ public class UserRegister {
         private String lastName;         // varchar(100),
 
         private String registeredRoles;
+        private String affiliations;
 
         public UserRegister createUserRegister(StatusItem statusItem) {
             return new UserRegister(
@@ -59,6 +62,7 @@ public class UserRegister {
                 middleName,
                 lastName,
                 registeredRoles,
+                affiliations,
                 statusItem);
         }
     }

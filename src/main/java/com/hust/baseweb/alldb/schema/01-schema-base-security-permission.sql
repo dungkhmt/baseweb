@@ -289,6 +289,13 @@ create table party_relationship
 
 -- DROP TABLE public.user_register;
 
+create table registered_affiliation(
+    affiliation_id varchar(200),
+    affiliation_name varchar(500),
+	last_updated_stamp timestamp NULL,
+	created_stamp timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    constraint pk_registered_affiliation primary key  (affiliation_id)
+);
 create TABLE public.user_register (
 	user_login_id varchar(60) NOT NULL,
 	"password" varchar(100) NOT NULL,
@@ -298,6 +305,7 @@ create TABLE public.user_register (
 	last_name varchar(100) NOT NULL,
 	status_id varchar(60) NULL,
 	registered_roles text NOT NULL,
+	affiliations text,
 	last_updated_stamp timestamp NULL,
 	created_stamp timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT pk_register__login PRIMARY KEY (user_login_id),

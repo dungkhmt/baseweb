@@ -42,4 +42,6 @@ public class RegisterIM {
     @NotNull(message = "Được yêu cầu")
     @Size(min = 1, message = "Yêu cầu ít nhất một vai trò")
     private List<@NotBlank String> roles;
+
+    private List<String> affiliations;
 }

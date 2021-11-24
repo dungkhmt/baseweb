@@ -16,6 +16,7 @@ public class PersonUpdateModel {
     private Date birthDate;
     private String partyCode;
     private List<String> roles;
+    private String enabled;
 
     public PersonUpdateModel() {
     }

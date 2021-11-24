@@ -1,16 +1,20 @@
 package com.hust.baseweb.controller;
 
 import com.hust.baseweb.applications.education.exception.SimpleResponse;
+import com.hust.baseweb.entity.RegisteredAffiliation;
 import com.hust.baseweb.model.ApproveRegistrationIM;
 import com.hust.baseweb.model.DisableUserRegistrationIM;
 import com.hust.baseweb.model.RegisterIM;
+import com.hust.baseweb.service.RegisteredAffiliationService;
 import com.hust.baseweb.service.UserService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -23,9 +27,13 @@ public class UserRegisterController {
 
     private UserService userService;
 
+    @Autowired
+    private RegisteredAffiliationService registeredAffiliationService;
+
     public UserRegisterController(UserService userService) {
         this.userService = userService;
     }
+
 
     /*@PostMapping("/user/register")
     public ResponseEntity<UserRegister.OutputModel> registerUser(@RequestBody UserRegister.InputModel inputModel) {
@@ -42,6 +50,13 @@ public class UserRegisterController {
         return ResponseEntity.ok(userService.approveRegisterUser(userLoginId));
     }*/
 
+    @GetMapping("/public/get-registered-affiliations")
+    public ResponseEntity<?> getRegisteredAffiliations(){
+        List<RegisteredAffiliation> affiliations = registeredAffiliationService.findAll();
+
+        return ResponseEntity.ok().body(affiliations);
+
+    }
     @PostMapping("/user/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterIM im) {
         SimpleResponse res = userService.register(im);

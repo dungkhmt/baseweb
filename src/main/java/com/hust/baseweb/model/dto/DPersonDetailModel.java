@@ -27,6 +27,7 @@ public class DPersonDetailModel extends RepresentationModel<DPersonDetailModel> 
     private String userLoginId;
     private String partyCode;
     private List<String> roles;
+    private String enabled;
 
     public DPersonDetailModel(
         String fullName, String status, String partyType, Date createdDate, String userLoginId,
