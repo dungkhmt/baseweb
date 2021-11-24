@@ -31,4 +31,6 @@ public class PersonModel {
     private String gender;
 
     private Date birthDate;
+
+    private String affiliations;
 }

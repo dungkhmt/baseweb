@@ -126,6 +126,7 @@ public class DataAdminController {
             PersonModel person= userService.findPersonByUserLoginId(e.getUserLoginId());
             if(person != null){
                 m.setFullname(person.getLastName() + " " + person.getMiddleName() + " " + person.getFirstName());
+                m.setAffiliations(person.getAffiliations());
             }
             m.setClassId(classId);
             m.setCourseId(courseId);

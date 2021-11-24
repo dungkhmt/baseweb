@@ -14,6 +14,7 @@ import java.util.Date;
 public class LogUserLoginCourseChapterMaterialOutputModel {
     private String userLoginId;
     private String fullname;
+    private String affiliations;
     private String classId;
     private String courseId;
     private String courseName;

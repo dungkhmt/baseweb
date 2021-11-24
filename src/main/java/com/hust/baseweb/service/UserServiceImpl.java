@@ -363,7 +363,7 @@ public class UserServiceImpl implements UserService {
             userRegister.getLastName(),
             userRegister.getMiddleName(),
             null,
-            null));
+            null,userRegister.getAffiliations()));
 
         StatusItem userApproved = statusItemRepo.findById("USER_APPROVED").orElseThrow(NoSuchElementException::new);
         userRegister.setStatusItem(userApproved);
@@ -477,6 +477,10 @@ public class UserServiceImpl implements UserService {
         }
         if(mId2Person.get(userLoginId) == null) {
             UserLogin userLogin = userLoginRepo.findByUserLoginId(userLoginId);
+            UserRegister userRegister = userRegisterRepo.findById(userLoginId).orElse(null);
+            String affiliations = "";
+            if(userRegister != null) affiliations = userRegister.getAffiliations();
+            log.info("findPersonByUserLoginId, affiliations of " + userLoginId + " = " + affiliations);
             Person person = personRepo.findByPartyId(userLogin.getParty().getPartyId());
             if (person == null) {
                 log.info("findPersonByUserLoginId, person of " + userLoginId + " not exists");
@@ -487,6 +491,7 @@ public class UserServiceImpl implements UserService {
             personModel.setFirstName(person.getFirstName());
             personModel.setMiddleName(person.getMiddleName());
             personModel.setLastName(person.getLastName());
+            personModel.setAffiliations(affiliations);
             mId2Person.put(userLoginId, personModel);
         }
         return mId2Person.get(userLoginId);
@@ -528,6 +533,7 @@ public class UserServiceImpl implements UserService {
         accountActivation.setStatusId(AccountActivation.STATUS_CREATED);
 
         accountActivation = accountActivationRepo.save(accountActivation);
+        //String affiliations = "";
 
         createAndSaveUserLoginNotYetActivated(new PersonModel(
             userRegister.getUserLoginId(),
@@ -538,7 +544,7 @@ public class UserServiceImpl implements UserService {
             userRegister.getLastName(),
             userRegister.getMiddleName(),
             null,
-            null));
+            null,userRegister.getAffiliations()));
 
         StatusItem userApproved = statusItemRepo.findById("USER_APPROVED").orElseThrow(NoSuchElementException::new);
         userRegister.setStatusItem(userApproved);

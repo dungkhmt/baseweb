@@ -72,6 +72,7 @@ public class LogUserLoginQuizQuestionServiceImpl implements LogUserLoginQuizQues
             }
 
             String fullName = "";
+            String affiliations = "";
             if (personModel != null) {
                 fullName = personModel.getLastName() +
                            " " +
@@ -79,6 +80,7 @@ public class LogUserLoginQuizQuestionServiceImpl implements LogUserLoginQuizQues
                            " " +
                            personModel.getFirstName();
                 log.info("findByClassId, fullName = " + fullName);
+                affiliations = personModel.getAffiliations();
             }else{
                 log.info("findByClassId, personModel NULL!");
 
@@ -86,7 +88,7 @@ public class LogUserLoginQuizQuestionServiceImpl implements LogUserLoginQuizQues
 
             return new StudentQuizParticipationModel(
                 logi.getUserLoginId(),
-                fullName,
+                fullName, affiliations,
                 (logi.getClassId() != null ? logi.getClassId().toString() : ""),
                 logi.getClassCode() + "",
                 (logi.getQuestionId() != null ? logi.getQuestionId().toString() : ""),
@@ -151,12 +153,14 @@ public class LogUserLoginQuizQuestionServiceImpl implements LogUserLoginQuizQues
                 courseName = course.getName();
             }
             String fullName = "";
+            String affiliations = "";
             if (personModel != null) {
                 fullName = personModel.getLastName() +
                            " " +
                            personModel.getMiddleName() +
                            " " +
                            personModel.getFirstName();
+                affiliations = personModel.getAffiliations();
                 //log.info("findByClassId, fullName = " + fullName);
             }else{
                 //log.info("findByClassId, personModel NULL!");
@@ -164,7 +168,7 @@ public class LogUserLoginQuizQuestionServiceImpl implements LogUserLoginQuizQues
             }
             return new StudentQuizParticipationModel(
                 logi.getUserLoginId(),
-                fullName,
+                fullName,affiliations,
                 (logi.getClassId() != null ? logi.getClassId().toString() : ""),
                 logi.getClassCode() + "",
                 (logi.getQuestionId() != null ? logi.getQuestionId().toString() : ""),
