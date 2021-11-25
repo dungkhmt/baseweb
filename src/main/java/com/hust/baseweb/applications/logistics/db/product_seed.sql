@@ -1,5 +1,9 @@
 insert into product_type(product_type_id, description)
-values ('FINISHED_GOOD', 'finished goods');
+values ('CAR', 'car'),
+       ('FOOD', 'food'),
+       ('DRINK', 'drink'),
+       ('FASHION', 'fashion')
+;
 
 insert into uom_type(uom_type_id, description)
 values ('WEIGHT_MEASURE', 'Weight'),

@@ -4,6 +4,8 @@ import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductType;
 import com.hust.baseweb.applications.logistics.entity.Uom;
 import com.hust.baseweb.applications.logistics.model.*;
+import com.hust.baseweb.applications.logistics.model.product.ListProductsByDefinePageModel;
+import com.hust.baseweb.applications.logistics.model.product.ProductByDefinePageModel;
 import com.hust.baseweb.applications.logistics.model.product.ProductDetailModel;
 import com.hust.baseweb.applications.logistics.repo.ProductPagingRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
@@ -12,16 +14,18 @@ import com.hust.baseweb.applications.logistics.service.ProductService;
 import com.hust.baseweb.applications.logistics.service.ProductTypeService;
 import com.hust.baseweb.applications.logistics.service.UomService;
 import com.hust.baseweb.entity.Content;
+import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.ContentRepo;
 import com.hust.baseweb.service.ContentService;
+import com.hust.baseweb.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -46,6 +50,9 @@ public class ProductController {
     private ContentService contentService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private ContentRepo contentRepo;
 
 
@@ -62,7 +69,7 @@ public class ProductController {
     }
 
     @PostMapping("/get-list-uoms")
-    public ResponseEntity getListUoms(Principal principal, @RequestBody InputModel input) {
+    public ResponseEntity<?> getListUoms(Principal principal, @RequestBody InputModel input) {
         log.info("getListUoms {}", input.getStatusId());
         List<Uom> uoms = uomService.getAllUoms();
         log.info("uoms size: {}", uoms.size());
@@ -72,7 +79,7 @@ public class ProductController {
     }
 
     @PostMapping("/get-list-product-type")
-    public ResponseEntity getListProductType(Principal principal, @RequestBody InputModel input) {
+    public ResponseEntity<?> getListProductType(Principal principal, @RequestBody InputModel input) {
         log.info("getListProductType");
         List<ProductType> productTypes = productTypeService.getAllProductType();
         // List<ProductType> productTypes = productTypeRepo.findAll();
@@ -81,12 +88,16 @@ public class ProductController {
     }
 
     @PostMapping("/add-new-product-to-db")
-    public ResponseEntity addNewProductToDatabase(Principal principal, @RequestBody ModelCreateProductInput input) {
+    public ResponseEntity<?> addNewProductToDatabase(Principal principal,
+                                                    @RequestParam("CreateProductInputModel") String json,
+                                                    @RequestParam("files") MultipartFile[] files) {
         log.info("addNewProductToDatabase");
-        log.info("input {}", input.toString());
-        Product product = productService.save(input.getProductId(), input.getProductName(), input.getType(), null, 0,
-                                              input.getQuantityUomId(), null, null, input.getContent());
-        return ResponseEntity.status(HttpStatus.CREATED).body(product.getProductId());
+//        log.info("input {}", input.toString());
+//        Product product = productService.save(input.getProductId(), input.getProductName(), input.getType(), null, 0,
+//                                              input.getQuantityUomId(), null, null, input.getContent());
+        UserLogin u = userService.findById(principal.getName());
+        Product product = productService.save(u, json, files);
+        return ResponseEntity.ok().body(product);
     }
 
 
@@ -116,27 +127,9 @@ public class ProductController {
     @GetMapping("/get-list-product-with-define-page")
     public ResponseEntity<?> getListProductWithDefinePage(Pageable pageable) {
         log.info("page {}", pageable);
-        Page<Product> productPage = productPagingRepo.findAll(pageable);
-        for (Product p : productPage) {
-            Uom u = p.getUom();
-            if (u != null) {
-                p.setUomDescription(u.getDescription());
-            }
-            Content content = p.getPrimaryImg();
-            if (content != null) {
-                try {
-                    Response response = contentService.getContentData(content.getContentId().toString());
-                    String base64Flag = "data:image/jpeg;base64," +
-                                        Base64.getEncoder().encodeToString(response.body().bytes());
-                    p.setAvatar(base64Flag);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return ResponseEntity.ok(productPage);
+        ListProductsByDefinePageModel productPage = productService.getListProductWithPage(pageable);
 
-
+        return ResponseEntity.ok().body(productPage);
     }
 
     @GetMapping("/get-product-for-edit/{productId}")

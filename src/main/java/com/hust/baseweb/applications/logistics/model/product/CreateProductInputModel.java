@@ -9,7 +9,8 @@ public class CreateProductInputModel {
 
     private String productId;
     private String productName;
-    private Double weight;
+//    private Double weight;
     private String uomId;
-
+    private String productType;
+    private String[] fileId;
 }

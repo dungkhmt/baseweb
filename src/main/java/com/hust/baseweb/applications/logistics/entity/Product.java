@@ -54,6 +54,8 @@ public class Product {
                inverseJoinColumns = @JoinColumn(name = "content_id", referencedColumnName = "content_id"))
     private Set<Content> contents;
 
+    @Column(name = "created_by_user_login_id")
+    private String createdByUserLoginId;
 
     @Transient
     private List<String> contentUrls;
@@ -75,6 +77,6 @@ public class Product {
     @OneToOne
     private Content primaryImg;
 
-    @Transient
+    @Column(name = "avatar")
     private String avatar;
 }

@@ -1,7 +1,12 @@
 package com.hust.baseweb.applications.logistics.service;
 
 import com.hust.baseweb.applications.logistics.entity.Product;
+import com.hust.baseweb.applications.logistics.model.product.ListProductsByDefinePageModel;
+import com.hust.baseweb.applications.logistics.model.product.ProductByDefinePageModel;
+import com.hust.baseweb.entity.UserLogin;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,5 +42,9 @@ public interface ProductService {
         Integer hsPal,
         List<String> contentIds
     );
+
+    Product save(UserLogin u, String json, MultipartFile[] files);
+
+    ListProductsByDefinePageModel getListProductWithPage(Pageable pageable);
 
 }
