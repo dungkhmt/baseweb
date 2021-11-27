@@ -141,9 +141,6 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
             }
         });
 
-
-
-
         QuizQuestion quizQuestion = new QuizQuestion();
         quizQuestion.setLevelId(input.getLevelId());
         quizQuestion.setQuestionContent(input.getQuestionContent());

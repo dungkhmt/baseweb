@@ -117,9 +117,11 @@ public class ProductController {
 
     @GetMapping("/product/{productId}")
     public ResponseEntity<?> getProductDetail(@PathVariable String productId) {
-        Product product = productService.findByProductId(productId);
-        ProductDetailModel productDetailModel = new ProductDetailModel(product);
-        log.info(productDetailModel.toString());
+//        Product product = productService.findByProductId(productId);
+//        ProductDetailModel productDetailModel = new ProductDetailModel(product);
+//        log.info(productDetailModel.toString());
+        ProductDetailModel productDetailModel = productService.getProductDetail(productId);
+
         return ResponseEntity.ok().body(productDetailModel);
     }
 
@@ -187,6 +189,15 @@ public class ProductController {
         productService.saveProduct(product);
     }
 
+    @PostMapping("/set-product-avatar/{productId}")
+    public ResponseEntity<?> setProductAvatar(@PathVariable String productId,
+                                              @RequestParam("fileName") String json,
+                                              @RequestParam("file") MultipartFile file) {
+        ProductDetailModel productDetailModel = productService.saveProductAvatar(productId, json, file);
+
+        return ResponseEntity.ok().body(productDetailModel);
+    }
+
     @PostMapping("/add-new-image/{productId}")
     public void addNewImage(@PathVariable String productId, @RequestBody NewImageModel input) {
         log.info("addNewImage");
@@ -211,7 +222,6 @@ public class ProductController {
             }
         }
 
-
         Content primaryImg = product.getPrimaryImg();
         if (primaryImg == null && contents.size() > 0) {
             primaryImg = contents.iterator().next();
@@ -219,9 +229,14 @@ public class ProductController {
         }
 
         productRepo.save(product);
-
-
     }
 
+    @PostMapping("/save-attachment-images/{productId}")
+    public ResponseEntity<?> saveAttachmentImages(@PathVariable String productId,
+                                                 @RequestParam("fileId") String json,
+                                                 @RequestParam("files") MultipartFile[] attachments) {
+        ProductDetailModel productDetailModel = productService.saveAttachmentImages(productId, json, attachments);
 
+        return ResponseEntity.ok().body(productDetailModel);
+    }
 }

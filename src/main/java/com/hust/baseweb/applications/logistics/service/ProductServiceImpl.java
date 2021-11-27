@@ -7,9 +7,7 @@ import com.hust.baseweb.applications.contentmanager.repo.MongoContentService;
 import com.hust.baseweb.applications.logistics.entity.Product;
 import com.hust.baseweb.applications.logistics.entity.ProductType;
 import com.hust.baseweb.applications.logistics.entity.Uom;
-import com.hust.baseweb.applications.logistics.model.product.CreateProductInputModel;
-import com.hust.baseweb.applications.logistics.model.product.ListProductsByDefinePageModel;
-import com.hust.baseweb.applications.logistics.model.product.ProductByDefinePageModel;
+import com.hust.baseweb.applications.logistics.model.product.*;
 import com.hust.baseweb.applications.logistics.repo.ProductPagingRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductTypeRepo;
@@ -254,10 +252,148 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ProductDetailModel saveProductAvatar(String productId, String json, MultipartFile newAvatar){
+        Product product = productRepo.findByProductId(productId);
+        ProductDetailModel productDetailModel = new ProductDetailModel(product);
+
+        Gson gson = new Gson();
+        SaveProductAvatarInputModel fileDetail = gson.fromJson(json, SaveProductAvatarInputModel.class);
+        ContentModel model = new ContentModel(fileDetail.getFileId(), newAvatar);
+
+        ObjectId id = null;
+        try {
+            id = mongoContentService.storeFileToGridFs(model);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        if (id != null) {
+            ContentHeaderModel rs = new ContentHeaderModel(id.toHexString());
+            product.setAvatar(rs.getId());
+            try {
+                GridFsResource content = mongoContentService.getById(rs.getId());
+                if (content != null) {
+                    InputStream inputStream = content.getInputStream();
+                    productDetailModel.setAvatar(IOUtils.toByteArray(inputStream));
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        product = productRepo.save(product);
+
+        return productDetailModel;
+    }
+
+    @Override
+    public ProductDetailModel saveAttachmentImages(String productId, String json, MultipartFile[] files) {
+        Product product = productRepo.findByProductId(productId);
+        ProductDetailModel productDetailModel = new ProductDetailModel(product);
+
+        Gson gson = new Gson();
+        SaveProductAttachmentInputModel input = gson.fromJson(json, SaveProductAttachmentInputModel.class);
+        List<String> attachmentId = new ArrayList<>();
+        String[] fileId = input.getFileId();
+        List<MultipartFile> fileArray = Arrays.asList(files);
+
+        fileArray.forEach((file) -> {
+            ContentModel model = new ContentModel(fileId[fileArray.indexOf(file)], file);
+
+            ObjectId id = null;
+            try {
+                id = mongoContentService.storeFileToGridFs(model);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            if (id != null) {
+                ContentHeaderModel rs = new ContentHeaderModel(id.toHexString());
+                attachmentId.add(rs.getId());
+            }
+        });
+
+        List<byte[]> fileArrays = new ArrayList<>();
+        for (String s : attachmentId) {
+            try {
+                GridFsResource content = mongoContentService.getById(s);
+                if (content != null) {
+                    InputStream inputStream = content.getInputStream();
+                    fileArrays.add(IOUtils.toByteArray(inputStream));
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        productDetailModel.setAttachmentImages(fileArrays);
+
+
+        product.setAttachmentImages(String.join(";", attachmentId));
+        product = productRepo.save(product);
+
+        return productDetailModel;
+    }
+
+    @Override
+    public ProductDetailModel getProductDetail(String productId) {
+        Product product = productRepo.findByProductId(productId);
+        ProductDetailModel productDetailModel = new ProductDetailModel();
+
+        if (product.getAvatar() != null) {
+            try {
+                GridFsResource content = mongoContentService.getById(product.getAvatar());
+                if (content != null) {
+                    InputStream inputStream = content.getInputStream();
+                    productDetailModel.setAvatar(IOUtils.toByteArray(inputStream));
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else {
+            productDetailModel.setAvatar(null);
+        }
+
+        if (product.getAttachmentImages() != null) {
+            String[] fileId = product.getAttachmentImages().split(";", -1);
+            if (fileId.length != 0) {
+                List<byte[]> fileArray = new ArrayList<>();
+                for (String s : fileId) {
+                    try {
+                        GridFsResource content = mongoContentService.getById(s);
+                        if (content != null) {
+                            InputStream inputStream = content.getInputStream();
+                            fileArray.add(IOUtils.toByteArray(inputStream));
+                        }
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+                productDetailModel.setAttachmentImages(fileArray);
+            } else {
+                productDetailModel.setAttachmentImages(null);
+            }
+        } else {
+            productDetailModel.setAttachmentImages(null);
+        }
+
+        productDetailModel.setProductId(product.getProductId());
+        productDetailModel.setProductName(product.getProductName());
+        productDetailModel.setType(product.getProductType() == null ? "UNKNOWN" : product.getProductType().getDescription());
+        productDetailModel.setUom(product.getUom() == null ? "UNKNOWN" : product.getUom().getDescription());
+
+        return productDetailModel;
+    }
+
+    @Override
     public void saveProduct(Product product) {
         productRepo.save(product);
     }
-
 
     @Override
     @Transactional
