@@ -149,8 +149,6 @@ public class ProductController {
 
 
         return ResponseEntity.ok(new ProductDetailModel(product));
-
-
     }
 
     @GetMapping("/get-list-product-img/{productId}")

@@ -26,6 +26,10 @@ CREATE TABLE product
     created_by_user_login_id      VARCHAR(60),
     product_transport_category_id varchar(60),
     primary_img                   uuid,
+
+    avatar                        varchar(60),
+    attachment_images             varchar(500),
+
     description                   TEXT,
     last_updated_stamp            TIMESTAMP,
     created_stamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
