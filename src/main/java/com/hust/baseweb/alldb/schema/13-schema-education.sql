@@ -194,7 +194,8 @@ create TABLE edu_class_registration (
 
 -- public.edu_class_registration foreign keys
 
-alter table public.edu_class_registration add CONSTRAINT fk_class_registration__user_login FOREIGN KEY (student_id) REFERENCES user_login(user_login_id);
+alter table public.edu_class_registration add CONSTRAINT fk_class_registration__user_login FOREIGN KEY (student_id) REFERENCES userf
+_login(user_login_id);
 alter table public.edu_class_registration add CONSTRAINT fk_class_registration_class FOREIGN KEY (class_id) REFERENCES edu_class(id);
 
 
