@@ -43,11 +43,11 @@ Khi đã sẵn sàng cho quá trình cài đặt project, thực hiện lần l�
 * Có thể backup và restore DB postgres bằng command line:
 
 ```
-Backup: pg_dump.exe -U postgres -W -F p baseweb > "D:\projects\baseweb\db\baseweb20210413"
+Backup: pg_dump.exe -U postgres -W -F p baseweb > "D:\projects\baseweb\db\baseweb20211201"
 ```
 
 ```
-Restore: psql.exe -U postgres -d baseweb -f "D:\projects\baseweb\db\baseweb20210413"
+Restore: psql.exe -U postgres -d baseweb -f "D:\projects\baseweb\db\baseweb20211201"
 ```
 
 ### 1.2. Cấu hình Mongo Replica Set
