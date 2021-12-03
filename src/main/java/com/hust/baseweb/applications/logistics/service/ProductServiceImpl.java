@@ -182,6 +182,7 @@ public class ProductServiceImpl implements ProductService {
         product.setCreatedByUserLoginId(u.getUserLoginId());
         product.setProductType(productTypeRepo.findById(input.getProductType()).orElse(null));
         product.setAvatar(String.join(";", attachmentId));
+        product.setWeight(input.getWeight());
         product.setCreatedStamp(new Date());
         product = productRepo.save(product);
 
@@ -254,6 +255,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDetailModel saveProductAvatar(String productId, String json, MultipartFile newAvatar){
         Product product = productRepo.findByProductId(productId);
+        product.setLastUpdatedStamp(new Date());
         ProductDetailModel productDetailModel = new ProductDetailModel(product);
 
         Gson gson = new Gson();
@@ -283,7 +285,7 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        product = productRepo.save(product);
+        productRepo.save(product);
 
         return productDetailModel;
     }
@@ -291,6 +293,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDetailModel saveAttachmentImages(String productId, String json, MultipartFile[] files) {
         Product product = productRepo.findByProductId(productId);
+        product.setLastUpdatedStamp(new Date());
         ProductDetailModel productDetailModel = new ProductDetailModel(product);
 
         Gson gson = new Gson();
@@ -333,7 +336,7 @@ public class ProductServiceImpl implements ProductService {
 
 
         product.setAttachmentImages(String.join(";", attachmentId));
-        product = productRepo.save(product);
+        productRepo.save(product);
 
         return productDetailModel;
     }
@@ -386,8 +389,22 @@ public class ProductServiceImpl implements ProductService {
         productDetailModel.setProductName(product.getProductName());
         productDetailModel.setType(product.getProductType() == null ? "UNKNOWN" : product.getProductType().getDescription());
         productDetailModel.setUom(product.getUom() == null ? "UNKNOWN" : product.getUom().getDescription());
+        productDetailModel.setWeight(product.getWeight());
+        productDetailModel.setDescription(product.getDescription());
 
         return productDetailModel;
+    }
+
+    @Override
+    public ProductDetailModel updateProduct(String productId, UpdateProductModel json) {
+        Product product = productRepo.findByProductId(productId);
+        product.setLastUpdatedStamp(new Date());
+        product.setWeight(json.getWeight());
+        product.setDescription(json.getDescription());
+
+        product = productRepo.save(product);
+
+        return new ProductDetailModel(product);
     }
 
     @Override

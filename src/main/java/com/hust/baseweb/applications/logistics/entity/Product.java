@@ -82,4 +82,7 @@ public class Product {
 
     @Column(name = "attachment_images")
     private String attachmentImages;
+
+    @Column(name = "description")
+    private String description;
 }

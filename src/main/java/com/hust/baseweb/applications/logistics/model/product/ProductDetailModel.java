@@ -26,7 +26,7 @@ public class ProductDetailModel {
     private Integer hsPal;
     private String productTransportCategoryId;
     private Double weight;
-
+    private String description;
 
     public ProductDetailModel() {
     }
@@ -54,6 +54,7 @@ public class ProductDetailModel {
         this.hsThu = product.getHsThu() ;
         this.productTransportCategoryId = product.getProductTransportCategoryId();
         this.weight = product.getWeight();
+        this.description = product.getDescription();
 
 //        this.contentUrls = product.getContents().stream().map(content -> {
 //            return ContentMappingConstant.CONTENT_MAPPING + "/" + content.getContentId().toString();

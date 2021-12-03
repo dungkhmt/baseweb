@@ -7,6 +7,7 @@ import com.hust.baseweb.applications.logistics.model.*;
 import com.hust.baseweb.applications.logistics.model.product.ListProductsByDefinePageModel;
 import com.hust.baseweb.applications.logistics.model.product.ProductByDefinePageModel;
 import com.hust.baseweb.applications.logistics.model.product.ProductDetailModel;
+import com.hust.baseweb.applications.logistics.model.product.UpdateProductModel;
 import com.hust.baseweb.applications.logistics.repo.ProductPagingRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductRepo;
 import com.hust.baseweb.applications.logistics.repo.ProductTypeRepo;
@@ -236,6 +237,14 @@ public class ProductController {
                                                  @RequestParam("fileId") String json,
                                                  @RequestParam("files") MultipartFile[] attachments) {
         ProductDetailModel productDetailModel = productService.saveAttachmentImages(productId, json, attachments);
+
+        return ResponseEntity.ok().body(productDetailModel);
+    }
+
+    @PutMapping("/update-product/{productId}")
+    public ResponseEntity<?> updateProduct(@PathVariable String productId,
+                                          @RequestBody UpdateProductModel json) {
+        ProductDetailModel productDetailModel = productService.updateProduct(productId, json);
 
         return ResponseEntity.ok().body(productDetailModel);
     }
