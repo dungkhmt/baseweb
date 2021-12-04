@@ -152,7 +152,8 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
         QuizCourseTopic quizCourseTopic = quizCourseTopicRepo.findById(input.getQuizCourseTopicId()).orElse(null);
 
         quizQuestion.setQuizCourseTopic(quizCourseTopic);
-        quizQuestion.setStatusId(QuizQuestion.STATUS_PUBLIC);
+        //quizQuestion.setStatusId(QuizQuestion.STATUS_PUBLIC);
+        quizQuestion.setStatusId(QuizQuestion.STATUS_PRIVATE);
         quizQuestion.setAttachment(String.join(";", attachmentId));
         quizQuestion.setCreatedStamp(new Date());
         quizQuestion = quizQuestionRepo.save(quizQuestion);
