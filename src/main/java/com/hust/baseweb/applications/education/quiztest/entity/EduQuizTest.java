@@ -15,6 +15,10 @@ import java.util.UUID;
 @Entity
 @Table(name = "edu_quiz_test")
 public class EduQuizTest {
+    public static final String QUIZ_TEST_STATUS_CREATED = "CREATED";
+    public static final String QUIZ_TEST_STATUS_DISABLED = "DISABLED";
+    public static final String QUIZ_TEST_STATUS_OPEN = "OPEN";
+    public static final String QUIZ_TEST_STATUS_HIDDEN = "HIDDEN";
 
     @Id
     @Column(name = "test_id")

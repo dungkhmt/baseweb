@@ -59,7 +59,7 @@ public class EduQuizTestSeviceImpl implements QuizTestService {
         newRecord.setCreatedByUserLoginId(user.getUserLoginId());
         newRecord.setDuration(input.getDuration());
         newRecord.setScheduleDatetime(input.getScheduleDatetime());
-        newRecord.setStatusId("");
+        newRecord.setStatusId(EduQuizTest.QUIZ_TEST_STATUS_CREATED);
         newRecord.setTestId(input.getTestId());
         newRecord.setClassId(input.getClassId());
         newRecord.setCreatedStamp(new Date());
@@ -154,6 +154,9 @@ public class EduQuizTestSeviceImpl implements QuizTestService {
         List<EduQuizTest> listEdu = repo.findAll();
         for (EduQuizTest eduEntity :
             listEdu) {
+            if(!eduEntity.getStatusId().equals(EduQuizTest.QUIZ_TEST_STATUS_OPEN))
+                continue;
+
             EduQuizTestModel eduModel = new EduQuizTestModel();
             eduModel.setTestId(eduEntity.getTestId());
             eduModel.setTestName(eduEntity.getTestName());
