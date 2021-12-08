@@ -32,7 +32,7 @@ import static com.hust.baseweb.applications.notifications.service.NotificationsS
 @RestController
 @RequestMapping("/notification")
 @AllArgsConstructor(onConstructor_ = @Autowired)
-public class NotificationController {
+public class NotificationController { 
 
     private final NotificationsService notificationsService;
 
