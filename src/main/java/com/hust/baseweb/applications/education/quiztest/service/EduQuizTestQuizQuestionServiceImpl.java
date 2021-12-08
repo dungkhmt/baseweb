@@ -47,6 +47,30 @@ public class EduQuizTestQuizQuestionServiceImpl implements EduQuizTestQuizQuesti
     }
 
     @Override
+    public int createQuizTestQuestion(UserLogin u, String testId, UUID questionId) {
+        EduQuizTestQuizQuestion eduQuizTestQuizQuestion = eduQuizTestQuizQuestionRepo
+            .findByTestIdAndQuestionId(testId, questionId);
+        if(eduQuizTestQuizQuestion != null){
+            log.info("createQuizTestQuestion, item (test " + testId + ", question " + questionId + ") EXISTS");
+            if(!eduQuizTestQuizQuestion.getStatusId().equals(EduQuizTestQuizQuestion.STATUS_CREATED)){
+                eduQuizTestQuizQuestion.setStatusId(EduQuizTestQuizQuestion.STATUS_CREATED);
+                eduQuizTestQuizQuestion = eduQuizTestQuizQuestionRepo.save(eduQuizTestQuizQuestion);
+            }
+            return 0;
+        }
+        eduQuizTestQuizQuestion = new EduQuizTestQuizQuestion();
+        eduQuizTestQuizQuestion.setQuestionId(questionId);
+        eduQuizTestQuizQuestion.setTestId(testId);
+        eduQuizTestQuizQuestion.setCreatedByUserLoginId(u.getUserLoginId());
+        eduQuizTestQuizQuestion.setCreatedStamp(new Date());
+        eduQuizTestQuizQuestion.setStatusId(EduQuizTestQuizQuestion.STATUS_CREATED);
+
+        eduQuizTestQuizQuestion = eduQuizTestQuizQuestionRepo.save(eduQuizTestQuizQuestion);
+
+        return 1;
+    }
+
+    @Override
     public EduQuizTestQuizQuestion removeQuizTestQuestion(UserLogin u, CreateQuizTestQuestionInputModel input) {
         EduQuizTestQuizQuestion eduQuizTestQuizQuestion = eduQuizTestQuizQuestionRepo
             .findByTestIdAndQuestionId(input.getTestId(),input.getQuestionId());

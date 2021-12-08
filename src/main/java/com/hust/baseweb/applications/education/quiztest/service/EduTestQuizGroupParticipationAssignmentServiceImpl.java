@@ -117,9 +117,19 @@ public class EduTestQuizGroupParticipationAssignmentServiceImpl
                     return a;
                 }
 
-                a.setQuizGroupId(input.getQuizTestGroupId());
-                a = eduTestQuizGroupParticipationAssignmentRepo.save(a);
-                return a;
+                //a.setQuizGroupId(input.getQuizTestGroupId());
+                //a = eduTestQuizGroupParticipationAssignmentRepo.save(a);
+                //return a;
+                // delete current record
+                eduTestQuizGroupParticipationAssignmentRepo.delete(a);
+
+                EduTestQuizGroupParticipationAssignment eduTestQuizGroupParticipationAssignment =
+                    new EduTestQuizGroupParticipationAssignment();
+                eduTestQuizGroupParticipationAssignment.setParticipationUserLoginId(input.getParticipantUserLoginId());
+                eduTestQuizGroupParticipationAssignment.setQuizGroupId(input.getQuizTestGroupId());
+                eduTestQuizGroupParticipationAssignment = eduTestQuizGroupParticipationAssignmentRepo.save(
+                    eduTestQuizGroupParticipationAssignment);
+                return eduTestQuizGroupParticipationAssignment;
             }
 
         }

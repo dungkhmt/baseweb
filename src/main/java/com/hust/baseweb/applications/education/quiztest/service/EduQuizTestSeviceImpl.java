@@ -15,6 +15,7 @@ import com.hust.baseweb.applications.education.quiztest.model.edutestquizpartici
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.QuizTestGroupInfoModel;
+import com.hust.baseweb.applications.education.quiztest.model.quiztestquestion.CreateQuizTestQuestionInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.*;
 import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestGroupRepo.QuizTestGroupInfo;
 import com.hust.baseweb.applications.education.quiztest.repo.EduQuizTestRepo.StudentInfo;
@@ -905,5 +906,17 @@ public class EduQuizTestSeviceImpl implements QuizTestService {
         }
 
         return listResult;
+    }
+
+    @Override
+    public int copyQuestionsFromQuizTest2QuizTest(UserLogin u, String fromQuizTestId, String toQuizTestId) {
+        List<QuizQuestionDetailModel> quizQuestions =
+            eduQuizTestQuizQuestionService.findAllByTestId(fromQuizTestId);
+        int cnt = 0;
+        for(QuizQuestionDetailModel q: quizQuestions){
+
+            cnt += eduQuizTestQuizQuestionService.createQuizTestQuestion(u,toQuizTestId, q.getQuestionId());
+        }
+        return cnt;
     }
 }

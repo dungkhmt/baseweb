@@ -11,6 +11,8 @@ import java.util.UUID;
 
 public interface EduQuizTestGroupRepo extends JpaRepository<EduTestQuizGroup, UUID> {
 
+    public List<EduTestQuizGroup> findAllByTestIdAndGroupCode(String testId, String groupCode);
+
     List<EduTestQuizGroup> findByTestId(String testId);
 
     EduTestQuizGroup findEduTestQuizGroupByTestIdAndQuizGroupId(

@@ -15,6 +15,7 @@ import com.hust.baseweb.applications.education.quiztest.model.edutestquizpartici
 import com.hust.baseweb.applications.education.quiztest.model.edutestquizparticipation.QuizTestParticipationExecutionResultOutputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quitestgroupquestion.AutoAssignQuestion2QuizTestGroupInputModel;
 import com.hust.baseweb.applications.education.quiztest.model.quiztestgroup.AutoAssignParticipants2QuizTestGroupInputModel;
+import com.hust.baseweb.applications.education.quiztest.model.quiztestquestion.CopyQuestionFromQuizTest2QuizTestInputModel;
 import com.hust.baseweb.applications.education.quiztest.repo.EduTestQuizParticipantRepo;
 import com.hust.baseweb.applications.education.quiztest.service.EduQuizTestQuizQuestionService;
 import com.hust.baseweb.applications.education.quiztest.service.QuizTestService;
@@ -233,6 +234,17 @@ public class QuizTestController {
             quizTestService.getQuizTestParticipationExecutionResult(input.getTestId());
 
         return ResponseEntity.ok().body(quizTestParticipationExecutionResultOutputModels);
+    }
+
+    @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
+    @PostMapping("/copy-question-from-quiztest-to-quiztest")
+    public ResponseEntity<?> copyQuestionFromQuizTestId2QuizTestId(Principal principal,
+                                                                   @RequestBody  CopyQuestionFromQuizTest2QuizTestInputModel input){
+        UserLogin u = userService.findById(principal.getName());
+
+        log.info("copyQuestionFromQuizTestId2QuizTestId from test " + input.getFromTestId() + " to test " + input.getToTestId());
+        int cnt = quizTestService.copyQuestionsFromQuizTest2QuizTest(u,input.getFromTestId(), input.getToTestId());
+        return ResponseEntity.ok().body(cnt);
     }
 
 }

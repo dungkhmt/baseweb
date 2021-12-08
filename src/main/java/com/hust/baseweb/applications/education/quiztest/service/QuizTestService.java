@@ -40,4 +40,6 @@ public interface QuizTestService {
     public Integer deleteQuizTestGroups(String testId, String[] listQuizTestGroupId);
 
     public List<QuizTestParticipationExecutionResultOutputModel> getQuizTestParticipationExecutionResult(String testId);
+
+    public int copyQuestionsFromQuizTest2QuizTest(UserLogin u, String fromQuizTestId, String toQuizTestId);
 }
