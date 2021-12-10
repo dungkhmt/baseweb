@@ -71,6 +71,7 @@ create table edu_quiz_test(
     duration int,
     course_id varchar(10),
     class_id uuid,
+    session_id uuid,
     status_id varchar(30),
     created_by_user_login_id varchar(60),
 
@@ -80,6 +81,7 @@ create table edu_quiz_test(
     constraint pk_edu_quiz_test_id primary key(test_id),
     constraint fk_edu_quiz_test_created_by_user_login_id foreign key(created_by_user_login_id) references user_login(user_login_id),
     constraint fk_edu_quiz_test_course_id foreign key(course_id) references edu_course(id),
+    constraint fk_edu_quiz_test_session foreign key(session_id) references edu_class_session(session_id),
     constraint fk_edu_quiz_test_class_id foreign key(class_id) references edu_class(id)
 );
 
