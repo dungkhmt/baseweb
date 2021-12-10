@@ -52,4 +52,7 @@ public class EduQuizTest {
     @Column(name = "class_id")
     private UUID classId;
 
+    @Column(name="session_id")
+    private UUID sessionId;
+
 }

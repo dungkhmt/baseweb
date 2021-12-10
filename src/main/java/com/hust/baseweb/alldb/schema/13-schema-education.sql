@@ -113,7 +113,7 @@ create table comments_edu_course_material(
     constraint fk_comments_edu_course_material_material_replay_to_comment_id foreign key (reply_to_comment_id) references comments_edu_course_material(comment_id),
     constraint fk_comments_edu_course_material_user_login_id foreign key(posted_by_user_login_id) references user_login(user_login_id)
 
-)
+);
 -- Drop table
 
 -- DROP TABLE public.edu_semester;

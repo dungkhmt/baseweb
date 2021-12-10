@@ -2,7 +2,9 @@ package com.hust.baseweb.applications.education.classmanagement.controller;
 
 import com.hust.baseweb.applications.education.classmanagement.entity.EduClassSession;
 import com.hust.baseweb.applications.education.classmanagement.model.CreateEduClassSessionIM;
+import com.hust.baseweb.applications.education.classmanagement.model.CreateQuizTestOfClassSessionIM;
 import com.hust.baseweb.applications.education.classmanagement.service.EduClassSessionService;
+import com.hust.baseweb.applications.education.quiztest.entity.EduQuizTest;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
@@ -37,5 +39,17 @@ public class EduClassSessionController {
         log.info("addASessionOfClass, sessionName = " + input.getSessionName());
         EduClassSession o = eduClassSessionService.save(input.getClassId(),input.getSessionName(), input.getDescription(),u.getUserLoginId());
         return ResponseEntity.ok().body(o);
+    }
+    @GetMapping("/get-quiz-test-list-of-session/{sessionId}")
+    public ResponseEntity<?> getQuizTestOfSession(Principal principal, @PathVariable UUID sessionId){
+        List<EduQuizTest> lst = eduClassSessionService.findAllBySession(sessionId);
+        return ResponseEntity.ok().body(lst);
+    }
+    @PostMapping("/add-a-quiz-test-of-class-session")
+    public ResponseEntity<?> addQuizTestOfClassSession(Principal principal, @RequestBody CreateQuizTestOfClassSessionIM input){
+        log.info("addQuizTestOfClassSession....testName = " + input.getTestName());
+        EduQuizTest eduQuizTest = eduClassSessionService.createQuizTestOfClassSession(input.getSessionId(),  input.getTestId(), input.getTestName(), input.getDuration());
+        return ResponseEntity.ok().body(eduQuizTest);
+
     }
 }

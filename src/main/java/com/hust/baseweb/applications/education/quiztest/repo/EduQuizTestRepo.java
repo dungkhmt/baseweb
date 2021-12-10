@@ -7,8 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface EduQuizTestRepo extends JpaRepository<EduQuizTest, String> {
+
+    List<EduQuizTest> findAllBySessionId(UUID sessionId);
+
 
     @Query(
         nativeQuery = true,
