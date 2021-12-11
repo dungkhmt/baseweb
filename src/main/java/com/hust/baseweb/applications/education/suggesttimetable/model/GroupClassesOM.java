@@ -1,5 +1,6 @@
 package com.hust.baseweb.applications.education.suggesttimetable.model;
 
+import com.hust.baseweb.applications.education.suggesttimetable.entity.EduClass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,11 +11,11 @@ import java.util.List;
  */
 @Getter
 @AllArgsConstructor
-public class GroupClasses {
+public class GroupClassesOM {
 
     private final String courseId;
 
     private final String classType;
 
-    private final List<EduOM> classes;
+    private final List<EduClass> classes;
 }
