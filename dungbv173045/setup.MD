@@ -6,7 +6,14 @@ In your application.yaml file add env : `DOCKER_SERVER_HOST`
 - Example: 
   - `DOCKER_SERVER_HOST: http://localhost:12375` (docker server)
   - `DOCKER_SERVER_HOST: unix:///var/run/docker.sock` (docker in local after install docker)
-
+  - 
+ docker run --privileged --name docker-service -d -p 12375:2375 \
+    --network docker-service-network --network-alias docker \
+    -e DOCKER_TLS_CERTDIR="" \
+    -v some-docker-certs-ca:/certs/ca \
+    -v some-docker-certs-client:/certs/client \
+    docker:dind
+    
 Access you docker server and run command to create default container:
 - `docker create --name java --label names=leetcode -w /workdir openjdk:13-buster /bin/sh -c "while true; do sleep 1000; done"`
 - `docker create --name golang --label names=leetcode -w /workdir golang:1.16-buster /bin/sh -c "while true; do sleep 1000; done"`
