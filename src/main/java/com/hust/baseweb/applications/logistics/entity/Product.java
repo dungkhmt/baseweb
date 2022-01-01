@@ -85,4 +85,8 @@ public class Product {
 
     @Column(name = "description")
     private String description;
+
+    @ManyToMany
+    @JoinTable(name = "product_promo_product", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "product_promo_rule_id"))
+    private List<ProductPromoRule> productPromoRules;
 }

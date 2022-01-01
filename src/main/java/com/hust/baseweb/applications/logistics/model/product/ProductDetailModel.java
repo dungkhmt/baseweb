@@ -28,6 +28,8 @@ public class ProductDetailModel {
     private Double weight;
     private String description;
 
+    private List<ProductPromoModel> productPromoModels;
+
     public ProductDetailModel() {
     }
 

@@ -4,14 +4,9 @@ import com.google.gson.Gson;
 import com.hust.baseweb.applications.contentmanager.model.ContentHeaderModel;
 import com.hust.baseweb.applications.contentmanager.model.ContentModel;
 import com.hust.baseweb.applications.contentmanager.repo.MongoContentService;
-import com.hust.baseweb.applications.logistics.entity.Product;
-import com.hust.baseweb.applications.logistics.entity.ProductType;
-import com.hust.baseweb.applications.logistics.entity.Uom;
+import com.hust.baseweb.applications.logistics.entity.*;
 import com.hust.baseweb.applications.logistics.model.product.*;
-import com.hust.baseweb.applications.logistics.repo.ProductPagingRepo;
-import com.hust.baseweb.applications.logistics.repo.ProductRepo;
-import com.hust.baseweb.applications.logistics.repo.ProductTypeRepo;
-import com.hust.baseweb.applications.logistics.repo.UomRepo;
+import com.hust.baseweb.applications.logistics.repo.*;
 import com.hust.baseweb.entity.Content;
 import com.hust.baseweb.entity.UserLogin;
 import com.hust.baseweb.repo.ContentRepo;
@@ -30,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,6 +40,10 @@ public class ProductServiceImpl implements ProductService {
     private ContentRepo contentRepo;
     private ProductTypeRepo productTypeRepo;
     private ProductPagingRepo productPagingRepo;
+    private ProductPromoProductRepo productPromoProductRepo;
+    private ProductPromoRuleRepo productPromoRuleRepo;
+    private ProductPromoRepo productPromoRepo;
+
 
     @Autowired
     private ContentService contentService;
@@ -384,6 +385,26 @@ public class ProductServiceImpl implements ProductService {
         } else {
             productDetailModel.setAttachmentImages(null);
         }
+
+        // get product promo information
+        product.setProductPromoRules(productPromoRuleRepo.findProductPromoRulesByProducts(product));
+        List<ProductPromoModel> productPromoModels = new ArrayList<>();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Gson g = new Gson();
+
+        for (ProductPromoRule productPromoRule : product.getProductPromoRules()) {
+            ProductPromoModel productPromoModel = new ProductPromoModel();
+            productPromoModel.setProductPromoRuleId(productPromoRule.getProductPromoRuleId());
+            ProductPromoPercentageDiscountModel productPromoPercentageDiscountModel = g.fromJson(productPromoRule.getJsonParams(), ProductPromoPercentageDiscountModel.class);
+            productPromoModel.setPromoPercentageDiscount(productPromoPercentageDiscountModel.getDiscount() * 100);
+            ProductPromo productPromo = productPromoRepo.findProductPromoByProductPromoId(productPromoRule.getProductPromoId());
+            productPromoModel.setPromoName(productPromo.getPromoName());
+            productPromoModel.setFromDate(dateFormat.format(productPromo.getFromDate()));
+            productPromoModel.setThruDate(dateFormat.format(productPromo.getThruDate()));
+
+            productPromoModels.add(productPromoModel);
+        }
+        productDetailModel.setProductPromoModels(productPromoModels);
 
         productDetailModel.setProductId(product.getProductId());
         productDetailModel.setProductName(product.getProductName());

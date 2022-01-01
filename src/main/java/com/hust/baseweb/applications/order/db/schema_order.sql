@@ -99,6 +99,7 @@ CREATE TABLE order_item
     order_item_seq_id  VARCHAR(60),
     order_item_type_id VARCHAR(60),
     product_id         VARCHAR(60),
+    user_id            VARCHAR(60),
     unit_price         DECIMAL(18, 2),
     quantity           DECIMAL(18, 6),
     status_id          VARCHAR(60),
