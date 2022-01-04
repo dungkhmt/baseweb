@@ -52,7 +52,12 @@ public class QuizController {
         UserLogin u = userService.findById(principal.getName());
         log.info("postCommentOnQuizQuestion, user " + u.getUserLoginId() + " post comments = " + input.getComment());
 
-        CommentOnQuizQuestion commentOnQuizQuestion = commentOnQuizQuestionService.createComment(input.getQuestionId(), input.getComment(), u);
+        CommentOnQuizQuestion commentOnQuizQuestion = commentOnQuizQuestionService.createComment(
+            input.getQuestionId(),
+            input.getComment(),
+            input.getReplyToCommentId(),
+            u
+        );
 
         return ResponseEntity.ok().body(commentOnQuizQuestion);
     }
@@ -61,6 +66,13 @@ public class QuizController {
         List<CommentOnQuizQuestionDetailOM> lst = commentOnQuizQuestionService.findByQuestionId(questionId);
         return ResponseEntity.ok().body(lst);
     }
+
+    @GetMapping("/get-list-reply-comments-on-quiz/{commentId}")
+    public ResponseEntity<?> getListReplyCommentsOnQuiz(Principal principal, @PathVariable UUID commentId){
+        List<CommentOnQuizQuestionDetailOM> lst = commentOnQuizQuestionService.findByReplyToCommentId(commentId);
+        return ResponseEntity.ok().body(lst);
+    }
+
     @GetMapping("/get-number-comments-on-quiz/{questionId}")
     public ResponseEntity<?> getNumberCommentsOnQuiz(Principal principal, @PathVariable UUID questionId){
         int nbr = commentOnQuizQuestionService.getNumberCommentsOnQuiz(questionId);
@@ -68,6 +80,24 @@ public class QuizController {
         return ResponseEntity.ok().body(nbr);
     }
 
+    @DeleteMapping("/delete-comment-on-quiz/{commentId}")
+    public ResponseEntity<?> deleteCommentOnQuiz(
+        Principal principal,
+        @PathVariable UUID commentId
+    ){
+        commentOnQuizQuestionService.deleteCommentOnQuiz(commentId);
+        return ResponseEntity.ok().body(commentId);
+    }
+
+    @PutMapping("/edit-comment-on-quiz/{commentId}")
+    public ResponseEntity<?> editCommentOnQuiz(
+        Principal principal,
+        @RequestBody CommentOnQuizQuestion input,
+        @PathVariable UUID commentId
+    ){
+        CommentOnQuizQuestion edittedComment = commentOnQuizQuestionService.updateComment(commentId, input.getCommentText());
+        return ResponseEntity.ok().body(edittedComment);
+    }
 
     @Secured({"ROLE_EDUCATION_TEACHING_MANAGEMENT_TEACHER"})
     @GetMapping("/get-all-quiz-course-topics")
