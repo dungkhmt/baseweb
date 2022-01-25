@@ -41,4 +41,6 @@ public interface UserLoginRepo extends JpaRepository<UserLogin, String> {
                    " on u.user_login_id = ug.user_login_id \n" +
                    "where ug.group_id = ?1", nativeQuery = true)
     List<String> findAllUserLoginOfGroup(String groupId);
+
+    List<UserLogin> findAllByUserLoginIdIn(List<String> userLoginIds);
 }
