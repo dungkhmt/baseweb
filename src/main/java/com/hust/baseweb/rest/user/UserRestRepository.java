@@ -13,6 +13,7 @@ import org.springframework.data.querydsl.binding.SingleValueBinding;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.util.List;
 import java.util.UUID;
 
 @RepositoryRestResource(exported = true, excerptProjection = UserRestBriefProjection.class)
@@ -36,6 +37,13 @@ public interface UserRestRepository extends PagingAndSortingRepository<DPerson, 
     Page<UserRestBriefProjection> findByLoginUserId(
         Pageable page,
         String userLoginId
+    );
+
+    @Query(
+        "select p from DPerson p where p.userLogin.userLoginId in :userLoginIds")
+    Page<UserRestBriefProjection> findByLoginUserIds(
+        Pageable page,
+        List<String> userLoginIds
     );
 
 
