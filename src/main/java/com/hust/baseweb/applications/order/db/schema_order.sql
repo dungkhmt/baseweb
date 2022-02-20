@@ -103,6 +103,7 @@ CREATE TABLE order_item
     unit_price         DECIMAL(18, 2),
     quantity           DECIMAL(18, 6),
     status_id          VARCHAR(60),
+    exported_quantity  INTEGER,
     last_updated_stamp TIMESTAMP,
     created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_order_item_id PRIMARY KEY (order_id, order_item_seq_id),

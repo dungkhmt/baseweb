@@ -83,40 +83,6 @@ public class QuizQuestionServiceImpl implements QuizQuestionService {
 
     @Override
     public QuizQuestion save(UserLogin u, String json, MultipartFile[] files) {
-
-        //Do save file
-//        Date now = new Date();
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-//        String prefixFileName = formatter.format(now);
-//        ArrayList<String> attachmentPaths = new ArrayList<>();
-//        Arrays.asList(files).forEach(file -> {
-//            try {
-//                Path path = Paths.get(properties.getFilesystemRoot() + "\\" + properties.getClassManagementDataPath());
-//                String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
-//
-//                if (file.isEmpty()) {
-//                    throw new StorageException("Failed to store empty file " + originalFileName);
-//                }
-//
-//                if (originalFileName.contains("..")) {
-//                    // This is a security check
-//                    throw new StorageException(
-//                        "Cannot store file with relative path outside current directory "
-//                        + originalFileName);
-//                }
-//
-//                // Can throw IOExeption, e.g NoSuchFileException.
-//                Files.copy(
-//                    file.getInputStream(),
-//                    path.resolve(prefixFileName + "-" + originalFileName),
-//                    StandardCopyOption.REPLACE_EXISTING);
-//                attachmentPaths.add(prefixFileName + "-" + file.getOriginalFilename());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
-        //taskInput.setAttachmentPaths(attachmentPaths.toArray(new String[0]));
-
         Gson gson = new Gson();
         QuizQuestionCreateInputModel input = gson.fromJson(json, QuizQuestionCreateInputModel.class);
         List<String> attachmentId = new ArrayList<>();
