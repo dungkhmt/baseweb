@@ -54,6 +54,8 @@ public class Product {
                inverseJoinColumns = @JoinColumn(name = "content_id", referencedColumnName = "content_id"))
     private Set<Content> contents;
 
+    @Column(name = "created_by_user_login_id")
+    private String createdByUserLoginId;
 
     @Transient
     private List<String> contentUrls;
@@ -75,6 +77,16 @@ public class Product {
     @OneToOne
     private Content primaryImg;
 
-    @Transient
+    @Column(name = "avatar")
     private String avatar;
+
+    @Column(name = "attachment_images")
+    private String attachmentImages;
+
+    @Column(name = "description")
+    private String description;
+
+    @ManyToMany
+    @JoinTable(name = "product_promo_product", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "product_promo_rule_id"))
+    private List<ProductPromoRule> productPromoRules;
 }

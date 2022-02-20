@@ -48,6 +48,9 @@ public class OrderHeader {
 
     private Boolean exported = false;
 
+    @Column(name = "product_store_id")
+    private String productStoreId;
+
     @Column(name = "created_stamp")
     private Date createdStamp;
 

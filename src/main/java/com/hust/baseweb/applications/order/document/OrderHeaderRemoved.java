@@ -116,7 +116,8 @@ public class OrderHeaderRemoved {
 
         Product product = new Product();
         product.setProductId("prporpropr");
-        OrderItem orderItem = new OrderItem("1", "2", product, 1.0, 2, 3);
+//        OrderItem orderItem = new OrderItem("1", "2", product, 1.0, 2, 3);
+        OrderItem orderItem = new OrderItem();
 
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);

@@ -26,6 +26,4 @@ public class OrderType {
 
     @Column(name = "last_updated_stamp")
     private Date lastUpdatedStamp;
-
-
 }

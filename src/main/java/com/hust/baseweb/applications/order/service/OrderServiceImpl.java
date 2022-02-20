@@ -617,8 +617,9 @@ public class OrderServiceImpl implements OrderService {
             .findById(UUID.fromString(purchaseCreateModel.getSupplierPartyId()))
             .orElseThrow(NoSuchElementException::new);
 
-        OrderHeader orderHeader = new OrderHeader(orderId, purchaseOrder, null, now, 0.0, null,
-                                                  false, now, now, null, vendorParty, null, null, null, null, null);
+//        OrderHeader orderHeader = new OrderHeader(orderId, purchaseOrder, null, now, 0.0, null,
+//                                                  false, now, now, null, vendorParty, null, null, null, null, null);
+        OrderHeader orderHeader = new OrderHeader();
 
         orderHeader = orderHeaderRepo.save(orderHeader);
 
@@ -651,16 +652,16 @@ public class OrderServiceImpl implements OrderService {
             OrderHeader.PurchaseCreateModel.ProductQuantity productQuantity =
                 purchaseCreateModel.getProductQuantities().get(i);
             String productId = productQuantity.getProductId();
-            OrderItem orderItem = new OrderItem(
-                orderId,
-                i + "",
-                productMap.get(productId),
-                Optional
-                    .ofNullable(productIdToSupplierUnitPrice.get(productId))
-                    .map(unitPrice -> 1.0 * unitPrice)
-                    .orElse(null),
-                productQuantity.getQuantity(),
-                0);
+            OrderItem orderItem = new OrderItem();
+//                orderId,
+//                i + "",
+//                productMap.get(productId),
+//                Optional
+//                    .ofNullable(productIdToSupplierUnitPrice.get(productId))
+//                    .map(unitPrice -> 1.0 * unitPrice)
+//                    .orElse(null),
+//                productQuantity.getQuantity(),
+//                0);
             orderItems.add(orderItem);
         }
 
