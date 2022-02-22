@@ -6,6 +6,7 @@ import com.hust.baseweb.entity.*;
 import com.hust.baseweb.applications.education.service.CommentsEduCourseMaterialService;
 import com.hust.baseweb.service.UserService;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
+@Log4j2
 @RestController
 @CrossOrigin
 @AllArgsConstructor( onConstructor = @__(@Autowired))

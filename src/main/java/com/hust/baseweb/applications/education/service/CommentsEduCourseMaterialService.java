@@ -15,4 +15,5 @@ public interface CommentsEduCourseMaterialService {
     List<CommentEduCourseDetailOM> findByReplyCommentId(UUID commentId);
     CommentsEduCourseMaterial editCommentEduCourse(UUID commentId, String comment);
     CommentsEduCourseMaterial deleteCommentEduCourse(UUID commentId);
+//    List<String> findPostedByUserLoginIdByEduCourseMaterialId(UUID eduCourseMaterialId);
 }
