@@ -27,4 +27,7 @@ public interface CommentsEduCourseMaterialRepo extends JpaRepository<CommentsEdu
     List<CommentsEduCourseMaterial> findByEduCourseMaterialIdWithoutReplyComment(UUID eduCourseMaterialId);
 
     List<CommentsEduCourseMaterial> findByReplyToCommentId(UUID replyToCommentId);
+
+    @Query(value="select distinct posted_by_user_login_id from comments_edu_course_material where edu_course_material_id = :eduCourseMaterialId", nativeQuery = true)
+    List<String> postedByUserLoginId(UUID eduCourseMaterialId);
 }
